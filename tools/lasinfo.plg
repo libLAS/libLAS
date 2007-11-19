@@ -1,0 +1,41 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: lasinfo - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\isenburg\LOCALS~1\Temp\RSP4BA.tmp" with contents
+[
+/nologo /ML /W3 /GX /O2 /I "..\inc" /I "..\stl" /I "..\src" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /Fp"Release/lasinfo.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\released_code\lastools\tools\src\lasinfo.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\isenburg\LOCALS~1\Temp\RSP4BA.tmp" 
+Creating temporary file "C:\DOCUME~1\isenburg\LOCALS~1\Temp\RSP4BB.tmp" with contents
+[
+../lib/LASlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:no /pdb:"Release/lasinfo.pdb" /machine:I386 /out:"Release/lasinfo.exe" 
+.\Release\fopengzipped.obj
+.\Release\lasinfo.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\isenburg\LOCALS~1\Temp\RSP4BB.tmp"
+<h3>Output Window</h3>
+Compiling...
+lasinfo.cpp
+Linking...
+Creating temporary file "C:\DOCUME~1\isenburg\LOCALS~1\Temp\RSP4BD.bat" with contents
+[
+@echo off
+copy Release\lasinfo.exe ..\bin\lasinfo.exe
+]
+Creating command line "C:\DOCUME~1\isenburg\LOCALS~1\Temp\RSP4BD.bat"
+
+        1 file(s) copied.
+
+
+
+<h3>Results</h3>
+lasinfo.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: las2las - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\ISENBU~1.ISE\LOCALS~1\Temp\RSP5E.tmp" with contents
+[
+/nologo /ML /W3 /GX /O2 /I "..\inc" /I "..\stl" /I "..\src" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /Fp"Release/las2las.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\released_code\lastools\tools\src\las2las.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\ISENBU~1.ISE\LOCALS~1\Temp\RSP5E.tmp" 
+Creating temporary file "C:\DOCUME~1\ISENBU~1.ISE\LOCALS~1\Temp\RSP5F.tmp" with contents
+[
+../lib/LASlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:no /pdb:"Release/las2las.pdb" /machine:I386 /out:"Release/las2las.exe" 
+.\Release\fopengzipped.obj
+.\Release\las2las.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\ISENBU~1.ISE\LOCALS~1\Temp\RSP5F.tmp"
+<h3>Output Window</h3>
+Compiling...
+las2las.cpp
+Linking...
+Creating temporary file "C:\DOCUME~1\ISENBU~1.ISE\LOCALS~1\Temp\RSP61.bat" with contents
+[
+@echo off
+copy Release\las2las.exe ..\bin\las2las.exe
+]
+Creating command line "C:\DOCUME~1\ISENBU~1.ISE\LOCALS~1\Temp\RSP61.bat"
+
+        1 file(s) copied.
+
+
+
+<h3>Results</h3>
+las2las.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

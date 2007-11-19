@@ -1,0 +1,69 @@
+****************************************************************
+
+  las2las:
+
+  reads and writes LIDAR data in the LAS format while modifing
+  its contents. Examples are clipping of points to those
+  that lie within a certain region specified by a bounding box
+  (-clip), eliminating points that are the second return
+  (-elim_return 2), that have a scan angle above some threshold
+  (-elim_scan_angle_above 5), or below some intensity
+  (-elim_intensity_below 15)
+  Another typical use may be to extract only first (-first_only)
+  returns or only last returns (-last_only). Extracting the first
+  return is actually the same as eliminating all others (e.g.
+  -elim_return 2 -elim_return 3, ...).
+ 
+****************************************************************
+
+example usage:
+
+>> las2las -i in.las -verbose
+
+lists the value ranges of all the points (similar to lasinfo.exe)
+
+>> las2las -i in.las -o out.las -clip 63025000 483450000 63050000 483475000
+
+clips points of in.las with x<63025000 or y<483450000 or x>63050000
+or y>483475000 and stores surviving points to out.las. note that
+clip expects the scaled integer values that the points are stored
+with (not the floating point coordinates they represent).
+
+>> las2las -i in.las -o out.las -eliminate_return 1
+
+eliminates all points of in.las that are designated first returns
+by the value in their return_number field and stores surviving
+points to out.las.
+
+>> las2las -i in.las -o out.las -eliminate_scan_angle_above 15
+
+eliminates all points of in.las whose scan angle is above 15 or
+below -15 and stores surviving points to out.las.
+
+>> las2las -i in.las -o out.las -eliminate_intensity_below 1000 -remove_extra_header
+
+eliminates all points of in.las whose intensity is below 1000 and
+stores surviving points to out.las. in addition all variable headers
+and any additional user headers are stripped from the file.
+
+>> las2las -i in.las -o out.las -last_only
+
+extracts all last return points from in.las and stores them to
+out.las.
+
+for more info:
+
+C:\lastools\bin>las2las -h
+usage:
+las2las -remove_extra_header in.las out.las
+las2las -i in.las -clip 63000000 483450000 63050000 483500000 -o out.las
+las2las -i in.las -eliminate_return 2 -o out.las
+las2las -i in.las -eliminate_scan_angle_above 15 -o out.las
+las2las -i in.las -eliminate_intensity_below 1000 -olas > out.las
+las2las -i in.las -first_only -clip 63000000 483450000 63050000 483500000 -o out.las
+las2las -i in.las -last_only -eliminate_intensity_below 2000 -olas > out.las
+las2las -h
+
+---------------
+
+if you find bugs let me (isenburg@cs.unc.edu) know.
