@@ -37,6 +37,7 @@ AC_CHECK_FUNCS([gettimeofday bzero memset memcpy bcopy])
 AC_CONFIG_FILES([	Makefile
 			inc/Makefile
 			src/Makefile
+		  	src/apps/Makefile
 		])
 
 AC_OUTPUT

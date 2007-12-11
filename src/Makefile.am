@@ -1,4 +1,5 @@
 noinst_LTLIBRARIES = liblibrary.la
+SUBDIRS = . apps
 
 INCLUDES = -I../inc
 
