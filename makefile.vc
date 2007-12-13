@@ -18,6 +18,7 @@ src_dir:
 clean:
 	-del *.obj 
 	-del *.lib
+	-del *.pdb
 	cd src
 	$(MAKE) /f makefile.vc clean
 	cd ..
