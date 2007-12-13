@@ -1,12 +1,10 @@
 ****************************************************************
-
   las2txt: converts from binary LAS to a standard ASCII format
- 
 ****************************************************************
 
-example usage:
+example usage::
 
->> las2txt -i lidar.las -o lidar.txt -parse xyz
+  >> las2txt -i lidar.las -o lidar.txt -parse xyz
 
 converts LAS file to ASCII and places the x, y, and z coordinate
 of each point at the 1st, 2nd, and 3rd entry of each line. the
