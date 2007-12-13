@@ -4,10 +4,26 @@ LAS_LIB = liblas.lib
 LAS_DLL = liblas$(LAS_VERSION).dll
 LAS_LIB_DLL = liblas_i.lib
 
-BASE_CFLAGS = -I$(LAS_ROOT)/inc
+INCLUDES = -I$(LAS_ROOT)/inc
+
+BUILD_DEBUG = NO
 
 
-CFLAGS= $(BASE_CFLAGS)
+!IF "$(BUILD_DEBUG)" == "YES"
+OPTFLAGS=	/nologo /MDd /EHsc /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DDEBUG /D_DEBUG /Fd$(LAS_ROOT)\las.pdb
+LAS_LIB = liblas_d.lib
+LAS_DLL = liblas$(LAS_VERSION)_d.dll
+LAS_LIB_DLL = liblas_i.lib
+!ELSE
+OPTFLAGS=	/nologo /MD /EHsc /Ox /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DNDEBUG
+LAS_LIB = liblas.lib
+LAS_DLL = liblas$(LAS_VERSION).dll
+LAS_LIB_DLL = liblas_i.lib
+!ENDIF
+
+
+
+CFLAGS= $(OPTFLAGS) $(INCLUDES)
 
 .c.obj:	
 	$(CC) $(CFLAGS) /c $*.c /Fo$*.obj
