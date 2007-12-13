@@ -36,10 +36,6 @@
 #include "lasreader.h"
 #include "laswriter.h"
 
-#ifdef _WIN32
-extern "C" FILE* fopenGzipped(const char* filename, const char* mode);
-#endif
-
 void usage()
 {
   fprintf(stderr,"usage:\n");
@@ -200,12 +196,8 @@ int main(int argc, char *argv[])
     FILE* file_in;
     if (strstr(file_names_in[i], ".gz"))
     {
-#ifdef _WIN32
-      file_in = fopenGzipped(file_names_in[i], "rb");
-#else
       fprintf(stderr, "ERROR: no support for gzipped input\n");
       exit(1);
-#endif
     }
     else
     {
@@ -370,12 +362,8 @@ int main(int argc, char *argv[])
     FILE* file_in;
     if (strstr(file_names_in[i], ".gz"))
     {
-#ifdef _WIN32
-      file_in = fopenGzipped(file_names_in[i], "rb");
-#else
       fprintf(stderr, "ERROR: no support for gzipped input\n");
       exit(1);
-#endif
     }
     else
     {

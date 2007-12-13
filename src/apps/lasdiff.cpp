@@ -35,9 +35,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef _WIN32
-extern "C" FILE* fopenGzipped(const char* filename, const char* mode);
-#endif
 
 void usage()
 {
@@ -97,12 +94,8 @@ int main(int argc, char *argv[])
   {
     if (strstr(file_name_in1, ".gz"))
     {
-#ifdef _WIN32
-      file_in1 = fopenGzipped(file_name_in1, "rb");
-#else
       fprintf(stderr, "ERROR: no support for gzipped input\n");
       exit(1);
-#endif
     }
     else
     {
@@ -132,12 +125,8 @@ int main(int argc, char *argv[])
   {
     if (strstr(file_name_in2, ".gz"))
     {
-#ifdef _WIN32
-      file_in2 = fopenGzipped(file_name_in2, "rb");
-#else
       fprintf(stderr, "ERROR: no support for gzipped input\n");
       exit(1);
-#endif
     }
     else
     {

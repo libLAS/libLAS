@@ -73,9 +73,6 @@ void usage()
   exit(1);
 }
 
-#ifdef _WIN32
-extern "C" FILE* fopenGzipped(const char* filename, const char* mode);
-#endif
 
 static int lidardouble2string(char* string, double value)
 {
@@ -253,12 +250,8 @@ int main(int argc, char *argv[])
     {
       if (strstr(file_name_in, ".gz"))
       {
-#ifdef _WIN32
-        file_in = fopenGzipped(file_name_in, "rb");
-#else
         fprintf(stderr, "ERROR: no support for gzipped input\n");
         exit(1);
-#endif
       }
       else
       {

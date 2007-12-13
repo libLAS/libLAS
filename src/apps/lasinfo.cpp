@@ -52,9 +52,6 @@ void usage()
   exit(1);
 }
 
-#ifdef _WIN32
-extern "C" FILE* fopenGzipped(const char* filename, const char* mode);
-#endif
 
 static inline void VecUpdateMinMax3dv(double min[3], double max[3], const double v[3])
 {
@@ -177,12 +174,8 @@ int main(int argc, char *argv[])
   {
     if (strstr(file_name, ".gz"))
     {
-#ifdef _WIN32
-      file = fopenGzipped(file_name, "rb");
-#else
       fprintf(stderr, "ERROR: no support for gzipped input\n");
       exit(1);
-#endif
     }
     else
     {
