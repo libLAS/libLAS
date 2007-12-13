@@ -88,6 +88,8 @@ extracts all last return points from in.las and stores them to out.las.
 Usage
 -----
 
+::
+
     C:\lastools\bin>las2las -h
     usage:
     las2las -remove_extra_header in.las out.las
