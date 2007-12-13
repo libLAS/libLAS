@@ -102,6 +102,8 @@ Example data
 try these sources for sample lidar data in LAS format:
 
 http://www.geoict.net/LidarData/Data/OptechSampleLAS.zip
+
 http://www.qcoherent.com/data/LP360_Sample_Data.rar
+
 http://www.appliedimagery.com/Serpent%20Mound%20Model%20LAS%20Data.las
 
