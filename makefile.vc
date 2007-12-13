@@ -1,0 +1,23 @@
+
+LAS_ROOT = .
+
+!INCLUDE nmake.opt
+
+CC=     cl
+LINK=   link
+
+default: src_dir 
+
+src_dir:
+    cd src
+    $(MAKE) /f makefile.vc 
+    cd ..
+
+
+
+clean:
+	-del *.obj 
+	-del *.lib
+	cd src
+	$(MAKE) /f makefile.vc clean
+	cd ..

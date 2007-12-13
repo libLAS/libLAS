@@ -1,0 +1,37 @@
+
+LAS_ROOT	=	..
+
+!INCLUDE $(LAS_ROOT)\nmake.opt
+
+
+LAS_OBJS	=	laswriter.obj lasreader.obj
+
+default: $(LAS_DLL) apps_dir
+
+all: default
+
+$(LAS_LIB):	$(LAS_OBJS)
+    if exist $(LAS_LIB) del $(LAS_LIB)
+	lib /nologo /out:$(LAS_LIB) $(LAS_OBJS)
+	
+$(LAS_DLL):	$(LAS_LIB)
+	link /dll  \
+	   $(LAS_OBJS) \
+	   /out:$(LAS_DLL) /implib:$(LAS_LIB_DLL)
+	if exist $(LAS_DLL).manifest mt -manifest $(LAS_DLL).manifest -outputresource:$(LAS_DLL);2   
+
+
+
+
+
+apps_dir:
+	cd apps
+	$(MAKE) /f makefile.vc all
+	cd ..
+	
+clean:
+	-del *.obj 
+	-del *.lib
+	cd apps
+	$(MAKE) /f makefile.vc clean
+	cd ..

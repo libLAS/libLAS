@@ -1,0 +1,17 @@
+LAS_VERSION=10
+
+LAS_LIB = liblas.lib
+LAS_DLL = liblas$(LAS_VERSION).dll
+LAS_LIB_DLL = liblas_i.lib
+
+BASE_CFLAGS = -I$(LAS_ROOT)/inc
+
+
+CFLAGS= $(BASE_CFLAGS)
+
+.c.obj:	
+	$(CC) $(CFLAGS) /c $*.c /Fo$*.obj
+
+.cpp.obj:	
+	$(CC) $(CFLAGS) /c $*.cpp /Fo$*.obj
+	
