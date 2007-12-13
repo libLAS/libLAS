@@ -1,32 +1,16 @@
-/*
-===============================================================================
+/***************************************************************************
+ * $Id$
+ * $Date$
+ *
+ * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
+ * Purpose: LAS file merging
+ * Author:  Martin Isenburg isenburg@cs.unc.edu 
+ ***************************************************************************
+ * Copyright (c) 2007, Martin Isenburg isenburg@cs.unc.edu 
+ *
+ * See LICENSE.txt in this source distribution for more information.
+ **************************************************************************/
 
-  FILE:  lasmerge.cpp
-  
-  CONTENTS:
-  
-    This tool merges multiple LAS file into a single LAS file and outputs it in
-    the LAS format. As input the user either provides multiple LAS file names or
-    a text file containing a list of LAS file names.
-
-  PROGRAMMERS:
-  
-    martin isenburg@cs.unc.edu
-  
-  COPYRIGHT:
-  
-    copyright (C) 2007  martin isenburg@cs.unc.edu
-    
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    07 November 2007 -- created after email from luis.viveros@digimapas.cl
-  
-===============================================================================
-*/
 
 #include <time.h>
 #include <stdio.h>

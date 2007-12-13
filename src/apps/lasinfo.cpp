@@ -1,37 +1,16 @@
-/*
-===============================================================================
+/***************************************************************************
+ * $Id$
+ * $Date$
+ *
+ * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
+ * Purpose: LAS information reporting and setting
+ * Author:  Martin Isenburg isenburg@cs.unc.edu 
+ ***************************************************************************
+ * Copyright (c) 2007, Martin Isenburg isenburg@cs.unc.edu 
+ *
+ * See LICENSE.txt in this source distribution for more information.
+ **************************************************************************/
 
-  FILE:  lasinfo.cpp
-
-  CONTENTS:
-
-    This tool reads a LIDAR file in LAS or LAZ format and prints out the info
-    from the standard header. When the '-variable' flag is used then it also
-    prints out info from any variable length headers. When the '-check' flag
-    is used the real bounding box of the points is computed and compared with
-    the bounding box specified in the header.
-
-  PROGRAMMERS:
-
-    martin isenburg@cs.unc.edu
-
-  COPYRIGHT:
-
-    copyright (C) 2007  martin isenburg@cs.unc.edu
-
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  CHANGE HISTORY:
-
-    13 July 2007 -- added the option to "repair" the header and change items
-    11 June 2007 -- fixed number of return counts after Vinton found another bug
-    6 June 2007 -- added lidardouble2string() after Vinton Valentine's bug report
-    25 March 2007 -- sitting at the Pacific Coffee after doing the escalators
-
-===============================================================================
-*/
 
 #include "lasreader.h"
 

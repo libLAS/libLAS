@@ -1,30 +1,17 @@
-/*
-===============================================================================
+/***************************************************************************
+ * $Id$
+ * $Date$
+ *
+ * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
+ * Purpose: Reads a point of type 0 (without gps_time) in standard 
+ *          LAS format 1.1
+ * Author:  Martin Isenburg isenburg@cs.unc.edu 
+ ***************************************************************************
+ * Copyright (c) 2007, Martin Isenburg isenburg@cs.unc.edu 
+ *
+ * See LICENSE.txt in this source distribution for more information.
+ **************************************************************************/
 
-  FILE:  laspointreader0raw.h
-  
-  CONTENTS:
-  
-    Reads a point of type 0 (without gps_time) in standard LAS format 1.1
-
-  PROGRAMMERS:
-  
-    martin isenburg@cs.unc.edu
-  
-  COPYRIGHT:
-  
-    copyright (C) 2007  martin isenburg@cs.unc.edu
-    
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    22 February 2007 -- created about an hour before henna's 32nd birthday
-  
-===============================================================================
-*/
 #ifndef LAS_POINT_READER_0RAW_H
 #define LAS_POINT_READER_0RAW_H
 

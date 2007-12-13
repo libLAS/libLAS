@@ -1,30 +1,16 @@
-/*
-===============================================================================
+/***************************************************************************
+ * $Id$
+ * $Date$
+ *
+ * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
+ * Purpose: LAS reader implementation
+ * Author:  Martin Isenburg isenburg@cs.unc.edu 
+ ***************************************************************************
+ * Copyright (c) 2007, Martin Isenburg isenburg@cs.unc.edu 
+ *
+ * See LICENSE.txt in this source distribution for more information.
+ **************************************************************************/
 
-  FILE:  lasreader.cpp
-  
-  CONTENTS:
-  
-    see corresponding header file
-  
-  PROGRAMMERS:
-  
-    martin isenburg@cs.unc.edu
-  
-  COPYRIGHT:
-  
-    copyright (C) 2007  martin isenburg@cs.unc.edu
-    
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    see corresponding header file
-  
-===============================================================================
-*/
 #include "lasreader.h"
 
 #define ENABLE_LAS_COMPRESSION_SUPPORT

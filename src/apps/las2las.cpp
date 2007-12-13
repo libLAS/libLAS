@@ -1,39 +1,16 @@
-/*
-===============================================================================
+/***************************************************************************
+ * $Id$
+ * $Date$
+ *
+ * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
+ * Purpose: LAS translation with optional configuration
+ * Author:  Martin Isenburg isenburg@cs.unc.edu 
+ ***************************************************************************
+ * Copyright (c) 2007, Martin Isenburg isenburg@cs.unc.edu 
+ *
+ * See LICENSE.txt in this source distribution for more information.
+ **************************************************************************/
 
-  FILE:  las2las.cpp
-  
-  CONTENTS:
-  
-    This tool reads and writes LIDAR data in the LAS format and is typically
-    used to modify the contents of a LAS file. Examples are clipping the points
-    to those that lie within a certain region specified by a bounding box (-clip),
-    eliminating points that are the second return (-elim_return 2), that have a
-    scan angle above a certain threshold (-elim_scan_angle_above 5), or that are
-    below a certain intensity (-elim_intensity_below 15).
-    Another typical use may be to extract only first (-first_only) returns or
-    only last returns (-last_only). Extracting the first return is actually the
-    same as eliminating all others (e.g. -elim_return 2 -elim_return 3, ...).
-    
-
-  PROGRAMMERS:
-  
-    martin isenburg@cs.unc.edu
-  
-  COPYRIGHT:
-  
-    copyright (C) 2007  martin isenburg@cs.unc.edu
-    
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    10 July 2007 -- created after talking with Linda about the H1B process
-  
-===============================================================================
-*/
 
 #include <time.h>
 #include <stdio.h>
@@ -43,9 +20,6 @@
 #include "lasreader.h"
 #include "laswriter.h"
 
-//#ifdef _WIN32
-//extern "C" FILE* fopenGzipped(const char* filename, const char* mode);
-//#endif
 
 void usage()
 {

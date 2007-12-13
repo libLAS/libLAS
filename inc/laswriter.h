@@ -1,30 +1,17 @@
-/*
-===============================================================================
+/***************************************************************************
+ * $Id$
+ * $Date$
+ *
+ * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
+ * Purpose: Writes LIDAR points from the LAS format 
+ *          (Version 1.x , March 07, 2005).
+ * Author:  Martin Isenburg isenburg@cs.unc.edu 
+ ***************************************************************************
+ * Copyright (c) 2007, Martin Isenburg isenburg@cs.unc.edu 
+ *
+ * See LICENSE.txt in this source distribution for more information.
+ **************************************************************************/
 
-  FILE:  LASwriter.h
-  
-  CONTENTS:
-  
-    Writes LIDAR points to the LAS format (Version 1.x, March 07, 2005).
-
-  PROGRAMMERS:
-  
-    martin isenburg@cs.unc.edu
-  
-  COPYRIGHT:
-  
-    copyright (C) 2007  martin isenburg@cs.unc.edu
-    
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    21 February 2007 -- created after eating Sarah's veggies with peanutsauce
-  
-===============================================================================
-*/
 #ifndef LAS_WRITER_H
 #define LAS_WRITER_H
 

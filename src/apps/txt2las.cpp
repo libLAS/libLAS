@@ -1,37 +1,15 @@
-/*
-===============================================================================
-
-  FILE:  txt2las.cpp
-  
-  CONTENTS:
-  
-		This tool parses LIDAR data as it is typically stored in standard ASCII
-		formats and converts it into the more efficient binary LAS format. The
-		tool operates in two passes. The first pass counts the points, measures
-		their bounding box, and - if applicable - creates the histogram for the
-		number of returns.
-
-  PROGRAMMERS:
-  
-    martin isenburg@cs.unc.edu
-  
-  COPYRIGHT:
-  
-    copyright (C) 2007  martin isenburg@cs.unc.edu
-    
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    13 July 2007 -- single pass if output is to file by using fopen("rb+" ... 
-    25 June 2007 -- added warning in case that quantization causes a sign flip
-    13 June 2007 -- added 'e' and 'd' for the parse string
-    26 February 2007 -- created sitting in the SFO lounge waiting for LH 455
-  
-===============================================================================
-*/
+/***************************************************************************
+ * $Id$
+ * $Date$
+ *
+ * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
+ * Purpose: ASCII text to LAS translation
+ * Author:  Martin Isenburg isenburg@cs.unc.edu 
+ ***************************************************************************
+ * Copyright (c) 2007, Martin Isenburg isenburg@cs.unc.edu 
+ *
+ * See LICENSE.txt in this source distribution for more information.
+ **************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>

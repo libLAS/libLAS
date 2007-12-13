@@ -1,33 +1,16 @@
-/*
-===============================================================================
+/***************************************************************************
+ * $Id$
+ * $Date$
+ *
+ * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
+ * Purpose: LAS difference scanning
+ * Author:  Martin Isenburg isenburg@cs.unc.edu 
+ ***************************************************************************
+ * Copyright (c) 2007, Martin Isenburg isenburg@cs.unc.edu 
+ *
+ * See LICENSE.txt in this source distribution for more information.
+ **************************************************************************/
 
-  FILE:  lasdiff.cpp
-
-  CONTENTS:
-
-    This tool reads two LIDAR files in LAS format and checks whether they are
-    identical. Both the standard header, the variable header, and all points
-    are checked.
-
-  PROGRAMMERS:
-
-    martin isenburg@cs.unc.edu
-
-  COPYRIGHT:
-
-    copyright (C) 2007  martin isenburg@cs.unc.edu
-
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  CHANGE HISTORY:
-
-    11 July 2007 -- added more complete reporting about differences
-    23 February 2007 -- created just before getting ready for the cabin trip
-
-===============================================================================
-*/
 
 #include "lasreader.h"
 
