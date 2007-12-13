@@ -7,6 +7,12 @@
 :Revision: $Revision$
 :Date: $Date$
 
+.. sectnum::
+
+.. contents::
+    :depth: 3
+    :backlinks: top
+
 Simple conversion to text file
 ------------------------------
 
