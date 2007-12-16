@@ -3,4 +3,4 @@ SUBDIRS = . apps
 
 INCLUDES = -I../inc
 
-liblibrary_la_SOURCES = lasreader.cpp laswriter.cpp
+liblibrary_la_SOURCES = lasreader.cpp laswriter.cpp las_c_api.cpp

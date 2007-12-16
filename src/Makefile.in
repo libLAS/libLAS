@@ -42,7 +42,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 liblibrary_la_LIBADD =
-am_liblibrary_la_OBJECTS = lasreader.lo laswriter.lo
+am_liblibrary_la_OBJECTS = lasreader.lo laswriter.lo las_c_api.lo
 liblibrary_la_OBJECTS = $(am_liblibrary_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -179,7 +179,7 @@ top_srcdir = @top_srcdir@
 noinst_LTLIBRARIES = liblibrary.la
 SUBDIRS = . apps
 INCLUDES = -I../inc
-liblibrary_la_SOURCES = lasreader.cpp laswriter.cpp
+liblibrary_la_SOURCES = lasreader.cpp laswriter.cpp las_c_api.cpp
 all: all-recursive
 
 .SUFFIXES:
@@ -231,6 +231,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/las_c_api.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lasreader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/laswriter.Plo@am__quote@
 
