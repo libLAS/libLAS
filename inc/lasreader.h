@@ -18,7 +18,7 @@
 #include "lasdefinitions.h"
 #include "laspointreader.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 class LASreader
 {

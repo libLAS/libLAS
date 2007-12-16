@@ -12,10 +12,10 @@
  **************************************************************************/
 
 
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "lasreader.h"
 #include "laswriter.h"

@@ -29,8 +29,8 @@
 #include <io.h>
 #endif
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 bool LASwriter::open(FILE* file, LASheader* header, int compression)
 {

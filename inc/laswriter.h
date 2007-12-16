@@ -18,7 +18,7 @@
 #include "lasdefinitions.h"
 #include "laspointwriter.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 class LASwriter
 {

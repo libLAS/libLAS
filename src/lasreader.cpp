@@ -29,8 +29,8 @@
 #include <io.h>
 #endif
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 bool LASreader::open(FILE* file, bool skip_to_point_data, bool only_skip_variable_header)
 {

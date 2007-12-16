@@ -12,7 +12,7 @@
  **************************************************************************/
 
 
-#include <time.h>
+#include <ctime>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>

@@ -17,7 +17,7 @@
 
 #include "laspointwriter.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 class LASpointWriter0raw : public LASpointWriter
 {

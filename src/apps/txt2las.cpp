@@ -11,9 +11,9 @@
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "laswriter.h"
 

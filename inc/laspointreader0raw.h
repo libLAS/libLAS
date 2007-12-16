@@ -17,7 +17,7 @@
 
 #include "laspointreader.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 class LASpointReader0raw : public LASpointReader
 {
