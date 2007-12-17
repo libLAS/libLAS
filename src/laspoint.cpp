@@ -22,11 +22,10 @@
 namespace liblas
 {
 
-Point::Point(float nfX, float nfY, float nfZ, float nfIntensity, double ndTime)
+LASPointPoint::LASPoint(float nfX, float nfY, float nfZ, float nfIntensity, double ndTime)
     : m_nfX(nfX), m_nfY(nfY), m_nfZ(nfZ), m_nfIntensity(nfIntensity), m_ndGPSTime(ndTime)
 {
 }
-
 
 }; /* end namespace liblas */
 

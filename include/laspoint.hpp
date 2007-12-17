@@ -22,7 +22,7 @@
 namespace liblas
 {
 
-class Point
+class LASPoint
 {
 public:
 
@@ -40,7 +40,7 @@ public:
         eOverlapPoints = 12
     };
 
-    Point(float nfX, float nfY, float nfZ, float nfIntensity, double ndTime);
+    LASPoint(float nfX, float nfY, float nfZ, float nfIntensity, double ndTime);
 
     float GetX() const;
     float GetY() const;
@@ -59,27 +59,27 @@ private:
     ClassificationType m_nClassification;
 };
 
-inline float Point::GetX() const
+inline float LASPoint::GetX() const
 {
     return m_nfX;
 }
-inline float Point::GetY() const
+inline float LASPoint::GetY() const
 {
     return m_nfY;
 }
-inline float Point::GetZ() const
+inline float LASPoint::GetZ() const
 {
     return m_nfZ;
 }
-inline float Point::GetIntensity() const
+inline float LASPoint::GetIntensity() const
 {
     return m_nfIntensity;
 }
-inline double Point::GetTime() const
+inline double LASPoint::GetTime() const
 {
     return m_ndGPSTime;
 }
-inline Point::ClassificationType Point::GetClassification() const
+inline LASPoint::ClassificationType LASPoint::GetClassification() const
 {
     return m_nClassification;
 }
