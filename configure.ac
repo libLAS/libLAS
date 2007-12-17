@@ -31,13 +31,29 @@ else
 	AC_MSG_RESULT(no)
 fi
 
+AC_DEFUN([AC_HAVE_LONG_LONG],
+[
+  AC_MSG_CHECKING([for 64bit integer type])
+
+  echo 'int main() { long long off=0; }' >> conftest.c
+  if test -z "`${CC} -o conftest conftest.c 2>&1`" ; then
+    AC_DEFINE(HAVE_LONG_LONG, 1, [Define to 1, if your compiler supports long long data type])
+    AC_MSG_RESULT([long long])
+  else
+    AC_MSG_RESULT([no])
+  fi
+  rm -f conftest*
+])
+
+AC_HAVE_LONG_LONG
+
 # Checks for library functions.
 AC_CHECK_FUNCS([gettimeofday bzero memset memcpy bcopy])
 
 AC_CONFIG_FILES([	Makefile
 			include/Makefile
 			src/Makefile
-		  	src/apps/Makefile
+		  	apps/Makefile
 		])
 
 AC_OUTPUT
