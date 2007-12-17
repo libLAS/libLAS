@@ -17,7 +17,9 @@
 #ifndef LASTYPES_HPP_INCLUDED
 #define LASTYPES_HPP_INCLUDED
 
-namespace liblas {
+namespace liblas
+{
+
 /* ==================================================================== */
 /*      Base portability stuff ... this stuff may need to be            */
 /*      modified for new platforms.                                     */
@@ -54,6 +56,9 @@ typedef long long          int64_t;
 typedef unsigned long long uint64_t;
 
 #else
+
+// NOTE: mloskot - this case may cause run-time errors 
+// like integral type overrun. Should be used carefully!
 
 typedef long               int64_t;
 typedef unsigned long      uint64_t;
