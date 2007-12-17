@@ -14,8 +14,8 @@
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
 
-#ifndef __INCLUDE_LASTYPES_HPP
-#define __INCLUDE_LASTYPES_HPP
+#ifndef LASTYPES_HPP_INCLUDED
+#define LASTYPES_HPP_INCLUDED
 
 namespace liblas {
 /* ==================================================================== */
@@ -63,4 +63,4 @@ typedef unsigned long      uint64_t;
 
 }; /* end namespace liblas */
 
-#endif /* ndef __INCLUDE_LASTYPES_HPP */
+#endif /* ndef LASTYPES_HPP_INCLUDED */

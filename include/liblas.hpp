@@ -13,8 +13,8 @@
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
 
-#ifndef __INCLUDE_LAS_HPP
-#define __INCLUDE_LAS_HPP
+#ifndef LIBLAS_HPP_INCLUDED
+#define LIBLAS_HPP_INCLUDED
 
 #include <exception>
 
@@ -55,4 +55,4 @@ public:
 
 }; /* end namespace liblas */
 
-#endif /* ndef __INCLUDE_LAS_HPP */
+#endif /* ndef LIBLAS_HPP_INCLUDED */

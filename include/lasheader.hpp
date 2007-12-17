@@ -12,8 +12,8 @@
  *
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
-#ifndef __INCLUDE_LASHEADER_HPP 
-#define __INCLUDE_LASHEADER_HPP
+#ifndef LASHEADER_HPP_INCLUDED
+#define LASHEADER_HPP_INCLUDED
 
 #include <exception>
 #include <lastypes.hpp>
@@ -40,4 +40,4 @@ public:
 
 }; /* end namespace liblas */
 
-#endif /* ndef __INCLUDE_LASHEADER_HPP */
+#endif /* ndef LASHEADER_HPP_INCLUDED */

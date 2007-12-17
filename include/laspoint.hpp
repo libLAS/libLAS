@@ -13,8 +13,8 @@
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
 
-#ifndef __INCLUDE_LASPOINT_HPP
-#define __INCLUDE_LASPOINT_HPP
+#ifndef LASPOINT_HPP_INCLUDED
+#define LASPOINT_HPP_INCLUDED
 
 #include <exception>
 #include <lastypes.hpp>
@@ -52,4 +52,4 @@ public:
 
 }; /* end namespace liblas */
 
-#endif /* ndef __INCLUDE_LASPOINT_HPP */
+#endif /* ndef LASPOINT_HPP_INCLUDED */
