@@ -55,7 +55,7 @@ public:
     void SkipTo(uint64_t nRecord);
 
     /* for writing point records */
-    void SetPoint(const LASPoint &roPoint, long long nPointID);
+    void SetPoint(const LASPoint &roPoint, uint64_t nPointID);
     void AddPoint(const LASPoint &roPoint);
 };
 
