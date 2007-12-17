@@ -57,8 +57,8 @@ public:
 
 private:
     FILE *m_fp;
-    uint64_t m_nlNextPoint;
-    uint64_t m_nlPointCount;
+    uint64_t m_lNextPoint;
+    uint64_t m_lPointCount;
     char *m_pszFilename;
     /* invariably, we will need more members here, for example,
      * offsets, scaling factors, etc...
