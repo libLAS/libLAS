@@ -1,4 +1,6 @@
-LASreader and LASwriter
+****************************************************************
+  LASreader and LASwriter
+****************************************************************
 
 This is the API for reading and writing LAS files from and to the
 standard format (*.las) as defined by (www.lasformat.org) as well
