@@ -1,5 +1,5 @@
 
-INCLUDES = -I../../inc
+INCLUDES = -I../include
 
 txt2las_SOURCES = txt2las.cpp 
 las2las_SOURCES = las2las.cpp 
