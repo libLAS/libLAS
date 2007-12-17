@@ -20,14 +20,30 @@
 namespace liblas
 {
 
-class file_not_found :
-    public virtual std::runtime_error {};
+class file_not_found : public virtual std::runtime_error
+{
+public:
+    file_not_found(std::string const& msg)
+        : std::runtime_error(msg)
+    {}
+};
 
-class unsupported_format :
-    public virtual std::runtime_error {};
+class unsupported_format : public virtual std::runtime_error
+{
+public:
+    unsupported_format(std::string const& msg)
+        : std::runtime_error(msg)
+    {}
+};
 
-class unsupported_version :
-    public virtual std::runtime_error {};
+class unsupported_version : public virtual std::runtime_error
+{
+public:
+    unsupported_version(std::string const& msg)
+        : std::runtime_error(msg)
+    {}
+};
+
 
 } /* end namespace liblas */
 
