@@ -20,12 +20,8 @@
 
 namespace liblas {
 
-class LASHeaderEntry {
-    uint16_t nRecordID;
-    uint16_t nRecordLen;
-    char psUserID[16];
-    char pszDescription[32];
-    uint8_t *pszData; /* nRecordLen bytes */
+class LASHeaderEntry
+{
 public:
     LASHeaderEntry(...);
     ~LASHeaderEntry();
@@ -35,7 +31,12 @@ public:
     const char *GetUserID() const { return psUserID; }
     const char *GetDescription() const { return pszDescription; }
     const char *GetData() const { return pszData; }
-
+private:
+    uint16_t nRecordID;
+    uint16_t nRecordLen;
+    char psUserID[16];
+    char pszDescription[32];
+    uint8_t *pszData; /* nRecordLen bytes */
 };
 
 }; /* end namespace liblas */

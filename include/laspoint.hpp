@@ -20,34 +20,37 @@
 #include <lastypes.hpp>
 namespace liblas {
 
-enum LASClassifications {
-    Created = 0,
-    Unclassified,
-    Ground,
-    LowVegetation,
-    HighVegetation,
-    Building,
-    LowPoint,
-    ModelKeyPoint,
-    Water,
-    OverlapPoints = 12
+enum ClassificationType
+{
+    eCreated = 0,
+    eUnclassified,
+    eGround,
+    eLowVegetation,
+    eHighVegetation,
+    eBuilding,
+    eLowPoint,
+    eModelKeyPoint,
+    eWater,
+    eOverlapPoints = 12
 };
 
-class LASPoint {
-    float nfX;
-    float nfY;
-    float nfZ;
-    float nfIntensity;
-    double ndGPSTime;
-    LASClassifications nClassification;
+class Point
+{
 public:
-    LASPoint(float nfX, float nfY, float nfZ, float nfIntensity, double ndTime);
+    Point(float nfX, float nfY, float nfZ, float nfIntensity, double ndTime);
     float GetX() const { return nfX; }
     float GetY() const { return nfY; }
     float GetZ() const { return nfZ; }
     float GetIntensity() const { return nfIntensity; }
     double GetTime() const { return ndGPSTime; }
-    LASClassifications GetClassification() const { return nClassification; }
+    ClassificationType GetClassification() const { return nClassification; }
+private:
+    float nfX;
+    float nfY;
+    float nfZ;
+    float nfIntensity;
+    double ndGPSTime;
+    ClassificationType nClassification;
 };
 
 }; /* end namespace liblas */
