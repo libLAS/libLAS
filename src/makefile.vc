@@ -30,8 +30,10 @@ apps_dir:
 	cd ..
 	
 clean:
-	-del *.obj 
+	-del *.dll
+	-del *.dll.manifest
 	-del *.lib
+	-del *.obj 
 	cd apps
 	$(MAKE) /f makefile.vc clean
 	cd ..

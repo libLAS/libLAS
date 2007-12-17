@@ -27,5 +27,6 @@ default: las2las.exe lasinfo.exe las2txt.exe lasdiff.exe lasmerge.exe
 all: default
 
 clean:
-	-del *.obj
 	-del *.exe
+	-del *.exe.manifest
+	-del *.obj

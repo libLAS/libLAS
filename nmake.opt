@@ -4,7 +4,7 @@ LAS_LIB = liblas.lib
 LAS_DLL = liblas$(LAS_VERSION).dll
 LAS_LIB_DLL = liblas_i.lib
 
-INCLUDES = -I$(LAS_ROOT)/inc
+INCLUDES = -I$(LAS_ROOT)/include
 
 BUILD_DEBUG = NO
 
