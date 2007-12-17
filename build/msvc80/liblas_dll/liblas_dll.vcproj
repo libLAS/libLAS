@@ -179,6 +179,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\laspoint.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\lasreader.cpp"
 				>
 			</File>
