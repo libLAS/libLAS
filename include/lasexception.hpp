@@ -12,15 +12,23 @@
  *
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
+#ifndef LASEXCEPTION_HPP_INCLUDE
+#define LASEXCEPTION_HPP_INCLUDE
 
-#ifndef __INCLUDE_LASEXCEPTION_HPP
-#define __INCLUDE_LASEXCEPTION_HPP
+#include <stdexcept>
 
-#include <exception>
-namespace liblas {
-class file_not_found : public virtual std::runtime_error {};
-class unsupported_format : public virtual std::runtime_error {};
-class unsupported_version : public virtual std::runtime_error {};
-}; /* end namespace liblas */
+namespace liblas
+{
 
-#endif /* ndef __INCLUDE_LASEXCEPTION_HPP */
+class file_not_found :
+    public virtual std::runtime_error {};
+
+class unsupported_format :
+    public virtual std::runtime_error {};
+
+class unsupported_version :
+    public virtual std::runtime_error {};
+
+} /* end namespace liblas */
+
+#endif /* ndef LASEXCEPTION_HPP_INCLUDE */
