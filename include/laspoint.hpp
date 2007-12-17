@@ -30,49 +30,55 @@ public:
         eUnclassified,
         eGround,
         eLowVegetation,
+        eMediumVegetation,
         eHighVegetation,
         eBuilding,
         eLowPoint,
         eModelKeyPoint,
-        eWater,
+        eWater = 9,
+        // = 10 // reserved for ASPRS Definition
+        // = 11 // reserved for ASPRS Definition
         eOverlapPoints = 12
+        // = 13-31 // reserved for ASPRS Definition
     };
 
-    LASPoint();
-    LASPoint(float fX, float fY, float fZ, float fIntensity, double dTime);
+    LASPoint(double dX, double dY, double dZ, uint16_t nIntensity, double dTime);
 
-    float GetX() const;
-    float GetY() const;
-    float GetZ() const;
-    float GetIntensity() const;
+    double GetX() const;
+    double GetY() const;
+    double GetZ() const;
+    uint16_t GetIntensity() const;
     double GetTime() const;
     ClassificationType GetClassification() const;
 
 private:
     
-    float m_fX;
-    float m_fY;
-    float m_fZ;
-    float m_fIntensity;
+    double m_dX;
+    double m_dY;
+    double m_dZ;
+    uint16_t m_nIntensity;
     double m_dGPSTime;
     ClassificationType m_eClassification;
 };
 
-inline float LASPoint::GetX() const
+inline double LASPoint::GetX() const
 {
-    return m_fX;
+    return m_dX;
 }
-inline float LASPoint::GetY() const
+
+inline double LASPoint::GetY() const
 {
-    return m_fY;
+    return m_dY;
 }
-inline float LASPoint::GetZ() const
+
+inline double LASPoint::GetZ() const
 {
-    return m_fZ;
+    return m_dZ;
 }
-inline float LASPoint::GetIntensity() const
+
+inline uint16_t LASPoint::GetIntensity() const
 {
-    return m_fIntensity;
+    return m_nIntensity;
 }
 inline double LASPoint::GetTime() const
 {
