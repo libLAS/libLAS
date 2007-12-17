@@ -24,10 +24,10 @@
 
 namespace liblas {
 
+class LASFileV1;
 
 class LASFile {
 public:
-
     enum OpenMode {
         eRead = 0,
         eReadWrite,
@@ -35,27 +35,30 @@ public:
     };
 
 
-    LASFile(const char *pszFilename);
-    LASFile(const char *pszFilename, OpenMode eCreateFlags);
-    ~LASFile();
+    virtual LASFile(const char *pszFilename);
+    virtual LASFile(const char *pszFilename, OpenMode eCreateFlags);
+    virtual ~LASFile();
 
-   const LASHeaderEntry &GetVariableHeaderRecord (uint16_t nEntryID) const;
+    virtual const LASRecordHeader &GetVariableHeaderRecord (uint16_t nEntryID) 
+        const;
    
-   /* Get a specific point */
-   const LASPoint &GetPointByID (uint64_t nPointID) const;
+    /* Get a specific point */
+    virtual const LASPoint &GetPointByID (uint64_t nPointID) const;
 
-   /* for iterating over the entire file, one point at a time */
-   const LASPoint &GetNextPoint() const;
-   /* return to first record */
-   void Rewind(); 
-   /* Skip to record nRecord */
-   void SkipTo(uint64_t nRecord);
+    /* for iterating over the entire file, one point at a time */
+    virtual const LASPoint &GetNextPoint() const;
+    /* return to first record */
+    void Rewind() { m_lNextPoint = 0; } 
+    /* Skip to record nRecord */
+    void SkipTo(uint64_t nRecord);
+    /* Get the number of the next record to be read */
+    uint64_t GetNextPointID() const { return m_lNextPoint; }
 
-   /* for writing point records */
-   void SetPoint(const LASPoint &roPoint, uint64_t nPointID);
-   void AddPoint(const LASPoint &roPoint);
+    /* for writing point records */
+    virtual void SetPoint(const LASPoint &roPoint, uint64_t nPointID);
+    virtual void AddPoint(const LASPoint &roPoint);
 
-private:
+protected:
     FILE *m_fp;
     uint64_t m_lNextPoint;
     uint64_t m_lPointCount;
