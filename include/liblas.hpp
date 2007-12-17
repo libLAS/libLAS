@@ -24,15 +24,20 @@
 
 namespace liblas {
 
+enum OpenMode {
+    eRead = 0,
+    eReadWrite,
+    eReadWriteUpdate
+};
+
+class LASFile;
 class LASFileV1;
+
+LASFile *Open(char *pszFilename);
+LASFile *Open(char *pszFilename, OpenMode eCreate);
 
 class LASFile {
 public:
-    enum OpenMode {
-        eRead = 0,
-        eReadWrite,
-        eReadWriteUpdate
-    };
 
 
     virtual LASFile(const char *pszFilename);
