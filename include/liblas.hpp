@@ -24,6 +24,12 @@
 
 namespace liblas {
 
+enum OpenMode {
+    eRead = 0,
+    eReadWrite,
+    eReadWriteUpdate
+}
+
 class LASFile {
      FILE *fp;
      uint64_t nlNextPoint;
@@ -33,7 +39,7 @@ class LASFile {
       */
 public:
      LASFile(const char *pszFilename);
-     LASFile(const char *pszFilename, uint16_t nCreateFlags);
+     LASFile(const char *pszFilename, OpenMode eCreateFlags);
      ~LASFile();
 
     const LASHeaderEntry &GetVariableHeaderRecord (uint16_t nEntryID) const;
