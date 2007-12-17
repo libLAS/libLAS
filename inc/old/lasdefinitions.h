@@ -1,6 +1,6 @@
 /***************************************************************************
- * $Id$
- * $Date$
+ * $Id: lasdefinitions.h 89 2007-12-16 03:16:41Z hobu $
+ * $Date: 2007-12-15 22:16:41 -0500 (Sat, 15 Dec 2007) $
  *
  * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
  * Purpose: Header and Point classes for reading and writing LIDAR points

@@ -1,6 +1,6 @@
 /***************************************************************************
- * $Id$
- * $Date$
+ * $Id: laspointreader1raw.h 89 2007-12-16 03:16:41Z hobu $
+ * $Date: 2007-12-15 22:16:41 -0500 (Sat, 15 Dec 2007) $
  *
  * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
  * Purpose: Reads a point of type 1 (with gps_time) in standard LAS format 1.1

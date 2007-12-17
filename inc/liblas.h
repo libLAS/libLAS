@@ -1,3 +1,17 @@
+/***************************************************************************
+ * $Id$
+ * $Date$
+ *
+ * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
+ * Purpose: C interface to libLAS 
+ * Author:  Howard Butler <hobu.inc@gmail.com>
+ *
+ ***************************************************************************
+ * Copyright (c) 2007, Martin Isenburg <isenburg@cs.unc.edu>
+ * Copyright (c) 2007, Howard Butler <hobu.inc@gmail.com> 
+ *
+ * See LICENSE.txt in this source distribution for more information.
+ **************************************************************************/
 
 #ifndef LIBLAS_H_INCLUDED
 #define LIBLAS_H_INCLUDED
