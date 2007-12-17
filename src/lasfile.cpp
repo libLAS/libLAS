@@ -34,8 +34,24 @@ const LASHeaderEntry &LASFile::GetVariableHeaderRecord(uint16_t nEntryID) const
 
 }
 
-const LASPoint &GetPointByID (uint16_t nPointID) const
+const LASPoint &LASFile::GetPointByID (uint16_t nPointID) const
 {
+
+}
+
+void LASFile::Rewind() {
+
+}
+
+void LASFile::SkipTo(uint64_t nRecord) {
+
+}
+
+void LASFile::SetPoint(const LASPoint &roPoint, uint64_t nPointID) {
+
+}
+
+void LASFile::AddPoint(const LASPoint &roPoint) {
 
 }
 
