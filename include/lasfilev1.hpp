@@ -14,8 +14,8 @@
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
 
-#ifndef __INCLUDE_LASFILEV1_HPP
-#define __INCLUDE_LASFILEV1_HPP
+#ifndef LASFILEV1_HPP_INCLUDED
+#define LASFILEV1_HPP_INCLUDED
 
 #include <liblas.hpp>
 #include <lastypes.hpp>
@@ -43,4 +43,4 @@ namespace details {
 
 }; /* end namespace liblas */
 
-#endif /* ndef __INCLUDE_LASFILEV1_HPP */
+#endif /* ndef LASFILEV1_HPP_INCLUDED*/

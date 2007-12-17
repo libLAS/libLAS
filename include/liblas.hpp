@@ -40,8 +40,8 @@ class LASFile {
 public:
 
 
-    virtual LASFile(const char *pszFilename);
-    virtual LASFile(const char *pszFilename, OpenMode eCreateFlags);
+    LASFile(const char *pszFilename);
+    LASFile(const char *pszFilename, OpenMode eCreateFlags);
     virtual ~LASFile();
 
     virtual const LASRecordHeader &GetVariableHeaderRecord (uint16_t nEntryID) 

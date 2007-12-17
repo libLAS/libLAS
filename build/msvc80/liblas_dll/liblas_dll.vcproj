@@ -177,19 +177,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\src\las_c_api.cpp"
+				RelativePath="..\..\..\src\lasfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lasfilev1.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lasheader.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\laspoint.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lasreader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\laswriter.cpp"
 				>
 			</File>
 		</Filter>
@@ -198,6 +198,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\..\include\lasfilev1.hpp"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\include\lasheader.hpp"
 				>
