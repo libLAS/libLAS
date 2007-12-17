@@ -13,23 +13,17 @@
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
 
-#ifndef LASPOINT_HPP_INCLUDED
-#define LASPOINT_HPP_INCLUDED
-
-#include <exception>
-#include <lastypes.hpp>
+#include <laspoint.hpp>
 
 namespace liblas
 {
 
-LASPointPoint::LASPoint(float fX, float fY, float fZ,
-                        float fIntensity, double dTime)
-    : m_fX(nfX), m_fY(nfY), m_fZ(nfZ),
+LASPoint::LASPoint(float fX, float fY, float fZ,
+                   float fIntensity, double dTime)
+    : m_fX(fX), m_fY(fY), m_fZ(fZ),
       m_fIntensity(fIntensity),
       m_dGPSTime(dTime)
 {
 }
 
-}; /* end namespace liblas */
-
-#endif /* ndef LASPOINT_HPP_INCLUDED */
+} /* end namespace liblas */

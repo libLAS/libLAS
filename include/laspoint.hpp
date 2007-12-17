@@ -12,11 +12,9 @@
  *
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
-
 #ifndef LASPOINT_HPP_INCLUDED
 #define LASPOINT_HPP_INCLUDED
 
-#include <exception>
 #include <lastypes.hpp>
 
 namespace liblas
@@ -40,6 +38,7 @@ public:
         eOverlapPoints = 12
     };
 
+    LASPoint();
     LASPoint(float fX, float fY, float fZ, float fIntensity, double dTime);
 
     float GetX() const;
@@ -84,6 +83,6 @@ inline LASPoint::ClassificationType LASPoint::GetClassification() const
     return m_eClassification;
 }
 
-}; /* end namespace liblas */
+} /* end namespace liblas */
 
 #endif /* ndef LASPOINT_HPP_INCLUDED */
