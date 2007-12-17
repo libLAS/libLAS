@@ -40,7 +40,7 @@ public:
         eOverlapPoints = 12
     };
 
-    LASPoint(float nfX, float nfY, float nfZ, float nfIntensity, double ndTime);
+    LASPoint(float fX, float fY, float fZ, float fIntensity, double dTime);
 
     float GetX() const;
     float GetY() const;
@@ -51,37 +51,37 @@ public:
 
 private:
     
-    float m_nfX;
-    float m_nfY;
-    float m_nfZ;
-    float m_nfIntensity;
-    double m_ndGPSTime;
-    ClassificationType m_nClassification;
+    float m_fX;
+    float m_fY;
+    float m_fZ;
+    float m_fIntensity;
+    double m_dGPSTime;
+    ClassificationType m_eClassification;
 };
 
 inline float LASPoint::GetX() const
 {
-    return m_nfX;
+    return m_fX;
 }
 inline float LASPoint::GetY() const
 {
-    return m_nfY;
+    return m_fY;
 }
 inline float LASPoint::GetZ() const
 {
-    return m_nfZ;
+    return m_fZ;
 }
 inline float LASPoint::GetIntensity() const
 {
-    return m_nfIntensity;
+    return m_fIntensity;
 }
 inline double LASPoint::GetTime() const
 {
-    return m_ndGPSTime;
+    return m_dGPSTime;
 }
 inline LASPoint::ClassificationType LASPoint::GetClassification() const
 {
-    return m_nClassification;
+    return m_eClassification;
 }
 
 }; /* end namespace liblas */
