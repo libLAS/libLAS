@@ -20,11 +20,11 @@
 namespace liblas {
 namespace details {
 
-LASFileV1::LASFileV1(const char *pszFilename) {
+LASFileV1::LASFileV1(const std::string& sFilename) {
 
 }
 
-LASFileV1::LASFileV1(const char *pszFilename, OpenMode eCreateFlags) {
+LASFileV1::LASFileV1(const std::string& sFilename, OpenMode eCreateFlags) {
 
 }
 

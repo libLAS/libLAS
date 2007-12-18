@@ -16,16 +16,18 @@
 #include <liblas.hpp>
 #include <lasfilev1.hpp>
 #include <lasexception.hpp>
+
 #include <cstdio>
+#include <string>
 
 namespace liblas {
 
-LASFile *Open(char *pszFilename) {
+LASFile *Open(const char *pszFilename) {
     return Open(pszFilename, eRead);
 }
 
-LASFile *Open(char *pszFilename, OpenMode eFlags) {
-    FILE *fp = fopen(pszFilename);
+LASFile *Open(const char *pszFilename, OpenMode eFlags) {
+    FILE *fp = fopen(pszFilename,"r");
     if (fp == NULL) {
         throw file_not_found(pszFilename);
     }
@@ -44,13 +46,13 @@ LASFile *Open(char *pszFilename, OpenMode eFlags) {
     uint8_t nVerMajor = 0;
     uint8_t nVerMinor = 0;
     fseek(fp, 16, SEEK_SET);
-    fread(nVerMajor, 1, 1, fp);
-    fread(nVerMinor, 1, 1, fp);
+    fread(&nVerMajor, 1, 1, fp);
+    fread(&nVerMinor, 1, 1, fp);
 
     if (nVerMajor == 1 && nVerMinor == 1) {
         /* construct and return an instance of LASFileV1 */
-        LASFileV1 *poLASFile = new LASFileV1(pszFilename, eFlags);
-        return poLASFile;
+        details::LASFileV1 *poLASFile = new details::LASFileV1(std::string(pszFilename), eFlags);
+        return (LASFile*) poLASFile;
     }
     else if (nVerMajor == 2 && nVerMinor == 0) {
         throw unsupported_version(

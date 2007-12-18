@@ -17,6 +17,7 @@
 #define LIBLAS_HPP_INCLUDED
 
 #include <exception>
+#include <string>
 
 #include <lastypes.hpp>
 #include <laspoint.hpp>

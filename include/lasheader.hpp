@@ -23,15 +23,15 @@ namespace liblas {
 class LASRecordHeader
 {
 public:
-    LASHeaderEntry(uint16_t nRecordID, uint16_t nRecordLen, char psUserID[16],
+    LASRecordHeader(uint16_t nRecordID, uint16_t nRecordLen, char psUserID[16],
         char psDescription[32], uint8_t *pszData);
-    ~LASHeaderEntry();
+    ~LASRecordHeader();
 
-    int GetRecordID() const { return nRecordID; }
-    int GetRecordLen() const { return nRecordLen; }
-    const char *GetUserID() const { return psUserID; }
-    const char *GetDescription() const { return pszDescription; }
-    const char *GetData() const { return pszData; }
+    int GetRecordID() const { return m_nRecordID; }
+    int GetRecordLen() const { return m_nRecordLen; }
+    const char *GetUserID() const { return m_psUserID; }
+    const char *GetDescription() const { return m_pszDescription; }
+    uint8_t *GetData() const { return m_Data; }
 private:
     uint16_t m_nRecordID;
     uint16_t m_nRecordLen;

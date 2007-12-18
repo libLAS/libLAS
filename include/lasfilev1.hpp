@@ -26,8 +26,8 @@ namespace details {
 
     class LASFileV1 : public LASFile {
     public:
-        LASFileV1(const char *pszFilename);
-        LASFileV1(const char *pszFilename, OpenMode eCreateFlags);
+        LASFileV1(const std::string& sFilename);
+        LASFileV1(const std::string& sFilename, OpenMode eCreateFlags);
         ~LASFileV1();
 
         const LASRecordHeader &GetVariableHeaderRecord(uint16_t nEntryID) const;
