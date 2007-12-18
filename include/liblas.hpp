@@ -73,7 +73,10 @@ protected:
      */
      
 private:
-    LASFile& operator= (const LASFile& other) {};
+
+    // Make the type noncopyable
+    LASFile(const LASFile& other);
+    LASFile& operator=(const LASFile& other);
 };
 
 }; /* end namespace liblas */
