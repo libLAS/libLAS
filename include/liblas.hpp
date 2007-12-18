@@ -33,15 +33,15 @@ enum OpenMode {
 class LASFile;
 class LASFileV1;
 
-LASFile *Open(char *pszFilename);
-LASFile *Open(char *pszFilename, OpenMode eCreate);
+LASFile *Open(const std::string& sFilename);
+LASFile *Open(const std::string& sFilename, OpenMode eCreate);
 
 class LASFile {
 public:
 
 
-    LASFile(const char *pszFilename);
-    LASFile(const char *pszFilename, OpenMode eCreateFlags);
+    LASFile(const std::string& sFilename);
+    LASFile(const std::string& sFilename, OpenMode eCreateFlags);
     virtual ~LASFile();
 
     virtual const LASRecordHeader &GetVariableHeaderRecord (uint16_t nEntryID) 
@@ -67,10 +67,13 @@ protected:
     FILE *m_fp;
     uint64_t m_lNextPoint;
     uint64_t m_lPointCount;
-    char *m_pszFilename;
+    std::string& m_sFilename;
     /* invariably, we will need more members here, for example,
      * offsets, scaling factors, etc...
      */
+     
+private:
+    LASFile& operator= (const LASFile& other) {};
 };
 
 }; /* end namespace liblas */
