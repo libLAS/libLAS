@@ -35,7 +35,7 @@ host_triplet = @host@
 bin_PROGRAMS = txt2las$(EXEEXT) las2las$(EXEEXT) las2txt$(EXEEXT) \
 	lasdiff$(EXEEXT) lasinfo$(EXEEXT) lasmerge$(EXEEXT) \
 	txt2las$(EXEEXT)
-subdir = src/apps
+subdir = apps
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -140,7 +140,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -196,8 +195,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-INCLUDES = -I../../inc
-txt2las_SOURCES = txt2las.cpp
+INCLUDES = -I../include
+txt2las_SOURCES = txt2las.cpp 
 las2las_SOURCES = las2las.cpp 
 las2txt_SOURCES = las2txt.cpp 
 lasdiff_SOURCES = lasdiff.cpp 
@@ -217,9 +216,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/apps/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  apps/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  src/apps/Makefile
+	  $(AUTOMAKE) --gnu  apps/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

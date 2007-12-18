@@ -32,7 +32,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = inc
+subdir = include
 DIST_COMMON = $(las_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -105,7 +105,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -161,16 +160,12 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-lasdir = $(includedir)/las
-las_HEADERS = lasdefinitions.h \
-					laspointreader.h \
-					laspointreader0raw.h \
-					laspointreader1raw.h \
-					laspointwriter.h \
-					laspointwriter0raw.h \
-					laspointwriter1raw.h \
-					lasreader.h \
-					laswriter.h
+lasdir = $(includedir)/liblas
+las_HEADERS = liblas.hpp \
+					liblas.h \
+					laspoint.hpp \
+					lasheader.hpp \
+					lastypes.hpp
 
 all: all-am
 
@@ -184,9 +179,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  inc/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  include/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  inc/Makefile
+	  $(AUTOMAKE) --gnu  include/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

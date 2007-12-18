@@ -4,4 +4,5 @@ las_HEADERS =		liblas.hpp \
 					liblas.h \
 					laspoint.hpp \
 					lasheader.hpp \
-					lastypes.hpp
+					lastypes.hpp \
+					lasfilev1.hpp
