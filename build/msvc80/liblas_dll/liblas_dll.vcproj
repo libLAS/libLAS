@@ -206,7 +206,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\liblas\reader.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\liblas\utility.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\liblas\writer.hpp"
 					>
 				</File>
 			</Filter>
