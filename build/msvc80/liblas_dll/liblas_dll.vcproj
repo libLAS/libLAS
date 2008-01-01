@@ -190,6 +190,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\liblas\endian.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\liblas\lasheader.hpp"
 					>
 				</File>
