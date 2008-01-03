@@ -19,6 +19,7 @@ namespace detail {
 class LASReader
 {
 public:
+
     LASReader(std::string const& file);
     LASReader(std::ifstream& ifs);
     ~LASReader();
@@ -32,11 +33,23 @@ public:
 
 private:
     
-    const std::auto_ptr<detail::Reader> m_pimpl;
+    //
+    // Private data members
+    //
     std::ifstream m_ifs; // used only if constructed with file path
+    const std::auto_ptr<detail::Reader> m_pimpl;
 
     LASHeader m_header;
     LASPoint m_point;
+    LASPointRecord m_record;
+
+    //
+    // Private function members
+    //
+
+    // Throws on error
+    void Init();
+
 };
 
 } // namespace liblas

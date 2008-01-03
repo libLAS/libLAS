@@ -127,7 +127,7 @@ LASHeader::PointExtents const& LASHeader::GetExtents() const
     return m_extents;
 }
 
-void LASHeader::Load(std::ifstream& ifs)
+void LASHeader::Read(std::ifstream& ifs)
 {
     using detail::bytes_of;
 

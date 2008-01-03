@@ -17,7 +17,7 @@ public:
     virtual ~Reader() {}
     virtual std::size_t GetVersion() const = 0;
     virtual bool ReadHeader(LASHeader& header) = 0;
-    virtual bool ReadPoint(LASPoint& point) = 0;
+    virtual bool ReadPoint(LASPointRecord& point) = 0;
 
 protected:
     
@@ -45,7 +45,7 @@ public:
     ReaderImpl(std::ifstream& ifs);
     std::size_t GetVersion() const;
     bool ReadHeader(LASHeader& header);
-    bool ReadPoint(LASPoint& point);
+    bool ReadPoint(LASPointRecord& point);
 
 private:
 

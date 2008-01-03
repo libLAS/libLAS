@@ -41,7 +41,7 @@ std::size_t ReaderImpl::GetVersion() const
 
 bool ReaderImpl::ReadHeader(LASHeader& header)
 {
-    header.Load(m_ifs);
+    header.Read(m_ifs);
 
     // TODO: which one is better:
     // if (4 != header.GetFileSignature().size())
@@ -53,7 +53,7 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     return true;
 }
 
-bool ReaderImpl::ReadPoint(LASPoint& point)
+bool ReaderImpl::ReadPoint(LASPointRecord& point)
 {
     if (0 == m_current)
         m_ifs.seekg(m_offset, std::ios::beg);
@@ -61,7 +61,7 @@ bool ReaderImpl::ReadPoint(LASPoint& point)
     if (m_current < m_size)
     {
         // TODO: static assert sizeof(LASPoint) == 20
-        m_ifs.read(bytes_of(point), sizeof(LASPoint));
+        m_ifs.read(bytes_of(point), sizeof(LASPointRecord));
         ++m_current;
 
         return true;

@@ -8,8 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace liblas
-{
+namespace liblas {
 
 class LASHeader
 {
@@ -61,7 +60,7 @@ public:
     PointOffsets const& GetOffsets() const;
     PointExtents const& GetExtents() const;
 
-    void Load(std::ifstream& ifs);
+    void Read(std::ifstream& ifs);
 
 private:
 

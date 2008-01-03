@@ -181,6 +181,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\..\include\liblas\detail\timer.hpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\..\include\liblas\detail\utility.hpp"
 						>
 					</File>
@@ -196,6 +200,10 @@
 			>
 			<File
 				RelativePath="..\..\..\src\lasheader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\laspoint.cpp"
 				>
 			</File>
 			<File
