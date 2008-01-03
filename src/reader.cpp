@@ -19,6 +19,18 @@ Reader* ReaderFactory::Create(std::ifstream& ifs)
         assert(false);
     }
 
+    // TODO: Implement selectin of LAS reader version:
+    /*
+    if condition-1.0
+        v10::ReaderImpl(ifs);
+    else if condition-1.1
+        v11::ReaderImpl(ifs);
+    else if condition-2.0
+        v20::ReaderImpl(ifs);
+    else
+        throw error
+    */
+
     return new v10::ReaderImpl(ifs);
 }
 
