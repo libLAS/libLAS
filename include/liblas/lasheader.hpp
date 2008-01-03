@@ -2,7 +2,9 @@
 #define LIBLAS_LASHEADER_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
-#include <liblas/utility.hpp>
+#include <liblas/detail/utility.hpp>
+//std
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -13,13 +15,20 @@ class LASHeader
 {
 public:
 
-    typedef Coord<double> PointScales;
-    typedef Coord<double> PointOffsets;
-    typedef Extents<double> PointExtents;
+    typedef detail::Point<double> PointScales;
+    typedef detail::Point<double> PointOffsets;
+    typedef detail::Extents<double> PointExtents;
+
+    LASHeader();
 
     std::string GetFileSignature() const;
+    void SetFileSignature(std::string const& v);
+
     uint16_t GetFileSourceId() const;
+    void SetFileSourceId(uint16_t const& v);
+
     uint16_t GetReserved() const;
+    void SetReserved(uint16_t const& v);
     
     uint32_t GetProjectId1() const;
     uint16_t GetProjectId2() const;
@@ -27,7 +36,10 @@ public:
     std::string GetProjectId4() const;
 
     uint8_t GetVersionMajor() const;
+    void SetVersionMajor(uint8_t const& v);
+
     uint8_t GetVersionMinor() const;
+    void SetVersionMinor(uint8_t const& v);
 
     std::string GetSystemId() const;
     std::string GetSoftwareId() const;
@@ -38,7 +50,7 @@ public:
     uint16_t GetHeaderSize() const;
     uint32_t GetDataOffset() const;
     uint32_t GetRecordsCount() const;
-    uint8_t GetDataFormatId() const;
+    uint8_t  GetDataFormatId() const;
     uint16_t GetDataRecordLength() const;
     uint32_t GetPointRecordsCount() const;
     
@@ -49,11 +61,21 @@ public:
     PointOffsets const& GetOffsets() const;
     PointExtents const& GetExtents() const;
 
+    void Load(std::ifstream& ifs);
+
 private:
 
-    // TODO: replcae static-size char arrays with std::string
+    // TODO: replace static-size char arrays with std::string
     //       and return const-reference to string object.
+    
+    //
+    // Private function members
+    //
+    void Init();
 
+    //
+    // Private data members
+    //
     char m_signature[4];
     uint16_t m_sourceId;
     uint16_t m_reserved;
@@ -73,10 +95,7 @@ private:
     uint8_t m_dataFormatId;
     uint16_t m_dataRecordLen;
     uint32_t m_pointRecordsCount;
-    
-    //uint32_t m_pointRecordsByReturn[5];
-    std::vector<uint32_t> m_pointRecordsByReturn;
-
+    uint32_t m_pointRecordsByReturn[5];
     PointScales m_scales;
     PointOffsets m_offsets;
     PointExtents m_extents;

@@ -176,6 +176,14 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath="..\..\..\src\lasreader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\reader.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="include"
@@ -202,11 +210,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\include\liblas\lasrecordheader.hpp"
+					RelativePath="..\..\..\include\liblas\lasreader.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\include\liblas\liblas.hpp"
+					RelativePath="..\..\..\include\liblas\lasrecordheader.hpp"
 					>
 				</File>
 				<File
@@ -215,10 +223,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\include\liblas\utility.hpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\include\liblas\writer.hpp"
 					>
 				</File>
 			</Filter>
