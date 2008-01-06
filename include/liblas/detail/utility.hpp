@@ -15,8 +15,8 @@ struct Point
 template <typename T>
 struct Extents
 {
-    typename Point<T> min;
-    typename Point<T> max;
+    typename detail::Point < T > min;
+    typename detail::Point < T > max;
 };
 
 template<typename T>
