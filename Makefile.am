@@ -1,4 +1,8 @@
-SUBDIRS = src
+CC=g++
+LD=ld
+
+SUBDIRS = src apps
+
 
 lib_LTLIBRARIES = liblas.la
 

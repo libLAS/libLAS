@@ -14,6 +14,8 @@ AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 AM_INIT_AUTOMAKE
 
+CC=$(CXX)
+
 # Checks for header files.
 AC_CHECK_HEADERS(string.h,, [AC_MSG_ERROR([cannot find string.h, bailing out])])
 AC_CHECK_HEADERS(stdio.h,, [AC_MSG_ERROR([cannot find stdio.h, bailing out])])
@@ -53,7 +55,7 @@ AC_CHECK_FUNCS([gettimeofday bzero memset memcpy bcopy])
 AC_CONFIG_FILES([	Makefile
 			include/Makefile
 			src/Makefile
-		  	apps/Makefile
+			apps/Makefile
 		])
 
 AC_OUTPUT

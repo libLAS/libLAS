@@ -19386,6 +19386,8 @@ fi
 
 
 
+CC=$(CXX)
+
 # Checks for header files.
 
 for ac_header in string.h
