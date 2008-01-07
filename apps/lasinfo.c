@@ -13,18 +13,18 @@
 
 
 #include <liblas.h>
-#define NULL 0
+#include <stdio.h>
 
 void usage()
 {
-    // fprintf(stderr,"usage:\n");
-    // fprintf(stderr,"lasinfo lidar.las\n");
-    // fprintf(stderr,"lasinfo -variable lidar.las\n");
-    // fprintf(stderr,"lasinfo -variable -nocheck lidar.las\n");
-    // fprintf(stderr,"lasinfo -i lidar.las -nocheck\n");
-    // fprintf(stderr,"lasinfo -i lidar.las -repair\n");
-    // fprintf(stderr,"lasinfo -i lidar.las -repair_bounding_box -file_creation 8 2007\n");
-    // fprintf(stderr,"lasinfo -i lidar.las -system_identifier \"hello world!\" -generating_software \"this is a test (-:\"\n");
+    fprintf(stderr,"usage:\n");
+    fprintf(stderr,"lasinfo lidar.las\n");
+    fprintf(stderr,"lasinfo -variable lidar.las\n");
+    fprintf(stderr,"lasinfo -variable -nocheck lidar.las\n");
+    fprintf(stderr,"lasinfo -i lidar.las -nocheck\n");
+    fprintf(stderr,"lasinfo -i lidar.las -repair\n");
+    fprintf(stderr,"lasinfo -i lidar.las -repair_bounding_box -file_creation 8 2007\n");
+    fprintf(stderr,"lasinfo -i lidar.las -system_identifier \"hello world!\" -generating_software \"this is a test (-:\"\n");
     exit(1);
 }
  
@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
        int i;
        char* file_name = NULL;
        LASReaderH reader = NULL;
+       LASHeaderH header = NULL;
     //   bool parse_variable_header = false;
     //   bool check_points = true;
     //   bool repair_header = false;
@@ -60,7 +61,7 @@ int main(int argc, char *argv[])
           file_name = argv[i];
         }
 
-        else if (i == argc - 1 && file_name == 0)
+        else if (i == argc - 1 && file_name == NULL)
         {
           file_name = argv[i];
         }
@@ -69,7 +70,12 @@ int main(int argc, char *argv[])
           usage();
         }
       }
-      //reader = LASReader_Create(file_name);
+      reader = LASReader_Create(file_name);
+      if (!reader) { usage();}
+      
+      header = LASReader_GetHeader(reader);
+      
+      LASReader_Destroy(reader);
     // 
     //   FILE* file;
     //   if (file_name)

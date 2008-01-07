@@ -25,3 +25,5 @@
 #endif
 
 #endif
+
+#define NULL 0

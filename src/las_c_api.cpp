@@ -10,12 +10,24 @@ LAS_C_START
 LASReaderH LASReader_Create(const char* filename) 
 
 {
+    if (filename == NULL) {
+        return NULL;
+    }
     return (LASReaderH) new LASReader(std::string(filename));   
 }
 
+void LASReader_Destroy(LASReaderH hReader)
+{
+    delete ((LASReader*) hReader);
+}
+
+
 LASHeaderH LASReader_GetHeader(LASReaderH hReader)
 {
-    return (LASHeaderH) &(((LASReader*) hReader)->GetHeader());
+    if (hReader)
+        return (LASHeaderH) &(((LASReader*) hReader)->GetHeader());
+    else
+        return NULL;
 }
 LAS_C_END
 

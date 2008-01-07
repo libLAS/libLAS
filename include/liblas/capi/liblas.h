@@ -12,9 +12,9 @@ typedef void *LASHeaderH;
 
 LAS_C_START
 
-LASReaderH LASReader_Create(const char * filename);
-LASHeaderH LASReader_GetHeader(LASReaderH hReader);
-//int LAS_Reader_Open(FILE* file, int bSkipHeader, int bSkipVariableHeader);
+LASReaderH LAS_DLL LASReader_Create(const char * filename);
+LASHeaderH LAS_DLL LASReader_GetHeader(LASReaderH hReader);
+
 //LASWriterH LAS_Writer_Create();
 
 LAS_C_END
