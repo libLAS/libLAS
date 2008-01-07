@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
           usage();
         }
       }
-      reader = LASReader_Create(file_name);
+      //reader = LASReader_Create(file_name);
     // 
     //   FILE* file;
     //   if (file_name)

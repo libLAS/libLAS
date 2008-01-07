@@ -14,7 +14,6 @@ AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 AM_INIT_AUTOMAKE
 
-CC=$(CXX)
 
 # Checks for header files.
 AC_CHECK_HEADERS(string.h,, [AC_MSG_ERROR([cannot find string.h, bailing out])])

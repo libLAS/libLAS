@@ -19386,7 +19386,6 @@ fi
 
 
 
-CC=$(CXX)
 
 # Checks for header files.
 
