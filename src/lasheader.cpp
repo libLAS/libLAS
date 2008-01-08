@@ -6,7 +6,8 @@
 #include <vector>
 #include <fstream>
 #include <stdexcept>
-#include <cstring> // std::memset
+#include <cstring> // std::memset, std::memcpy
+#include <cassert>
 
 namespace liblas
 {
@@ -14,6 +15,69 @@ namespace liblas
 LASHeader::LASHeader()
 {
     Init();
+}
+
+LASHeader::LASHeader(LASHeader const& other) :
+    m_sourceId(other.m_sourceId),
+    m_reserved(other.m_reserved),
+    m_projectId1(other.m_projectId1),
+    m_projectId2(other.m_projectId2),
+    m_projectId3(other.m_projectId3),
+    m_versionMajor(other.m_versionMajor),
+    m_versionMinor(other.m_versionMinor),
+    m_createDOY(other.m_createDOY),
+    m_createYear(other.m_createYear),
+    m_headerSize(other.m_headerSize),
+    m_dataOffset(other.m_dataOffset),
+    m_recordsCount(other.m_recordsCount),
+    m_dataFormatId(other.m_dataFormatId),
+    m_dataRecordLen(other.m_dataRecordLen),
+    m_pointRecordsCount(other.m_pointRecordsCount),
+    m_scales(other.m_scales),
+    m_offsets(other.m_offsets),
+    m_extents(other.m_extents)
+{
+    std::memcpy(m_projectId4, other.m_projectId4, sizeof(m_projectId4)); 
+    std::memcpy(m_systemId, other.m_systemId, sizeof(m_systemId));
+    std::memcpy(m_softwareId, other.m_softwareId, sizeof(m_softwareId));
+    std::memcpy(m_pointRecordsByReturn, other.m_pointRecordsByReturn,
+                sizeof(m_pointRecordsByReturn));
+}
+
+LASHeader& LASHeader::operator=(LASHeader const& rhs)
+{
+    if (&rhs != this)
+    {
+        void* p = 0;
+        p = std::memcpy(m_signature, rhs.m_signature, sizeof(m_signature));
+        assert(p == m_signature);
+        m_sourceId = rhs.m_sourceId;
+        m_reserved = rhs.m_reserved;
+        m_projectId1 = rhs.m_projectId1;
+        m_projectId2 = rhs.m_projectId2;
+        m_projectId3 = rhs.m_projectId3;
+        m_versionMajor = rhs.m_versionMajor;
+        m_versionMinor = rhs.m_versionMinor;
+        p = std::memcpy(m_systemId, rhs.m_systemId, sizeof(m_systemId));
+        assert(p == m_systemId);
+        p = std::memcpy(m_softwareId, rhs.m_softwareId, sizeof(m_softwareId));
+        assert(p == m_softwareId);
+        m_createDOY = rhs.m_createDOY;
+        m_createYear = rhs.m_createYear;
+        m_headerSize = rhs.m_headerSize;
+        m_dataOffset = rhs.m_dataOffset;
+        m_recordsCount = rhs.m_recordsCount;
+        m_dataFormatId = rhs.m_dataFormatId;
+        m_dataRecordLen = rhs.m_dataRecordLen;
+        m_pointRecordsCount = rhs.m_pointRecordsCount;
+        p = std::memcpy(m_pointRecordsByReturn, rhs.m_pointRecordsByReturn,
+                        sizeof(m_pointRecordsByReturn));
+        assert(p == m_pointRecordsByReturn);
+        m_scales = rhs.m_scales;
+        m_offsets = rhs.m_offsets;
+        m_extents = rhs.m_extents;
+    }
+    return *this;
 }
 
 std::string LASHeader::GetFileSignature() const
@@ -132,7 +196,7 @@ void LASHeader::Read(std::ifstream& ifs)
     using detail::bytes_of;
 
     if (!ifs.is_open())
-        throw std::runtime_error("file stream is closed");
+        throw std::runtime_error("input stream not open");
 
     ifs.seekg(0);
     ifs.read(bytes_of(m_signature), sizeof(m_signature));

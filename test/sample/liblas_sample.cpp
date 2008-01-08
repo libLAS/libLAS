@@ -42,18 +42,6 @@ int main()
 {
     try
     {
-        liblas::LASPoint p1;
-        p1.SetCoordinates(1, 2, 3);
-        liblas::LASPoint p2(p1);
-        cout << "p1 - " << p1 << '\n';
-        cout << "p2 - " << p2 << '\n';
-        p2.SetCoordinates(4, 5, 6);
-        p1 = p2;
-        cout << "p1 - " << p1 << '\n';
-
-        return 0;
-
-
         char* const name = "d:\\data\\lidar\\LDR030828_213450_0.LAS"; 
         liblas::LASReader reader(name);
         

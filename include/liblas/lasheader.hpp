@@ -19,6 +19,8 @@ public:
     typedef detail::Extents<double> PointExtents;
 
     LASHeader();
+    LASHeader(LASHeader const& other);
+    LASHeader& operator=(LASHeader const& rhs);
 
     std::string GetFileSignature() const;
     void SetFileSignature(std::string const& v);
@@ -28,7 +30,8 @@ public:
 
     uint16_t GetReserved() const;
     void SetReserved(uint16_t const& v);
-    
+
+    // TODO: Add Set* functions
     uint32_t GetProjectId1() const;
     uint16_t GetProjectId2() const;
     uint16_t GetProjectId3() const;
@@ -40,6 +43,7 @@ public:
     uint8_t GetVersionMinor() const;
     void SetVersionMinor(uint8_t const& v);
 
+    // TODO: Add Set* functions
     std::string GetSystemId() const;
     std::string GetSoftwareId() const;
 
