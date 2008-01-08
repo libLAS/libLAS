@@ -46,7 +46,9 @@ public:
         // = 13-31 // reserved for ASPRS Definition
     };
 
-    LASPoint(LASHeader const& header);
+    LASPoint();
+    LASPoint(LASPoint const& other);
+    LASPoint& operator=(LASPoint const& rhs);
 
     double GetX() const;
     double GetY() const;
@@ -68,8 +70,7 @@ public:
     double GetTime() const;
 
 private:
-    
-    LASHeader const& m_header;
+
     detail::Point<double> m_pt;
     uint16_t m_intensity;
     uint8_t m_flags;
@@ -86,17 +87,17 @@ inline void LASPoint::SetCoordinates(double x, double y, double z)
 
 inline double LASPoint::GetX() const
 {
-    return m_pt.x * m_header.GetScales().x + m_header.GetOffsets().x;
+    return m_pt.x;
 }
 
 inline double LASPoint::GetY() const
 {
-    return m_pt.y * m_header.GetScales().y + m_header.GetOffsets().y;
+    return m_pt.y;
 }
 
 inline double LASPoint::GetZ() const
 {
-    return m_pt.z * m_header.GetScales().z + m_header.GetOffsets().z;
+    return m_pt.z;
 }
 
 inline uint16_t LASPoint::GetIntensity() const

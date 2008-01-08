@@ -12,15 +12,13 @@ namespace liblas
 
 LASReader::LASReader(std::string const& file) :
     m_ifs(file.c_str(), std::ios::in | std::ios::binary),
-        m_pimpl(detail::ReaderFactory::Create(m_ifs)),
-            m_header(), m_point(m_header)
+        m_pimpl(detail::ReaderFactory::Create(m_ifs))
 {
     Init();
 }
 
 LASReader::LASReader(std::ifstream& ifs) :
-    m_pimpl(detail::ReaderFactory::Create(ifs)),
-        m_header(), m_point(m_header)
+    m_pimpl(detail::ReaderFactory::Create(ifs))
 {
     Init();
 }
@@ -54,7 +52,12 @@ bool LASReader::ReadPoint()
     //       and invent sometime better but still trying to encapsulate
     //       LAS point data with user-friendly interfaces instead of returning
     //       raw data record.
-    m_point.SetCoordinates(m_record.x, m_record.y, m_record.z);
+
+    double const x = m_record.x * m_header.GetScales().x + m_header.GetOffsets().x;
+    double const y = m_record.y * m_header.GetScales().y + m_header.GetOffsets().y;
+    double const z = m_record.z * m_header.GetScales().z + m_header.GetOffsets().z;
+
+    m_point.SetCoordinates(x, y, z);
     m_point.SetIntensity(m_record.intensity);
     m_point.SetScanFlags(m_record.flags);
     m_point.SetClassification(m_record.classification);
