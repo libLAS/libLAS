@@ -81,9 +81,9 @@ int main(int argc, char *argv[])
       fprintf(stdout, "  file source ID:            %d\n", LASHeader_GetFileSourceId(header) ) ;
       fprintf(stdout, "  reserved:                  %d\n", LASHeader_GetReserved(header) );
       fprintf(stdout, "  project ID GUID data 1-4:  %d %d %d '%s'\n", LASHeader_GetProjectId1(header), LASHeader_GetProjectId2(header), LASHeader_GetProjectId3(header), LASHeader_GetProjectId4(header));
-      // fprintf(stdout, "  version major.minor:       %d.%d\n", header->version_major, header->version_minor);
-      // fprintf(stdout, "  system_identifier:         '%s'\n", header->system_identifier);
-      // fprintf(stdout, "  generating_software:       '%s'\n", header->generating_software);
+      fprintf(stdout, "  version major.minor:       %d.%d\n", LASHeader_GetVersionMajor(header), LASHeader_GetVersionMinor(header));
+      fprintf(stdout, "  system_identifier:         '%s'\n", LASHeader_GetSystemId(header));
+      fprintf(stdout, "  generating_software:       '%s'\n", LASHeader_GetSoftwareId(header));
       // fprintf(stdout, "  file creation day/year:    %d/%d\n", header->file_creation_day, header->file_creation_year);
       // fprintf(stdout, "  header size                %d\n", header->header_size);
       // fprintf(stdout, "  offset to point data       %d\n", header->offset_to_point_data);
