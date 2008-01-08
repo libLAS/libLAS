@@ -74,6 +74,31 @@ int main(int argc, char *argv[])
       if (!reader) { usage();}
       
       header = LASReader_GetHeader(reader);
+      if (!header) { usage();}
+
+      fprintf(stdout, "reporting all LAS header entries:\n");
+      fprintf(stdout, "  file signature:            '%s'\n", LASHeader_GetFileSignature(header) );
+      fprintf(stdout, "  file source ID:            %d\n", LASHeader_GetFileSourceId(header) ) ;
+      fprintf(stdout, "  reserved:                  %d\n", LASHeader_GetReserved(header) );
+      fprintf(stdout, "  project ID GUID data 1-4:  %d %d %d '%s'\n", LASHeader_GetProjectId1(header), LASHeader_GetProjectId2(header), LASHeader_GetProjectId3(header), LASHeader_GetProjectId4(header));
+      // fprintf(stdout, "  version major.minor:       %d.%d\n", header->version_major, header->version_minor);
+      // fprintf(stdout, "  system_identifier:         '%s'\n", header->system_identifier);
+      // fprintf(stdout, "  generating_software:       '%s'\n", header->generating_software);
+      // fprintf(stdout, "  file creation day/year:    %d/%d\n", header->file_creation_day, header->file_creation_year);
+      // fprintf(stdout, "  header size                %d\n", header->header_size);
+      // fprintf(stdout, "  offset to point data       %d\n", header->offset_to_point_data);
+      // fprintf(stdout, "  number var. length records %d\n", header->number_of_variable_length_records);
+      // fprintf(stdout, "  point data format          %d\n", header->point_data_format);
+      // fprintf(stdout, "  point data record length   %d\n", header->point_data_record_length);
+      // fprintf(stdout, "  number of point records    %d\n", header->number_of_point_records);
+      // fprintf(stdout, "  number of points by return %d %d %d %d %d\n", header->number_of_points_by_return[0], header->number_of_points_by_return[1], header->number_of_points_by_return[2], header->number_of_points_by_return[3], header->number_of_points_by_return[4]);
+      // fprintf(stdout, "  scale factor x y z         "); lidardouble2string(printstring, header->x_scale_factor, header->y_scale_factor, header->z_scale_factor, true); fprintf(stdout, printstring);
+      // fprintf(stdout, "  offset x y z               "); lidardouble2string(printstring, header->x_offset, header->y_offset, header->z_offset, true); fprintf(stdout, printstring);
+      // fprintf(stdout, "  min x y z                  "); lidardouble2string(printstring, header->min_x, header->min_y, header->min_z, true); fprintf(stdout, printstring);
+      // fprintf(stdout, "  max x y z                  "); lidardouble2string(printstring, header->max_x, header->max_y, header->max_z, true); fprintf(stdout, printstring);
+      //     
+    
+      
       LASReader_Destroy(reader);
       LASHeader_Destroy(header);
 

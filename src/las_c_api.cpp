@@ -33,6 +33,73 @@ LASHeaderH LASReader_GetHeader(LASReaderH hReader)
         return NULL;
 }
 
+char* LASHeader_GetFileSignature(LASHeaderH hHeader) {
+    // caller owns it
+    if (hHeader){
+        std::string signature = ((LASHeader*) hHeader)->GetFileSignature();
+        char* output = (char*) malloc(signature.size() * sizeof(char*) + 1);
+        strcpy(output, signature.c_str());
+        return output;
+    }
+    else return NULL;
+}
+
+long LASHeader_GetFileSourceId(LASHeaderH hHeader) {
+    if (hHeader){
+        long fileid = ((LASHeader*) hHeader)->GetFileSourceId();
+        return fileid;
+    }
+    else return 0;
+}
+
+long LASHeader_GetReserved(LASHeaderH hHeader) {
+    if (hHeader){
+        long fileid = ((LASHeader*) hHeader)->GetReserved();
+        return fileid;
+    }
+    else return 0;
+}
+
+long long LASHeader_GetProjectId1(LASHeaderH hHeader) {
+    if (hHeader){
+        long long fileid = ((LASHeader*) hHeader)->GetProjectId1();
+        return fileid;
+    }
+    else return 0;
+}
+
+long LASHeader_GetProjectId2(LASHeaderH hHeader) {
+    if (hHeader){
+        long long fileid = ((LASHeader*) hHeader)->GetProjectId2();
+        return fileid;
+    }
+    else return 0;
+}
+
+long LASHeader_GetProjectId3(LASHeaderH hHeader) {
+    if (hHeader){
+        long long fileid = ((LASHeader*) hHeader)->GetProjectId3();
+        return fileid;
+    }
+    else return 0;
+}
+
+char* LASHeader_GetProjectId4(LASHeaderH hHeader) {
+    // caller owns it
+    if (hHeader){
+        std::string projectid = ((LASHeader*) hHeader)->GetProjectId4();
+        char* output = (char*) malloc(projectid.size() * sizeof(char*) + 1);
+        strcpy(output, projectid.c_str());
+        return output;
+    }
+    else return NULL;
+}
+
+// uint32_t GetProjectId1() const;
+// uint16_t GetProjectId2() const;
+// uint16_t GetProjectId3() const;
+// std::string GetProjectId4() const;
+
 void LASHeader_Destroy(LASHeaderH hHeader)
 {
     delete ((LASHeader*) hHeader);
