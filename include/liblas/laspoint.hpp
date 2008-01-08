@@ -7,8 +7,6 @@
 
 namespace liblas {
 
-class LASHeader; // Forward declaration
-
 struct LASPointRecord
 {
     int x;
@@ -21,8 +19,6 @@ struct LASPointRecord
     unsigned char user_data;
     unsigned short point_source_id;
 };
-
-// TODO:  Replace or wrap the raw Point structure above with more complete version below
 
 class LASPoint
 {
