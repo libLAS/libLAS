@@ -3,9 +3,9 @@
 // This file has been stolen from <boost/detail/endian.hpp> and
 // modified for libLAS purposes.
 //
-// Copyright 2007, Mateusz Loskot <mateusz@loskot.net>
-// Copyright 2005 Caleb Epstein
-// Copyright 2006 John Maddock
+// Copyright Mateusz Loskot 2007, mateusz@loskot.net
+// Copyright Caleb Epstein 2005
+// Copyright John Maddock 2006
 // Distributed under the Boost  Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)

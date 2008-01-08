@@ -4,11 +4,11 @@
 // This file has been stolen from <boost/cstdint.hpp> and
 // modified for libLAS purposes.
 //
-//  (C) Copyright 2007, Mateusz Loskot <mateusz@loskot.net>
-//  (C) Copyright 2007, Phil Vachon <philippe@cowpig.ca> 
-//  (C) Copyright John Maddock 2001
-//  (C) Copyright Jens Mauer 2001
-//  (C) Copyright Beman Dawes 1999
+// Copyright Mateusz Loskot 2007, mateusz@loskot.net
+// Copyright Phil Vachon 2007, philippe@cowpig.ca
+// Copyright John Maddock 2001
+// Copyright Jens Mauer 2001
+// Copyright Beman Dawes 1999
 // Distributed under the Boost  Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
