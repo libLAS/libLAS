@@ -24,11 +24,20 @@ void LASReader_Destroy(LASReaderH hReader)
 
 LASHeaderH LASReader_GetHeader(LASReaderH hReader)
 {
-    if (hReader)
-        return (LASHeaderH) &(((LASReader*) hReader)->GetHeader());
+    if (hReader) {
+        LASHeader header = ((LASReader*) hReader)->GetHeader();
+        return (LASHeaderH) new LASHeader( header );
+        
+    }
     else
         return NULL;
 }
+
+void LASHeader_Destroy(LASHeaderH hHeader)
+{
+    delete ((LASHeader*) hHeader);
+}
+
 LAS_C_END
 
 // 

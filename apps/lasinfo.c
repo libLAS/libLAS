@@ -74,8 +74,9 @@ int main(int argc, char *argv[])
       if (!reader) { usage();}
       
       header = LASReader_GetHeader(reader);
-      
       LASReader_Destroy(reader);
+      LASHeader_Destroy(header);
+
     // 
     //   FILE* file;
     //   if (file_name)
