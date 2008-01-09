@@ -16,7 +16,7 @@ RELEASE_VERSION=liblas_version
 
 dnl Default compilation flags
 debug_default="no"
-CXXFLAGS="-Wall -pedantic -ansi -std=c++98 $CXXFLAGS"
+CXXFLAGS="-Wall -Wno-long-long -pedantic -ansi -std=c++98 $CXXFLAGS"
 
 dnl Checks for programs.
 AM_INIT_AUTOMAKE
