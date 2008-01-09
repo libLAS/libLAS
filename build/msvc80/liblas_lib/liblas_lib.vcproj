@@ -181,6 +181,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\..\include\liblas\detail\sharedptr.hpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\..\include\liblas\detail\timer.hpp"
 						>
 					</File>

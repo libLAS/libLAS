@@ -3,6 +3,7 @@
 
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/detail/sharedptr.hpp>
 // std
 #include <fstream>
 #include <string>
@@ -46,6 +47,10 @@ private:
     //
     // Private function members
     //
+    
+    // Blocked copying operations, declared but not defined.
+    LASReader(LASReader const& other);
+    LASReader& operator=(LASReader const& rhs);
 
     // Throws on error
     void Init();
