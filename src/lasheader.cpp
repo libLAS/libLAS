@@ -111,8 +111,10 @@ uint16_t LASHeader::GetProjectId3() const
 
 std::string LASHeader::GetProjectId4() const
 {
-    uint8_t const* p = m_projectId4;
-    return detail::bytes_of(p);
+    char const* p = reinterpret_cast<char const*>(m_projectId4);
+    // TODO: should we force size even if c points to empty array?
+    // std::string tmp(c, 8);
+    return p;
 }
 
 uint8_t LASHeader::GetVersionMajor() const
