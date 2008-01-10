@@ -5,6 +5,7 @@
 #include <fstream>
 #include <cassert>
 #include <cstdlib> // std::size_t
+#include <stdexcept>
 
 namespace liblas { namespace detail {
 
