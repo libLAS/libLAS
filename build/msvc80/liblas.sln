@@ -5,6 +5,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblas_dll", "liblas_dll\li
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblas_lib", "liblas_lib\liblas_lib.vcproj", "{208417AE-D08E-4938-AC26-A16ABD55AA5B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblas_test", "liblas_test\liblas_test.vcproj", "{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{208417AE-D08E-4938-AC26-A16ABD55AA5B} = {208417AE-D08E-4938-AC26-A16ABD55AA5B}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +24,10 @@ Global
 		{208417AE-D08E-4938-AC26-A16ABD55AA5B}.Debug|Win32.Build.0 = Debug|Win32
 		{208417AE-D08E-4938-AC26-A16ABD55AA5B}.Release|Win32.ActiveCfg = Release|Win32
 		{208417AE-D08E-4938-AC26-A16ABD55AA5B}.Release|Win32.Build.0 = Release|Win32
+		{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}.Debug|Win32.Build.0 = Debug|Win32
+		{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}.Release|Win32.ActiveCfg = Release|Win32
+		{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
