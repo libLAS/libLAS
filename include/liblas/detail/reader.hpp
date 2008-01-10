@@ -36,6 +36,7 @@ public:
 };
 
 namespace v10 {
+
 class ReaderImpl : public Reader
 {
 public:
@@ -51,16 +52,28 @@ private:
 
     std::ifstream& m_ifs;
 };
+
 } // namespace v10
 
 namespace v11 {
-class ReaderImpl// : public Reader
+
+class ReaderImpl : public Reader
 {
 public:
-    ReaderImpl();
-};
-} // namespace v11
 
+    typedef Reader Base;
+    
+    ReaderImpl(std::ifstream& ifs);
+    std::size_t GetVersion() const;
+    bool ReadHeader(LASHeader& header);
+    bool ReadPoint(LASPointRecord& point);
+
+private:
+
+    std::ifstream& m_ifs;
+};
+
+} // namespace v11
 
 }} // namespace liblas::detail
 

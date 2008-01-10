@@ -169,6 +169,10 @@
 					RelativePath="..\..\..\include\liblas\lasrecordheader.hpp"
 					>
 				</File>
+				<File
+					RelativePath="..\..\..\include\liblas\liblas.hpp"
+					>
+				</File>
 				<Filter
 					Name="detail"
 					>

@@ -14,24 +14,36 @@ Reader::Reader() : m_offset(0), m_current(0)
 
 Reader* ReaderFactory::Create(std::ifstream& ifs)
 {
+    using detail::bytes_of;
+
     if (!ifs.is_open())
     {
         assert(false);
     }
 
-    // TODO: Implement selectin of LAS reader version:
-    /*
-    if condition-1.0
-        v10::ReaderImpl(ifs);
-    else if condition-1.1
-        v11::ReaderImpl(ifs);
-    else if condition-2.0
-        v20::ReaderImpl(ifs);
-    else
-        throw error
-    */
+    // Determine version of given LAS file and
+    // instantiate appropriate reader.
+    uint8_t verMajor = 0;
+    uint8_t verMinor = 0;
+    ifs.seekg(24, std::ios::beg);
+    ifs.read(bytes_of(verMajor), 1);
+    ifs.read(bytes_of(verMinor), 1);
 
-    return new v10::ReaderImpl(ifs);
+    if (1 == verMajor && 0 == verMinor)
+    {
+        return new v10::ReaderImpl(ifs);
+    }
+    else if (1 == verMajor && 1 == verMinor)
+    {
+        return new v11::ReaderImpl(ifs);
+    }
+    else if (2 == verMajor && 0 == verMinor)
+    {
+        // TODO: LAS 2.0 read/write support
+        throw std::runtime_error("LAS 2.0 file detected but unsupported");
+    }
+
+    throw std::runtime_error("LAS file of unknown version");
 }
 
 void ReaderFactory::Destroy(Reader* p)
@@ -48,6 +60,7 @@ ReaderImpl::ReaderImpl(std::ifstream& ifs) : Base(), m_ifs(ifs)
 
 std::size_t ReaderImpl::GetVersion() const
 {
+    // TODO: use defined macro or review this calculation
     return (1 * 100000 + 0);
 }
 
@@ -85,16 +98,26 @@ bool ReaderImpl::ReadPoint(LASPointRecord& point)
 } // namespace v10
 
 
-
-
-
-
-
-
-
 namespace v11 {
-ReaderImpl::ReaderImpl()
+
+ReaderImpl::ReaderImpl(std::ifstream& ifs) : Base(), m_ifs(ifs)
 {
+}
+
+std::size_t ReaderImpl::GetVersion() const
+{
+    // TODO: use defined macro or review this calculation
+    return (1 * 100000 + 1);
+}
+
+bool ReaderImpl::ReadHeader(LASHeader& header)
+{
+    return false;
+}
+
+bool ReaderImpl::ReadPoint(LASPointRecord& point)
+{
+    return false;
 }
 
 } // namespace v10

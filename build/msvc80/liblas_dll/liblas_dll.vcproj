@@ -177,6 +177,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\..\src\lasheader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\laspoint.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\lasreader.cpp"
 				>
 			</File>
@@ -198,10 +206,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\include\liblas\endian.hpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\include\liblas\lasheader.hpp"
 					>
 				</File>
@@ -218,13 +222,37 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\include\liblas\reader.hpp"
+					RelativePath="..\..\..\include\liblas\liblas.hpp"
 					>
 				</File>
-				<File
-					RelativePath="..\..\..\include\liblas\utility.hpp"
+				<Filter
+					Name="detail"
 					>
-				</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\endian.hpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\reader.hpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\sharedptr.hpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\timer.hpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\utility.hpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\writer.hpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 	</Files>
