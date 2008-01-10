@@ -25,6 +25,12 @@ inline char* bytes_of(T& data)
     return static_cast<char*>(static_cast<void*>(&data));
 }
 
+template<typename T>
+inline char* bytes_of(T* data)
+{
+    return static_cast<char*>(static_cast<void*>(data));
+}
+
 }} // namespace liblas::detail
 
 #endif // LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
