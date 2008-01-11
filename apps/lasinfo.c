@@ -14,6 +14,7 @@
 
 #include <liblas.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void usage()
 {
@@ -61,10 +62,10 @@ int main(int argc, char *argv[])
           file_name = argv[i];
         }
 
-        else if (i == argc - 1 && file_name == NULL)
-        {
-          file_name = argv[i];
-        }
+        // else if (i == argc - 1 && file_name == NULL)
+        // {
+        //   file_name = argv[i];
+        // }
         else
         {
           usage();
@@ -76,7 +77,9 @@ int main(int argc, char *argv[])
       header = LASReader_GetHeader(reader);
       if (!header) { usage();}
 
-      fprintf(stdout, "reporting all LAS header entries:\n");
+
+
+      fprintf(stdout, "reporting all LAS header entries for %s:\n", file_name);
       fprintf(stdout, "  file signature:            '%s'\n", LASHeader_GetFileSignature(header) );
       fprintf(stdout, "  file source ID:            %d\n", LASHeader_GetFileSourceId(header) ) ;
       fprintf(stdout, "  reserved:                  %d\n", LASHeader_GetReserved(header) );
@@ -84,13 +87,13 @@ int main(int argc, char *argv[])
       fprintf(stdout, "  version major.minor:       %d.%d\n", LASHeader_GetVersionMajor(header), LASHeader_GetVersionMinor(header));
       fprintf(stdout, "  system_identifier:         '%s'\n", LASHeader_GetSystemId(header));
       fprintf(stdout, "  generating_software:       '%s'\n", LASHeader_GetSoftwareId(header));
-      // fprintf(stdout, "  file creation day/year:    %d/%d\n", header->file_creation_day, header->file_creation_year);
-      // fprintf(stdout, "  header size                %d\n", header->header_size);
-      // fprintf(stdout, "  offset to point data       %d\n", header->offset_to_point_data);
-      // fprintf(stdout, "  number var. length records %d\n", header->number_of_variable_length_records);
-      // fprintf(stdout, "  point data format          %d\n", header->point_data_format);
-      // fprintf(stdout, "  point data record length   %d\n", header->point_data_record_length);
-      // fprintf(stdout, "  number of point records    %d\n", header->number_of_point_records);
+      fprintf(stdout, "  file creation day/year:    %d/%d\n", LASHeader_GetCreationDOY(header), LASHeader_GetCreationYear(header));
+      fprintf(stdout, "  header size                %d\n", LASHeader_GetHeaderSize(header));
+      fprintf(stdout, "  offset to point data       %d\n", LASHeader_GetDataOffset(header));
+      fprintf(stdout, "  number var. length records %d\n", LASHeader_GetRecordsCount(header));
+      fprintf(stdout, "  point data format          %d\n", LASHeader_GetDataFormatId(header));
+      fprintf(stdout, "  point data record length   %d\n", LASHeader_GetDataRecordLength(header));
+      fprintf(stdout, "  number of point records    %d\n", LASHeader_GetPointRecordsCount(header));
       // fprintf(stdout, "  number of points by return %d %d %d %d %d\n", header->number_of_points_by_return[0], header->number_of_points_by_return[1], header->number_of_points_by_return[2], header->number_of_points_by_return[3], header->number_of_points_by_return[4]);
       // fprintf(stdout, "  scale factor x y z         "); lidardouble2string(printstring, header->x_scale_factor, header->y_scale_factor, header->z_scale_factor, true); fprintf(stdout, printstring);
       // fprintf(stdout, "  offset x y z               "); lidardouble2string(printstring, header->x_offset, header->y_offset, header->z_offset, true); fprintf(stdout, printstring);

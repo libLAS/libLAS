@@ -1,21 +1,35 @@
-#include <liblas/capi/liblas.h>
+// #include <liblas/capi/liblas.h>
 
 #include <liblas/lasreader.hpp>
 
 
-#include <string>
-#include <cstdio>
+typedef void *LASWriterH;
+typedef void *LASReaderH;
+typedef void *LASPointH;
+typedef void *LASHeaderH;
 
+#include <string>
+//#include <cstdio>
+#include <exception>
+#include <iostream>
 using namespace liblas;
-LAS_C_START
+
+extern "C" {
+
+#include <stdint.h>
 
 LASReaderH LASReader_Create(const char* filename) 
 
 {
-    if (filename == NULL) {
+    try {
+        return (LASReaderH) new LASReader(std::string(filename));   
+    } catch (std::exception const& e)
+    {
+        std::cout << "Error: " << e.what() << std::endl;
         return NULL;
     }
-    return (LASReaderH) new LASReader(std::string(filename));   
+
+    
 }
 
 void LASReader_Destroy(LASReaderH hReader)
@@ -46,7 +60,7 @@ char* LASHeader_GetFileSignature(LASHeaderH hHeader) {
     else return NULL;
 }
 
-long LASHeader_GetFileSourceId(LASHeaderH hHeader) {
+liblas::uint16_t LASHeader_GetFileSourceId(LASHeaderH hHeader) {
     if (hHeader){
         long value = ((LASHeader*) hHeader)->GetFileSourceId();
         return value;
@@ -54,15 +68,15 @@ long LASHeader_GetFileSourceId(LASHeaderH hHeader) {
     else return 0;
 }
 
-long LASHeader_GetReserved(LASHeaderH hHeader) {
+liblas::uint16_t LASHeader_GetReserved(LASHeaderH hHeader) {
     if (hHeader){
-        long value = ((LASHeader*) hHeader)->GetReserved();
+        unsigned short value = ((LASHeader*) hHeader)->GetReserved();
         return value;
     }
     else return 0;
 }
 
-long long LASHeader_GetProjectId1(LASHeaderH hHeader) {
+liblas::uint32_t LASHeader_GetProjectId1(LASHeaderH hHeader) {
     if (hHeader){
         long long value = ((LASHeader*) hHeader)->GetProjectId1();
         return value;
@@ -70,7 +84,7 @@ long long LASHeader_GetProjectId1(LASHeaderH hHeader) {
     else return 0;
 }
 
-long LASHeader_GetProjectId2(LASHeaderH hHeader) {
+liblas::uint16_t LASHeader_GetProjectId2(LASHeaderH hHeader) {
     if (hHeader){
         long value = ((LASHeader*) hHeader)->GetProjectId2();
         return value;
@@ -78,7 +92,7 @@ long LASHeader_GetProjectId2(LASHeaderH hHeader) {
     else return 0;
 }
 
-long LASHeader_GetProjectId3(LASHeaderH hHeader) {
+liblas::uint16_t LASHeader_GetProjectId3(LASHeaderH hHeader) {
     if (hHeader){
         long value = ((LASHeader*) hHeader)->GetProjectId3();
         return value;
@@ -97,7 +111,7 @@ char* LASHeader_GetProjectId4(LASHeaderH hHeader) {
     else return NULL;
 }
 
-long LASHeader_GetVersionMajor(LASHeaderH hHeader) {
+liblas::uint8_t LASHeader_GetVersionMajor(LASHeaderH hHeader) {
     if (hHeader){
         long value = ((LASHeader*) hHeader)->GetVersionMajor();
         return value;
@@ -105,7 +119,7 @@ long LASHeader_GetVersionMajor(LASHeaderH hHeader) {
     else return 0;
 }
 
-long LASHeader_GetVersionMinor(LASHeaderH hHeader) {
+liblas::uint8_t LASHeader_GetVersionMinor(LASHeaderH hHeader) {
     if (hHeader){
         long value = ((LASHeader*) hHeader)->GetVersionMinor();
         return value;
@@ -124,6 +138,22 @@ char* LASHeader_GetSystemId(LASHeaderH hHeader) {
     else return NULL;
 }
 
+liblas::uint16_t LASHeader_GetCreationDOY(LASHeaderH hHeader) {
+    if (hHeader){
+        unsigned short value = ((LASHeader*) hHeader)->GetCreationDOY();
+        return value;
+    }
+    else return 0;
+}
+
+liblas::uint16_t LASHeader_GetCreationYear(LASHeaderH hHeader) {
+    if (hHeader){
+        unsigned short value = ((LASHeader*) hHeader)->GetCreationYear();
+        return value;
+    }
+    else return 0;
+}
+
 char* LASHeader_GetSoftwareId(LASHeaderH hHeader) {
     // caller owns it
     if (hHeader){
@@ -135,13 +165,67 @@ char* LASHeader_GetSoftwareId(LASHeaderH hHeader) {
     else return NULL;
 }
 
+liblas::uint16_t LASHeader_GetHeaderSize(LASHeaderH hHeader) {
+    if (hHeader){
+        unsigned short value = ((LASHeader*) hHeader)->GetHeaderSize();
+        return value;
+    }
+    else return 0;
+}
+
+liblas::uint32_t LASHeader_GetDataOffset(LASHeaderH hHeader) {
+    if (hHeader){
+        unsigned long value = ((LASHeader*) hHeader)->GetDataOffset();
+        return value;
+    }
+    else return 0;
+}
+
+
+
+
+liblas::uint32_t LASHeader_GetRecordsCount(LASHeaderH hHeader) {
+    if (hHeader){
+        unsigned long value = ((LASHeader*) hHeader)->GetRecordsCount();
+        return value;
+    }
+    else return 0;
+}
+
+liblas::uint8_t LASHeader_GetDataFormatId(LASHeaderH hHeader) {
+    if (hHeader){
+        unsigned char value = ((LASHeader*) hHeader)->GetDataFormatId();
+        return value;
+    }
+    else return 0;
+}
+
+liblas::uint16_t LASHeader_GetDataRecordLength(LASHeaderH hHeader) {
+    if (hHeader){
+        unsigned short value = ((LASHeader*) hHeader)->GetDataRecordLength();
+        return value;
+    }
+    else return 0;
+}
+
+
+liblas::uint32_t LASHeader_GetPointRecordsCount(LASHeaderH hHeader) {
+    if (hHeader){
+        unsigned long value = ((LASHeader*) hHeader)->GetPointRecordsCount();
+        return value;
+    }
+    else return 0;
+}
+
+
+
 void LASHeader_Destroy(LASHeaderH hHeader)
 {
     delete ((LASHeader*) hHeader);
 }
 
 
-LAS_C_END
+} // extern "C"
 
 // 
 // #include "lasdefinitions.h"
