@@ -72,6 +72,7 @@ AC_CONFIG_FILES([
     Makefile
     include/Makefile
     src/Makefile
+    src/detail/Makefile
     apps/Makefile
 ])
 
