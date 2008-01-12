@@ -21,13 +21,13 @@ extern "C" {
 LASReaderH LASReader_Create(const char* filename) 
 
 {
-    try {
+    // try {
         return (LASReaderH) new LASReader(std::string(filename));   
-    } catch (std::exception const& e)
-    {
-        std::cout << "Error: " << e.what() << std::endl;
-        return NULL;
-    }
+    // } catch (std::exception const& e)
+    // {
+    //     std::cout << "Error: " << e.what() << std::endl;
+    //     return NULL;
+    // }
 
     
 }

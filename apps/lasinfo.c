@@ -62,20 +62,20 @@ int main(int argc, char *argv[])
           file_name = argv[i];
         }
 
-        // else if (i == argc - 1 && file_name == NULL)
-        // {
-        //   file_name = argv[i];
-        // }
+        else if (i == argc - 1 && file_name == NULL)
+        {
+          file_name = argv[i];
+        }
         else
         {
           usage();
         }
       }
       reader = LASReader_Create(file_name);
-      if (!reader) { usage();}
+     if (!reader) { usage();}
       
       header = LASReader_GetHeader(reader);
-      if (!header) { usage();}
+     if (!header) { usage();}
 
 
 
