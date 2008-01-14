@@ -53,9 +53,9 @@ bool LASReader::ReadPoint()
     //       LAS point data with user-friendly interfaces instead of returning
     //       raw data record.
 
-    double const x = m_record.x * m_header.GetScales().x + m_header.GetOffsets().x;
-    double const y = m_record.y * m_header.GetScales().y + m_header.GetOffsets().y;
-    double const z = m_record.z * m_header.GetScales().z + m_header.GetOffsets().z;
+    double const x = m_record.x * m_header.GetScaleX() + m_header.GetOffsetX();
+    double const y = m_record.y * m_header.GetScaleY() + m_header.GetOffsetY();
+    double const z = m_record.z * m_header.GetScaleZ() + m_header.GetOffsetZ();
 
     m_point.SetCoordinates(x, y, z);
     m_point.SetIntensity(m_record.intensity);

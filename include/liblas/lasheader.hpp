@@ -14,10 +14,6 @@ class LASHeader
 {
 public:
 
-    typedef detail::Point<double> PointScales;
-    typedef detail::Point<double> PointOffsets;
-    typedef detail::Extents<double> PointExtents;
-
     LASHeader();
     LASHeader(LASHeader const& other);
     LASHeader& operator=(LASHeader const& rhs);
@@ -60,13 +56,27 @@ public:
     // TODO: design it in user-friendly way
     //std::vector<uint32_t> const& GetPointRecordsByReturnCount() const;
     
-    PointScales const& GetScales() const;
-    PointOffsets const& GetOffsets() const;
-    PointExtents const& GetExtents() const;
+    double GetScaleX() const;
+    double GetScaleY() const;
+    double GetScaleZ() const;
+    double GetOffsetX() const;
+    double GetOffsetY() const;
+    double GetOffsetZ() const;
+    double GetMaxX() const;
+    double GetMinX() const;
+    double GetMaxY() const;
+    double GetMinY() const;
+    double GetMaxZ() const;
+    double GetMinZ() const;
 
     void Read(std::ifstream& ifs);
 
 private:
+    
+    typedef detail::Point<double> PointScales;
+    typedef detail::Point<double> PointOffsets;
+    typedef detail::Extents<double> PointExtents;
+
 
     // TODO: replace static-size char arrays with std::string
     //       and return const-reference to string object.

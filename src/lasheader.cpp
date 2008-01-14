@@ -178,19 +178,64 @@ uint32_t LASHeader::GetPointRecordsCount() const
 //std::vector<uint32_t> const& GetPointRecordsByReturnCount() const
 
 
-LASHeader::PointScales const& LASHeader::GetScales() const
+double LASHeader::GetScaleX() const
 {
-    return m_scales;
+    return m_scales.x;
 }
 
-LASHeader::PointOffsets const& LASHeader::GetOffsets() const
+double LASHeader::GetScaleY() const
 {
-    return m_offsets;
+    return m_scales.y;
 }
 
-LASHeader::PointExtents const& LASHeader::GetExtents() const
+double LASHeader::GetScaleZ() const
 {
-    return m_extents;
+    return m_scales.z;
+}
+
+double LASHeader::GetOffsetX() const
+{
+    return m_offsets.x;
+}
+
+double LASHeader::GetOffsetY() const
+{
+    return m_offsets.y;
+}
+
+double LASHeader::GetOffsetZ() const
+{
+    return m_offsets.z;
+}
+
+double LASHeader::GetMaxX() const
+{
+    return m_extents.max.x;
+}
+
+double LASHeader::GetMinX() const
+{
+    return m_extents.min.x;
+}
+
+double LASHeader::GetMaxY() const
+{
+    return m_extents.max.y;
+}
+
+double LASHeader::GetMinY() const
+{
+    return m_extents.min.y;
+}
+
+double LASHeader::GetMaxZ() const
+{
+    return m_extents.max.z;
+}
+
+double LASHeader::GetMinZ() const
+{
+    return m_extents.min.z;
 }
 
 void LASHeader::Read(std::ifstream& ifs)
