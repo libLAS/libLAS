@@ -209,6 +209,19 @@ liblas::uint16_t LASHeader_GetDataRecordLength(LASHeaderH hHeader) {
 }
 
 
+liblas::uint32_t LASHeader_GetPointRecordsByReturnCount(LASHeaderH hHeader, int index) {
+    if (hHeader){
+        std::vector<liblas::uint32_t> counts  = ((LASHeader*) hHeader)->GetPointRecordsByReturnCount();
+        if ( (index < 5) && (index >= 0)) {
+            return counts[index];
+        } else {
+            return 0;
+        }
+
+    }
+    else return 0;
+}
+
 liblas::uint32_t LASHeader_GetPointRecordsCount(LASHeaderH hHeader) {
     if (hHeader){
         unsigned long value = ((LASHeader*) hHeader)->GetPointRecordsCount();
@@ -216,8 +229,101 @@ liblas::uint32_t LASHeader_GetPointRecordsCount(LASHeaderH hHeader) {
     }
     else return 0;
 }
+double LASHeader_GetScaleX(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
 
+double LASHeader_GetScaleY(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
 
+double LASHeader_GetScaleZ(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
+
+double LASHeader_GetOffsetX(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
+
+double LASHeader_GetOffsetY(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
+
+double LASHeader_GetOffsetZ(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
+
+double LASHeader_GetMinX(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
+
+double LASHeader_GetMinY(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
+
+double LASHeader_GetMinZ(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
+
+double LASHeader_GetMaxX(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
+
+double LASHeader_GetMaxY(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
+
+double LASHeader_GetMaxZ(LASHeaderH hHeader) {
+    if (hHeader){
+        double value = ((LASHeader*) hHeader)->GetScaleX();
+        return value;
+    }
+    else return 0;
+}
 
 void LASHeader_Destroy(LASHeaderH hHeader)
 {

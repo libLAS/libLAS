@@ -40,8 +40,13 @@ LASHeader::LASHeader(LASHeader const& other) :
     std::memcpy(m_projectId4, other.m_projectId4, sizeof(m_projectId4)); 
     std::memcpy(m_systemId, other.m_systemId, sizeof(m_systemId));
     std::memcpy(m_softwareId, other.m_softwareId, sizeof(m_softwareId));
-    std::memcpy(m_pointRecordsByReturn, other.m_pointRecordsByReturn,
-                sizeof(m_pointRecordsByReturn));
+
+    if (other.m_pointRecordsByReturn.size() > 0) {
+        for (int i=0; i < other.m_pointRecordsByReturn.size(); i++) {
+            m_pointRecordsByReturn.push_back(other.m_pointRecordsByReturn[i]);
+        }
+    }
+
 }
 
 LASHeader& LASHeader::operator=(LASHeader const& rhs)
@@ -70,9 +75,12 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         m_dataFormatId = rhs.m_dataFormatId;
         m_dataRecordLen = rhs.m_dataRecordLen;
         m_pointRecordsCount = rhs.m_pointRecordsCount;
-        p = std::memcpy(m_pointRecordsByReturn, rhs.m_pointRecordsByReturn,
-                        sizeof(m_pointRecordsByReturn));
-        assert(p == m_pointRecordsByReturn);
+        if (rhs.m_pointRecordsByReturn.size() > 0) {
+            for (int i=0; i < rhs.m_pointRecordsByReturn.size(); i++) {
+                m_pointRecordsByReturn.push_back(rhs.m_pointRecordsByReturn[i]);
+            }
+        }
+
         m_scales = rhs.m_scales;
         m_offsets = rhs.m_offsets;
         m_extents = rhs.m_extents;
@@ -175,7 +183,19 @@ uint32_t LASHeader::GetPointRecordsCount() const
 }
 
 // TODO: design it in user-friendly way
-//std::vector<uint32_t> const& GetPointRecordsByReturnCount() const
+std::vector<uint32_t> const& LASHeader::GetPointRecordsByReturnCount() 
+{
+    return m_pointRecordsByReturn;
+// //    std::vector<uint32_t> *output = new std::vector<uint32_t>;
+//     std::vector<uint32_t> *output = new std::vector<uint32_t>;
+//     for (int i=0; i< 5; i++) {
+//         output->push_back(m_pointRecordsByReturn[i]);
+//   //      printf ("m_pointRecordsByReturn[%d]: %d\n", i, (int) m_pointRecordsByReturn[i]);
+// 
+//     }
+//     // This is never cleaned up!
+//     return *output;
+}
 
 
 double LASHeader::GetScaleX() const
@@ -265,7 +285,18 @@ void LASHeader::Read(std::ifstream& ifs)
     ifs.read(bytes_of(m_dataFormatId), 1);
     ifs.read(bytes_of(m_dataRecordLen), 2);
     ifs.read(bytes_of(m_pointRecordsCount), 4);
-    ifs.read(bytes_of(m_pointRecordsByReturn), 20);
+
+    
+    uint32_t rec_by_return[5];
+    ifs.read(bytes_of(rec_by_return), 20);
+    
+    for (int i=0; i< 5; i++) {
+        uint32_t value = rec_by_return[i];
+        m_pointRecordsByReturn.push_back(value);
+        printf ("m_pointRecordsByReturn[%d]: %d\n", (int)i, (int) rec_by_return[i]);
+
+    }
+    
     ifs.read(bytes_of(m_scales.x), 8);
     ifs.read(bytes_of(m_scales.y), 8);
     ifs.read(bytes_of(m_scales.z), 8);

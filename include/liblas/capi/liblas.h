@@ -50,5 +50,21 @@ uint16_t LASHeader_GetDataRecordLength(LASHeaderH hHeader);
 uint8_t LASHeader_GetDataFormatId(LASHeaderH hHeader);
 uint32_t LASHeader_GetPointRecordsCount(LASHeaderH hHeader);
 
+double LASHeader_GetScaleX(LASHeaderH hHeader);
+double LASHeader_GetScaleY(LASHeaderH hHeader);
+double LASHeader_GetScaleZ(LASHeaderH hHeader);
+
+double LASHeader_GetOffsetX(LASHeaderH hHeader);
+double LASHeader_GetOffsetY(LASHeaderH hHeader);
+double LASHeader_GetOffsetZ(LASHeaderH hHeader);
+
+double LASHeader_GetMinX(LASHeaderH hHeader);
+double LASHeader_GetMinY(LASHeaderH hHeader);
+double LASHeader_GetMinZ(LASHeaderH hHeader);
+
+double LASHeader_GetMaxX(LASHeaderH hHeader);
+double LASHeader_GetMaxY(LASHeaderH hHeader);
+double LASHeader_GetMaxZ(LASHeaderH hHeader);
+
 LAS_C_END
 #endif

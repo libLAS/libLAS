@@ -94,11 +94,11 @@ int main(int argc, char *argv[])
       fprintf(stdout, "  point data format          %d\n", LASHeader_GetDataFormatId(header));
       fprintf(stdout, "  point data record length   %d\n", LASHeader_GetDataRecordLength(header));
       fprintf(stdout, "  number of point records    %d\n", LASHeader_GetPointRecordsCount(header));
-      // fprintf(stdout, "  number of points by return %d %d %d %d %d\n", header->number_of_points_by_return[0], header->number_of_points_by_return[1], header->number_of_points_by_return[2], header->number_of_points_by_return[3], header->number_of_points_by_return[4]);
-      // fprintf(stdout, "  scale factor x y z         "); lidardouble2string(printstring, header->x_scale_factor, header->y_scale_factor, header->z_scale_factor, true); fprintf(stdout, printstring);
-      // fprintf(stdout, "  offset x y z               "); lidardouble2string(printstring, header->x_offset, header->y_offset, header->z_offset, true); fprintf(stdout, printstring);
-      // fprintf(stdout, "  min x y z                  "); lidardouble2string(printstring, header->min_x, header->min_y, header->min_z, true); fprintf(stdout, printstring);
-      // fprintf(stdout, "  max x y z                  "); lidardouble2string(printstring, header->max_x, header->max_y, header->max_z, true); fprintf(stdout, printstring);
+      fprintf(stdout, "  number of points by return %d %d %d %d %d\n", LASHeader_GetPointRecordsByReturnCount(header, 0), LASHeader_GetPointRecordsByReturnCount(header, 1), LASHeader_GetPointRecordsByReturnCount(header, 2), LASHeader_GetPointRecordsByReturnCount(header, 3), LASHeader_GetPointRecordsByReturnCount(header, 4));
+      fprintf(stdout, "  scale factor x y z         %.6f %.6f %.6f\n", LASHeader_GetScaleX(header), LASHeader_GetScaleY(header), LASHeader_GetScaleZ(header));// lidardouble2string(printstring, header->x_scale_factor, header->y_scale_factor, header->z_scale_factor, true); fprintf(stdout, printstring);
+      fprintf(stdout, "  offset x y z               %.6f %.6f %.6f\n", LASHeader_GetOffsetX(header), LASHeader_GetOffsetY(header), LASHeader_GetOffsetZ(header));// lidardouble2string(printstring, header->x_offset, header->y_offset, header->z_offset, true); fprintf(stdout, printstring);
+      fprintf(stdout, "  min x y z                  %.6f %.6f %.6f\n", LASHeader_GetMinX(header), LASHeader_GetMinY(header), LASHeader_GetMinZ(header));// lidardouble2string(printstring, header->min_x, header->min_y, header->min_z, true); fprintf(stdout, printstring);
+      fprintf(stdout, "  max x y z                  %.6f %.6f %.6f\n", LASHeader_GetMaxX(header), LASHeader_GetMaxY(header), LASHeader_GetMaxZ(header));// lidardouble2string(printstring, header->max_x, header->max_y, header->max_z, true); fprintf(stdout, printstring);
       //     
     
       
