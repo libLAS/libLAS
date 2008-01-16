@@ -2,6 +2,7 @@
 #define LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 
 #include <iosfwd>
+#include <stdexcept>
 
 namespace liblas { namespace detail {
 
