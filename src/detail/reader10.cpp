@@ -3,9 +3,9 @@
 #include <liblas/detail/reader.hpp>
 // std
 #include <fstream>
-#include <cassert>
-#include <cstdlib> // std::size_t
 #include <stdexcept>
+#include <cstdlib> // std::size_t
+#include <cassert>
 
 namespace liblas { namespace detail { namespace v10 {
 
@@ -36,12 +36,17 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 bool ReaderImpl::ReadPoint(LASPointRecord& point)
 {
     if (0 == m_current)
+    {
+        m_ifs.clear();
         m_ifs.seekg(m_offset, std::ios::beg);
+    }
 
     if (m_current < m_size)
     {
-        // TODO: static assert sizeof(LASPoint) == 20
-        m_ifs.read(bytes_of(point), sizeof(LASPointRecord));
+        // TODO: Replace with compile-time assert
+        assert(20 == sizeof(LASPointRecord));
+
+        detail::read_n(point, m_ifs, sizeof(LASPointRecord));
         ++m_current;
 
         return true;

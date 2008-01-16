@@ -11,6 +11,7 @@ namespace liblas { namespace detail { namespace v11 {
 
 ReaderImpl::ReaderImpl(std::ifstream& ifs) : Base(), m_ifs(ifs)
 {
+    throw std::runtime_error("TODO: reading LAS 1.1 not finished");
 }
 
 std::size_t ReaderImpl::GetVersion() const

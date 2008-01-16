@@ -42,11 +42,13 @@ int main()
 {
     try
     {
-        //char const* name = "d:\\data\\lidar\\LDR030828_213450_0.LAS"; 
+        char const* name = "d:\\data\\lidar\\LDR030828_213450_0.LAS"; 
         //char const* name = "d:\\data\\lidar\\Sample_LiDAR_LAS_File.las";
-        char const* name = "d:\\data\\lidar\\iowa\\04164492.las";
+        //char const* name = "d:\\data\\lidar\\iowa\\04164492.las";
+        //char const* name = "d:\\dev\\liblas\\_svn\\trunk\\test\\data\\TO_core_last_clip.las";
+        //char const* name = "d:\\data\\lidar\\gilmer\\000001.las";
         
-        std::ifstream ifs(name);
+        std::ifstream ifs(name, ios::in | ios::binary);
         liblas::LASReader reader(ifs);
         
         cout << "File: " << name << '\n';
