@@ -43,8 +43,11 @@ int main()
     try
     {
         //char const* name = "d:\\data\\lidar\\LDR030828_213450_0.LAS"; 
-        char const* name = "d:\\data\\lidar\\Sample_LiDAR_LAS_File.las";
-        liblas::LASReader reader(name);
+        //char const* name = "d:\\data\\lidar\\Sample_LiDAR_LAS_File.las";
+        char const* name = "d:\\data\\lidar\\iowa\\04164492.las";
+        
+        std::ifstream ifs(name);
+        liblas::LASReader reader(ifs);
         
         cout << "File: " << name << '\n';
         cout << "Version: " << reader.GetVersion() << '\n';

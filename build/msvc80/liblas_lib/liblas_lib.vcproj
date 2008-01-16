@@ -218,10 +218,22 @@
 				RelativePath="..\..\..\src\lasreader.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\src\reader.cpp"
+			<Filter
+				Name="detail"
 				>
-			</File>
+				<File
+					RelativePath="..\..\..\src\detail\reader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\detail\reader10.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\detail\reader11.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
