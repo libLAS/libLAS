@@ -22,7 +22,8 @@ LASReaderH LASReader_Create(const char* filename)
 
 {
     // try {
-        return (LASReaderH) new LASReader(std::string(filename));   
+    std::ifstream strm(filename, std::ios::in | std::ios::binary);
+        return (LASReaderH) new LASReader(strm);   
     // } catch (std::exception const& e)
     // {
     //     std::cout << "Error: " << e.what() << std::endl;
