@@ -42,7 +42,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 liblasdetail_la_LIBADD =
-am_liblasdetail_la_OBJECTS = reader.lo
+am_liblasdetail_la_OBJECTS = reader.lo reader10.lo reader11.lo
 liblasdetail_la_OBJECTS = $(am_liblasdetail_la_OBJECTS)
 DEFAULT_INCLUDES = -I.
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -168,7 +168,7 @@ top_builddir = ../..
 top_srcdir = ../..
 INCLUDES = -I../../include -I../../include/detail
 noinst_LTLIBRARIES = liblasdetail.la
-liblasdetail_la_SOURCES = reader.cpp
+liblasdetail_la_SOURCES = reader.cpp reader10.cpp reader11.cpp
 all: all-am
 
 .SUFFIXES:
@@ -221,6 +221,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/reader.Plo
+include ./$(DEPDIR)/reader10.Plo
+include ./$(DEPDIR)/reader11.Plo
 
 .cpp.o:
 	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
