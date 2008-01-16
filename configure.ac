@@ -16,6 +16,7 @@ RELEASE_VERSION=liblas_version
 
 dnl Default compilation flags
 debug_default="no"
+CFLAGS="-Wall -Wno-long-long -pedantic -ansi $CFLAGS"
 CXXFLAGS="-Wall -Wno-long-long -pedantic -ansi -std=c++98 $CXXFLAGS"
 
 dnl Checks for programs.
@@ -38,9 +39,11 @@ LIBS="$LIBS"
 AC_ARG_ENABLE([debug], [  --enable-debug=[no/yes] turn on debugging [default=$debug_default]],, enable_debug=$debug_default)
 
 if test "x$enable_debug" = "xyes"; then
+	CFLAGS="$CFLAGS -g -DDEBUG"
 	CXXFLAGS="$CXXFLAGS -g -DDEBUG"
 	AC_MSG_RESULT(yes)
 else
+	CFLAGS="$CFLAGS -O3 -DNDEBUG"
 	CXXFLAGS="$CXXFLAGS -O3 -DNDEBUG"
 	AC_MSG_RESULT(no)
 fi
