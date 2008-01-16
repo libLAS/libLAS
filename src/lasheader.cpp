@@ -252,49 +252,49 @@ double LASHeader::GetMinZ() const
 
 void LASHeader::Read(std::ifstream& ifs)
 {
-    using detail::bytes_of;
+    using detail::read_n;
 
     if (!ifs)
         throw std::runtime_error("input stream state is invalid");
 
     ifs.seekg(0);
-    ifs.read(bytes_of(m_signature), sizeof(m_signature));
-    ifs.read(bytes_of(m_sourceId), 2);
-    ifs.read(bytes_of(m_reserved), 2);
-    ifs.read(bytes_of(m_projectId1), 4);
-    ifs.read(bytes_of(m_projectId2), 2);
-    ifs.read(bytes_of(m_projectId3), 2);
-    ifs.read(bytes_of(m_projectId4), 8);
-    ifs.read(bytes_of(m_versionMajor), 1);
-    ifs.read(bytes_of(m_versionMinor), 1);
-    ifs.read(bytes_of(m_systemId), 32);
-    ifs.read(bytes_of(m_softwareId), 32);
-    ifs.read(bytes_of(m_createDOY), 2);
-    ifs.read(bytes_of(m_createYear), 2);
-    ifs.read(bytes_of(m_headerSize), 2);
-    ifs.read(bytes_of(m_dataOffset), 4);
-    ifs.read(bytes_of(m_recordsCount), 4);
-    ifs.read(bytes_of(m_dataFormatId), 1);
-    ifs.read(bytes_of(m_dataRecordLen), 2);
-    ifs.read(bytes_of(m_pointRecordsCount), 4);
+    read_n(m_signature, ifs, sizeof(m_signature));
+    read_n(m_sourceId, ifs, 2);
+    read_n(m_reserved, ifs, 2);
+    read_n(m_projectId1, ifs, 4);
+    read_n(m_projectId2, ifs, 2);
+    read_n(m_projectId3, ifs, 2);
+    read_n(m_projectId4, ifs, 8);
+    read_n(m_versionMajor, ifs, 1);
+    read_n(m_versionMinor, ifs, 1);
+    read_n(m_systemId, ifs, 32);
+    read_n(m_softwareId, ifs, 32);
+    read_n(m_createDOY, ifs, 2);
+    read_n(m_createYear, ifs, 2);
+    read_n(m_headerSize, ifs, 2);
+    read_n(m_dataOffset, ifs, 4);
+    read_n(m_recordsCount, ifs, 4);
+    read_n(m_dataFormatId, ifs, 1);
+    read_n(m_dataRecordLen, ifs, 2);
+    read_n(m_pointRecordsCount, ifs, 4);
 
     std::size_t const nrbyr = 5;
     uint32_t rbyr[nrbyr];
-    ifs.read(bytes_of(rbyr), 20);
+    read_n(rbyr, ifs, 20);
     std::vector<uint32_t>(rbyr, rbyr + nrbyr).swap(m_pointRecordsByReturn);
 
-    ifs.read(bytes_of(m_scales.x), 8);
-    ifs.read(bytes_of(m_scales.y), 8);
-    ifs.read(bytes_of(m_scales.z), 8);
-    ifs.read(bytes_of(m_offsets.x), 8);
-    ifs.read(bytes_of(m_offsets.y), 8);
-    ifs.read(bytes_of(m_offsets.z), 8);
-    ifs.read(bytes_of(m_extents.max.x), 8);
-    ifs.read(bytes_of(m_extents.min.x), 8);
-    ifs.read(bytes_of(m_extents.max.y), 8);
-    ifs.read(bytes_of(m_extents.min.y), 8);
-    ifs.read(bytes_of(m_extents.max.z), 8);
-    ifs.read(bytes_of(m_extents.min.z), 8);
+    read_n(m_scales.x, ifs, 8);
+    read_n(m_scales.y, ifs, 8);
+    read_n(m_scales.z, ifs, 8);
+    read_n(m_offsets.x, ifs, 8);
+    read_n(m_offsets.y, ifs, 8);
+    read_n(m_offsets.z, ifs, 8);
+    read_n(m_extents.max.x, ifs, 8);
+    read_n(m_extents.min.x, ifs, 8);
+    read_n(m_extents.max.y, ifs, 8);
+    read_n(m_extents.min.y, ifs, 8);
+    read_n(m_extents.max.z, ifs, 8);
+    read_n(m_extents.min.z, ifs, 8);
 }
 
 void LASHeader::Init()
