@@ -1,5 +1,5 @@
 #include <vld.h>
-#include <liblas/cstdint.hpp>
+#include <liblas/liblas.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/detail/timer.hpp>
@@ -53,7 +53,6 @@ int main()
         
         cout << "File: " << name << '\n';
         cout << "Version: " << reader.GetVersion() << '\n';
-
         cout << "Signature: " << reader.GetHeader().GetFileSignature() << '\n';
         cout << "Points count: " << reader.GetHeader().GetPointRecordsCount() << '\n';
 

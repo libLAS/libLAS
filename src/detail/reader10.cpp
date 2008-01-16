@@ -1,3 +1,4 @@
+#include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/detail/reader.hpp>
@@ -15,8 +16,7 @@ ReaderImpl::ReaderImpl(std::ifstream& ifs) : Base(), m_ifs(ifs)
 
 std::size_t ReaderImpl::GetVersion() const
 {
-    // TODO: use defined macro or review this calculation
-    return (1 * 100000 + 0);
+    return eLASVersion10;
 }
 
 bool ReaderImpl::ReadHeader(LASHeader& header)

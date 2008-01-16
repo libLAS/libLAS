@@ -41,11 +41,6 @@ bool LASReader::ReadPoint()
 {
     bool ret = m_pimpl->ReadPoint(m_record);
 
-    // TODO: Check if these calls will slow down the reading operation
-    //       and invent sometime better but still trying to encapsulate
-    //       LAS point data with user-friendly interfaces instead of returning
-    //       raw data record.
-
     double const x = m_record.x * m_header.GetScaleX() + m_header.GetOffsetX();
     double const y = m_record.y * m_header.GetScaleY() + m_header.GetOffsetY();
     double const z = m_record.z * m_header.GetScaleZ() + m_header.GetOffsetZ();
