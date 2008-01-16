@@ -254,8 +254,8 @@ void LASHeader::Read(std::ifstream& ifs)
 {
     using detail::bytes_of;
 
-    if (!ifs.is_open())
-        throw std::runtime_error("input stream not open");
+    if (!ifs)
+        throw std::runtime_error("input stream state is invalid");
 
     ifs.seekg(0);
     ifs.read(bytes_of(m_signature), sizeof(m_signature));

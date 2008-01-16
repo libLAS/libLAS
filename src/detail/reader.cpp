@@ -17,9 +17,9 @@ Reader* ReaderFactory::Create(std::ifstream& ifs)
 {
     using detail::bytes_of;
 
-    if (!ifs.is_open())
+    if (!ifs)
     {
-        throw std::runtime_error("LAS file not open");
+        throw std::runtime_error("input stream state is invalid");
     }
 
     // Determine version of given LAS file and
