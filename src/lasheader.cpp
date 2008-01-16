@@ -278,17 +278,11 @@ void LASHeader::Read(std::ifstream& ifs)
     ifs.read(bytes_of(m_dataRecordLen), 2);
     ifs.read(bytes_of(m_pointRecordsCount), 4);
 
-    
-    uint32_t rec_by_return[5];
-    ifs.read(bytes_of(rec_by_return), 20);
-    
-    for (int i=0; i< 5; i++) {
-        uint32_t value = rec_by_return[i];
-        m_pointRecordsByReturn.push_back(value);
-        printf ("m_pointRecordsByReturn[%d]: %d\n", (int)i, (int) rec_by_return[i]);
+    std::size_t const nrbyr = 5;
+    uint32_t rbyr[nrbyr];
+    ifs.read(bytes_of(rbyr), 20);
+    std::vector<uint32_t>(rbyr, rbyr + nrbyr).swap(m_pointRecordsByReturn);
 
-    }
-    
     ifs.read(bytes_of(m_scales.x), 8);
     ifs.read(bytes_of(m_scales.y), 8);
     ifs.read(bytes_of(m_scales.z), 8);
