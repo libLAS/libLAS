@@ -22,7 +22,7 @@ class WriterFactory
 public:
 
     // TODO: prototypes
-    static Writer* create(std::string const& file, LASHeader const& header);
+    static Writer* create(std::ofstream& ofs, LASHeader const& header);
     static Writer* destroy(Writer* p);
 
 private:

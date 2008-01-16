@@ -1,20 +1,25 @@
 #ifndef LIBLAS_DETAIL_READER_HPP_INCLUDED
 #define LIBLAS_DETAIL_READER_HPP_INCLUDED
 
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
+#include <liblas/cstdint.hpp>
 // std
 #include <iosfwd>
-#include <string>
 
-namespace liblas { namespace detail {
+namespace liblas {
+
+// Forward declarations
+class LASHeader;
+class LASPoint;
+struct LASPointRecord;
+
+namespace detail {
 
 class Reader
 {
 public:
 
     Reader();
-    virtual ~Reader() {}
+    virtual ~Reader();
     virtual std::size_t GetVersion() const = 0;
     virtual bool ReadHeader(LASHeader& header) = 0;
     virtual bool ReadPoint(LASPointRecord& point) = 0;
@@ -34,46 +39,6 @@ public:
     static Reader* Create(std::ifstream& ifs);
     static void Destroy(Reader* p);
 };
-
-namespace v10 {
-
-class ReaderImpl : public Reader
-{
-public:
-
-    typedef Reader Base;
-    
-    ReaderImpl(std::ifstream& ifs);
-    std::size_t GetVersion() const;
-    bool ReadHeader(LASHeader& header);
-    bool ReadPoint(LASPointRecord& point);
-
-private:
-
-    std::ifstream& m_ifs;
-};
-
-} // namespace v10
-
-namespace v11 {
-
-class ReaderImpl : public Reader
-{
-public:
-
-    typedef Reader Base;
-    
-    ReaderImpl(std::ifstream& ifs);
-    std::size_t GetVersion() const;
-    bool ReadHeader(LASHeader& header);
-    bool ReadPoint(LASPointRecord& point);
-
-private:
-
-    std::ifstream& m_ifs;
-};
-
-} // namespace v11
 
 }} // namespace liblas::detail
 

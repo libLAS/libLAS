@@ -170,6 +170,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\liblas\laswriter.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\liblas\liblas.hpp"
 					>
 				</File>
@@ -182,6 +186,14 @@
 					</File>
 					<File
 						RelativePath="..\..\..\include\liblas\detail\reader.hpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\reader10.hpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\reader11.hpp"
 						>
 					</File>
 					<File
@@ -218,6 +230,10 @@
 				RelativePath="..\..\..\src\lasreader.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\laswriter.cpp"
+				>
+			</File>
 			<Filter
 				Name="detail"
 				>
@@ -231,6 +247,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\detail\reader11.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\detail\writer.cpp"
 					>
 				</File>
 			</Filter>

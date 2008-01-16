@@ -1,6 +1,9 @@
+#include <liblas/detail/reader.hpp>
+#include <liblas/detail/reader10.hpp>
+#include <liblas/detail/reader11.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/detail/reader.hpp>
+
 // std
 #include <fstream>
 #include <cassert>
@@ -13,10 +16,12 @@ Reader::Reader() : m_offset(0), m_current(0)
 {
 }
 
+Reader::~Reader()
+{
+}
+
 Reader* ReaderFactory::Create(std::ifstream& ifs)
 {
-    using detail::bytes_of;
-
     if (!ifs)
     {
         throw std::runtime_error("input stream state is invalid");

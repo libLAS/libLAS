@@ -1,7 +1,7 @@
+#include <liblas/detail/reader10.hpp>
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/detail/reader.hpp>
 // std
 #include <fstream>
 #include <stdexcept>
