@@ -71,7 +71,7 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         m_dataRecordLen = rhs.m_dataRecordLen;
         m_pointRecordsCount = rhs.m_pointRecordsCount;
         
-        std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
+        std::vector<uint32_t>(rhs.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
 
         m_scales = rhs.m_scales;
         m_offsets = rhs.m_offsets;
