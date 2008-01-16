@@ -10,13 +10,6 @@
 namespace liblas
 {
 
-LASReader::LASReader(std::string const& file) :
-    m_ifs(file.c_str(), std::ios::in | std::ios::binary),
-        m_pimpl(detail::ReaderFactory::Create(m_ifs))
-{
-    Init();
-}
-
 LASReader::LASReader(std::ifstream& ifs) :
     m_pimpl(detail::ReaderFactory::Create(ifs))
 {
