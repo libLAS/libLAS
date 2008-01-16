@@ -3,6 +3,7 @@
 
 #include <iosfwd>
 #include <stdexcept>
+#include <iostream>
 
 namespace liblas { namespace detail {
 
