@@ -10,7 +10,7 @@ enum LASFileVersion
 {
     eLASVersion10 = 1 * 100000 + 0,
     eLASVersion11 = 1 * 100000 + 1,
-    eLASVersion20 = 2 * 100000 + 0,
+    eLASVersion20 = 2 * 100000 + 0
 };
 
 } // namespace liblas
