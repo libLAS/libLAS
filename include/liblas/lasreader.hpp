@@ -21,7 +21,6 @@ class LASReader
 {
 public:
 
-    LASReader(std::string const& file);
     LASReader(std::ifstream& ifs);
     ~LASReader();
     
@@ -37,7 +36,6 @@ private:
     //
     // Private data members
     //
-    std::ifstream m_ifs; // used only if constructed with file path
     const std::auto_ptr<detail::Reader> m_pimpl;
 
     LASHeader m_header;
