@@ -38,10 +38,10 @@ Reader* ReaderFactory::Create(std::ifstream& ifs)
     {
         return new v11::ReaderImpl(ifs);
     }
-    else if (2 == verMajor && 0 == verMinor)
+    else if (2 == verMajor && 0 <= verMinor)
     {
         // TODO: LAS 2.0 read/write support
-        throw std::runtime_error("LAS 2.0 file detected but unsupported");
+        throw std::runtime_error("LAS 2.0+ file detected but unsupported");
     }
 
     throw std::runtime_error("LAS file of unknown version");
