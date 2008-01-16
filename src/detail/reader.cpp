@@ -27,8 +27,8 @@ Reader* ReaderFactory::Create(std::ifstream& ifs)
     uint8_t verMajor = 0;
     uint8_t verMinor = 0;
     ifs.seekg(24, std::ios::beg);
-    ifs.read(bytes_of(verMajor), 1);
-    ifs.read(bytes_of(verMinor), 1);
+    detail::read_n(verMajor, ifs, 1);
+    detail::read_n(verMinor, ifs, 1);
 
     if (1 == verMajor && 0 == verMinor)
     {
@@ -47,7 +47,7 @@ Reader* ReaderFactory::Create(std::ifstream& ifs)
     throw std::runtime_error("LAS file of unknown version");
 }
 
-void ReaderFactory::Destroy(Reader* p)
+void ReaderFactory::Destroy(Reader* p) 
 {
     delete p;
     p = 0;
