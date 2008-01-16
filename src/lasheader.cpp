@@ -41,12 +41,7 @@ LASHeader::LASHeader(LASHeader const& other) :
     std::memcpy(m_systemId, other.m_systemId, sizeof(m_systemId));
     std::memcpy(m_softwareId, other.m_softwareId, sizeof(m_softwareId));
 
-    if (other.m_pointRecordsByReturn.size() > 0) {
-        for (int i=0; i < other.m_pointRecordsByReturn.size(); i++) {
-            m_pointRecordsByReturn.push_back(other.m_pointRecordsByReturn[i]);
-        }
-    }
-
+    std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
 }
 
 LASHeader& LASHeader::operator=(LASHeader const& rhs)
@@ -75,11 +70,8 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         m_dataFormatId = rhs.m_dataFormatId;
         m_dataRecordLen = rhs.m_dataRecordLen;
         m_pointRecordsCount = rhs.m_pointRecordsCount;
-        if (rhs.m_pointRecordsByReturn.size() > 0) {
-            for (int i=0; i < rhs.m_pointRecordsByReturn.size(); i++) {
-                m_pointRecordsByReturn.push_back(rhs.m_pointRecordsByReturn[i]);
-            }
-        }
+        
+        std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
 
         m_scales = rhs.m_scales;
         m_offsets = rhs.m_offsets;
