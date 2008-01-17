@@ -11,8 +11,11 @@ class Writer
 public:
 
     // TODO: prototypes
+    Writer();
     virtual ~Writer();
-    virtual void WritePoint(LASPoint const& point) = 0;
+    virtual std::size_t GetVersion() const = 0;
+    virtual bool WriteHeader(LASHeader const& header) = 0;
+    virtual bool WritePoint(LASPoint const& point) = 0;
 
 private:
 };
@@ -22,8 +25,8 @@ class WriterFactory
 public:
 
     // TODO: prototypes
-    static Writer* create(std::ofstream& ofs, LASHeader const& header);
-    static Writer* destroy(Writer* p);
+    static Writer* Create(std::ofstream& ofs, LASHeader const& header);
+    static void Destroy(Writer* p);
 
 private:
 };

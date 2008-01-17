@@ -212,6 +212,10 @@
 						RelativePath="..\..\..\include\liblas\detail\writer.hpp"
 						>
 					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\writer10.hpp"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>
@@ -251,6 +255,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\detail\writer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\detail\writer10.cpp"
 					>
 				</File>
 			</Filter>

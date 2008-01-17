@@ -36,26 +36,26 @@ inline char* bytes_of(T* data)
 }
 
 template <typename T>
-void read_n(T& dest, std::istream& input, std::streamsize const& num)
+void read_n(T& dest, std::istream& src, std::streamsize const& num)
 {
     // TODO: Review and redesign errors handling logic if necessary
 
-    if (!input)
+    if (!src)
         throw std::runtime_error("input stream is not readable");
 
     // Read bytes into buffer
-    input.read(detail::bytes_of(dest), num);
+    src.read(detail::bytes_of(dest), num);
     
     // Test stream state bits
-    if (input.eof())
+    if (src.eof())
         throw std::runtime_error("end of file encountered");
-    else if (input.fail())
+    else if (src.fail())
         throw std::runtime_error("non-fatal I/O error occured");
-    else if (input.bad())
+    else if (src.bad())
         throw std::runtime_error("fatal I/O error occured");
 
     // Poor man test of data consistency
-    std::streamsize const rn = input.gcount();
+    std::streamsize const rn = src.gcount();
     if (num != rn)
     {
         std::ostringstream os;
@@ -63,6 +63,24 @@ void read_n(T& dest, std::istream& input, std::streamsize const& num)
         throw std::runtime_error(os.str());
     }
 }
+
+template <typename T>
+void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
+{
+    if (!dest)
+        throw std::runtime_error("output stream is not writable");
+
+    dest.write(detail::bytes_of(src), num);
+
+    // Test stream state bits
+    if (dest.eof())
+        throw std::runtime_error("end of file encountered");
+    else if (dest.fail())
+        throw std::runtime_error("non-fatal I/O error occured");
+    else if (dest.bad())
+        throw std::runtime_error("fatal I/O error occured");
+}
+
 
 }} // namespace liblas::detail
 

@@ -1,8 +1,8 @@
 #include <vld.h>
-#include <liblas/liblas.hpp>
+// liblas
+#include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/laswriter.hpp>
-#include <liblas/detail/timer.hpp>
+// std
 #include <algorithm>
 #include <exception>
 #include <stdexcept>
@@ -21,9 +21,6 @@ int main()
 {
     try
     {
-        std::ofstream ofs(name, ios::in | ios::binary);
-        liblas::LASWriter  reader(ifs);
-        
     }
     catch (std::exception const& e)
     {
