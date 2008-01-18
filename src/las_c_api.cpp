@@ -18,12 +18,14 @@ extern "C" {
 
 #include <stdint.h>
 
+std::ifstream g_ifs;
+
 LASReaderH LASReader_Create(const char* filename) 
 
 {
     // try {
-    std::ifstream strm(filename, std::ios::in | std::ios::binary);
-    LASReader* reader = new LASReader(strm);
+    g_ifs.open(filename, std::ios::in | std::ios::binary);
+    LASReader* reader = new LASReader(g_ifs);
     // LASHeader header = reader->GetHeader();
     // header.Read(strm);
     return (LASReaderH) reader;
@@ -40,6 +42,7 @@ LASReaderH LASReader_Create(const char* filename)
 void LASReader_Destroy(LASReaderH hReader)
 {
     delete ((LASReader*) hReader);
+    g_ifs.close();
 }
 
 
@@ -59,9 +62,9 @@ LASPointH LASReader_GetPoint(LASReaderH hReader)
 {
     if (hReader) {
         LASReader *reader = ((LASReader*) hReader);
-        reader->ReadPoint();
-        return (LASPointH) new LASPoint(reader->GetPoint());
-        
+        if (reader->ReadPoint()) 
+            return (LASPointH) new LASPoint(reader->GetPoint());
+        else return NULL;
     }
     else
         return NULL;
