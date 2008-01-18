@@ -78,13 +78,13 @@ AUTOMAKE = ${SHELL} /Users/hobu/svn/liblas/trunk/missing --run automake-1.10
 AWK = awk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -Wall -Wno-long-long -pedantic -ansi  -O3 -DNDEBUG
+CFLAGS = -Wall -Wno-long-long -pedantic -ansi  -g -DDEBUG
 CPP = gcc -E
 CPPFLAGS = 
 CXX = g++
 CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -Wall -Wno-long-long -pedantic -ansi -std=c++98  -O3 -DNDEBUG
+CXXFLAGS = -Wall -Wno-long-long -pedantic -ansi -std=c++98  -g -DDEBUG
 CYGPATH_W = echo
 DEFS = -DPACKAGE_NAME=\"las\" -DPACKAGE_TARNAME=\"las\" -DPACKAGE_VERSION=\"1.0.0\" -DPACKAGE_STRING=\"las\ 1.0.0\" -DPACKAGE_BUGREPORT=\"hobu.inc@gmail.com\" -DPACKAGE=\"las\" -DVERSION=\"1.0.0\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DHAVE_STRING_H=1 -DHAVE_STDIO_H=1 -DHAVE_STDLIB_H=1 -DHAVE_LONG_LONG=1 -DHAVE_GETTIMEOFDAY=1 -DHAVE_BZERO=1 -DHAVE_MEMSET=1 -DHAVE_MEMCPY=1 -DHAVE_BCOPY=1
 DEPDIR = .deps

@@ -18,8 +18,14 @@ LAS_C_START
 #include <stdint.h>
 
 LASReaderH LAS_DLL LASReader_Create(const char * filename);
+LASPointH LASReader_GetPoint(LASReaderH hReader);
 void LASReader_Destroy(LASReaderH hReader);
 
+double LASPoint_GetX(LASPointH);
+double LASPoint_GetY(LASPointH);
+double LASPoint_GetZ(LASPointH);
+
+int LASHeader_Read(LASHeaderH hHeader);
 LASHeaderH LAS_DLL LASReader_GetHeader(LASReaderH hReader);
 void LASHeader_Destroy(LASHeaderH hHeader);
 

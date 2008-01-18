@@ -23,7 +23,11 @@ LASReaderH LASReader_Create(const char* filename)
 {
     // try {
     std::ifstream strm(filename, std::ios::in | std::ios::binary);
-        return (LASReaderH) new LASReader(strm);   
+    LASReader* reader = new LASReader(strm);
+    // LASHeader header = reader->GetHeader();
+    // header.Read(strm);
+    return (LASReaderH) reader;
+//        return (LASReaderH) new LASReader(strm);   
     // } catch (std::exception const& e)
     // {
     //     std::cout << "Error: " << e.what() << std::endl;
@@ -49,6 +53,49 @@ LASHeaderH LASReader_GetHeader(LASReaderH hReader)
     else
         return NULL;
 }
+
+
+LASPointH LASReader_GetPoint(LASReaderH hReader)
+{
+    if (hReader) {
+        LASReader *reader = ((LASReader*) hReader);
+        reader->ReadPoint();
+        return (LASPointH) new LASPoint(reader->GetPoint());
+        
+    }
+    else
+        return NULL;
+}
+
+double LASPoint_GetX(LASPointH hPoint) {
+    
+    if (hPoint){
+        double value = ((LASPoint*) hPoint)->GetX();
+        return value;
+    }
+    else return 0;
+}
+
+double LASPoint_GetY(LASPointH hPoint) {
+    
+    if (hPoint){
+        double value = ((LASPoint*) hPoint)->GetY();
+        return value;
+    }
+    else return 0;
+}
+
+double LASPoint_GetZ(LASPointH hPoint) {
+    
+    if (hPoint){
+        double value = ((LASPoint*) hPoint)->GetZ();
+        return value;
+    }
+    else return 0;
+}
+
+
+
 
 char* LASHeader_GetFileSignature(LASHeaderH hHeader) {
     // caller owns it
@@ -240,7 +287,7 @@ double LASHeader_GetScaleX(LASHeaderH hHeader) {
 
 double LASHeader_GetScaleY(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetScaleY();
         return value;
     }
     else return 0;
@@ -248,7 +295,7 @@ double LASHeader_GetScaleY(LASHeaderH hHeader) {
 
 double LASHeader_GetScaleZ(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetScaleZ();
         return value;
     }
     else return 0;
@@ -256,7 +303,7 @@ double LASHeader_GetScaleZ(LASHeaderH hHeader) {
 
 double LASHeader_GetOffsetX(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetOffsetX();
         return value;
     }
     else return 0;
@@ -264,7 +311,7 @@ double LASHeader_GetOffsetX(LASHeaderH hHeader) {
 
 double LASHeader_GetOffsetY(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetOffsetY();
         return value;
     }
     else return 0;
@@ -272,7 +319,7 @@ double LASHeader_GetOffsetY(LASHeaderH hHeader) {
 
 double LASHeader_GetOffsetZ(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetOffsetZ();
         return value;
     }
     else return 0;
@@ -280,7 +327,7 @@ double LASHeader_GetOffsetZ(LASHeaderH hHeader) {
 
 double LASHeader_GetMinX(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetMinX();
         return value;
     }
     else return 0;
@@ -288,7 +335,7 @@ double LASHeader_GetMinX(LASHeaderH hHeader) {
 
 double LASHeader_GetMinY(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetMinY();
         return value;
     }
     else return 0;
@@ -296,7 +343,7 @@ double LASHeader_GetMinY(LASHeaderH hHeader) {
 
 double LASHeader_GetMinZ(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetMinZ();
         return value;
     }
     else return 0;
@@ -304,7 +351,7 @@ double LASHeader_GetMinZ(LASHeaderH hHeader) {
 
 double LASHeader_GetMaxX(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetMaxX();
         return value;
     }
     else return 0;
@@ -312,7 +359,7 @@ double LASHeader_GetMaxX(LASHeaderH hHeader) {
 
 double LASHeader_GetMaxY(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetMaxY();
         return value;
     }
     else return 0;
@@ -320,7 +367,7 @@ double LASHeader_GetMaxY(LASHeaderH hHeader) {
 
 double LASHeader_GetMaxZ(LASHeaderH hHeader) {
     if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
+        double value = ((LASHeader*) hHeader)->GetMaxZ();
         return value;
     }
     else return 0;

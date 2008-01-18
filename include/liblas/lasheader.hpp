@@ -107,7 +107,6 @@ private:
     uint8_t m_dataFormatId;
     uint16_t m_dataRecordLen;
     uint32_t m_pointRecordsCount;
-    //uint32_t m_pointRecordsByReturn[5];
     std::vector<uint32_t> m_pointRecordsByReturn;
     PointScales m_scales;
     PointOffsets m_offsets;

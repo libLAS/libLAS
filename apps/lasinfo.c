@@ -36,8 +36,9 @@ int main(int argc, char *argv[])
        char* file_name = NULL;
        LASReaderH reader = NULL;
        LASHeaderH header = NULL;
+       int check_points = 0;
 /*    //   bool parse_variable_header = false;
-    //   bool check_points = true;
+    //   
     //   bool repair_header = false;
     //   bool repair_bounding_box = false;
     //   bool change_header = false;
@@ -62,6 +63,11 @@ int main(int argc, char *argv[])
           i++;
           file_name = argv[i];
         }
+        else if (strcmp(argv[i],"-c") == 0)
+        {
+          i++;
+          check_points=1;
+        }
 
         else if (i == argc - 1 && file_name == NULL)
         {
@@ -73,10 +79,10 @@ int main(int argc, char *argv[])
         }
       }
       reader = LASReader_Create(file_name);
-     if (!reader) { usage();}
+  /*   if (!reader) { usage();} */
       
       header = LASReader_GetHeader(reader);
-     if (!header) { usage();}
+/*     if (!header) { usage();} */
 
 
 
@@ -203,29 +209,33 @@ int main(int argc, char *argv[])
     // 
     //   // some additional histograms
     // 
-    //   unsigned int number_of_point_records = 0;
-    //   unsigned int number_of_points_by_return[8] = {0,0,0,0,0,0,0,0};
-    //   int number_of_returns_of_given_pulse[8] = {0,0,0,0,0,0,0,0};
-    //   int classification[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    //   int classification_synthetic = 0;
-    //   int classification_keypoint = 0;
-    //   int classification_withheld = 0;
-    // 
-    //   // loop over the points
-    // 
-    //   if (check_points)
-    //   {
-    //     fprintf(stderr, "reporting minimum and maximum for all %d LAS point record entries ...\n",lasreader->npoints);
-    //     LASpoint point_min;
-    //     LASpoint point_max;
-    //     double gps_time_min;
-    //     double gps_time_max;
-    //     double coordinates[3];
-    //     double min[3];
-    //     double max[3];
-    //     lasreader->read_point(coordinates);
-    //     point_min = lasreader->point;
-    //     point_max = lasreader->point;
+*/
+
+
+      unsigned int number_of_point_records = 0;
+      unsigned int number_of_points_by_return[8] = {0,0,0,0,0,0,0,0};
+      int number_of_returns_of_given_pulse[8] = {0,0,0,0,0,0,0,0};
+      int classification[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+      int classification_synthetic = 0;
+      int classification_keypoint = 0;
+      int classification_withheld = 0;
+
+       if (check_points)
+       {
+         fprintf(stderr, "reporting minimum and maximum for all %d LAS point record entries ...\n",LASHeader_GetPointRecordsCount(header));
+        LASPointH point_min;
+        LASPointH point_max;
+        double gps_time_min;
+        double gps_time_max;
+        double coordinates[3];
+        double min[3];
+        double max[3];
+        LASPointH p = LASReader_GetPoint(reader);
+        point_min = p;
+        point_max = p;
+        fprintf(stderr, "point X,Y,Z: %.6f %.6f %.6f", LASPoint_GetX(p),LASPoint_GetY(p),LASPoint_GetZ(p));
+       }
+/*
     //     gps_time_min = lasreader->gps_time;
     //     gps_time_max = lasreader->gps_time;
     //     VecCopy3dv(min, coordinates);
