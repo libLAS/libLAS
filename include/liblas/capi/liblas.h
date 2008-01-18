@@ -49,6 +49,7 @@ uint8_t LASHeader_GetDataFormatId(LASHeaderH hHeader);
 uint16_t LASHeader_GetDataRecordLength(LASHeaderH hHeader);
 uint8_t LASHeader_GetDataFormatId(LASHeaderH hHeader);
 uint32_t LASHeader_GetPointRecordsCount(LASHeaderH hHeader);
+uint32_t LASHeader_GetPointRecordsByReturnCount(LASHeaderH hHeader, int index);
 
 double LASHeader_GetScaleX(LASHeaderH hHeader);
 double LASHeader_GetScaleY(LASHeaderH hHeader);

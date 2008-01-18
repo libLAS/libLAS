@@ -92,7 +92,7 @@ AUTOMAKE = ${SHELL} /Users/hobu/svn/liblas/trunk/missing --run automake-1.10
 AWK = awk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -Wall -Wno-long-long -pedantic -ansi  -O3 -DNDEBUG
 CPP = gcc -E
 CPPFLAGS = 
 CXX = g++

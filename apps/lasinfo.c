@@ -15,6 +15,7 @@
 #include <liblas.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void usage()
 {
@@ -35,7 +36,7 @@ int main(int argc, char *argv[])
        char* file_name = NULL;
        LASReaderH reader = NULL;
        LASHeaderH header = NULL;
-    //   bool parse_variable_header = false;
+/*    //   bool parse_variable_header = false;
     //   bool check_points = true;
     //   bool repair_header = false;
     //   bool repair_bounding_box = false;
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
     //   bool ilas = false;
     // 
     // 
-    
+  */  
       for (i = 1; i < argc; i++)
       {
         if (strcmp(argv[i],"-h") == 0)
@@ -95,16 +96,16 @@ int main(int argc, char *argv[])
       fprintf(stdout, "  point data record length   %d\n", LASHeader_GetDataRecordLength(header));
       fprintf(stdout, "  number of point records    %d\n", LASHeader_GetPointRecordsCount(header));
       fprintf(stdout, "  number of points by return %d %d %d %d %d\n", LASHeader_GetPointRecordsByReturnCount(header, 0), LASHeader_GetPointRecordsByReturnCount(header, 1), LASHeader_GetPointRecordsByReturnCount(header, 2), LASHeader_GetPointRecordsByReturnCount(header, 3), LASHeader_GetPointRecordsByReturnCount(header, 4));
-      fprintf(stdout, "  scale factor x y z         %.6f %.6f %.6f\n", LASHeader_GetScaleX(header), LASHeader_GetScaleY(header), LASHeader_GetScaleZ(header));// lidardouble2string(printstring, header->x_scale_factor, header->y_scale_factor, header->z_scale_factor, true); fprintf(stdout, printstring);
-      fprintf(stdout, "  offset x y z               %.6f %.6f %.6f\n", LASHeader_GetOffsetX(header), LASHeader_GetOffsetY(header), LASHeader_GetOffsetZ(header));// lidardouble2string(printstring, header->x_offset, header->y_offset, header->z_offset, true); fprintf(stdout, printstring);
-      fprintf(stdout, "  min x y z                  %.6f %.6f %.6f\n", LASHeader_GetMinX(header), LASHeader_GetMinY(header), LASHeader_GetMinZ(header));// lidardouble2string(printstring, header->min_x, header->min_y, header->min_z, true); fprintf(stdout, printstring);
-      fprintf(stdout, "  max x y z                  %.6f %.6f %.6f\n", LASHeader_GetMaxX(header), LASHeader_GetMaxY(header), LASHeader_GetMaxZ(header));// lidardouble2string(printstring, header->max_x, header->max_y, header->max_z, true); fprintf(stdout, printstring);
-      //     
+      fprintf(stdout, "  scale factor x y z         %.6f %.6f %.6f\n", LASHeader_GetScaleX(header), LASHeader_GetScaleY(header), LASHeader_GetScaleZ(header));
+      fprintf(stdout, "  offset x y z               %.6f %.6f %.6f\n", LASHeader_GetOffsetX(header), LASHeader_GetOffsetY(header), LASHeader_GetOffsetZ(header));
+      fprintf(stdout, "  min x y z                  %.6f %.6f %.6f\n", LASHeader_GetMinX(header), LASHeader_GetMinY(header), LASHeader_GetMinZ(header));
+      fprintf(stdout, "  max x y z                  %.6f %.6f %.6f\n", LASHeader_GetMaxX(header), LASHeader_GetMaxY(header), LASHeader_GetMaxZ(header));
+   
     
       
       LASReader_Destroy(reader);
       LASHeader_Destroy(header);
-
+/*
     // 
     //   FILE* file;
     //   if (file_name)
@@ -470,6 +471,6 @@ int main(int argc, char *argv[])
     //   {
     //     fclose(file);
     //   }
-
+*/
   return 0;
 }
