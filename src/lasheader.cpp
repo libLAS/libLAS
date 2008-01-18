@@ -174,19 +174,9 @@ uint32_t LASHeader::GetPointRecordsCount() const
     return m_pointRecordsCount;
 }
 
-// TODO: design it in user-friendly way
 std::vector<uint32_t> const& LASHeader::GetPointRecordsByReturnCount() 
 {
     return m_pointRecordsByReturn;
-// //    std::vector<uint32_t> *output = new std::vector<uint32_t>;
-//     std::vector<uint32_t> *output = new std::vector<uint32_t>;
-//     for (int i=0; i< 5; i++) {
-//         output->push_back(m_pointRecordsByReturn[i]);
-//   //      printf ("m_pointRecordsByReturn[%d]: %d\n", i, (int) m_pointRecordsByReturn[i]);
-// 
-//     }
-//     // This is never cleaned up!
-//     return *output;
 }
 
 
