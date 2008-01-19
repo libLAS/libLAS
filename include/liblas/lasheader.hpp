@@ -76,7 +76,15 @@ private:
     typedef detail::Point<double> PointOffsets;
     typedef detail::Extents<double> PointExtents;
 
-
+    enum
+    {
+        eSignatureSize = 4,
+        ePointsByReturnSize = 5,
+        eProjectId4Size = 8,
+        eSystemIdSize = 32,
+        eSoftwareIdSize = 32
+    };
+    
     // TODO: replace static-size char arrays with std::string
     //       and return const-reference to string object.
     
@@ -88,17 +96,17 @@ private:
     //
     // Private data members
     //
-    char m_signature[4];
+    char m_signature[eSignatureSize];
     uint16_t m_sourceId;
     uint16_t m_reserved;
     uint32_t m_projectId1;
     uint16_t m_projectId2;
     uint16_t m_projectId3;
-    uint8_t m_projectId4[8];
+    uint8_t m_projectId4[eProjectId4Size];
     uint8_t m_versionMajor;
     uint8_t m_versionMinor;
-    char m_systemId[32];
-    char m_softwareId[32];
+    char m_systemId[eSystemIdSize];
+    char m_softwareId[eSoftwareIdSize];
     uint16_t m_createDOY;
     uint16_t m_createYear;
     uint16_t m_headerSize;
