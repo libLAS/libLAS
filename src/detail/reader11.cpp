@@ -25,7 +25,7 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     return false;
 }
 
-bool ReaderImpl::ReadPoint(LASPointRecord& point)
+bool ReaderImpl::ReadNextPoint(LASPointRecord& point)
 {
     return false;
 }

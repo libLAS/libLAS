@@ -33,7 +33,7 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     return true;
 }
 
-bool ReaderImpl::ReadPoint(LASPointRecord& point)
+bool ReaderImpl::ReadNextPoint(LASPointRecord& point)
 {
     if (0 == m_current)
     {

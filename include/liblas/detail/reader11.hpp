@@ -23,7 +23,7 @@ public:
     ReaderImpl(std::ifstream& ifs);
     std::size_t GetVersion() const;
     bool ReadHeader(LASHeader& header);
-    bool ReadPoint(LASPointRecord& point);
+    bool ReadNextPoint(LASPointRecord& point);
 
 private:
 

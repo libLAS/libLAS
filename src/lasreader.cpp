@@ -37,9 +37,9 @@ LASPoint const& LASReader::GetPoint() const
     return m_point;
 }
 
-bool LASReader::ReadPoint()
+bool LASReader::ReadNextPoint()
 {
-    bool ret = m_pimpl->ReadPoint(m_record);
+    bool ret = m_pimpl->ReadNextPoint(m_record);
 
     double const x = m_record.x * m_header.GetScaleX() + m_header.GetOffsetX();
     double const y = m_record.y * m_header.GetScaleY() + m_header.GetOffsetY();

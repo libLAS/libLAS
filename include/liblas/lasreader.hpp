@@ -29,7 +29,7 @@ public:
     LASHeader const& GetHeader() const;
     LASPoint const& GetPoint() const;
     
-    bool ReadPoint();
+    bool ReadNextPoint();
 
 private:
     
