@@ -6,7 +6,7 @@
 #include <vector>
 #include <fstream>
 #include <stdexcept>
-#include <cstring> // std::memset, std::memcpy
+#include <cstring> // std::memset, std::memcpy, std::strncpy
 #include <cassert>
 
 namespace liblas
@@ -85,10 +85,27 @@ std::string LASHeader::GetFileSignature() const
     return m_signature;
 }
 
+void LASHeader::SetFileSignature(std::string const& v)
+{
+    if (0 != v.compare(0, eSignatureSize, "LASF"))
+        throw std::invalid_argument("invalid file signature");
+
+    std::strncpy(m_signature, v.c_str(), eSignatureSize);
+}
+
 uint16_t LASHeader::GetFileSourceId() const
 {
     return m_sourceId;
 }
+
+void LASHeader::SetFileSourceId(uint16_t const& v)
+{
+    if (0 > v || v > 35535)
+        throw std::out_of_range("file source id out of range");
+
+    m_sourceId = v;
+}
+
 uint16_t LASHeader::GetReserved() const
 {
     return m_reserved;
@@ -122,9 +139,25 @@ uint8_t LASHeader::GetVersionMajor() const
     return m_versionMajor;
 }
 
+void LASHeader::SetVersionMajor(uint8_t const& v)
+{
+    if (eVersionMajorMin > v || v > eVersionMajorMax)
+        throw std::out_of_range("version major out of range");
+
+    m_versionMajor = v;
+}
+
 uint8_t LASHeader::GetVersionMinor() const
 {
     return m_versionMinor;
+}
+
+void LASHeader::SetVersionMinor(uint8_t const& v)
+{
+    if (eVersionMinorMin > v || v > eVersionMinorMax)
+        throw std::out_of_range("version minor out of range");
+
+    m_versionMinor = v;
 }
 
 std::string LASHeader::GetSystemId() const

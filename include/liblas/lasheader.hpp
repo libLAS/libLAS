@@ -25,7 +25,6 @@ public:
     void SetFileSourceId(uint16_t const& v);
 
     uint16_t GetReserved() const;
-    void SetReserved(uint16_t const& v);
 
     // TODO: Add Set* functions
     uint32_t GetProjectId1() const;
@@ -78,6 +77,10 @@ private:
 
     enum
     {
+        eVersionMinorMin = 0,
+        eVersionMinorMax = 1,
+        eVersionMajorMin = 1,
+        eVersionMajorMax = 2,
         eSignatureSize = 4,
         ePointsByReturnSize = 5,
         eProjectId4Size = 8,
