@@ -35,12 +35,14 @@
 
 namespace liblas { namespace detail {
 
-inline unsigned char random_byte()
+inline liblas::uint8_t random_byte()
 {
+    using liblas::uint8_t;
+
     // Requires pseudo-random numbers generator to be initialized
     // in create_random_based() function - a poor man solution.
-    unsigned char const rmin = std::numeric_limits<unsigned char>::min();
-    unsigned char const rmax = std::numeric_limits<unsigned char>::max();
+    uint8_t const rmin = std::numeric_limits<uint8_t>::min();
+    uint8_t const rmax = std::numeric_limits<uint8_t>::max();
     return std::rand() % rmax + rmin;
 }
 
