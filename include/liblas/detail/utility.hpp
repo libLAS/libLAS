@@ -24,15 +24,27 @@ struct Extents
 };
 
 template<typename T>
-inline char* bytes_of(T& data)
+inline char* as_buffer(T& data)
 {
     return static_cast<char*>(static_cast<void*>(&data));
 }
 
 template<typename T>
-inline char* bytes_of(T* data)
+inline char* as_buffer(T* data)
 {
     return static_cast<char*>(static_cast<void*>(data));
+}
+
+template<typename T>
+inline char const* as_bytes(T const& data)
+{
+    return static_cast<char const*>(static_cast<void const*>(&data));
+}
+
+template<typename T>
+inline char const* as_bytes(T const* data)
+{
+    return static_cast<char const*>(static_cast<void const*>(data));
 }
 
 template <typename T>
@@ -44,7 +56,7 @@ void read_n(T& dest, std::istream& src, std::streamsize const& num)
         throw std::runtime_error("input stream is not readable");
 
     // Read bytes into buffer
-    src.read(detail::bytes_of(dest), num);
+    src.read(detail::as_buffer(dest), num);
     
     // Test stream state bits
     if (src.eof())
@@ -70,7 +82,7 @@ void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
     if (!dest)
         throw std::runtime_error("output stream is not writable");
 
-    dest.write(detail::bytes_of(src), num);
+    dest.write(detail::as_bytes(src), num);
 
     // Test stream state bits
     if (dest.eof())
