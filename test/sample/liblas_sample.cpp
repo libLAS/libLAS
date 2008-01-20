@@ -2,13 +2,16 @@
 // liblas
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/laswriter.hpp>
+#include <liblas/guid.hpp>
 // std
 #include <algorithm>
 #include <exception>
 #include <stdexcept>
-#include <utility>
 #include <iomanip>
 #include <iostream>
+#include <string>
+#include <utility>
 #include <cstdlib>
 #include <cassert>
 using namespace std;
@@ -21,10 +24,21 @@ int main()
 {
     try
     {
+        char const* name = "test.las";
+        std::ofstream ofs(name, ios::out | ios::binary);
+        
+        liblas::LASHeader hdr;
+        hdr.SetFileSignature("LASF");
+        cout << hdr.GetFileSignature() << endl;
+
     }
     catch (std::exception const& e)
     {
         std::cout << "Error: " << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        std::cout << "Unknown error\n";
     }
 
     return 0;

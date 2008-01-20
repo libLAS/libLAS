@@ -154,6 +154,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\liblas\guid.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\liblas\lasheader.hpp"
 					>
 				</File>
@@ -194,6 +198,10 @@
 					</File>
 					<File
 						RelativePath="..\..\..\include\liblas\detail\reader11.hpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\sha1.hpp"
 						>
 					</File>
 					<File
