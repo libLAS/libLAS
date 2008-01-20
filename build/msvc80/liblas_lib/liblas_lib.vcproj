@@ -158,6 +158,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\liblas\laserror.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\liblas\lasheader.hpp"
 					>
 				</File>
@@ -230,6 +234,10 @@
 		<Filter
 			Name="src"
 			>
+			<File
+				RelativePath="..\..\..\src\laserror.cpp"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\lasheader.cpp"
 				>

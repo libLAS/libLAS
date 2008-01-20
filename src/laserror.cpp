@@ -6,7 +6,7 @@
 namespace liblas
 {
 
-LASError::LASError(int code, std::string message, std::string method) :
+LASError::LASError(int code, std::string const& message, std::string const& method) :
     m_code(code),
     m_message(message),
     m_method(method)
@@ -18,7 +18,6 @@ LASError::LASError(LASError const& other) :
     m_message(other.m_message),
     m_method(other.m_method)
 {
-
 }
 
 LASError& LASError::operator=(LASError const& rhs)
