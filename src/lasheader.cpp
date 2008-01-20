@@ -37,11 +37,18 @@ LASHeader::LASHeader(LASHeader const& other) :
     m_offsets(other.m_offsets),
     m_extents(other.m_extents)
 {
-    std::memcpy(m_projectId4, other.m_projectId4, sizeof(m_projectId4)); 
-    std::memcpy(m_systemId, other.m_systemId, sizeof(m_systemId));
-    std::memcpy(m_softwareId, other.m_softwareId, sizeof(m_softwareId));
+    void* p = 0;
+    p = std::memcpy(m_signature, other.m_signature, eSignatureSize);
+    assert(p == m_signature);
+    p = std::memcpy(m_projectId4, other.m_projectId4, eProjectId4Size); 
+    assert(p == m_projectId4);
+    p = std::memcpy(m_systemId, other.m_systemId, eSystemIdSize);
+    assert(p == m_systemId);
+    p = std::memcpy(m_softwareId, other.m_softwareId, eSoftwareIdSize);
+    assert(p == m_softwareId);
 
     std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
+    assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
 }
 
 LASHeader& LASHeader::operator=(LASHeader const& rhs)
@@ -49,18 +56,20 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
     if (&rhs != this)
     {
         void* p = 0;
-        p = std::memcpy(m_signature, rhs.m_signature, sizeof(m_signature));
+        p = std::memcpy(m_signature, rhs.m_signature, eSignatureSize);
         assert(p == m_signature);
         m_sourceId = rhs.m_sourceId;
         m_reserved = rhs.m_reserved;
         m_projectId1 = rhs.m_projectId1;
         m_projectId2 = rhs.m_projectId2;
         m_projectId3 = rhs.m_projectId3;
+        p = std::memcpy(m_projectId4, rhs.m_projectId4, eProjectId4Size); 
+        assert(p == m_projectId4);
         m_versionMajor = rhs.m_versionMajor;
         m_versionMinor = rhs.m_versionMinor;
-        p = std::memcpy(m_systemId, rhs.m_systemId, sizeof(m_systemId));
+        p = std::memcpy(m_systemId, rhs.m_systemId, eSystemIdSize);
         assert(p == m_systemId);
-        p = std::memcpy(m_softwareId, rhs.m_softwareId, sizeof(m_softwareId));
+        p = std::memcpy(m_softwareId, rhs.m_softwareId, eSoftwareIdSize);
         assert(p == m_softwareId);
         m_createDOY = rhs.m_createDOY;
         m_createYear = rhs.m_createYear;
@@ -72,6 +81,7 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         m_pointRecordsCount = rhs.m_pointRecordsCount;
         
         std::vector<uint32_t>(rhs.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
+        assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
 
         m_scales = rhs.m_scales;
         m_offsets = rhs.m_offsets;
