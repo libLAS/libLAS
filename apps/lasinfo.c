@@ -106,11 +106,35 @@ int main(int argc, char *argv[])
       fprintf(stdout, "  offset x y z               %.6f %.6f %.6f\n", LASHeader_GetOffsetX(header), LASHeader_GetOffsetY(header), LASHeader_GetOffsetZ(header));
       fprintf(stdout, "  min x y z                  %.6f %.6f %.6f\n", LASHeader_GetMinX(header), LASHeader_GetMinY(header), LASHeader_GetMinZ(header));
       fprintf(stdout, "  max x y z                  %.6f %.6f %.6f\n", LASHeader_GetMaxX(header), LASHeader_GetMaxY(header), LASHeader_GetMaxZ(header));
-   
+
+      unsigned int number_of_point_records = 0;
+      unsigned int number_of_points_by_return[8] = {0,0,0,0,0,0,0,0};
+      int number_of_returns_of_given_pulse[8] = {0,0,0,0,0,0,0,0};
+      int classification[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+      int classification_synthetic = 0;
+      int classification_keypoint = 0;
+      int classification_withheld = 0;
+
+       if (check_points)
+       {
+         fprintf(stderr, "reporting minimum and maximum for all %d LAS point record entries ...\n",LASHeader_GetPointRecordsCount(header));
+        LASPointH point_min;
+        LASPointH point_max;
+        double gps_time_min;
+        double gps_time_max;
+        double coordinates[3];
+        double min[3];
+        double max[3];
+        LASPointH p = LASReader_GetPoint(reader);
+        point_min = p;
+        point_max = p;
+        fprintf(stderr, "point X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(p),LASPoint_GetY(p),LASPoint_GetZ(p));
+       }   
     
-      
+     
       LASReader_Destroy(reader);
       LASHeader_Destroy(header);
+
 /*
     // 
     //   FILE* file;
@@ -212,29 +236,7 @@ int main(int argc, char *argv[])
 */
 
 
-      unsigned int number_of_point_records = 0;
-      unsigned int number_of_points_by_return[8] = {0,0,0,0,0,0,0,0};
-      int number_of_returns_of_given_pulse[8] = {0,0,0,0,0,0,0,0};
-      int classification[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-      int classification_synthetic = 0;
-      int classification_keypoint = 0;
-      int classification_withheld = 0;
 
-       if (check_points)
-       {
-         fprintf(stderr, "reporting minimum and maximum for all %d LAS point record entries ...\n",LASHeader_GetPointRecordsCount(header));
-        LASPointH point_min;
-        LASPointH point_max;
-        double gps_time_min;
-        double gps_time_max;
-        double coordinates[3];
-        double min[3];
-        double max[3];
-        LASPointH p = LASReader_GetPoint(reader);
-        point_min = p;
-        point_max = p;
-        fprintf(stderr, "point X,Y,Z: %.6f %.6f %.6f", LASPoint_GetX(p),LASPoint_GetY(p),LASPoint_GetZ(p));
-       }
 /*
     //     gps_time_min = lasreader->gps_time;
     //     gps_time_max = lasreader->gps_time;

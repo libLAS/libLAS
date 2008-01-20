@@ -51,7 +51,7 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 liblas_la_DEPENDENCIES = detail/liblasdetail.la
 am_liblas_la_OBJECTS = lasheader.lo lasreader.lo las_c_api.lo \
-	laspoint.lo
+	laspoint.lo laserror.lo
 liblas_la_OBJECTS = $(am_liblas_la_OBJECTS)
 liblas_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -191,7 +191,7 @@ top_srcdir = ..
 SUBDIRS = detail .
 INCLUDES = -I../include -I../include/detail
 lib_LTLIBRARIES = liblas.la
-liblas_la_SOURCES = lasheader.cpp lasreader.cpp las_c_api.cpp laspoint.cpp
+liblas_la_SOURCES = lasheader.cpp lasreader.cpp las_c_api.cpp laspoint.cpp laserror.cpp
 liblas_la_LIBADD = detail/liblasdetail.la
 liblas_la_LDFLAGS = -version-info 1:0:0
 all: all-recursive
@@ -264,6 +264,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/las_c_api.Plo
+include ./$(DEPDIR)/laserror.Plo
 include ./$(DEPDIR)/lasheader.Plo
 include ./$(DEPDIR)/laspoint.Plo
 include ./$(DEPDIR)/lasreader.Plo

@@ -1,7 +1,7 @@
 // #include <liblas/capi/liblas.h>
 
 #include <liblas/lasreader.hpp>
-
+#include <liblas/laserror.hpp>
 
 typedef void *LASWriterH;
 typedef void *LASReaderH;
@@ -9,6 +9,8 @@ typedef void *LASPointH;
 typedef void *LASHeaderH;
 
 #include <string>
+#include <stack>
+#include <map>
 //#include <cstdio>
 #include <exception>
 #include <iostream>
@@ -18,23 +20,28 @@ extern "C" {
 
 #include <stdint.h>
 
+// Error stuff
+
+
+
 std::ifstream g_ifs;
+
+
+
+std::stack<LASError > errors;
 
 LASReaderH LASReader_Create(const char* filename) 
 
 {
-    // try {
-    g_ifs.open(filename, std::ios::in | std::ios::binary);
-    LASReader* reader = new LASReader(g_ifs);
-    // LASHeader header = reader->GetHeader();
-    // header.Read(strm);
-    return (LASReaderH) reader;
-//        return (LASReaderH) new LASReader(strm);   
-    // } catch (std::exception const& e)
-    // {
-    //     std::cout << "Error: " << e.what() << std::endl;
-    //     return NULL;
-    // }
+    try {
+        g_ifs.open(filename, std::ios::in | std::ios::binary);
+        LASReader* reader = new LASReader(g_ifs);
+        return (LASReaderH) reader;
+    } catch (std::exception const& e)
+     {
+         std::cout << "Error: " << e.what() << std::endl;
+         return NULL;
+     }
 
     
 }
@@ -270,7 +277,7 @@ liblas::uint32_t LASHeader_GetPointRecordsByReturnCount(LASHeaderH hHeader, int 
         }
 
     }
-    else return 0;
+    return 0;
 }
 
 liblas::uint32_t LASHeader_GetPointRecordsCount(LASHeaderH hHeader) {
