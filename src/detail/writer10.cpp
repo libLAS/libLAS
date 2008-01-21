@@ -23,8 +23,6 @@ std::size_t WriterImpl::GetVersion() const
 
 bool WriterImpl::WriteHeader(LASHeader const& header)
 {
-    // TODO: Call LASHeader::Write() which delegates to sth like this:
-    //       detail::write_n(ofs, header.GetFileSignature().c_str(), 4);
     // TODO: should we return anything or just declare it as void?
 
     uint8_t n1 = 0;
