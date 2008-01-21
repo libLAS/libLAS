@@ -28,7 +28,10 @@ typedef enum
     LE_Fatal = 4
 } LASError;
 
-
+void LASError_Reset(void);
+int LASError_GetLastErrorNum(void);
+const char* LASError_GetLastErrorMsg(void);
+const char* LASError_GetLastErrorMethod(void);
 
 LASReaderH LAS_DLL LASReader_Create(const char * filename);
 LASPointH LAS_DLL LASReader_GetPoint(LASReaderH hReader);

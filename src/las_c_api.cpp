@@ -30,6 +30,43 @@ std::ifstream g_ifs;
 
 std::stack<LASError > errors;
 
+
+void LASError_Reset() {
+    if (errors.empty()) return;
+    for (std::size_t i=0;i<errors.size();i++) errors.pop();
+}
+
+int LASError_GetLastErrorNum(){
+    if (errors.empty()) return 0;
+    if (errors.size() > 0) {
+        LASError err = errors.top();
+        return err.GetCode();
+    }
+    return 0;
+}
+
+const char* LASError_GetLastErrorMsg(){
+    if (errors.empty()) return NULL;
+    if (errors.size() > 0) {
+        LASError err = errors.top();
+        return err.GetMessage().c_str();
+    }
+    return NULL;
+}
+
+const char* LASError_GetLastErrorMethod(){
+    if (errors.empty()) return NULL;
+    if (errors.size() > 0) {
+        LASError err = errors.top();
+        return err.GetMethod().c_str();
+    }
+    return NULL;    
+}
+
+void LASError_PushError(int code, const char *message, const char *method) {
+    LASError err = LASError(code, message, method);
+    errors.push(err);
+}
 LASReaderH LASReader_Create(const char* filename) 
 
 {
@@ -69,7 +106,7 @@ LASPointH LASReader_GetPoint(LASReaderH hReader)
 {
     if (hReader) {
         LASReader *reader = ((LASReader*) hReader);
-        if (reader->ReadPoint()) 
+        if (reader->ReadNextPoint()) 
             return (LASPointH) new LASPoint(reader->GetPoint());
         else return NULL;
     }
