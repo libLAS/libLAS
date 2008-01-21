@@ -13,6 +13,10 @@
 namespace liblas
 {
 
+char const* const LASHeader::FileSignature = "LASF";
+char const* const LASHeader::SystemIdentifier = "libLAS";
+char const* const LASHeader::SoftwareIdentifier = "libLAS 1.0";
+
 LASHeader::LASHeader()
 {
     Init();
@@ -39,7 +43,7 @@ LASHeader::LASHeader(LASHeader const& other) :
     m_extents(other.m_extents)
 {
     void* p = 0;
-    p = std::memcpy(m_signature, other.m_signature, eSignatureSize);
+    p = std::memcpy(m_signature, other.m_signature, eFileSignatureSize);
     assert(p == m_signature);
     p = std::memcpy(m_projectId4, other.m_projectId4, eProjectId4Size); 
     assert(p == m_projectId4);
@@ -57,7 +61,7 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
     if (&rhs != this)
     {
         void* p = 0;
-        p = std::memcpy(m_signature, rhs.m_signature, eSignatureSize);
+        p = std::memcpy(m_signature, rhs.m_signature, eFileSignatureSize);
         assert(p == m_signature);
         m_sourceId = rhs.m_sourceId;
         m_reserved = rhs.m_reserved;
@@ -98,10 +102,10 @@ std::string LASHeader::GetFileSignature() const
 
 void LASHeader::SetFileSignature(std::string const& v)
 {
-    if (0 != v.compare(0, eSignatureSize, "LASF"))
+    if (0 != v.compare(0, eFileSignatureSize, FileSignature))
         throw std::invalid_argument("invalid file signature");
 
-    std::strncpy(m_signature, v.c_str(), eSignatureSize);
+    std::strncpy(m_signature, v.c_str(), eFileSignatureSize);
 }
 
 uint16_t LASHeader::GetFileSourceId() const
@@ -240,30 +244,44 @@ uint32_t LASHeader::GetRecordsCount() const
     return m_recordsCount;
 }
 
-uint8_t LASHeader::GetDataFormatId() const
+LASHeader::PointFormat LASHeader::GetDataFormatId() const
 {
-    return m_dataFormatId;
+    if (ePointFormat0 == m_dataFormatId)
+        return ePointFormat0;
+    else
+        return ePointFormat1;
 }
 
-void LASHeader::SetDataFormatId(uint8_t const& v)
+void LASHeader::SetDataFormatId(LASHeader::PointFormat const& v)
 {
-    if (v <= 0)
-        m_dataFormatId = 0;
-    else
-        m_dataFormatId = 1;
+    m_dataFormatId = v;
 }
 
 uint16_t LASHeader::GetDataRecordLength() const
 {
-    if (0 == m_dataFormatId)
+    // NOTE: assertions below are used to check if our assumption is correct,
+    // for debugging purpose only.
+
+    if (ePointFormat0 == m_dataFormatId)
+    {
+        assert(ePointDataRecordSize0 == m_dataRecordLen);
         return ePointDataRecordSize0;
+    }
     else
+    {
+        assert(ePointDataRecordSize1 == m_dataRecordLen);
         return ePointDataRecordSize1;
+    }
 }
 
 uint32_t LASHeader::GetPointRecordsCount() const
 {
     return m_pointRecordsCount;
+}
+
+void LASHeader::SetPointRecordsCount(uint32_t const& v)
+{
+    m_pointRecordsCount = v;
 }
 
 std::vector<uint32_t> const& LASHeader::GetPointRecordsByReturnCount() const
@@ -344,12 +362,22 @@ double LASHeader::GetMinZ() const
     return m_extents.min.z;
 }
 
+void LASHeader::SetMax(double x, double y, double z)
+{
+    m_extents.max = detail::Point<double>(x, y, z);
+}
+
+void LASHeader::SetMin(double x, double y, double z)
+{
+    m_extents.min = detail::Point<double>(x, y, z);
+}
+
 void LASHeader::Read(std::ifstream& ifs)
 {
     using detail::read_n;
 
     if (!ifs)
-        throw std::runtime_error("input stream state is invalid");
+        throw std::runtime_error("input stream state is invalid");  
 
     ifs.seekg(0);
     read_n(m_signature, ifs, sizeof(m_signature));
@@ -398,20 +426,39 @@ void LASHeader::Read(std::ifstream& ifs)
 
 void LASHeader::Init()
 {
-    m_versionMajor = m_versionMinor = m_dataFormatId = uint8_t();
-    m_dataRecordLen = m_createDOY = m_createYear = m_headerSize = uint16_t();
+    // Initialize public header block with default values
+
+    m_versionMajor = 1;
+    m_versionMinor = 0;
+    m_dataFormatId = ePointFormat0;
+    m_dataRecordLen = ePointDataRecordSize0;
+
+    // TODO: Use current date
+    m_createDOY = 0;
+    m_createYear = 0;
+    
+    m_headerSize = eHeaderSize;
+
+    // TODO: Replace with liblas::guid, unique or null GUID.
     m_sourceId = m_reserved = m_projectId2 = m_projectId3 = uint16_t();
     m_projectId1 = uint32_t();
-    m_dataOffset = m_recordsCount = m_pointRecordsCount = uint32_t();
-
-    std::memset(m_signature, 0, sizeof(m_signature));
     std::memset(m_projectId4, 0, sizeof(m_projectId4)); 
-    std::memset(m_systemId, 0, sizeof(m_systemId));
-    std::memset(m_softwareId, 0, sizeof(m_softwareId));
 
-    // Zero causes initialization with smallest allowed
-    // scale value (0.01)
-    SetScale(0, 0, 0);
+    m_dataOffset = eHeaderSize + eDataSignatureSize;
+    m_recordsCount = 0;
+    m_pointRecordsCount = 0;
+
+    std::memset(m_signature, 0, eFileSignatureSize);
+    std::strncpy(m_signature, FileSignature, eFileSignatureSize);
+
+    std::memset(m_systemId, 0, eSystemIdSize);
+    std::strncpy(m_systemId, SystemIdentifier, eSystemIdSize);
+
+    std::memset(m_softwareId, 0, eSoftwareIdSize);
+    std::strncpy(m_softwareId, SoftwareIdentifier, eSoftwareIdSize);
+
+    // Zero scale value is useless, so we need to use a small value.
+    SetScale(0.01, 0.01, 0.01);
 }
 
 } // namespace liblas

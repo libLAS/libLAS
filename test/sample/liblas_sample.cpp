@@ -23,6 +23,8 @@ inline std::ostream& operator<<(std::ostream& os, liblas::LASPoint const& p);
 
 int main()
 {
+    using liblas::LASHeader;
+
     try
     {
         char const* name = "test.las";
@@ -31,15 +33,6 @@ int main()
             std::ofstream ofs(name, ios::out | ios::binary);
 
             liblas::LASHeader hdr;
-            hdr.SetFileSignature("LASF");
-            hdr.SetVersionMajor(1);
-            hdr.SetVersionMinor(0);
-            hdr.SetSystemId("mloskotsys");
-            hdr.SetSoftwareId("mloskotsoft");
-            hdr.SetCreationDOY(7);
-            hdr.SetCreationYear(2008);
-            hdr.SetDataFormatId(0);
-
             liblas::LASWriter writer(ofs, hdr);
         }
 

@@ -14,6 +14,12 @@ class LASHeader
 {
 public:
 
+    enum PointFormat
+    {
+        ePointFormat0 = 0,
+        ePointFormat1 = 1,
+    };
+
     LASHeader();
     LASHeader(LASHeader const& other);
     LASHeader& operator=(LASHeader const& rhs);
@@ -26,7 +32,7 @@ public:
 
     uint16_t GetReserved() const;
 
-    // TODO: Add Set* functions
+    // TODO: Replace GUID data calls with single Get/Set using liblas::guid type
     uint32_t GetProjectId1() const;
     uint16_t GetProjectId2() const;
     uint16_t GetProjectId3() const;
@@ -55,11 +61,13 @@ public:
     uint32_t GetDataOffset() const;
     uint32_t GetRecordsCount() const;
     
-    uint8_t GetDataFormatId() const;
-    void SetDataFormatId(uint8_t const& v);
+    PointFormat GetDataFormatId() const;
+    void SetDataFormatId(PointFormat const& v);
 
     uint16_t GetDataRecordLength() const;
+    
     uint32_t GetPointRecordsCount() const;
+    void SetPointRecordsCount(uint32_t const& v);
     
     std::vector<uint32_t> const& GetPointRecordsByReturnCount() const;
     
@@ -80,6 +88,9 @@ public:
     double GetMaxZ() const;
     double GetMinZ() const;
 
+    void SetMax(double x, double y, double z);
+    void SetMin(double x, double y, double z);
+
     void Read(std::ifstream& ifs);
 
 private:
@@ -94,15 +105,21 @@ private:
         eVersionMinorMax = 1,
         eVersionMajorMin = 1,
         eVersionMajorMax = 2,
-        eSignatureSize = 4,
+        eDataSignatureSize = 2,
+        eFileSignatureSize = 4,
         ePointsByReturnSize = 5,
         eProjectId4Size = 8,
         ePointDataRecordSize0 = 20,
         ePointDataRecordSize1 = 28,
         eSystemIdSize = 32,
-        eSoftwareIdSize = 32
+        eSoftwareIdSize = 32,
+        eHeaderSize = 227,
     };
     
+    static char const* const FileSignature; // = "LASF";
+    static char const* const SystemIdentifier; // = "libLAS";
+    static char const* const SoftwareIdentifier; // = "libLAS 1.0";
+
     // TODO: replace static-size char arrays with std::string
     //       and return const-reference to string object.
     
@@ -114,7 +131,7 @@ private:
     //
     // Private data members
     //
-    char m_signature[eSignatureSize];
+    char m_signature[eFileSignatureSize];
     uint16_t m_sourceId;
     uint16_t m_reserved;
     uint32_t m_projectId1;
