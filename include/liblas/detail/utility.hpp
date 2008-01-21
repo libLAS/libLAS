@@ -11,6 +11,7 @@ template <typename T>
 struct Point
 {
     Point() : x(T()), y(T()), z(T()) {}
+    Point(T const& x, T const& y, T const& z) : x(x), y(y), z(z) {}
     T x;
     T y;
     T z;
