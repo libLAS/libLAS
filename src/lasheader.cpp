@@ -2,10 +2,11 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/utility.hpp>
 //std
-#include <string>
-#include <vector>
+#include <algorithm>
 #include <fstream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 #include <cstring> // std::memset, std::memcpy, std::strncpy
 #include <cassert>
 
@@ -175,9 +176,27 @@ std::string LASHeader::GetSystemId() const
     return m_systemId;
 }
 
+void LASHeader::SetSystemId(std::string const& v)
+{
+    if (v.size() > eSystemIdSize)
+        throw std::invalid_argument("system id too long");
+
+    std::fill(m_systemId, m_systemId + eSystemIdSize, 0);
+    std::strncpy(m_systemId, v.c_str(), eSystemIdSize);
+}
+
 std::string LASHeader::GetSoftwareId() const
 {
     return m_softwareId;
+}
+
+void LASHeader::SetSoftwareId(std::string const& v)
+{
+    if (v.size() > eSoftwareIdSize)
+        throw std::invalid_argument("generating software id too long");
+
+    std::fill(m_softwareId, m_softwareId + eSoftwareIdSize, 0);
+    std::strncpy(m_softwareId, v.c_str(), eSoftwareIdSize);
 }
 
 uint16_t LASHeader::GetCreationDOY() const
@@ -185,14 +204,31 @@ uint16_t LASHeader::GetCreationDOY() const
     return m_createDOY;
 }
 
+void LASHeader::SetCreationDOY(uint16_t const& v)
+{
+    if (1 > v || v > 366)
+        throw std::out_of_range("day of year out of range");
+
+    m_createDOY = v;
+}
+
 uint16_t LASHeader::GetCreationYear() const
 {
     return m_createYear;
 }
 
+void LASHeader::SetCreationYear(uint16_t const& v)
+{
+    // mloskot: I've taken these values arbitrarily
+    if (1960 > v || v > 9999)
+        throw std::out_of_range("year out of range");
+
+    m_createYear = v;
+}
+
 uint16_t LASHeader::GetHeaderSize() const
 {
-    return m_headerSize;
+    return 227; // m_headerSize;
 }
 
 uint32_t LASHeader::GetDataOffset() const
@@ -304,8 +340,13 @@ void LASHeader::Read(std::ifstream& ifs)
     read_n(m_softwareId, ifs, 32);
     read_n(m_createDOY, ifs, 2);
     read_n(m_createYear, ifs, 2);
-    read_n(m_headerSize, ifs, 2);
+    read_n(m_headerSize, ifs, 2); // TODO: should we validate == 227?
     read_n(m_dataOffset, ifs, 4);
+    // TODO: Move this test to LASHeader::Validate()
+    if (m_dataOffset < m_headerSize)
+    {
+        throw std::domain_error("offset to point data smaller than header size");
+    }
     read_n(m_recordsCount, ifs, 4);
     read_n(m_dataFormatId, ifs, 1);
     read_n(m_dataRecordLen, ifs, 2);
