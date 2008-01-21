@@ -244,20 +244,32 @@ uint8_t LASHeader::GetDataFormatId() const
 {
     return m_dataFormatId;
 }
+
+void LASHeader::SetDataFormatId(uint8_t const& v)
+{
+    if (v <= 0)
+        m_dataFormatId = 0;
+    else
+        m_dataFormatId = 1;
+}
+
 uint16_t LASHeader::GetDataRecordLength() const
 {
-    return m_dataRecordLen;
+    if (0 == m_dataFormatId)
+        return ePointDataRecordSize0;
+    else
+        return ePointDataRecordSize1;
 }
+
 uint32_t LASHeader::GetPointRecordsCount() const
 {
     return m_pointRecordsCount;
 }
 
-std::vector<uint32_t> const& LASHeader::GetPointRecordsByReturnCount() 
+std::vector<uint32_t> const& LASHeader::GetPointRecordsByReturnCount() const
 {
     return m_pointRecordsByReturn;
 }
-
 
 double LASHeader::GetScaleX() const
 {
@@ -274,6 +286,14 @@ double LASHeader::GetScaleZ() const
     return m_scales.z;
 }
 
+void LASHeader::SetScale(double x, double y, double z)
+{
+    double const minscale = 0.01;
+    m_scales.x = (0 == x) ? minscale : x;
+    m_scales.y = (0 == y) ? minscale : y;
+    m_scales.z = (0 == z) ? minscale : z;
+}
+
 double LASHeader::GetOffsetX() const
 {
     return m_offsets.x;
@@ -287,6 +307,11 @@ double LASHeader::GetOffsetY() const
 double LASHeader::GetOffsetZ() const
 {
     return m_offsets.z;
+}
+
+void LASHeader::SetOffset(double x, double y, double z)
+{
+    m_offsets = PointOffsets(x, y, z);
 }
 
 double LASHeader::GetMaxX() const
@@ -352,10 +377,10 @@ void LASHeader::Read(std::ifstream& ifs)
     read_n(m_dataRecordLen, ifs, 2);
     read_n(m_pointRecordsCount, ifs, 4);
 
-    std::size_t const nrbyr = 5;
-    uint32_t rbyr[nrbyr];
-    read_n(rbyr, ifs, 20);
-    std::vector<uint32_t>(rbyr, rbyr + nrbyr).swap(m_pointRecordsByReturn);
+    std::vector<uint32_t>::size_type const srbyr = 5;
+    uint32_t rbyr[srbyr] = { 0 };
+    read_n(rbyr, ifs, sizeof(rbyr));
+    std::vector<uint32_t>(rbyr, rbyr + srbyr).swap(m_pointRecordsByReturn);
 
     read_n(m_scales.x, ifs, 8);
     read_n(m_scales.y, ifs, 8);
@@ -383,6 +408,10 @@ void LASHeader::Init()
     std::memset(m_projectId4, 0, sizeof(m_projectId4)); 
     std::memset(m_systemId, 0, sizeof(m_systemId));
     std::memset(m_softwareId, 0, sizeof(m_softwareId));
+
+    // Zero causes initialization with smallest allowed
+    // scale value (0.01)
+    SetScale(0, 0, 0);
 }
 
 } // namespace liblas

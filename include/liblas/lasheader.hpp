@@ -54,18 +54,25 @@ public:
     uint16_t GetHeaderSize() const;
     uint32_t GetDataOffset() const;
     uint32_t GetRecordsCount() const;
-    uint8_t  GetDataFormatId() const;
+    
+    uint8_t GetDataFormatId() const;
+    void SetDataFormatId(uint8_t const& v);
+
     uint16_t GetDataRecordLength() const;
     uint32_t GetPointRecordsCount() const;
     
-    std::vector<uint32_t> const& GetPointRecordsByReturnCount() ;
+    std::vector<uint32_t> const& GetPointRecordsByReturnCount() const;
     
     double GetScaleX() const;
     double GetScaleY() const;
     double GetScaleZ() const;
+    void SetScale(double x, double y, double z);
+
     double GetOffsetX() const;
     double GetOffsetY() const;
     double GetOffsetZ() const;
+    void SetOffset(double x, double y, double z);
+
     double GetMaxX() const;
     double GetMinX() const;
     double GetMaxY() const;
@@ -90,6 +97,8 @@ private:
         eSignatureSize = 4,
         ePointsByReturnSize = 5,
         eProjectId4Size = 8,
+        ePointDataRecordSize0 = 20,
+        ePointDataRecordSize1 = 28,
         eSystemIdSize = 32,
         eSoftwareIdSize = 32
     };
