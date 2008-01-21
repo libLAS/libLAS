@@ -38,6 +38,7 @@ int main()
             hdr.SetSoftwareId("mloskotsoft");
             hdr.SetCreationDOY(7);
             hdr.SetCreationYear(2008);
+            hdr.SetDataFormatId(0);
 
             liblas::LASWriter writer(ofs, hdr);
         }

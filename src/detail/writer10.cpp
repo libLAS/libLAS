@@ -4,6 +4,7 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/liblas.hpp>
 // std
+#include <vector>
 #include <fstream>
 #include <stdexcept>
 #include <cstdlib> // std::size_t
@@ -79,26 +80,63 @@ bool WriterImpl::WriteHeader(LASHeader const& header)
     detail::write_n(m_ofs, n2, sizeof(n2));
 
     // 14. Offset to data
+    // At this point, no variable length records are written, so 
+    // data offset is equal to (header size + data start signature size):
+    // 227 + 2 = 229
+    // TODO: This value must be updated after new variable length record is added.
+    uint32_t const dataSignatureSize = 2;
+    n4 = header.GetHeaderSize() + dataSignatureSize; 
+    detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 15. Number of variable length records
+    // At this point, no variable length records are written.
+    // TODO: This value must be updated after new variable length record is added.
+    n4 = 0;
+    detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 16. Point Data Format ID
+    n1 = header.GetDataFormatId();
+    detail::write_n(m_ofs, n1, sizeof(n1));
 
     // 17. Point Data Record Length
+    n2 = header.GetDataRecordLength();
+    detail::write_n(m_ofs, n2, sizeof(n2));
 
     // 18. Number of point records
+    // At this point, no point data records are written.
+    // TODO: This value must be updated after all point data records are added.
+    n4 = 0;
+    detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 19. Number of points by return
+    std::vector<uint32_t>::size_type const srbyr = 5;
+    std::vector<uint32_t> const& vpbr = header.GetPointRecordsByReturnCount();
+    assert(vpbr.size() <= srbyr);
+    uint32_t pbr[srbyr] = { 0 };
+    std::copy(vpbr.begin(), vpbr.end(), pbr);
+    detail::write_n(m_ofs, pbr, sizeof(pbr));
 
-    // 20-22. Scale factors 
+    // 20-22. Scale factors
+    detail::write_n(m_ofs, header.GetScaleX(), sizeof(double));
+    detail::write_n(m_ofs, header.GetScaleY(), sizeof(double));
+    detail::write_n(m_ofs, header.GetScaleZ(), sizeof(double));
 
     // 23-25. Offsets
+    detail::write_n(m_ofs, header.GetOffsetX(), sizeof(double));
+    detail::write_n(m_ofs, header.GetOffsetY(), sizeof(double));
+    detail::write_n(m_ofs, header.GetOffsetZ(), sizeof(double));
 
     // 26-27. Max/Min X
+    detail::write_n(m_ofs, header.GetMaxX(), sizeof(double));
+    detail::write_n(m_ofs, header.GetMinX(), sizeof(double));
 
     // 28-29. Max/Min Y
+    detail::write_n(m_ofs, header.GetMaxY(), sizeof(double));
+    detail::write_n(m_ofs, header.GetMinY(), sizeof(double));
 
     // 30-31. Max/Min Z
+    detail::write_n(m_ofs, header.GetMaxZ(), sizeof(double));
+    detail::write_n(m_ofs, header.GetMinZ(), sizeof(double));
 
     return true;
 }
