@@ -11,6 +11,7 @@ typedef void *LASHeaderH;
 #include <string>
 #include <stack>
 #include <map>
+#include <iosfwd>
 //#include <cstdio>
 #include <exception>
 #include <iostream>
@@ -23,6 +24,14 @@ extern "C" {
 // Error stuff
 
 
+typedef enum
+{
+    LE_None = 0,
+    LE_Debug = 1,
+    LE_Warning = 2,
+    LE_Failure = 3,
+    LE_Fatal = 4
+} LASErrorEnum;
 
 std::ifstream g_ifs;
 
@@ -34,6 +43,11 @@ std::stack<LASError > errors;
 void LASError_Reset() {
     if (errors.empty()) return;
     for (std::size_t i=0;i<errors.size();i++) errors.pop();
+}
+
+void LASError_Pop() {
+    if (errors.empty()) return;
+    errors.pop();
 }
 
 int LASError_GetLastErrorNum(){
@@ -67,16 +81,27 @@ void LASError_PushError(int code, const char *message, const char *method) {
     LASError err = LASError(code, message, method);
     errors.push(err);
 }
+
 LASReaderH LASReader_Create(const char* filename) 
 
 {
+    if (filename == NULL) {
+        LASError_PushError(LE_Failure, "Inputted filename was null", "LASReader_Create");
+        return NULL;
+    }
+    // try {
+    //     
+    // } catch (std::exception const& e) 
+    // {
+    //     
+    // }
     try {
         g_ifs.open(filename, std::ios::in | std::ios::binary);
         LASReader* reader = new LASReader(g_ifs);
         return (LASReaderH) reader;
     } catch (std::exception const& e)
      {
-         std::cout << "Error: " << e.what() << std::endl;
+         LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
          return NULL;
      }
 
@@ -427,31 +452,3 @@ void LASHeader_Destroy(LASHeaderH hHeader)
 
 
 } // extern "C"
-
-// 
-// #include "lasdefinitions.h"
-// #include "laswriter.h"
-// #include "lasreader.h"
-// #include "lasheader.h"
-// 
-// LASReaderH LAS_Reader_Create() 
-// 
-// {
-//     return (LASReaderH) new LASreader();
-//     
-// }
-// 
-
-// 
-// int LAS_Reader_Open(LASReaderH hReader, FILE* file, int bSkipHeader, int bSkipVariableHeader)
-// {
-//     bool output = false;
-//     output = ((LASreader*)hReader)->open(file, bSkipHeader, bSkipVariableHeader);   
-//     return output;
-// }
-// 
-// 
-// LASWriterH LAS_Writer_Create()
-// {
-//     return (LASWriterH) new LASwriter();
-// }

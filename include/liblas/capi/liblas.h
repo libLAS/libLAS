@@ -29,7 +29,8 @@ typedef enum
 } LASError;
 
 void LASError_Reset(void);
-int LASError_GetLastErrorNum(void);
+void LASError_Pop();
+LASError LASError_GetLastErrorNum(void);
 const char* LASError_GetLastErrorMsg(void);
 const char* LASError_GetLastErrorMethod(void);
 

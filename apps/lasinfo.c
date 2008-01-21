@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         }
       }
       reader = LASReader_Create(file_name);
-  /*   if (!reader) { usage();} */
+      if (!reader) { fprintf(stdout, "Error! %d, %s, in method %s\n",LASError_GetLastErrorNum(),LASError_GetLastErrorMsg(),LASError_GetLastErrorMethod()); exit(-1);} 
       
       header = LASReader_GetHeader(reader);
 /*     if (!header) { usage();} */
