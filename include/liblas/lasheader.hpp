@@ -38,12 +38,18 @@ public:
     uint8_t GetVersionMinor() const;
     void SetVersionMinor(uint8_t const& v);
 
-    // TODO: Add Set* functions
     std::string GetSystemId() const;
-    std::string GetSoftwareId() const;
+    void SetSystemId(std::string const& v);
 
+    std::string GetSoftwareId() const;
+    void SetSoftwareId(std::string const& v);
+
+    // TODO: Replace these 2 calls with more general version: Set/GetCreationDate(date)
     uint16_t GetCreationDOY() const;
+    void SetCreationDOY(uint16_t const& v);
+
     uint16_t GetCreationYear() const;
+    void SetCreationYear(uint16_t const&v);
 
     uint16_t GetHeaderSize() const;
     uint32_t GetDataOffset() const;
