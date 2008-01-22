@@ -1,9 +1,11 @@
+#if defined(_MSC_VER) && defined(USE_VLD)
 #include <vld.h>
+#endif
+
 // liblas
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/laswriter.hpp>
-#include <liblas/lasreader.hpp>
 #include <liblas/guid.hpp>
 // std
 #include <algorithm>
@@ -29,34 +31,25 @@ int main()
     {
         char const* name = "test.las";
 
-        {
-            std::ofstream ofs(name, ios::out | ios::binary);
+        std::ofstream ofs(name, ios::out | ios::binary);
 
-            liblas::LASHeader hdr;
-            hdr.SetDataFormatId(LASHeader::ePointFormat1);
-            hdr.SetPointRecordsCount(1000); // should be corrected automatically by writer
-            liblas::LASWriter writer(ofs, hdr);
+        liblas::LASHeader hdr;
+        hdr.SetDataFormatId(LASHeader::ePointFormat1);
+        hdr.SetPointRecordsCount(1000); // should be corrected automatically by writer
+        liblas::LASWriter writer(ofs, hdr);
 
-            liblas::LASPoint p;
-            p.SetCoordinates(10, 20, 30);
+        liblas::LASPoint p;
+        p.SetCoordinates(10, 20, 30);
 
-            writer.WritePoint(p);
-        }
-        return 0;
-
-        {
-            std::ifstream ifs(name, ios::out | ios::binary);
-            liblas::LASReader reader(ifs);
-            reader.ReadNextPoint();
-        }
+        writer.WritePoint(p);
     }
     catch (std::exception const& e)
     {
-        std::cout << "Error: " << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
     }
     catch (...)
     {
-        std::cout << "Unknown error\n";
+        std::cerr << "Unknown error\n";
     }
 
     return 0;
