@@ -374,6 +374,8 @@ void LASHeader::SetMin(double x, double y, double z)
 
 void LASHeader::Read(std::ifstream& ifs)
 {
+    // TODO: Move header reading to reader implementation(s)
+
     using detail::read_n;
 
     if (!ifs)
