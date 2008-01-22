@@ -43,9 +43,9 @@ bool LASReader::ReadNextPoint()
     double time = 0;
     
     if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
-        m_pimpl->ReadNextPoint(m_record);
+        ret = m_pimpl->ReadNextPoint(m_record);
     else
-        m_pimpl->ReadNextPoint(m_record, time);
+        ret = m_pimpl->ReadNextPoint(m_record, time);
 
     double const x = m_record.x * m_header.GetScaleX() + m_header.GetOffsetX();
     double const y = m_record.y * m_header.GetScaleY() + m_header.GetOffsetY();
