@@ -1,28 +1,30 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/utility.hpp>
+// std
+#include <cstring>
 
 namespace liblas {
 
 LASPoint::LASPoint() :
-    m_pt(), m_intensity(0), m_flags(0), m_class(0), m_gpsTime(0)
+    m_intensity(0), m_flags(0), m_class(0), m_gpsTime(0)
 {
-    // constructed
+    std::memset(m_coords, 0, coords_size);
 }
 
 LASPoint::LASPoint(LASPoint const& other) :
-    m_pt(other.m_pt), m_intensity(other.m_intensity),
+    m_intensity(other.m_intensity),
         m_flags(other.m_flags), m_class(other.m_class),
             m_gpsTime(other.m_gpsTime)
 {
-    // copied
+    std::memcpy(m_coords, other.m_coords, coords_size);
 }
 
 LASPoint& LASPoint::operator=(LASPoint const& rhs)
 {
     if (&rhs != this)
     {
-        m_pt = rhs.m_pt;
+        std::memcpy(m_coords, rhs.m_coords, coords_size);
         m_intensity = rhs.m_intensity;
         m_flags = rhs.m_flags;
         m_class = rhs.m_class;

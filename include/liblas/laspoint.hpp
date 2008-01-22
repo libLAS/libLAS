@@ -2,7 +2,8 @@
 #define LIBLAS_LASPOINT_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
-#include <liblas/detail/utility.hpp>
+#include <stdexcept> // std::out_of_range
+#include <cstdlib> // std::size_t
 
 namespace liblas {
 
@@ -78,35 +79,44 @@ public:
     double GetTime() const;
     void SetTime(double time);
 
+    double& operator[](std::size_t n);
+    double const& operator[](std::size_t n) const;
+
 private:
 
-    detail::Point<double> m_pt;
+    static std::size_t const coords_size = 3;
+    double m_coords[coords_size];
     uint16_t m_intensity;
     uint8_t m_flags;
     uint8_t m_class;
     double m_gpsTime;
+
+    void throw_out_of_range() const
+    {
+        throw std::out_of_range("coordinate subscript out of range");
+    }
 };
 
 inline void LASPoint::SetCoordinates(double x, double y, double z)
 {
-    m_pt.x = x;
-    m_pt.y = y;
-    m_pt.z = z;
+    m_coords[0] = x;
+    m_coords[1] = y;
+    m_coords[2] = z;
 }
 
 inline double LASPoint::GetX() const
 {
-    return m_pt.x;
+    return m_coords[0];
 }
 
 inline double LASPoint::GetY() const
 {
-    return m_pt.y;
+    return m_coords[1];
 }
 
 inline double LASPoint::GetZ() const
 {
-    return m_pt.z;
+    return m_coords[2];
 }
 
 inline uint16_t LASPoint::GetIntensity() const
@@ -171,6 +181,22 @@ inline double LASPoint::GetTime() const
 inline void LASPoint::SetTime(double time)
 {
     m_gpsTime = time;
+}
+
+inline double& LASPoint::operator[](std::size_t n)
+{
+    if (3 <= n)
+        throw_out_of_range();
+
+    return m_coords[n];
+}
+
+inline double const& LASPoint::operator[](std::size_t n) const
+{
+    if (3 <= n)
+        throw_out_of_range();
+
+    return m_coords[n];
 }
 
 } // namespace liblas

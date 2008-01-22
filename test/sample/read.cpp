@@ -50,12 +50,12 @@ int main()
         {
             liblas::LASPoint const& p = reader.GetPoint();
 
-            mx.first = std::min<double>(mx.first, p.GetX());
-            mx.second = std::max<double>(mx.second, p.GetX());
-            my.first = std::min<double>(my.first, p.GetY());
-            my.second = std::max<double>(my.second, p.GetY());
-            mz.first = std::min<double>(mz.first, p.GetZ());
-            mz.second = std::max<double>(mz.second, p.GetZ());
+            mx.first = std::min<double>(mx.first, p[0]);
+            mx.second = std::max<double>(mx.second, p[0]);
+            my.first = std::min<double>(my.first, p[1]);
+            my.second = std::max<double>(my.second, p[1]);
+            mz.first = std::min<double>(mz.first, p[2]);
+            mz.second = std::max<double>(mz.second, p[2]);
             
             // Warning: Printing zillion of points may take looong time
             //cout << i << ". " << p << '\n';
