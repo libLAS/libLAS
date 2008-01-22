@@ -64,7 +64,7 @@ public:
         construct(std::string(str));
     }
 
-    explicit guid(wchar_t const*const str)
+    explicit guid(wchar_t const* const str)
     {
         if (0 == str)
             throw_invalid_argument();
@@ -75,6 +75,11 @@ public:
     explicit guid(std::basic_string<ch, char_traits, alloc> const& str)
     {
         construct(str);
+    }
+
+    guid(liblas::uint32_t const& d1, liblas::uint16_t const& d2, liblas::uint16_t const& d3, liblas::uint8_t const (&d4)[8])
+    {
+        construct(d1, d2, d3, d4);
     }
 
     guid(guid const& rhs) /* throw() */
@@ -154,7 +159,26 @@ public:
     template <typename ByteOutputIterator>
     void output_bytes(ByteOutputIterator out) const
     {
-        std::copy(data_, data_  static_size, out);
+        std::copy(data_, data_ + static_size, out);
+    }
+
+    void output_data(liblas::uint32_t& d1, liblas::uint16_t& d2, liblas::uint16_t& d3, liblas::uint8_t (&d4)[8]) const
+    {
+        std::stringstream ss;
+
+        ss << data_[0] << data_[1] << data_[2] << data_[3];
+        ss >> std::hex >> d1;
+
+        ss << data_[4] << data_[5];
+        ss >> std::hex >> d2;
+
+        ss << data_[6] << data_[7];
+        ss >> std::hex >> d3;
+
+        for (std::size_t i = 0; i < sizeof(d4); ++i)
+        {
+            d4[i] = data_[i + 8];
+        }
     }
 
     static guid const& null() /* throw() */
@@ -201,6 +225,11 @@ public:
 
 private:
 
+    void throw_invalid_argument() const
+    {
+        throw std::invalid_argument("invalid guid string");
+    }
+
     template <typename ch, typename char_traits, typename alloc>
     void construct(std::basic_string<ch, char_traits, alloc> const& str)
     {
@@ -211,9 +240,33 @@ private:
         }
     }
 
-    void throw_invalid_argument() const
+    void construct(liblas::uint32_t const& d1, liblas::uint16_t const& d2, liblas::uint16_t const& d3, liblas::uint8_t const (&d4)[8])
     {
-        throw std::invalid_argument("invalid guid string");
+        std::ostringstream ss;
+        ss.flags(std::ios::hex);        
+        ss.fill('0');
+
+        ss.width(8);
+        ss << d1;
+        ss << '-';
+
+        ss.width(4);
+        ss << d2;
+        ss << '-';
+
+        ss.width(4);
+        ss << d3;
+        ss << '-';
+
+        for (std::size_t i = 0; i < sizeof(d4); ++i)
+        {
+            ss.width(2);
+            ss << static_cast<liblas::uint32_t>(d4[i]);
+            if (1 == i)
+                ss << '-';
+        }
+
+        construct(ss.str());
     }
 
     //random number based
@@ -299,6 +352,8 @@ std::basic_ostream<ch, char_traits>& operator<<(std::basic_ostream<ch, char_trai
 {
     using namespace std;
 
+    // TODO: If optional support of Boost is added,
+    // use Boost I/O State Savers for safe RAII.
     std::ios_base::fmtflags flags_saver(os.flags());
     std::streamsize width_saver(os.width());
     ch fill_saver(os.fill());
@@ -383,7 +438,8 @@ std::basic_istream<ch, char_traits>& operator>>(std::basic_istream<ch, char_trai
                 if (i == 3 || i == 5 || i == 7 || i == 9)
                 {
                     is >> c;
-                    if (c != '-') is.setstate(ios_base::failbit);
+                    if (c != '-')
+                        is.setstate(ios_base::failbit);
                 }
             }
         }
@@ -391,7 +447,8 @@ std::basic_istream<ch, char_traits>& operator>>(std::basic_istream<ch, char_trai
         if (bHaveBraces && is)
         {
             is >> c;
-            if (c != '}') is.setstate(ios_base::failbit);
+            if (c != '}')
+                is.setstate(ios_base::failbit);
         }
         
         if (is)
