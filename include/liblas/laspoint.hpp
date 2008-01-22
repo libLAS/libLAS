@@ -7,23 +7,28 @@
 
 namespace liblas {
 
+// TODO: HIGH PRIORITY: Make record type specific to LAS version and Point Data Format
 struct LASPointRecord
 {
     LASPointRecord() :
-        x(0), y(0), z(0), intensity(0), flags(0),
-        classification(0), scan_angle_rank(0),
-        user_data(0), point_source_id(0)
+        x(0), y(0), z(0),
+        intensity(0),
+        flags(0),
+        classification(0),
+        scan_angle_rank(0),
+        user_data(0),
+        point_source_id(0)
     {}
 
-    int x;
-    int y;
-    int z;
-    unsigned short intensity;
-    unsigned char flags; // TODO: Replace with portable std::bitset<8>
-    unsigned char classification;
-    char scan_angle_rank;
-    unsigned char user_data;
-    unsigned short point_source_id;
+    uint32_t x;
+    uint32_t y;
+    uint32_t z;
+    uint16_t intensity;
+    uint8_t flags; // TODO: Replace with portable std::bitset<8>
+    uint8_t classification;
+    int8_t scan_angle_rank;
+    uint8_t user_data;
+    uint16_t point_source_id;
 };
 
 class LASPoint
@@ -68,7 +73,7 @@ public:
     uint8_t GetScanFlags() const;
     void SetScanFlags(uint8_t flags);
 
-    uint16_t GetClassification() const;
+    uint8_t GetClassification() const;
     void SetClassification(uint8_t classify);
     
     double GetTime() const;
@@ -153,7 +158,7 @@ inline double LASPoint::GetTime() const
     return m_gpsTime;
 }
 
-inline uint16_t LASPoint::GetClassification() const
+inline uint8_t LASPoint::GetClassification() const
 {
     return m_class;
 }
