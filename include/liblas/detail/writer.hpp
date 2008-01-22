@@ -14,8 +14,9 @@ public:
     Writer();
     virtual ~Writer();
     virtual std::size_t GetVersion() const = 0;
-    virtual bool WriteHeader(LASHeader const& header) = 0;
-    virtual bool WritePoint(LASPoint const& point) = 0;
+    virtual void WriteHeader(LASHeader const& header) = 0;
+    virtual void UpdateHeader(LASHeader const& header) = 0;
+    virtual void WritePointRecord(LASPointRecord const& record) = 0;
 
 private:
 };

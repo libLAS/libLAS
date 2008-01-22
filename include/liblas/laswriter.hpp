@@ -25,29 +25,18 @@ public:
     ~LASWriter();
     
     std::size_t GetVersion() const;
+    bool WritePoint(LASPoint const& point);
 
 private:
-    
-    //
-    // Private data members
-    //
-    const std::auto_ptr<detail::Writer> m_pimpl;
-
-    LASHeader m_header;
-    LASPoint m_point;
-    LASPointRecord m_record;
-
-    //
-    // Private function members
-    //
     
     // Blocked copying operations, declared but not defined.
     LASWriter(LASWriter const& other);
     LASWriter& operator=(LASWriter const& rhs);
 
-    // Throws on error
-    //void Init();
+    const std::auto_ptr<detail::Writer> m_pimpl;
 
+    LASHeader m_header;
+    LASPointRecord m_record;
 };
 
 } // namespace liblas

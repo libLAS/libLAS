@@ -18,13 +18,26 @@ LASWriter::LASWriter(std::ofstream& ofs, LASHeader const& header) :
 
 LASWriter::~LASWriter()
 {
-    // empty, but required so we can implement PIMPL using
-    // std::auto_ptr with incomplete type (Reader).
+    m_pimpl->UpdateHeader(m_header);
 }
 
 std::size_t LASWriter::GetVersion() const
 {
     return m_pimpl->GetVersion();
+}
+
+bool LASWriter::WritePoint(LASPoint const& point)
+{
+    m_record.x = static_cast<uint32_t>((point.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX());
+    m_record.y = static_cast<uint32_t>((point.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
+    m_record.z = static_cast<uint32_t>((point.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ());
+    m_record.intensity = point.GetIntensity();
+    m_record.flags = point.GetScanFlags();
+    m_record.classification = point.GetClassification();
+
+    m_pimpl->WritePointRecord(m_record);
+
+    return true;
 }
 
 } // namespace liblas

@@ -12,7 +12,8 @@
 
 namespace liblas { namespace detail { namespace v10 {
 
-WriterImpl::WriterImpl(std::ofstream& ofs) : Base(), m_ofs(ofs)
+WriterImpl::WriterImpl(std::ofstream& ofs) :
+    Base(), m_ofs(ofs), m_pointCount(0)
 {
 }
 
@@ -21,7 +22,7 @@ std::size_t WriterImpl::GetVersion() const
     return eLASVersion10;
 }
 
-bool WriterImpl::WriteHeader(LASHeader const& header)
+void WriterImpl::WriteHeader(LASHeader const& header)
 {
     // TODO: should we return anything or just declare it as void?
 
@@ -137,16 +138,37 @@ bool WriterImpl::WriteHeader(LASHeader const& header)
     // 30-31. Max/Min Z
     detail::write_n(m_ofs, header.GetMaxZ(), sizeof(double));
     detail::write_n(m_ofs, header.GetMinZ(), sizeof(double));
-
-    return true;
 }
 
-bool WriterImpl::WritePoint(LASPoint const& point)
+void WriterImpl::UpdateHeader(LASHeader const& header)
 {
-    // TODO: to be implemented
+    if (m_pointCount != header.GetPointRecordsCount())
+    {
+        // Skip to first byte of number of point records data member
+        std::streamsize const dataPos = 107; 
+        m_ofs.seekp(dataPos, std::ios::beg);
+
+        detail::write_n(m_ofs, m_pointCount , sizeof(m_pointCount));
+    }
+}
+
+void WriterImpl::WritePointRecord(LASPointRecord const& record)
+{
     // TODO: should we return anything or just declare it as void?
 
-    return false;
+    // Point data start signature
+    if (0 == m_pointCount)
+    {
+        uint8_t const sgn1 = 0xCC;
+        uint8_t const sgn2 = 0xDD;
+        detail::write_n(m_ofs, sgn1, sizeof(uint8_t));
+        detail::write_n(m_ofs, sgn2, sizeof(uint8_t));
+    }
+
+    assert(20 == sizeof(record)); // TODO: Static assert would be better
+    detail::write_n(m_ofs, record, sizeof(record));
+
+    ++m_pointCount;
 }
 
 }}} // namespace liblas::detail::v10

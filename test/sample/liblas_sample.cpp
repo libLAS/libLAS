@@ -34,7 +34,13 @@ int main()
 
             liblas::LASHeader hdr;
             liblas::LASWriter writer(ofs, hdr);
+
+            liblas::LASPoint p;
+            p.SetCoordinates(10, 20, 30);
+
+            writer.WritePoint(p);
         }
+        return 0;
 
         {
             std::ifstream ifs(name, ios::out | ios::binary);
