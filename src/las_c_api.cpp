@@ -42,20 +42,22 @@ std::stack<LASError > errors;
    do { if( NULL == ptr ) \
       { \
         LASErrorEnum const ret = LE_Failure; \
-        char message[250]; \
-        sprintf(message, "Pointer \'%s\' is NULL in \'%s\'.", #ptr, (func));\
+        std::ostringstream msg; \
+        msg << "Pointer \'" << #ptr << "\' is NULL in \'" << (func) <<"\'."; \
+        std::string message(msg.str()); \
         LASError_PushError( ret, \
-           message, (func)); \
+           message.c_str(), (func)); \
          return; }} while(0)
 
 #define VALIDATE_POINTER1(ptr, func, rc) \
    do { if( NULL == ptr ) \
       { \
-          LASErrorEnum const ret = LE_Failure; \
-        char message[250]; \
-        sprintf(message, "Pointer \'%s\' is NULL in \'%s\'.", #ptr, (func));\
+        LASErrorEnum const ret = LE_Failure; \
+        std::ostringstream msg; \
+        msg << "Pointer \'" << #ptr << "\' is NULL in \'" << (func) <<"\'."; \
+        std::string message(msg.str()); \
         LASError_PushError( ret, \
-           message, (func)); \
+           message.c_str(), (func)); \
         return (rc); }} while(0)
 
 void LASError_Reset() {
