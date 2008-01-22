@@ -9,6 +9,12 @@ namespace liblas {
 
 struct LASPointRecord
 {
+    LASPointRecord() :
+        x(0), y(0), z(0), intensity(0), flags(0),
+        classification(0), scan_angle_rank(0),
+        user_data(0), point_source_id(0)
+    {}
+
     int x;
     int y;
     int z;
@@ -58,6 +64,8 @@ public:
     uint16_t GetNumberOfReturns() const;
     uint16_t GetScanDirection() const;
     uint16_t GetFlightLineEdge() const;
+
+    uint8_t GetScanFlags() const;
     void SetScanFlags(uint8_t flags);
 
     uint16_t GetClassification() const;
@@ -128,6 +136,11 @@ inline uint16_t LASPoint::GetFlightLineEdge() const
 {
     // Read bit 7
     return ((m_flags >> 7) & 0x01);
+}
+
+inline uint8_t LASPoint::GetScanFlags() const
+{
+    return m_flags;
 }
 
 inline void LASPoint::SetScanFlags(uint8_t flags)
