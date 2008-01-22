@@ -33,6 +33,8 @@ int main()
             std::ofstream ofs(name, ios::out | ios::binary);
 
             liblas::LASHeader hdr;
+            hdr.SetDataFormatId(LASHeader::ePointFormat1);
+            hdr.SetPointRecordsCount(1000); // should be corrected automatically by writer
             liblas::LASWriter writer(ofs, hdr);
 
             liblas::LASPoint p;

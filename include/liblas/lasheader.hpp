@@ -120,8 +120,8 @@ private:
     static char const* const SystemIdentifier; // = "libLAS";
     static char const* const SoftwareIdentifier; // = "libLAS 1.0";
 
-    // TODO: replace static-size char arrays with std::string
-    //       and return const-reference to string object.
+    // TODO (low-priority): replace static-size char arrays
+    // with std::string and return const-reference to string object.
     
     //
     // Private function members

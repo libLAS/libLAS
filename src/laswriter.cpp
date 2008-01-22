@@ -28,6 +28,7 @@ std::size_t LASWriter::GetVersion() const
 
 bool LASWriter::WritePoint(LASPoint const& point)
 {
+    // TODO: Move composition of point record deep into writer implementation
     m_record.x = static_cast<uint32_t>((point.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX());
     m_record.y = static_cast<uint32_t>((point.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
     m_record.z = static_cast<uint32_t>((point.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ());
@@ -35,7 +36,10 @@ bool LASWriter::WritePoint(LASPoint const& point)
     m_record.flags = point.GetScanFlags();
     m_record.classification = point.GetClassification();
 
-    m_pimpl->WritePointRecord(m_record);
+    if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
+        m_pimpl->WritePointRecord(m_record);
+    else
+        m_pimpl->WritePointRecord(m_record, point.GetTime());
 
     return true;
 }

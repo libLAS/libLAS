@@ -24,8 +24,6 @@ std::size_t WriterImpl::GetVersion() const
 
 void WriterImpl::WriteHeader(LASHeader const& header)
 {
-    // TODO: should we return anything or just declare it as void?
-
     uint8_t n1 = 0;
     uint16_t n2 = 0;
     uint32_t n4 = 0;
@@ -105,7 +103,7 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     detail::write_n(m_ofs, n2, sizeof(n2));
 
     // 18. Number of point records
-    // TODO: This value must be updated after all point data records are added.
+    // This value is updated if necessary, see UpdateHeader function.
     n4 = header.GetPointRecordsCount();
     detail::write_n(m_ofs, n4, sizeof(n4));
 
@@ -154,21 +152,33 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
 
 void WriterImpl::WritePointRecord(LASPointRecord const& record)
 {
-    // TODO: should we return anything or just declare it as void?
+    // Write point data record format 0
 
-    // Point data start signature
     if (0 == m_pointCount)
     {
+        // Two bytes of point data start signature, required by LAS 1.0
         uint8_t const sgn1 = 0xCC;
         uint8_t const sgn2 = 0xDD;
         detail::write_n(m_ofs, sgn1, sizeof(uint8_t));
         detail::write_n(m_ofs, sgn2, sizeof(uint8_t));
     }
 
-    assert(20 == sizeof(record)); // TODO: Static assert would be better
+    // TODO: Static assert would be better
+    assert(20 == sizeof(record));
     detail::write_n(m_ofs, record, sizeof(record));
 
     ++m_pointCount;
+}
+
+void WriterImpl::WritePointRecord(LASPointRecord const& record, double const& time)
+{
+    // TODO: Static assert would be better
+    assert(28 == sizeof(record) + sizeof(double));
+
+    // Write point data record format 1
+    WritePointRecord(record);
+
+    detail::write_n(m_ofs, time, sizeof(double));
 }
 
 }}} // namespace liblas::detail::v10

@@ -1,13 +1,12 @@
 #ifndef LIBLAS_LASPOINT_HPP_INCLUDED
 #define LIBLAS_LASPOINT_HPP_INCLUDED
 
-#include <liblas/lasheader.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/utility.hpp>
 
 namespace liblas {
 
-// TODO: HIGH PRIORITY: Make record type specific to LAS version and Point Data Format
+// TODO: Move to implementation details namespace
 struct LASPointRecord
 {
     LASPointRecord() :
@@ -65,13 +64,13 @@ public:
     uint16_t GetIntensity() const;
     void SetIntensity(uint16_t intensity);
 
+    uint8_t GetScanFlags() const;
+    void SetScanFlags(uint8_t flags);
+    
     uint16_t GetReturnNumber() const;
     uint16_t GetNumberOfReturns() const;
     uint16_t GetScanDirection() const;
     uint16_t GetFlightLineEdge() const;
-
-    uint8_t GetScanFlags() const;
-    void SetScanFlags(uint8_t flags);
 
     uint8_t GetClassification() const;
     void SetClassification(uint8_t classify);
