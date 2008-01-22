@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
       fprintf(stdout, "  file signature:            '%s'\n", LASHeader_GetFileSignature(header) );
       fprintf(stdout, "  file source ID:            %d\n", LASHeader_GetFileSourceId(header) ) ;
       fprintf(stdout, "  reserved:                  %d\n", LASHeader_GetReserved(header) );
-      fprintf(stdout, "  project ID GUID data 1-4:  %d %d %d '%s'\n", LASHeader_GetProjectId1(header), LASHeader_GetProjectId2(header), LASHeader_GetProjectId3(header), LASHeader_GetProjectId4(header));
+      fprintf(stdout, "  project ID GUID:           '%s'\n", LASHeader_GetProjectId(header));
       fprintf(stdout, "  version major.minor:       %d.%d\n", LASHeader_GetVersionMajor(header), LASHeader_GetVersionMinor(header));
       fprintf(stdout, "  system_identifier:         '%s'\n", LASHeader_GetSystemId(header));
       fprintf(stdout, "  generating_software:       '%s'\n", LASHeader_GetSoftwareId(header));

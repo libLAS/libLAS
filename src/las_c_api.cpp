@@ -2,6 +2,7 @@
 
 #include <liblas/lasreader.hpp>
 #include <liblas/laserror.hpp>
+#include <liblas/guid.hpp>
 
 typedef void *LASWriterH;
 typedef void *LASReaderH;
@@ -35,10 +36,27 @@ typedef enum
 
 std::ifstream g_ifs;
 
-
-
 std::stack<LASError > errors;
 
+#define VALIDATE_POINTER0(ptr, func) \
+   do { if( NULL == ptr ) \
+      { \
+        LASErrorEnum const ret = LE_Failure; \
+        char message[250]; \
+        sprintf(message, "Pointer \'%s\' is NULL in \'%s\'.", #ptr, (func));\
+        LASError_PushError( ret, \
+           message, (func)); \
+         return; }} while(0)
+
+#define VALIDATE_POINTER1(ptr, func, rc) \
+   do { if( NULL == ptr ) \
+      { \
+          LASErrorEnum const ret = LE_Failure; \
+        char message[250]; \
+        sprintf(message, "Pointer \'%s\' is NULL in \'%s\'.", #ptr, (func));\
+        LASError_PushError( ret, \
+           message, (func)); \
+        return (rc); }} while(0)
 
 void LASError_Reset() {
     if (errors.empty()) return;
@@ -78,7 +96,7 @@ const char* LASError_GetLastErrorMethod(){
 }
 
 void LASError_PushError(int code, const char *message, const char *method) {
-    LASError err = LASError(code, message, method);
+    LASError err = LASError(code, std::string(message), std::string(method));
     errors.push(err);
 }
 
@@ -89,12 +107,6 @@ LASReaderH LASReader_Create(const char* filename)
         LASError_PushError(LE_Failure, "Inputted filename was null", "LASReader_Create");
         return NULL;
     }
-    // try {
-    //     
-    // } catch (std::exception const& e) 
-    // {
-    //     
-    // }
     try {
         g_ifs.open(filename, std::ios::in | std::ios::binary);
         LASReader* reader = new LASReader(g_ifs);
@@ -110,6 +122,8 @@ LASReaderH LASReader_Create(const char* filename)
 
 void LASReader_Destroy(LASReaderH hReader)
 {
+    VALIDATE_POINTER0(hReader, "LASReader_Destroy");
+    
     delete ((LASReader*) hReader);
     g_ifs.close();
 }
@@ -117,53 +131,46 @@ void LASReader_Destroy(LASReaderH hReader)
 
 LASHeaderH LASReader_GetHeader(LASReaderH hReader)
 {
-    if (hReader) {
-        LASHeader header = ((LASReader*) hReader)->GetHeader();
-        return (LASHeaderH) new LASHeader( header );
-        
-    }
-    else
-        return NULL;
+    VALIDATE_POINTER1(hReader, "LASReader_GetHeader", NULL);
+
+    LASHeader header = ((LASReader*) hReader)->GetHeader();
+    return (LASHeaderH) new LASHeader( header );
 }
 
 
 LASPointH LASReader_GetPoint(LASReaderH hReader)
 {
-    if (hReader) {
-        LASReader *reader = ((LASReader*) hReader);
-        if (reader->ReadNextPoint()) 
-            return (LASPointH) new LASPoint(reader->GetPoint());
-        else return NULL;
-    }
-    else
+    VALIDATE_POINTER1(hReader, "LASReader_GetPoint", NULL);
+    
+    LASReader *reader = ((LASReader*) hReader);
+    if (reader->ReadNextPoint()) 
+        return (LASPointH) new LASPoint(reader->GetPoint());
+    else 
         return NULL;
 }
 
 double LASPoint_GetX(LASPointH hPoint) {
+
+    VALIDATE_POINTER1(hPoint, "LASPoint_GetX", 0.0);
     
-    if (hPoint){
-        double value = ((LASPoint*) hPoint)->GetX();
-        return value;
-    }
-    else return 0;
+    double value = ((LASPoint*) hPoint)->GetX();
+    return value;
 }
 
 double LASPoint_GetY(LASPointH hPoint) {
     
-    if (hPoint){
-        double value = ((LASPoint*) hPoint)->GetY();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hPoint, "LASPoint_GetY", 0.0);
+    
+    double value = ((LASPoint*) hPoint)->GetY();
+    return value;
 }
 
 double LASPoint_GetZ(LASPointH hPoint) {
     
-    if (hPoint){
-        double value = ((LASPoint*) hPoint)->GetZ();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hPoint, "LASPoint_GetZ", 0.0);
+    
+    double value = ((LASPoint*) hPoint)->GetZ();
+    return value;
 }
 
 
@@ -171,282 +178,229 @@ double LASPoint_GetZ(LASPointH hPoint) {
 
 char* LASHeader_GetFileSignature(LASHeaderH hHeader) {
     // caller owns it
-    if (hHeader){
-        std::string signature = ((LASHeader*) hHeader)->GetFileSignature();
-        char* value = (char*) malloc(signature.size() * sizeof(char*) + 1);
-        strcpy(value, signature.c_str());
-        return value;
-    }
-    else return NULL;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetFileSignature", NULL);
+    
+    std::string signature = ((LASHeader*) hHeader)->GetFileSignature();
+    char* value = (char*) malloc(signature.size() * sizeof(char*) + 1);
+    strcpy(value, signature.c_str());
+    return value;
 }
 
 liblas::uint16_t LASHeader_GetFileSourceId(LASHeaderH hHeader) {
-    if (hHeader){
-        long value = ((LASHeader*) hHeader)->GetFileSourceId();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetFileSourceId", 0);
+
+    long value = ((LASHeader*) hHeader)->GetFileSourceId();
+    return value;
 }
 
 liblas::uint16_t LASHeader_GetReserved(LASHeaderH hHeader) {
-    if (hHeader){
-        unsigned short value = ((LASHeader*) hHeader)->GetReserved();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetReserved", 0);
+
+    unsigned short value = ((LASHeader*) hHeader)->GetReserved();
+    return value;
 }
 
-liblas::uint32_t LASHeader_GetProjectId1(LASHeaderH hHeader) {
-    if (hHeader){
-        long long value = ((LASHeader*) hHeader)->GetProjectId1();
-        return value;
-    }
-    else return 0;
-}
-
-liblas::uint16_t LASHeader_GetProjectId2(LASHeaderH hHeader) {
-    if (hHeader){
-        long value = ((LASHeader*) hHeader)->GetProjectId2();
-        return value;
-    }
-    else return 0;
-}
-
-liblas::uint16_t LASHeader_GetProjectId3(LASHeaderH hHeader) {
-    if (hHeader){
-        long value = ((LASHeader*) hHeader)->GetProjectId3();
-        return value;
-    }
-    else return 0;
-}
-
-char* LASHeader_GetProjectId4(LASHeaderH hHeader) {
-    // caller owns it
-    if (hHeader){
-        std::string projectid = ((LASHeader*) hHeader)->GetProjectId4();
-        char* output = (char*) malloc(projectid.size() * sizeof(char*) + 1);
-        strcpy(output, projectid.c_str());
-        return output;
-    }
-    else return NULL;
+char* LASHeader_GetProjectId(LASHeaderH hHeader) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetProjectId", 0);
+    
+    liblas::guid id = ((LASHeader*) hHeader)->GetProjectId();
+    char* output = (char*) malloc(id.to_string().size() * sizeof(char*) + 1);
+    strcpy(output, id.to_string().c_str());
+    return output;
 }
 
 liblas::uint8_t LASHeader_GetVersionMajor(LASHeaderH hHeader) {
-    if (hHeader){
-        long value = ((LASHeader*) hHeader)->GetVersionMajor();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetVersionMajor", 0);
+
+    long value = ((LASHeader*) hHeader)->GetVersionMajor();
+    return value;
 }
 
 liblas::uint8_t LASHeader_GetVersionMinor(LASHeaderH hHeader) {
-    if (hHeader){
-        long value = ((LASHeader*) hHeader)->GetVersionMinor();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetVersionMinor", 0);
+
+    long value = ((LASHeader*) hHeader)->GetVersionMinor();
+    return value;
 }
 
 char* LASHeader_GetSystemId(LASHeaderH hHeader) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetSystemId", NULL);
+
     // caller owns it
-    if (hHeader){
-        std::string sysid = ((LASHeader*) hHeader)->GetSystemId();
-        char* value = (char*) malloc(sysid.size() * sizeof(char*) + 1);
-        strcpy(value, sysid.c_str());
-        return value;
-    }
-    else return NULL;
+    std::string sysid = ((LASHeader*) hHeader)->GetSystemId();
+    char* value = (char*) malloc(sysid.size() * sizeof(char*) + 1);
+    strcpy(value, sysid.c_str());
+    return value;
 }
 
 liblas::uint16_t LASHeader_GetCreationDOY(LASHeaderH hHeader) {
-    if (hHeader){
-        unsigned short value = ((LASHeader*) hHeader)->GetCreationDOY();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetCreationDOY", 0);
+
+    unsigned short value = ((LASHeader*) hHeader)->GetCreationDOY();
+    return value;
 }
 
 liblas::uint16_t LASHeader_GetCreationYear(LASHeaderH hHeader) {
-    if (hHeader){
-        unsigned short value = ((LASHeader*) hHeader)->GetCreationYear();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetCreationYear", 0);
+
+    unsigned short value = ((LASHeader*) hHeader)->GetCreationYear();
+    return value;
 }
 
 char* LASHeader_GetSoftwareId(LASHeaderH hHeader) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetSoftwareId", NULL);
+
     // caller owns it
-    if (hHeader){
-        std::string softid = ((LASHeader*) hHeader)->GetSoftwareId();
-        char* value = (char*) malloc(softid.size() * sizeof(char*) + 1);
-        strcpy(value, softid.c_str());
-        return value;
-    }
-    else return NULL;
+    std::string softid = ((LASHeader*) hHeader)->GetSoftwareId();
+    char* value = (char*) malloc(softid.size() * sizeof(char*) + 1);
+    strcpy(value, softid.c_str());
+    return value;
 }
 
 liblas::uint16_t LASHeader_GetHeaderSize(LASHeaderH hHeader) {
-    if (hHeader){
-        unsigned short value = ((LASHeader*) hHeader)->GetHeaderSize();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetHeaderSize", 0);
+
+    unsigned short value = ((LASHeader*) hHeader)->GetHeaderSize();
+    return value;
 }
 
 liblas::uint32_t LASHeader_GetDataOffset(LASHeaderH hHeader) {
-    if (hHeader){
-        unsigned long value = ((LASHeader*) hHeader)->GetDataOffset();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetDataOffset", 0);
+
+    unsigned long value = ((LASHeader*) hHeader)->GetDataOffset();
+    return value;
 }
 
 
 
 
 liblas::uint32_t LASHeader_GetRecordsCount(LASHeaderH hHeader) {
-    if (hHeader){
-        unsigned long value = ((LASHeader*) hHeader)->GetRecordsCount();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetRecordsCount", 0);
+
+    unsigned long value = ((LASHeader*) hHeader)->GetRecordsCount();
+    return value;
 }
 
 liblas::uint8_t LASHeader_GetDataFormatId(LASHeaderH hHeader) {
-    if (hHeader){
-        unsigned char value = ((LASHeader*) hHeader)->GetDataFormatId();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetDataFormatId", 0);
+
+    unsigned char value = ((LASHeader*) hHeader)->GetDataFormatId();
+    return value;
 }
 
 liblas::uint16_t LASHeader_GetDataRecordLength(LASHeaderH hHeader) {
-    if (hHeader){
-        unsigned short value = ((LASHeader*) hHeader)->GetDataRecordLength();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetDataRecordLength", 0);
+
+    unsigned short value = ((LASHeader*) hHeader)->GetDataRecordLength();
+    return value;
 }
 
 
 liblas::uint32_t LASHeader_GetPointRecordsByReturnCount(LASHeaderH hHeader, int index) {
-    if (hHeader){
-        std::vector<liblas::uint32_t> counts  = ((LASHeader*) hHeader)->GetPointRecordsByReturnCount();
-        if ( (index < 5) && (index >= 0)) {
-            return counts[index];
-        } else {
-            return 0;
-        }
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetPointRecordsByReturnCount", 0);
 
-    }
+    std::vector<liblas::uint32_t> counts  = ((LASHeader*) hHeader)->GetPointRecordsByReturnCount();
+    if ( (index < 5) && (index >= 0)) {
+        return counts[index];
+    } 
+
     return 0;
+    
 }
 
 liblas::uint32_t LASHeader_GetPointRecordsCount(LASHeaderH hHeader) {
-    if (hHeader){
-        unsigned long value = ((LASHeader*) hHeader)->GetPointRecordsCount();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetPointRecordsCount", 0);
+
+    unsigned long value = ((LASHeader*) hHeader)->GetPointRecordsCount();
+    return value;
 }
 double LASHeader_GetScaleX(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleX();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetScaleX", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetScaleX();
+    return value;
 }
 
 double LASHeader_GetScaleY(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleY();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetScaleY", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetScaleY();
+    return value;
 }
 
 double LASHeader_GetScaleZ(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetScaleZ();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetScaleZ", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetScaleZ();
+    return value;
 }
 
 double LASHeader_GetOffsetX(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetOffsetX();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetOffsetX", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetOffsetX();
+    return value;
 }
 
 double LASHeader_GetOffsetY(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetOffsetY();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetOffsetY", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetOffsetY();
+    return value;
 }
 
 double LASHeader_GetOffsetZ(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetOffsetZ();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetOffsetZ", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetOffsetZ();
+    return value;
 }
 
 double LASHeader_GetMinX(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetMinX();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetMinX", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetMinX();
+    return value;
 }
 
 double LASHeader_GetMinY(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetMinY();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetMinY", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetMinY();
+    return value;
 }
 
 double LASHeader_GetMinZ(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetMinZ();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetMinZ", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetMinZ();
+    return value;
 }
 
 double LASHeader_GetMaxX(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetMaxX();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetMaxX", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetMaxX();
+    return value;
 }
 
 double LASHeader_GetMaxY(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetMaxY();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetMaxY", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetMaxY();
+    return value;
 }
 
 double LASHeader_GetMaxZ(LASHeaderH hHeader) {
-    if (hHeader){
-        double value = ((LASHeader*) hHeader)->GetMaxZ();
-        return value;
-    }
-    else return 0;
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetMaxZ", 0.0);
+
+    double value = ((LASHeader*) hHeader)->GetMaxZ();
+    return value;
 }
 
 void LASHeader_Destroy(LASHeaderH hHeader)
 {
+    VALIDATE_POINTER0(hHeader, "LASHeader_Destroy");
     delete ((LASHeader*) hHeader);
 }
 

@@ -50,10 +50,7 @@ char* LAS_DLL LASHeader_GetFileSignature(LASHeaderH hHeader);
 uint16_t LAS_DLL LASHeader_GetFileSourceId(LASHeaderH hHeader);
 
 
-uint32_t LAS_DLL LASHeader_GetProjectId1(LASHeaderH hHeader);
-uint16_t LAS_DLL LASHeader_GetProjectId2(LASHeaderH hHeader);
-uint16_t LAS_DLL LASHeader_GetProjectId3(LASHeaderH hHeader);
-char* LAS_DLL LASHeader_GetProjectId4(LASHeaderH hHeader);
+char* LASHeader_GetProjectId(LASHeaderH hHeader);
 
 uint8_t LAS_DLL LASHeader_GetVersionMajor(LASHeaderH hHeader);
 uint8_t LAS_DLL LASHeader_GetVersionMinor(LASHeaderH hHeader);
