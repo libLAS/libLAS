@@ -76,6 +76,7 @@ public:
     void SetClassification(uint8_t classify);
     
     double GetTime() const;
+    void SetTime(double time);
 
 private:
 
@@ -152,11 +153,6 @@ inline void LASPoint::SetScanFlags(uint8_t flags)
     m_flags = flags;
 }
 
-inline double LASPoint::GetTime() const
-{
-    return m_gpsTime;
-}
-
 inline uint8_t LASPoint::GetClassification() const
 {
     return m_class;
@@ -165,6 +161,16 @@ inline uint8_t LASPoint::GetClassification() const
 inline void LASPoint::SetClassification(uint8_t classify)
 {
     m_class = classify;
+}
+
+inline double LASPoint::GetTime() const
+{
+    return m_gpsTime;
+}
+
+inline void LASPoint::SetTime(double time)
+{
+    m_gpsTime = time;
 }
 
 } // namespace liblas

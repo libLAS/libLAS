@@ -24,6 +24,7 @@ public:
     std::size_t GetVersion() const;
     bool ReadHeader(LASHeader& header);
     bool ReadNextPoint(LASPointRecord& point);
+    bool ReadNextPoint(LASPointRecord& point, double& time);
 
 private:
 

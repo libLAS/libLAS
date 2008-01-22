@@ -39,7 +39,13 @@ LASPoint const& LASReader::GetPoint() const
 
 bool LASReader::ReadNextPoint()
 {
-    bool ret = m_pimpl->ReadNextPoint(m_record);
+    bool ret = false;
+    double time = 0;
+    
+    if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
+        m_pimpl->ReadNextPoint(m_record);
+    else
+        m_pimpl->ReadNextPoint(m_record, time);
 
     double const x = m_record.x * m_header.GetScaleX() + m_header.GetOffsetX();
     double const y = m_record.y * m_header.GetScaleY() + m_header.GetOffsetY();
@@ -49,6 +55,7 @@ bool LASReader::ReadNextPoint()
     m_point.SetIntensity(m_record.intensity);
     m_point.SetScanFlags(m_record.flags);
     m_point.SetClassification(m_record.classification);
+    m_point.SetTime(time);
 
     return ret;
 }

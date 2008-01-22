@@ -27,7 +27,21 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
 bool ReaderImpl::ReadNextPoint(LASPointRecord& point)
 {
+    // Read point data record format 0
+
     return false;
+}
+
+bool ReaderImpl::ReadNextPoint(LASPointRecord& record, double& time)
+{
+    // Read point data record format 1
+
+    // TODO: Replace with compile-time assert
+    assert(28 == sizeof(record) + sizeof(time));
+
+    bool eof = ReadNextPoint(record);
+
+    return eof;
 }
 
 }}} // namespace liblas::detail::v11

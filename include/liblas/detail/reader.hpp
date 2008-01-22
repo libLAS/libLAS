@@ -23,6 +23,7 @@ public:
     virtual std::size_t GetVersion() const = 0;
     virtual bool ReadHeader(LASHeader& header) = 0;
     virtual bool ReadNextPoint(LASPointRecord& point) = 0;
+    virtual bool ReadNextPoint(LASPointRecord& point, double& time) = 0;
 
 protected:
     

@@ -33,8 +33,10 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     return true;
 }
 
-bool ReaderImpl::ReadNextPoint(LASPointRecord& point)
+bool ReaderImpl::ReadNextPoint(LASPointRecord& record)
 {
+    // Read point data record format 0
+
     if (0 == m_current)
     {
         m_ifs.clear();
@@ -44,15 +46,31 @@ bool ReaderImpl::ReadNextPoint(LASPointRecord& point)
     if (m_current < m_size)
     {
         // TODO: Replace with compile-time assert
-        assert(20 == sizeof(LASPointRecord));
+        assert(20 == sizeof(record));
 
-        detail::read_n(point, m_ifs, sizeof(LASPointRecord));
+        detail::read_n(record, m_ifs, sizeof(LASPointRecord));
         ++m_current;
 
         return true;
     }
 
     return false;
+}
+
+bool ReaderImpl::ReadNextPoint(LASPointRecord& record, double& time)
+{
+    // Read point data record format 1
+
+    // TODO: Replace with compile-time assert
+    assert(28 == sizeof(record) + sizeof(time));
+
+    bool eof = ReadNextPoint(record);
+    if (eof)
+    {
+        detail::read_n(time, m_ifs, sizeof(double));
+    }
+
+    return eof;
 }
 
 }}} // namespace liblas::detail::v10

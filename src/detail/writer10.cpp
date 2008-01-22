@@ -173,7 +173,7 @@ void WriterImpl::WritePointRecord(LASPointRecord const& record)
 void WriterImpl::WritePointRecord(LASPointRecord const& record, double const& time)
 {
     // TODO: Static assert would be better
-    assert(28 == sizeof(record) + sizeof(double));
+    assert(28 == sizeof(record) + sizeof(time));
 
     // Write point data record format 1
     WritePointRecord(record);

@@ -47,6 +47,7 @@ int main()
         {
             std::ifstream ifs(name, ios::out | ios::binary);
             liblas::LASReader reader(ifs);
+            reader.ReadNextPoint();
         }
     }
     catch (std::exception const& e)
