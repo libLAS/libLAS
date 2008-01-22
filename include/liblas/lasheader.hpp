@@ -17,7 +17,7 @@ public:
     enum PointFormat
     {
         ePointFormat0 = 0,
-        ePointFormat1 = 1,
+        ePointFormat1 = 1
     };
 
     LASHeader();
@@ -113,7 +113,7 @@ private:
         ePointDataRecordSize1 = 28,
         eSystemIdSize = 32,
         eSoftwareIdSize = 32,
-        eHeaderSize = 227,
+        eHeaderSize = 227
     };
     
     static char const* const FileSignature; // = "LASF";
