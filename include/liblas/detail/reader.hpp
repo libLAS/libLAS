@@ -10,9 +10,10 @@ namespace liblas {
 // Forward declarations
 class LASHeader;
 class LASPoint;
-struct LASPointRecord;
 
 namespace detail {
+
+struct PointRecord;
 
 class Reader
 {
@@ -22,8 +23,8 @@ public:
     virtual ~Reader();
     virtual std::size_t GetVersion() const = 0;
     virtual bool ReadHeader(LASHeader& header) = 0;
-    virtual bool ReadNextPoint(LASPointRecord& point) = 0;
-    virtual bool ReadNextPoint(LASPointRecord& point, double& time) = 0;
+    virtual bool ReadNextPoint(PointRecord& point) = 0;
+    virtual bool ReadNextPoint(PointRecord& point, double& time) = 0;
 
 protected:
     

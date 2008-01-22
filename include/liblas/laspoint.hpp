@@ -7,30 +7,6 @@
 
 namespace liblas {
 
-// TODO: Move to implementation details namespace
-struct LASPointRecord
-{
-    LASPointRecord() :
-        x(0), y(0), z(0),
-        intensity(0),
-        flags(0),
-        classification(0),
-        scan_angle_rank(0),
-        user_data(0),
-        point_source_id(0)
-    {}
-
-    uint32_t x;
-    uint32_t y;
-    uint32_t z;
-    uint16_t intensity;
-    uint8_t flags; // TODO: Replace with portable std::bitset<8>
-    uint8_t classification;
-    int8_t scan_angle_rank;
-    uint8_t user_data;
-    uint16_t point_source_id;
-};
-
 class LASPoint
 {
 public:

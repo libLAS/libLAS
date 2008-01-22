@@ -1,4 +1,5 @@
 #include <liblas/detail/reader10.hpp>
+#include <liblas/detail/utility.hpp>
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
@@ -33,7 +34,7 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     return true;
 }
 
-bool ReaderImpl::ReadNextPoint(LASPointRecord& record)
+bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
 {
     // Read point data record format 0
 
@@ -48,7 +49,7 @@ bool ReaderImpl::ReadNextPoint(LASPointRecord& record)
         // TODO: Replace with compile-time assert
         assert(20 == sizeof(record));
 
-        detail::read_n(record, m_ifs, sizeof(LASPointRecord));
+        detail::read_n(record, m_ifs, sizeof(PointRecord));
         ++m_current;
 
         return true;
@@ -57,7 +58,7 @@ bool ReaderImpl::ReadNextPoint(LASPointRecord& record)
     return false;
 }
 
-bool ReaderImpl::ReadNextPoint(LASPointRecord& record, double& time)
+bool ReaderImpl::ReadNextPoint(detail::PointRecord& record, double& time)
 {
     // Read point data record format 1
 

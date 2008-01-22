@@ -10,7 +10,9 @@ namespace liblas {
 // Forward declarations
 class LASHeader;
 class LASPoint;
-struct LASPointRecord;
+namespace detail {
+    struct PointRecord;
+}
 
 namespace detail { namespace v10 {
 
@@ -23,8 +25,8 @@ public:
     ReaderImpl(std::ifstream& ifs);
     std::size_t GetVersion() const;
     bool ReadHeader(LASHeader& header);
-    bool ReadNextPoint(LASPointRecord& point);
-    bool ReadNextPoint(LASPointRecord& point, double& time);
+    bool ReadNextPoint(PointRecord& point);
+    bool ReadNextPoint(PointRecord& point, double& time);
 
 private:
 

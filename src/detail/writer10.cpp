@@ -147,7 +147,7 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
     }
 }
 
-void WriterImpl::WritePointRecord(LASPointRecord const& record)
+void WriterImpl::WritePointRecord(detail::PointRecord const& record)
 {
     // Write point data record format 0
 
@@ -167,7 +167,7 @@ void WriterImpl::WritePointRecord(LASPointRecord const& record)
     ++m_pointCount;
 }
 
-void WriterImpl::WritePointRecord(LASPointRecord const& record, double const& time)
+void WriterImpl::WritePointRecord(detail::PointRecord const& record, double const& time)
 {
     // TODO: Static assert would be better
     assert(28 == sizeof(record) + sizeof(time));

@@ -11,7 +11,9 @@ namespace liblas {
 // Forward declarations
 class LASHeader;
 class LASPoint;
-struct LASPointRecord;
+namespace detail {
+    struct LASPointRecord;
+}
 
 namespace detail { namespace v10 {
 
@@ -25,8 +27,8 @@ public:
     std::size_t GetVersion() const;
     void WriteHeader(LASHeader const& header);
     void UpdateHeader(LASHeader const& header);
-    void WritePointRecord(LASPointRecord const& record);
-    void WritePointRecord(LASPointRecord const& record, double const& time);
+    void WritePointRecord(PointRecord const& record);
+    void WritePointRecord(PointRecord const& record, double const& time);
 
 private:
 

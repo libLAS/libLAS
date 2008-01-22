@@ -3,7 +3,6 @@
 
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/detail/sharedptr.hpp>
 // std
 #include <fstream>
 #include <string>
@@ -13,8 +12,10 @@
 namespace liblas
 {
 
+ // Forward declarations
 namespace detail {
-    class Writer; // Forward declaration
+    class Writer;
+    struct PointRecord;
 }
 
 class LASWriter
@@ -36,7 +37,7 @@ private:
     const std::auto_ptr<detail::Writer> m_pimpl;
 
     LASHeader m_header;
-    LASPointRecord m_record;
+    detail::PointRecord m_record;
 };
 
 } // namespace liblas
