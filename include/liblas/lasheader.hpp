@@ -2,6 +2,7 @@
 #define LIBLAS_LASHEADER_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
+#include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
 //std
 #include <iosfwd>
@@ -33,10 +34,8 @@ public:
     uint16_t GetReserved() const;
 
     // TODO: Replace GUID data calls with single Get/Set using liblas::guid type
-    uint32_t GetProjectId1() const;
-    uint16_t GetProjectId2() const;
-    uint16_t GetProjectId3() const;
-    std::string GetProjectId4() const;
+    guid GetProjectId() const;
+    void SetProjectId(guid const& v);
 
     uint8_t GetVersionMajor() const;
     void SetVersionMajor(uint8_t const& v);

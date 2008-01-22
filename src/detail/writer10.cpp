@@ -35,20 +35,17 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     n4 = header.GetReserved();
     detail::write_n(m_ofs, n4, sizeof(n4));
 
-    // 3. GUID data 1
-    n4 = header.GetProjectId1();
-    detail::write_n(m_ofs, n4, sizeof(n4));
-    
-    // 4. GUID data 2
-    n2 = header.GetProjectId2();
-    detail::write_n(m_ofs, n2, sizeof(n2));
-    
-    // 5. GUID data 3
-    n2 = header.GetProjectId3();
-    detail::write_n(m_ofs, n2, sizeof(n2));
-    
-    // 6. GUID data 4
-    detail::write_n(m_ofs, header.GetProjectId4().c_str(), 8);
+    // 3-6. GUID data
+    uint32_t d1 = 0;
+    uint16_t d2 = 0;
+    uint16_t d3 = 0;
+    uint8_t d4[8] = { 0 };
+    liblas::guid g = header.GetProjectId();
+    g.output_data(d1, d2, d3, d4);
+    detail::write_n(m_ofs, d1, sizeof(d1));
+    detail::write_n(m_ofs, d2, sizeof(d2));
+    detail::write_n(m_ofs, d3, sizeof(d3));
+    detail::write_n(m_ofs, d4, sizeof(d4));
     
     // 7. Version major
     n1 = header.GetVersionMajor();

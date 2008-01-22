@@ -1,5 +1,6 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/cstdint.hpp>
+#include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
 //std
 #include <algorithm>
@@ -126,27 +127,14 @@ uint16_t LASHeader::GetReserved() const
     return m_reserved;
 }
 
-uint32_t LASHeader::GetProjectId1() const
+liblas::guid LASHeader::GetProjectId() const
 {
-    return m_projectId1;
+    return liblas::guid(m_projectId1, m_projectId2, m_projectId3, m_projectId4);
 }
 
-uint16_t LASHeader::GetProjectId2() const
+void LASHeader::SetProjectId(guid const& v)
 {
-    return m_projectId2;
-}
-
-uint16_t LASHeader::GetProjectId3() const
-{
-    return m_projectId3;
-}
-
-std::string LASHeader::GetProjectId4() const
-{
-    char const* p = reinterpret_cast<char const*>(m_projectId4);
-    // TODO: should we force size even if c points to empty array?
-    // std::string tmp(c, 8);
-    return p;
+    v.output_data(m_projectId1, m_projectId2, m_projectId3, m_projectId4);
 }
 
 uint8_t LASHeader::GetVersionMajor() const
