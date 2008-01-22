@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblas_sample", "liblas_sample.vcproj", "{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "write", "write.vcproj", "{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{208417AE-D08E-4938-AC26-A16ABD55AA5B} = {208417AE-D08E-4938-AC26-A16ABD55AA5B}
 	EndProjectSection

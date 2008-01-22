@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="liblas_sample"
+	Name="write"
 	ProjectGUID="{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}"
-	RootNamespace="liblas_sample"
+	RootNamespace="write"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -172,7 +172,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\liblas_sample.cpp"
+			RelativePath=".\write.cpp"
 			>
 		</File>
 	</Files>
