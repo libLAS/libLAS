@@ -53,10 +53,12 @@ bool WriterImpl::WriteHeader(LASHeader const& header)
     
     // 7. Version major
     n1 = header.GetVersionMajor();
+    assert(1 == n1);
     detail::write_n(m_ofs, n1, sizeof(n1));
     
     // 8. Version minor
     n1 = header.GetVersionMinor();
+    assert(0 == n1);
     detail::write_n(m_ofs, n1, sizeof(n1));
 
     // 9. System ID
@@ -75,6 +77,7 @@ bool WriterImpl::WriteHeader(LASHeader const& header)
 
     // 13. Header Size
     n2 = header.GetHeaderSize();
+    assert(227 <= n2);
     detail::write_n(m_ofs, n2, sizeof(n2));
 
     // 14. Offset to data
@@ -83,13 +86,13 @@ bool WriterImpl::WriteHeader(LASHeader const& header)
     // 227 + 2 = 229
     // TODO: This value must be updated after new variable length record is added.
     uint32_t const dataSignatureSize = 2;
-    n4 = header.GetHeaderSize() + dataSignatureSize; 
+    n4 = header.GetHeaderSize() + dataSignatureSize;
+    assert(229 <= n4);
     detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 15. Number of variable length records
-    // At this point, no variable length records are written.
     // TODO: This value must be updated after new variable length record is added.
-    n4 = 0;
+    n4 = header.GetRecordsCount();
     detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 16. Point Data Format ID
@@ -101,9 +104,8 @@ bool WriterImpl::WriteHeader(LASHeader const& header)
     detail::write_n(m_ofs, n2, sizeof(n2));
 
     // 18. Number of point records
-    // At this point, no point data records are written.
     // TODO: This value must be updated after all point data records are added.
-    n4 = 0;
+    n4 = header.GetPointRecordsCount();
     detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 19. Number of points by return
