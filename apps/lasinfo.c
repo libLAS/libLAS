@@ -133,10 +133,18 @@ int main(int argc, char *argv[])
         double coordinates[3];
         double min[3];
         double max[3];
-        LASPointH p = LASReader_GetPoint(reader);
+        LASPointH p = LASReader_GetNextPoint(reader);
         point_min = p;
         point_max = p;
         fprintf(stderr, "point X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(p),LASPoint_GetY(p),LASPoint_GetZ(p));
+
+          fprintf(stdout, 
+                  "Error! %d, %s, in method %s\n",
+                  LASError_GetLastErrorNum(),
+                  LASError_GetLastErrorMsg(),
+                  LASError_GetLastErrorMethod()
+                 ); 
+
        }   
     
      

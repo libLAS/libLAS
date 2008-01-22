@@ -35,7 +35,7 @@ const char* LASError_GetLastErrorMsg(void);
 const char* LASError_GetLastErrorMethod(void);
 
 LASReaderH LAS_DLL LASReader_Create(const char * filename);
-LASPointH LAS_DLL LASReader_GetPoint(LASReaderH hReader);
+LASPointH LAS_DLL LASReader_GetNextPoint(LASReaderH hReader);
 void LAS_DLL LASReader_Destroy(LASReaderH hReader);
 
 double LAS_DLL LASPoint_GetX(LASPointH);
@@ -53,14 +53,22 @@ uint16_t LAS_DLL LASHeader_GetFileSourceId(LASHeaderH hHeader);
 char* LASHeader_GetProjectId(LASHeaderH hHeader);
 
 uint8_t LAS_DLL LASHeader_GetVersionMajor(LASHeaderH hHeader);
+LASError LAS_DLL LASHeader_SetVersionMajor(LASHeaderH hHeader, uint8_t value);
 uint8_t LAS_DLL LASHeader_GetVersionMinor(LASHeaderH hHeader);
+LASError LAS_DLL LASHeader_SetVersionMinor(LASHeaderH hHeader, uint8_t value);
+
 char* LAS_DLL LASHeader_GetSystemId(LASHeaderH hHeader);
+LASError LAS_DLL LASHeader_SetSystemId(LASHeaderH hHeader, const char* value);
+
 char* LAS_DLL LASHeader_GetSoftwareId(LASHeaderH hHeader);
+LASError LAS_DLL LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* value);
 
 int16_t LAS_DLL LASHeader_GetReserved(LASHeaderH hHeader);
 
 int16_t LAS_DLL LASHeader_GetCreationDOY(LASHeaderH hHeader);
+LASError LAS_DLL LASHeader_SetCreationDOY(LASHeaderH hHeader, uint16_t value);
 int16_t LAS_DLL LASHeader_GetCreationYear(LASHeaderH hHeader);
+LASError LAS_DLL LASHeader_SetCreationYear(LASHeaderH hHeader, uint16_t value);
 
 uint16_t LAS_DLL LASHeader_GetHeaderSize(LASHeaderH hHeader);
 uint32_t LAS_DLL LASHeader_GetDataOffset(LASHeaderH hHeader);

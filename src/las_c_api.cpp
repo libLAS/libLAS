@@ -140,15 +140,28 @@ LASHeaderH LASReader_GetHeader(LASReaderH hReader)
 }
 
 
-LASPointH LASReader_GetPoint(LASReaderH hReader)
+LASPointH LASReader_GetNextPoint(LASReaderH hReader)
 {
-    VALIDATE_POINTER1(hReader, "LASReader_GetPoint", NULL);
-    
-    LASReader *reader = ((LASReader*) hReader);
-    if (reader->ReadNextPoint()) 
-        return (LASPointH) new LASPoint(reader->GetPoint());
-    else 
+    VALIDATE_POINTER1(hReader, "LASReader_GetNextPoint", NULL);
+
+
+
+    try {
+        LASReader *reader = ((LASReader*) hReader);
+        if (reader->ReadNextPoint()) 
+            return (LASPointH) new LASPoint(reader->GetPoint());
+        else 
+            return NULL;
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_GetNextPoint");
+        printf("cought exception...returning nulll\n.");
         return NULL;
+    }
+ 
+    return NULL;
+        
+
 }
 
 double LASPoint_GetX(LASPointH hPoint) {
@@ -218,11 +231,40 @@ liblas::uint8_t LASHeader_GetVersionMajor(LASHeaderH hHeader) {
     return value;
 }
 
+LASErrorEnum LASHeader_SetVersionMajor(LASHeaderH hHeader, liblas::uint8_t value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetVersionMajor", LE_Failure);
+
+    try {
+        ((LASHeader*) hHeader)->SetVersionMajor(value);    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetVersionMajor");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
 liblas::uint8_t LASHeader_GetVersionMinor(LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetVersionMinor", 0);
 
     long value = ((LASHeader*) hHeader)->GetVersionMinor();
     return value;
+}
+
+LASErrorEnum LASHeader_SetVersionMinor(LASHeaderH hHeader, liblas::uint8_t value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetVersionMinor", LE_Failure);
+
+    // TODO: Maybe this should be a fatal error -- hobu
+    try {
+        ((LASHeader*) hHeader)->SetVersionMinor(value);    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetVersionMinor");
+        return LE_Failure;
+    }
+ 
+    return LE_None;
 }
 
 char* LASHeader_GetSystemId(LASHeaderH hHeader) {
@@ -235,18 +277,18 @@ char* LASHeader_GetSystemId(LASHeaderH hHeader) {
     return value;
 }
 
-liblas::uint16_t LASHeader_GetCreationDOY(LASHeaderH hHeader) {
-    VALIDATE_POINTER1(hHeader, "LASHeader_GetCreationDOY", 0);
+LASErrorEnum LASHeader_SetSystemId(LASHeaderH hHeader, const char* value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetSystemId", LE_Failure); 
 
-    unsigned short value = ((LASHeader*) hHeader)->GetCreationDOY();
-    return value;
-}
+    try {
+            ((LASHeader*) hHeader)->SetSystemId(std::string(value));
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetSystemId");
+        return LE_Failure;
+    }
 
-liblas::uint16_t LASHeader_GetCreationYear(LASHeaderH hHeader) {
-    VALIDATE_POINTER1(hHeader, "LASHeader_GetCreationYear", 0);
-
-    unsigned short value = ((LASHeader*) hHeader)->GetCreationYear();
-    return value;
+    return LE_None;
 }
 
 char* LASHeader_GetSoftwareId(LASHeaderH hHeader) {
@@ -257,6 +299,46 @@ char* LASHeader_GetSoftwareId(LASHeaderH hHeader) {
     char* value = (char*) malloc(softid.size() * sizeof(char*) + 1);
     strcpy(value, softid.c_str());
     return value;
+}
+
+LASErrorEnum LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetSoftwareId", LE_Failure); 
+
+    try {
+            ((LASHeader*) hHeader)->SetSoftwareId(std::string(value));
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetSoftwareId");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+liblas::uint16_t LASHeader_GetCreationDOY(LASHeaderH hHeader) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetCreationDOY", 0);
+
+    unsigned short value = ((LASHeader*) hHeader)->GetCreationDOY();
+    return value;
+}
+
+LASErrorEnum LASHeader_SetCreationDOY(LASHeaderH hHeader, liblas::uint16_t value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetCreationDOY", LE_Failure);
+    ((LASHeader*) hHeader)->SetCreationDOY(value);    
+    return LE_None;
+}
+
+liblas::uint16_t LASHeader_GetCreationYear(LASHeaderH hHeader) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetCreationYear", 0);
+
+    unsigned short value = ((LASHeader*) hHeader)->GetCreationYear();
+    return value;
+}
+
+LASErrorEnum LASHeader_SetCreationYear(LASHeaderH hHeader, liblas::uint16_t value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetCreationYear", LE_Failure);
+    ((LASHeader*) hHeader)->SetCreationYear(value);    
+    return LE_None;
 }
 
 liblas::uint16_t LASHeader_GetHeaderSize(LASHeaderH hHeader) {
@@ -288,6 +370,20 @@ liblas::uint8_t LASHeader_GetDataFormatId(LASHeaderH hHeader) {
 
     unsigned char value = ((LASHeader*) hHeader)->GetDataFormatId();
     return value;
+}
+
+LASErrorEnum LASHeader_SetDataFormatId(LASHeaderH hHeader, int value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetDataFormatId", LE_Failure); 
+    
+    try {
+            ((LASHeader*) hHeader)->SetDataFormatId((liblas::LASHeader::PointFormat)value);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetDataFormatId");
+        return LE_Failure;
+    }
+
+    return LE_None;
 }
 
 liblas::uint16_t LASHeader_GetDataRecordLength(LASHeaderH hHeader) {

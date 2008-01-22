@@ -43,7 +43,7 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 liblasdetail_la_LIBADD =
 am_liblasdetail_la_OBJECTS = reader.lo reader10.lo reader11.lo \
-	writer10.lo
+	writer.lo writer10.lo
 liblasdetail_la_OBJECTS = $(am_liblasdetail_la_OBJECTS)
 DEFAULT_INCLUDES = -I.
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -169,7 +169,7 @@ top_builddir = ../..
 top_srcdir = ../..
 INCLUDES = -I../../include -I../../include/detail
 noinst_LTLIBRARIES = liblasdetail.la
-liblasdetail_la_SOURCES = reader.cpp reader10.cpp reader11.cpp writer10.cpp
+liblasdetail_la_SOURCES = reader.cpp reader10.cpp reader11.cpp writer.cpp writer10.cpp
 all: all-am
 
 .SUFFIXES:
@@ -224,6 +224,7 @@ distclean-compile:
 include ./$(DEPDIR)/reader.Plo
 include ./$(DEPDIR)/reader10.Plo
 include ./$(DEPDIR)/reader11.Plo
+include ./$(DEPDIR)/writer.Plo
 include ./$(DEPDIR)/writer10.Plo
 
 .cpp.o:
