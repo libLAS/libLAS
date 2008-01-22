@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="write"
-	ProjectGUID="{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}"
-	RootNamespace="write"
+	Name="read"
+	ProjectGUID="{15D6F951-5F44-4419-907C-9201C2032E24}"
+	RootNamespace="read"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -172,11 +172,11 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\utility.hpp"
+			RelativePath=".\read.cpp"
 			>
 		</File>
 		<File
-			RelativePath=".\write.cpp"
+			RelativePath=".\utility.hpp"
 			>
 		</File>
 	</Files>
