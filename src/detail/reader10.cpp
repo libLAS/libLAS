@@ -38,6 +38,9 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
 {
     // Read point data record format 0
 
+    // TODO: Replace with compile-time assert
+    assert(LASHeader::ePointSize0 == sizeof(record));
+
     if (0 == m_current)
     {
         m_ifs.clear();
@@ -46,9 +49,6 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
 
     if (m_current < m_size)
     {
-        // TODO: Replace with compile-time assert
-        assert(LASHeader::ePointSize0 == sizeof(record));
-
         detail::read_n(record, m_ifs, sizeof(PointRecord));
         ++m_current;
 
@@ -63,7 +63,7 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record, double& time)
     // Read point data record format 1
 
     // TODO: Replace with compile-time assert
-    assert(28 == sizeof(record) + sizeof(time));
+    assert(LASHeader::ePointSize1 == sizeof(record) + sizeof(time));
 
     bool eof = ReadNextPoint(record);
     if (eof)
@@ -76,6 +76,11 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record, double& time)
 
 bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record)
 {
+    // Read point data record format 0
+
+    // TODO: Replace with compile-time assert
+    assert(LASHeader::ePointSize0 == sizeof(record));
+
     if (m_size <= n)
         return false;
 
@@ -86,6 +91,22 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record)
     detail::read_n(record, m_ifs, sizeof(record));
 
     return true;
+}
+
+bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record, double& time)
+{
+    // Read point data record format 1
+
+    // TODO: Replace with compile-time assert
+    assert(LASHeader::ePointSize1 == sizeof(record) + sizeof(time));
+
+    bool eof = ReadNextPoint(record);
+    if (eof)
+    {
+        detail::read_n(time, m_ifs, sizeof(double));
+    }
+
+    return eof;
 }
 
 }}} // namespace liblas::detail::v10

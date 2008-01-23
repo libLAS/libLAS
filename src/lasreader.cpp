@@ -60,7 +60,7 @@ bool LASReader::ReadPointAt(std::size_t n)
     if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
         ret = m_pimpl->ReadPointAt(n, m_record);
     else
-        ret = false; // m_pimpl->ReadNextPoint(m_record, time);
+        ret = m_pimpl->ReadNextPoint(m_record, time);
 
     MakePoint(time);
 

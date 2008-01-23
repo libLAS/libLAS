@@ -28,6 +28,7 @@ public:
     bool ReadNextPoint(PointRecord& record);
     bool ReadNextPoint(PointRecord& record, double& time);
     bool ReadPointAt(std::size_t n, PointRecord& record);
+    bool ReadPointAt(std::size_t n, PointRecord& record, double& time);
 
 private:
 
