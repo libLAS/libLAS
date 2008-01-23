@@ -33,6 +33,9 @@ public:
     bool ReadNextPoint();
     bool ReadPointAt(std::size_t n);
 
+    // The operator is not const because it updates file stream position.
+    LASPoint const& operator[](std::size_t n);
+
 private:
 
     // Blocked copying operations, declared but not defined.

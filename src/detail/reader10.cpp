@@ -100,7 +100,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record, double& time)
     // TODO: Replace with compile-time assert
     assert(LASHeader::ePointSize1 == sizeof(record) + sizeof(time));
 
-    bool eof = ReadNextPoint(record);
+    bool eof = ReadPointAt(n, record);
     if (eof)
     {
         detail::read_n(time, m_ifs, sizeof(double));

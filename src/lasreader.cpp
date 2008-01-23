@@ -47,7 +47,10 @@ bool LASReader::ReadNextPoint()
     else
         ret = m_pimpl->ReadNextPoint(m_record, time);
 
-    MakePoint(time);
+    if (ret)
+    {
+        MakePoint(time);
+    }
 
     return ret;
 }
@@ -60,12 +63,41 @@ bool LASReader::ReadPointAt(std::size_t n)
     if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
         ret = m_pimpl->ReadPointAt(n, m_record);
     else
-        ret = m_pimpl->ReadNextPoint(m_record, time);
+        ret = m_pimpl->ReadPointAt(n, m_record, time);
 
-    MakePoint(time);
+    if (ret)
+    {
+        MakePoint(time);
+    }
 
     return ret;
 }
+
+LASPoint const& LASReader::operator[](std::size_t n)
+{
+    if (m_header.GetPointRecordsCount() <= n)
+    {
+        throw std::out_of_range("point subscript out of range");
+    }
+
+    bool ret = false;
+    double time = 0;
+
+    if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
+        ret = m_pimpl->ReadPointAt(n, m_record);
+    else
+        ret = m_pimpl->ReadPointAt(n, m_record, time);
+
+    if (!ret)
+    {
+        throw std::out_of_range("no point record at given position");
+    }
+
+    MakePoint(time);
+
+    return m_point;
+}
+
 
 void LASReader::Init()
 {
