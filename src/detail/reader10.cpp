@@ -47,7 +47,7 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
     if (m_current < m_size)
     {
         // TODO: Replace with compile-time assert
-        assert(20 == sizeof(record));
+        assert(LASHeader::ePointSize0 == sizeof(record));
 
         detail::read_n(record, m_ifs, sizeof(PointRecord));
         ++m_current;
@@ -72,6 +72,20 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record, double& time)
     }
 
     return eof;
+}
+
+bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record)
+{
+    if (m_size <= n)
+        return false;
+
+    std::streamsize pos = (static_cast<std::streamsize>(n) * LASHeader::ePointSize0) + m_offset;
+
+    m_ifs.clear();
+    m_ifs.seekg(pos, std::ios::beg);
+    detail::read_n(record, m_ifs, sizeof(record));
+
+    return true;
 }
 
 }}} // namespace liblas::detail::v10

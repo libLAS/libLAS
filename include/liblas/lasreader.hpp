@@ -31,28 +31,21 @@ public:
     LASPoint const& GetPoint() const;
     
     bool ReadNextPoint();
+    bool ReadPointAt(std::size_t n);
 
 private:
-    
-    //
-    // Private data members
-    //
-    const std::auto_ptr<detail::Reader> m_pimpl;
 
-    LASHeader m_header;
-    LASPoint m_point;
-    detail::PointRecord m_record;
-
-    //
-    // Private function members
-    //
-    
     // Blocked copying operations, declared but not defined.
     LASReader(LASReader const& other);
     LASReader& operator=(LASReader const& rhs);
 
-    // Throws on error
-    void Init();
+    void Init(); // throws on error
+    void MakePoint(double const& time);
+
+    const std::auto_ptr<detail::Reader> m_pimpl;
+    LASHeader m_header;
+    LASPoint m_point;
+    detail::PointRecord m_record;
 
 };
 

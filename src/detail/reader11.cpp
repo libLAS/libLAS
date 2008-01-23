@@ -26,7 +26,7 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     return false;
 }
 
-bool ReaderImpl::ReadNextPoint(detail::PointRecord& point)
+bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
 {
     // Read point data record format 0
 
@@ -43,6 +43,11 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record, double& time)
     bool eof = ReadNextPoint(record);
 
     return eof;
+}
+
+bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record)
+{
+    return false;
 }
 
 }}} // namespace liblas::detail::v11

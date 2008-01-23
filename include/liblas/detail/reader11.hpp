@@ -25,8 +25,9 @@ public:
     ReaderImpl(std::ifstream& ifs);
     std::size_t GetVersion() const;
     bool ReadHeader(LASHeader& header);
-    bool ReadNextPoint(detail::PointRecord& point);
-    bool ReadNextPoint(detail::PointRecord& point, double& time);
+    bool ReadNextPoint(detail::PointRecord& record);
+    bool ReadNextPoint(detail::PointRecord& record, double& time);
+    bool ReadPointAt(std::size_t n, PointRecord& record);
 
 private:
 

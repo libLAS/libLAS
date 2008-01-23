@@ -23,8 +23,9 @@ public:
     virtual ~Reader();
     virtual std::size_t GetVersion() const = 0;
     virtual bool ReadHeader(LASHeader& header) = 0;
-    virtual bool ReadNextPoint(PointRecord& point) = 0;
-    virtual bool ReadNextPoint(PointRecord& point, double& time) = 0;
+    virtual bool ReadNextPoint(PointRecord& record) = 0;
+    virtual bool ReadNextPoint(PointRecord& record, double& time) = 0;
+    virtual bool ReadPointAt(std::size_t n, PointRecord& record) = 0;
 
 protected:
     

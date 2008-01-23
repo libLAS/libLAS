@@ -21,6 +21,12 @@ public:
         ePointFormat1 = 1
     };
 
+    enum PointSize
+    {
+        ePointSize0 = 20,
+        ePointSize1 = 28
+    };
+
     LASHeader();
     LASHeader(LASHeader const& other);
     LASHeader& operator=(LASHeader const& rhs);
@@ -108,8 +114,6 @@ private:
         eFileSignatureSize = 4,
         ePointsByReturnSize = 5,
         eProjectId4Size = 8,
-        ePointDataRecordSize0 = 20,
-        ePointDataRecordSize1 = 28,
         eSystemIdSize = 32,
         eSoftwareIdSize = 32,
         eHeaderSize = 227

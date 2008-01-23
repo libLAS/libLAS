@@ -245,9 +245,9 @@ void LASHeader::SetDataFormatId(LASHeader::PointFormat const& v)
     m_dataFormatId = v;
 
     if (ePointFormat0 == m_dataFormatId)
-        m_dataRecordLen = ePointDataRecordSize0;
+        m_dataRecordLen = ePointSize0;
     else
-        m_dataRecordLen = ePointDataRecordSize1;
+        m_dataRecordLen = ePointSize1;
 }
 
 uint16_t LASHeader::GetDataRecordLength() const
@@ -257,13 +257,13 @@ uint16_t LASHeader::GetDataRecordLength() const
 
     if (ePointFormat0 == m_dataFormatId)
     {
-        assert(ePointDataRecordSize0 == m_dataRecordLen);
-        return ePointDataRecordSize0;
+        assert(ePointSize0 == m_dataRecordLen);
+        return ePointSize0;
     }
     else
     {
-        assert(ePointDataRecordSize1 == m_dataRecordLen);
-        return ePointDataRecordSize1;
+        assert(ePointSize1 == m_dataRecordLen);
+        return ePointSize1;
     }
 }
 
@@ -426,7 +426,7 @@ void LASHeader::Init()
     m_versionMajor = 1;
     m_versionMinor = 0;
     m_dataFormatId = ePointFormat0;
-    m_dataRecordLen = ePointDataRecordSize0;
+    m_dataRecordLen = ePointSize0;
 
     // TODO: Use current date
     m_createDOY = 0;
