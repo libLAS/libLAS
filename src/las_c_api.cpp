@@ -12,10 +12,9 @@ typedef void *LASHeaderH;
 #include <string>
 #include <stack>
 #include <map>
-#include <iosfwd>
 //#include <cstdio>
 #include <exception>
-#include <iostream>
+#include <fstream>
 using namespace liblas;
 
 extern "C" {
