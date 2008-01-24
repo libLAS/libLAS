@@ -116,7 +116,7 @@ uint16_t LASHeader::GetFileSourceId() const
 
 void LASHeader::SetFileSourceId(uint16_t const& v)
 {
-    if (0 > v || v > 35535)
+    if (v > 35535)
         throw std::out_of_range("file source id out of range");
 
     m_sourceId = v;
@@ -157,7 +157,7 @@ uint8_t LASHeader::GetVersionMinor() const
 
 void LASHeader::SetVersionMinor(uint8_t const& v)
 {
-    if (eVersionMinorMin > v || v > eVersionMinorMax)
+    if (v > eVersionMinorMax)
         throw std::out_of_range("version minor out of range");
 
     m_versionMinor = v;
