@@ -27,7 +27,7 @@ public:
 #ifdef WIN32
       QueryPerformanceCounter(&m_start);
 #else
-      gettimeofday(&m_start, NULL);
+      gettimeofday(&m_start, 0);
 #endif
   }
 
@@ -37,7 +37,7 @@ public:
   QueryPerformanceCounter(&m_stop);
   return (m_stop.LowPart - m_start.LowPart) / m_freq;
 #else
-  gettimeofday(&m_stop, NULL);
+  gettimeofday(&m_stop, 0);
   return (m_stop.tv_sec - m_start.tv_sec) * double(1000)
           + (m_stop.tv_usec - m_start.tv_usec) / double(1000);
 #endif
