@@ -242,7 +242,7 @@ LASHeader::PointFormat LASHeader::GetDataFormatId() const
 
 void LASHeader::SetDataFormatId(LASHeader::PointFormat const& v)
 {
-    m_dataFormatId = v;
+    m_dataFormatId = (v == ePointFormat0 ? 0 : 1);
 
     if (ePointFormat0 == m_dataFormatId)
         m_dataRecordLen = ePointSize0;

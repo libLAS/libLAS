@@ -2,7 +2,7 @@
 #define LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 
 #include <iosfwd>
-#include <sstream> // std::ostringstream
+#include <sstream>
 #include <stdexcept>
 
 namespace liblas { namespace detail {

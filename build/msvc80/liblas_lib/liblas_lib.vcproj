@@ -45,8 +45,9 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				DisableLanguageExtensions="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
@@ -107,7 +108,7 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
@@ -190,6 +191,10 @@
 					>
 					<File
 						RelativePath="..\..\..\include\liblas\detail\endian.hpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\fwd.hpp"
 						>
 					</File>
 					<File

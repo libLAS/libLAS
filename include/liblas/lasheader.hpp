@@ -5,7 +5,7 @@
 #include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
 //std
-#include <iosfwd>
+#include <iosfwd> // std::ifstream
 #include <string>
 #include <vector>
 

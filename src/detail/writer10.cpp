@@ -92,7 +92,7 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 16. Point Data Format ID
-    n1 = header.GetDataFormatId();
+    n1 = static_cast<uint8_t>(header.GetDataFormatId());
     detail::write_n(m_ofs, n1, sizeof(n1));
 
     // 17. Point Data Record Length

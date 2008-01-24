@@ -1,18 +1,11 @@
 #ifndef LIBLAS_DETAIL_WRITER_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_HPP_INCLUDED
 
+#include <liblas/detail/fwd.hpp>
+// std
 #include <iosfwd>
 
-namespace liblas {
-
-// Forward declarations
-class LASHeader;
-class LASPoint;
-namespace detail {
-    struct PointRecord;
-}
-    
-namespace detail {
+namespace liblas { namespace detail {
 
 class Writer
 {
@@ -25,8 +18,6 @@ public:
     virtual void UpdateHeader(LASHeader const& header) = 0;
     virtual void WritePointRecord(PointRecord const& record) = 0;
     virtual void WritePointRecord(PointRecord const& record, double const& time) = 0;
-
-private:
 };
 
 class WriterFactory

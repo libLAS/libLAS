@@ -3,20 +3,15 @@
 
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/detail/fwd.hpp>
 // std
-#include <fstream>
+#include <iosfwd> // std::ofstream
 #include <string>
 #include <memory>
 #include <cstdlib> // std::size_t
 
 namespace liblas
 {
-
- // Forward declarations
-namespace detail {
-    class Writer;
-    struct PointRecord;
-}
 
 class LASWriter
 {

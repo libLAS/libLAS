@@ -2,19 +2,11 @@
 #define LIBLAS_DETAIL_READER11_HPP_INCLUDED
 
 #include <liblas/detail/reader.hpp>
+#include <liblas/detail/fwd.hpp>
 // std
 #include <iosfwd>
 
-namespace liblas {
-
-// Forward declarations
-class LASHeader;
-class LASPoint;
-namespace detail {
-    struct LASPointRecord;
-}
-
-namespace detail { namespace v11 {
+namespace liblas { namespace detail { namespace v11 {
 
 class ReaderImpl : public Reader
 {

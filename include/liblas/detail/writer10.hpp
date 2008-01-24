@@ -2,20 +2,12 @@
 #define LIBLAS_DETAIL_WRITER10_HPP_INCLUDED
 
 #include <liblas/detail/writer.hpp>
+#include <liblas/detail/fwd.hpp>
 #include <liblas/cstdint.hpp>
 // std
 #include <iosfwd>
 
-namespace liblas {
-
-// Forward declarations
-class LASHeader;
-class LASPoint;
-namespace detail {
-    struct LASPointRecord;
-}
-
-namespace detail { namespace v10 {
+namespace liblas { namespace detail { namespace v10 {
 
 class WriterImpl : public Writer
 {

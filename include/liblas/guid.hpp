@@ -32,6 +32,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <cassert>
 
 namespace liblas { namespace detail {
 
@@ -43,7 +44,10 @@ inline liblas::uint8_t random_byte()
     // in create_random_based() function - a poor man solution.
     uint8_t const rmin = std::numeric_limits<uint8_t>::min();
     uint8_t const rmax = std::numeric_limits<uint8_t>::max();
-    return std::rand() % rmax + rmin;
+    uint32_t const rnd = std::rand() % rmax + rmin;
+
+    assert(rnd <= 255);
+    return static_cast<uint8_t>(rnd);
 }
 
 } // namespace detail
@@ -301,9 +305,9 @@ private:
     // name based
     static guid create_name_based(guid const& namespace_guid, char const* name, int name_length)
     {
-        using namespace detail;
+        using liblas::uint8_t;
         
-        SHA1 sha1;
+        detail::SHA1 sha1;
         sha1.Input(namespace_guid.data_, namespace_guid.static_size);
         sha1.Input(name, name_length);
         unsigned int digest[5];
@@ -316,10 +320,11 @@ private:
         guid result;
         for (int i = 0; i < 4; ++i)
         {
-            result.data_[i*4+0] = ((digest[i] >> 24) & 0xFF);
-            result.data_[i*4+1] = ((digest[i] >> 16) & 0xFF);
-            result.data_[i*4+2] = ((digest[i] >> 8) & 0xFF);
-            result.data_[i*4+3] = ((digest[i] >> 0) & 0xFF);
+            
+            result.data_[i*4+0] = static_cast<uint8_t>((digest[i] >> 24) & 0xFF);
+            result.data_[i*4+1] = static_cast<uint8_t>((digest[i] >> 16) & 0xFF);
+            result.data_[i*4+2] = static_cast<uint8_t>((digest[i] >> 8) & 0xFF);
+            result.data_[i*4+3] = static_cast<uint8_t>((digest[i] >> 0) & 0xFF);
         }
         
         // set variant
@@ -401,7 +406,7 @@ std::basic_istream<ch, char_traits>& operator>>(std::basic_istream<ch, char_trai
     if (ok)
     {
         ch c;
-        c = is.peek();
+        c = static_cast<ch>(is.peek());
         bool bHaveBraces = false;
         if (c == '{')
         {
@@ -431,7 +436,7 @@ std::basic_istream<ch, char_traits>& operator>>(std::basic_istream<ch, char_trai
                 is.setstate(ios_base::badbit);
             }
 
-            temp_guid.data_[i] = val;
+            temp_guid.data_[i] = static_cast<liblas::uint8_t>(val);
 
             if (is)
             {

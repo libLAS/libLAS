@@ -12,6 +12,7 @@
 #include <stdexcept>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <utility>
 #include <cstdlib>

@@ -2,6 +2,7 @@
 #define LIBLAS_LASPOINT_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
+// std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
 

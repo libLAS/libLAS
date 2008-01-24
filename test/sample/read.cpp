@@ -13,6 +13,7 @@
 #include <utility>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <cassert>
 // sample
@@ -23,20 +24,22 @@ int main()
 {
     try
     {
-        char const* name = "d:\\data\\lidar\\LDR030828_213450_0.LAS"; 
+        //char const* name = "d:\\data\\lidar\\LDR030828_213450_0.LAS"; 
         //char const* name = "d:\\data\\lidar\\Sample_LiDAR_LAS_File.las";
         //char const* name = "d:\\data\\lidar\\iowa\\04164492.las";
         //char const* name = "d:\\data\\lidar\\Serpent_Mound_Model.las";
-        //char const* name = "d:\\dev\\liblas\\_svn\\trunk\\test\\data\\TO_core_last_clip.las";
+        char const* name = "d:\\dev\\liblas\\_svn\\trunk\\test\\data\\TO_core_last_clip.las";
 
         std::ifstream ifs(name, ios::in | ios::binary);
         liblas::LASReader reader(ifs);
         
-        cout << "File: " << name << '\n';
-        cout << "Version: " << reader.GetVersion() << '\n';
-        cout << "Format: " << reader.GetHeader().GetDataFormatId() << '\n';
+        cout << "File name: " << name << '\n';
         cout << "Signature: " << reader.GetHeader().GetFileSignature() << '\n';
-        cout << "Points count: " << reader.GetHeader().GetPointRecordsCount() << '\n';
+        cout << "Version  : " << reader.GetVersion() << '\n';
+        cout << "Format   : " << reader.GetHeader().GetDataFormatId() << '\n';
+        cout << "Project  : " << reader.GetHeader().GetProjectId() << '\n';
+        cout << "Size     : " << reader.GetHeader().GetPointRecordsCount() << '\n';
+        
 
         liblas::detail::Timer t;
         t.start();

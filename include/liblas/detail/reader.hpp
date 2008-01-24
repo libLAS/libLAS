@@ -2,16 +2,11 @@
 #define LIBLAS_DETAIL_READER_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
+#include <liblas/detail/fwd.hpp>
 // std
 #include <iosfwd>
 
-namespace liblas {
-
-// Forward declarations
-class LASHeader;
-class LASPoint;
-
-namespace detail {
+namespace liblas { namespace detail {
 
 struct PointRecord;
 
