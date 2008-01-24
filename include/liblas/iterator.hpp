@@ -2,6 +2,7 @@
 #define LIBLAS_ITERATOR_HPP_INCLUDED
 
 #include <liblas/lasreader.hpp>
+#include <liblas/laswriter.hpp>
 #include <iterator>
 #include <cassert>
 
@@ -72,8 +73,6 @@ private:
     liblas::LASReader* m_reader;
 };
 
-typedef reader_iterator<LASPoint> lasreader_iterator;
-
 template <typename T>
 bool operator==(reader_iterator<T> const& lhs, reader_iterator<T> const& rhs)
 {
@@ -85,6 +84,59 @@ bool operator!=(reader_iterator<T> const& lhs, reader_iterator<T> const& rhs)
 {
     return (!(lhs == rhs));
 }
+
+template <typename T>
+class writer_iterator
+{
+public:
+
+    typedef std::output_iterator_tag iterator_category;
+    typedef void value_type;
+    typedef void pointer;
+    typedef T const& reference;
+    typedef void difference_type;
+
+    writer_iterator(liblas::LASWriter& writer)
+        : m_writer(&writer)
+    {
+        assert(0 != m_writer);
+    }
+
+    writer_iterator& operator=(reference value) 
+    {
+        assert(0 != m_writer);
+
+        bool const ret = m_writer->WritePoint(value);
+        assert(ret); // TODO: Low-level debugging
+
+        return (*this);
+    }
+
+    writer_iterator& operator*()
+    {
+        // pretend to return designated value
+        return (*this);
+    }
+
+    writer_iterator& operator++()
+    {
+        // pretend to preincrement
+        return (*this);
+    }
+
+    writer_iterator operator++(int)
+    {
+        // pretend to postincrement
+        return (*this);
+    }
+
+private:
+
+    liblas::LASWriter* m_writer;
+};
+
+typedef reader_iterator<LASPoint> lasreader_iterator;
+typedef writer_iterator<LASPoint> laswriter_iterator;
 
 } // namespace liblas
 
