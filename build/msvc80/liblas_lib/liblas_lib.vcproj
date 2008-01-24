@@ -159,6 +159,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\liblas\iterator.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\liblas\laserror.hpp"
 					>
 				</File>
