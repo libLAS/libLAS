@@ -2,6 +2,7 @@
 #define LIBLAS_LASPOINT_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
+#include <liblas/detail/fwd.hpp>
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
@@ -38,6 +39,7 @@ public:
     double GetY() const;
     double GetZ() const;
     void SetCoordinates(double x, double y, double z);
+    void SetCoordinates(LASHeader const& header, double x, double y, double z);
 
     uint16_t GetIntensity() const;
     void SetIntensity(uint16_t intensity);

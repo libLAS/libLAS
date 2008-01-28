@@ -1,4 +1,5 @@
 #include <liblas/laspoint.hpp>
+#include <liblas/lasheader.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/utility.hpp>
 // std
@@ -31,6 +32,15 @@ LASPoint& LASPoint::operator=(LASPoint const& rhs)
         m_gpsTime = rhs.m_gpsTime;
     }
     return *this;
+}
+
+void LASPoint::SetCoordinates(LASHeader const& header, double x, double y, double z)
+{
+    double const cx = x * header.GetScaleX() + header.GetOffsetX();
+    double const cy = y * header.GetScaleY() + header.GetOffsetY();
+    double const cz = z * header.GetScaleZ() + header.GetOffsetZ();
+
+    SetCoordinates(cx, cy, cz);
 }
 
 } // namespace liblas
