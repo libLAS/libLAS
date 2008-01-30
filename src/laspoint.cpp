@@ -17,15 +17,20 @@ LASPoint::LASPoint(LASPoint const& other) :
     m_intensity(other.m_intensity),
         m_flags(other.m_flags), m_class(other.m_class),
             m_gpsTime(other.m_gpsTime)
-{
-    std::memcpy(m_coords, other.m_coords, coords_size);
+{    
+    m_coords[0] = other.m_coords[0];
+    m_coords[1] = other.m_coords[1];
+    m_coords[2] = other.m_coords[2];
 }
 
 LASPoint& LASPoint::operator=(LASPoint const& rhs)
 {
+    printf("in LASPoint& LASPoint::operator=...\n");
     if (&rhs != this)
     {
-        std::memcpy(m_coords, rhs.m_coords, coords_size);
+        m_coords[0] = rhs.m_coords[0];
+        m_coords[1] = rhs.m_coords[1];
+        m_coords[2] = rhs.m_coords[2];
         m_intensity = rhs.m_intensity;
         m_flags = rhs.m_flags;
         m_class = rhs.m_class;
