@@ -137,14 +137,15 @@ int main(int argc, char *argv[])
         point_min = p;
         point_max = p;
         fprintf(stderr, "point X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(p),LASPoint_GetY(p),LASPoint_GetZ(p));
-
+        
+        if (LASError_GetErrorCount()) {
           fprintf(stdout, 
                   "Error! %d, %s, in method %s\n",
                   LASError_GetLastErrorNum(),
                   LASError_GetLastErrorMsg(),
                   LASError_GetLastErrorMethod()
                  ); 
-
+         }
        }   
     
      

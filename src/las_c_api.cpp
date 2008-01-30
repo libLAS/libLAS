@@ -101,6 +101,9 @@ void LASError_PushError(int code, const char *message, const char *method) {
     errors.push(err);
 }
 
+int LASError_GetErrorCount(void) {
+    return errors.size();
+}
 LASReaderH LASReader_Create(const char* filename) 
 
 {
