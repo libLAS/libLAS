@@ -65,6 +65,8 @@ public:
     double& operator[](std::size_t n);
     double const& operator[](std::size_t n) const;
 
+    bool equal(LASPoint const& other) const;
+
 private:
 
     static std::size_t const coords_size = 3;
@@ -79,6 +81,16 @@ private:
         throw std::out_of_range("coordinate subscript out of range");
     }
 };
+
+inline bool operator==(LASPoint const& lhs, LASPoint const& rhs)
+{
+    return lhs.equal(rhs);
+}
+
+inline bool operator!=(LASPoint const& lhs, LASPoint const& rhs)
+{
+    return (!(lhs == rhs));
+}
 
 inline void LASPoint::SetCoordinates(double x, double y, double z)
 {

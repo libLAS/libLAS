@@ -68,4 +68,56 @@ namespace tut
         ensure_equals("wrong time",
                       p.GetTime(), double(0));
     }
+
+    // Test assignment operator
+    template<>
+    template<>
+    void to::test<3>()
+    {
+        liblas::LASPoint p;
+        p = m_default;
+
+        ensure_equals("wrong X coordinate",
+                      p.GetX(), double(0));
+        ensure_equals("wrong Y coordinate",
+                      p.GetY(), double(0));
+        ensure_equals("wrong Z coordinate",
+                      p.GetZ(), double(0));
+        ensure_equals("wrong intensity",
+                      p.GetIntensity(), 0);
+        ensure_equals("wrong return number",
+                      p.GetReturnNumber(), 0);
+        ensure_equals("wrong number of returns",
+                      p.GetNumberOfReturns(), 0);
+        ensure_equals("wrong scan direction",
+                      p.GetScanDirection(), 0);
+        ensure_equals("wrong edge of flight line",
+                      p.GetFlightLineEdge(), 0);
+        ensure_equals("wrong classification",
+                      p.GetClassification(), 0);
+        ensure_equals("wrong time",
+                      p.GetTime(), double(0));
+    }
+
+    // Test equal-to operator
+    template<>
+    template<>
+    void to::test<4>()
+    {
+        liblas::LASPoint p;
+        
+        ensure("points are not equal", m_default == p);
+    }
+
+    // Test not-equal-to operator
+    template<>
+    template<>
+    void to::test<5>()
+    {
+        liblas::LASPoint p;
+        p.SetCoordinates(1.123, 2.456, 3.789);
+        
+        ensure("points are equal", m_default != p);
+    }
+
 };

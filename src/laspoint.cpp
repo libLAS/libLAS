@@ -46,4 +46,24 @@ void LASPoint::SetCoordinates(LASHeader const& header, double x, double y, doubl
     SetCoordinates(cx, cy, cz);
 }
 
+bool LASPoint::equal(LASPoint const& other) const
+{
+    double const epsilon = std::numeric_limits<double>::epsilon(); 
+
+    double const dx = m_coords[0] - other.m_coords[0];
+    double const dy = m_coords[1] - other.m_coords[1];
+    double const dz = m_coords[2] - other.m_coords[2];
+
+    // TODO: Should we compare other data members, besides the coordinates?
+
+    if (((dx <= epsilon) && (dx >= -epsilon ))
+        || ((dy <= epsilon) && (dy >= -epsilon ))
+        || ((dz <= epsilon) && (dz >= -epsilon )))
+    {
+        return true;
+    }
+
+    return false;
+}
+
 } // namespace liblas
