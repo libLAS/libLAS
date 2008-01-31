@@ -108,6 +108,11 @@ public:
         return std::equal(data_, data_ + static_size, rhs.data_);
     }
 
+    bool operator!=(guid const& rhs) const /* throw() */
+    {
+        return (!(*this == rhs));
+    }
+
     bool operator<(guid const& rhs) const /* throw() */
     {
         return std::lexicographical_compare(data_, data_ + static_size, rhs.data_, rhs.data_ + static_size);
