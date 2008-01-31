@@ -40,6 +40,10 @@ public:
     double GetZ() const;
     void SetCoordinates(double x, double y, double z);
     void SetCoordinates(LASHeader const& header, double x, double y, double z);
+    
+    void SetX(double value);
+    void SetY(double value);
+    void SetZ(double value);
 
     uint16_t GetIntensity() const;
     void SetIntensity(uint16_t intensity);
@@ -88,14 +92,29 @@ inline double LASPoint::GetX() const
     return m_coords[0];
 }
 
+inline void LASPoint::SetX( double value ) 
+{
+    m_coords[0] = value;
+}
+
 inline double LASPoint::GetY() const
 {
     return m_coords[1];
 }
 
+inline void LASPoint::SetY( double value ) 
+{
+    m_coords[1] = value;
+}
+
 inline double LASPoint::GetZ() const
 {
     return m_coords[2];
+}
+
+inline void LASPoint::SetZ( double value ) 
+{
+    m_coords[2] = value;
 }
 
 inline uint16_t LASPoint::GetIntensity() const
