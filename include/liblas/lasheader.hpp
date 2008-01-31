@@ -27,6 +27,10 @@ public:
         ePointSize1 = 28
     };
 
+    static char const* const FileSignature; // = "LASF";
+    static char const* const SystemIdentifier; // = "libLAS";
+    static char const* const SoftwareIdentifier; // = "libLAS 1.0";
+
     LASHeader();
     LASHeader(LASHeader const& other);
     LASHeader& operator=(LASHeader const& rhs);
@@ -118,10 +122,6 @@ private:
         eSoftwareIdSize = 32,
         eHeaderSize = 227
     };
-    
-    static char const* const FileSignature; // = "LASF";
-    static char const* const SystemIdentifier; // = "libLAS";
-    static char const* const SoftwareIdentifier; // = "libLAS 1.0";
 
     // TODO (low-priority): replace static-size char arrays
     // with std::string and return const-reference to string object.

@@ -434,7 +434,6 @@ void LASHeader::Init()
     
     m_headerSize = eHeaderSize;
 
-    // TODO: Replace with liblas::guid, unique or null GUID.
     m_sourceId = m_reserved = m_projectId2 = m_projectId3 = uint16_t();
     m_projectId1 = uint32_t();
     std::memset(m_projectId4, 0, sizeof(m_projectId4)); 
