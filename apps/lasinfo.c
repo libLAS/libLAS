@@ -90,8 +90,15 @@ int main(int argc, char *argv[])
       } 
       
       header = LASReader_GetHeader(reader);
-/*     if (!header) { usage();} */
-
+      if (!header) { 
+          fprintf(stdout, 
+                  "Error! %d, %s, in method %s\n",
+                  LASError_GetLastErrorNum(),
+                  LASError_GetLastErrorMsg(),
+                  LASError_GetLastErrorMethod()
+                 ); 
+          exit(-1);
+      } 
 
 
       fprintf(stdout, "reporting all LAS header entries for %s:\n", file_name);
@@ -126,18 +133,81 @@ int main(int argc, char *argv[])
        if (check_points)
        {
          fprintf(stderr, "reporting minimum and maximum for all %d LAS point record entries ...\n",LASHeader_GetPointRecordsCount(header));
-        LASPointH point_min;
-        LASPointH point_max;
+        LASPointH pmin;
+        LASPointH pmax;
+        LASPointH p;
+
         double gps_time_min;
         double gps_time_max;
+        double t, tmax, tmin;
         double coordinates[3];
         double min[3];
         double max[3];
-        LASPointH p = LASReader_GetNextPoint(reader);
-        point_min = p;
-        point_max = p;
-        fprintf(stderr, "point X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(p),LASPoint_GetY(p),LASPoint_GetZ(p));
-        
+        double x, y, z;
+        uint16_t intensity;
+
+
+        p  = LASReader_GetNextPoint(reader);
+        pmin = LASPoint_Copy(p);
+        pmax = LASPoint_Copy(p);
+ 
+        while (p)
+        {
+            x = LASPoint_GetX(p);
+            LASPoint_SetX(pmin, MIN(x, LASPoint_GetX(pmin)));
+            LASPoint_SetX(pmax, MAX(x, LASPoint_GetX(pmax)));
+
+            y = LASPoint_GetY(p);
+            LASPoint_SetY(pmin, MIN(y, LASPoint_GetY(pmin)));
+            LASPoint_SetY(pmax, MAX(y, LASPoint_GetY(pmax)));
+
+            z = LASPoint_GetZ(p);
+            LASPoint_SetZ(pmin, MIN(z, LASPoint_GetZ(pmin)));
+            LASPoint_SetZ(pmax, MAX(z, LASPoint_GetZ(pmax)));
+
+            intensity = LASPoint_GetIntensity(p);
+            LASPoint_SetIntensity(pmin, MIN(intensity, LASPoint_GetIntensity(pmin)));
+            LASPoint_SetIntensity(pmax, MAX(intensity, LASPoint_GetIntensity(pmax)));
+
+            t = LASPoint_GetTime(p);
+            LASPoint_SetTime(pmin, MIN(t, LASPoint_GetTime(pmin)));
+            LASPoint_SetTime(pmax, MAX(t, LASPoint_GetTime(pmax)));
+/*
+
+          // if (lasreader->point.edge_of_flight_line < point_min.edge_of_flight_line) point_min.edge_of_flight_line = lasreader->point.edge_of_flight_line;
+          // else if (lasreader->point.edge_of_flight_line > point_max.edge_of_flight_line) point_max.edge_of_flight_line = lasreader->point.edge_of_flight_line;
+          // if (lasreader->point.scan_direction_flag < point_min.scan_direction_flag) point_min.scan_direction_flag = lasreader->point.scan_direction_flag;
+          // else if (lasreader->point.scan_direction_flag > point_max.scan_direction_flag) point_max.scan_direction_flag = lasreader->point.scan_direction_flag;
+          // if (lasreader->point.number_of_returns_of_given_pulse < point_min.number_of_returns_of_given_pulse) point_min.number_of_returns_of_given_pulse = lasreader->point.number_of_returns_of_given_pulse;
+          // else if (lasreader->point.number_of_returns_of_given_pulse > point_max.number_of_returns_of_given_pulse) point_max.number_of_returns_of_given_pulse = lasreader->point.number_of_returns_of_given_pulse;
+          // if (lasreader->point.return_number < point_min.return_number) point_min.return_number = lasreader->point.return_number;
+          // else if (lasreader->point.return_number > point_max.return_number) point_max.return_number = lasreader->point.return_number;
+          // if (lasreader->point.classification < point_min.classification) point_min.classification = lasreader->point.classification;
+          // else if (lasreader->point.classification > point_max.classification) point_max.classification = lasreader->point.classification;
+          // if (lasreader->point.scan_angle_rank < point_min.scan_angle_rank) point_min.scan_angle_rank = lasreader->point.scan_angle_rank;
+          // else if (lasreader->point.scan_angle_rank > point_max.scan_angle_rank) point_max.scan_angle_rank = lasreader->point.scan_angle_rank;
+          // if (lasreader->point.user_data < point_min.user_data) point_min.user_data = lasreader->point.user_data;
+          // else if (lasreader->point.user_data > point_max.user_data) point_max.user_data = lasreader->point.user_data;
+          // if (lasreader->point.point_source_ID < point_min.point_source_ID) point_min.point_source_ID = lasreader->point.point_source_ID;
+          // else if (lasreader->point.point_source_ID > point_max.point_source_ID) point_max.point_source_ID = lasreader->point.point_source_ID;
+          // if (lasreader->point.point_source_ID < point_min.point_source_ID) point_min.point_source_ID = lasreader->point.point_source_ID;
+          // else if (lasreader->point.point_source_ID > point_max.point_source_ID) point_max.point_source_ID = lasreader->point.point_source_ID;
+
+          // VecUpdateMinMax3dv(min, max, coordinates);
+          // number_of_point_records++;
+          // number_of_points_by_return[lasreader->point.return_number]++;
+          // number_of_returns_of_given_pulse[lasreader->point.number_of_returns_of_given_pulse]++;
+          // classification[(lasreader->point.classification & 31)]++;
+          // if (lasreader->point.classification & 32) classification_synthetic++;
+          // if (lasreader->point.classification & 64) classification_keypoint++;
+          // if (lasreader->point.classification & 128) classification_withheld++;
+          */
+          p  = LASReader_GetNextPoint(reader);
+        }
+        fprintf(stderr, "Calculated Minimums X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(pmin),LASPoint_GetY(pmin),LASPoint_GetZ(pmin));
+        fprintf(stderr, "Calculated Maximums X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(pmax),LASPoint_GetY(pmax),LASPoint_GetZ(pmax));
+        fprintf(stderr, "Min Time: %.6f Max Time: %.6f\n", LASPoint_GetTime(pmin),LASPoint_GetTime(pmax));
+ 
         if (LASError_GetErrorCount()) {
           fprintf(stdout, 
                   "Error! %d, %s, in method %s\n",

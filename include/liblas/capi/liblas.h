@@ -40,8 +40,29 @@ LASPointH LAS_DLL LASReader_GetNextPoint(LASReaderH hReader);
 void LAS_DLL LASReader_Destroy(LASReaderH hReader);
 
 double LAS_DLL LASPoint_GetX(LASPointH);
+LASError LASPoint_SetX(LASPointH hPoint, double value);
 double LAS_DLL LASPoint_GetY(LASPointH);
+LASError LASPoint_SetY(LASPointH hPoint, double value);
 double LAS_DLL LASPoint_GetZ(LASPointH);
+LASError LASPoint_SetZ(LASPointH hPoint, double value);
+
+uint16_t LAS_DLL LASPoint_GetIntensity(LASPointH);
+LASError LASPoint_SetIntensity(LASPointH hPoint, uint16_t value);
+
+uint16_t LAS_DLL LASPoint_GetReturnNumber(LASPointH);
+uint16_t LAS_DLL LASPoint_GetNumberOfReturns(LASPointH);
+uint16_t LAS_DLL LASPoint_GetScanDirection(LASPointH);
+uint16_t LAS_DLL LASPoint_GetFlightLineEdge(LASPointH);
+uint8_t LAS_DLL LASPoint_GetScanFlags(LASPointH);
+LASError LASPoint_SetScanFlags(LASPointH hPoint, uint8_t value);
+uint8_t LAS_DLL LASPoint_GetClassification(LASPointH);
+LASError LASPoint_SetClassification(LASPointH hPoint, uint8_t value);
+double LAS_DLL LASPoint_GetTime(LASPointH);
+LASError LASPoint_SetTime(LASPointH hPoint, double value);
+
+
+LASPointH LAS_DLL LASPoint_Create(void);
+LASPointH LASPoint_Copy(LASPointH);
 
 int LAS_DLL LASHeader_Read(LASHeaderH hHeader);
 LASHeaderH LAS_DLL LASReader_GetHeader(LASReaderH hReader);
