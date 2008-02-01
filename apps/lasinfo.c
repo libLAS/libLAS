@@ -132,27 +132,29 @@ int main(int argc, char *argv[])
 
        if (check_points)
        {
-         fprintf(stderr, "reporting minimum and maximum for all %d LAS point record entries ...\n",LASHeader_GetPointRecordsCount(header));
+           
         LASPointH pmin;
         LASPointH pmax;
         LASPointH p;
 
-        double gps_time_min;
-        double gps_time_max;
-        double t, tmax, tmin;
-        double coordinates[3];
-        double min[3];
-        double max[3];
+
+        double t;
         double x, y, z;
         uint16_t intensity;
-
-
+        uint8_t cls;
+        uint16_t retnum, numret, scandir, fedge;
+        
+        long rgpsum = 0;
+        
         p  = LASReader_GetNextPoint(reader);
         pmin = LASPoint_Copy(p);
         pmax = LASPoint_Copy(p);
- 
+        
+
         while (p)
         {
+
+        
             x = LASPoint_GetX(p);
             LASPoint_SetX(pmin, MIN(x, LASPoint_GetX(pmin)));
             LASPoint_SetX(pmax, MAX(x, LASPoint_GetX(pmax)));
@@ -172,18 +174,34 @@ int main(int argc, char *argv[])
             t = LASPoint_GetTime(p);
             LASPoint_SetTime(pmin, MIN(t, LASPoint_GetTime(pmin)));
             LASPoint_SetTime(pmax, MAX(t, LASPoint_GetTime(pmax)));
-/*
 
-          // if (lasreader->point.edge_of_flight_line < point_min.edge_of_flight_line) point_min.edge_of_flight_line = lasreader->point.edge_of_flight_line;
-          // else if (lasreader->point.edge_of_flight_line > point_max.edge_of_flight_line) point_max.edge_of_flight_line = lasreader->point.edge_of_flight_line;
-          // if (lasreader->point.scan_direction_flag < point_min.scan_direction_flag) point_min.scan_direction_flag = lasreader->point.scan_direction_flag;
-          // else if (lasreader->point.scan_direction_flag > point_max.scan_direction_flag) point_max.scan_direction_flag = lasreader->point.scan_direction_flag;
-          // if (lasreader->point.number_of_returns_of_given_pulse < point_min.number_of_returns_of_given_pulse) point_min.number_of_returns_of_given_pulse = lasreader->point.number_of_returns_of_given_pulse;
-          // else if (lasreader->point.number_of_returns_of_given_pulse > point_max.number_of_returns_of_given_pulse) point_max.number_of_returns_of_given_pulse = lasreader->point.number_of_returns_of_given_pulse;
-          // if (lasreader->point.return_number < point_min.return_number) point_min.return_number = lasreader->point.return_number;
-          // else if (lasreader->point.return_number > point_max.return_number) point_max.return_number = lasreader->point.return_number;
-          // if (lasreader->point.classification < point_min.classification) point_min.classification = lasreader->point.classification;
-          // else if (lasreader->point.classification > point_max.classification) point_max.classification = lasreader->point.classification;
+            retnum =LASPoint_GetReturnNumber(p);
+            LASPoint_SetReturnNumber(pmin, MIN(retnum, LASPoint_GetReturnNumber(pmin)));
+            LASPoint_SetReturnNumber(pmax, MAX(retnum, LASPoint_GetReturnNumber(pmax)));                    
+
+            numret =LASPoint_GetNumberOfReturns(p);
+            LASPoint_SetNumberOfReturns(pmin, MIN(numret, LASPoint_GetNumberOfReturns(pmin)));
+            LASPoint_SetNumberOfReturns(pmax, MAX(numret, LASPoint_GetNumberOfReturns(pmax)));  
+            
+            scandir = LASPoint_GetScanDirection(p);
+            LASPoint_SetScanDirection(pmin, MIN(scandir, LASPoint_GetScanDirection(pmin)));
+            LASPoint_SetScanDirection(pmax, MAX(scandir, LASPoint_GetScanDirection(pmax)));  
+            
+            fedge = LASPoint_GetFlightLineEdge(p);
+            LASPoint_SetFlightLineEdge(pmin, MIN(fedge, LASPoint_GetFlightLineEdge(pmin)));
+            LASPoint_SetFlightLineEdge(pmax, MAX(fedge, LASPoint_GetFlightLineEdge(pmax)));  
+            
+            number_of_point_records++;
+            number_of_points_by_return[LASPoint_GetReturnNumber(p)]++;
+            number_of_returns_of_given_pulse[LASPoint_GetNumberOfReturns(p)]++;
+            
+            cls = LASPoint_GetClassification(p);
+            classification[(cls & 31)]++;            
+            if (cls & 32) classification_synthetic++;          
+            if (cls & 64) classification_keypoint++; 
+            if (cls & 128) classification_withheld++;
+          
+          /*
           // if (lasreader->point.scan_angle_rank < point_min.scan_angle_rank) point_min.scan_angle_rank = lasreader->point.scan_angle_rank;
           // else if (lasreader->point.scan_angle_rank > point_max.scan_angle_rank) point_max.scan_angle_rank = lasreader->point.scan_angle_rank;
           // if (lasreader->point.user_data < point_min.user_data) point_min.user_data = lasreader->point.user_data;
@@ -193,21 +211,36 @@ int main(int argc, char *argv[])
           // if (lasreader->point.point_source_ID < point_min.point_source_ID) point_min.point_source_ID = lasreader->point.point_source_ID;
           // else if (lasreader->point.point_source_ID > point_max.point_source_ID) point_max.point_source_ID = lasreader->point.point_source_ID;
 
-          // VecUpdateMinMax3dv(min, max, coordinates);
-          // number_of_point_records++;
-          // number_of_points_by_return[lasreader->point.return_number]++;
-          // number_of_returns_of_given_pulse[lasreader->point.number_of_returns_of_given_pulse]++;
-          // classification[(lasreader->point.classification & 31)]++;
-          // if (lasreader->point.classification & 32) classification_synthetic++;
-          // if (lasreader->point.classification & 64) classification_keypoint++;
-          // if (lasreader->point.classification & 128) classification_withheld++;
           */
           p  = LASReader_GetNextPoint(reader);
         }
-        fprintf(stderr, "Calculated Minimums X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(pmin),LASPoint_GetY(pmin),LASPoint_GetZ(pmin));
-        fprintf(stderr, "Calculated Maximums X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(pmax),LASPoint_GetY(pmax),LASPoint_GetZ(pmax));
-        fprintf(stderr, "Min Time: %.6f Max Time: %.6f\n", LASPoint_GetTime(pmin),LASPoint_GetTime(pmax));
- 
+
+        fprintf(stderr, "\nreporting minimums and maximums for all %d LAS point record entries ...\n",LASHeader_GetPointRecordsCount(header));
+        fprintf(stderr, " Number of points: %d\n", number_of_point_records);
+        
+        fprintf(stderr, " Min X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(pmin),LASPoint_GetY(pmin),LASPoint_GetZ(pmin));
+        fprintf(stderr, " Min X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(pmax),LASPoint_GetY(pmax),LASPoint_GetZ(pmax));
+        fprintf(stderr, " Min Time: %.6f Max Time: %.6f\n", LASPoint_GetTime(pmin),LASPoint_GetTime(pmax));
+        fprintf(stderr, " Return Number -- Min: %d Max: %d\n", LASPoint_GetReturnNumber(pmin),LASPoint_GetReturnNumber(pmax));
+        fprintf(stderr, " Return Count -- Min: %d Max %d\n", LASPoint_GetNumberOfReturns(pmin),LASPoint_GetNumberOfReturns(pmax));
+
+        fprintf(stderr, " overview over number of returns of given pulse:"); 
+        for (i = 1; i < 8; i++) {
+            rgpsum = rgpsum + number_of_returns_of_given_pulse[i];
+            fprintf(stderr, " %d", number_of_returns_of_given_pulse[i]);
+        }
+        fprintf(stderr, " --- %d\n", rgpsum); 
+
+        if (classification_synthetic || classification_keypoint ||  classification_withheld) {
+            fprintf(stderr, "histogram of classification of points:\n"); 
+            if (classification_synthetic) fprintf(stderr, " +-> flagged as synthetic: %d\n", classification_synthetic);
+            if (classification_keypoint) fprintf(stderr,  " +-> flagged as keypoints: %d\n", classification_keypoint);
+            if (classification_withheld) fprintf(stderr,  " +-> flagged as withheld:  %d\n", classification_withheld);
+        }      
+/*        fprintf(stderr, " number_of_returns_of_given_pulse %d %d\n",point_min.number_of_returns_of_given_pulse, point_max.number_of_returns_of_given_pulse);
+        for (i = 0; i < 32; i++) if (classification[i]) fprintf(stderr, " %8d %s (%d)\n", classification[i], LASpointClassification[i], i);
+
+ */
         if (LASError_GetErrorCount()) {
           fprintf(stdout, 
                   "Error! %d, %s, in method %s\n",
