@@ -8,7 +8,7 @@
 namespace liblas {
 
 LASPoint::LASPoint() :
-    m_intensity(0), m_flags(0), m_class(0), m_gpsTime(0)
+    m_intensity(0), m_flags(0), m_class(0), m_angleRank(0), m_gpsTime(0)
 {
     std::memset(m_coords, 0, sizeof(m_coords));
 }
@@ -16,7 +16,7 @@ LASPoint::LASPoint() :
 LASPoint::LASPoint(LASPoint const& other) :
     m_intensity(other.m_intensity),
         m_flags(other.m_flags), m_class(other.m_class),
-            m_gpsTime(other.m_gpsTime)
+            m_angleRank(other.m_angleRank), m_gpsTime(other.m_gpsTime)
 {
     std::memcpy(m_coords, other.m_coords, sizeof(m_coords));
 }
@@ -32,6 +32,7 @@ LASPoint& LASPoint::operator=(LASPoint const& rhs)
         m_intensity = rhs.m_intensity;
         m_flags = rhs.m_flags;
         m_class = rhs.m_class;
+        m_angleRank = rhs.m_angleRank;
         m_gpsTime = rhs.m_gpsTime;
     }
     return *this;
@@ -96,6 +97,14 @@ void LASPoint::SetFlightLineEdge(uint16_t const& edge)
     uint8_t mask = ~0;
     m_flags &= ~(mask << (begin - 1)); 
     m_flags |= ((val & mask) << (begin - 1));
+}
+
+void LASPoint::SetScanAngleRank(int8_t const& rank)
+{
+    if (eScanAngleRankMin > rank || rank > eScanAngleRankMax)
+        throw std::out_of_range("scan angle rank out of range");
+
+    m_angleRank = rank;
 }
 
 bool LASPoint::equal(LASPoint const& other) const

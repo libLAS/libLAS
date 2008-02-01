@@ -33,6 +33,12 @@ public:
         // = 13-31 // reserved for ASPRS Definition
     };
 
+    enum ScanAngleRankRange
+    {
+        eScanAngleRankMin = -90,
+        eScanAngleRankMax = 90,
+    };
+
     LASPoint();
     LASPoint(LASPoint const& other);
     LASPoint& operator=(LASPoint const& rhs);
@@ -67,6 +73,9 @@ public:
 
     uint8_t GetClassification() const;
     void SetClassification(uint8_t const& classify);
+
+    int8_t GetScanAngleRank() const;
+    void SetScanAngleRank(int8_t const& rank);
     
     double GetTime() const;
     void SetTime(double const& time);
@@ -83,6 +92,7 @@ private:
     uint16_t m_intensity;
     uint8_t m_flags;
     uint8_t m_class;
+    int8_t m_angleRank;
     double m_gpsTime;
 
     void throw_out_of_range() const
@@ -190,6 +200,11 @@ inline uint8_t LASPoint::GetClassification() const
 inline void LASPoint::SetClassification(uint8_t const& classify)
 {
     m_class = classify;
+}
+
+inline int8_t LASPoint::GetScanAngleRank() const
+{
+    return m_angleRank;
 }
 
 inline double LASPoint::GetTime() const

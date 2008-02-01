@@ -271,4 +271,35 @@ namespace tut
         
         ensure_equals("invalid copy of scan flags pattern", bits, expected);
     }
+
+    // Test Get/SetScanAngleRank
+    template<>
+    template<>
+    void to::test<11>()
+    {
+        ensure_equals("invalid default scan angle rank",
+                      m_default.GetScanAngleRank(), 0);
+
+        liblas::int8_t const rank1 = -90;
+        m_default.SetScanAngleRank(rank1);
+        ensure_equals("invalid scan angle rank",
+                      m_default.GetScanAngleRank(), rank1);
+
+        liblas::int8_t const rank2 = 90;
+        m_default.SetScanAngleRank(rank2);
+        ensure_equals("invalid scan angle rank",
+                      m_default.GetScanAngleRank(), rank2);
+
+        try
+        {
+            liblas::int8_t const outofrange = 91;
+            m_default.SetScanAngleRank(outofrange);
+
+            ensure("std::out_of_range not thrown", false);
+        }
+        catch (std::out_of_range const& e)
+        {
+            ensure(e.what(), true);
+        }
+    }
 };
