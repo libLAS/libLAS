@@ -154,36 +154,10 @@ inline uint16_t LASPoint::GetReturnNumber() const
     return (m_flags & 0x07);
 }
 
-inline void LASPoint::SetReturnNumber(uint16_t const& num)
-{
-    if (num > 0x07)
-        throw std::out_of_range("return number out of range");
-
-    // Store value in bits 1,2,3
-    uint8_t val = static_cast<uint8_t>(num);
-    uint16_t const begin = 1;
-    uint8_t mask = ~0;
-    m_flags &= ~(mask << (begin - 1)); 
-    m_flags |= ((val & mask) << (begin - 1));
-}
-
 inline uint16_t LASPoint::GetNumberOfReturns() const
 {
     // Read bits 4,5,6
     return ((m_flags >> 3) & 0x07);
-}
-
-inline void LASPoint::SetNumberOfReturns(uint16_t const& num)
-{
-    if (num > 0x07)
-        throw std::out_of_range("number of returns out of range");
-
-    // Store value in bits 4,5,6
-    uint8_t val = static_cast<uint8_t>(num);
-    uint16_t const begin = 4;
-    uint8_t mask = ~0;
-    m_flags &= ~(mask << (begin - 1)); 
-    m_flags |= ((val & mask) << (begin - 1));
 }
 
 inline uint16_t LASPoint::GetScanDirection() const
@@ -192,36 +166,10 @@ inline uint16_t LASPoint::GetScanDirection() const
     return ((m_flags >> 6) & 0x01);
 }
 
-inline void LASPoint::SetScanDirection(uint16_t const& dir)
-{
-    if (dir > 0x01)
-        throw std::out_of_range("scan direction flag out of range");
-    
-    // Store value in bit 7th
-    uint8_t val = static_cast<uint8_t>(dir);
-    uint16_t const begin = 7;
-    uint8_t mask = ~0;
-    m_flags &= ~(mask << (begin - 1)); 
-    m_flags |= ((val & mask) << (begin - 1));
-}
-
 inline uint16_t LASPoint::GetFlightLineEdge() const
 {
     // Read 8th bit
     return ((m_flags >> 7) & 0x01);
-}
-
-inline void LASPoint::SetFlightLineEdge(uint16_t const& edge)
-{
-    if (edge > 0x01)
-        throw std::out_of_range("edge of flight line out of range");
-
-    // Store value in bit 8th
-    uint8_t val = static_cast<uint8_t>(edge);
-    uint16_t const begin = 8;
-    uint8_t mask = ~0;
-    m_flags &= ~(mask << (begin - 1)); 
-    m_flags |= ((val & mask) << (begin - 1));
 }
 
 inline uint8_t LASPoint::GetScanFlags() const
