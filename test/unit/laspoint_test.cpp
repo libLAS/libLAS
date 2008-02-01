@@ -120,4 +120,70 @@ namespace tut
         ensure("points are equal", m_default != p);
     }
 
+    // Test Get/SetReturnNumber
+    template<>
+    template<>
+    void to::test<6>()
+    {
+        ensure_equals("invalid default return number",
+                      m_default.GetReturnNumber(), 0);
+
+        liblas::uint16_t const num = 7;
+        m_default.SetReturnNumber(num);
+        ensure_equals("invalid return number",
+                      m_default.GetReturnNumber(), num);
+    }
+
+    // Test Get/SetNumberOfReturns
+    template<>
+    template<>
+    void to::test<7>()
+    {
+        ensure_equals("invalid default number of returns",
+                      m_default.GetNumberOfReturns(), 0);
+
+        liblas::uint16_t const num = 7;
+        m_default.SetNumberOfReturns(num);
+        ensure_equals("invalid number of returns",
+                      m_default.GetNumberOfReturns(), num);
+    }
+
+    // Test Get/SetScanDirection
+    template<>
+    template<>
+    void to::test<8>()
+    {
+        ensure_equals("invalid default scan direction flag",
+                      m_default.GetScanDirection(), 0);
+
+        liblas::uint16_t const dir = 1;
+        m_default.SetScanDirection(dir);
+        ensure_equals("invalid scan direction flag",
+                      m_default.GetScanDirection(), dir);
+    }
+
+    // Test Get/SetFlightLineEdge
+    template<>
+    template<>
+    void to::test<9>()
+    {
+        ensure_equals("invalid default edge of flight line",
+                      m_default.GetFlightLineEdge(), 0);
+
+        liblas::uint16_t const edge = 1;
+        m_default.SetFlightLineEdge(edge);
+        ensure_equals("invalid edge of flight line",
+                      m_default.GetFlightLineEdge(), edge);
+    }
+
+    // Test Get/SetScanFlags
+    template<>
+    template<>
+    void to::test<10>()
+    {
+        std::bitset<8> zeros;
+        std::bitset<8> bits = m_default.GetScanFlags();
+        
+        ensure_equals("invalid default scan flags", bits, zeros);
+    }
 };
