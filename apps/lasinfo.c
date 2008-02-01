@@ -218,18 +218,63 @@ int main(int argc, char *argv[])
         fprintf(stderr, "\nreporting minimums and maximums for all %d LAS point record entries ...\n",LASHeader_GetPointRecordsCount(header));
         fprintf(stderr, " Number of points: %d\n", number_of_point_records);
         
-        fprintf(stderr, " Min X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(pmin),LASPoint_GetY(pmin),LASPoint_GetZ(pmin));
-        fprintf(stderr, " Min X,Y,Z: %.6f %.6f %.6f\n", LASPoint_GetX(pmax),LASPoint_GetY(pmax),LASPoint_GetZ(pmax));
-        fprintf(stderr, " Min Time: %.6f Max Time: %.6f\n", LASPoint_GetTime(pmin),LASPoint_GetTime(pmax));
-        fprintf(stderr, " Return Number -- Min: %d Max: %d\n", LASPoint_GetReturnNumber(pmin),LASPoint_GetReturnNumber(pmax));
-        fprintf(stderr, " Return Count -- Min: %d Max %d\n", LASPoint_GetNumberOfReturns(pmin),LASPoint_GetNumberOfReturns(pmax));
+        fprintf(stderr, " Min X,Y,Z: %.6f %.6f %.6f\n", 
+                        LASPoint_GetX(pmin),
+                        LASPoint_GetY(pmin),
+                        LASPoint_GetZ(pmin)
+                );
+        fprintf(stderr, " Min X,Y,Z: %.6f %.6f %.6f\n", 
+                        LASPoint_GetX(pmax),
+                        LASPoint_GetY(pmax),
+                        LASPoint_GetZ(pmax)
+                );
+        fprintf(stderr, " Min Time: %.6f Max Time: %.6f\n", 
+                        LASPoint_GetTime(pmin),
+                        LASPoint_GetTime(pmax)
+                );
+        fprintf(stderr, " Return Number -- Min: %d Max: %d\n", 
+                        LASPoint_GetReturnNumber(pmin),
+                        LASPoint_GetReturnNumber(pmax)
+                );
+        fprintf(stderr, " Return Count -- Min: %d Max %d\n", 
+                        LASPoint_GetNumberOfReturns(pmin),
+                        LASPoint_GetNumberOfReturns(pmax)
+                );
+        fprintf(stderr, " Flightline Edge -- Min: %d Max %d\n", 
+                        LASPoint_GetFlightLineEdge(pmin),
+                        LASPoint_GetFlightLineEdge(pmax)
+                );
 
-        fprintf(stderr, " overview over number of returns of given pulse:"); 
+        fprintf(stderr, " number of returns of given pulse:"); 
         for (i = 1; i < 8; i++) {
             rgpsum = rgpsum + number_of_returns_of_given_pulse[i];
             fprintf(stderr, " %d", number_of_returns_of_given_pulse[i]);
         }
         fprintf(stderr, " --- %d\n", rgpsum); 
+
+        if (number_of_point_records != LASHeader_GetPointRecordsCount(header))
+        {
+        fprintf(stderr, "real number of points (%d) is different from "
+                        "header number of points (%d)\n", 
+                        number_of_point_records, 
+                        LASHeader_GetPointRecordsCount(header)
+                );
+        }
+
+
+        for (i = 0; i < 5; i++) {
+            if (LASHeader_GetPointRecordsByReturnCount(header, i) != number_of_points_by_return[i]) 
+            {
+                fprintf(stderr, " actual number of points by return is different (actual, header):"); 
+                for (i = 0; i < 5; i++) {
+                    fprintf(stderr, " (%d,%d)", 
+                            number_of_points_by_return[i],
+                            LASHeader_GetPointRecordsByReturnCount(header, i)
+                            );
+                } 
+                fprintf(stderr, "\n");
+            }
+        }
 
         if (classification_synthetic || classification_keypoint ||  classification_withheld) {
             fprintf(stderr, "histogram of classification of points:\n"); 
