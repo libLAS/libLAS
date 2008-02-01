@@ -38,6 +38,10 @@ namespace tut
                       m_default.GetFlightLineEdge(), 0);
         ensure_equals("wrong defualt classification",
                       m_default.GetClassification(), 0);
+        ensure_equals("wrong defualt scan angle rank",
+                      m_default.GetScanAngleRank(), 0);
+        ensure_equals("wrong defualt user data value",
+                      m_default.GetUserData(), 0);
         ensure_equals("wrong defualt time",
                       m_default.GetTime(), double(0));
     }
@@ -67,6 +71,10 @@ namespace tut
                       p.GetFlightLineEdge(), 0);
         ensure_equals("wrong classification",
                       p.GetClassification(), 0);
+        ensure_equals("wrong scan angle rank",
+                      m_default.GetScanAngleRank(), 0);
+        ensure_equals("wrong user data value",
+                      m_default.GetUserData(), 0);
         ensure_equals("wrong time",
                       p.GetTime(), double(0));
     }
@@ -97,6 +105,10 @@ namespace tut
                       p.GetFlightLineEdge(), 0);
         ensure_equals("wrong classification",
                       p.GetClassification(), 0);
+        ensure_equals("wrong scan angle rank",
+                      p.GetScanAngleRank(), 0);
+        ensure_equals("wrong user data value",
+                      p.GetUserData(), 0);
         ensure_equals("wrong time",
                       p.GetTime(), double(0));
     }
@@ -301,5 +313,20 @@ namespace tut
         {
             ensure(e.what(), true);
         }
+    }
+
+    // Test Get/SetUserData
+    template<>
+    template<>
+    void to::test<12>()
+    {
+        ensure_equals("invalid default user data value",
+                      m_default.GetUserData(), 0);
+
+        liblas::uint8_t const data = 7; // dummy value
+        m_default.SetUserData(data);
+
+        ensure_equals("invalid user data value",
+                      m_default.GetUserData(), data);
     }
 };

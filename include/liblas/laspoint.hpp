@@ -76,6 +76,9 @@ public:
 
     int8_t GetScanAngleRank() const;
     void SetScanAngleRank(int8_t const& rank);
+
+    uint8_t GetUserData() const;
+    void SetUserData(uint8_t const& data);
     
     double GetTime() const;
     void SetTime(double const& time);
@@ -93,6 +96,7 @@ private:
     uint8_t m_flags;
     uint8_t m_class;
     int8_t m_angleRank;
+    uint8_t m_userData;
     double m_gpsTime;
 
     void throw_out_of_range() const
@@ -205,6 +209,11 @@ inline void LASPoint::SetClassification(uint8_t const& classify)
 inline int8_t LASPoint::GetScanAngleRank() const
 {
     return m_angleRank;
+}
+
+inline uint8_t LASPoint::GetUserData() const
+{
+    return m_userData;
 }
 
 inline double LASPoint::GetTime() const
