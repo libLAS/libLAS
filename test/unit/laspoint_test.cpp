@@ -1,6 +1,8 @@
 // $Id$
 #include <liblas/laspoint.hpp>
 #include <tut/tut.hpp>
+#include <bitset>
+
 namespace tut
 { 
     struct laspoint_data
@@ -128,10 +130,27 @@ namespace tut
         ensure_equals("invalid default return number",
                       m_default.GetReturnNumber(), 0);
 
-        liblas::uint16_t const num = 7;
-        m_default.SetReturnNumber(num);
+        liblas::uint16_t const num1 = 7;
+        m_default.SetReturnNumber(num1);
         ensure_equals("invalid return number",
-                      m_default.GetReturnNumber(), num);
+                      m_default.GetReturnNumber(), num1);
+
+        liblas::uint16_t const num2 = 3;
+        m_default.SetReturnNumber(num2);
+        ensure_equals("invalid return number",
+                      m_default.GetReturnNumber(), num2);
+
+        try
+        {
+            liblas::uint16_t const outofrange = 8;
+            m_default.SetReturnNumber(outofrange);
+
+            ensure("std::out_of_range not thrown", false);
+        }
+        catch (std::out_of_range const& e)
+        {
+            ensure(e.what(), true);
+        }
     }
 
     // Test Get/SetNumberOfReturns
@@ -142,10 +161,27 @@ namespace tut
         ensure_equals("invalid default number of returns",
                       m_default.GetNumberOfReturns(), 0);
 
-        liblas::uint16_t const num = 7;
-        m_default.SetNumberOfReturns(num);
+        liblas::uint16_t const num1 = 7;
+        m_default.SetNumberOfReturns(num1);
         ensure_equals("invalid number of returns",
-                      m_default.GetNumberOfReturns(), num);
+                      m_default.GetNumberOfReturns(), num1);
+
+        liblas::uint16_t const num2 = 3;
+        m_default.SetNumberOfReturns(num2);
+        ensure_equals("invalid number of returns",
+                      m_default.GetNumberOfReturns(), num2);
+
+        try
+        {
+            liblas::uint16_t const outofrange = 8;
+            m_default.SetNumberOfReturns(outofrange);
+
+            ensure("std::out_of_range not thrown", false);
+        }
+        catch (std::out_of_range const& e)
+        {
+            ensure(e.what(), true);
+        }
     }
 
     // Test Get/SetScanDirection
@@ -156,10 +192,27 @@ namespace tut
         ensure_equals("invalid default scan direction flag",
                       m_default.GetScanDirection(), 0);
 
-        liblas::uint16_t const dir = 1;
-        m_default.SetScanDirection(dir);
+        liblas::uint16_t const positive = 1;
+        m_default.SetScanDirection(positive);
         ensure_equals("invalid scan direction flag",
-                      m_default.GetScanDirection(), dir);
+                      m_default.GetScanDirection(), positive);
+
+        liblas::uint16_t const negative = 0;
+        m_default.SetScanDirection(negative);
+        ensure_equals("invalid scan direction flag",
+                      m_default.GetScanDirection(), negative);
+
+        try
+        {
+            liblas::uint16_t const outofrange = 2;
+            m_default.SetScanDirection(outofrange);
+
+            ensure("std::out_of_range not thrown", false);
+        }
+        catch (std::out_of_range const& e)
+        {
+            ensure(e.what(), true);
+        }
     }
 
     // Test Get/SetFlightLineEdge
@@ -170,10 +223,27 @@ namespace tut
         ensure_equals("invalid default edge of flight line",
                       m_default.GetFlightLineEdge(), 0);
 
-        liblas::uint16_t const edge = 1;
-        m_default.SetFlightLineEdge(edge);
+        liblas::uint16_t const endofscan = 1;
+        m_default.SetFlightLineEdge(endofscan);
         ensure_equals("invalid edge of flight line",
-                      m_default.GetFlightLineEdge(), edge);
+                      m_default.GetFlightLineEdge(), endofscan);
+
+        liblas::uint16_t const notendofscan = 0;
+        m_default.SetFlightLineEdge(notendofscan);
+        ensure_equals("invalid edge of flight line",
+                      m_default.GetFlightLineEdge(), notendofscan);
+
+        try
+        {
+            liblas::uint16_t const outofrange = 2;
+            m_default.SetFlightLineEdge(outofrange);
+
+            ensure("std::out_of_range not thrown", false);
+        }
+        catch (std::out_of_range const& e)
+        {
+            ensure(e.what(), true);
+        }
     }
 
     // Test Get/SetScanFlags
@@ -185,5 +255,20 @@ namespace tut
         std::bitset<8> bits = m_default.GetScanFlags();
         
         ensure_equals("invalid default scan flags", bits, zeros);
+
+        m_default.SetReturnNumber(3);
+        m_default.SetNumberOfReturns(7);
+        m_default.SetScanDirection(0);
+        m_default.SetFlightLineEdge(1);
+
+        std::bitset<8> expected(std::string("10111011"));
+        bits = m_default.GetScanFlags();
+        
+        ensure_equals("invalid scan flags pattern", bits, expected);
+
+        liblas::LASPoint copy(m_default);
+        bits = copy.GetScanFlags();
+        
+        ensure_equals("invalid copy of scan flags pattern", bits, expected);
     }
 };

@@ -5,7 +5,6 @@
 #include <liblas/detail/fwd.hpp>
 // std
 #include <stdexcept> // std::out_of_range
-#include <bitset>
 #include <cstdlib> // std::size_t
 
 #include <iostream>
