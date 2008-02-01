@@ -256,7 +256,7 @@ inline void LASPoint::SetTime(double const& time)
 
 inline double& LASPoint::operator[](std::size_t const& n)
 {
-    if (3 <= n)
+    if (coords_size <= n)
         throw_out_of_range();
 
     return m_coords[n];
@@ -264,7 +264,7 @@ inline double& LASPoint::operator[](std::size_t const& n)
 
 inline double const& LASPoint::operator[](std::size_t const& n) const
 {
-    if (3 <= n)
+    if (coords_size <= n)
         throw_out_of_range();
 
     return m_coords[n];
