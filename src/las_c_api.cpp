@@ -130,6 +130,7 @@ void LASReader_Destroy(LASReaderH hReader)
     
     delete ((LASReader*) hReader);
     g_ifs.close();
+    hReader = NULL;
 }
 
 
@@ -174,6 +175,7 @@ LASPointH LASPoint_Copy(LASPointH hPoint) {
 void LASPoint_Destroy(LASPointH hPoint) {
     VALIDATE_POINTER0(hPoint, "LASPoint_GetX");
     delete (LASPoint*) hPoint;
+    hPoint = NULL;
 }
 
 double LASPoint_GetX(LASPointH hPoint) {
@@ -748,6 +750,7 @@ void LASHeader_Destroy(LASHeaderH hHeader)
 {
     VALIDATE_POINTER0(hHeader, "LASHeader_Destroy");
     delete ((LASHeader*) hHeader);
+    hHeader=NULL;
 }
 
 
