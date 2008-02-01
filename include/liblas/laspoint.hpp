@@ -36,7 +36,7 @@ public:
     enum ScanAngleRankRange
     {
         eScanAngleRankMin = -90,
-        eScanAngleRankMax = 90,
+        eScanAngleRankMax = 90
     };
 
     LASPoint();
