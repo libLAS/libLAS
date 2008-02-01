@@ -143,14 +143,15 @@ LASHeaderH LASReader_GetHeader(LASReaderH hReader)
 }
 
 
-LASPointH LASReader_GetNextPoint(LASReaderH hReader)
+const LASPointH LASReader_GetNextPoint(LASReaderH hReader)
 {
     VALIDATE_POINTER1(hReader, "LASReader_GetNextPoint", NULL);
 
     try {
         LASReader *reader = ((LASReader*) hReader);
         if (reader->ReadNextPoint()) 
-            return (LASPointH) new LASPoint(reader->GetPoint());
+            // return (LASPointH) new LASPoint(reader->GetPoint());
+            return (LASPointH) &(reader->GetPoint());
         else 
             return NULL;
     } catch (std::exception const& e)

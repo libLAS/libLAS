@@ -36,7 +36,7 @@ const char* LASError_GetLastErrorMethod(void);
 int LASError_GetErrorCount(void);
 
 LASReaderH LAS_DLL LASReader_Create(const char * filename);
-LASPointH LAS_DLL LASReader_GetNextPoint(LASReaderH hReader);
+const LASPointH LAS_DLL LASReader_GetNextPoint(LASReaderH hReader);
 void LAS_DLL LASReader_Destroy(LASReaderH hReader);
 
 double LAS_DLL LASPoint_GetX(LASPointH);
