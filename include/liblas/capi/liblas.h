@@ -29,98 +29,98 @@ typedef enum
 } LASError;
 
 void LASError_Reset(void);
-void LASError_Pop();
+void LASError_Pop(void);
 LASError LASError_GetLastErrorNum(void);
 const char* LASError_GetLastErrorMsg(void);
 const char* LASError_GetLastErrorMethod(void);
 int LASError_GetErrorCount(void);
 
 LASReaderH LAS_DLL LASReader_Create(const char * filename);
-const LASPointH LAS_DLL LASReader_GetNextPoint(LASReaderH hReader);
+const LASPointH LAS_DLL LASReader_GetNextPoint(const LASReaderH hReader);
 void LAS_DLL LASReader_Destroy(LASReaderH hReader);
 
-double LAS_DLL LASPoint_GetX(LASPointH);
+double LAS_DLL LASPoint_GetX(const LASPointH);
 LASError LASPoint_SetX(LASPointH hPoint, double value);
-double LAS_DLL LASPoint_GetY(LASPointH);
+double LAS_DLL LASPoint_GetY(const LASPointH);
 LASError LASPoint_SetY(LASPointH hPoint, double value);
-double LAS_DLL LASPoint_GetZ(LASPointH);
+double LAS_DLL LASPoint_GetZ(const LASPointH);
 LASError LASPoint_SetZ(LASPointH hPoint, double value);
 
-uint16_t LAS_DLL LASPoint_GetIntensity(LASPointH);
+uint16_t LAS_DLL LASPoint_GetIntensity(const LASPointH);
 LASError LASPoint_SetIntensity(LASPointH hPoint, uint16_t value);
 
-uint16_t LAS_DLL LASPoint_GetReturnNumber(LASPointH);
+uint16_t LAS_DLL LASPoint_GetReturnNumber(const LASPointH);
 LASError LASPoint_SetReturnNumber(LASPointH hPoint, uint16_t value);
-uint16_t LAS_DLL LASPoint_GetNumberOfReturns(LASPointH);
+uint16_t LAS_DLL LASPoint_GetNumberOfReturns(const LASPointH);
 LASError LASPoint_SetNumberOfReturns(LASPointH hPoint, uint16_t value);
-uint16_t LAS_DLL LASPoint_GetScanDirection(LASPointH);
+uint16_t LAS_DLL LASPoint_GetScanDirection(const LASPointH);
 LASError LASPoint_SetScanDirection(LASPointH hPoint, uint16_t value);
-uint16_t LAS_DLL LASPoint_GetFlightLineEdge(LASPointH);
+uint16_t LAS_DLL LASPoint_GetFlightLineEdge(const LASPointH);
 LASError LASPoint_SetFlightLineEdge(LASPointH hPoint, uint16_t value);
-uint8_t LAS_DLL LASPoint_GetScanFlags(LASPointH);
+uint8_t LAS_DLL LASPoint_GetScanFlags(const LASPointH);
 LASError LASPoint_SetScanFlags(LASPointH hPoint, uint8_t value);
-uint8_t LAS_DLL LASPoint_GetClassification(LASPointH);
+uint8_t LAS_DLL LASPoint_GetClassification(const LASPointH);
 LASError LASPoint_SetClassification(LASPointH hPoint, uint8_t value);
-double LAS_DLL LASPoint_GetTime(LASPointH);
+double LAS_DLL LASPoint_GetTime(const LASPointH);
 LASError LASPoint_SetTime(LASPointH hPoint, double value);
 
 
 LASPointH LAS_DLL LASPoint_Create(void);
-LASPointH LASPoint_Copy(LASPointH);
+LASPointH LASPoint_Copy(const LASPointH);
 void LASPoint_Destroy(LASPointH hPoint);
 
 int LAS_DLL LASHeader_Read(LASHeaderH hHeader);
-LASHeaderH LAS_DLL LASReader_GetHeader(LASReaderH hReader);
+LASHeaderH LAS_DLL LASReader_GetHeader(const LASReaderH hReader);
 void LAS_DLL LASHeader_Destroy(LASHeaderH hHeader);
 
-char* LAS_DLL LASHeader_GetFileSignature(LASHeaderH hHeader);
-uint16_t LAS_DLL LASHeader_GetFileSourceId(LASHeaderH hHeader);
+char* LAS_DLL LASHeader_GetFileSignature(const LASHeaderH hHeader);
+uint16_t LAS_DLL LASHeader_GetFileSourceId(const LASHeaderH hHeader);
 
 
-char* LASHeader_GetProjectId(LASHeaderH hHeader);
+char* LASHeader_GetProjectId(const LASHeaderH hHeader);
 
-uint8_t LAS_DLL LASHeader_GetVersionMajor(LASHeaderH hHeader);
+uint8_t LAS_DLL LASHeader_GetVersionMajor(const LASHeaderH hHeader);
 LASError LAS_DLL LASHeader_SetVersionMajor(LASHeaderH hHeader, uint8_t value);
-uint8_t LAS_DLL LASHeader_GetVersionMinor(LASHeaderH hHeader);
+uint8_t LAS_DLL LASHeader_GetVersionMinor(const LASHeaderH hHeader);
 LASError LAS_DLL LASHeader_SetVersionMinor(LASHeaderH hHeader, uint8_t value);
 
-char* LAS_DLL LASHeader_GetSystemId(LASHeaderH hHeader);
+char* LAS_DLL LASHeader_GetSystemId(const LASHeaderH hHeader);
 LASError LAS_DLL LASHeader_SetSystemId(LASHeaderH hHeader, const char* value);
 
-char* LAS_DLL LASHeader_GetSoftwareId(LASHeaderH hHeader);
+char* LAS_DLL LASHeader_GetSoftwareId(const LASHeaderH hHeader);
 LASError LAS_DLL LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* value);
 
-int16_t LAS_DLL LASHeader_GetReserved(LASHeaderH hHeader);
+int16_t LAS_DLL LASHeader_GetReserved(const LASHeaderH hHeader);
 
-int16_t LAS_DLL LASHeader_GetCreationDOY(LASHeaderH hHeader);
+int16_t LAS_DLL LASHeader_GetCreationDOY(const LASHeaderH hHeader);
 LASError LAS_DLL LASHeader_SetCreationDOY(LASHeaderH hHeader, uint16_t value);
-int16_t LAS_DLL LASHeader_GetCreationYear(LASHeaderH hHeader);
+int16_t LAS_DLL LASHeader_GetCreationYear(const LASHeaderH hHeader);
 LASError LAS_DLL LASHeader_SetCreationYear(LASHeaderH hHeader, uint16_t value);
 
-uint16_t LAS_DLL LASHeader_GetHeaderSize(LASHeaderH hHeader);
-uint32_t LAS_DLL LASHeader_GetDataOffset(LASHeaderH hHeader);
-uint32_t LAS_DLL LASHeader_GetRecordsCount(LASHeaderH hHeader);
-uint8_t LAS_DLL LASHeader_GetDataFormatId(LASHeaderH hHeader);
-uint16_t LAS_DLL LASHeader_GetDataRecordLength(LASHeaderH hHeader);
-uint8_t LAS_DLL LASHeader_GetDataFormatId(LASHeaderH hHeader);
-uint32_t LAS_DLL LASHeader_GetPointRecordsCount(LASHeaderH hHeader);
-uint32_t LAS_DLL LASHeader_GetPointRecordsByReturnCount(LASHeaderH hHeader, int index);
+uint16_t LAS_DLL LASHeader_GetHeaderSize(const LASHeaderH hHeader);
+uint32_t LAS_DLL LASHeader_GetDataOffset(const LASHeaderH hHeader);
+uint32_t LAS_DLL LASHeader_GetRecordsCount(const LASHeaderH hHeader);
+uint8_t LAS_DLL LASHeader_GetDataFormatId(const LASHeaderH hHeader);
+uint16_t LAS_DLL LASHeader_GetDataRecordLength(const LASHeaderH hHeader);
+uint8_t LAS_DLL LASHeader_GetDataFormatId(const LASHeaderH hHeader);
+uint32_t LAS_DLL LASHeader_GetPointRecordsCount(const LASHeaderH hHeader);
+uint32_t LAS_DLL LASHeader_GetPointRecordsByReturnCount(const LASHeaderH hHeader, int index);
 
-double LAS_DLL LASHeader_GetScaleX(LASHeaderH hHeader);
-double LAS_DLL LASHeader_GetScaleY(LASHeaderH hHeader);
-double LAS_DLL LASHeader_GetScaleZ(LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetScaleX(const LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetScaleY(const LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetScaleZ(const LASHeaderH hHeader);
 
-double LAS_DLL LASHeader_GetOffsetX(LASHeaderH hHeader);
-double LAS_DLL LASHeader_GetOffsetY(LASHeaderH hHeader);
-double LAS_DLL LASHeader_GetOffsetZ(LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetOffsetX(const LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetOffsetY(const LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetOffsetZ(const LASHeaderH hHeader);
 
-double LAS_DLL LASHeader_GetMinX(LASHeaderH hHeader);
-double LAS_DLL LASHeader_GetMinY(LASHeaderH hHeader);
-double LAS_DLL LASHeader_GetMinZ(LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetMinX(const LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetMinY(const LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetMinZ(const LASHeaderH hHeader);
 
-double LAS_DLL LASHeader_GetMaxX(LASHeaderH hHeader);
-double LAS_DLL LASHeader_GetMaxY(LASHeaderH hHeader);
-double LAS_DLL LASHeader_GetMaxZ(LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetMaxX(const LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetMaxY(const LASHeaderH hHeader);
+double LAS_DLL LASHeader_GetMaxZ(const LASHeaderH hHeader);
 
 LAS_C_END
 #endif

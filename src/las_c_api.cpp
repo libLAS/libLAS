@@ -59,17 +59,17 @@ std::stack<LASError > errors;
            message.c_str(), (func)); \
         return (rc); }} while(0)
 
-void LASError_Reset() {
+void LASError_Reset(void) {
     if (errors.empty()) return;
     for (std::size_t i=0;i<errors.size();i++) errors.pop();
 }
 
-void LASError_Pop() {
+void LASError_Pop(void) {
     if (errors.empty()) return;
     errors.pop();
 }
 
-int LASError_GetLastErrorNum(){
+int LASError_GetLastErrorNum(void){
     if (errors.empty()) return 0;
     if (errors.size() > 0) {
         LASError err = errors.top();
@@ -78,7 +78,7 @@ int LASError_GetLastErrorNum(){
     return 0;
 }
 
-const char* LASError_GetLastErrorMsg(){
+const char* LASError_GetLastErrorMsg(void){
     if (errors.empty()) return NULL;
     if (errors.size() > 0) {
         LASError err = errors.top();
@@ -87,7 +87,7 @@ const char* LASError_GetLastErrorMsg(){
     return NULL;
 }
 
-const char* LASError_GetLastErrorMethod(){
+const char* LASError_GetLastErrorMethod(void){
     if (errors.empty()) return NULL;
     if (errors.size() > 0) {
         LASError err = errors.top();
@@ -134,7 +134,7 @@ void LASReader_Destroy(LASReaderH hReader)
 }
 
 
-LASHeaderH LASReader_GetHeader(LASReaderH hReader)
+LASHeaderH LASReader_GetHeader(const LASReaderH hReader)
 {
     VALIDATE_POINTER1(hReader, "LASReader_GetHeader", NULL);
 
@@ -143,7 +143,7 @@ LASHeaderH LASReader_GetHeader(LASReaderH hReader)
 }
 
 
-const LASPointH LASReader_GetNextPoint(LASReaderH hReader)
+const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
 {
     VALIDATE_POINTER1(hReader, "LASReader_GetNextPoint", NULL);
 
@@ -169,7 +169,7 @@ LASPointH LASPoint_Create(void) {
         return (LASPointH) new LASPoint();
 }
 
-LASPointH LASPoint_Copy(LASPointH hPoint) {
+LASPointH LASPoint_Copy(const LASPointH hPoint) {
         return (LASPointH) new LASPoint(*((LASPoint*) hPoint));
 }
 
@@ -179,7 +179,7 @@ void LASPoint_Destroy(LASPointH hPoint) {
     hPoint = NULL;
 }
 
-double LASPoint_GetX(LASPointH hPoint) {
+double LASPoint_GetX(const LASPointH hPoint) {
 
     VALIDATE_POINTER1(hPoint, "LASPoint_GetX", 0.0);
     
@@ -203,7 +203,7 @@ LASErrorEnum LASPoint_SetX(LASPointH hPoint, double value) {
 
 }
 
-double LASPoint_GetY(LASPointH hPoint) {
+double LASPoint_GetY(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetY", 0.0);
     
@@ -227,7 +227,7 @@ LASErrorEnum LASPoint_SetY(LASPointH hPoint, double value) {
 
 }
 
-double LASPoint_GetZ(LASPointH hPoint) {
+double LASPoint_GetZ(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetZ", 0.0);
     
@@ -251,7 +251,7 @@ LASErrorEnum LASPoint_SetZ(LASPointH hPoint, double value) {
 
 }
 
-liblas::uint16_t LASPoint_GetIntensity(LASPointH hPoint) {
+liblas::uint16_t LASPoint_GetIntensity(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetIntensity", 0);
     
@@ -275,7 +275,7 @@ LASErrorEnum LASPoint_SetIntensity(LASPointH hPoint, liblas::uint16_t value) {
 
 }
 
-liblas::uint16_t LASPoint_GetReturnNumber(LASPointH hPoint) {
+liblas::uint16_t LASPoint_GetReturnNumber(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetReturnNumber", 0);
     
@@ -299,7 +299,7 @@ LASErrorEnum LASPoint_SetReturnNumber(LASPointH hPoint, liblas::uint16_t value) 
 
 }
 
-liblas::uint16_t LASPoint_GetNumberOfReturns(LASPointH hPoint) {
+liblas::uint16_t LASPoint_GetNumberOfReturns(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetNumberOfReturns", 0);
     
@@ -323,7 +323,7 @@ LASErrorEnum LASPoint_SetNumberOfReturns(LASPointH hPoint, liblas::uint16_t valu
 
 }
 
-liblas::uint16_t LASPoint_GetScanDirection(LASPointH hPoint) {
+liblas::uint16_t LASPoint_GetScanDirection(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetScanDirection", 0);
     
@@ -347,7 +347,7 @@ LASErrorEnum LASPoint_SetScanDirection(LASPointH hPoint, liblas::uint16_t value)
 
 }
 
-liblas::uint16_t LASPoint_GetFlightLineEdge(LASPointH hPoint) {
+liblas::uint16_t LASPoint_GetFlightLineEdge(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetFlightLineEdge", 0);
     
@@ -370,7 +370,7 @@ LASErrorEnum LASPoint_SetFlightLineEdge(LASPointH hPoint, liblas::uint16_t value
     return LE_None;
 
 }
-liblas::uint8_t LASPoint_GetScanFlags(LASPointH hPoint) {
+liblas::uint8_t LASPoint_GetScanFlags(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetScanFlags", 0);
     
@@ -394,7 +394,7 @@ LASErrorEnum LASPoint_SetScanFlags(LASPointH hPoint, liblas::uint8_t value) {
 
 }
 
-liblas::uint8_t LASPoint_GetClassification(LASPointH hPoint) {
+liblas::uint8_t LASPoint_GetClassification(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetClassification", 0);
     
@@ -434,7 +434,7 @@ LASErrorEnum LASPoint_SetTime(LASPointH hPoint, double value) {
 
 }
 
-double LASPoint_GetTime(LASPointH hPoint) {
+double LASPoint_GetTime(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetTime", 0.0);
     
@@ -442,7 +442,7 @@ double LASPoint_GetTime(LASPointH hPoint) {
     return value;
 }
 
-char* LASHeader_GetFileSignature(LASHeaderH hHeader) {
+char* LASHeader_GetFileSignature(const LASHeaderH hHeader) {
     // caller owns it
     VALIDATE_POINTER1(hHeader, "LASHeader_GetFileSignature", NULL);
     
@@ -452,21 +452,21 @@ char* LASHeader_GetFileSignature(LASHeaderH hHeader) {
     return value;
 }
 
-liblas::uint16_t LASHeader_GetFileSourceId(LASHeaderH hHeader) {
+liblas::uint16_t LASHeader_GetFileSourceId(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetFileSourceId", 0);
 
     unsigned short value = ((LASHeader*) hHeader)->GetFileSourceId();
     return value;
 }
 
-liblas::uint16_t LASHeader_GetReserved(LASHeaderH hHeader) {
+liblas::uint16_t LASHeader_GetReserved(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetReserved", 0);
 
     unsigned short value = ((LASHeader*) hHeader)->GetReserved();
     return value;
 }
 
-char* LASHeader_GetProjectId(LASHeaderH hHeader) {
+char* LASHeader_GetProjectId(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetProjectId", 0);
     
     liblas::guid id = ((LASHeader*) hHeader)->GetProjectId();
@@ -475,7 +475,7 @@ char* LASHeader_GetProjectId(LASHeaderH hHeader) {
     return output;
 }
 
-liblas::uint8_t LASHeader_GetVersionMajor(LASHeaderH hHeader) {
+liblas::uint8_t LASHeader_GetVersionMajor(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetVersionMajor", 0);
 
     long value = ((LASHeader*) hHeader)->GetVersionMajor();
@@ -496,7 +496,7 @@ LASErrorEnum LASHeader_SetVersionMajor(LASHeaderH hHeader, liblas::uint8_t value
     return LE_None;
 }
 
-liblas::uint8_t LASHeader_GetVersionMinor(LASHeaderH hHeader) {
+liblas::uint8_t LASHeader_GetVersionMinor(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetVersionMinor", 0);
 
     long value = ((LASHeader*) hHeader)->GetVersionMinor();
@@ -518,7 +518,7 @@ LASErrorEnum LASHeader_SetVersionMinor(LASHeaderH hHeader, liblas::uint8_t value
     return LE_None;
 }
 
-char* LASHeader_GetSystemId(LASHeaderH hHeader) {
+char* LASHeader_GetSystemId(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetSystemId", NULL);
 
     // caller owns it
@@ -542,7 +542,7 @@ LASErrorEnum LASHeader_SetSystemId(LASHeaderH hHeader, const char* value) {
     return LE_None;
 }
 
-char* LASHeader_GetSoftwareId(LASHeaderH hHeader) {
+char* LASHeader_GetSoftwareId(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetSoftwareId", NULL);
 
     // caller owns it
@@ -566,7 +566,7 @@ LASErrorEnum LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* value) {
     return LE_None;
 }
 
-liblas::uint16_t LASHeader_GetCreationDOY(LASHeaderH hHeader) {
+liblas::uint16_t LASHeader_GetCreationDOY(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetCreationDOY", 0);
 
     unsigned short value = ((LASHeader*) hHeader)->GetCreationDOY();
@@ -579,7 +579,7 @@ LASErrorEnum LASHeader_SetCreationDOY(LASHeaderH hHeader, liblas::uint16_t value
     return LE_None;
 }
 
-liblas::uint16_t LASHeader_GetCreationYear(LASHeaderH hHeader) {
+liblas::uint16_t LASHeader_GetCreationYear(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetCreationYear", 0);
 
     unsigned short value = ((LASHeader*) hHeader)->GetCreationYear();
@@ -592,14 +592,14 @@ LASErrorEnum LASHeader_SetCreationYear(LASHeaderH hHeader, liblas::uint16_t valu
     return LE_None;
 }
 
-liblas::uint16_t LASHeader_GetHeaderSize(LASHeaderH hHeader) {
+liblas::uint16_t LASHeader_GetHeaderSize(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetHeaderSize", 0);
 
     unsigned short value = ((LASHeader*) hHeader)->GetHeaderSize();
     return value;
 }
 
-liblas::uint32_t LASHeader_GetDataOffset(LASHeaderH hHeader) {
+liblas::uint32_t LASHeader_GetDataOffset(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetDataOffset", 0);
 
     unsigned long value = ((LASHeader*) hHeader)->GetDataOffset();
@@ -609,14 +609,14 @@ liblas::uint32_t LASHeader_GetDataOffset(LASHeaderH hHeader) {
 
 
 
-liblas::uint32_t LASHeader_GetRecordsCount(LASHeaderH hHeader) {
+liblas::uint32_t LASHeader_GetRecordsCount(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetRecordsCount", 0);
 
     unsigned long value = ((LASHeader*) hHeader)->GetRecordsCount();
     return value;
 }
 
-liblas::uint8_t LASHeader_GetDataFormatId(LASHeaderH hHeader) {
+liblas::uint8_t LASHeader_GetDataFormatId(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetDataFormatId", 0);
 
     unsigned char value = ((LASHeader*) hHeader)->GetDataFormatId();
@@ -637,7 +637,7 @@ LASErrorEnum LASHeader_SetDataFormatId(LASHeaderH hHeader, int value) {
     return LE_None;
 }
 
-liblas::uint16_t LASHeader_GetDataRecordLength(LASHeaderH hHeader) {
+liblas::uint16_t LASHeader_GetDataRecordLength(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetDataRecordLength", 0);
 
     unsigned short value = ((LASHeader*) hHeader)->GetDataRecordLength();
@@ -645,7 +645,7 @@ liblas::uint16_t LASHeader_GetDataRecordLength(LASHeaderH hHeader) {
 }
 
 
-liblas::uint32_t LASHeader_GetPointRecordsByReturnCount(LASHeaderH hHeader, int index) {
+liblas::uint32_t LASHeader_GetPointRecordsByReturnCount(const LASHeaderH hHeader, int index) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetPointRecordsByReturnCount", 0);
 
     std::vector<liblas::uint32_t> counts  = ((LASHeader*) hHeader)->GetPointRecordsByReturnCount();
@@ -657,90 +657,91 @@ liblas::uint32_t LASHeader_GetPointRecordsByReturnCount(LASHeaderH hHeader, int 
     
 }
 
-liblas::uint32_t LASHeader_GetPointRecordsCount(LASHeaderH hHeader) {
+liblas::uint32_t LASHeader_GetPointRecordsCount(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetPointRecordsCount", 0);
 
     unsigned long value = ((LASHeader*) hHeader)->GetPointRecordsCount();
     return value;
 }
-double LASHeader_GetScaleX(LASHeaderH hHeader) {
+
+double LASHeader_GetScaleX(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetScaleX", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetScaleX();
     return value;
 }
 
-double LASHeader_GetScaleY(LASHeaderH hHeader) {
+double LASHeader_GetScaleY(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetScaleY", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetScaleY();
     return value;
 }
 
-double LASHeader_GetScaleZ(LASHeaderH hHeader) {
+double LASHeader_GetScaleZ(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetScaleZ", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetScaleZ();
     return value;
 }
 
-double LASHeader_GetOffsetX(LASHeaderH hHeader) {
+double LASHeader_GetOffsetX(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetOffsetX", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetOffsetX();
     return value;
 }
 
-double LASHeader_GetOffsetY(LASHeaderH hHeader) {
+double LASHeader_GetOffsetY(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetOffsetY", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetOffsetY();
     return value;
 }
 
-double LASHeader_GetOffsetZ(LASHeaderH hHeader) {
+double LASHeader_GetOffsetZ(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetOffsetZ", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetOffsetZ();
     return value;
 }
 
-double LASHeader_GetMinX(LASHeaderH hHeader) {
+double LASHeader_GetMinX(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetMinX", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetMinX();
     return value;
 }
 
-double LASHeader_GetMinY(LASHeaderH hHeader) {
+double LASHeader_GetMinY(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetMinY", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetMinY();
     return value;
 }
 
-double LASHeader_GetMinZ(LASHeaderH hHeader) {
+double LASHeader_GetMinZ(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetMinZ", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetMinZ();
     return value;
 }
 
-double LASHeader_GetMaxX(LASHeaderH hHeader) {
+double LASHeader_GetMaxX(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetMaxX", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetMaxX();
     return value;
 }
 
-double LASHeader_GetMaxY(LASHeaderH hHeader) {
+double LASHeader_GetMaxY(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetMaxY", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetMaxY();
     return value;
 }
 
-double LASHeader_GetMaxZ(LASHeaderH hHeader) {
+double LASHeader_GetMaxZ(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetMaxZ", 0.0);
 
     double value = ((LASHeader*) hHeader)->GetMaxZ();
