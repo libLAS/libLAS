@@ -282,6 +282,12 @@ std::vector<uint32_t> const& LASHeader::GetPointRecordsByReturnCount() const
     return m_pointRecordsByReturn;
 }
 
+void LASHeader::SetPointRecordsByReturnCount(int r, uint32_t value)
+{
+    m_pointRecordsByReturn[r] = value;
+}
+
+
 double LASHeader::GetScaleX() const
 {
     return m_scales.x;

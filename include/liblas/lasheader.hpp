@@ -79,6 +79,7 @@ public:
     void SetPointRecordsCount(uint32_t const& v);
     
     std::vector<uint32_t> const& GetPointRecordsByReturnCount() const;
+    void SetPointRecordsByReturnCount(int r, uint32_t v);
     
     double GetScaleX() const;
     double GetScaleY() const;
