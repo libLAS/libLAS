@@ -32,7 +32,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = lasinfo$(EXEEXT)
+bin_PROGRAMS = lasinfo$(EXEEXT) las2las$(EXEEXT)
 subdir = apps
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -44,6 +44,10 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
+am_las2las_OBJECTS = las2las.$(OBJEXT)
+las2las_OBJECTS = $(am_las2las_OBJECTS)
+las2las_LDADD = $(LDADD)
+las2las_DEPENDENCIES = ../src/liblas.la
 am_lasinfo_OBJECTS = lasinfo.$(OBJEXT)
 lasinfo_OBJECTS = $(am_lasinfo_OBJECTS)
 lasinfo_LDADD = $(LDADD)
@@ -60,8 +64,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(lasinfo_SOURCES)
-DIST_SOURCES = $(lasinfo_SOURCES)
+SOURCES = $(las2las_SOURCES) $(lasinfo_SOURCES)
+DIST_SOURCES = $(las2las_SOURCES) $(lasinfo_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -172,6 +176,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 INCLUDES = -I../include/liblas/capi
 lasinfo_SOURCES = lasinfo.c 
+las2las_SOURCES = las2las.c
 LDADD = ../src/liblas.la
 all: all-am
 
@@ -234,6 +239,9 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+las2las$(EXEEXT): $(las2las_OBJECTS) $(las2las_DEPENDENCIES) 
+	@rm -f las2las$(EXEEXT)
+	$(LINK) $(las2las_OBJECTS) $(las2las_LDADD) $(LIBS)
 lasinfo$(EXEEXT): $(lasinfo_OBJECTS) $(lasinfo_DEPENDENCIES) 
 	@rm -f lasinfo$(EXEEXT)
 	$(LINK) $(lasinfo_OBJECTS) $(lasinfo_LDADD) $(LIBS)
@@ -244,6 +252,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/las2las.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lasinfo.Po@am__quote@
 
 .c.o:
