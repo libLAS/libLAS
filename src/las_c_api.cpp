@@ -2,6 +2,7 @@
 
 #include <liblas/lasreader.hpp>
 #include <liblas/laserror.hpp>
+#include <liblas/laswriter.hpp>
 #include <liblas/guid.hpp>
 
 typedef void *LASWriterH;
@@ -34,6 +35,7 @@ typedef enum
 } LASErrorEnum;
 
 std::ifstream g_ifs;
+std::ofstream g_ofs;
 
 std::stack<LASError > errors;
 
@@ -442,6 +444,54 @@ double LASPoint_GetTime(const LASPointH hPoint) {
     return value;
 }
 
+liblas::uint8_t LASPoint_GetScanAngleRank(const LASPointH hPoint) {
+    
+    VALIDATE_POINTER1(hPoint, "LASPoint_GetScanAngleRank", 0);
+    
+    liblas::uint8_t value = ((LASPoint*) hPoint)->GetScanAngleRank();
+    return value;
+}
+
+LASErrorEnum LASPoint_SetScanAngleRank(LASPointH hPoint, liblas::uint8_t value) {
+
+    VALIDATE_POINTER1(hPoint, "LASPoint_SetScanAngleRank", LE_Failure);
+
+    try {
+            ((LASPoint*) hPoint)->SetScanAngleRank(value);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetScanAngleRank");
+        return LE_Failure;
+    }
+
+    return LE_None;
+
+}
+
+liblas::uint8_t LASPoint_GetUserData(const LASPointH hPoint) {
+    
+    VALIDATE_POINTER1(hPoint, "LASPoint_GetUserData", 0);
+    
+    liblas::uint8_t value = ((LASPoint*) hPoint)->GetUserData();
+    return value;
+}
+
+LASErrorEnum LASPoint_SetUserData(LASPointH hPoint, liblas::uint8_t value) {
+
+    VALIDATE_POINTER1(hPoint, "LASPoint_SetUserData", LE_Failure);
+
+    try {
+            ((LASPoint*) hPoint)->SetUserData(value);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetUserData");
+        return LE_Failure;
+    }
+
+    return LE_None;
+
+}
+
 char* LASHeader_GetFileSignature(const LASHeaderH hHeader) {
     // caller owns it
     VALIDATE_POINTER1(hHeader, "LASHeader_GetFileSignature", NULL);
@@ -657,6 +707,21 @@ liblas::uint32_t LASHeader_GetPointRecordsByReturnCount(const LASHeaderH hHeader
     
 }
 
+LASErrorEnum LASHeader_SetPointRecordsByReturnCount(const LASHeaderH hHeader, int index, liblas::uint32_t value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetPointRecordsByReturnCount", LE_Failure);
+
+    try {
+        ((LASHeader*) hHeader)->SetPointRecordsByReturnCount(index, value);    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetPointRecordsByReturnCount");
+        return LE_Failure;
+    }
+ 
+    return LE_None;    
+}
+
+
 liblas::uint32_t LASHeader_GetPointRecordsCount(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetPointRecordsCount", 0);
 
@@ -664,6 +729,19 @@ liblas::uint32_t LASHeader_GetPointRecordsCount(const LASHeaderH hHeader) {
     return value;
 }
 
+LASErrorEnum LASHeader_SetPointRecordsCount(const LASHeaderH hHeader, liblas::uint32_t value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetPointRecordsCount", LE_Failure);
+
+    try {
+        ((LASHeader*) hHeader)->SetPointRecordsCount(value);    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetPointRecordsCount");
+        return LE_Failure;
+    }
+ 
+    return LE_None;    
+}
 double LASHeader_GetScaleX(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetScaleX", 0.0);
 
@@ -683,6 +761,20 @@ double LASHeader_GetScaleZ(const LASHeaderH hHeader) {
 
     double value = ((LASHeader*) hHeader)->GetScaleZ();
     return value;
+}
+
+LASErrorEnum LASHeader_SetScale(LASHeaderH hHeader, double x, double y, double z) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetScale", LE_Failure); 
+    
+    try {
+            ((LASHeader*) hHeader)->SetScale(x,y,z);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetScale");
+        return LE_Failure;
+    }
+
+    return LE_None;
 }
 
 double LASHeader_GetOffsetX(const LASHeaderH hHeader) {
@@ -706,6 +798,20 @@ double LASHeader_GetOffsetZ(const LASHeaderH hHeader) {
     return value;
 }
 
+LASErrorEnum LASHeader_SetOffset(LASHeaderH hHeader, double x, double y, double z) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetOffset", LE_Failure); 
+    
+    try {
+            ((LASHeader*) hHeader)->SetOffset(x,y,z);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetOffset");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
 double LASHeader_GetMinX(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetMinX", 0.0);
 
@@ -725,6 +831,20 @@ double LASHeader_GetMinZ(const LASHeaderH hHeader) {
 
     double value = ((LASHeader*) hHeader)->GetMinZ();
     return value;
+}
+
+LASErrorEnum LASHeader_SetMin(LASHeaderH hHeader, double x, double y, double z) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetMin", LE_Failure); 
+    
+    try {
+            ((LASHeader*) hHeader)->SetMin(x,y,z);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetMin");
+        return LE_Failure;
+    }
+
+    return LE_None;
 }
 
 double LASHeader_GetMaxX(const LASHeaderH hHeader) {
@@ -748,6 +868,20 @@ double LASHeader_GetMaxZ(const LASHeaderH hHeader) {
     return value;
 }
 
+LASErrorEnum LASHeader_SetMax(LASHeaderH hHeader, double x, double y, double z) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetMax", LE_Failure); 
+    
+    try {
+            ((LASHeader*) hHeader)->SetMax(x,y,z);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetMax");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
 void LASHeader_Destroy(LASHeaderH hHeader)
 {
     VALIDATE_POINTER0(hHeader, "LASHeader_Destroy");
@@ -755,5 +889,47 @@ void LASHeader_Destroy(LASHeaderH hHeader)
     hHeader=NULL;
 }
 
+LASHeaderH LASHeader_Copy(const LASHeaderH hHeader) {
+        return (LASHeaderH) new LASHeader(*((LASHeader*) hHeader));
+}
 
+LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
+
+    if (filename == NULL) {
+        LASError_PushError(LE_Failure, "Inputted filename was null", "LASReader_Create");
+        return NULL;
+    }
+    try {
+        g_ofs.open(filename, std::ios::in | std::ios::binary);
+        LASWriter* writer = new LASWriter(g_ofs, *((LASHeader*) hHeader));
+        return (LASWriterH) writer;
+    } catch (std::exception const& e)
+     {
+         LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
+         return NULL;
+     }
+    
+}
+
+LASErrorEnum LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoint) {
+
+    VALIDATE_POINTER1(hPoint, "LASWriter_WritePoint", LE_Failure);
+
+    try {
+            ((LASWriter*) hWriter)->WritePoint(*((LASPoint*) hPoint));
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetScanAngleRank");
+        return LE_Failure;
+    }
+
+    return LE_None;    
+}
+
+void LASWriter_Destroy(LASWriterH hWriter)
+{
+    VALIDATE_POINTER0(hWriter, "LASWriter_Destroy");
+    delete ((LASWriter*) hWriter);
+    hWriter=NULL;
+}
 } // extern "C"

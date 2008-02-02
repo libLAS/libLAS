@@ -24,7 +24,17 @@
 #endif
 #endif
 
+#ifndef NULL
 #define NULL 0
+#endif
+
+#ifndef TRUE
+#define TRUE 1
+#endif 
+
+#ifndef FALSE
+#define FALSE 0
+#endif
 
 #ifndef MAX
 #  define MIN(a,b)      ((a<b) ? a : b)
