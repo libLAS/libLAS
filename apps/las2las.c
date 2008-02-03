@@ -48,8 +48,9 @@ int main(int argc, char *argv[])
   char* file_name_out = 0;
   int olas = FALSE;
   int olaz = FALSE;
-  int clip_xy_min[2] = {0,0};
-  int clip_xy_max[2] = {0,0};
+  int clip_xy_min[2];
+  int clip_xy_max[2];
+  int clip = FALSE;
   int remove_extra_header = FALSE;
   int elim_return = 0;
   int elim_scan_angle_above = 0;
@@ -118,6 +119,7 @@ int main(int argc, char *argv[])
       clip_xy_max[0] = atoi(argv[i]);
       i++;
       clip_xy_max[1] = atoi(argv[i]);
+      clip = TRUE;
     }
     else if (strcmp(argv[i],"-eliminate_return") == 0 || strcmp(argv[i],"-elim_return") == 0 || strcmp(argv[i],"-elim_ret") == 0)
     {
@@ -212,18 +214,19 @@ int main(int argc, char *argv[])
       p  = LASReader_GetNextPoint(reader);
       continue;
     }
-    if (clip_xy_min && (LASPoint_GetX(p) < clip_xy_min[0] || LASPoint_GetY(p) < clip_xy_min[1]))
+    
+    if (clip && (LASPoint_GetX(p) < clip_xy_min[0] || LASPoint_GetY(p) < clip_xy_min[1]))
     {
       clipped++;
       p  = LASReader_GetNextPoint(reader);
       continue;
     }
-    if (clip_xy_max && (LASPoint_GetX(p) > clip_xy_max[0] || LASPoint_GetY(p) > clip_xy_max[1]))
+    if (clip && (LASPoint_GetX(p) > clip_xy_max[0] || LASPoint_GetY(p) > clip_xy_max[1]))
     {
       clipped++;
       p  = LASReader_GetNextPoint(reader);
       continue;
-    }
+    } 
     if (elim_return && (elim_return & (1 << LASPoint_GetReturnNumber(p))))
     {
       eliminated_return++;
