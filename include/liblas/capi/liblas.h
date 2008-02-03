@@ -78,6 +78,7 @@ int LAS_DLL LASHeader_Read(LASHeaderH hHeader);
 LASHeaderH LAS_DLL LASReader_GetHeader(const LASReaderH hReader);
 void LAS_DLL LASHeader_Destroy(LASHeaderH hHeader);
 LASHeaderH LASHeader_Copy(const LASHeaderH hHeader);
+LASHeaderH LASHeader_Create(void);
 
 char* LAS_DLL LASHeader_GetFileSignature(const LASHeaderH hHeader);
 uint16_t LAS_DLL LASHeader_GetFileSourceId(const LASHeaderH hHeader);

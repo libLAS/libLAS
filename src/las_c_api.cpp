@@ -136,14 +136,6 @@ void LASReader_Destroy(LASReaderH hReader)
 }
 
 
-LASHeaderH LASReader_GetHeader(const LASReaderH hReader)
-{
-    VALIDATE_POINTER1(hReader, "LASReader_GetHeader", NULL);
-
-    LASHeader header = ((LASReader*) hReader)->GetHeader();
-    return (LASHeaderH) new LASHeader( header );
-}
-
 
 const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
 {
@@ -165,6 +157,18 @@ const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
  
     return NULL;
 
+}
+
+LASHeaderH LASReader_GetHeader(const LASReaderH hReader)
+{
+    VALIDATE_POINTER1(hReader, "LASReader_GetHeader", NULL);
+
+    LASHeader header = ((LASReader*) hReader)->GetHeader();
+    return (LASHeaderH) new LASHeader( header );
+}
+
+LASHeaderH LASHeader_Create(void) {
+        return (LASHeaderH) new LASHeader();
 }
 
 LASPointH LASPoint_Create(void) {
@@ -491,6 +495,7 @@ LASErrorEnum LASPoint_SetUserData(LASPointH hPoint, liblas::uint8_t value) {
     return LE_None;
 
 }
+
 
 char* LASHeader_GetFileSignature(const LASHeaderH hHeader) {
     // caller owns it
@@ -896,7 +901,7 @@ LASHeaderH LASHeader_Copy(const LASHeaderH hHeader) {
 LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
 
     if (filename == NULL) {
-        LASError_PushError(LE_Failure, "Inputted filename was null", "LASReader_Create");
+        LASError_PushError(LE_Failure, "Inputted filename was null", "LASWriter_Create");
         return NULL;
     }
     try {
@@ -905,7 +910,7 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
         return (LASWriterH) writer;
     } catch (std::exception const& e)
      {
-         LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
+         LASError_PushError(LE_Failure, e.what(), "LASWriter_Create");
          return NULL;
      }
     
