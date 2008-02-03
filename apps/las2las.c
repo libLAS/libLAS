@@ -203,36 +203,43 @@ int main(int argc, char *argv[])
     if (last_only && LASPoint_GetReturnNumber(p) != LASPoint_GetNumberOfReturns(p))
     {
       eliminated_last_only++;
+      p  = LASReader_GetNextPoint(reader);
       continue;
     }
     if (first_only && LASPoint_GetReturnNumber(p) != 1)
     {
       eliminated_first_only++;
+      p  = LASReader_GetNextPoint(reader);
       continue;
     }
     if (clip_xy_min && (LASPoint_GetX(p) < clip_xy_min[0] || LASPoint_GetY(p) < clip_xy_min[1]))
     {
       clipped++;
+      p  = LASReader_GetNextPoint(reader);
       continue;
     }
     if (clip_xy_max && (LASPoint_GetX(p) > clip_xy_max[0] || LASPoint_GetY(p) > clip_xy_max[1]))
     {
       clipped++;
+      p  = LASReader_GetNextPoint(reader);
       continue;
     }
     if (elim_return && (elim_return & (1 << LASPoint_GetReturnNumber(p))))
     {
       eliminated_return++;
+      p  = LASReader_GetNextPoint(reader);
       continue;
     }
     if (elim_scan_angle_above && (LASPoint_GetScanAngleRank(p) > elim_scan_angle_above || LASPoint_GetScanAngleRank(p) < -elim_scan_angle_above))
     {
       eliminated_scan_angle++;
+      p  = LASReader_GetNextPoint(reader);
       continue;
     }
     if (elim_intensity_below && LASPoint_GetIntensity(p) < elim_intensity_below)
     {
       eliminated_intensity++;
+      p  = LASReader_GetNextPoint(reader);
       continue;
     }
     surviving_number_of_point_records++;
@@ -427,31 +434,39 @@ int main(int argc, char *argv[])
 
     if (last_only && LASPoint_GetReturnNumber(p) != LASPoint_GetNumberOfReturns(p))
     {
-      continue;
+        p  = LASReader_GetNextPoint(reader);
+        continue;
     }
     if (first_only && LASPoint_GetReturnNumber(p) != 1)
     {
-      continue;
+        p  = LASReader_GetNextPoint(reader);
+        continue;
+
     }
     if (clip_xy_min && (LASPoint_GetX(p) < clip_xy_min[0] || LASPoint_GetY(p) < clip_xy_min[1]))
     {
-      continue;
+        p  = LASReader_GetNextPoint(reader);
+        continue;
     }
     if (clip_xy_max && (LASPoint_GetX(p) > clip_xy_max[0] || LASPoint_GetY(p) > clip_xy_max[1]))
     {
-      continue;
+        p  = LASReader_GetNextPoint(reader);
+        continue;
     }
     if (elim_return && (elim_return & (1 << LASPoint_GetReturnNumber(p))))
     {
-      continue;
+        p  = LASReader_GetNextPoint(reader);
+        continue;
     }
     if (elim_scan_angle_above && (LASPoint_GetScanAngleRank(p) > elim_scan_angle_above || LASPoint_GetScanAngleRank(p) < -elim_scan_angle_above))
     {
-      continue;
+        p  = LASReader_GetNextPoint(reader);
+        continue;
     }
     if (elim_intensity_below && LASPoint_GetIntensity(p) < elim_intensity_below)
     {
-      continue;
+        p  = LASReader_GetNextPoint(reader);
+        continue;
     }
     LASWriter_WritePoint(writer,p);
 
