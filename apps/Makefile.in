@@ -33,7 +33,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = lasinfo$(EXEEXT) las2las$(EXEEXT) lasmerge$(EXEEXT) \
-	las2txt$(EXEEXT)
+	las2txt$(EXEEXT) txt2las$(EXEEXT)
 subdir = apps
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -61,6 +61,10 @@ am_lasmerge_OBJECTS = lasmerge.$(OBJEXT)
 lasmerge_OBJECTS = $(am_lasmerge_OBJECTS)
 lasmerge_LDADD = $(LDADD)
 lasmerge_DEPENDENCIES = ../src/liblas.la
+am_txt2las_OBJECTS = txt2las.$(OBJEXT)
+txt2las_OBJECTS = $(am_txt2las_OBJECTS)
+txt2las_LDADD = $(LDADD)
+txt2las_DEPENDENCIES = ../src/liblas.la
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -74,9 +78,9 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(las2las_SOURCES) $(las2txt_SOURCES) $(lasinfo_SOURCES) \
-	$(lasmerge_SOURCES)
+	$(lasmerge_SOURCES) $(txt2las_SOURCES)
 DIST_SOURCES = $(las2las_SOURCES) $(las2txt_SOURCES) \
-	$(lasinfo_SOURCES) $(lasmerge_SOURCES)
+	$(lasinfo_SOURCES) $(lasmerge_SOURCES) $(txt2las_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -190,6 +194,7 @@ lasinfo_SOURCES = lasinfo.c
 las2las_SOURCES = las2las.c
 lasmerge_SOURCES = lasmerge.c
 las2txt_SOURCES = las2txt.c
+txt2las_SOURCES = txt2las.c
 LDADD = ../src/liblas.la
 all: all-am
 
@@ -264,6 +269,9 @@ lasinfo$(EXEEXT): $(lasinfo_OBJECTS) $(lasinfo_DEPENDENCIES)
 lasmerge$(EXEEXT): $(lasmerge_OBJECTS) $(lasmerge_DEPENDENCIES) 
 	@rm -f lasmerge$(EXEEXT)
 	$(LINK) $(lasmerge_OBJECTS) $(lasmerge_LDADD) $(LIBS)
+txt2las$(EXEEXT): $(txt2las_OBJECTS) $(txt2las_DEPENDENCIES) 
+	@rm -f txt2las$(EXEEXT)
+	$(LINK) $(txt2las_OBJECTS) $(txt2las_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -275,6 +283,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/las2txt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lasinfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lasmerge.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/txt2las.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
