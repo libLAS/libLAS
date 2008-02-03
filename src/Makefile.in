@@ -51,7 +51,7 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 liblas_la_DEPENDENCIES = detail/liblasdetail.la
 am_liblas_la_OBJECTS = lasheader.lo lasreader.lo las_c_api.lo \
-	laspoint.lo laserror.lo
+	laspoint.lo laserror.lo laswriter.lo
 liblas_la_OBJECTS = $(am_liblas_la_OBJECTS)
 liblas_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -191,7 +191,7 @@ top_srcdir = @top_srcdir@
 SUBDIRS = detail .
 INCLUDES = -I../include -I../include/detail
 lib_LTLIBRARIES = liblas.la
-liblas_la_SOURCES = lasheader.cpp lasreader.cpp las_c_api.cpp laspoint.cpp laserror.cpp
+liblas_la_SOURCES = lasheader.cpp lasreader.cpp las_c_api.cpp laspoint.cpp laserror.cpp laswriter.cpp
 liblas_la_LIBADD = detail/liblasdetail.la
 liblas_la_LDFLAGS = -version-info 1:0:0
 all: all-recursive
@@ -268,6 +268,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lasheader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/laspoint.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lasreader.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/laswriter.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

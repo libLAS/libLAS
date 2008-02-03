@@ -905,7 +905,7 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
         return NULL;
     }
     try {
-        g_ofs.open(filename, std::ios::in | std::ios::binary);
+        g_ofs.open(filename, std::ios::out | std::ios::binary);
         LASWriter* writer = new LASWriter(g_ofs, *((LASHeader*) hHeader));
         return (LASWriterH) writer;
     } catch (std::exception const& e)
@@ -935,6 +935,8 @@ void LASWriter_Destroy(LASWriterH hWriter)
 {
     VALIDATE_POINTER0(hWriter, "LASWriter_Destroy");
     delete ((LASWriter*) hWriter);
+    g_ofs.close();
+
     hWriter=NULL;
 }
 } // extern "C"
