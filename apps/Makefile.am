@@ -1,4 +1,4 @@
-INCLUDES = -I../include/liblas/capi
+INCLUDES = -I../include/liblas/capi -I../include
 
 lasinfo_SOURCES = lasinfo.c 
 las2las_SOURCES = las2las.c
