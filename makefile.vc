@@ -6,14 +6,17 @@ LAS_ROOT = .
 CC=     cl
 LINK=   link
 
-default: src_dir 
+default: src_dir apps_dir
 
 src_dir:
     cd src
     $(MAKE) /f makefile.vc 
     cd ..
 
-
+apps_dir:
+    cd apps
+    $(MAKE) /f makefile.vc
+    cd ..
 
 clean:
 	-del *.obj 

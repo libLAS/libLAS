@@ -15,8 +15,9 @@ typedef void *LASHeaderH;
 
 LAS_C_START
 
+#ifndef _WIN32
 #include <stdint.h>
-
+#endif
 
 
 typedef enum

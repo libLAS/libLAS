@@ -242,7 +242,7 @@ private:
     template <typename ch, typename char_traits, typename alloc>
     void construct(std::basic_string<ch, char_traits, alloc> const& str)
     {
-        std::basic_stringstream<ch, char_traits, alloc> ss;
+        std::basic_stringstream <ch, char_traits, alloc > ss;
         if (!(ss << str) || !(ss >> *this))
         {
             throw_invalid_argument();
