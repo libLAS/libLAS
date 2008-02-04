@@ -20,7 +20,9 @@ using namespace liblas;
 
 extern "C" {
 
+#ifndef _WIN32
 #include <stdint.h>
+#endif
 
 // Error stuff
 
