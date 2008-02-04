@@ -13,10 +13,13 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <limits.h> // needed for limits macros
-
+#ifdef LIBLAS_C_API
+#include <limits.h>
+#else
+#include <climits>
 namespace liblas
 {
+#endif
 
 //  These are fairly safe guesses for some 16-bit, and most 32-bit and 64-bit
 //  platforms.  For other systems, they will have to be hand tailored.
@@ -76,6 +79,10 @@ namespace liblas
 # define LIBLAS_NO_INT64_T
 #endif
 
+#ifndef LIBLAS_C_API
 } // namespace liblas
+#endif
+
+
 
 #endif // LIBLAS_CSTDINT_HPP_INCLUDED

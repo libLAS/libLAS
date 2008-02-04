@@ -7,6 +7,9 @@
 #include "las_version.h"
 #include "las_config.h"
 
+#define LIBLAS_C_API
+#include <liblas/cstdint.hpp>
+
 
 typedef void *LASWriterH;
 typedef void *LASReaderH;
@@ -81,7 +84,7 @@ void LAS_DLL LASHeader_Destroy(LASHeaderH hHeader);
 LASHeaderH LASHeader_Copy(const LASHeaderH hHeader);
 LASHeaderH LASHeader_Create(void);
 
-char* LAS_DLL LASHeader_GetFileSignature(const LASHeaderH hHeader);
+char* LASHeader_GetFileSignature(const LASHeaderH hHeader);
 uint16_t LAS_DLL LASHeader_GetFileSourceId(const LASHeaderH hHeader);
 
 
@@ -92,10 +95,10 @@ LASError LAS_DLL LASHeader_SetVersionMajor(LASHeaderH hHeader, uint8_t value);
 uint8_t LAS_DLL LASHeader_GetVersionMinor(const LASHeaderH hHeader);
 LASError LAS_DLL LASHeader_SetVersionMinor(LASHeaderH hHeader, uint8_t value);
 
-char* LAS_DLL LASHeader_GetSystemId(const LASHeaderH hHeader);
+char* LASHeader_GetSystemId(const LASHeaderH hHeader);
 LASError LAS_DLL LASHeader_SetSystemId(LASHeaderH hHeader, const char* value);
 
-char* LAS_DLL LASHeader_GetSoftwareId(const LASHeaderH hHeader);
+char* LASHeader_GetSoftwareId(const LASHeaderH hHeader);
 LASError LAS_DLL LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* value);
 
 int16_t LAS_DLL LASHeader_GetReserved(const LASHeaderH hHeader);
