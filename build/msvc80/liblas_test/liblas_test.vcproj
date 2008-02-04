@@ -194,6 +194,10 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\..\..\test\unit\guid_test.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\test\unit\lasheader_test.cpp"
 			>
 		</File>
