@@ -25,4 +25,7 @@ clean:
 	cd src
 	$(MAKE) /f makefile.vc clean
 	cd ..
+	cd apps
+	$(MAKE) /f makefile.vc clean
+	cd ..
 
