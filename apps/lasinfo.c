@@ -37,6 +37,13 @@ int main(int argc, char *argv[])
        LASReaderH reader = NULL;
        LASHeaderH header = NULL;
        int check_points = 0;
+      unsigned int number_of_point_records = 0;
+      unsigned int number_of_points_by_return[8] = {0,0,0,0,0,0,0,0};
+      int number_of_returns_of_given_pulse[8] = {0,0,0,0,0,0,0,0};
+      int classification[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+      int classification_synthetic = 0;
+      int classification_keypoint = 0;
+      int classification_withheld = 0;
 /*    //   bool parse_variable_header = false;
     //   
     //   bool repair_header = false;
@@ -122,13 +129,7 @@ int main(int argc, char *argv[])
       fprintf(stdout, "  min x y z                  %.6f %.6f %.6f\n", LASHeader_GetMinX(header), LASHeader_GetMinY(header), LASHeader_GetMinZ(header));
       fprintf(stdout, "  max x y z                  %.6f %.6f %.6f\n", LASHeader_GetMaxX(header), LASHeader_GetMaxY(header), LASHeader_GetMaxZ(header));
 
-      unsigned int number_of_point_records = 0;
-      unsigned int number_of_points_by_return[8] = {0,0,0,0,0,0,0,0};
-      int number_of_returns_of_given_pulse[8] = {0,0,0,0,0,0,0,0};
-      int classification[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-      int classification_synthetic = 0;
-      int classification_keypoint = 0;
-      int classification_withheld = 0;
+
 
        if (check_points)
        {
