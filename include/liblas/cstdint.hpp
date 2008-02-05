@@ -1,6 +1,7 @@
 #ifndef LIBLAS_CSTDINT_HPP_INCLUDED
 #define LIBLAS_CSTDINT_HPP_INCLUDED
 
+/*
 // This file has been stolen from <boost/cstdint.hpp> and
 // modified for libLAS purposes.
 //
@@ -12,15 +13,22 @@
 // Distributed under the Boost  Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
+*/
 
 #ifdef LIBLAS_C_API
 #include <limits.h>
+
+#ifndef _WIN32
+#include <stdint.h>
+#endif
+
 #else
 #include <climits>
 namespace liblas
 {
 #endif
 
+/*
 //  These are fairly safe guesses for some 16-bit, and most 32-bit and 64-bit
 //  platforms.  For other systems, they will have to be hand tailored.
 //
@@ -30,6 +38,7 @@ namespace liblas
 //  example, byte arithmetic and load/stores are as fast as "int" sized ones.
 
 //  8-bit types  ------------------------------------------------------------//
+*/
 
 #if UCHAR_MAX == 0xff
     typedef signed char     int8_t;
@@ -38,7 +47,9 @@ namespace liblas
 #   error defaults not correct; you must hand modify liblas/cstdint.hpp
 #endif
 
+/*
 //  16-bit types  -----------------------------------------------------------//
+*/
 
 #if USHRT_MAX == 0xffff
     typedef short           int16_t;
@@ -47,19 +58,49 @@ namespace liblas
 #   error defaults not correct; you must hand modify liblas/cstdint.hpp
 #endif
 
+/*
 //  32-bit types  -----------------------------------------------------------//
+*/
 
+#ifndef _UINT32_T
 #if ULONG_MAX == 0xffffffff
-    typedef long            int32_t;
+
     typedef unsigned long   uint32_t;
 #elif UINT_MAX == 0xffffffff
-    typedef int             int32_t;
     typedef unsigned int    uint32_t;
 #else
 #   error defaults not correct; you must hand modify liblas/cstdint.hpp
-# endif
+#endif
 
+#else
+#ifndef LIBLAS_C_API
+    typedef ::uint32_t uint32_t;
+
+#endif
+
+#endif
+
+#ifndef _INT32_T
+#if ULONG_MAX == 0xffffffff
+
+    typedef long            int32_t;
+#elif UINT_MAX == 0xffffffff
+    typedef int             int32_t;
+#else
+#   error defaults not correct; you must hand modify liblas/cstdint.hpp
+#endif
+
+#else
+
+#ifndef LIBLAS_C_API
+    typedef ::int32_t int32_t;
+#endif
+
+
+#endif
+/*
 //  64-bit types + intmax_t and uintmax_t  ----------------------------------//
+*/
 
 #if ULONG_MAX != 0xffffffff
 # if ULONG_MAX == 18446744073709551615 // 2**64 - 1
@@ -72,15 +113,15 @@ namespace liblas
     __extension__ typedef long long            int64_t;
     __extension__ typedef unsigned long long   uint64_t;
 #elif defined(_MSC_VER)
-    // we have Borland/Intel/Microsoft __int64:
+/*    // we have Borland/Intel/Microsoft __int64: */
     typedef __int64             int64_t;
     typedef unsigned __int64    uint64_t;
-#else // assume no 64-bit integers
+#else /* // assume no 64-bit integers */
 # define LIBLAS_NO_INT64_T
 #endif
 
 #ifndef LIBLAS_C_API
-} // namespace liblas
+}  /* // namespace liblas */
 #endif
 
 
