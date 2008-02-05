@@ -2,6 +2,9 @@ LAS_ROOT	=	..
 
 !INCLUDE $(LAS_ROOT)\nmake.opt
 
+
+all: default
+
 las2las.exe:
 	$(CC) $(CFLAGS) las2las.c $(LAS_ROOT)/src/$(LAS_LIB)
 	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
@@ -24,7 +27,6 @@ lasmerge.exe:
 
 default: las2las.exe lasinfo.exe las2txt.exe lasmerge.exe
 
-all: default
 
 clean:
 	-del *.obj
