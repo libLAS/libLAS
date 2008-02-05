@@ -40,5 +40,6 @@ clean:
 	-del *.lib
 	-del *.dll
 	-del *.bak
+	-del *.manifest
 	for %d in ( $(LAS_OBJS) ) do \
 		del %d	
