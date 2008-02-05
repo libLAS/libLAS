@@ -1,6 +1,6 @@
 /***************************************************************************
- * $Id: las2txt.cpp 86 2007-12-16 02:37:02Z hobu $
- * $Date: 2007-12-15 20:37:02 -0600 (Sat, 15 Dec 2007) $
+ * $Id$
+ * $Date$
  *
  * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
  * Purpose: LAS translation to ASCII text with optional configuration
