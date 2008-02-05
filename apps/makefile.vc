@@ -31,3 +31,5 @@ default: las2las.exe lasinfo.exe las2txt.exe lasmerge.exe
 clean:
 	-del *.obj
 	-del *.exe
+	-del *.manifest
+	-del *.bak
