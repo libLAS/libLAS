@@ -22,6 +22,7 @@ clean:
 	-del *.obj 
 	-del *.lib
 	-del *.pdb
+	-del *.bak
 	cd src
 	$(MAKE) /f makefile.vc clean
 	cd ..
