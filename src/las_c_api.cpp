@@ -77,13 +77,13 @@ private:
 LASFile::LASFile(std::string filename, int mode) :
     m_filename(filename), m_mode(mode)
 {
-    if (filename == "stdin") {
-        m_strm = &std::cin;
-    }
-
-    if (filename == "stdout" ) {
-        m_strm = &std::cout;
-    }
+    // if (filename == "stdin") {
+    //     m_strm = &std::cin;
+    // }
+    // 
+    // if (filename == "stdout" ) {
+    //     m_strm = &std::cout;
+    // }
     
     if (mode == LASFile::eRead) {
         m_strm = new std::ifstream(m_filename.c_str(), std::ios::in | std::ios::binary);
@@ -191,6 +191,10 @@ LASReaderH LASReader_Create(const char* filename)
             std::ifstream* ifs;
 
             ifs = dynamic_cast<std::ifstream*> (lasfile->GetStream());
+            if (!ifs) {
+                LASError_PushError(LE_Failure, "dynamic_cast failed", "LASReader_Create");
+                return NULL;                
+            }
             
             LASReader* reader = new LASReader(*ifs);
             return (LASReaderH) reader;
