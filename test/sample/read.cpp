@@ -43,9 +43,6 @@ int main()
         cout << "VLRecords count: " << reader.GetHeader().GetRecordsCount() << '\n';
         
 
-
-        return 0;
-
         liblas::detail::Timer t;
         t.start();
         

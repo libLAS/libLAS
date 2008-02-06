@@ -114,7 +114,7 @@ uint16_t LASHeader::GetFileSourceId() const
     return m_sourceId;
 }
 
-void LASHeader::SetFileSourceId(uint16_t const& v)
+void LASHeader::SetFileSourceId(uint16_t v)
 {
     if (v > 35535)
         throw std::out_of_range("file source id out of range");
@@ -142,7 +142,7 @@ uint8_t LASHeader::GetVersionMajor() const
     return m_versionMajor;
 }
 
-void LASHeader::SetVersionMajor(uint8_t const& v)
+void LASHeader::SetVersionMajor(uint8_t v)
 {
     if (eVersionMajorMin > v || v > eVersionMajorMax)
         throw std::out_of_range("version major out of range");
@@ -155,7 +155,7 @@ uint8_t LASHeader::GetVersionMinor() const
     return m_versionMinor;
 }
 
-void LASHeader::SetVersionMinor(uint8_t const& v)
+void LASHeader::SetVersionMinor(uint8_t v)
 {
     if (v > eVersionMinorMax)
         throw std::out_of_range("version minor out of range");
@@ -196,7 +196,7 @@ uint16_t LASHeader::GetCreationDOY() const
     return m_createDOY;
 }
 
-void LASHeader::SetCreationDOY(uint16_t const& v)
+void LASHeader::SetCreationDOY(uint16_t v)
 {
     if (1 > v || v > 366)
         throw std::out_of_range("day of year out of range");
@@ -209,7 +209,7 @@ uint16_t LASHeader::GetCreationYear() const
     return m_createYear;
 }
 
-void LASHeader::SetCreationYear(uint16_t const& v)
+void LASHeader::SetCreationYear(uint16_t v)
 {
     // mloskot: I've taken these values arbitrarily
     if (1960 > v || v > 9999)
@@ -227,9 +227,24 @@ uint32_t LASHeader::GetDataOffset() const
 {
     return m_dataOffset;
 }
+
+void LASHeader::SetDataOffset(uint32_t v)
+{
+    uint32_t const dataSignatureSize = 2;
+    if (v > (GetHeaderSize() + dataSignatureSize))
+        throw std::out_of_range("data offset out of range");
+
+    m_dataOffset = v;
+}
+
 uint32_t LASHeader::GetRecordsCount() const
 {
     return m_recordsCount;
+}
+
+void LASHeader::SetRecordsCount(uint32_t v)
+{
+    m_recordsCount = v;
 }
 
 LASHeader::PointFormat LASHeader::GetDataFormatId() const
@@ -240,9 +255,9 @@ LASHeader::PointFormat LASHeader::GetDataFormatId() const
         return ePointFormat1;
 }
 
-void LASHeader::SetDataFormatId(LASHeader::PointFormat const& v)
+void LASHeader::SetDataFormatId(LASHeader::PointFormat v)
 {
-    m_dataFormatId = (v == ePointFormat0 ? 0 : 1);
+    m_dataFormatId = (ePointFormat0 == v ? 0 : 1);
 
     if (ePointFormat0 == m_dataFormatId)
         m_dataRecordLen = ePointSize0;
@@ -272,7 +287,7 @@ uint32_t LASHeader::GetPointRecordsCount() const
     return m_pointRecordsCount;
 }
 
-void LASHeader::SetPointRecordsCount(uint32_t const& v)
+void LASHeader::SetPointRecordsCount(uint32_t v)
 {
     m_pointRecordsCount = v;
 }
@@ -282,8 +297,9 @@ std::vector<uint32_t> const& LASHeader::GetPointRecordsByReturnCount() const
     return m_pointRecordsByReturn;
 }
 
-void LASHeader::SetPointRecordsByReturnCount(int r, uint32_t value)
+void LASHeader::SetPointRecordsByReturnCount(std::size_t r, uint32_t value)
 {
+    // TODO: replace with std::vector<T>::at()
     m_pointRecordsByReturn[r] = value;
 }
 
@@ -369,60 +385,6 @@ void LASHeader::SetMax(double x, double y, double z)
 void LASHeader::SetMin(double x, double y, double z)
 {
     m_extents.min = detail::Point<double>(x, y, z);
-}
-
-void LASHeader::Read(std::ifstream& ifs)
-{
-    // TODO: Move header reading to reader implementation(s)
-
-    using detail::read_n;
-
-    if (!ifs)
-        throw std::runtime_error("input stream state is invalid");  
-
-    ifs.seekg(0);
-    read_n(m_signature, ifs, sizeof(m_signature));
-    read_n(m_sourceId, ifs, 2);
-    read_n(m_reserved, ifs, 2);
-    read_n(m_projectId1, ifs, 4);
-    read_n(m_projectId2, ifs, 2);
-    read_n(m_projectId3, ifs, 2);
-    read_n(m_projectId4, ifs, 8);
-    read_n(m_versionMajor, ifs, 1);
-    read_n(m_versionMinor, ifs, 1);
-    read_n(m_systemId, ifs, 32);
-    read_n(m_softwareId, ifs, 32);
-    read_n(m_createDOY, ifs, 2);
-    read_n(m_createYear, ifs, 2);
-    read_n(m_headerSize, ifs, 2); // TODO: should we validate == 227?
-    read_n(m_dataOffset, ifs, 4);
-    // TODO: Move this test to LASHeader::Validate()
-    if (m_dataOffset < m_headerSize)
-    {
-        throw std::domain_error("offset to point data smaller than header size");
-    }
-    read_n(m_recordsCount, ifs, 4);
-    read_n(m_dataFormatId, ifs, 1);
-    read_n(m_dataRecordLen, ifs, 2);
-    read_n(m_pointRecordsCount, ifs, 4);
-
-    std::vector<uint32_t>::size_type const srbyr = 5;
-    uint32_t rbyr[srbyr] = { 0 };
-    read_n(rbyr, ifs, sizeof(rbyr));
-    std::vector<uint32_t>(rbyr, rbyr + srbyr).swap(m_pointRecordsByReturn);
-
-    read_n(m_scales.x, ifs, 8);
-    read_n(m_scales.y, ifs, 8);
-    read_n(m_scales.z, ifs, 8);
-    read_n(m_offsets.x, ifs, 8);
-    read_n(m_offsets.y, ifs, 8);
-    read_n(m_offsets.z, ifs, 8);
-    read_n(m_extents.max.x, ifs, 8);
-    read_n(m_extents.min.x, ifs, 8);
-    read_n(m_extents.max.y, ifs, 8);
-    read_n(m_extents.min.y, ifs, 8);
-    read_n(m_extents.max.z, ifs, 8);
-    read_n(m_extents.min.z, ifs, 8);
 }
 
 void LASHeader::Init()

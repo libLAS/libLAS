@@ -39,7 +39,7 @@ public:
     void SetFileSignature(std::string const& v);
 
     uint16_t GetFileSourceId() const;
-    void SetFileSourceId(uint16_t const& v);
+    void SetFileSourceId(uint16_t v);
 
     uint16_t GetReserved() const;
 
@@ -48,10 +48,10 @@ public:
     void SetProjectId(guid const& v);
 
     uint8_t GetVersionMajor() const;
-    void SetVersionMajor(uint8_t const& v);
+    void SetVersionMajor(uint8_t v);
 
     uint8_t GetVersionMinor() const;
-    void SetVersionMinor(uint8_t const& v);
+    void SetVersionMinor(uint8_t v);
 
     std::string GetSystemId() const;
     void SetSystemId(std::string const& v);
@@ -61,25 +61,29 @@ public:
 
     // TODO: Replace these 2 calls with more general version: Set/GetCreationDate(date)
     uint16_t GetCreationDOY() const;
-    void SetCreationDOY(uint16_t const& v);
+    void SetCreationDOY(uint16_t v);
 
     uint16_t GetCreationYear() const;
-    void SetCreationYear(uint16_t const&v);
+    void SetCreationYear(uint16_t v);
 
     uint16_t GetHeaderSize() const;
+    
     uint32_t GetDataOffset() const;
+    void SetDataOffset(uint32_t v);
+
     uint32_t GetRecordsCount() const;
+    void SetRecordsCount(uint32_t v);
     
     PointFormat GetDataFormatId() const;
-    void SetDataFormatId(PointFormat const& v);
+    void SetDataFormatId(PointFormat v);
 
     uint16_t GetDataRecordLength() const;
     
     uint32_t GetPointRecordsCount() const;
-    void SetPointRecordsCount(uint32_t const& v);
+    void SetPointRecordsCount(uint32_t v);
     
     std::vector<uint32_t> const& GetPointRecordsByReturnCount() const;
-    void SetPointRecordsByReturnCount(int r, uint32_t v);
+    void SetPointRecordsByReturnCount(std::size_t r, uint32_t v);
     
     double GetScaleX() const;
     double GetScaleY() const;
@@ -100,8 +104,6 @@ public:
 
     void SetMax(double x, double y, double z);
     void SetMin(double x, double y, double z);
-
-    void Read(std::ifstream& ifs);
 
 private:
     
