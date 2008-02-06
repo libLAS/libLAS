@@ -1,11 +1,35 @@
 #ifndef LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 #define LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 
+#include <liblas/cstdint.hpp>
 #include <iosfwd>
 #include <sstream>
 #include <stdexcept>
+#include <cstring>
 
 namespace liblas { namespace detail {
+
+struct VariableLengthRecordHeader
+{
+    VariableLengthRecordHeader()
+        : reserved(0), record_id(0), record_length_after_header(0)
+    {
+        std::memset(user_id, 0, eUserIdSize);
+        std::memset(description, 0, eDescriptionSize);
+    }
+ 
+    enum
+    {
+        eUserIdSize = 16,
+        eDescriptionSize = 32
+    };
+
+    uint16_t reserved;
+    int8_t user_id[eUserIdSize]; 
+    uint16_t record_id;
+    uint16_t record_length_after_header;
+    int8_t description[eDescriptionSize];
+};
 
 struct PointRecord
 {
