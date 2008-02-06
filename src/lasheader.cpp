@@ -198,7 +198,7 @@ uint16_t LASHeader::GetCreationDOY() const
 
 void LASHeader::SetCreationDOY(uint16_t v)
 {
-    if (1 > v || v > 366)
+    if (v > 366)
         throw std::out_of_range("day of year out of range");
 
     m_createDOY = v;
@@ -212,7 +212,7 @@ uint16_t LASHeader::GetCreationYear() const
 void LASHeader::SetCreationYear(uint16_t v)
 {
     // mloskot: I've taken these values arbitrarily
-    if (1960 > v || v > 9999)
+    if (v > 9999)
         throw std::out_of_range("year out of range");
 
     m_createYear = v;
