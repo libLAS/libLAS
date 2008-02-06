@@ -181,19 +181,21 @@ LASReaderH LASReader_Create(const char* filename)
         
         p = files.find(filename);
         
-        if (p!=files.end()) {
+        if (p==files.end()) {
 
             LASFile* lasfile;
             lasfile = new LASFile(filename, LASFile::eRead);
 
             files[filename] = lasfile;
 
-            std::istream* ifs;
-            // this cast is invalid
-            ifs = static_cast<std::istream*> (lasfile->GetStream());
-            LASReader* reader = new LASReader(g_ifs);
+            std::ifstream* ifs;
+
+            ifs = dynamic_cast<std::ifstream*> (lasfile->GetStream());
+            
+            LASReader* reader = new LASReader(*ifs);
             return (LASReaderH) reader;
         }
+        LASError_PushError(LE_Failure, "not able to create map entry", "LASReader_Create");
         return NULL;
     
     } catch (std::exception const& e)
