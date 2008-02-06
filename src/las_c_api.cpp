@@ -15,6 +15,7 @@ typedef void *LASHeaderH;
 #include <map>
 //#include <cstdio>
 #include <exception>
+#include <ios>
 #include <iostream>
 #include <fstream>
 using namespace liblas;
@@ -42,16 +43,21 @@ std::ofstream g_ofs;
 
 std::stack<LASError > errors;
 
+class LASFile;
+
+typedef std::map<std::string, LASFile> StrLASFileMap;
+typedef std::map<std::string, LASFile>::const_iterator StrLASFileMapIt;
+
+StrLASFileMap files;
 
 class LASFile
 {
 public:
 
     LASFile(std::string filename, int mode);
+    ~LASFile();
     
-    std::ifstream& GetReadStream() {return m_read_strm;}
-    std::ofstream& GetWriteStream() {return m_write_strm;}
-
+    std::ios*  GetStream() {return m_strm;}
     enum OpenMode
     {
         eRead = 0,
@@ -60,24 +66,41 @@ public:
     };
 
 private:
-    std::ifstream m_read_strm;
-    std::ofstream m_write_strm;
+    std::ios* m_strm;
     std::string m_filename;
     int m_mode;
+    LASFile();
 };
 
 LASFile::LASFile(std::string filename, int mode) :
     m_filename(filename), m_mode(mode)
 {
+    if (filename == "stdin") {
+        m_strm = &std::cin;
+    }
 
+    if (filename == "stdout" ) {
+        m_strm = &std::cout;
+    }
+    
     if (mode == LASFile::eRead) {
-        m_read_strm.open(m_filename.c_str(), std::ios::in | std::ios::binary);        
+        m_strm = new std::ifstream(m_filename.c_str(), std::ios::in | std::ios::binary);
+        if (!(m_strm->good())) {
+            throw std::runtime_error("Input stream for read operation was not good");
+        } 
     }
     if (mode == LASFile::eWrite) {
-        m_write_strm.open(m_filename.c_str(), std::ios::out | std::ios::binary);        
+        m_strm = new std::ifstream(m_filename.c_str(), std::ios::out | std::ios::binary);
+        if (!(m_strm->good())) {
+            throw std::runtime_error("Output stream for write operation was not good");
+        } 
+
     }
 }
 
+LASFile::~LASFile() {
+   // m_strm->close();
+}
 #define VALIDATE_POINTER0(ptr, func) \
    do { if( NULL == ptr ) \
       { \
@@ -152,9 +175,27 @@ LASReaderH LASReader_Create(const char* filename)
     VALIDATE_POINTER1(filename, "LASReader_Create", NULL);
 
     try {
-        g_ifs.open(filename, std::ios::in | std::ios::binary);
+        StrLASFileMap::iterator p;
+        bool bFound = false;
+        for (p = files.begin(); p!=files.end(); ++p) {
+            std::string key;
+            key = p->first;
+            if (key == std::string(filename)) {
+                // File already exists and is open or something
+                bFound=true;
+            }
+        }
+        if (!bFound) {
+            StrLASFileMap::const_iterator p;
+            //files[filename] = LASFile(std::string(filename), LASFile::eRead);
+            p = files.insert(std::make_pair(std::string(filename), LASFile(std::string(filename), LASFile::eRead)));
+        
+//        LASReader* reader = new LASReader((std::istream*)*(files[filename].GetStream()));
+//        g_ifs.open(filename, std::ios::in | std::ios::binary);
         LASReader* reader = new LASReader(g_ifs);
         return (LASReaderH) reader;
+        }
+    
     } catch (std::exception const& e)
      {
          LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
