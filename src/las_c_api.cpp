@@ -45,8 +45,8 @@ std::stack<LASError > errors;
 
 class LASFile;
 
-typedef std::map<std::string, LASFile> StrLASFileMap;
-typedef std::map<std::string, LASFile>::const_iterator StrLASFileMapIt;
+typedef std::map<std::string, LASFile*> StrLASFileMap;
+typedef std::map<std::string, LASFile*>::const_iterator StrLASFileMapIt;
 
 StrLASFileMap files;
 
@@ -58,6 +58,8 @@ public:
     ~LASFile();
     
     std::ios*  GetStream() {return m_strm;}
+    std::string GetFilename() {return m_filename;}
+    
     enum OpenMode
     {
         eRead = 0,
@@ -175,26 +177,24 @@ LASReaderH LASReader_Create(const char* filename)
     VALIDATE_POINTER1(filename, "LASReader_Create", NULL);
 
     try {
-        StrLASFileMap::iterator p;
-        bool bFound = false;
-        for (p = files.begin(); p!=files.end(); ++p) {
-            std::string key;
-            key = p->first;
-            if (key == std::string(filename)) {
-                // File already exists and is open or something
-                bFound=true;
-            }
-        }
-        if (!bFound) {
-            StrLASFileMap::const_iterator p;
-            //files[filename] = LASFile(std::string(filename), LASFile::eRead);
-            p = files.insert(std::make_pair(std::string(filename), LASFile(std::string(filename), LASFile::eRead)));
+        StrLASFileMap::const_iterator p;
         
-//        LASReader* reader = new LASReader((std::istream*)*(files[filename].GetStream()));
-//        g_ifs.open(filename, std::ios::in | std::ios::binary);
-        LASReader* reader = new LASReader(g_ifs);
-        return (LASReaderH) reader;
+        p = files.find(filename);
+        
+        if (p!=files.end()) {
+
+            LASFile* lasfile;
+            lasfile = new LASFile(filename, LASFile::eRead);
+
+            files[filename] = lasfile;
+
+            std::istream* ifs;
+            // this cast is invalid
+            ifs = static_cast<std::istream*> (lasfile->GetStream());
+            LASReader* reader = new LASReader(g_ifs);
+            return (LASReaderH) reader;
         }
+        return NULL;
     
     } catch (std::exception const& e)
      {
