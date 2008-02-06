@@ -15,6 +15,7 @@ typedef void *LASHeaderH;
 #include <map>
 //#include <cstdio>
 #include <exception>
+#include <iostream>
 #include <fstream>
 using namespace liblas;
 
@@ -40,6 +41,42 @@ std::ifstream g_ifs;
 std::ofstream g_ofs;
 
 std::stack<LASError > errors;
+
+
+class LASFile
+{
+public:
+
+    LASFile(std::string filename, int mode);
+    
+    std::ifstream& GetReadStream() {return m_read_strm;}
+    std::ofstream& GetWriteStream() {return m_write_strm;}
+
+    enum OpenMode
+    {
+        eRead = 0,
+        eWrite = 1,
+        eUpdate = 2
+    };
+
+private:
+    std::ifstream m_read_strm;
+    std::ofstream m_write_strm;
+    std::string m_filename;
+    int m_mode;
+};
+
+LASFile::LASFile(std::string filename, int mode) :
+    m_filename(filename), m_mode(mode)
+{
+
+    if (mode == LASFile::eRead) {
+        m_read_strm.open(m_filename.c_str(), std::ios::in | std::ios::binary);        
+    }
+    if (mode == LASFile::eWrite) {
+        m_write_strm.open(m_filename.c_str(), std::ios::out | std::ios::binary);        
+    }
+}
 
 #define VALIDATE_POINTER0(ptr, func) \
    do { if( NULL == ptr ) \
@@ -108,13 +145,12 @@ void LASError_PushError(int code, const char *message, const char *method) {
 int LASError_GetErrorCount(void) {
     return errors.size();
 }
+
 LASReaderH LASReader_Create(const char* filename) 
 
 {
-    if (filename == NULL) {
-        LASError_PushError(LE_Failure, "Inputted filename was null", "LASReader_Create");
-        return NULL;
-    }
+    VALIDATE_POINTER1(filename, "LASReader_Create", NULL);
+
     try {
         g_ifs.open(filename, std::ios::in | std::ios::binary);
         LASReader* reader = new LASReader(g_ifs);
