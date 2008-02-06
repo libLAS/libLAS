@@ -231,7 +231,7 @@ uint32_t LASHeader::GetDataOffset() const
 void LASHeader::SetDataOffset(uint32_t v)
 {
     uint32_t const dataSignatureSize = 2;
-    if (v > (GetHeaderSize() + dataSignatureSize))
+    if (v < (GetHeaderSize() + dataSignatureSize))
         throw std::out_of_range("data offset out of range");
 
     m_dataOffset = v;
@@ -297,10 +297,12 @@ std::vector<uint32_t> const& LASHeader::GetPointRecordsByReturnCount() const
     return m_pointRecordsByReturn;
 }
 
-void LASHeader::SetPointRecordsByReturnCount(std::size_t r, uint32_t value)
+void LASHeader::SetPointRecordsByReturnCount(std::size_t r, uint32_t v)
 {
-    // TODO: replace with std::vector<T>::at()
-    m_pointRecordsByReturn[r] = value;
+    assert(m_pointRecordsByReturn.size() == LASHeader::ePointsByReturnSize);
+
+    uint32_t& t = m_pointRecordsByReturn.at(r);
+    t = v;
 }
 
 
@@ -418,6 +420,8 @@ void LASHeader::Init()
 
     std::memset(m_softwareId, 0, eSoftwareIdSize);
     std::strncpy(m_softwareId, SoftwareIdentifier, eSoftwareIdSize);
+
+    m_pointRecordsByReturn.resize(ePointsByReturnSize);
 
     // Zero scale value is useless, so we need to use a small value.
     SetScale(0.01, 0.01, 0.01);

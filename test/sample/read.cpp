@@ -33,15 +33,20 @@ int main()
 
         std::ifstream ifs(name, ios::in | ios::binary);
         liblas::LASReader reader(ifs);
+        liblas::LASHeader const& h = reader.GetHeader();
         
         cout << "File name: " << name << '\n';
-        cout << "Signature: " << reader.GetHeader().GetFileSignature() << '\n';
         cout << "Version  : " << reader.GetVersion() << '\n';
-        cout << "Format   : " << reader.GetHeader().GetDataFormatId() << '\n';
-        cout << "Project  : " << reader.GetHeader().GetProjectId() << '\n';
-        cout << "Points count: " << reader.GetHeader().GetPointRecordsCount() << '\n';
-        cout << "VLRecords count: " << reader.GetHeader().GetRecordsCount() << '\n';
-        
+        cout << "Signature: " << h.GetFileSignature() << '\n';
+        cout << "Format   : " << h.GetDataFormatId() << '\n';
+        cout << "Project  : " << h.GetProjectId() << '\n';
+        cout << "Points count: " << h.GetPointRecordsCount() << '\n';
+        cout << "VLRecords count: " << h.GetRecordsCount() << '\n';
+        cout << "Points by return: ";
+        std::copy(h.GetPointRecordsByReturnCount().begin(),
+                  h.GetPointRecordsByReturnCount().end(),
+                  ostream_iterator<liblas::uint32_t>(std::cout, " "));
+        cout << std::endl;
 
         liblas::detail::Timer t;
         t.start();
