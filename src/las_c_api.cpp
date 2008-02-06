@@ -15,7 +15,7 @@ typedef void *LASHeaderH;
 #include <map>
 //#include <cstdio>
 #include <exception>
-#include <ios>
+
 #include <iostream>
 #include <fstream>
 using namespace liblas;
@@ -92,7 +92,7 @@ LASFile::LASFile(std::string filename, int mode) :
         } 
     }
     if (mode == LASFile::eWrite) {
-        m_strm = new std::ifstream(m_filename.c_str(), std::ios::out | std::ios::binary);
+        m_strm = new std::ofstream(m_filename.c_str(), std::ios::out | std::ios::binary);
         if (!(m_strm->good())) {
             throw std::runtime_error("Output stream for write operation was not good");
         } 
@@ -189,8 +189,9 @@ LASReaderH LASReader_Create(const char* filename)
             files[filename] = lasfile;
 
             std::ifstream* ifs;
+            std::ios* p = lasfile->GetStream();
 
-            ifs = dynamic_cast<std::ifstream*> (lasfile->GetStream());
+            ifs = dynamic_cast<std::ifstream*> (p);
             if (!ifs) {
                 LASError_PushError(LE_Failure, "dynamic_cast failed", "LASReader_Create");
                 return NULL;                
