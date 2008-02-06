@@ -25,7 +25,6 @@ LASPoint::LASPoint(LASPoint const& other) :
 
 LASPoint& LASPoint::operator=(LASPoint const& rhs)
 {
-    printf("in LASPoint& LASPoint::operator=...\n");
     if (&rhs != this)
     {
         m_coords[0] = rhs.m_coords[0];
