@@ -9,6 +9,10 @@
 #include <cstdlib> // std::size_t
 #include <cassert>
 
+
+// XXX: to be removed
+#include <iostream>
+
 namespace liblas { namespace detail { namespace v10 {
 
 ReaderImpl::ReaderImpl(std::ifstream& ifs) : Base(), m_ifs(ifs)
@@ -156,6 +160,59 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     m_offset = header.GetDataOffset();
     m_size = header.GetPointRecordsCount();
+
+
+    // TODO: Testing reading of VLRecords with GeoKeys
+    //ReadGeoreference(header);
+
+    return true;
+}
+
+bool ReaderImpl::ReadGeoreference(LASHeader const& header)
+{
+    // TODO: Under construction
+
+    VLRHeader vlrh = { 0 };
+    std::string const uid("LASF_Projection");
+
+    m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
+
+    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
+    {
+        read_n(vlrh, m_ifs, sizeof(VLRHeader));
+
+        std::cout << "XXX: " << vlrh.userId << " , " << vlrh.recordId << std::endl;
+
+        if (uid == vlrh.userId && 34735 == vlrh.recordId)
+        {
+            if (34735 == vlrh.recordId)
+            {
+                GeoKeysHeader gkh = { 0 };
+                read_n(gkh, m_ifs, sizeof(GeoKeysHeader));
+
+                std::cout << " XXX: " << gkh.keyDirectoryVersion << " ; " << gkh.keyRevision << " ; " << gkh.minorRevision << " ; " << gkh.numberOfKeys << std::endl;
+
+                for (uint16_t j = 0; j < gkh.numberOfKeys; ++j)
+                {
+                    GeoKeyEntry gke = { 0 };
+                    read_n(gke, m_ifs, sizeof(GeoKeyEntry));
+
+                    std::cout << "  XXX: " << gke.keyId << " ; " << gke.tiffTagLocation<< " ; " << gke.count << " ; " <<  gke.count << std::endl;
+                }
+            }
+            //else if (34736 == vlrh.recordId)
+            //{
+            //}
+            //else if (34737 == vlrh.recordId)
+            //{
+            //}
+        }
+        else
+        {
+            std::ifstream::pos_type const pos = m_ifs.tellg();
+            m_ifs.seekg(pos + std::ifstream::pos_type(vlrh.recordLengthAfterHeader));
+        }
+    }
 
     return true;
 }
