@@ -163,7 +163,7 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
 
     // TODO: Testing reading of VLRecords with GeoKeys
-    //ReadGeoreference(header);
+    ReadGeoreference(header);
 
     return true;
 }
@@ -181,31 +181,36 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
     {
         read_n(vlrh, m_ifs, sizeof(VLRHeader));
 
-        std::cout << "XXX: " << vlrh.userId << " , " << vlrh.recordId << std::endl;
-
         if (uid == vlrh.userId && 34735 == vlrh.recordId)
         {
-            if (34735 == vlrh.recordId)
+            std::cout << "GeoKeyDirectoryTag: " << vlrh.recordId << std::endl;
+
+            GeoKeysHeader gkh = { 0 };
+            read_n(gkh, m_ifs, sizeof(GeoKeysHeader));
+
+            std::cout << "--Header: " << gkh.keyDirectoryVersion << " ; " << gkh.keyRevision << " ; " << gkh.minorRevision << " ; " << gkh.numberOfKeys << std::endl;
+
+            for (uint16_t j = 0; j < gkh.numberOfKeys; ++j)
             {
-                GeoKeysHeader gkh = { 0 };
-                read_n(gkh, m_ifs, sizeof(GeoKeysHeader));
+                GeoKeyEntry gke = { 0 };
+                read_n(gke, m_ifs, sizeof(GeoKeyEntry));
 
-                std::cout << " XXX: " << gkh.keyDirectoryVersion << " ; " << gkh.keyRevision << " ; " << gkh.minorRevision << " ; " << gkh.numberOfKeys << std::endl;
-
-                for (uint16_t j = 0; j < gkh.numberOfKeys; ++j)
-                {
-                    GeoKeyEntry gke = { 0 };
-                    read_n(gke, m_ifs, sizeof(GeoKeyEntry));
-
-                    std::cout << "  XXX: " << gke.keyId << " ; " << gke.tiffTagLocation<< " ; " << gke.count << " ; " <<  gke.count << std::endl;
-                }
+                std::cout << "---KeyEntry: " << gke.keyId << " ; " << gke.tiffTagLocation<< " ; " << gke.count << " ; " <<  gke.valueOffset << std::endl;
             }
-            //else if (34736 == vlrh.recordId)
-            //{
-            //}
-            //else if (34737 == vlrh.recordId)
-            //{
-            //}
+        }
+        else if (uid == vlrh.userId && 34736 == vlrh.recordId)
+        {
+            std::cout << "GeoDoubleParamsTag: " << vlrh.recordId << std::endl;
+
+            std::ifstream::pos_type const pos = m_ifs.tellg();
+            m_ifs.seekg(pos + std::ifstream::pos_type(vlrh.recordLengthAfterHeader));
+        }
+        else if (uid == vlrh.userId && 34737 == vlrh.recordId)
+        {
+            std::cout << "GeoAsciiParamsTag: " << vlrh.recordId << std::endl;
+
+            std::ifstream::pos_type const pos = m_ifs.tellg();
+            m_ifs.seekg(pos + std::ifstream::pos_type(vlrh.recordLengthAfterHeader));
         }
         else
         {
