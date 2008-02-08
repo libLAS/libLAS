@@ -116,7 +116,7 @@ uint16_t LASHeader::GetFileSourceId() const
 
 void LASHeader::SetFileSourceId(uint16_t v)
 {
-    if (v > 35535)
+    if (v > 65535)
         throw std::out_of_range("file source id out of range");
 
     m_sourceId = v;
@@ -399,7 +399,7 @@ void LASHeader::Init()
     // Initialize public header block with default values
 
     m_versionMajor = 1;
-    m_versionMinor = 0;
+    m_versionMinor = 1;
     m_dataFormatId = ePointFormat0;
     m_dataRecordLen = ePointSize0;
 
