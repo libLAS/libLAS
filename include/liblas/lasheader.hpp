@@ -11,99 +11,229 @@
 
 namespace liblas {
 
-/// \todo To be documented.
+/// Definition of public header block.
+/// The header contains set of generic data and metadata
+/// describing a family of ASPRS LAS files. The header is stored
+/// at the beginning of every valid ASPRS LAS file.
 class LASHeader
 {
 public:
 
+    /// Range of allowed ASPRS LAS file format versions.
+    enum FormatVersion
+    {
+        eVersionMajorMin = 1, ///< Minimum of major component
+        eVersionMajorMax = 1, ///< Maximum of major component
+        eVersionMinorMin = 0, ///< Minimum of minor component
+        eVersionMinorMax = 1, ///< Maximum of minor component
+    };
+
+    /// Versions of point record format.
     enum PointFormat
     {
-        ePointFormat0 = 0,
-        ePointFormat1 = 1
+        ePointFormat0 = 0, ///< Point Data Format \e 0
+        ePointFormat1 = 1  ///< Point Data Format \e 1
     };
 
+    /// Number of bytes of point record storage in particular format.
     enum PointSize
     {
-        ePointSize0 = 20,
-        ePointSize1 = 28
+        ePointSize0 = 20, ///< Size of point record in data format \e 0
+        ePointSize1 = 28  ///< Size of point record in data format \e 1
     };
 
-    static char const* const FileSignature; // = "LASF";
-    static char const* const SystemIdentifier; // = "libLAS";
-    static char const* const SoftwareIdentifier; // = "libLAS 1.0";
+    /// Official signature of ASPRS LAS file format, always \b "LASF".
+    static char const* const FileSignature;
 
+    /// Default system identifier used by libLAS, always \b "libLAS".
+    static char const* const SystemIdentifier;
+
+    /// Default software identifier used by libLAS, always \b "libLAS X.Y".
+    static char const* const SoftwareIdentifier;
+
+    /// Default constructor.
+    /// The default constructed header is configured according to the ASPRS
+    /// LAS 1.1 Specification, point data format set to 0.
+    /// Other fields filled with 0.
     LASHeader();
+
+    /// Copy constructor.
     LASHeader(LASHeader const& other);
+
+    /// Assignment operator.
     LASHeader& operator=(LASHeader const& rhs);
 
+    /// Get ASPRS LAS file signature.
+    /// \return 4-characters long string - \b "LASF".
     std::string GetFileSignature() const;
+
+    /// Set ASPRS LAS file signature.
+    /// The only value allowed as file signature is \b "LASF",
+    /// defined as FileSignature constant.
+    /// \exception std::invalid_argument - if invalid signature given.
+    /// \param v - string contains file signature, at least 4-bytes long
+    /// with "LASF" as first four bytes.
     void SetFileSignature(std::string const& v);
 
+    /// Get file source identifier.
     uint16_t GetFileSourceId() const;
+
+    /// Set file source identifier.
+    /// \exception std::out_of_range - if invalid identifier is given.
+    /// \param v - should be set to a value between 1 and 65535.
     void SetFileSourceId(uint16_t v);
 
+    /// Get value field reserved by the ASPRS LAS Specification.
+    /// \note This field is always filled with 0.
     uint16_t GetReserved() const;
 
-    // TODO: Replace GUID data calls with single Get/Set using liblas::guid type
+    /// Get project identifier.
+    /// \return Global Unique Identifier as an instance of liblas::guid class.
     guid GetProjectId() const;
+
+    /// Set project identifier.
     void SetProjectId(guid const& v);
 
+    /// Get major component of version of LAS format.
+    /// \return Always 1 is returned as the only valid value.
     uint8_t GetVersionMajor() const;
+
+    /// Set major component of version of LAS format.
+    /// \exception std::out_of_range - invalid value given.
+    /// \param v - value between eVersionMajorMin and eVersionMajorMax.
     void SetVersionMajor(uint8_t v);
 
+    /// Get minor component of version of LAS format.
+    /// \return Valid values are 1 or 0.
     uint8_t GetVersionMinor() const;
+
+    /// Set minor component of version of LAS format.
+    /// \exception std::out_of_range - invalid value given.
+    /// \param v - value between eVersionMinorMin and eVersionMinorMax.
     void SetVersionMinor(uint8_t v);
 
+    /// Get system identifier.
+    /// Default value is \b "libLAS" specified as the SystemIdentifier constant.
     std::string GetSystemId() const;
+
+    /// Set system identifier.
+    /// \exception std::invalid_argument - if identifier longer than 32 bytes.
+    /// \param v - system identifiers string.
     void SetSystemId(std::string const& v);
 
+    /// Get software identifier.
+    /// Default value is \b "libLAS 1.0", specified as
+    /// the SoftwareIdentifier constant.
     std::string GetSoftwareId() const;
+
+    /// Set software identifier.
+    /// \exception std::invalid_argument - if identifier is longer than 32 bytes.
+    /// \param v - software identifiers string.
     void SetSoftwareId(std::string const& v);
 
-    // TODO: Replace these 2 calls with more general version: Set/GetCreationDate(date)
+    /// Get day of year of file creation date.
+    /// \todo Use full date structure instead of Julian date number.
     uint16_t GetCreationDOY() const;
+
+    /// Set day of year of file creation date.
+    /// \exception std::out_of_range - given value is higher than number 366.
+    /// \todo Use full date structure instead of Julian date number.
     void SetCreationDOY(uint16_t v);
 
+    /// Set year of file creation date.
+    /// \todo Remove if full date structure is used.
     uint16_t GetCreationYear() const;
+
+    /// Get year of file creation date.
+    /// \exception std::out_of_range - given value is higher than number 9999.
+    /// \todo Remove if full date structure is used.
     void SetCreationYear(uint16_t v);
 
+    /// Get number of bytes of generic verion of public header block storage.
+    /// Standard version of the public header block is 227 bytes long.
     uint16_t GetHeaderSize() const;
     
+    /// Get number of bytes from the beginning to the first point record.
     uint32_t GetDataOffset() const;
+
+    /// Set number of bytes from the beginning to the first point record.
+    /// \exception std::out_of_range - if given offset is bigger than 227+2 bytes
+    /// for the LAS 1.0 format and 227 bytes for the LAS 1.1 format.
     void SetDataOffset(uint32_t v);
 
+    /// Get number of variable-length records.
     uint32_t GetRecordsCount() const;
+
+    /// Set number of variable-length records.
     void SetRecordsCount(uint32_t v);
     
+    /// Get identifier of point data (record) format.
     PointFormat GetDataFormatId() const;
+
+    /// Set identifier of point data (record) format.
     void SetDataFormatId(PointFormat v);
 
+    /// \todo To be documented
     uint16_t GetDataRecordLength() const;
     
+    /// Get total number of point records stored in the LAS file.
     uint32_t GetPointRecordsCount() const;
+
+    /// Set number of point records that will be stored in a new LAS file.
     void SetPointRecordsCount(uint32_t v);
     
+    /// Get array of the total point records per return.
     std::vector<uint32_t> const& GetPointRecordsByReturnCount() const;
+
+    /// Set values of array of the total point records per return.
     void SetPointRecordsByReturnCount(std::size_t r, uint32_t v);
     
+    /// Get scale factor for X coordinate.
     double GetScaleX() const;
+
+    /// Get scale factor for Y coordinate.
     double GetScaleY() const;
+    
+    /// Get scale factor for Z coordinate.
     double GetScaleZ() const;
+
+    /// Set values of scale factor for X, Y and Z coordinates.
     void SetScale(double x, double y, double z);
 
+    /// Get X coordinate offset.
     double GetOffsetX() const;
+    
+    /// Get Y coordinate offset.
     double GetOffsetY() const;
+    
+    /// Get Z coordinate offset.
     double GetOffsetZ() const;
+
+    /// Set values of X, Y and Z coordinates offset.
     void SetOffset(double x, double y, double z);
 
+    /// Get minimum value of extent of X coordinate.
     double GetMaxX() const;
+
+    /// Get maximum value of extent of X coordinate.
     double GetMinX() const;
+
+    /// Get minimum value of extent of Y coordinate.
     double GetMaxY() const;
+
+    /// Get maximum value of extent of Y coordinate.
     double GetMinY() const;
+
+    /// Get minimum value of extent of Z coordinate.
     double GetMaxZ() const;
+
+    /// Get maximum value of extent of Z coordinate.
     double GetMinZ() const;
 
+    /// Set maximum values of extent of X, Y and Z coordinates.
     void SetMax(double x, double y, double z);
+
+    /// Set minimum values of extent of X, Y and Z coordinates.
     void SetMin(double x, double y, double z);
 
 private:
@@ -114,17 +244,14 @@ private:
 
     enum
     {
-        eVersionMinorMin = 0,
-        eVersionMinorMax = 1,
-        eVersionMajorMin = 1,
-        eVersionMajorMax = 2,
         eDataSignatureSize = 2,
         eFileSignatureSize = 4,
         ePointsByReturnSize = 5,
         eProjectId4Size = 8,
         eSystemIdSize = 32,
         eSoftwareIdSize = 32,
-        eHeaderSize = 227
+        eHeaderSize = 227,
+        eFileSourceIdMax = 65535
     };
 
     // TODO (low-priority): replace static-size char arrays
