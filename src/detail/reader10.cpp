@@ -5,13 +5,9 @@
 #include <liblas/laspoint.hpp>
 // std
 #include <fstream>
-#include <stdexcept>
 #include <cstdlib> // std::size_t
 #include <cassert>
-
-
-// XXX: to be removed
-#include <iostream>
+#include <stdexcept>
 
 namespace liblas { namespace detail { namespace v10 {
 
@@ -161,7 +157,6 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     m_offset = header.GetDataOffset();
     m_size = header.GetPointRecordsCount();
 
-
     // TODO: Under construction
     //       Testing reading of VLRecords with GeoKeys
     //ReadGeoreference(header);
@@ -254,13 +249,13 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record, double& time)
     // TODO: Replace with compile-time assert
     assert(LASHeader::ePointSize1 == sizeof(record) + sizeof(time));
 
-    bool eof = ReadNextPoint(record);
-    if (eof)
+    bool hasData = ReadNextPoint(record);
+    if (hasData)
     {
         detail::read_n(time, m_ifs, sizeof(double));
     }
 
-    return eof;
+    return hasData;
 }
 
 bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record)
@@ -289,13 +284,13 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record, double& time)
     // TODO: Replace with compile-time assert
     assert(LASHeader::ePointSize1 == sizeof(record) + sizeof(time));
 
-    bool eof = ReadPointAt(n, record);
-    if (eof)
+    bool hasData = ReadPointAt(n, record);
+    if (hasData)
     {
         detail::read_n(time, m_ifs, sizeof(double));
     }
 
-    return eof;
+    return hasData;
 }
 
 }}} // namespace liblas::detail::v10
