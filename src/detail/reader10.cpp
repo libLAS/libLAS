@@ -162,8 +162,9 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     m_size = header.GetPointRecordsCount();
 
 
-    // TODO: Testing reading of VLRecords with GeoKeys
-    ReadGeoreference(header);
+    // TODO: Under construction
+    //       Testing reading of VLRecords with GeoKeys
+    //ReadGeoreference(header);
 
     return true;
 }
