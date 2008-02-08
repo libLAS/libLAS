@@ -37,6 +37,7 @@
 
 namespace liblas {
 
+/// \todo To be documented.
 class guid
 {
 public:

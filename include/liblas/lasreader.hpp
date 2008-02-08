@@ -13,6 +13,7 @@
 namespace liblas
 {
 
+/// \todo To be documented.
 class LASReader
 {
 public:

@@ -11,6 +11,7 @@
 
 namespace liblas {
 
+/// \todo To be documented.
 class LASPoint
 {
 public:
@@ -105,11 +106,13 @@ private:
     }
 };
 
+/// \todo To be documented.
 inline bool operator==(LASPoint const& lhs, LASPoint const& rhs)
 {
     return lhs.equal(rhs);
 }
 
+/// \todo To be documented.
 inline bool operator!=(LASPoint const& lhs, LASPoint const& rhs)
 {
     return (!(lhs == rhs));

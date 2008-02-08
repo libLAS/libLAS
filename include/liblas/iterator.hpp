@@ -8,6 +8,7 @@
 
 namespace liblas {
 
+/// \todo To be documented.
 template <typename T>
 class reader_iterator
 {
@@ -73,18 +74,21 @@ private:
     liblas::LASReader* m_reader;
 };
 
+/// \todo To be documented.
 template <typename T>
 bool operator==(reader_iterator<T> const& lhs, reader_iterator<T> const& rhs)
 {
     return lhs.equal(rhs);
 }
 
+/// \todo To be documented.
 template <typename T>
 bool operator!=(reader_iterator<T> const& lhs, reader_iterator<T> const& rhs)
 {
     return (!(lhs == rhs));
 }
 
+/// \todo To be documented.
 template <typename T>
 class writer_iterator
 {
@@ -136,7 +140,11 @@ private:
 };
 
 // Declare specializations for user's convenience
+
+/// \todo To be documented.
 typedef reader_iterator<LASPoint> lasreader_iterator;
+
+/// \todo To be documented.
 typedef writer_iterator<LASPoint> laswriter_iterator;
 
 } // namespace liblas

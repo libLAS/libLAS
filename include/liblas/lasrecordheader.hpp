@@ -8,6 +8,7 @@
 namespace liblas
 {
 
+/// \todo To be documented.
 class LASRecordHeader
 {
 public:

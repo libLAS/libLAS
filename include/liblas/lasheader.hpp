@@ -11,6 +11,7 @@
 
 namespace liblas {
 
+/// \todo To be documented.
 class LASHeader
 {
 public:

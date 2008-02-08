@@ -6,7 +6,8 @@
 #include <string>
 
 namespace liblas {
-    
+
+/// \todo To be documented.
 class LASError
 {
 public:
