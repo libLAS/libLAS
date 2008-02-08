@@ -231,8 +231,13 @@ uint32_t LASHeader::GetDataOffset() const
 void LASHeader::SetDataOffset(uint32_t v)
 {
     uint32_t const dataSignatureSize = 2;
-    if (v < (GetHeaderSize() + dataSignatureSize))
+    uint16_t const hsize = GetHeaderSize();
+
+    if ((eVersionMinorMin == m_versionMinor && v < hsize + dataSignatureSize)
+        || (eVersionMinorMax == m_versionMinor && v < hsize))
+    {
         throw std::out_of_range("data offset out of range");
+    }
 
     m_dataOffset = v;
 }

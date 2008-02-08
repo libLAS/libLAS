@@ -1,6 +1,6 @@
 #include <liblas/detail/writer.hpp>
 #include <liblas/detail/writer10.hpp>
-//#include <liblas/detail/writer11.hpp>
+#include <liblas/detail/writer11.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 // std
@@ -34,10 +34,10 @@ Writer* WriterFactory::Create(std::ofstream& ofs, LASHeader const& header)
     {
         return new v10::WriterImpl(ofs);
     }
-    //if (1 == major && 1 == minor)
-    //{
-    //    return new v11::WriterImpl(ofs);
-    //}
+    if (1 == major && 1 == minor)
+    {
+        return new v11::WriterImpl(ofs);
+    }
     else if (2 == major && 0 == minor)
     {
         // TODO: LAS 2.0 read/write support
