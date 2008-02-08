@@ -22,6 +22,7 @@
 
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/sha1.hpp>
+#include <liblas/detail/utility.hpp>
 #include <iosfwd>
 #include <iomanip>
 #include <algorithm>
@@ -34,23 +35,7 @@
 #include <ctime>
 #include <cassert>
 
-namespace liblas { namespace detail {
-
-inline liblas::uint8_t random_byte()
-{
-    using liblas::uint8_t;
-
-    // Requires pseudo-random numbers generator to be initialized
-    // in create_random_based() function - a poor man solution.
-    uint8_t const rmin = std::numeric_limits<uint8_t>::min();
-    uint8_t const rmax = std::numeric_limits<uint8_t>::max();
-    uint32_t const rnd = std::rand() % rmax + rmin;
-
-    assert(rnd <= 255);
-    return static_cast<uint8_t>(rnd);
-}
-
-} // namespace detail
+namespace liblas {
 
 class guid
 {
@@ -291,7 +276,7 @@ private:
         
         for (size_t i = 0; i < static_size; i++)
         {
-            result.data_[i] = detail::random_byte();
+            result.data_[i] = detail::generate_random_byte<liblas::uint8_t>();
         }
     
         // set variant

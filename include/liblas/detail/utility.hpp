@@ -6,6 +6,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <cstring>
+#include <cassert>
 
 namespace liblas { namespace detail {
 
@@ -95,6 +96,19 @@ struct Extents
     typename detail::Point < T > min;
     typename detail::Point < T > max;
 };
+
+template <typename T>
+inline T generate_random_byte()
+{
+    // Requires pseudo-random numbers generator to be initialized
+    // in create_random_based() function - a poor man solution.
+    T const rmin = std::numeric_limits<T>::min();
+    T const rmax = std::numeric_limits<T>::max();
+    unsigned int const rnd = std::rand() % rmax + rmin;
+
+    assert(rnd <= 255);
+    return static_cast<T>(rnd);
+}
 
 template<typename T>
 inline char* as_buffer(T& data)

@@ -135,6 +135,7 @@ private:
     liblas::LASWriter* m_writer;
 };
 
+// Declare specializations for user's convenience
 typedef reader_iterator<LASPoint> lasreader_iterator;
 typedef writer_iterator<LASPoint> laswriter_iterator;
 
