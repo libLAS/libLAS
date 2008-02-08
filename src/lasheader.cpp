@@ -116,7 +116,7 @@ uint16_t LASHeader::GetFileSourceId() const
 
 void LASHeader::SetFileSourceId(uint16_t v)
 {
-    if (v > 65535)
+    if (v > eFileSourceIdMax)
         throw std::out_of_range("file source id out of range");
 
     m_sourceId = v;
@@ -220,7 +220,7 @@ void LASHeader::SetCreationYear(uint16_t v)
 
 uint16_t LASHeader::GetHeaderSize() const
 {
-    return 227; // m_headerSize;
+    return eHeaderSize;
 }
 
 uint32_t LASHeader::GetDataOffset() const
