@@ -12,11 +12,12 @@
  **************************************************************************/
 
 
-#include <liblas.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <liblas.h>
 void usage()
 {
     fprintf(stderr,"usage:\n");
