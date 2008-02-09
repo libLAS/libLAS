@@ -3,6 +3,7 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/laserror.hpp>
 #include <liblas/laswriter.hpp>
+#include <liblas/lasfile.hpp>
 #include <liblas/guid.hpp>
 
 typedef void *LASWriterH;
@@ -50,59 +51,6 @@ typedef std::map<std::string, LASFile*>::const_iterator StrLASFileMapIt;
 
 StrLASFileMap files;
 
-class LASFile
-{
-public:
-
-    LASFile(std::string filename, int mode);
-    ~LASFile();
-    
-    std::ios*  GetStream() {return m_strm;}
-    std::string GetFilename() {return m_filename;}
-    
-    enum OpenMode
-    {
-        eRead = 0,
-        eWrite = 1,
-        eUpdate = 2
-    };
-
-private:
-    std::ios* m_strm;
-    std::string m_filename;
-    int m_mode;
-    LASFile();
-};
-
-LASFile::LASFile(std::string filename, int mode) :
-    m_filename(filename), m_mode(mode)
-{
-    // if (filename == "stdin") {
-    //     m_strm = &std::cin;
-    // }
-    // 
-    // if (filename == "stdout" ) {
-    //     m_strm = &std::cout;
-    // }
-    
-    if (mode == LASFile::eRead) {
-        m_strm = new std::ifstream(m_filename.c_str(), std::ios::in | std::ios::binary);
-        if (!(m_strm->good())) {
-            throw std::runtime_error("Input stream for read operation was not good");
-        } 
-    }
-    if (mode == LASFile::eWrite) {
-        m_strm = new std::ofstream(m_filename.c_str(), std::ios::out | std::ios::binary);
-        if (!(m_strm->good())) {
-            throw std::runtime_error("Output stream for write operation was not good");
-        } 
-
-    }
-}
-
-LASFile::~LASFile() {
-   // m_strm->close();
-}
 #define VALIDATE_POINTER0(ptr, func) \
    do { if( NULL == ptr ) \
       { \
