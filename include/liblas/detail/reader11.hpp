@@ -1,3 +1,10 @@
+// $Id$
+//
+// (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
 #ifndef LIBLAS_DETAIL_READER11_HPP_INCLUDED
 #define LIBLAS_DETAIL_READER11_HPP_INCLUDED
 

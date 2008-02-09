@@ -1,3 +1,11 @@
+// $Id$
+//
+// (C) Copyright Phil Vachon 2008, philippe@cowpig.ca
+// (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
 #ifndef LIBLAS_LASHEADER_HPP_INCLUDED
 #define LIBLAS_LASHEADER_HPP_INCLUDED
 

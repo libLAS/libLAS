@@ -1,3 +1,10 @@
+// $Id$
+//
+// (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
 #include <liblas/detail/reader.hpp>
 #include <liblas/detail/reader10.hpp>
 #include <liblas/detail/reader11.hpp>

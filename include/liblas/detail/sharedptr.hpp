@@ -1,12 +1,16 @@
-#ifndef LIBLAS_DETAIL_SHAREDPTR_HPP_INCLUDED
-#define LIBLAS_DETAIL_SHAREDPTR_HPP_INCLUDED
-
-// Copyright Mateusz Loskot 2007, mateusz@loskot.net
-// Copyright Nicolai M. Josuttis 1999
+// $Id$/
 //
 // The SharedPtr class is based on implementation of CountedPtr
 // from the book "The C++ Standard Library - A Tutorial and Reference"
-// by Nicolai M. Josuttis, Addison-Wesley, 1999
+//
+// (C) Copyright Nicolai M. Josuttis 1999
+// (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
+#ifndef LIBLAS_DETAIL_SHAREDPTR_HPP_INCLUDED
+#define LIBLAS_DETAIL_SHAREDPTR_HPP_INCLUDED
 
 namespace liblas { namespace detail {
 

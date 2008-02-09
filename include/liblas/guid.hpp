@@ -1,16 +1,15 @@
-#ifndef LIBLAS_GUID_HPP
-#define LIBLAS_GUID_HPP
-
+// $Id$
+//
 // This file has been stolen from <boost/guid.hpp> file
 // available at http://www.boost-consulting.com/vault/
 // and modified for libLAS purposes.
 //
-// Copyright 2008 Mateusz Loskot, mateusz@loskot.net.
-// Copyright 2006 Andy Tompkins.
+// (C) Copyright 2006 Andy Tompkins.
+// (C) Copyright 2008 Mateusz Loskot, mateusz@loskot.net.
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-
+//
 // Revision History
 //  06 Feb 2006 - Initial Revision
 //  09 Nov 2006 - fixed variant and version bits for v4 guids
@@ -19,6 +18,9 @@
 //  20 Nov 2006 - add fixes for gcc (from Tim Blechmann)
 //  07 Mar 2007 - converted to header only
 //  20 Jan 2008 - removed dependency of Boost and modified for libLAS (by Mateusz Loskot)
+//
+#ifndef LIBLAS_GUID_HPP
+#define LIBLAS_GUID_HPP
 
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/sha1.hpp>

@@ -1,3 +1,12 @@
+// $Id$
+//
+// (C) Copyright Howard Butler 2008
+// (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
+// (C) Copyright Phil Vachon 2008, philippe@cowpig.ca
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
 #ifndef LIBLAS_HPP_INCLUDED
 #define LIBLAS_HPP_INCLUDED
 

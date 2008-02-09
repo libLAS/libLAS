@@ -1,3 +1,10 @@
+// $Id$
+//
+// (C) Copyright Howard Butler 2007
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
 #include <liblas/laserror.hpp>
 #include <liblas/cstdint.hpp>
 //std

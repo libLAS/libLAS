@@ -1,11 +1,11 @@
-#ifndef LIBLAS_DETAIL_ENDIAN_HPP_INCLUDED
-#define LIBLAS_DETAIL_ENDIAN_HPP_INCLUDED
+// $Id$
+//
 // This file has been stolen from <boost/detail/endian.hpp> and
 // modified for libLAS purposes.
 //
-// Copyright Mateusz Loskot 2007, mateusz@loskot.net
-// Copyright Caleb Epstein 2005
-// Copyright John Maddock 2006
+// (C) Copyright Mateusz Loskot 2007, mateusz@loskot.net
+// (C) Copyright Caleb Epstein 2005
+// (C) Copyright John Maddock 2006
 // Distributed under the Boost  Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -30,6 +30,8 @@
  * Modified by Caleb Epstein to use <endian.h> with GNU libc and to
  * defined the BOOST_ENDIAN macro.
  */
+#ifndef LIBLAS_DETAIL_ENDIAN_HPP_INCLUDED
+#define LIBLAS_DETAIL_ENDIAN_HPP_INCLUDED
 
 // GNU libc offers the helpful header <endian.h> which defines
 // __BYTE_ORDER

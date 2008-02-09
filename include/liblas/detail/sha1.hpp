@@ -1,56 +1,55 @@
-/*
- *  sha1.h
- *
- *  Copyright (C) 1998
- *  Paul E. Jones <paulej@arid.us>
- *  All Rights Reserved.
- *
- *  This software is licensed as "freeware."  Permission to distribute
- *  this software in source and binary forms is hereby granted without
- *  a fee.  THIS SOFTWARE IS PROVIDED 'AS IS' AND WITHOUT ANY EXPRESSED
- *  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *  THE AUTHOR SHALL NOT BE HELD LIABLE FOR ANY DAMAGES RESULTING
- *  FROM THE USE OF THIS SOFTWARE, EITHER DIRECTLY OR INDIRECTLY, INCLUDING,
- *  BUT NOT LIMITED TO, LOSS OF DATA OR DATA BEING RENDERED INACCURATE.
- *
- *****************************************************************************
- *  $Id: sha1.h,v 1.6 2004/03/27 18:02:26 paulej Exp $
- *  Modified March 7, 2007 - Andy Tompkins - change to a header only library
- *****************************************************************************
- *
- *  Description:
- *      This class implements the Secure Hashing Standard as defined
- *      in FIPS PUB 180-1 published April 17, 1995.
- *
- *      Many of the variable names in this class, especially the single
- *      character names, were used because those were the names used
- *      in the publication.
- *
- *      The Secure Hashing Standard, which uses the Secure Hashing
- *      Algorithm (SHA), produces a 160-bit message digest for a
- *      given data stream.  In theory, it is highly improbable that
- *      two messages will produce the same message digest.  Therefore,
- *      this algorithm can serve as a means of providing a "fingerprint"
- *      for a message.
- *
- *  Portability Issues:
- *      SHA-1 is defined in terms of 32-bit "words".  This code was
- *      written with the expectation that the processor has at least
- *      a 32-bit machine word size.  If the machine word size is larger,
- *      the code should still function properly.  One caveat to that
- *      is that the input functions taking characters and character arrays
- *      assume that only 8 bits of information are stored in each character.
- *
- *  Caveats:
- *      SHA-1 is designed to work with messages less than 2^64 bits long.
- *      Although SHA-1 allows a message digest to be generated for
- *      messages of any number of bits less than 2^64, this implementation
- *      only works with messages with a length that is a multiple of 8
- *      bits.
- *
- */
-
+// $Id$
+//
+//  sha1.h
+//
+//  Copyright (C) 1998
+//  Paul E. Jones <paulej@arid.us>
+//  All Rights Reserved.
+//
+//  This software is licensed as "freeware."  Permission to distribute
+//  this software in source and binary forms is hereby granted without
+//  a fee.  THIS SOFTWARE IS PROVIDED 'AS IS' AND WITHOUT ANY EXPRESSED
+//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//  THE AUTHOR SHALL NOT BE HELD LIABLE FOR ANY DAMAGES RESULTING
+//  FROM THE USE OF THIS SOFTWARE, EITHER DIRECTLY OR INDIRECTLY, INCLUDING,
+//  BUT NOT LIMITED TO, LOSS OF DATA OR DATA BEING RENDERED INACCURATE.
+//
+//////////////////////////////////////////////////////////////////////////////
+//  ###Id: sha1.h,v 1.6 2004/03/27 18:02:26 paulej Exp ###
+//  Modified March 7, 2007 - Andy Tompkins - change to a header only library
+//////////////////////////////////////////////////////////////////////////////
+//
+//  Description:
+//      This class implements the Secure Hashing Standard as defined
+//      in FIPS PUB 180-1 published April 17, 1995.
+//
+//      Many of the variable names in this class, especially the single
+//      character names, were used because those were the names used
+//      in the publication.
+//
+//      The Secure Hashing Standard, which uses the Secure Hashing
+//      Algorithm (SHA), produces a 160-bit message digest for a
+//      given data stream.  In theory, it is highly improbable that
+//      two messages will produce the same message digest.  Therefore,
+//      this algorithm can serve as a means of providing a "fingerprint"
+//      for a message.
+//
+//  Portability Issues:
+//      SHA-1 is defined in terms of 32-bit "words".  This code was
+//      written with the expectation that the processor has at least
+//      a 32-bit machine word size.  If the machine word size is larger,
+//      the code should still function properly.  One caveat to that
+//      is that the input functions taking characters and character arrays
+//      assume that only 8 bits of information are stored in each character.
+//
+//  Caveats:
+//      SHA-1 is designed to work with messages less than 2^64 bits long.
+//      Although SHA-1 allows a message digest to be generated for
+//      messages of any number of bits less than 2^64, this implementation
+//      only works with messages with a length that is a multiple of 8
+//      bits.
+//
 #ifndef LIBLAS_SHA1_HPP_INCLUDED
 #define LIBLAS_SHA1_HPP_INCLUDED
 

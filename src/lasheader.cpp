@@ -1,3 +1,11 @@
+// $Id$
+//
+// (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
+// (C) Copyright Phil Vachon 2008, philippe@cowpig.ca
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
 #include <liblas/lasheader.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>

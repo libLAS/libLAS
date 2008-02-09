@@ -1,3 +1,10 @@
+// $Id$
+//
+// (C) Copyright Howard Butler 2008
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
 #ifndef LIBLAS_LASFILE_HPP_INCLUDED
 #define LIBLAS_LASFILE_HPP_INCLUDED
 

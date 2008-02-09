@@ -1,3 +1,12 @@
+// $Id$
+//
+// (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
+// (C) Copyright Phil Vachon 2007, philippe@cowpig.ca
+// (C) Copyright Howard Butler 2007
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
 #ifndef LIBLAS_LASERROR_HPP_INCLUDED
 #define LIBLAS_LASERROR_HPP_INCLUDED
 
