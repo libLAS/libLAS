@@ -9,9 +9,10 @@
 #include <vld.h>
 #endif
 // liblas
-#include <liblas/cstdint.hpp>
+#include <liblas/liblas.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasreader.hpp>
+#include <liblas/cstdint.hpp>
 #include <liblas/detail/timer.hpp>
 //std
 #include <algorithm>
@@ -40,8 +41,11 @@ int main()
         //char const* name = "d:\\dev\\liblas\\_svn\\trunk\\test\\data\\TO_core_last_clip.las";
         char const* name = "test.las";
         
-
-        std::ifstream ifs(name, ios::in | ios::binary);
+        std::ifstream ifs;
+        if (!liblas::Open(ifs, name))
+        {
+            throw std::runtime_error(std::string("Can not open ") + name);
+        }
         liblas::LASReader reader(ifs);
         liblas::LASHeader const& h = reader.GetHeader();
         

@@ -11,6 +11,8 @@
 #define LIBLAS_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
+#include <fstream>
+#include <string>
 
 /// Namespace grouping all elements of libLAS public interface.
 /// \note
@@ -31,6 +33,18 @@ enum LASFileVersion
     eLASVersion11 = 1 * 100000 + 1, ///< LAS Format 1.1
     eLASVersion20 = 2 * 100000 + 0  ///< LAS Format 2.0
 };
+
+inline bool Open(std::ifstream& ifs, std::string const& filename)
+{
+    ifs.open(filename.c_str(), std::ios::in | std::ios::binary);
+    return ifs.is_open();
+}
+
+inline bool Create(std::ofstream& ofs, std::string const& filename)
+{
+    ofs.open(filename.c_str(), std::ios::out | std::ios::binary);
+    return ofs.is_open();
+}
 
 } // namespace liblas
 

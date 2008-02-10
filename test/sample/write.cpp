@@ -9,6 +9,7 @@
 #include <vld.h>
 #endif
 // liblas
+#include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/laswriter.hpp>
@@ -36,7 +37,11 @@ int main()
     {
         char const* name = "test.las";
 
-        std::ofstream ofs(name, ios::out | ios::binary);
+        std::ofstream ofs;
+        if (!liblas::Create(ofs, name))
+        {
+            throw std::runtime_error(std::string("Can not create ") + name);
+        }
 
         liblas::LASHeader hdr;
         hdr.SetVersionMajor(1);

@@ -167,6 +167,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\liblas\lasfile.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\liblas\lasheader.hpp"
 					>
 				</File>
@@ -249,6 +253,10 @@
 			>
 			<File
 				RelativePath="..\..\..\src\laserror.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lasfile.cpp"
 				>
 			</File>
 			<File
