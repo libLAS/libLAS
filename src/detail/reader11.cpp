@@ -167,6 +167,8 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     m_offset = header.GetDataOffset();
     m_size = header.GetPointRecordsCount();
+
+    return true;
 }
 
 bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)

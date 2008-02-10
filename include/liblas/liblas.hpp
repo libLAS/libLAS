@@ -34,13 +34,29 @@ enum LASFileVersion
     eLASVersion20 = 2 * 100000 + 0  ///< LAS Format 2.0
 };
 
-inline bool Open(std::ifstream& ifs, std::string const& filename)
+/// Open file to read in binary mode.
+/// The input file is also attached to input stream.
+/// \param ifs - reference to input file stream to
+/// which opened file is attached
+/// \param filename - name of file to open
+/// \return true if file has been opened with success, false otherwise
+/// \exception No throw
+///
+inline bool Open(std::ifstream& ifs, std::string const& filename) // throw()
 {
     ifs.open(filename.c_str(), std::ios::in | std::ios::binary);
     return ifs.is_open();
 }
 
-inline bool Create(std::ofstream& ofs, std::string const& filename)
+/// Create file and open to write in binary mode.
+/// The output file is also attached to output stream.
+/// \param ofs - reference to output file stream to
+/// which created file is attached
+/// \param filename - name of file to open
+/// \return true if file has been create with success, false otherwise
+/// \exception No throw
+///
+inline bool Create(std::ofstream& ofs, std::string const& filename) // throw()
 {
     ofs.open(filename.c_str(), std::ios::out | std::ios::binary);
     return ofs.is_open();
