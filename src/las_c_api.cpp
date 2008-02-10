@@ -5,7 +5,6 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
-#include <liblas/capi/liblas.h>
 
 #include <liblas/lasreader.hpp>
 #include <liblas/laserror.hpp>
@@ -50,8 +49,6 @@ std::ifstream g_ifs;
 std::ofstream g_ofs;
 
 std::stack<LASError > errors;
-
-class LASFile;
 
 typedef std::map<std::string, LASFile*> StrLASFileMap;
 typedef std::map<std::string, LASFile*>::const_iterator StrLASFileMapIt;
