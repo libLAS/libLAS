@@ -136,6 +136,7 @@ LASReaderH LASReader_Create(const char* filename)
         if (p==files.end()) {
 
             LASFile* lasfile;
+            /* FIXME : not freed by LASReader_Destroy */
             lasfile = new LASFile(filename, LASFile::eRead);
 
             files[filename] = lasfile;
@@ -540,9 +541,7 @@ char* LASHeader_GetFileSignature(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetFileSignature", NULL);
     
     std::string signature = ((LASHeader*) hHeader)->GetFileSignature();
-    char* value = (char*) malloc(signature.size() * sizeof(char*) + 1);
-    strcpy(value, signature.c_str());
-    return value;
+    return strdup(signature.c_str());
 }
 
 liblas::uint16_t LASHeader_GetFileSourceId(const LASHeaderH hHeader) {
@@ -563,9 +562,7 @@ char* LASHeader_GetProjectId(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetProjectId", 0);
     
     liblas::guid id = ((LASHeader*) hHeader)->GetProjectId();
-    char* output = (char*) malloc(id.to_string().size() * sizeof(char*) + 1);
-    strcpy(output, id.to_string().c_str());
-    return output;
+    return strdup(id.to_string().c_str());
 }
 
 liblas::uint8_t LASHeader_GetVersionMajor(const LASHeaderH hHeader) {
@@ -616,9 +613,7 @@ char* LASHeader_GetSystemId(const LASHeaderH hHeader) {
 
     // caller owns it
     std::string sysid = ((LASHeader*) hHeader)->GetSystemId();
-    char* value = (char*) malloc(sysid.size() * sizeof(char*) + 1);
-    strcpy(value, sysid.c_str());
-    return value;
+    return strdup(sysid.c_str());
 }
 
 LASErrorEnum LASHeader_SetSystemId(LASHeaderH hHeader, const char* value) {
@@ -640,9 +635,7 @@ char* LASHeader_GetSoftwareId(const LASHeaderH hHeader) {
 
     // caller owns it
     std::string softid = ((LASHeader*) hHeader)->GetSoftwareId();
-    char* value = (char*) malloc(softid.size() * sizeof(char*) + 1);
-    strcpy(value, softid.c_str());
-    return value;
+    return strdup(softid.c_str());
 }
 
 LASErrorEnum LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* value) {

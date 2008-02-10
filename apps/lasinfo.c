@@ -45,6 +45,8 @@ int main(int argc, char *argv[])
       int classification_synthetic = 0;
       int classification_keypoint = 0;
       int classification_withheld = 0;
+      char *pszSignature, *pszProjectId, *pszSystemId, *pszSoftwareId;
+
 /*    //   bool parse_variable_header = false;
     //   
     //   bool repair_header = false;
@@ -109,14 +111,19 @@ int main(int argc, char *argv[])
       } 
 
 
+      pszSignature = LASHeader_GetFileSignature(header);
+      pszProjectId = LASHeader_GetProjectId(header);
+      pszSystemId = LASHeader_GetSystemId(header);
+      pszSoftwareId = LASHeader_GetSoftwareId(header);
+
       fprintf(stdout, "reporting all LAS header entries for %s:\n", file_name);
-      fprintf(stdout, "  file signature:            '%s'\n", LASHeader_GetFileSignature(header) );
+      fprintf(stdout, "  file signature:            '%s'\n", pszSignature );
       fprintf(stdout, "  file source ID:            %d\n", LASHeader_GetFileSourceId(header) ) ;
       fprintf(stdout, "  reserved:                  %d\n", LASHeader_GetReserved(header) );
-      fprintf(stdout, "  project ID GUID:           '%s'\n", LASHeader_GetProjectId(header));
+      fprintf(stdout, "  project ID GUID:           '%s'\n", pszProjectId);
       fprintf(stdout, "  version major.minor:       %d.%d\n", LASHeader_GetVersionMajor(header), LASHeader_GetVersionMinor(header));
-      fprintf(stdout, "  system_identifier:         '%s'\n", LASHeader_GetSystemId(header));
-      fprintf(stdout, "  generating_software:       '%s'\n", LASHeader_GetSoftwareId(header));
+      fprintf(stdout, "  system_identifier:         '%s'\n", pszSystemId);
+      fprintf(stdout, "  generating_software:       '%s'\n", pszSoftwareId);
       fprintf(stdout, "  file creation day/year:    %d/%d\n", LASHeader_GetCreationDOY(header), LASHeader_GetCreationYear(header));
       fprintf(stdout, "  header size                %d\n", LASHeader_GetHeaderSize(header));
       fprintf(stdout, "  offset to point data       %d\n", LASHeader_GetDataOffset(header));
@@ -130,7 +137,10 @@ int main(int argc, char *argv[])
       fprintf(stdout, "  min x y z                  %.6f %.6f %.6f\n", LASHeader_GetMinX(header), LASHeader_GetMinY(header), LASHeader_GetMinZ(header));
       fprintf(stdout, "  max x y z                  %.6f %.6f %.6f\n", LASHeader_GetMaxX(header), LASHeader_GetMaxY(header), LASHeader_GetMaxZ(header));
 
-
+      free(pszSignature);
+      free(pszProjectId);
+      free(pszSystemId);
+      free(pszSoftwareId);
 
        if (check_points)
        {
