@@ -149,3 +149,4 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);
 
 LAS_C_END
 #endif
+

@@ -43,6 +43,5 @@
 #  define MAX(a,b)      ((a>b) ? a : b)
 #endif
 
-
-#endif // LAS_CONFIG_H_INCLUDED
+#endif /* LAS_CONFIG_H_INCLUDED */
 

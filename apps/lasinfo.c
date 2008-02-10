@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
             rgpsum = rgpsum + number_of_returns_of_given_pulse[i];
             fprintf(stderr, " %d", number_of_returns_of_given_pulse[i]);
         }
-        fprintf(stderr, " --- %d\n", rgpsum); 
+        fprintf(stderr, " --- %ld\n", rgpsum); 
 
         if (number_of_point_records != LASHeader_GetPointRecordsCount(header))
         {
