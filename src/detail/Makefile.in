@@ -43,7 +43,7 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 liblasdetail_la_LIBADD =
 am_liblasdetail_la_OBJECTS = reader.lo reader10.lo reader11.lo \
-	writer.lo writer10.lo
+	writer.lo writer10.lo writer11.lo
 liblasdetail_la_OBJECTS = $(am_liblasdetail_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -169,7 +169,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 INCLUDES = -I../../include -I../../include/detail
 noinst_LTLIBRARIES = liblasdetail.la
-liblasdetail_la_SOURCES = reader.cpp reader10.cpp reader11.cpp writer.cpp writer10.cpp
+liblasdetail_la_SOURCES = reader.cpp reader10.cpp reader11.cpp writer.cpp writer10.cpp writer11.cpp
 all: all-am
 
 .SUFFIXES:
@@ -226,6 +226,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reader11.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writer10.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writer11.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
