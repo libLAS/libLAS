@@ -61,6 +61,14 @@ int main()
 
         try { f2.GetWriter(); }
         catch(std::exception const& e) { std::cout << "OK: " << e.what() << std::endl; }
+
+        // Copy operations
+        LASFile f4(f1);
+        print_file(f4);
+
+        LASFile f5 = f4;
+        print_file(f5);
+
     }
     catch (std::exception const& e)
     {
