@@ -13,6 +13,8 @@ namespace liblas {
 
 class LASHeader;
 class LASPoint;
+class LASReader;
+class LASWriter;
 
 namespace detail {
 
