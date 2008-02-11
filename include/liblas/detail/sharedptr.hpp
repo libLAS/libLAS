@@ -4,13 +4,14 @@
 // from the book "The C++ Standard Library - A Tutorial and Reference"
 //
 // (C) Copyright Nicolai M. Josuttis 1999
-// (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
+// (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net (modifications)
 // Distributed under the BSD License
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #ifndef LIBLAS_DETAIL_SHAREDPTR_HPP_INCLUDED
 #define LIBLAS_DETAIL_SHAREDPTR_HPP_INCLUDED
+#include <cassert>
 
 namespace liblas { namespace detail {
 
@@ -53,10 +54,17 @@ public:
 
     T& operator*() const throw()
     {
+        assert(0 != m_ptr);
         return *m_ptr;
     }
 
     T* operator->() const throw()
+    {
+        assert(0 != m_ptr);
+        return m_ptr;
+    }
+
+    T* get() const
     {
         return m_ptr;
     }
