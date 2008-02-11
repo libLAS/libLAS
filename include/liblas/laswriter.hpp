@@ -12,7 +12,7 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/detail/fwd.hpp>
 // std
-#include <iosfwd> // std::ofstream
+#include <iosfwd> // std::ostream
 #include <string>
 #include <memory>
 #include <cstdlib> // std::size_t
@@ -25,10 +25,11 @@ class LASWriter
 {
 public:
 
-    LASWriter(std::ofstream& ofs, LASHeader const& header);
+    LASWriter(std::ostream& ofs, LASHeader const& header);
     ~LASWriter();
     
     std::size_t GetVersion() const;
+    LASHeader const& GetHeader() const;
     bool WritePoint(LASPoint const& point);
 
 private:

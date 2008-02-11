@@ -42,7 +42,7 @@ class ReaderFactory
 public:
 
     // TODO: prototypes
-    static Reader* Create(std::ifstream& ifs);
+    static Reader* Create(std::istream& ifs);
     static void Destroy(Reader* p);
 };
 

@@ -31,7 +31,7 @@ class WriterFactory
 {
 public:
 
-    static Writer* Create(std::ofstream& ofs, LASHeader const& header);
+    static Writer* Create(std::ostream& ofs, LASHeader const& header);
     static void Destroy(Writer* p);
 };
 

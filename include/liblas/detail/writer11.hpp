@@ -22,7 +22,7 @@ public:
 
     typedef Writer Base;
     
-    WriterImpl(std::ofstream& ofs);
+    WriterImpl(std::ostream& ofs);
     std::size_t GetVersion() const;
     void WriteHeader(LASHeader const& header);
     void UpdateHeader(LASHeader const& header);
@@ -31,7 +31,7 @@ public:
 
 private:
 
-    std::ofstream& m_ofs;
+    std::ostream& m_ofs;
     liblas::uint32_t m_pointCount;
 };
 

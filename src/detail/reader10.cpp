@@ -18,7 +18,7 @@
 
 namespace liblas { namespace detail { namespace v10 {
 
-ReaderImpl::ReaderImpl(std::ifstream& ifs) : Base(), m_ifs(ifs)
+ReaderImpl::ReaderImpl(std::istream& ifs) : Base(), m_ifs(ifs)
 {
 }
 
@@ -205,20 +205,20 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
         {
             std::cout << "GeoDoubleParamsTag: " << vlrh.recordId << std::endl;
 
-            std::ifstream::pos_type const pos = m_ifs.tellg();
-            m_ifs.seekg(pos + std::ifstream::pos_type(vlrh.recordLengthAfterHeader));
+            std::istream::pos_type const pos = m_ifs.tellg();
+            m_ifs.seekg(pos + std::istream::pos_type(vlrh.recordLengthAfterHeader));
         }
         else if (uid == vlrh.userId && 34737 == vlrh.recordId)
         {
             std::cout << "GeoAsciiParamsTag: " << vlrh.recordId << std::endl;
 
-            std::ifstream::pos_type const pos = m_ifs.tellg();
-            m_ifs.seekg(pos + std::ifstream::pos_type(vlrh.recordLengthAfterHeader));
+            std::istream::pos_type const pos = m_ifs.tellg();
+            m_ifs.seekg(pos + std::istream::pos_type(vlrh.recordLengthAfterHeader));
         }
         else
         {
-            std::ifstream::pos_type const pos = m_ifs.tellg();
-            m_ifs.seekg(pos + std::ifstream::pos_type(vlrh.recordLengthAfterHeader));
+            std::istream::pos_type const pos = m_ifs.tellg();
+            m_ifs.seekg(pos + std::istream::pos_type(vlrh.recordLengthAfterHeader));
         }
     }
 

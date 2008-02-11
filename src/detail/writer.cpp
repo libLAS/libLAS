@@ -26,7 +26,7 @@ Writer::~Writer()
 {
 }
 
-Writer* WriterFactory::Create(std::ofstream& ofs, LASHeader const& header)
+Writer* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
 {
     if (!ofs)
     {

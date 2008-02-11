@@ -19,7 +19,7 @@
 
 namespace liblas { namespace detail { namespace v10 {
 
-WriterImpl::WriterImpl(std::ofstream& ofs) :
+WriterImpl::WriterImpl(std::ostream& ofs) :
     Base(), m_ofs(ofs), m_pointCount(0)
 {
 }

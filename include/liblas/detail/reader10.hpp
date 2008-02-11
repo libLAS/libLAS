@@ -21,7 +21,7 @@ public:
 
     typedef Reader Base;
     
-    ReaderImpl(std::ifstream& ifs);
+    ReaderImpl(std::istream& ifs);
     std::size_t GetVersion() const;
     bool ReadHeader(LASHeader& header);
     bool ReadGeoreference(LASHeader const& header); // TODO: Under construction
@@ -32,7 +32,7 @@ public:
 
 private:
 
-    std::ifstream& m_ifs;
+    std::istream& m_ifs;
 };
 
 }}} // namespace liblas::detail::v10

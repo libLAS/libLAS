@@ -18,7 +18,7 @@
 
 namespace liblas { namespace detail { namespace v11 {
 
-ReaderImpl::ReaderImpl(std::ifstream& ifs) : Base(), m_ifs(ifs)
+ReaderImpl::ReaderImpl(std::istream& ifs) : Base(), m_ifs(ifs)
 {
 }
 

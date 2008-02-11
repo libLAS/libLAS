@@ -27,7 +27,7 @@ Reader::~Reader()
 {
 }
 
-Reader* ReaderFactory::Create(std::ifstream& ifs)
+Reader* ReaderFactory::Create(std::istream& ifs)
 {
     if (!ifs)
     {

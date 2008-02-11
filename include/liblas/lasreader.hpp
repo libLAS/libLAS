@@ -25,11 +25,10 @@ class LASReader
 {
 public:
 
-    LASReader(std::ifstream& ifs);
+    LASReader(std::istream& ifs);
     ~LASReader();
     
     std::size_t GetVersion() const;
-
     LASHeader const& GetHeader() const;
     LASPoint const& GetPoint() const;
     
