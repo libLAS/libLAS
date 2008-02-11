@@ -1,40 +1,75 @@
 // $Id$
 //
 // (C) Copyright Howard Butler 2008
+// (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
 // Distributed under the BSD License
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/lasfile.hpp>
-#include <fstream>
+#include <liblas/lasheader.hpp>
+#include <liblas/detail/file.hpp>
+#include <string>
 #include <stdexcept>
 
-LASFile::LASFile(std::string filename, int mode) :
-    m_filename(filename), m_mode(mode)
+namespace liblas {
+
+LASFile::LASFile()
+{}
+
+LASFile::LASFile(std::string const& filename)
+    : m_pimpl(new detail::FileImpl(filename))
+{}
+
+LASFile::LASFile(std::string const& filename, LASHeader const& header)
+    : m_pimpl(new detail::FileImpl(filename, header))
+{}
+
+LASFile::LASFile(LASFile const& other)
+    : m_pimpl(other.m_pimpl)
+{}
+
+LASFile& LASFile::operator=(LASFile const& rhs)
 {
-    // if (filename == "stdin") {
-    //     m_strm = &std::cin;
-    // }
-    // 
-    // if (filename == "stdout" ) {
-    //     m_strm = &std::cout;
-    // }
-    
-    if (mode == LASFile::eRead) {
-        m_strm = new std::ifstream(m_filename.c_str(), std::ios::in | std::ios::binary);
-        if (!(m_strm->good())) {
-            throw std::runtime_error("Input stream for read operation was not good");
-        } 
-    }
-    if (mode == LASFile::eWrite) {
-        m_strm = new std::ofstream(m_filename.c_str(), std::ios::out | std::ios::binary);
-        if (!(m_strm->good())) {
-            throw std::runtime_error("Output stream for write operation was not good");
-        } 
-
-    }
+    m_pimpl = rhs.m_pimpl;
+    return (*this);
 }
 
-LASFile::~LASFile() {
-   // m_strm->close();
+bool LASFile::IsNull() const
+{
+     return (0 == m_pimpl.get());
 }
+
+std::string LASFile::GetName() const
+{
+    return m_pimpl->GetName();
+}
+
+LASFile::Mode LASFile::GetMode() const
+{
+    int const mode = m_pimpl->GetMode();
+    if (mode == 0)
+        return eRead;
+    else if (mode == 1)
+        return eWrite;
+
+    assert("SHOULD NEVER GET HERE");
+    return eRead;
+}
+
+LASHeader const& LASFile::GetHeader() const
+{
+    return m_pimpl->GetHeader();
+}
+
+LASReader& LASFile::GetReader()
+{
+    return m_pimpl->GetReader();
+}
+
+LASWriter& LASFile::GetWriter()
+{
+    return m_pimpl->GetWriter();
+}
+
+} // namespace liblas
