@@ -17,7 +17,7 @@
 namespace liblas
 {
 
-LASWriter::LASWriter(std::ofstream& ofs, LASHeader const& header) :
+LASWriter::LASWriter(std::ostream& ofs, LASHeader const& header) :
     m_pimpl(detail::WriterFactory::Create(ofs, header)), m_header(header)
 {
     m_pimpl->WriteHeader(m_header);
@@ -25,12 +25,18 @@ LASWriter::LASWriter(std::ofstream& ofs, LASHeader const& header) :
 
 LASWriter::~LASWriter()
 {
+    assert(0 != m_pimpl.get());
     m_pimpl->UpdateHeader(m_header);
 }
 
 std::size_t LASWriter::GetVersion() const
 {
     return m_pimpl->GetVersion();
+}
+
+LASHeader const& LASWriter::GetHeader() const
+{
+    return m_header;
 }
 
 bool LASWriter::WritePoint(LASPoint const& point)

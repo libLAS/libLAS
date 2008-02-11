@@ -17,7 +17,7 @@
 namespace liblas
 {
 
-LASReader::LASReader(std::ifstream& ifs) :
+LASReader::LASReader(std::istream& ifs) :
     m_pimpl(detail::ReaderFactory::Create(ifs))
 {
     Init();
