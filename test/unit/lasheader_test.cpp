@@ -42,7 +42,7 @@ namespace tut
         ensure_equals("wrong default major version",
                       m_default.GetVersionMajor(), 1);
         ensure_equals("wrong default minor version",
-                       m_default.GetVersionMinor(), 0);
+                       m_default.GetVersionMinor(), 1);
         
         ensure_equals("wrong default system id",
                       m_default.GetSystemId(), LASHeader::SystemIdentifier);

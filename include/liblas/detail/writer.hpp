@@ -25,6 +25,12 @@ public:
     virtual void UpdateHeader(LASHeader const& header) = 0;
     virtual void WritePointRecord(PointRecord const& record) = 0;
     virtual void WritePointRecord(PointRecord const& record, double const& time) = 0;
+
+private:
+
+    // Blocked copying operations, declared but not defined.
+    Writer(Writer const& other);
+    Writer& operator=(Writer const& rhs);
 };
 
 class WriterFactory

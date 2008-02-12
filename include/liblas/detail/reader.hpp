@@ -35,6 +35,12 @@ protected:
     std::streamoff m_offset;
     uint32_t m_size;
     uint32_t m_current;
+
+private:
+
+    // Blocked copying operations, declared but not defined.
+    Reader(Reader const& other);
+    Reader& operator=(Reader const& rhs);
 };
 
 class ReaderFactory

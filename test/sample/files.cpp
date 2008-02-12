@@ -5,7 +5,6 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
-#define USE_VLD 1
 #if defined(_MSC_VER) && defined(USE_VLD)
 #include <vld.h>
 #endif

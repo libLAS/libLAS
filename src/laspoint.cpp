@@ -64,7 +64,7 @@ void LASPoint::SetReturnNumber(uint16_t const& num)
     // Store value in bits 1,2,3
     uint8_t val = static_cast<uint8_t>(num);
     uint16_t const begin = 1;
-    uint8_t mask = ~0;
+    uint8_t mask = uint8_t(~0);
     m_flags &= ~(mask << (begin - 1)); 
     m_flags |= ((val & mask) << (begin - 1));
 }
@@ -77,7 +77,7 @@ void LASPoint::SetNumberOfReturns(uint16_t const& num)
     // Store value in bits 4,5,6
     uint8_t val = static_cast<uint8_t>(num);
     uint16_t const begin = 4;
-    uint8_t mask = ~0;
+    uint8_t mask = uint8_t(~0);
     m_flags &= ~(mask << (begin - 1)); 
     m_flags |= ((val & mask) << (begin - 1));
 }
@@ -90,7 +90,7 @@ void LASPoint::SetScanDirection(uint16_t const& dir)
     // Store value in bit 7th
     uint8_t val = static_cast<uint8_t>(dir);
     uint16_t const begin = 7;
-    uint8_t mask = ~0;
+    uint8_t mask = uint8_t(~0);
     m_flags &= ~(mask << (begin - 1)); 
     m_flags |= ((val & mask) << (begin - 1));
 }
@@ -103,7 +103,7 @@ void LASPoint::SetFlightLineEdge(uint16_t const& edge)
     // Store value in bit 8th
     uint8_t val = static_cast<uint8_t>(edge);
     uint16_t const begin = 8;
-    uint8_t mask = ~0;
+    uint8_t mask = uint8_t(~0);
     m_flags &= ~(mask << (begin - 1)); 
     m_flags |= ((val & mask) << (begin - 1));
 }
