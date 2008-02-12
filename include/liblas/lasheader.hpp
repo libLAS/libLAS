@@ -83,11 +83,12 @@ public:
     void SetFileSignature(std::string const& v);
 
     /// Get file source identifier.
+    /// \exception No throw
     uint16_t GetFileSourceId() const;
 
     /// Set file source identifier.
-    /// \exception std::out_of_range - if invalid identifier is given.
     /// \param v - should be set to a value between 1 and 65535.
+    /// \exception No throw
     void SetFileSourceId(uint16_t v);
 
     /// Get value field reserved by the ASPRS LAS Specification.
