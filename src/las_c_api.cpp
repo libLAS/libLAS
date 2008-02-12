@@ -137,10 +137,12 @@ LASReaderH LASReader_Create(const char* filename)
 
             LASFile* lasfile;
             /* FIXME : not freed by LASReader_Destroy */
-            lasfile = new LASFile(filename, LASFile::eRead);
+            lasfile = new LASFile(filename);
 
             files[filename] = lasfile;
 
+            /* TODO: mloskot - Commented this code to enable compilation */
+            /*
             std::ifstream* ifs;
             std::ios* p = lasfile->GetStream();
 
@@ -152,6 +154,8 @@ LASReaderH LASReader_Create(const char* filename)
             
             LASReader* reader = new LASReader(*ifs);
             return (LASReaderH) reader;
+            */
+            return NULL; /* FIXME: mloskot - high priority to fix it */
         }
         LASError_PushError(LE_Failure, "not able to create map entry", "LASReader_Create");
         return NULL;
@@ -300,7 +304,7 @@ liblas::uint16_t LASPoint_GetIntensity(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetIntensity", 0);
     
-    double value = ((LASPoint*) hPoint)->GetIntensity();
+    liblas::uint16_t value = ((LASPoint*) hPoint)->GetIntensity();
     return value;
 }
 
