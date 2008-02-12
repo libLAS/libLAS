@@ -159,7 +159,17 @@ LASReaderH LASReader_Create(const char* filename)
 void LASReader_Destroy(LASReaderH hReader)
 {
     VALIDATE_POINTER0(hReader, "LASReader_Destroy");
-    
+
+    StrLASFileMap::const_iterator p;    
+    LASReader* reader = (LASReader*)hReader;
+    for (p=files.begin(); p!=files.end(); ++p) {
+        LASFile f = p->second;
+        LASReader& freader = f.GetReader();
+        std::ifstream& a = dynamic_cast<std::ifstream&>(freader.GetStream());
+        if (&a == reader->GetStream()) {
+            a.close();
+        }
+    }
 //delete ((LASReader*) hReader);
 
     hReader = NULL;

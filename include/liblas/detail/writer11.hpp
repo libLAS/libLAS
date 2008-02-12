@@ -28,7 +28,8 @@ public:
     void UpdateHeader(LASHeader const& header);
     void WritePointRecord(PointRecord const& record);
     void WritePointRecord(PointRecord const& record, double const& time);
-
+    std::ostream& GetStream();
+    
 private:
 
     std::ostream& m_ofs;

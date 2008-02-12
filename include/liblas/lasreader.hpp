@@ -38,6 +38,9 @@ public:
     // The operator is not const because it updates file stream position.
     LASPoint const& operator[](std::size_t n);
 
+    // Allow fetching of the stream
+    std::istream& GetStream();
+    
 private:
 
     // Blocked copying operations, declared but not defined.

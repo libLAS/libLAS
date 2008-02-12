@@ -300,4 +300,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record, double& time)
     return hasData;
 }
 
+std::istream& ReaderImpl::GetStream() {
+    return m_ifs;
+}
 }}} // namespace liblas::detail::v10

@@ -30,6 +30,7 @@ public:
     bool ReadPointAt(std::size_t n, PointRecord& record);
     bool ReadPointAt(std::size_t n, PointRecord& record, double& time);
 
+    std::istream& GetStream();
 private:
 
     std::istream& m_ifs;

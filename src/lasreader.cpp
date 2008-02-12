@@ -127,5 +127,8 @@ void LASReader::MakePoint(double const& time)
     m_point.SetTime(time);
 }
 
+std::istream& LASReader::GetStream() {
+    return m_pimpl->GetStream();
+}
 } // namespace liblas
 
