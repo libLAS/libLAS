@@ -25,7 +25,7 @@ public:
     virtual void UpdateHeader(LASHeader const& header) = 0;
     virtual void WritePointRecord(PointRecord const& record) = 0;
     virtual void WritePointRecord(PointRecord const& record, double const& time) = 0;
-    virtual std::ostream& GetStream();
+    virtual std::ostream& GetStream() = 0;
 
 private:
 

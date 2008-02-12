@@ -9,6 +9,7 @@
 #include <liblas/lasfile.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/detail/file.hpp>
+
 #include <string>
 #include <stdexcept>
 
