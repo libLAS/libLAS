@@ -141,21 +141,8 @@ LASReaderH LASReader_Create(const char* filename)
 
             files[filename] = lasfile;
 
-            /* TODO: mloskot - Commented this code to enable compilation */
-            /*
-            std::ifstream* ifs;
-            std::ios* p = lasfile->GetStream();
+            return (LASReaderH) &(lasfile->GetReader());
 
-            ifs = dynamic_cast<std::ifstream*> (p);
-            if (!ifs) {
-                LASError_PushError(LE_Failure, "dynamic_cast failed", "LASReader_Create");
-                return NULL;                
-            }
-            
-            LASReader* reader = new LASReader(*ifs);
-            return (LASReaderH) reader;
-            */
-            return NULL; /* FIXME: mloskot - high priority to fix it */
         }
         LASError_PushError(LE_Failure, "not able to create map entry", "LASReader_Create");
         return NULL;
@@ -173,8 +160,8 @@ void LASReader_Destroy(LASReaderH hReader)
 {
     VALIDATE_POINTER0(hReader, "LASReader_Destroy");
     
-    delete ((LASReader*) hReader);
-    g_ifs.close();
+//delete ((LASReader*) hReader);
+
     hReader = NULL;
 }
 
@@ -925,7 +912,7 @@ LASErrorEnum LASHeader_SetMax(LASHeaderH hHeader, double x, double y, double z) 
 void LASHeader_Destroy(LASHeaderH hHeader)
 {
     VALIDATE_POINTER0(hHeader, "LASHeader_Destroy");
-    delete ((LASHeader*) hHeader);
+//    delete ((LASHeader*) hHeader);
     hHeader=NULL;
 }
 
@@ -940,9 +927,26 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
         return NULL;
     }
     try {
-        g_ofs.open(filename, std::ios::out | std::ios::binary);
-        LASWriter* writer = new LASWriter(g_ofs, *((LASHeader*) hHeader));
-        return (LASWriterH) writer;
+
+        StrLASFileMap::const_iterator p;
+        
+        p = files.find(filename);
+        
+        if (p==files.end()) {
+
+            LASFile* lasfile;
+
+            lasfile = new LASFile(filename);
+
+            files[filename] = lasfile;
+
+            return (LASWriterH) &(lasfile->GetWriter());
+
+        }
+        
+        LASError_PushError(LE_Failure, "not able to create map entry", "LASWriter_Create");
+        return NULL;
+
     } catch (std::exception const& e)
      {
          LASError_PushError(LE_Failure, e.what(), "LASWriter_Create");
@@ -969,8 +973,8 @@ LASErrorEnum LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoi
 void LASWriter_Destroy(LASWriterH hWriter)
 {
     VALIDATE_POINTER0(hWriter, "LASWriter_Destroy");
-    delete ((LASWriter*) hWriter);
-    g_ofs.close();
+//    delete ((LASWriter*) hWriter);
+//    g_ofs.close();
 
     hWriter=NULL;
 }
