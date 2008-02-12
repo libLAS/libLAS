@@ -6,8 +6,10 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/lasheader.hpp>
+#include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <tut/tut.hpp>
+
 namespace tut
 { 
     struct lasheader_data
@@ -18,7 +20,7 @@ namespace tut
     typedef test_group<lasheader_data> tg;
     typedef tg::object to;
 
-    tg test_group("liblas::LASHeader");
+    tg test_group_lasheader("liblas::LASHeader");
 
     // Test default construction
     template<>
@@ -54,17 +56,17 @@ namespace tut
         ensure_equals("wrong default creation year",
                       m_default.GetCreationYear(), 0);
         ensure_equals("wrong default header size",
-                      m_default.GetHeaderSize(), 227);
+                      m_default.GetHeaderSize(), liblas::uint16_t(227));
         ensure_equals("wrong default data offset",
-                      m_default.GetDataOffset(), 229);
+                      m_default.GetDataOffset(), liblas::uint32_t(229));
         ensure_equals("wrong default records count",
-                      m_default.GetRecordsCount(), 0);
+                      m_default.GetRecordsCount(), liblas::uint32_t(0));
         ensure_equals("wrong default data format id",
                       m_default.GetDataFormatId(), LASHeader::ePointFormat0);
         ensure_equals("wrong default data record length",
                       m_default.GetDataRecordLength(), LASHeader::ePointSize0);
         ensure_equals("wrong default point records count",
-                      m_default.GetPointRecordsCount(), 0);
+                      m_default.GetPointRecordsCount(), liblas::uint32_t(0));
 
         ensure_equals("wrong default X scale",
                       m_default.GetScaleX(), double(0.01));
@@ -93,4 +95,5 @@ namespace tut
         ensure_equals("wrong default max Z",
                       m_default.GetMaxZ(), double(0));
     }
-};
+}
+

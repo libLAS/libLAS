@@ -9,6 +9,7 @@
 #include <tut/tut.hpp>
 #include <string>
 #include <algorithm> // std::std::transform
+#include <cstdlib> // std::size_t
 #include <cctype> // std::toupper
 
 namespace tut
@@ -26,7 +27,7 @@ namespace tut
     typedef test_group<guid_data> tg;
     typedef tg::object to;
 
-    tg test_group("liblas::guid");
+    tg test_group_guid("liblas::guid");
 
     // Test default construction
     template<>
@@ -35,13 +36,14 @@ namespace tut
     {
         ensure(m_d.is_null());
 
-        ensure_equals(16, m_d.byte_count());
+        std::size_t const len = 16;
+        ensure_equals(len, m_d.byte_count());
 
         std::string s = m_d.to_string();
         ensure_equals(s, m_dstr);
 
         liblas::guid g;
-        ensure_equals(16, g.byte_count());
+        ensure_equals(len, g.byte_count());
         ensure_equals(g, m_d);
     }
 
@@ -57,11 +59,11 @@ namespace tut
         ensure_not(m_d == g);
 
         std::string s2 = m_d.to_string();
-        std::transform(s2.begin(), s2.end(), s2.begin(), std::toupper);
+        std::transform(s2.begin(), s2.end(), s2.begin(), (int(*)(int))std::toupper);
         ensure_not(s1 == s2);
 
         s2 = g.to_string();
-        std::transform(s2.begin(), s2.end(), s2.begin(), std::toupper);
+        std::transform(s2.begin(), s2.end(), s2.begin(), (int(*)(int))std::toupper);
         ensure_equals(s2, s1);
     }
 
@@ -77,7 +79,7 @@ namespace tut
         ensure_not(m_d == g);
 
         std::string s2 = g.to_string();
-        std::transform(s2.begin(), s2.end(), s2.begin(), std::toupper);
+        std::transform(s2.begin(), s2.end(), s2.begin(), (int(*)(int))std::toupper);
         ensure_equals(s2, s1);
     }
 
@@ -137,4 +139,5 @@ namespace tut
         g2 = g1;
         ensure_equals(g2, g1);
     }
-};
+}
+

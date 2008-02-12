@@ -18,7 +18,10 @@ SET( LIBLAS_SRC
     lasfile.cpp
 )
 
-ADD_DEFINITIONS( /Za )
+# Diable Visual C++ language extensions when building libLAS library
+IF (WIN32)
+    ADD_DEFINITIONS( /Za )
+ENDIF (WIN32)
 
 INCLUDE_DIRECTORIES(
     ../include

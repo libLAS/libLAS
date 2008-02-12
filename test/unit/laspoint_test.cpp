@@ -19,7 +19,7 @@ namespace tut
     typedef test_group<laspoint_data> tg;
     typedef tg::object to;
 
-    tg test_group("liblas::LASPoint");
+    tg test_group_laspoint("liblas::LASPoint");
 
     // Test default construction
     template<>
@@ -335,4 +335,5 @@ namespace tut
         ensure_equals("invalid user data value",
                       m_default.GetUserData(), data);
     }
-};
+}
+
