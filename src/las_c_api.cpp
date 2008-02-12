@@ -50,8 +50,8 @@ std::ofstream g_ofs;
 
 std::stack<LASError > errors;
 
-typedef std::map<std::string, LASFile*> StrLASFileMap;
-typedef std::map<std::string, LASFile*>::const_iterator StrLASFileMapIt;
+typedef std::map<std::string, LASFile> StrLASFileMap;
+typedef std::map<std::string, LASFile>::const_iterator StrLASFileMapIt;
 
 StrLASFileMap files;
 
@@ -135,13 +135,13 @@ LASReaderH LASReader_Create(const char* filename)
         
         if (p==files.end()) {
 
-            LASFile* lasfile;
+            LASFile lasfile;
             /* FIXME : not freed by LASReader_Destroy */
-            lasfile = new LASFile(filename);
+            lasfile = LASFile(filename);
 
             files[filename] = lasfile;
 
-            return (LASReaderH) &(lasfile->GetReader());
+            return (LASReaderH) &(lasfile.GetReader());
 
         }
         LASError_PushError(LE_Failure, "not able to create map entry", "LASReader_Create");
@@ -934,13 +934,13 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
         
         if (p==files.end()) {
 
-            LASFile* lasfile;
+            LASFile lasfile;
 
-            lasfile = new LASFile(filename);
+            lasfile = LASFile(filename);
 
             files[filename] = lasfile;
 
-            return (LASWriterH) &(lasfile->GetWriter());
+            return (LASWriterH) &(lasfile.GetWriter());
 
         }
         
