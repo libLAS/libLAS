@@ -32,6 +32,8 @@ public:
     LASHeader const& GetHeader() const;
     bool WritePoint(LASPoint const& point);
 
+    // Allow fetching of the stream
+    std::istream& GetStream();
 private:
     
     // Blocked copying operations, declared but not defined.
