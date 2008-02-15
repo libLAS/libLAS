@@ -160,17 +160,37 @@ void LASReader_Destroy(LASReaderH hReader)
 {
     VALIDATE_POINTER0(hReader, "LASReader_Destroy");
 
-    StrLASFileMap::const_iterator p;    
+    StrLASFileMap::iterator p;    
     LASReader* reader = (LASReader*)hReader;
     for (p=files.begin(); p!=files.end(); ++p) {
         LASFile f = p->second;
         LASReader& freader = f.GetReader();
+
+
+    try {
         std::ifstream& a = dynamic_cast<std::ifstream&>(freader.GetStream());
         if (&a == reader->GetStream()) {
-            a.close();
+            files.erase(p);
+            break;
+//            a.close();
         }
+    } catch (std::bad_cast const& e)
+    {
+        std::istream& a = dynamic_cast<std::istream&>(freader.GetStream());
+        if (&a == reader->GetStream()) {
+            files.erase(p);
+            break;
+//            a.close();
+        }        
+    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_Destroy");
+        return ;
     }
-//delete ((LASReader*) hReader);
+    
+
+    }
 
     hReader = NULL;
 }
@@ -983,8 +1003,42 @@ LASErrorEnum LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoi
 void LASWriter_Destroy(LASWriterH hWriter)
 {
     VALIDATE_POINTER0(hWriter, "LASWriter_Destroy");
-//    delete ((LASWriter*) hWriter);
-//    g_ofs.close();
+
+
+
+    StrLASFileMap::iterator p;    
+    LASWriter* writer = (LASWriter*)hWriter;
+    for (p=files.begin(); p!=files.end(); ++p) {
+        LASFile f = p->second;
+        LASWriter& fwriter = f.GetWriter();
+
+
+    try {
+        std::ofstream& a = dynamic_cast<std::ofstream&>(fwriter.GetStream());
+        if (&a == writer->GetStream()) {
+            files.erase(p);
+            break;
+//            a.close();
+        }
+    } catch (std::bad_cast const& e)
+    {
+        std::ostream& a = dynamic_cast<std::ostream&>(fwriter.GetStream());
+        if (&a == writer->GetStream()) {
+            files.erase(p);
+            break;
+//            a.close();
+        }        
+    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASWriter_Destroy");
+        return ;
+    }
+    
+
+    }
+
+
 
     hWriter=NULL;
 }
