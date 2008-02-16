@@ -33,7 +33,7 @@ public:
     bool WritePoint(LASPoint const& point);
 
     // Allow fetching of the stream
-    std::istream& GetStream();
+    std::ostream& GetStream();
     
     // Allow in-place writing of header
     void WriteHeader(LASHeader const& header);

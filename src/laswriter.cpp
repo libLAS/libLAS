@@ -57,6 +57,10 @@ bool LASWriter::WritePoint(LASPoint const& point)
     return true;
 }
 
+std::ostream& LASWriter::GetStream() {
+    return m_pimpl->GetStream();
+}
+
 void LASWriter::WriteHeader(LASHeader const& header)
 {
     m_pimpl->WriteHeader(header);
