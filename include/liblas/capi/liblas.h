@@ -145,6 +145,7 @@ LAS_DLL LASError LASHeader_SetMax(LASHeaderH hHeader, double x, double y, double
 
 LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader);
 LAS_DLL LASError LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoint);
+LAS_DLL LASError LASWriter_WriteHeader(const LASWriterH hWriter, const LASHeaderH hHeader);
 LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);
 
 LAS_C_END

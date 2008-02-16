@@ -30,6 +30,7 @@ public:
     LASFile(std::string const& filename);
     LASFile(std::string const& filename, LASHeader const& header);
     LASFile(LASFile const& other);
+    ~LASFile();
     LASFile& operator=(LASFile const& rhs);
 
     bool IsNull() const;

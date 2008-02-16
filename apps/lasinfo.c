@@ -199,7 +199,7 @@ void print_error(char* message) {
 
     if (LASError_GetErrorCount()) {
         fprintf(stdout, 
-            "You have encountered an error. '%s' with message %s(%d) from method %s\n",
+            "%s: %s (%d) from method %s\n",
             message,
             LASError_GetLastErrorMsg(),
             LASError_GetLastErrorNum(),
@@ -398,8 +398,10 @@ int main(int argc, char *argv[])
 {
     int i;
     char* file_name = NULL;
+    
     LASReaderH reader = NULL;
     LASHeaderH header = NULL;
+    LASWriterH writer = NULL;
     
     int check_points = FALSE;
     int repair_header = FALSE;
@@ -412,17 +414,11 @@ int main(int argc, char *argv[])
     char generating_software[31];
     uint8_t file_creation_day = 0;
     uint8_t file_creation_year = 0;
+    
+    int err=0;
 
     PointSummary* summary = NULL;
 
-
-/*    //   bool parse_variable_header = false;
-    //   
-    //   bool repair_header = false;
-    //   bool repair_bounding_box = false;
-    //   bool change_header = false;
-
-  */  
     for (i = 1; i < argc; i++)
     {
         if (    strcmp(argv[i],"-h") == 0 ||
@@ -471,6 +467,7 @@ int main(int argc, char *argv[])
                 ) 
         {
             repair_header = TRUE;
+            check_points = TRUE;
         }
 
         else if (   strcmp(argv[i], "--repair_bb") == 0             ||
@@ -485,6 +482,7 @@ int main(int argc, char *argv[])
                 ) 
         {
             repair_bounding_box = TRUE;
+            check_points = TRUE;
         }
 
         else if (   strcmp(argv[i],"--system_identifier") == 0   ||
@@ -539,6 +537,7 @@ int main(int argc, char *argv[])
         usage();
         exit(-1);
     }
+    
     reader = LASReader_Create(file_name);
     if (!reader) { 
         print_error("Could not open file ");
@@ -551,17 +550,62 @@ int main(int argc, char *argv[])
 
     print_header(header, file_name);
     
+    if (change_header) {
+        if (system_identifier) {
+            err = LASHeader_SetSystemId (header, system_identifier);
+            if (err) print_error("Could not set SystemId");
+        }
+        if (generating_software) {
+            err = LASHeader_SetSoftwareId(header, generating_software);
+            if (err) print_error("Could not set SoftwareId");
+        }
+        if ( file_creation_day || file_creation_year) {
+            err = LASHeader_SetCreationDOY(header, file_creation_day);
+            if (err) print_error("Could not set file creation day");
+            err = LASHeader_SetCreationYear(header, file_creation_year);
+            if (err) print_error("Could not set file creation year");
+        }
+
+        /* We need to wipe out the reader and make a writer. */
+        if (reader) {
+            LASReader_Destroy(reader);
+            reader = NULL;
+        }
+        
+        writer = LASWriter_Create(file_name, header);
+        if (!writer) print_error("Problem creating LASWriterH object");
+        err = LASWriter_WriteHeader(writer, header);
+        if (err) print_error("Problem writing header");
+        LASWriter_Destroy(writer);
+        writer = NULL;
+    }
+    
     if (check_points)
     {
         summary = SummarizePoints(reader);
         print_point_summary(summary, header);
+        
+        if (repair_header) {
+            /* We need to wipe out the reader and make a writer. */
+            if (reader) {
+                LASReader_Destroy(reader);
+                reader = NULL;
+            }
+            
+            if (use_stdin) {
+                print_error("Cannot update header information on piped input!");
+                exit(-1);
+            }
+            
+            
+        }
         free(summary);
         
     }   
     
-     
-     LASReader_Destroy(reader);
+     if (reader) LASReader_Destroy(reader);
      LASHeader_Destroy(header);
+     
 
 /*
     // 

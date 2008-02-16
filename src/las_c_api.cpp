@@ -162,6 +162,7 @@ void LASReader_Destroy(LASReaderH hReader)
 
     StrLASFileMap::iterator p;    
     LASReader* reader = (LASReader*)hReader;
+    printf ("Files size: %d\n", (int) files.size());
     for (p=files.begin(); p!=files.end(); ++p) {
         LASFile f = p->second;
         LASReader& freader = f.GetReader();
@@ -169,22 +170,34 @@ void LASReader_Destroy(LASReaderH hReader)
 
     try {
         std::ifstream& a = dynamic_cast<std::ifstream&>(freader.GetStream());
-        if (&a == reader->GetStream()) {
+        std::ifstream& r = dynamic_cast<std::ifstream&>(reader->GetStream());
+        if (&a == &r) {
+            printf("Erasing map entry for reader, streams matched!\n");
+
+            a.close();
+            r.close();
             files.erase(p);
-            break;
-//            a.close();
+//            files.erase(p);
+
+
+            hReader = NULL;
+            return;
         }
+        
     } catch (std::bad_cast const& e)
     {
         std::istream& a = dynamic_cast<std::istream&>(freader.GetStream());
-        if (&a == reader->GetStream()) {
+        std::istream& r = reader->GetStream();
+        if (&a == &r) {
             files.erase(p);
-            break;
-//            a.close();
+            hReader = NULL;
+            return;
+            //a.close();
         }        
     
     } catch (std::exception const& e)
     {
+        hReader=NULL;
         LASError_PushError(LE_Failure, e.what(), "LASReader_Destroy");
         return ;
     }
@@ -993,7 +1006,23 @@ LASErrorEnum LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoi
             ((LASWriter*) hWriter)->WritePoint(*((LASPoint*) hPoint));
     } catch (std::exception const& e)
     {
-        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetScanAngleRank");
+        LASError_PushError(LE_Failure, e.what(), "LASWriter_WritePoint");
+        return LE_Failure;
+    }
+
+    return LE_None;    
+}
+
+LASErrorEnum LASWriter_WriteHeader(const LASWriterH hWriter, const LASHeaderH hHeader) {
+
+    VALIDATE_POINTER1(hHeader, "LASWriter_WriteHeader", LE_Failure);
+    VALIDATE_POINTER1(hWriter, "LASWriter_WriteHeader", LE_Failure);
+    
+    try {
+            ((LASWriter*) hWriter)->WriteHeader(*((LASHeader*) hHeader));
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASWriter_WriteHeader");
         return LE_Failure;
     }
 

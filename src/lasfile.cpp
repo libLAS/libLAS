@@ -73,4 +73,7 @@ LASWriter& LASFile::GetWriter()
     return m_pimpl->GetWriter();
 }
 
+LASFile::~LASFile() {
+    printf("DELETING LASFile!!!!\n");
+}
 } // namespace liblas
