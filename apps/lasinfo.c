@@ -49,7 +49,7 @@ void usage()
     fprintf(stderr,"\n");
 
     fprintf(stderr, "For more information, see the full documentation for lasinfo at:\n"
-                    " http://liblas.org/browser/trunk/doc/lasdiff.txt\n");
+                    " http://liblas.org/browser/trunk/doc/lasinfo.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
     exit(1);
