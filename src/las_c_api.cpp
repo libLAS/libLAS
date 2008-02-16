@@ -172,8 +172,8 @@ void LASReader_Destroy(LASReaderH hReader)
         if (&a == &r) {
             printf("Erasing map entry for reader, streams matched!\n");
 
-            a.close();
-            r.close();
+            // a.close();
+            // r.close();
             files.erase(p);
 //            files.erase(p);
 
@@ -1046,8 +1046,8 @@ void LASWriter_Destroy(LASWriterH hWriter)
         if (&a == &r) {
             printf("Erasing map entry for writer, streams matched!\n");
 
-            a.close();
-            r.close();
+            // a.close();
+            // r.close();
             files.erase(p);
 //            files.erase(p);
 
