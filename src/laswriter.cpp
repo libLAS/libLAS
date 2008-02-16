@@ -60,6 +60,7 @@ bool LASWriter::WritePoint(LASPoint const& point)
 void LASWriter::WriteHeader(LASHeader const& header)
 {
     m_pimpl->WriteHeader(header);
+    m_header = header;
 }
 
 } // namespace liblas
