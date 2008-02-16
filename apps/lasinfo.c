@@ -21,14 +21,37 @@
 
 void usage()
 {
-    fprintf(stderr,"usage:\n");
-    fprintf(stderr,"lasinfo lidar.las\n");
-    fprintf(stderr,"lasinfo -variable lidar.las\n");
-    fprintf(stderr,"lasinfo -variable -nocheck lidar.las\n");
-    fprintf(stderr,"lasinfo -i lidar.las -nocheck\n");
-    fprintf(stderr,"lasinfo -i lidar.las -repair\n");
-    fprintf(stderr,"lasinfo -i lidar.las -repair_bounding_box -file_creation 8 2007\n");
-    fprintf(stderr,"lasinfo -i lidar.las -system_identifier \"hello world!\" -generating_software \"this is a test (-:\"\n");
+    fprintf(stderr,"----------------------------------------------------------\n");
+    fprintf(stderr,"    lasinfo usage:\n");
+    fprintf(stderr,"----------------------------------------------------------\n");
+    fprintf(stderr,"\n");
+
+    fprintf(stderr,"Printing simple header info:\n");
+    fprintf(stderr,"  lasinfo lidar.las\n");
+    fprintf(stderr,"\n");
+
+    fprintf(stderr,"Checking point information:\n");
+    fprintf(stderr,"  lasinfo --check lidar.las\n");
+    fprintf(stderr,"\n");
+
+    fprintf(stderr,"Reading from stdin:\n");
+    fprintf(stderr,"  lasinfo --stdin -c < lidar.las\n");
+    fprintf(stderr,"\n");
+
+    fprintf(stderr,"Repairing header info to reflect point data:\n");
+    fprintf(stderr,"  lasinfo -i lidar.las --repair\n");
+    fprintf(stderr,"  lasinfo -i lidar.las --repair_bounding_box\n");
+    fprintf(stderr,"\n");
+
+    fprintf(stderr,"Altering header inf:\n");
+    fprintf(stderr, "  lasinfo -i lidar.las --system_identifier \"hello world!\" "
+                    "--generating_software \"this is a test (-:\"  --file_creation 8 2007\n");
+    fprintf(stderr,"\n");
+
+    fprintf(stderr, "For more information, see the full documentation for lasinfo at:\n"
+                    " http://liblas.org/browser/trunk/doc/lasdiff.txt\n");
+    fprintf(stderr,"----------------------------------------------------------\n");
+
     exit(1);
 }
 
@@ -57,97 +80,85 @@ typedef struct  {
 } PointSummary;
 
 PointSummary* SummarizePoints(LASReaderH reader) {
-
-/*        LASPointH pmin;
-        LASPointH pmax;
-
-
-
-        double t;
-        double x, y, z;
-        uint16_t intensity;
-        uint8_t cls, scan_angle, user_data;
-        uint16_t retnum, numret, scandir, fedge;
+    
+    PointSummary* summary;
+    LASPointH p;
+    uint8_t cls;
         
-        long rgpsum = 0;
-*/        
-        PointSummary* summary;
-        LASPointH p;
-        uint8_t cls;
-        
-        summary = (PointSummary*) malloc(sizeof(PointSummary));
-        p  = LASReader_GetNextPoint(reader);
+    summary = (PointSummary*) malloc(sizeof(PointSummary));
+    p  = LASReader_GetNextPoint(reader);
 
-        summary->pmin = LASPoint_Copy(p);
-        summary->pmax = LASPoint_Copy(p);
+    summary->pmin = LASPoint_Copy(p);
+    summary->pmax = LASPoint_Copy(p);
         
 
-        while (p)
-        {
+    while (p)
+    {
 
         
-            summary->x = LASPoint_GetX(p);
-            LASPoint_SetX(summary->pmin, MIN(summary->x, LASPoint_GetX(summary->pmin)));
-            LASPoint_SetX(summary->pmax, MAX(summary->x, LASPoint_GetX(summary->pmax)));
+        summary->x = LASPoint_GetX(p);
+        LASPoint_SetX(summary->pmin, MIN(summary->x, LASPoint_GetX(summary->pmin)));
+        LASPoint_SetX(summary->pmax, MAX(summary->x, LASPoint_GetX(summary->pmax)));
 
-            summary->y = LASPoint_GetY(p);
-            LASPoint_SetY(summary->pmin, MIN(summary->y, LASPoint_GetY(summary->pmin)));
-            LASPoint_SetY(summary->pmax, MAX(summary->y, LASPoint_GetY(summary->pmax)));
+        summary->y = LASPoint_GetY(p);
+        LASPoint_SetY(summary->pmin, MIN(summary->y, LASPoint_GetY(summary->pmin)));
+        LASPoint_SetY(summary->pmax, MAX(summary->y, LASPoint_GetY(summary->pmax)));
 
-            summary->z = LASPoint_GetZ(p);
-            LASPoint_SetZ(summary->pmin, MIN(summary->z, LASPoint_GetZ(summary->pmin)));
-            LASPoint_SetZ(summary->pmax, MAX(summary->z, LASPoint_GetZ(summary->pmax)));
+        summary->z = LASPoint_GetZ(p);
+        LASPoint_SetZ(summary->pmin, MIN(summary->z, LASPoint_GetZ(summary->pmin)));
+        LASPoint_SetZ(summary->pmax, MAX(summary->z, LASPoint_GetZ(summary->pmax)));
 
-            summary->intensity = LASPoint_GetIntensity(p);
-            LASPoint_SetIntensity(summary->pmin, MIN(summary->intensity, LASPoint_GetIntensity(summary->pmin)));
-            LASPoint_SetIntensity(summary->pmax, MAX(summary->intensity, LASPoint_GetIntensity(summary->pmax)));
+        summary->intensity = LASPoint_GetIntensity(p);
+        LASPoint_SetIntensity(summary->pmin, MIN(summary->intensity, LASPoint_GetIntensity(summary->pmin)));
+        LASPoint_SetIntensity(summary->pmax, MAX(summary->intensity, LASPoint_GetIntensity(summary->pmax)));
 
-            summary->t = LASPoint_GetTime(p);
-            LASPoint_SetTime(summary->pmin, MIN(summary->t, LASPoint_GetTime(summary->pmin)));
-            LASPoint_SetTime(summary->pmax, MAX(summary->t, LASPoint_GetTime(summary->pmax)));
+        summary->t = LASPoint_GetTime(p);
+        LASPoint_SetTime(summary->pmin, MIN(summary->t, LASPoint_GetTime(summary->pmin)));
+        LASPoint_SetTime(summary->pmax, MAX(summary->t, LASPoint_GetTime(summary->pmax)));
 
-            summary->retnum = LASPoint_GetReturnNumber(p);
-            LASPoint_SetReturnNumber(summary->pmin, MIN(summary->retnum, LASPoint_GetReturnNumber(summary->pmin)));
-            LASPoint_SetReturnNumber(summary->pmax, MAX(summary->retnum, LASPoint_GetReturnNumber(summary->pmax)));                    
+        summary->retnum = LASPoint_GetReturnNumber(p);
+        LASPoint_SetReturnNumber(summary->pmin, MIN(summary->retnum, LASPoint_GetReturnNumber(summary->pmin)));
+        LASPoint_SetReturnNumber(summary->pmax, MAX(summary->retnum, LASPoint_GetReturnNumber(summary->pmax)));                    
 
-            summary->numret = LASPoint_GetNumberOfReturns(p);
-            LASPoint_SetNumberOfReturns(summary->pmin, MIN(summary->numret, LASPoint_GetNumberOfReturns(summary->pmin)));
-            LASPoint_SetNumberOfReturns(summary->pmax, MAX(summary->numret, LASPoint_GetNumberOfReturns(summary->pmax)));  
-            
-            summary->scandir = LASPoint_GetScanDirection(p);
-            LASPoint_SetScanDirection(summary->pmin, MIN(summary->scandir, LASPoint_GetScanDirection(summary->pmin)));
-            LASPoint_SetScanDirection(summary->pmax, MAX(summary->scandir, LASPoint_GetScanDirection(summary->pmax)));  
-            
-            summary->fedge = LASPoint_GetFlightLineEdge(p);
-            LASPoint_SetFlightLineEdge(summary->pmin, MIN(summary->fedge, LASPoint_GetFlightLineEdge(summary->pmin)));
-            LASPoint_SetFlightLineEdge(summary->pmax, MAX(summary->fedge, LASPoint_GetFlightLineEdge(summary->pmax)));  
+        summary->numret = LASPoint_GetNumberOfReturns(p);
+        LASPoint_SetNumberOfReturns(summary->pmin, MIN(summary->numret, LASPoint_GetNumberOfReturns(summary->pmin)));
+        LASPoint_SetNumberOfReturns(summary->pmax, MAX(summary->numret, LASPoint_GetNumberOfReturns(summary->pmax)));  
+        
+        summary->scandir = LASPoint_GetScanDirection(p);
+        LASPoint_SetScanDirection(summary->pmin, MIN(summary->scandir, LASPoint_GetScanDirection(summary->pmin)));
+        LASPoint_SetScanDirection(summary->pmax, MAX(summary->scandir, LASPoint_GetScanDirection(summary->pmax)));  
+        
+        summary->fedge = LASPoint_GetFlightLineEdge(p);
+        LASPoint_SetFlightLineEdge(summary->pmin, MIN(summary->fedge, LASPoint_GetFlightLineEdge(summary->pmin)));
+        LASPoint_SetFlightLineEdge(summary->pmax, MAX(summary->fedge, LASPoint_GetFlightLineEdge(summary->pmax)));  
 
-            summary->scan_angle = LASPoint_GetScanAngleRank(p);
-            LASPoint_SetScanAngleRank(summary->pmin, MIN(summary->scan_angle, LASPoint_GetScanAngleRank(summary->pmin)));
-            LASPoint_SetScanAngleRank(summary->pmax, MAX(summary->scan_angle, LASPoint_GetScanAngleRank(summary->pmax)));  
+        summary->scan_angle = LASPoint_GetScanAngleRank(p);
+        LASPoint_SetScanAngleRank(summary->pmin, MIN(summary->scan_angle, LASPoint_GetScanAngleRank(summary->pmin)));
+        LASPoint_SetScanAngleRank(summary->pmax, MAX(summary->scan_angle, LASPoint_GetScanAngleRank(summary->pmax)));  
 
-            summary->user_data = LASPoint_GetUserData(p);
-            LASPoint_SetUserData(summary->pmin, MIN(summary->user_data, LASPoint_GetUserData(summary->pmin)));
-            LASPoint_SetUserData(summary->pmax, MAX(summary->user_data, LASPoint_GetUserData(summary->pmax)));  
-                                    
-            summary->number_of_point_records++;
-            summary->number_of_points_by_return[LASPoint_GetReturnNumber(p)]++;
-            summary->number_of_returns_of_given_pulse[LASPoint_GetNumberOfReturns(p)]++;
-            
-            cls = LASPoint_GetClassification(p);
-            summary->classification[(cls & 31)]++;            
-            if (cls & 32) summary->classification_synthetic++;          
-            if (cls & 64) summary->classification_keypoint++; 
-            if (cls & 128) summary->classification_withheld++;
+        summary->user_data = LASPoint_GetUserData(p);
+        LASPoint_SetUserData(summary->pmin, MIN(summary->user_data, LASPoint_GetUserData(summary->pmin)));
+        LASPoint_SetUserData(summary->pmax, MAX(summary->user_data, LASPoint_GetUserData(summary->pmax)));  
+                                
+        summary->number_of_point_records++;
+        summary->number_of_points_by_return[LASPoint_GetReturnNumber(p)]++;
+        summary->number_of_returns_of_given_pulse[LASPoint_GetNumberOfReturns(p)]++;
+        
+        cls = LASPoint_GetClassification(p);
+        summary->classification[(cls & 31)]++;            
+        if (cls & 32) summary->classification_synthetic++;          
+        if (cls & 64) summary->classification_keypoint++; 
+        if (cls & 128) summary->classification_withheld++;
           
           /*
           // if (lasreader->point.point_source_ID < point_min.point_source_ID) point_min.point_source_ID = lasreader->point.point_source_ID;
           // else if (lasreader->point.point_source_ID > point_max.point_source_ID) point_max.point_source_ID = lasreader->point.point_source_ID;
 
           */
-          p  = LASReader_GetNextPoint(reader);
-        } 
-        return summary;
+        p  = LASReader_GetNextPoint(reader);
+    }
+     
+    return summary;
 }
 static const char * LASPointClassification [] = {
   "Created, never classified",
@@ -186,16 +197,109 @@ static const char * LASPointClassification [] = {
 
 void print_error(char* message) {
 
-          fprintf(stdout, 
-                  "You have encountered an error. '%s' with message %s(%d) from method %s\n",
-                  message,
-                  LASError_GetLastErrorMsg(),
-                  LASError_GetLastErrorNum(),
-                  LASError_GetLastErrorMethod()
-                 ); 
-          exit(-1);
+    if (LASError_GetErrorCount()) {
+        fprintf(stdout, 
+            "You have encountered an error. '%s' with message %s(%d) from method %s\n",
+            message,
+            LASError_GetLastErrorMsg(),
+            LASError_GetLastErrorNum(),
+            LASError_GetLastErrorMethod()
+        ); 
+    } else {
+        fprintf(stdout, 
+            "You have encountered an error. '%s'\n",
+            message
+        );         
+    }
+
 }
 
+void print_point_summary(PointSummary* summary, LASHeaderH header) {
+
+    long rgpsum = 0;
+    int i = 0;
+    
+    fprintf(stderr, "\nreporting minimums and maximums for all %d LAS point record entries ...\n",
+                    LASHeader_GetPointRecordsCount(header));
+                    
+    fprintf(stderr, " Number of points: %d\n", 
+                    summary->number_of_point_records);
+    
+    fprintf(stderr, " Min X,Y,Z: %.6f %.6f %.6f\n", 
+                    LASPoint_GetX(summary->pmin),
+                    LASPoint_GetY(summary->pmin),
+                    LASPoint_GetZ(summary->pmin)
+            );
+    fprintf(stderr, " Min X,Y,Z: %.6f %.6f %.6f\n", 
+                    LASPoint_GetX(summary->pmax),
+                    LASPoint_GetY(summary->pmax),
+                    LASPoint_GetZ(summary->pmax)
+            );
+    fprintf(stderr, " Min Time: %.6f Max Time: %.6f\n", 
+                    LASPoint_GetTime(summary->pmin),
+                    LASPoint_GetTime(summary->pmax)
+            );
+    fprintf(stderr, " Return Number -- Min: %d Max: %d\n", 
+                    LASPoint_GetReturnNumber(summary->pmin),
+                    LASPoint_GetReturnNumber(summary->pmax)
+            );
+    fprintf(stderr, " Return Count -- Min: %d Max %d\n", 
+                    LASPoint_GetNumberOfReturns(summary->pmin),
+                    LASPoint_GetNumberOfReturns(summary->pmax)
+            );
+    fprintf(stderr, " Flightline Edge -- Min: %d Max %d\n", 
+                    LASPoint_GetFlightLineEdge(summary->pmin),
+                    LASPoint_GetFlightLineEdge(summary->pmax)
+            );
+    
+    fprintf(stderr, " number of returns of given pulse:"); 
+    for (i = 1; i < 8; i++) {
+        rgpsum = summary->rgpsum + summary->number_of_returns_of_given_pulse[i];
+        fprintf(stderr, " %d", summary->number_of_returns_of_given_pulse[i]);
+    }
+    fprintf(stderr, " --- %ld\n", rgpsum); 
+
+    if (summary->number_of_point_records != LASHeader_GetPointRecordsCount(header))
+    {
+    fprintf(stderr, "real number of points (%d) is different from "
+                    "header number of points (%d)\n", 
+                    summary->number_of_point_records, 
+                    LASHeader_GetPointRecordsCount(header)
+            );
+    }
+
+
+    for (i = 0; i < 5; i++) {
+        if (LASHeader_GetPointRecordsByReturnCount(header, i) != summary->number_of_points_by_return[i]) 
+        {
+            fprintf(stderr, " actual number of points by return is different (actual, header):"); 
+            for (i = 0; i < 5; i++) {
+                fprintf(stderr, " (%d,%d)", 
+                        summary->number_of_points_by_return[i],
+                        LASHeader_GetPointRecordsByReturnCount(header, i)
+                        );
+            } 
+            fprintf(stderr, "\n");
+        }
+    }
+
+    fprintf(stderr, "  -------- Point Classifications --------\n");
+    for (i = 0; i < 32; i++) {
+        if (summary->classification[i]) {
+            fprintf(stderr, " %8d %s (%d)\n", 
+                            summary->classification[i], 
+                            LASPointClassification[i], 
+                            i);
+        }
+    }
+
+    if (summary->classification_synthetic || summary->classification_keypoint ||  summary->classification_withheld) {
+        fprintf(stderr, " histogram of classification of points:\n"); 
+        if (summary->classification_synthetic) fprintf(stderr, " +-> flagged as synthetic: %d\n", summary->classification_synthetic);
+        if (summary->classification_keypoint) fprintf(stderr,  " +-> flagged as keypoints: %d\n", summary->classification_keypoint);
+        if (summary->classification_withheld) fprintf(stderr,  " +-> flagged as withheld:  %d\n", summary->classification_withheld);
+    }         
+}
 
 void print_header(LASHeaderH header, const char* file_name) {
 
@@ -296,13 +400,22 @@ int main(int argc, char *argv[])
     char* file_name = NULL;
     LASReaderH reader = NULL;
     LASHeaderH header = NULL;
-    int check_points = 0;
-
-    long rgpsum = 0;
     
-    int ilas = FALSE;
+    int check_points = FALSE;
+    int repair_header = FALSE;
+    int change_header = FALSE;
+    int repair_bounding_box = FALSE;
+    int use_stdin = FALSE;
+
+
+    char system_identifier[31];
+    char generating_software[31];
+    uint8_t file_creation_day = 0;
+    uint8_t file_creation_year = 0;
 
     PointSummary* summary = NULL;
+
+
 /*    //   bool parse_variable_header = false;
     //   
     //   bool repair_header = false;
@@ -312,38 +425,120 @@ int main(int argc, char *argv[])
   */  
     for (i = 1; i < argc; i++)
     {
-        if (strcmp(argv[i],"-h") == 0)
+        if (    strcmp(argv[i],"-h") == 0 ||
+                strcmp(argv[i],"--help") == 0
+            )
         {
-          usage();
+            usage();
         }
-        else if (strcmp(argv[i],"-i") == 0)
+        else if (   strcmp(argv[i],"--input") == 0  ||
+                    strcmp(argv[i],"--in") == 0     ||
+                    strcmp(argv[i],"-i") == 0       ||
+                    strcmp(argv[i],"-in") == 0
+                )
         {
-          i++;
-          file_name = argv[i];
+            i++;
+            file_name = argv[i];
         }
-        else if (strcmp(argv[i],"-c") == 0)
+        else if (   strcmp(argv[i], "--points") == 0        || 
+                    strcmp(argv[i], "--check") == 0         || 
+                    strcmp(argv[i], "--check_points") == 0  ||
+                    strcmp(argv[i], "-c") == 0          || 
+                    strcmp(argv[i], "-points") == 0         || 
+                    strcmp(argv[i], "-check") == 0          || 
+                    strcmp(argv[i], "-check_points") == 0  
+                )
         {
-          i++;
-          check_points=1;
+            check_points = TRUE;
         }
-        else if (strcmp(argv[i], "-ilas") == 0) 
+        else if (   strcmp(argv[i], "--nocheck") == 0 ||
+                    strcmp(argv[i], "-nocheck") == 0 
+                )
         {
-            ilas = TRUE;
+            check_points = FALSE;
         }
+        else if (   strcmp(argv[i], "--stdin") == 0 ||
+                    strcmp(argv[i], "-ilas") == 0
+                ) 
+        {
+            use_stdin = TRUE;
+        }
+
+        else if (   strcmp(argv[i], "--repair") == 0        ||
+                    strcmp(argv[i], "-r") == 0  ||
+                    strcmp(argv[i], "-repair_header") == 0  ||
+                    strcmp(argv[i], "-repair") == 0
+                ) 
+        {
+            repair_header = TRUE;
+        }
+
+        else if (   strcmp(argv[i], "--repair_bb") == 0             ||
+                    strcmp(argv[i], "--repair_bounding_box") == 0   ||
+                    strcmp(argv[i], "--repair_boundingbox") == 0    ||
+                    strcmp(argv[i], "-repair_bb") == 0              ||
+                    strcmp(argv[i], "-repair_bounding_box") == 0    ||
+                    strcmp(argv[i], "-repair_boundingbox") == 0     ||
+                    strcmp(argv[i], "-repair") == 0     ||
+                    strcmp(argv[i], "-rb") == 0
+
+                ) 
+        {
+            repair_bounding_box = TRUE;
+        }
+
+        else if (   strcmp(argv[i],"--system_identifier") == 0   ||
+                    strcmp(argv[i],"-system_identifier") == 0   ||
+                    strcmp(argv[i],"-s") == 0   ||
+                    strcmp(argv[i],"-sys_id") == 0)
+        {
+			i++;
+            strncpy(system_identifier, argv[i], 31);
+            system_identifier[31] = '\0';
+            change_header = TRUE;
+		}
+
+        else if (   strcmp(argv[i],"--generating_software") == 0   ||
+                    strcmp(argv[i],"-generating_software") == 0   ||
+                    strcmp(argv[i],"-g") == 0   ||
+                    strcmp(argv[i],"-gen_soft") == 0)
+        {
+			i++;
+            strncpy(generating_software, argv[i], 31);
+            generating_software[31] = '\0';
+            change_header = TRUE;
+		}
+
+        else if (   strcmp(argv[i],"--file_creation") == 0   ||
+                    strcmp(argv[i],"-file_creation") == 0)
+        {
+			i++;
+            file_creation_day = (unsigned short)atoi(argv[i]);
+			i++;
+            file_creation_year = (unsigned short)atoi(argv[i]);
+            change_header = TRUE;
+		}
+		              
         else if (i == argc - 1 && file_name == NULL)
         {
-          file_name = argv[i];
-        }
+            file_name = argv[i];
+        } 
         else
         {
-          usage();
+            usage();
+            exit(-1);
         }
     }
       
-    if (ilas) {
+    if (use_stdin) {
         file_name = "stdin";
     }
     
+    if (!file_name) {
+        print_error("No filename was provided to be opened");
+        usage();
+        exit(-1);
+    }
     reader = LASReader_Create(file_name);
     if (!reader) { 
         print_error("Could not open file ");
@@ -359,101 +554,10 @@ int main(int argc, char *argv[])
     if (check_points)
     {
         summary = SummarizePoints(reader);
-
-        fprintf(stderr, "\nreporting minimums and maximums for all %d LAS point record entries ...\n",
-                        LASHeader_GetPointRecordsCount(header));
-                        
-        fprintf(stderr, " Number of points: %d\n", 
-                        summary->number_of_point_records);
+        print_point_summary(summary, header);
+        free(summary);
         
-        fprintf(stderr, " Min X,Y,Z: %.6f %.6f %.6f\n", 
-                        LASPoint_GetX(summary->pmin),
-                        LASPoint_GetY(summary->pmin),
-                        LASPoint_GetZ(summary->pmin)
-                );
-        fprintf(stderr, " Min X,Y,Z: %.6f %.6f %.6f\n", 
-                        LASPoint_GetX(summary->pmax),
-                        LASPoint_GetY(summary->pmax),
-                        LASPoint_GetZ(summary->pmax)
-                );
-        fprintf(stderr, " Min Time: %.6f Max Time: %.6f\n", 
-                        LASPoint_GetTime(summary->pmin),
-                        LASPoint_GetTime(summary->pmax)
-                );
-        fprintf(stderr, " Return Number -- Min: %d Max: %d\n", 
-                        LASPoint_GetReturnNumber(summary->pmin),
-                        LASPoint_GetReturnNumber(summary->pmax)
-                );
-        fprintf(stderr, " Return Count -- Min: %d Max %d\n", 
-                        LASPoint_GetNumberOfReturns(summary->pmin),
-                        LASPoint_GetNumberOfReturns(summary->pmax)
-                );
-        fprintf(stderr, " Flightline Edge -- Min: %d Max %d\n", 
-                        LASPoint_GetFlightLineEdge(summary->pmin),
-                        LASPoint_GetFlightLineEdge(summary->pmax)
-                );
-        
-        fprintf(stderr, " number of returns of given pulse:"); 
-        for (i = 1; i < 8; i++) {
-            rgpsum = summary->rgpsum + summary->number_of_returns_of_given_pulse[i];
-            fprintf(stderr, " %d", summary->number_of_returns_of_given_pulse[i]);
-        }
-        fprintf(stderr, " --- %ld\n", rgpsum); 
-
-        if (summary->number_of_point_records != LASHeader_GetPointRecordsCount(header))
-        {
-        fprintf(stderr, "real number of points (%d) is different from "
-                        "header number of points (%d)\n", 
-                        summary->number_of_point_records, 
-                        LASHeader_GetPointRecordsCount(header)
-                );
-        }
-
-
-        for (i = 0; i < 5; i++) {
-            if (LASHeader_GetPointRecordsByReturnCount(header, i) != summary->number_of_points_by_return[i]) 
-            {
-                fprintf(stderr, " actual number of points by return is different (actual, header):"); 
-                for (i = 0; i < 5; i++) {
-                    fprintf(stderr, " (%d,%d)", 
-                            summary->number_of_points_by_return[i],
-                            LASHeader_GetPointRecordsByReturnCount(header, i)
-                            );
-                } 
-                fprintf(stderr, "\n");
-            }
-        }
-
-        fprintf(stderr, " Point Classifications --------\n");
-        for (i = 0; i < 32; i++) {
-            if (summary->classification[i]) {
-                fprintf(stderr, " %8d %s (%d)\n", 
-                                summary->classification[i], 
-                                LASPointClassification[i], 
-                                i);
-            }
-        }
-
-        if (summary->classification_synthetic || summary->classification_keypoint ||  summary->classification_withheld) {
-            fprintf(stderr, " histogram of classification of points:\n"); 
-            if (summary->classification_synthetic) fprintf(stderr, " +-> flagged as synthetic: %d\n", summary->classification_synthetic);
-            if (summary->classification_keypoint) fprintf(stderr,  " +-> flagged as keypoints: %d\n", summary->classification_keypoint);
-            if (summary->classification_withheld) fprintf(stderr,  " +-> flagged as withheld:  %d\n", summary->classification_withheld);
-        }      
-        
-
-
-        if (LASError_GetErrorCount()) {
-          fprintf(stdout, 
-                  "Error! %d, %s, in method %s\n",
-                  LASError_GetLastErrorNum(),
-                  LASError_GetLastErrorMsg(),
-                  LASError_GetLastErrorMethod()
-                 ); 
-         }
-        
-         free(summary);
-     } /* check_points */   
+    }   
     
      
      LASReader_Destroy(reader);
