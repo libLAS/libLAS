@@ -57,5 +57,10 @@ bool LASWriter::WritePoint(LASPoint const& point)
     return true;
 }
 
+void LASWriter::WriteHeader(LASHeader const& header)
+{
+    m_pimpl->WriteHeader(header);
+}
+
 } // namespace liblas
 
