@@ -652,7 +652,7 @@ LASErrorEnum LASHeader_SetSystemId(LASHeaderH hHeader, const char* value) {
     VALIDATE_POINTER1(hHeader, "LASHeader_SetSystemId", LE_Failure); 
 
     try {
-            ((LASHeader*) hHeader)->SetSystemId(std::string(value));
+            ((LASHeader*) hHeader)->SetSystemId(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetSystemId");
@@ -674,7 +674,7 @@ LASErrorEnum LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* value) {
     VALIDATE_POINTER1(hHeader, "LASHeader_SetSoftwareId", LE_Failure); 
 
     try {
-            ((LASHeader*) hHeader)->SetSoftwareId(std::string(value));
+            ((LASHeader*) hHeader)->SetSoftwareId(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetSoftwareId");
