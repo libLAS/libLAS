@@ -22,6 +22,8 @@ public:
 
     // Initialize pointer with existing pointer, where pointer p
     // is required to be a return value of new operator
+    // TODO: Relax the "0 != p requirement"
+    //  m_count(new long(p ? 1 : 0))
     explicit SharedPtr(T* p = 0)
         : m_ptr(p), m_count(new long(1))
     {}
@@ -67,6 +69,11 @@ public:
     T* get() const
     {
         return m_ptr;
+    }
+
+    long use_count() const
+    {
+        return (*m_count);
     }
 
 private:
