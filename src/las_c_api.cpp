@@ -955,7 +955,7 @@ LASErrorEnum LASHeader_SetMax(LASHeaderH hHeader, double x, double y, double z) 
 void LASHeader_Destroy(LASHeaderH hHeader)
 {
     VALIDATE_POINTER0(hHeader, "LASHeader_Destroy");
-//    delete ((LASHeader*) hHeader);
+    delete ((LASHeader*) hHeader);
     hHeader=NULL;
 }
 
