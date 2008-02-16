@@ -549,7 +549,7 @@ int main(int argc, char *argv[])
     } 
       
     header = LASReader_GetHeader(reader);
-    if (header) { 
+    if (!header) { 
         print_error("Could not get LASHeader ");
         exit(-1);
     } 
