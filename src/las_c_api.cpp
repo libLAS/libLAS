@@ -120,7 +120,7 @@ void LASError_PushError(int code, const char *message, const char *method) {
 }
 
 int LASError_GetErrorCount(void) {
-    return errors.size();
+    return static_cast<int>(errors.size());
 }
 
 LASReaderH LASReader_Create(const char* filename) 
@@ -135,10 +135,8 @@ LASReaderH LASReader_Create(const char* filename)
         
         if (p==files.end()) {
 
-            LASFile lasfile;
             /* FIXME : not freed by LASReader_Destroy */
-            lasfile = LASFile(filename);
-
+            LASFile lasfile(filename);
             files[filename] = lasfile;
 
             return (LASReaderH) &(lasfile.GetReader());
@@ -603,7 +601,7 @@ liblas::uint8_t LASHeader_GetVersionMajor(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetVersionMajor", 0);
 
     long value = ((LASHeader*) hHeader)->GetVersionMajor();
-    return value;
+    return liblas::uint8_t(value);
 }
 
 LASErrorEnum LASHeader_SetVersionMajor(LASHeaderH hHeader, liblas::uint8_t value) {
@@ -624,7 +622,7 @@ liblas::uint8_t LASHeader_GetVersionMinor(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetVersionMinor", 0);
 
     long value = ((LASHeader*) hHeader)->GetVersionMinor();
-    return value;
+    return liblas::uint8_t(value);
 }
 
 LASErrorEnum LASHeader_SetVersionMinor(LASHeaderH hHeader, liblas::uint8_t value) {
@@ -1034,14 +1032,11 @@ void LASWriter_Destroy(LASWriterH hWriter)
 {
     VALIDATE_POINTER0(hWriter, "LASWriter_Destroy");
 
-
-
     StrLASFileMap::iterator p;    
     LASWriter* writer = (LASWriter*)hWriter;
     for (p=files.begin(); p!=files.end(); ++p) {
         LASFile f = p->second;
         LASWriter& fwriter = f.GetWriter();
-
 
     try {
         std::ofstream& a = dynamic_cast<std::ofstream&>(fwriter.GetStream());
