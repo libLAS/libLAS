@@ -545,11 +545,13 @@ int main(int argc, char *argv[])
     reader = LASReader_Create(file_name);
     if (!reader) { 
         print_error("Could not open file ");
+        exit(-1);
     } 
       
     header = LASReader_GetHeader(reader);
-    if (!header) { 
+    if (header) { 
         print_error("Could not get LASHeader ");
+        exit(-1);
     } 
 
     print_header(header, file_name);
