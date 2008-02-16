@@ -974,12 +974,13 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
         StrLASFileMap::const_iterator p;
         
         p = files.find(filename);
+        LASHeader* header = ((LASHeader*) hHeader);
         
         if (p==files.end()) {
 
             LASFile lasfile;
 
-            lasfile = LASFile(filename);
+            lasfile = LASFile(filename, *header);
 
             files[filename] = lasfile;
 
