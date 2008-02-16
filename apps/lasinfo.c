@@ -11,6 +11,10 @@
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
 
+/* TODO: Remove before releasing */
+#if defined(_MSC_VER) && defined(USE_VLD)
+#include <vld.h>
+#endif
 
 
 #include <stdio.h>
