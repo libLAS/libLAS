@@ -7,7 +7,7 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		AdditionalIncludeDirectories="$(LIBLAS_DIR)\include"
-		PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
+		PreprocessorDefinitions="USE_VLD;_CRT_SECURE_NO_WARNINGS"
 	/>
 	<UserMacro
 		Name="LIBLAS_DIR"
