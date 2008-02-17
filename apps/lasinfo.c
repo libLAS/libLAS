@@ -585,9 +585,15 @@ int main(int argc, char *argv[])
         }
         
         writer = LASWriter_Create(file_name, header_copy);
-        if (!writer) print_error("Problem creating LASWriterH object");
+        if (!writer) {
+            print_error("Problem creating LASWriterH object");
+            exit(-1);
+        }
         err = LASWriter_WriteHeader(writer, header_copy);
-        if (err) print_error("Problem writing header");
+        if (err) {
+            print_error("Problem writing header");
+            exit(-1);
+        }
         LASWriter_Destroy(writer);
         writer = NULL;
     }
