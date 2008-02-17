@@ -405,6 +405,7 @@ int main(int argc, char *argv[])
     
     LASReaderH reader = NULL;
     LASHeaderH header = NULL;
+    LASHeaderH header_copy = NULL;
     LASWriterH writer = NULL;
     
     int check_points = FALSE;
@@ -556,6 +557,8 @@ int main(int argc, char *argv[])
         exit(-1);
     } 
 
+    
+    
     print_header(header, file_name);
     
     if (change_header) {
@@ -574,15 +577,18 @@ int main(int argc, char *argv[])
             if (err) print_error("Could not set file creation year");
         }
 
+        header_copy = LASHeader_Copy(header);
+        LASHeader_Destroy(header);
+        
         /* We need to wipe out the reader and make a writer. */
         if (reader) {
             LASReader_Destroy(reader);
             reader = NULL;
         }
         
-        writer = LASWriter_Create(file_name, header);
+        writer = LASWriter_Create(file_name, header_copy);
         if (!writer) print_error("Problem creating LASWriterH object");
-        err = LASWriter_WriteHeader(writer, header);
+        err = LASWriter_WriteHeader(writer, header_copy);
         if (err) print_error("Problem writing header");
         LASWriter_Destroy(writer);
         writer = NULL;
