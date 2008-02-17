@@ -20,6 +20,11 @@ namespace liblas
 LASWriter::LASWriter(std::ostream& ofs, LASHeader const& header) :
     m_pimpl(detail::WriterFactory::Create(ofs, header)), m_header(header)
 {
+
+#ifdef DEBUG
+    printf("CREATING LASWriter from ostream and header...\n");
+#endif
+
     m_pimpl->WriteHeader(m_header);
 }
 

@@ -27,6 +27,9 @@ LASReader::~LASReader()
 {
     // empty, but required so we can implement PIMPL using
     // std::auto_ptr with incomplete type (Reader).
+#ifdef DEBUG
+    printf("DELETING LASReader...\n");
+#endif
 }
 
 std::size_t LASReader::GetVersion() const

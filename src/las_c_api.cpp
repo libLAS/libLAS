@@ -1035,6 +1035,7 @@ void LASWriter_Destroy(LASWriterH hWriter)
     StrLASFileMap::iterator p;    
     LASWriter* writer = (LASWriter*)hWriter;
 
+    printf("LASWriter_Destroy files size: %d\n", (int) files.size());
     for (p=files.begin(); p!=files.end(); ++p) {
         LASFile f = p->second;
         LASWriter& fwriter = f.GetWriter();
