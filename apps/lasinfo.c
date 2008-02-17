@@ -494,35 +494,35 @@ int main(int argc, char *argv[])
                     strcmp(argv[i],"-s") == 0   ||
                     strcmp(argv[i],"-sys_id") == 0)
         {
-	    i++;
- 	    system_identifier = (char*) malloc(31 * sizeof(char));
+            i++;
+            system_identifier = (char*) malloc(31 * sizeof(char));
             strncpy(system_identifier, argv[i], 31);
             system_identifier[31] = '\0';
             change_header = TRUE;
-		}
+        }
 
         else if (   strcmp(argv[i],"--generating_software") == 0   ||
                     strcmp(argv[i],"-generating_software") == 0   ||
                     strcmp(argv[i],"-g") == 0   ||
                     strcmp(argv[i],"-gen_soft") == 0)
         {
-			i++;
-	    generating_software = (char*) malloc(31*sizeof(char));
+            i++;
+            generating_software = (char*) malloc(31*sizeof(char));
             strncpy(generating_software, argv[i], 31);
             generating_software[31] = '\0';
             change_header = TRUE;
-		}
+        }
 
         else if (   strcmp(argv[i],"--file_creation") == 0   ||
                     strcmp(argv[i],"-file_creation") == 0)
         {
-			i++;
+            i++;
             file_creation_day = (unsigned short)atoi(argv[i]);
-			i++;
+            i++;
             file_creation_year = (unsigned short)atoi(argv[i]);
             change_header = TRUE;
-		}
-		              
+        }
+                      
         else if (i == argc - 1 && file_name == NULL)
         {
             file_name = argv[i];
