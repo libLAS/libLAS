@@ -976,12 +976,7 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
         
         if (p==files.end()) {
 
-            LASFile lasfile;
-
-            lasfile = LASFile(filename, *header);
-
-            files[filename] = lasfile;
-// problem if GetWriter throws an exception...
+            LASFile lasfile = LASFile(filename, *header);
             
             LASWriter* writer = NULL;
             try {
@@ -993,6 +988,7 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
                 throw std::runtime_error("rethrowing");
             }
 
+            files[filename] = lasfile;
             return (LASWriterH) writer;
 
         }
