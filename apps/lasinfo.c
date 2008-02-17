@@ -414,8 +414,8 @@ int main(int argc, char *argv[])
     int use_stdin = FALSE;
 
 
-    char system_identifier[31];
-    char generating_software[31];
+    char *system_identifier = NULL;
+    char *generating_software = NULL;
     uint8_t file_creation_day = 0;
     uint8_t file_creation_year = 0;
     
@@ -494,7 +494,8 @@ int main(int argc, char *argv[])
                     strcmp(argv[i],"-s") == 0   ||
                     strcmp(argv[i],"-sys_id") == 0)
         {
-			i++;
+	    i++;
+ 	    system_identifier = (char*) malloc(31 * sizeof(char));
             strncpy(system_identifier, argv[i], 31);
             system_identifier[31] = '\0';
             change_header = TRUE;
@@ -506,6 +507,7 @@ int main(int argc, char *argv[])
                     strcmp(argv[i],"-gen_soft") == 0)
         {
 			i++;
+	    generating_software = (char*) malloc(31*sizeof(char));
             strncpy(generating_software, argv[i], 31);
             generating_software[31] = '\0';
             change_header = TRUE;
