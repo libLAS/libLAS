@@ -576,7 +576,7 @@ int main(int argc, char *argv[])
         }
 
         header_copy = LASHeader_Copy(header);
-        LASHeader_Destroy(header);
+        if (header) LASHeader_Destroy(header);
         
         /* We need to wipe out the reader and make a writer. */
         if (reader) {
@@ -594,6 +594,18 @@ int main(int argc, char *argv[])
     
     if (check_points)
     {
+        reader = LASReader_Create(file_name);
+        if (!reader) { 
+            print_error("Could not open file ");
+            exit(-1);
+        } 
+  
+        header = LASReader_GetHeader(reader);
+        if (!header) { 
+            print_error("Could not get LASHeader ");
+            exit(-1);
+        } 
+        
         summary = SummarizePoints(reader);
         print_point_summary(summary, header);
         
@@ -616,7 +628,7 @@ int main(int argc, char *argv[])
     }   
     
      if (reader) LASReader_Destroy(reader);
-     LASHeader_Destroy(header);
+     if (header) LASHeader_Destroy(header);
      
 
 /*
