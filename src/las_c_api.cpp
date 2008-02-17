@@ -988,7 +988,9 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
                 writer = &(lasfile.GetWriter());
             }
             catch (...) {
+                printf("Caught exception fetching writer");
                 files.erase(filename);
+                throw std::runtime_error("rethrowing");
             }
 
             return (LASWriterH) writer;
