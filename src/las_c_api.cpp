@@ -981,8 +981,10 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
             lasfile = LASFile(filename, *header);
 
             files[filename] = lasfile;
+// problem if GetWriter throws an exception...
+            LASWriter* writer = &(lasfile.GetWriter());
 
-            return (LASWriterH) &(lasfile.GetWriter());
+            return (LASWriterH) writer;
 
         }
         
