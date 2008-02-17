@@ -181,6 +181,7 @@ void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
         p = as_bytes(src);
         if (p) {
           if (strlen(p) == 0) {
+              throw std::runtime_error("Hey dumbass, you can't write zero-bytes here");
         printf("Attempted to write a zero-byte value we were supposed to write %d bytes!!!\n", int(num));
  }
         }
