@@ -173,22 +173,21 @@ void read_n(T& dest, std::istream& src, std::streamsize const& num)
 template <typename T>
 void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
 {
+
     if (!dest)
         throw std::runtime_error("output stream is not writable");
-    printf("Writing %d bytes...\n", (int) num);
-    try {
-        const char* p;
-        p = as_bytes(src);
-        if (p) {
-          if (strlen(p) == 0) {
-              throw std::runtime_error("Hey dumbass, you can't write zero-bytes here");
-        printf("Attempted to write a zero-byte value we were supposed to write %d bytes!!!\n", int(num));
- }
+
+
+    const char* p;
+    p = as_bytes(src);
+    if (p) {
+        if (strlen(p) == 0) {
+            printf("Attempted to write a zero-byte value we were supposed to write %d bytes!!!\n", int(num));
+            throw std::runtime_error("Hey dumbass, you can't write zero-bytes here");
+
         }
     }
-    catch (...) {
-    }
-    if (!num) printf("write_n input was null!!!\n");
+
     dest.write(detail::as_bytes(src), num);
 
     // Test stream state bits
