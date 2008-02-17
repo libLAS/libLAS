@@ -497,8 +497,7 @@ int main(int argc, char *argv[])
         {
             i++;
             system_identifier = (char*) malloc(31 * sizeof(char));
-            strncpy(system_identifier, argv[i], 31);
-            system_identifier[31] = '\0';
+            strcpy(system_identifier, argv[i]);
             change_header = TRUE;
         }
 
@@ -509,8 +508,7 @@ int main(int argc, char *argv[])
         {
             i++;
             generating_software = (char*) malloc(31*sizeof(char));
-            strncpy(generating_software, argv[i], 31);
-            generating_software[31] = '\0';
+            strcpy(generating_software, argv[i]);
             change_header = TRUE;
         }
 
