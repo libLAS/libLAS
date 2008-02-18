@@ -54,12 +54,14 @@ LASHeader::LASHeader(LASHeader const& other) :
 {
     void* p = 0;
 
-    p = std::memcpy(m_signature, other.m_signature, eFileSignatureSize);
-    assert(p == m_signature);
+//    p = std::memcpy(m_signature, other.m_signature, eFileSignatureSize);
+//    assert(p == m_signature);
+    m_signature = other.m_signature;
     p = std::memcpy(m_projectId4, other.m_projectId4, eProjectId4Size); 
     assert(p == m_projectId4);
-    p = std::memcpy(m_systemId, other.m_systemId, eSystemIdSize);
-    assert(p == m_systemId);
+//    p = std::memcpy(m_systemId, other.m_systemId, eSystemIdSize);
+//    assert(p == m_systemId);
+    m_systemId = other.m_systemId;
     // p = std::memcpy(m_softwareId, other.m_softwareId, eSoftwareIdSize);
     // assert(p == m_softwareId);
     m_softwareId = other.m_softwareId;
@@ -73,8 +75,9 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
     if (&rhs != this)
     {
         void* p = 0;
-        p = std::memcpy(m_signature, rhs.m_signature, eFileSignatureSize);
-        assert(p == m_signature);
+//        p = std::memcpy(m_signature, rhs.m_signature, eFileSignatureSize);
+//        assert(p == m_signature);
+        m_signature = rhs.m_signature;
         m_sourceId = rhs.m_sourceId;
         m_reserved = rhs.m_reserved;
         m_projectId1 = rhs.m_projectId1;
@@ -84,8 +87,9 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         assert(p == m_projectId4);
         m_versionMajor = rhs.m_versionMajor;
         m_versionMinor = rhs.m_versionMinor;
-        p = std::memcpy(m_systemId, rhs.m_systemId, eSystemIdSize);
-        assert(p == m_systemId);
+        //p = std::memcpy(m_systemId, rhs.m_systemId, eSystemIdSize);
+        //assert(p == m_systemId);
+        m_systemId = rhs.m_systemId;
         // p = std::memcpy(m_softwareId, rhs.m_softwareId, eSoftwareIdSize);
         // assert(p == m_softwareId);
         m_softwareId = rhs.m_softwareId;
@@ -118,7 +122,9 @@ void LASHeader::SetFileSignature(std::string const& v)
     if (0 != v.compare(0, eFileSignatureSize, FileSignature))
         throw std::invalid_argument("invalid file signature");
 
-    std::strncpy(m_signature, v.c_str(), eFileSignatureSize);
+    m_signature = v;
+
+//    std::strncpy(m_signature, v.c_str(), eFileSignatureSize);
 }
 
 uint16_t LASHeader::GetFileSourceId() const
@@ -181,9 +187,11 @@ void LASHeader::SetSystemId(std::string const& v)
 {
     if (v.size() > eSystemIdSize)
         throw std::invalid_argument("system id too long");
+    
+    m_systemId = v;
 
-    std::fill(m_systemId, m_systemId + eSystemIdSize, 0);
-    std::strncpy(m_systemId, v.c_str(), eSystemIdSize);
+//    std::fill(m_systemId, m_systemId + eSystemIdSize, 0);
+//    std::strncpy(m_systemId, v.c_str(), eSystemIdSize);
 }
 
 std::string  LASHeader::GetSoftwareId() const
@@ -427,15 +435,18 @@ void LASHeader::Init()
     m_recordsCount = 0;
     m_pointRecordsCount = 0;
 
-    std::memset(m_signature, 0, eFileSignatureSize);
-    std::strncpy(m_signature, FileSignature, eFileSignatureSize);
+//    std::memset(m_signature, 0, eFileSignatureSize);
+//    std::strncpy(m_signature, FileSignature, eFileSignatureSize);
+    m_signature = LASHeader::FileSignature;
 
-    std::memset(m_systemId, 0, eSystemIdSize);
-    std::strncpy(m_systemId, SystemIdentifier, eSystemIdSize);
+//    std::memset(m_systemId, 0, eSystemIdSize);
+//    std::strncpy(m_systemId, SystemIdentifier, eSystemIdSize);
+    m_systemId = LASHeader::SystemIdentifier;
 
 //    std::memset(m_softwareId, 0, eSoftwareIdSize);
 //    std::strncpy(m_softwareId, SoftwareIdentifier, eSoftwareIdSize);
     m_softwareId = LASHeader::SoftwareIdentifier;
+
     m_pointRecordsByReturn.resize(ePointsByReturnSize);
 
     // Zero scale value is useless, so we need to use a small value.

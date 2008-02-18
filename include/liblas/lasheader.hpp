@@ -273,7 +273,8 @@ private:
     //
     // Private data members
     //
-    char m_signature[eFileSignatureSize];
+//    char m_signature[eFileSignatureSize];
+    std::string m_signature;
     uint16_t m_sourceId;
     uint16_t m_reserved;
     uint32_t m_projectId1;
@@ -282,7 +283,8 @@ private:
     uint8_t m_projectId4[eProjectId4Size];
     uint8_t m_versionMajor;
     uint8_t m_versionMinor;
-    char m_systemId[eSystemIdSize];
+//    char m_systemId[eSystemIdSize];
+    std::string m_systemId;
     std::string m_softwareId;
 //    char m_softwareId[eSoftwareIdSize];
     uint16_t m_createDOY;
