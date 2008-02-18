@@ -147,7 +147,7 @@ void read_n(T& dest, std::istream& src, std::streamsize const& num)
     // TODO: Review and redesign errors handling logic if necessary
 
     if (!src)
-        throw std::runtime_error("input stream is not readable");
+        throw std::runtime_error("detail::liblas::read_n input stream is not readable");
 
     // Read bytes into buffer
     src.read(detail::as_buffer(dest), num);
@@ -175,16 +175,16 @@ void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
 {
 
     if (!dest)
-        throw std::runtime_error("output stream is not writable");
+        throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
 
 
     const char* p;
-    p = as_bytes(src);
+    p = detail::as_bytes(src);
     if (p) {
         if (strlen(p) == 0) {
+#ifdef DEBUG
             printf("Attempted to write a zero-byte value we were supposed to write %d bytes!!!\n", int(num));
-            throw std::runtime_error("Hey dumbass, you can't write zero-bytes here");
-
+#endif
         }
     }
 

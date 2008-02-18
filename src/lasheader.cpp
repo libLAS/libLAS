@@ -52,6 +52,7 @@ LASHeader::LASHeader(LASHeader const& other) :
     m_extents(other.m_extents)
 {
     void* p = 0;
+
     p = std::memcpy(m_signature, other.m_signature, eFileSignatureSize);
     assert(p == m_signature);
     p = std::memcpy(m_projectId4, other.m_projectId4, eProjectId4Size); 
@@ -63,6 +64,7 @@ LASHeader::LASHeader(LASHeader const& other) :
 
     std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
     assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
+
 }
 
 LASHeader& LASHeader::operator=(LASHeader const& rhs)

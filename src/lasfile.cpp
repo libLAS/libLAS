@@ -17,31 +17,26 @@ namespace liblas {
 
 LASFile::LASFile()
 {
-    printf("CREATING LASFile default constructor\n");
 }
 
 LASFile::LASFile(std::string const& filename)
     : m_pimpl(new detail::FileImpl(filename))
 {
-    printf("CREATING LASFile from filename...\n");
 }
 
 LASFile::LASFile(std::string const& filename, LASHeader const& header)
     : m_pimpl(new detail::FileImpl(filename, header))
 {
-    printf("CREATING LASFile from filename and header...\n");
 }
 
 LASFile::LASFile(LASFile const& other)
     : m_pimpl(other.m_pimpl)
 {
-    printf("CREATING LASFile with copy constructor...\n");
 }
 
 LASFile& LASFile::operator=(LASFile const& rhs)
 {
     m_pimpl = rhs.m_pimpl;
-    printf("LASFile operator= ...\n");
     return (*this);
 }
 
@@ -84,6 +79,6 @@ LASWriter& LASFile::GetWriter()
 
 LASFile::~LASFile()
 {
-    printf("DELETING LASFile (count=%d)\n", m_pimpl.use_count());
+//    printf("DELETING LASFile (count=%d)\n", m_pimpl.use_count());
 }
 } // namespace liblas

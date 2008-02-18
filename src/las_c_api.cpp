@@ -160,7 +160,7 @@ void LASReader_Destroy(LASReaderH hReader)
 
     StrLASFileMap::iterator p;    
     LASReader* reader = (LASReader*)hReader;
-    printf ("Files size: %d\n", (int) files.size());
+
     for (p=files.begin(); p!=files.end(); ++p) {
         LASFile f = p->second;
         LASReader& freader = f.GetReader();
@@ -170,14 +170,7 @@ void LASReader_Destroy(LASReaderH hReader)
         std::ifstream& a = dynamic_cast<std::ifstream&>(freader.GetStream());
         std::ifstream& r = dynamic_cast<std::ifstream&>(reader->GetStream());
         if (&a == &r) {
-            printf("Erasing map entry for reader, streams matched!\n");
-
-            // a.close();
-            // r.close();
             files.erase(p);
-//            files.erase(p);
-
-
             hReader = NULL;
             return;
         }
@@ -190,7 +183,6 @@ void LASReader_Destroy(LASReaderH hReader)
             files.erase(p);
             hReader = NULL;
             return;
-            //a.close();
         }        
     
     } catch (std::exception const& e)
@@ -222,7 +214,6 @@ const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASReader_GetNextPoint");
-        printf("cought exception...returning nulll\n.");
         return NULL;
     }
  
@@ -976,14 +967,13 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
         
         if (p==files.end()) {
 
-            LASFile lasfile = LASFile(filename, *header);
-            
+            LASFile lasfile;
+            lasfile = LASFile(filename, *header);
             LASWriter* writer = NULL;
             try {
                 writer = &(lasfile.GetWriter());
             }
             catch (...) {
-                printf("Caught exception fetching writer");
                 files.erase(filename);
                 throw std::runtime_error("rethrowing");
             }
@@ -1042,7 +1032,6 @@ void LASWriter_Destroy(LASWriterH hWriter)
     StrLASFileMap::iterator p;    
     LASWriter* writer = (LASWriter*)hWriter;
 
-    printf("LASWriter_Destroy files size: %d\n", (int) files.size());
     for (p=files.begin(); p!=files.end(); ++p) {
         LASFile f = p->second;
         LASWriter& fwriter = f.GetWriter();
@@ -1052,14 +1041,7 @@ void LASWriter_Destroy(LASWriterH hWriter)
         std::ofstream& a = dynamic_cast<std::ofstream&>(fwriter.GetStream());
         std::ofstream& r = dynamic_cast<std::ofstream&>(writer->GetStream());
         if (&a == &r) {
-            printf("Erasing map entry for writer, streams matched!\n");
-
-            // a.close();
-            // r.close();
             files.erase(p);
-//            files.erase(p);
-
-
             hWriter = NULL;
             return;
         }
@@ -1072,7 +1054,7 @@ void LASWriter_Destroy(LASWriterH hWriter)
             files.erase(p);
             hWriter = NULL;
             return;
-            //a.close();
+
     }        
     
     } catch (std::exception const& e)

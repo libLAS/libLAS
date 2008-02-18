@@ -83,6 +83,7 @@ private:
 
     void dispose()
     {
+        
         if (--*m_count == 0)
         {
             delete m_count;

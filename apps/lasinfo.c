@@ -577,6 +577,7 @@ int main(int argc, char *argv[])
 
         header_copy = LASHeader_Copy(header);
         if (header){ LASHeader_Destroy(header); header=NULL;}
+        
         /* We need to wipe out the reader and make a writer. */
         if (reader) {
             LASReader_Destroy(reader);
@@ -586,19 +587,11 @@ int main(int argc, char *argv[])
         writer = LASWriter_Create(file_name, header_copy);
         if (!writer) {
             print_error("Problem creating LASWriterH object");
-	    LASHeader_Destroy(header_copy);
-            header_copy = NULL;
-            exit(-1);
-        }
-        err = LASWriter_WriteHeader(writer, header_copy);
-        if (err) {
-            print_error("Problem writing header");
             LASHeader_Destroy(header_copy);
-            LASWriter_Destroy(writer);
             header_copy = NULL;
-            writer = NULL;
             exit(-1);
         }
+
         LASWriter_Destroy(writer);
         writer = NULL;
     }

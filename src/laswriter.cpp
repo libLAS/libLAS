@@ -13,25 +13,25 @@
 #include <string>
 #include <cstring> // std::memset
 #include <cassert>
-
+#include <iostream>
+#include <ios>
 namespace liblas
 {
 
 LASWriter::LASWriter(std::ostream& ofs, LASHeader const& header) :
     m_pimpl(detail::WriterFactory::Create(ofs, header)), m_header(header)
 {
-
-#ifdef DEBUG
-    printf("CREATING LASWriter from ostream and header...\n");
-#endif
-
     m_pimpl->WriteHeader(m_header);
 }
 
 LASWriter::~LASWriter()
 {
     assert(0 != m_pimpl.get());
-    m_pimpl->UpdateHeader(m_header);
+//    printf("Destroying LASWriter ... Stream is: %d Pimpl STream is: %d \n", GetStream().good(),m_pimpl->GetStream().good());
+//    std::cout.flags ( std::ios::right | std::ios::hex | std::ios::showbase );
+//    std::cout << "Stream Flags: " <<GetStream().flags() << std::endl;
+    // This is the problem
+//    m_pimpl->UpdateHeader(m_header);
 }
 
 std::size_t LASWriter::GetVersion() const
