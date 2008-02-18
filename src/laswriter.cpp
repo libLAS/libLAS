@@ -13,8 +13,7 @@
 #include <string>
 #include <cstring> // std::memset
 #include <cassert>
-#include <iostream>
-#include <ios>
+
 namespace liblas
 {
 
