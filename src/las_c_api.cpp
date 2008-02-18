@@ -979,8 +979,8 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
             }
 
             files[filename] = lasfile;
+            writer = &(lasfile.GetWriter());
             return (LASWriterH) writer;
-
         }
         
         LASError_PushError(LE_Failure, "not able to create map entry", "LASWriter_Create");
