@@ -49,6 +49,7 @@ LASHeader::LASHeader(LASHeader const& other) :
     m_pointRecordsCount(other.m_pointRecordsCount),
     m_scales(other.m_scales),
     m_offsets(other.m_offsets),
+
     m_extents(other.m_extents)
 {
     void* p = 0;
@@ -59,9 +60,9 @@ LASHeader::LASHeader(LASHeader const& other) :
     assert(p == m_projectId4);
     p = std::memcpy(m_systemId, other.m_systemId, eSystemIdSize);
     assert(p == m_systemId);
-    p = std::memcpy(m_softwareId, other.m_softwareId, eSoftwareIdSize);
-    assert(p == m_softwareId);
-
+    // p = std::memcpy(m_softwareId, other.m_softwareId, eSoftwareIdSize);
+    // assert(p == m_softwareId);
+    m_softwareId = other.m_softwareId;
     std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
     assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
 
@@ -85,8 +86,9 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         m_versionMinor = rhs.m_versionMinor;
         p = std::memcpy(m_systemId, rhs.m_systemId, eSystemIdSize);
         assert(p == m_systemId);
-        p = std::memcpy(m_softwareId, rhs.m_softwareId, eSoftwareIdSize);
-        assert(p == m_softwareId);
+        // p = std::memcpy(m_softwareId, rhs.m_softwareId, eSoftwareIdSize);
+        // assert(p == m_softwareId);
+        m_softwareId = rhs.m_softwareId;
         m_createDOY = rhs.m_createDOY;
         m_createYear = rhs.m_createYear;
         m_headerSize = rhs.m_headerSize;
@@ -184,7 +186,7 @@ void LASHeader::SetSystemId(std::string const& v)
     std::strncpy(m_systemId, v.c_str(), eSystemIdSize);
 }
 
-std::string LASHeader::GetSoftwareId() const
+std::string  LASHeader::GetSoftwareId() const
 {
     return m_softwareId;
 }
@@ -193,9 +195,10 @@ void LASHeader::SetSoftwareId(std::string const& v)
 {
     if (v.size() > eSoftwareIdSize)
         throw std::invalid_argument("generating software id too long");
-
-    std::fill(m_softwareId, m_softwareId + eSoftwareIdSize, 0);
-    std::strncpy(m_softwareId, v.c_str(), eSoftwareIdSize);
+    
+    m_softwareId = v;
+//    std::fill(m_softwareId, m_softwareId + eSoftwareIdSize, 0);
+//    std::strncpy(m_softwareId, v.c_str(), eSoftwareIdSize);
 }
 
 uint16_t LASHeader::GetCreationDOY() const
@@ -430,9 +433,9 @@ void LASHeader::Init()
     std::memset(m_systemId, 0, eSystemIdSize);
     std::strncpy(m_systemId, SystemIdentifier, eSystemIdSize);
 
-    std::memset(m_softwareId, 0, eSoftwareIdSize);
-    std::strncpy(m_softwareId, SoftwareIdentifier, eSoftwareIdSize);
-
+//    std::memset(m_softwareId, 0, eSoftwareIdSize);
+//    std::strncpy(m_softwareId, SoftwareIdentifier, eSoftwareIdSize);
+    m_softwareId = LASHeader::SoftwareIdentifier;
     m_pointRecordsByReturn.resize(ePointsByReturnSize);
 
     // Zero scale value is useless, so we need to use a small value.

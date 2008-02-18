@@ -283,7 +283,8 @@ private:
     uint8_t m_versionMajor;
     uint8_t m_versionMinor;
     char m_systemId[eSystemIdSize];
-    char m_softwareId[eSoftwareIdSize];
+    std::string m_softwareId;
+//    char m_softwareId[eSoftwareIdSize];
     uint16_t m_createDOY;
     uint16_t m_createYear;
     uint16_t m_headerSize;
