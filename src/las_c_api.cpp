@@ -953,7 +953,8 @@ LASHeaderH LASHeader_Copy(const LASHeaderH hHeader) {
 }
 
 LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
-
+    VALIDATE_POINTER1(hHeader, "LASWriter_Create", NULL); 
+    
     if (filename == NULL) {
         LASError_PushError(LE_Failure, "Inputted filename was null", "LASWriter_Create");
         return NULL;
