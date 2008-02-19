@@ -54,7 +54,7 @@ FileImpl::FileImpl(std::string const& filename, LASHeader const& header)
     }
     else
     {
-        std::ios::openmode const mode = std::ios::out | std::ios::binary;
+        std::ios::openmode const mode = std::ios::out | std::ios::binary | std::ios::ate;
         m_ostrm = new std::ofstream(m_filename.c_str(), mode);
 
         if (!m_ostrm->good())
@@ -109,7 +109,7 @@ LASReader& FileImpl::GetReader()
     if (0 == m_reader.get())
     {
         // TODO: Define specialized exception type for this error
-        std::string msg("file write-only: " + m_filename);
+        std::string msg("Reader is file write-only: " + m_filename);
         throw std::runtime_error(msg);
     }
 
@@ -118,10 +118,11 @@ LASReader& FileImpl::GetReader()
 
 LASWriter& FileImpl::GetWriter()
 {
+                printf("detail::LASFile::GetWriter filename: %s!\n",m_filename.c_str());
     if (0 == m_writer.get())
     {
         // TODO: Define specialized exception type for this error
-        std::string msg("file read-only: " + m_filename);
+        std::string msg("Writer is file read-only: " + m_filename);
         throw std::runtime_error(msg);
     }
 
