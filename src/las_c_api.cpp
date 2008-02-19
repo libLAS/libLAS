@@ -980,7 +980,7 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
             }
 
             files[filename] = lasfile;
-            writer = &(lasfile.GetWriter());
+
             return (LASWriterH) writer;
         }
         
@@ -1035,36 +1035,43 @@ void LASWriter_Destroy(LASWriterH hWriter)
 
     for (p=files.begin(); p!=files.end(); ++p) {
         LASFile f = p->second;
-        LASWriter& fwriter = f.GetWriter();
 
+        try {
+            
+            LASWriter& fwriter = f.GetWriter();
 
-    try {
-        std::ofstream& a = dynamic_cast<std::ofstream&>(fwriter.GetStream());
-        std::ofstream& r = dynamic_cast<std::ofstream&>(writer->GetStream());
-        if (&a == &r) {
-            files.erase(p);
-            hWriter = NULL;
-            return;
-        }
+            try {
+                std::ofstream& a = dynamic_cast<std::ofstream&>(fwriter.GetStream());
+                std::ofstream& r = dynamic_cast<std::ofstream&>(writer->GetStream());
+                if (&a == &r) {
+                    files.erase(p);
+                    hWriter = NULL;
+                    return;
+                }
         
-    } catch (std::bad_cast const& e)
-    {
-        std::ostream& a = dynamic_cast<std::ostream&>(fwriter.GetStream());
-        std::ostream& r = writer->GetStream();
-        if (&a == &r) {
-            files.erase(p);
-            hWriter = NULL;
-            return;
+            } catch (std::bad_cast const& e)
+            {
+                std::ostream& a = dynamic_cast<std::ostream&>(fwriter.GetStream());
+                std::ostream& r = writer->GetStream();
+                if (&a == &r) {
+                    files.erase(p);
+                    hWriter = NULL;
+                    return;
 
-    }        
+            }        
     
-    } catch (std::exception const& e)
-    {
-        hWriter=NULL;
-        LASError_PushError(LE_Failure, e.what(), "LASWriter_Destroy");
-        return ;
-    }
+            } catch (std::exception const& e)
+            {
+                hWriter=NULL;
+                LASError_PushError(LE_Failure, e.what(), "LASWriter_Destroy");
+                return ;
+            }
     
+        }  catch (std::runtime_error const& e) 
+        {
+            // if we can't fetch a writer for this LASFile, don't worry about it
+            continue;
+        }
 
 
     }
