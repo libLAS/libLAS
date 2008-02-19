@@ -59,6 +59,25 @@ void usage()
     exit(1);
 }
 
+void print_error(char* message) {
+
+    if (LASError_GetErrorCount()) {
+        fprintf(stdout, 
+            "%s: %s (%d) from method %s\n",
+            message,
+            LASError_GetLastErrorMsg(),
+            LASError_GetLastErrorNum(),
+            LASError_GetLastErrorMethod()
+        ); 
+    } else {
+        fprintf(stdout, 
+            "You have encountered an error. '%s'\n",
+            message
+        );         
+    }
+
+}
+
 typedef struct  {
 
     double t;
@@ -91,6 +110,11 @@ PointSummary* SummarizePoints(LASReaderH reader) {
         
     summary = (PointSummary*) malloc(sizeof(PointSummary));
     p  = LASReader_GetNextPoint(reader);
+    
+    if (!p) {
+        print_error("Not able to fetch a point.  Reader must be invalid");
+        exit(-1);
+    }
 
     summary->pmin = LASPoint_Copy(p);
     summary->pmax = LASPoint_Copy(p);
@@ -145,7 +169,7 @@ PointSummary* SummarizePoints(LASReaderH reader) {
         LASPoint_SetUserData(summary->pmax, MAX(summary->user_data, LASPoint_GetUserData(summary->pmax)));  
                                 
         summary->number_of_point_records++;
-        summary->number_of_points_by_return[LASPoint_GetReturnNumber(p)]++;
+        summary->number_of_points_by_return[LASPoint_GetReturnNumber(p)-1]++;
         summary->number_of_returns_of_given_pulse[LASPoint_GetNumberOfReturns(p)]++;
         
         cls = LASPoint_GetClassification(p);
@@ -198,25 +222,6 @@ static const char * LASPointClassification [] = {
   "Reserved for ASPRS Definition",
   "Reserved for ASPRS Definition"
 };
-
-void print_error(char* message) {
-
-    if (LASError_GetErrorCount()) {
-        fprintf(stdout, 
-            "%s: %s (%d) from method %s\n",
-            message,
-            LASError_GetLastErrorMsg(),
-            LASError_GetLastErrorNum(),
-            LASError_GetLastErrorMethod()
-        ); 
-    } else {
-        fprintf(stdout, 
-            "You have encountered an error. '%s'\n",
-            message
-        );         
-    }
-
-}
 
 void print_point_summary(PointSummary* summary, LASHeaderH header) {
 
@@ -398,6 +403,71 @@ void print_header(LASHeaderH header, const char* file_name) {
     
     
 }
+
+void CopyLASData(const char* filename, LASWriterH writer) {
+
+    LASReaderH reader = NULL;
+    LASPointH p = NULL;
+    int err = 0;
+    
+    reader = LASReader_Create(filename);
+    if (!reader) { 
+        print_error("CopyLASData: Could not create Reader for temporary file ");
+        exit(-1);
+    } 
+
+    p  = LASReader_GetNextPoint(reader);
+
+    while (p) {
+        err = LASWriter_WritePoint(writer,p);
+        if (err) {
+            print_error("CopyLASData: Failure writing point");
+            exit(-1);
+        }
+        p  = LASReader_GetNextPoint(reader);
+    }
+
+}
+char* WriteTempCopy(LASReaderH reader) {
+    
+    char template[30] = "/tmp/fileXXXXXX";
+    char *temp_filename=NULL;
+    int err = 0;
+    LASWriterH writer = NULL;
+    LASPointH p = NULL;
+    
+ /*   temp_filename = (char*) malloc(50*sizeof(char));
+ */
+    temp_filename = mktemp(template);
+    if (!temp_filename) {
+        print_error("Could not create temporary filename");
+        exit(-1);
+    }
+   
+    writer = LASWriter_Create(template, LASReader_GetHeader(reader));
+    if (!writer) { 
+        print_error("Could not create Writer for temporary file ");
+        exit(-1);
+    } 
+
+
+    p  = LASReader_GetNextPoint(reader);
+
+    while (p) {
+        err = LASWriter_WritePoint(writer,p);
+        if (err) {
+            print_error("WriteTempCopy: Failure writing point");
+            exit(-1);
+        }
+        p  = LASReader_GetNextPoint(reader);
+    }
+
+    LASWriter_Destroy(writer);
+    
+    return strdup(temp_filename);
+
+        
+}
 int main(int argc, char *argv[])
 {
     int i;
@@ -413,6 +483,7 @@ int main(int argc, char *argv[])
     int change_header = FALSE;
     int repair_bounding_box = FALSE;
     int use_stdin = FALSE;
+    int update_return_counts = FALSE;
 
 
     char *system_identifier = NULL;
@@ -420,6 +491,7 @@ int main(int argc, char *argv[])
     uint8_t file_creation_day = 0;
     uint8_t file_creation_year = 0;
     
+    char* temp_filename = NULL;
     int err=0;
 
     PointSummary* summary = NULL;
@@ -575,21 +647,28 @@ int main(int argc, char *argv[])
             if (err) print_error("Could not set file creation year");
         }
 
-        if (header){ LASHeader_Destroy(header); header=NULL;}
 
+        temp_filename = WriteTempCopy(reader);
+    
         /* We need to wipe out the reader and make a writer. */
         if (reader) {
             LASReader_Destroy(reader);
+            print_error("error after attempting to destroy reader is set to:");
+
             reader = NULL;
         }
         
         writer = LASWriter_Create(file_name, header);
         if (!writer) {
             print_error("Problem creating LASWriterH object");
-	    LASHeader_Destroy(header_copy);
-            header_copy = NULL;
+	        LASHeader_Destroy(header);
+            header = NULL;
             exit(-1);
         }
+        
+    /*    printf("Temp filename: %s\n", temp_filename);
+        CopyLASData(temp_filename, writer);
+*/
         LASWriter_Destroy(writer);
         writer = NULL;
         LASHeader_Destroy(header);
@@ -628,7 +707,64 @@ int main(int argc, char *argv[])
                 print_error("Cannot update header information on piped input!");
                 exit(-1);
             }
+
+  
+            if (! header) {
+                header = LASReader_GetHeader(reader);
+                if (!header) { 
+                    print_error("Could not get LASHeader ");
+                    exit(-1);
+            } 
             
+            if (repair_bounding_box) {
+                err = LASHeader_SetMin( header, 
+                                        LASPoint_GetX(summary->pmin), 
+                                        LASPoint_GetY(summary->pmin), 
+                                        LASPoint_GetZ(summary->pmin)
+                                      );
+                if (err) {
+                    print_error("Could not set minimum for header ");
+                    exit(-1);
+                }
+                err = LASHeader_SetMax( header, 
+                                        LASPoint_GetX(summary->pmax), 
+                                        LASPoint_GetY(summary->pmax), 
+                                        LASPoint_GetZ(summary->pmax)
+                                      );
+                if (err) {
+                    print_error("Could not set minimum for header ");
+                    exit(-1);
+                }
+
+            }
+
+            for (i = 0; i < 5; i++) {
+                if (LASHeader_GetPointRecordsByReturnCount(header, i) != summary->number_of_points_by_return[i]) 
+                {
+                    update_return_counts = TRUE;
+                }
+            }
+            
+            if (update_return_counts) {
+                printf("supposed to update return counts\n");
+                for (i = 0; i < 5; i++) {
+                    LASHeader_SetPointRecordsByReturnCount(header, i, summary->number_of_points_by_return[i]);
+                    printf("update_return_counts...\n");
+                }                
+            }
+                
+            writer = LASWriter_Create(file_name, header);
+            if (!writer) {
+                print_error("Problem creating LASWriterH object");
+    	        LASHeader_Destroy(header);
+                header = NULL;
+                exit(-1);
+            }
+            LASWriter_Destroy(writer);
+            writer = NULL;
+            LASHeader_Destroy(header);
+            header = NULL;            
+        }             
             
         }
         free(summary);
