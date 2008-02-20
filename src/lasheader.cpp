@@ -219,7 +219,7 @@ std::string LASHeader::GetSystemId(bool pad /*= false*/) const
     // pad right side with spaces
     if (pad && tmp.size() < eSystemIdSize)
     {
-        tmp.resize(eSystemIdSize, ' ');
+        tmp.resize(eSystemIdSize, 0);
         assert(tmp.size() == eSystemIdSize);
     }
 
@@ -245,7 +245,7 @@ std::string  LASHeader::GetSoftwareId(bool pad /*= false*/) const
     // pad right side with spaces
     if (pad && tmp.size() < eSoftwareIdSize)
     {
-        tmp.resize(eSoftwareIdSize, ' ');
+        tmp.resize(eSoftwareIdSize, 0);
         assert(tmp.size() == eSoftwareIdSize);
     }
 
