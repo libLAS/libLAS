@@ -112,6 +112,38 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
     return *this;
 }
 
+bool LASHeader::operator==(LASHeader const& other) const
+{
+    if (&other == this) return true;
+    
+    if (m_signature != other.m_signature) return false;
+    if (m_sourceId != other.m_sourceId) return false;
+    if (m_reserved != other.m_reserved) return false;
+    if (m_projectId1 != other.m_projectId1) return false;
+    if (m_projectId2 != other.m_projectId2) return false;
+    if (m_projectId3 != other.m_projectId3) return false;
+    if (m_projectId4 != other.m_projectId4) return false;
+    if (m_versionMajor != other.m_versionMajor) return false;
+    if (m_versionMinor != other.m_versionMinor) return false;
+    if (m_systemId != other.m_systemId) return false;
+    if (m_softwareId != other.m_softwareId) return false;
+    if (m_createDOY != other.m_createDOY) return false;
+    if (m_createYear != other.m_createYear) return false;
+    if (m_headerSize != other.m_headerSize) return false;
+    if (m_dataOffset != other.m_dataOffset) return false;
+    if (m_recordsCount != other.m_recordsCount) return false;
+    if (m_dataFormatId != other.m_dataFormatId) return false;
+    if (m_dataRecordLen != other.m_dataRecordLen) return false;
+    if (m_pointRecordsCount != other.m_pointRecordsCount) return false;
+    if (m_pointRecordsByReturn != other.m_pointRecordsByReturn) return false;
+    if (m_scales != other.m_scales) return false;
+    if (m_offsets != other.m_offsets) return false;
+    if (m_extents != other.m_extents) return false;
+    
+    return true;
+}
+
+
 std::string LASHeader::GetFileSignature() const
 {
     return m_signature;
@@ -452,5 +484,7 @@ void LASHeader::Init()
     // Zero scale value is useless, so we need to use a small value.
     SetScale(0.01, 0.01, 0.01);
 }
+
+
 
 } // namespace liblas

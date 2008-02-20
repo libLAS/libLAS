@@ -69,6 +69,9 @@ public:
 
     /// Assignment operator.
     LASHeader& operator=(LASHeader const& rhs);
+    
+    /// Comparison operator.
+    bool operator==(const LASHeader& other) const;
 
     /// Get ASPRS LAS file signature.
     /// \return 4-characters long string - \b "LASF".
