@@ -202,8 +202,11 @@ public:
     /// Get array of the total point records per return.
     std::vector<uint32_t> const& GetPointRecordsByReturnCount() const;
 
-    /// Set values of array of the total point records per return.
-    void SetPointRecordsByReturnCount(std::size_t r, uint32_t v);
+    /// Set values of 5-elements array of total point records per return.
+    /// \exception std::out_of_range - if index is bigger than 4.
+    /// \param index - subscript (0-4) of array element being updated.
+    /// \param v - new value to assign to array element identified by index.
+    void SetPointRecordsByReturnCount(std::size_t index, uint32_t v);
     
     /// Get scale factor for X coordinate.
     double GetScaleX() const;

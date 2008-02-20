@@ -8,6 +8,7 @@
 #include <liblas/laspoint.hpp>
 #include <tut/tut.hpp>
 #include <bitset>
+#include <stdexcept>
 
 namespace tut
 { 

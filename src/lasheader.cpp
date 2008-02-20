@@ -374,11 +374,11 @@ std::vector<uint32_t> const& LASHeader::GetPointRecordsByReturnCount() const
     return m_pointRecordsByReturn;
 }
 
-void LASHeader::SetPointRecordsByReturnCount(std::size_t r, uint32_t v)
+void LASHeader::SetPointRecordsByReturnCount(std::size_t index, uint32_t v)
 {
     assert(m_pointRecordsByReturn.size() == LASHeader::ePointsByReturnSize);
 
-    uint32_t& t = m_pointRecordsByReturn.at(r);
+    uint32_t& t = m_pointRecordsByReturn.at(index);
     t = v;
 }
 
