@@ -30,7 +30,7 @@ LASWriter::~LASWriter()
 //    std::cout.flags ( std::ios::right | std::ios::hex | std::ios::showbase );
 //    std::cout << "Stream Flags: " <<GetStream().flags() << std::endl;
     // This is the problem
-//    m_pimpl->UpdateHeader(m_header);
+    m_pimpl->UpdateHeader(m_header);
 }
 
 std::size_t LASWriter::GetVersion() const
