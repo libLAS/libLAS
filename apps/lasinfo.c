@@ -632,24 +632,24 @@ int main(int argc, char *argv[])
     print_header(header, file_name);
     
     if (change_header) {
-        if (system_identifier) {
+ /*       if (system_identifier) {
             err = LASHeader_SetSystemId (header, system_identifier);
             if (err) print_error("Could not set SystemId");
-        }
+        }*/
         if (generating_software) {
             err = LASHeader_SetSoftwareId(header, generating_software);
             if (err) print_error("Could not set SoftwareId");
         }
-        if ( file_creation_day || file_creation_year) {
+/*        if ( file_creation_day || file_creation_year) {
             err = LASHeader_SetCreationDOY(header, file_creation_day);
             if (err) print_error("Could not set file creation day");
             err = LASHeader_SetCreationYear(header, file_creation_year);
             if (err) print_error("Could not set file creation year");
         }
+*/
 
-
-        temp_filename = WriteTempCopy(reader);
-    
+  /*      temp_filename = WriteTempCopy(reader);
+    */
         /* We need to wipe out the reader and make a writer. */
         if (reader) {
             LASReader_Destroy(reader);
@@ -669,10 +669,11 @@ int main(int argc, char *argv[])
     /*    printf("Temp filename: %s\n", temp_filename);
         CopyLASData(temp_filename, writer);
 */
-        LASWriter_Destroy(writer);
+        if (writer) LASWriter_Destroy(writer);
         writer = NULL;
-        LASHeader_Destroy(header);
+        if (header) LASHeader_Destroy(header);
         header = NULL;
+        exit(0);
     }
     
     if (check_points)
