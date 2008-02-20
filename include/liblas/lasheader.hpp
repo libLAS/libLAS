@@ -125,7 +125,11 @@ public:
 
     /// Get system identifier.
     /// Default value is \b "libLAS" specified as the SystemIdentifier constant.
-    std::string GetSystemId() const;
+    /// \param pad - if true the returned string is padded right with spaces and
+    /// its length is 32 bytes, if false (default) no padding occurs and
+    /// length of the returned string is <= 32 bytes.
+    /// \return value of system identifier field.
+    std::string GetSystemId(bool pad = false) const;
 
     /// Set system identifier.
     /// \exception std::invalid_argument - if identifier longer than 32 bytes.
@@ -133,9 +137,11 @@ public:
     void SetSystemId(std::string const& v);
 
     /// Get software identifier.
-    /// Default value is \b "libLAS 1.0", specified as
-    /// the SoftwareIdentifier constant.
-    std::string GetSoftwareId() const;
+    /// Default value is \b "libLAS 1.0", specified as the SoftwareIdentifier constant.
+    /// \param pad - if true the returned string is padded right with spaces and its length is 32 bytes,
+    /// if false (default) no padding occurs and length of the returned string is <= 32 bytes.
+    /// \return value of generating software identifier field.
+    std::string GetSoftwareId(bool pad = false) const;
 
     /// Set software identifier.
     /// \exception std::invalid_argument - if identifier is longer than 32 bytes.

@@ -43,5 +43,9 @@
 #  define MAX(a,b)      ((a>b) ? a : b)
 #endif
 
+#ifdef _MSC_VER
+#define strdup _strdup
+#endif
+
 #endif /* LAS_CONFIG_H_INCLUDED */
 

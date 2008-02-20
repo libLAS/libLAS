@@ -210,9 +210,19 @@ void LASHeader::SetVersionMinor(uint8_t v)
     m_versionMinor = v;
 }
 
-std::string LASHeader::GetSystemId() const
+std::string LASHeader::GetSystemId(bool pad /*= false*/) const
 {
-    return m_systemId;
+    std::string tmp(m_systemId);
+
+    // pad right side with spaces
+    if (pad && tmp.size() < eSystemIdSize)
+    {
+        tmp.resize(eSystemIdSize, ' ');
+        assert(tmp.size() == eSystemIdSize);
+    }
+
+    assert(tmp.size() <= eSystemIdSize);
+    return tmp;
 }
 
 void LASHeader::SetSystemId(std::string const& v)
@@ -226,9 +236,19 @@ void LASHeader::SetSystemId(std::string const& v)
     std::strncpy(m_systemId, v.c_str(), eSystemIdSize);
 }
 
-std::string  LASHeader::GetSoftwareId() const
+std::string  LASHeader::GetSoftwareId(bool pad /*= false*/) const
 {
-    return m_softwareId;
+    std::string tmp(m_softwareId);
+
+    // pad right side with spaces
+    if (pad && tmp.size() < eSoftwareIdSize)
+    {
+        tmp.resize(eSoftwareIdSize, ' ');
+        assert(tmp.size() == eSoftwareIdSize);
+    }
+
+    assert(tmp.size() <= eSoftwareIdSize);
+    return tmp;
 }
 
 void LASHeader::SetSoftwareId(std::string const& v)

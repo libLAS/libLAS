@@ -69,10 +69,14 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     detail::write_n(m_ofs, n1, sizeof(n1));
 
     // 10. System ID
-    detail::write_n(m_ofs, header.GetSystemId().c_str(), 32);
+    std::string sysid(header.GetSystemId(true));
+    assert(sysid.size() == 32);
+    detail::write_n(m_ofs, sysid.c_str(), 32);
     
     // 11. Generating Software ID
-    detail::write_n(m_ofs, header.GetSoftwareId().c_str(), 32);
+    std::string softid(header.GetSoftwareId(true));
+    assert(softid.size() == 32);
+    detail::write_n(m_ofs, softid.c_str(), 32);
 
     // 12. File Creation Day of Year
     n2 = header.GetCreationDOY();
