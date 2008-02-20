@@ -36,7 +36,9 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     uint32_t n4 = 0;
 
     // 1. File Signature
-    detail::write_n(m_ofs, header.GetFileSignature().c_str(), 4);
+    std::string filesig(header.GetFileSignature());
+    assert(filesig.size() == 4);
+    detail::write_n(m_ofs, filesig, 4);
     
     // 2. File Source ID
     n2 = header.GetFileSourceId();
