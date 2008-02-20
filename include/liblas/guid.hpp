@@ -161,20 +161,32 @@ public:
 
     void output_data(liblas::uint32_t& d1, liblas::uint16_t& d2, liblas::uint16_t& d3, liblas::uint8_t (&d4)[8]) const
     {
-        std::stringstream ss;
-
-        ss << data_[0] << data_[1] << data_[2] << data_[3];
-        ss >> std::hex >> d1;
-
-        ss << data_[4] << data_[5];
-        ss >> std::hex >> d2;
-
-        ss << data_[6] << data_[7];
-        ss >> std::hex >> d3;
-
-        for (std::size_t i = 0; i < sizeof(d4); ++i)
+        d1 = d2 = d3 = 0;
+        std::size_t pos = 0;
+        int const charbit = std::numeric_limits<liblas::uint8_t>::digits;
+        
+        for (; pos < 4; ++pos)
         {
-            d4[i] = data_[i + 8];
+            
+            d1 <<= charbit;
+            d1 |= static_cast<unsigned char>(data_[pos]);
+        }
+
+        for (; pos < 6; ++pos)
+        {
+            d2 <<= charbit;
+            d2 |= static_cast<unsigned char>(data_[pos]);
+        }
+
+        for (; pos < 8; ++pos)
+        {
+            d3 <<= charbit;
+            d3 |= static_cast<unsigned char>(data_[pos]);
+        }
+
+        for (std::size_t j = 0; j < sizeof(d4); ++j)
+        {
+            d4[j] = data_[j + 8];
         }
     }
 
