@@ -6,9 +6,11 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/guid.hpp>
+#include <liblas/cstdint.hpp>
 #include <tut/tut.hpp>
 #include <string>
 #include <algorithm> // std::std::transform
+#include <cstring> // std::memset
 #include <cstdlib> // std::size_t
 #include <cctype> // std::toupper
 
@@ -138,6 +140,42 @@ namespace tut
 
         g2 = g1;
         ensure_equals(g2, g1);
+    }
+
+    // Test guid construction with 4-parts data
+    template<>
+    template<>
+    void to::test<7>()
+    {
+        std::string strguid("01234567-89ab-cdef-0123-456789abcdef");
+        liblas::guid g1(strguid);
+        ensure_equals(g1.to_string(), strguid);
+
+        // Binary representation of "01234567-89ab-cdef-0123-456789abcdef"
+        liblas::uint32_t n1 = 19088743;
+        liblas::uint16_t n2 = 35243;
+        liblas::uint16_t n3 = 52719;
+        liblas::uint8_t n4[8] = { 0 };
+        n4[0] = 0x01;
+        n4[1] = 0x23;
+        n4[2] = 0x45;
+        n4[3] = 0x67;
+        n4[4] = 0x89;
+        n4[5] = 0xab;
+        n4[6] = 0xcd;
+        n4[7] = 0xef;
+
+        liblas::guid g2(n1, n2, n3, n4);
+        ensure_equals(g1, g2);
+
+        n1 = n2 = n3 = 0;
+        std::memset(n4, 0, 8);
+
+        g2.output_data(n1, n2, n3, n4);
+        liblas::guid g3(n1, n2, n3, n4);
+
+        ensure_equals(g1, g3);
+        ensure_equals(g2, g3);
     }
 }
 
