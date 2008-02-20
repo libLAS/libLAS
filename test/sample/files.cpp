@@ -10,6 +10,7 @@
 #endif
 // liblas
 #include <liblas/liblas.hpp>
+#include <liblas/laspoint.hpp>
 #include <liblas/lasfile.hpp>
 //std
 #include <algorithm>
@@ -44,30 +45,32 @@ int main()
 
     try
     {
-        LASFile f0;
-        LASFile f1("test2.las", liblas::LASHeader());
-        LASFile f2("test.las"); // throws if file missing
+        {
+            LASFile f;
+            {
+                LASFile f0;
+                LASFile f1("test2.las", liblas::LASHeader());
+                LASFile f2("test.las"); // throws if file missing
 
-        std::list<LASFile> files;
-        files.push_back(f0);
-        files.push_back(f1);
-        files.push_back(f2);
+                std::list<LASFile> files;
+                files.push_back(f0);
+                files.push_back(f1);
+                files.push_back(f2);
 
-        std::for_each(files.begin(), files.end(), print_file);
+                std::for_each(files.begin(), files.end(), print_file);
 
-        try { f1.GetReader(); }
-        catch(std::exception const& e) { std::cout << "OK: " << e.what() << std::endl; }
+                f = f1; // save
 
-        try { f2.GetWriter(); }
-        catch(std::exception const& e) { std::cout << "OK: " << e.what() << std::endl; }
+                liblas::LASPoint p;
+                p.SetCoordinates(10, 20, 30);
+                f.GetWriter().WritePoint(p);
 
-        // Copy operations
-        LASFile f4(f1);
-        print_file(f4);
+                files.clear(); // get rid of all but f1 (now f)
+            }
 
-        LASFile f5 = f4;
-        print_file(f5);
-
+            print_file(f); // f (previously f1) is still alive
+        
+        } // f goes to hell and header gots updated here
     }
     catch (std::exception const& e)
     {

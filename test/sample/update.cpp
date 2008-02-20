@@ -27,6 +27,9 @@ int main()
 {
     using namespace liblas;
 
+    LASFile f;
+    f = LASFile("TO_core_last_clip.las");
+
     try
     {
         char const* name = "TO_core_last_clip.las";
@@ -39,6 +42,12 @@ int main()
 
         LASHeader hdr = reader->GetHeader();
 
+        std::string s = hdr.GetSoftwareId();
+        std::string::size_type a = s.size();
+        a = s.capacity();
+        std::string s1 = hdr.GetSoftwareId(true);
+a = s1.size();
+a = s1.capacity();
 
         hdr.SetVersionMajor(1);
         hdr.SetVersionMinor(0);

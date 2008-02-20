@@ -44,11 +44,8 @@ private:
     std::string m_filename;
     std::istream* m_istrm;
     std::ostream* m_ostrm;
-    //LASReader* m_reader;
-    //LASWriter* m_writer;
-    std::auto_ptr<LASReader> m_reader;
-    std::auto_ptr<LASWriter> m_writer;
-
+    LASReader* m_reader;
+    LASWriter* m_writer;
     LASHeader m_header;
 
     void throw_no_file_error() const;

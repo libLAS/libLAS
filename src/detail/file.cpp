@@ -19,7 +19,7 @@ namespace liblas { namespace detail {
 
 FileImpl::FileImpl(std::string const& filename)
     : m_mode(0), m_filename(filename),
-        m_istrm(0), m_ostrm(0)//, m_reader(0), m_writer(0)
+        m_istrm(0), m_ostrm(0), m_reader(0), m_writer(0)
 {
     if (filename == "stdin")
     {
@@ -38,7 +38,7 @@ FileImpl::FileImpl(std::string const& filename)
     }
 
     assert(0 != m_istrm);
-    m_reader = std::auto_ptr<LASReader>(new LASReader(*m_istrm));
+    m_reader = new LASReader(*m_istrm);
     m_header = m_reader->GetHeader();
 
     assert(0 == m_ostrm);
@@ -46,7 +46,7 @@ FileImpl::FileImpl(std::string const& filename)
 
 FileImpl::FileImpl(std::string const& filename, LASHeader const& header)
     : m_mode(1), m_filename(filename),
-        m_istrm(0), m_ostrm(0), m_header(header) //, m_reader(0), m_writer(0), m_header(header)
+        m_istrm(0), m_ostrm(0), m_reader(0), m_writer(0), m_header(header)
 {
     if (filename == "stdout")
     {
@@ -65,27 +65,35 @@ FileImpl::FileImpl(std::string const& filename, LASHeader const& header)
     }
 
     assert(0 != m_ostrm);
-    m_writer = std::auto_ptr<LASWriter>(new LASWriter(*m_ostrm, m_header));
+    m_writer = new LASWriter(*m_ostrm, m_header);
 
     assert(0 == m_istrm);
 }
 
 FileImpl::~FileImpl()
 {
+    // NOTE: The order of destruction is very important.
+    // reader/writer first, then streams.
+    // In other words, kill clients first, suppliers afterwards.
+
     if (m_istrm != &std::cin && 0 != m_istrm)
     {
-        assert(0 == m_writer.get());
+        assert(0 == m_writer);
         assert(0 == m_ostrm);
-        //delete m_reader;
+        delete m_reader;
+        m_reader = 0;
         delete m_istrm;
+        m_istrm = 0;
     }
 
     if (m_ostrm != &std::cout && 0 != m_ostrm)
     {
-        assert(0 == m_reader.get());
+        assert(0 == m_reader);
         assert(0 == m_istrm);
-        //delete m_writer;
+        delete m_writer;
+        m_writer = 0;
         delete m_ostrm;
+        m_ostrm = 0;
     }
 }
 
@@ -106,27 +114,26 @@ LASHeader const& FileImpl::GetHeader() const
 
 LASReader& FileImpl::GetReader()
 {
-    if (0 == m_reader.get())
+    if (0 == m_reader)
     {
         // TODO: Define specialized exception type for this error
         std::string msg("Reader is file write-only: " + m_filename);
         throw std::runtime_error(msg);
     }
 
-    return (*(m_reader.get()));
+    return (*m_reader);
 }
 
 LASWriter& FileImpl::GetWriter()
 {
-                printf("detail::LASFile::GetWriter filename: %s!\n",m_filename.c_str());
-    if (0 == m_writer.get())
+    if (0 == m_writer)
     {
         // TODO: Define specialized exception type for this error
         std::string msg("Writer is file read-only: " + m_filename);
         throw std::runtime_error(msg);
     }
 
-    return (*(m_writer.get()));
+    return (*m_writer);
 }
 
 void FileImpl::throw_no_file_error() const
