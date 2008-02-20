@@ -166,6 +166,8 @@ uint16_t LASHeader::GetFileSourceId() const
 
 void LASHeader::SetFileSourceId(uint16_t v)
 {
+    // TODO: Should we warn or throw about type overflow occuring when
+    //       user passes 65535 + 1 = 0
     m_sourceId = v;
 }
 
