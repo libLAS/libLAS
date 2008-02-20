@@ -95,19 +95,24 @@ struct Point
     T x;
     T y;
     T z;
-    bool operator==(const Point < T >& other) const {
-        if ((x == other.x) && (y == other.y) && (z == other.z))
-            return true;
-        return false;
-    }
-    bool operator!=(const Point < T >& other) const {
-        if ((x == other.x) && (y == other.y) && (z == other.z))
-            return false;
-        return true;
+
+    bool equal(Point<T> const& other) const
+    {
+        return ((x == other.x) && (y == other.y) && (z == other.z));
     }
 };
 
+template <typename T>
+bool operator==(Point<T> const& lhs, Point<T> const& rhs)
+{
+    return lhs.equal(rhs);
+}
 
+template <typename T>
+bool operator!=(Point<T> const& lhs, Point<T> const& rhs)
+{
+    return (!lhs.equal(rhs));
+}
 
 template <typename T>
 struct Extents
@@ -115,18 +120,23 @@ struct Extents
     typename detail::Point < T > min;
     typename detail::Point < T > max;
 
-    bool operator==(const Extents < T >& other) const {
-        if ( min == other.min && max == other.max)
-           return true;
-        return false;
+    bool equal(Extents<T> const& other) const
+    {
+        return (min == other.min && max == other.max);
     }
-    bool operator!=(const Extents < T >& other) const  {
-        if (min == other.min && max == other.max)
-            return false;
-        return true;
-    }
-
 };
+
+template <typename T>
+bool operator==(Extents<T> const& lhs, Extents<T> const& rhs)
+{
+    return lhs.equal(rhs);
+}
+
+template <typename T>
+bool operator!=(Extents<T> const& lhs, Extents<T> const& rhs)
+{
+    return (!lhs.equal(rhs));
+}
 
 template <typename T>
 inline T generate_random_byte()
