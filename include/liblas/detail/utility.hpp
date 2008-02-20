@@ -95,13 +95,37 @@ struct Point
     T x;
     T y;
     T z;
+    bool operator==(const T& other)  {
+        if ((x == other.x) && (y == other.y) && (z == other.z))
+            return true;
+        return false;
+    }
+    bool operator!=(const T& other)  {
+        if ((x == other.x) && (y == other.y) && (z == other.z))
+            return false;
+        return true;
+    }
 };
+
+
 
 template <typename T>
 struct Extents
 {
     typename detail::Point < T > min;
     typename detail::Point < T > max;
+
+    bool operator==(const T& other)  {
+        if ( min == other.min && max == other.max)
+           return true;
+        return false;
+    }
+    bool operator!=(const T& other)  {
+        if (min == other.min && max == other.max)
+            return false;
+        return true;
+    }
+
 };
 
 template <typename T>
