@@ -106,10 +106,24 @@ PointSummary* SummarizePoints(LASReaderH reader) {
     
     PointSummary* summary;
     LASPointH p;
-    uint8_t cls;
-    int i =0;
-        
+    uint8_t cls = 0;
+    int i = 0;
+
     summary = (PointSummary*) malloc(sizeof(PointSummary));
+
+    summary->number_of_point_records = 0;
+    for (i=0; i<8;i++)
+        summary->number_of_points_by_return[i] = 0;
+    for (i=0; i<8;i++)
+        summary->number_of_returns_of_given_pulse[i] = 0;
+    for (i=0; i<32;i++)
+        summary->classification[i] = 0;
+    summary->classification_synthetic = 0;
+    summary->classification_keypoint = 0;
+    summary->classification_withheld = 0;
+        
+
+
     p  = LASReader_GetNextPoint(reader);
     
     if (!p) {
