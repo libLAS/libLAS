@@ -172,36 +172,43 @@ void LASReader_Destroy(LASReaderH hReader)
 
     for (p=files.begin(); p!=files.end(); ++p) {
         LASFile f = p->second;
-        LASReader& freader = f.GetReader();
-
-
-    try {
-        std::ifstream& a = dynamic_cast<std::ifstream&>(freader.GetStream());
-        std::ifstream& r = dynamic_cast<std::ifstream&>(reader->GetStream());
-        if (&a == &r) {
-            files.erase(p);
-            hReader = NULL;
-            return;
-        }
         
-    } catch (std::bad_cast const& e)
-    {
-        std::istream& a = dynamic_cast<std::istream&>(freader.GetStream());
-        std::istream& r = reader->GetStream();
-        if (&a == &r) {
-            files.erase(p);
-            hReader = NULL;
-            return;
-        }        
-    
-    } catch (std::exception const& e)
-    {
-        hReader=NULL;
-        LASError_PushError(LE_Failure, e.what(), "LASReader_Destroy");
-        return ;
-    }
-    
 
+        try {
+            
+            LASReader& freader = f.GetReader();
+
+            try {
+                std::ifstream& a = dynamic_cast<std::ifstream&>(freader.GetStream());
+                std::ifstream& r = dynamic_cast<std::ifstream&>(reader->GetStream());
+                if (&a == &r) {
+                    files.erase(p);
+                    hReader = NULL;
+                    return;
+                }
+
+        
+            } catch (std::bad_cast const& e)
+            {
+                std::istream& a = dynamic_cast<std::istream&>(freader.GetStream());
+                std::istream& r = reader->GetStream();
+                if (&a == &r) {
+                    files.erase(p);
+                    hReader = NULL;
+                    return;
+                }     
+
+            } catch (std::exception const& e)
+            {
+                hReader=NULL;
+                LASError_PushError(LE_Failure, e.what(), "LASReader_Destroy");
+                return;
+            }
+    
+        }  catch (std::runtime_error const& e) 
+        {
+            continue;
+        }
     }
 
     hReader = NULL;
@@ -567,6 +574,16 @@ LASErrorEnum LASPoint_SetUserData(LASPointH hPoint, liblas::uint8_t value) {
 
 }
 
+int LASPoint_Equal(const LASPointH hPoint1, const LASPointH hPoint2) {
+    VALIDATE_POINTER1(hPoint1, "LASPoint_Equal", 0);
+    VALIDATE_POINTER1(hPoint2, "LASPoint_Equal", 0);
+
+    LASPoint* point1 = ((LASPoint*) hPoint1);
+    LASPoint* point2 = ((LASPoint*) hPoint2);
+
+    return (point1 == point2);
+
+}
 
 char* LASHeader_GetFileSignature(const LASHeaderH hHeader) {
     // caller owns it
@@ -968,10 +985,7 @@ int LASHeader_Equal(const LASHeaderH hHeader1, const LASHeaderH hHeader2) {
     LASHeader* header1 = ((LASHeader*) hHeader1);
     LASHeader* header2 = ((LASHeader*) hHeader2);
 
-    
-    return true;
-    
-
+    return (header1 == header2);
 }
 
 LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
@@ -1053,13 +1067,11 @@ void LASWriter_Destroy(LASWriterH hWriter)
     VALIDATE_POINTER0(hWriter, "LASWriter_Destroy");
 
     StrLASFileMap::iterator p;  
-    StrLASFileMap::iterator eraseme=0;
       
     LASWriter* writer = (LASWriter*)hWriter;
 
-    printf("Files size: %d\n", (int) files.size());
     for (p=files.begin(); p!=files.end(); ++p) {
-        printf("At the top of the loop!!!\n");
+
         LASFile f = p->second;
 
         try {
@@ -1070,11 +1082,9 @@ void LASWriter_Destroy(LASWriterH hWriter)
                 std::ofstream& a = dynamic_cast<std::ofstream&>(fwriter.GetStream());
                 std::ofstream& r = dynamic_cast<std::ofstream&>(writer->GetStream());
                 if (&a == &r) {
-                    printf("Streams matched ... erasing... \n");
-                    eraseme = p;
-                    // files.erase(p);
-                    // hWriter = NULL;
-                    // return;
+                    files.erase(p);
+                    hWriter = NULL;
+                    return;
                 }
         
             } catch (std::bad_cast const& e)
@@ -1082,10 +1092,9 @@ void LASWriter_Destroy(LASWriterH hWriter)
                 std::ostream& a = dynamic_cast<std::ostream&>(fwriter.GetStream());
                 std::ostream& r = writer->GetStream();
                 if (&a == &r) {
-                    eraseme = p;
-                    // files.erase(p);
-                    // hWriter = NULL;
-                    // return;
+                    files.erase(p);
+                    hWriter = NULL;
+                    return;
                 }
 
             } catch (std::exception const& e)
@@ -1097,15 +1106,11 @@ void LASWriter_Destroy(LASWriterH hWriter)
     
         }  catch (std::runtime_error const& e) 
         {
-            // if we can't fetch a writer for this LASFile, don't worry about it
-            printf("Caught outer exception!!!\n");
             continue;
         }
 
 
     }
-        printf("At the bottom of the loop!!!\n");
-
 
     hWriter=NULL;
 }
