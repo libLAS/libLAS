@@ -227,6 +227,8 @@ const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
             return (LASPointH) &(reader->GetPoint());
         else 
             return NULL;
+    } catch (std::out_of_range const& e) {
+        return NULL;
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASReader_GetNextPoint");
