@@ -744,6 +744,9 @@ int main(int argc, char *argv[])
         }             
             
         }
+        
+        LASPoint_Destroy(summary->pmin);
+        LASPoint_Destroy(summary->pmax);
         free(summary);
         
     }   
