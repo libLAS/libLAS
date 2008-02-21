@@ -211,21 +211,6 @@ void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
         throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
 
 
-    // TODO: To be removed after tests
-    // XXX: This test is irrelevant because strlen will always give ser of src is,
-    //      for example integer of 0 value.
-    const char* p;
-    p = detail::as_bytes(src);
-    if (p)
-    {
-        if (strlen(p) == 0)
-        {
-#if defined(DEBUG) || defined(_DEBUG)
-            printf("Attempted to write a zero-byte value we were supposed to write %d bytes!!!\n", int(num));
-#endif
-        }
-    }
-
     dest.write(detail::as_bytes(src), num);
 
     // Test stream state bits
