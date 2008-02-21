@@ -255,8 +255,7 @@ void print_point_summary(PointSummary* summary, LASHeaderH header) {
     fprintf(stderr, "  Actual Point Count: %d\n", 
                     summary->number_of_point_records);
 
-    fprintf(stderr, "\n---------------------------------------------------------\n");
-    fprintf(stderr, "  Minimum and Maximum Attributes (min,max)\n");
+    fprintf(stderr, "\n  Minimum and Maximum Attributes (min,max)\n");
     fprintf(stderr, "---------------------------------------------------------\n");
     
     fprintf(stderr, "  Min X,Y,Z: \t\t%.6f,%.6f,%.6f\n", 
@@ -304,8 +303,7 @@ void print_point_summary(PointSummary* summary, LASHeaderH header) {
                     LASPoint_GetClassification(summary->pmax)
                     );
                     
-    fprintf(stderr, "\n---------------------------------------------------------\n");
-    fprintf(stderr, "  Number of Returns by Pulse\n");
+    fprintf(stderr, "\n  Number of Returns by Pulse\n");
     fprintf(stderr, "---------------------------------------------------------\n");
     
     for (i = 1; i < 8; i++) {
@@ -329,8 +327,7 @@ void print_point_summary(PointSummary* summary, LASHeaderH header) {
         }
     }
 
-    fprintf(stderr, "\n---------------------------------------------------------\n");
-    fprintf(stderr, "  Point Classifications\n");
+    fprintf(stderr, "\n  Point Classifications\n");
     fprintf(stderr, "---------------------------------------------------------\n");
 
     for (i = 0; i < 32; i++) {
@@ -343,8 +340,7 @@ void print_point_summary(PointSummary* summary, LASHeaderH header) {
     }
 
     if (summary->classification_synthetic || summary->classification_keypoint ||  summary->classification_withheld) {
-        fprintf(stderr, "\n---------------------------------------------------------\n");
-        fprintf(stderr, "  Point Classification Histogram\n");
+        fprintf(stderr, "\n  Point Classification Histogram\n");
         fprintf(stderr, "---------------------------------------------------------\n");
 
         if (summary->classification_synthetic) fprintf(stderr, " +-> flagged as synthetic: %d\n", summary->classification_synthetic);
