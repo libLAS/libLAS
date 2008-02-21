@@ -188,7 +188,7 @@ void read_n(T& dest, std::istream& src, std::streamsize const& num)
     
     // Test stream state bits
     if (src.eof())
-        throw std::runtime_error("end of file encountered");
+        throw std::out_of_range("end of file encountered");
     else if (src.fail())
         throw std::runtime_error("non-fatal I/O error occured");
     else if (src.bad())
@@ -215,7 +215,7 @@ void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
 
     // Test stream state bits
     if (dest.eof())
-        throw std::runtime_error("end of file encountered");
+        throw std::out_of_range("end of file encountered");
     else if (dest.fail())
         throw std::runtime_error("non-fatal I/O error occured");
     else if (dest.bad())

@@ -240,8 +240,15 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
 
     if (m_current < m_size)
     {
-        detail::read_n(record, m_ifs, sizeof(PointRecord));
-        ++m_current;
+        try {
+            detail::read_n(record, m_ifs, sizeof(PointRecord));
+            ++m_current;
+            
+        }
+        // we reached the end of the file
+        catch (std::out_of_range const& e) {
+            return false;
+        }
 
         return true;
     }
