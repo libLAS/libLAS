@@ -132,7 +132,7 @@ PointSummary* SummarizePoints(LASReaderH reader) {
             print_error("Not able to fetch a point.  LASReaderH is invalid");
         else
             print_error("File does not contain any points to read.");
-        exit(-1);
+        exit(1);
     }
 
     summary->pmin = LASPoint_Copy(p);
@@ -211,7 +211,7 @@ PointSummary* SummarizePoints(LASReaderH reader) {
 
         if (LASError_GetLastErrorNum()) {
             print_error("Not able to fetch point");
-            exit(-1);
+            exit(1);
         }
         
         i++;
@@ -259,7 +259,7 @@ void print_point_summary(PointSummary* summary, LASHeaderH header) {
     long rgpsum = 0;
     int i = 0;
 
-    if (!summary) {print_error("Point Summary does not exist!"); exit(-1);}
+    if (!summary) {print_error("Point Summary does not exist!"); exit(1);}
 
     fprintf(stderr, "\n---------------------------------------------------------\n");
     fprintf(stderr, "  Point Inspection Summary\n");
@@ -326,15 +326,15 @@ void print_point_summary(PointSummary* summary, LASHeaderH header) {
         rgpsum = rgpsum + summary->number_of_returns_of_given_pulse[i];
         fprintf(stderr, "\t(%d) %d", i,summary->number_of_returns_of_given_pulse[i]);
     }
-    fprintf(stderr, "\n Actual Point Count: %ld\n", rgpsum); 
+    fprintf(stderr, "\n Total Pulses: %ld\n", rgpsum); 
 
 
     for (i = 0; i < 5; i++) {
         if (LASHeader_GetPointRecordsByReturnCount(header, i) != summary->number_of_points_by_return[i]) 
         {
-            fprintf(stderr, " actual number of points by return is different (actual, header):"); 
+            fprintf(stderr, " \n Actual number of points by return \n is different from header (actual, header):\n"); 
             for (i = 0; i < 5; i++) {
-                fprintf(stderr, " (%d,%d)", 
+                fprintf(stderr, "\t(%d,%d)", 
                         summary->number_of_points_by_return[i],
                         LASHeader_GetPointRecordsByReturnCount(header, i)
                         );
@@ -386,7 +386,7 @@ void print_header(LASHeaderH header, const char* file_name) {
     
     if (strcmp(pszSignature,"LASF") !=0) {
         print_error("File signature is not 'LASF'... aborting");
-        exit(-1);
+        exit(1);
     }
     fprintf(stdout, "  Version:                    %d.%d\n", 
                     LASHeader_GetVersionMajor(header), 
@@ -486,7 +486,7 @@ int main(int argc, char *argv[])
     uint8_t file_creation_day = 0;
     uint8_t file_creation_year = 0;
     
-    int err=0;
+    int err = 0;
 
     PointSummary* summary = NULL;
 
@@ -595,7 +595,7 @@ int main(int argc, char *argv[])
         else
         {
             usage();
-            exit(-1);
+            exit(1);
         }
     }
       
@@ -606,19 +606,19 @@ int main(int argc, char *argv[])
     if (!file_name) {
         print_error("No filename was provided to be opened");
         usage();
-        exit(-1);
+        exit(1);
     }
     
     reader = LASReader_Create(file_name);
     if (!reader) { 
         print_error("Could not open file ");
-        exit(-1);
+        exit(1);
     } 
       
     header = LASReader_GetHeader(reader);
     if (!header) { 
         print_error("Could not get LASHeader ");
-        exit(-1);
+        exit(1);
     } 
 
     
@@ -652,7 +652,7 @@ int main(int argc, char *argv[])
             print_error("Problem creating LASWriterH object");
 	        LASHeader_Destroy(header);
             header = NULL;
-            exit(-1);
+            exit(1);
         }
 
         if (writer) LASWriter_Destroy(writer);
@@ -667,7 +667,7 @@ int main(int argc, char *argv[])
             reader = LASReader_Create(file_name);
             if (!reader) { 
                 print_error("Could not open file ");
-                exit(-1);
+                exit(1);
             } 
         }
   
@@ -675,7 +675,7 @@ int main(int argc, char *argv[])
             header = LASReader_GetHeader(reader);
             if (!header) { 
                 print_error("Could not get LASHeader ");
-                exit(-1);
+                exit(1);
             } 
         } 
         
@@ -684,15 +684,14 @@ int main(int argc, char *argv[])
         print_point_summary(summary, header);
         
         if (repair_header) {
-            /* We need to wipe out the reader and make a writer. */
-            if (reader) {
-                LASReader_Destroy(reader);
-                reader = NULL;
-            }
+            fprintf(stderr, "\n---------------------------------------------------------\n");
+            fprintf(stderr, "  Repair Summary\n");
+            fprintf(stderr, "---------------------------------------------------------\n");
+
             
             if (use_stdin) {
                 print_error("Cannot update header information on piped input!");
-                exit(-1);
+                exit(1);
             }
 
   
@@ -700,10 +699,28 @@ int main(int argc, char *argv[])
                 header = LASReader_GetHeader(reader);
                 if (!header) { 
                     print_error("Could not get LASHeader ");
-                    exit(-1);
+                    exit(1);
+                }
             } 
+        
+            if (! repair_bounding_box) {
+                if ( LASHeader_GetMinX(header) != LASPoint_GetX(summary->pmin) )
+                    repair_bounding_box = TRUE;
+                if ( LASHeader_GetMinY(header) != LASPoint_GetY(summary->pmin) )
+                    repair_bounding_box = TRUE;
+                if ( LASHeader_GetMinZ(header) != LASPoint_GetZ(summary->pmin) )
+                    repair_bounding_box = TRUE;
+
+                if ( LASHeader_GetMaxX(header) != LASPoint_GetX(summary->pmax) )
+                    repair_bounding_box = TRUE;
+                if ( LASHeader_GetMaxY(header) != LASPoint_GetY(summary->pmax) )
+                    repair_bounding_box = TRUE;
+                if ( LASHeader_GetMaxZ(header) != LASPoint_GetZ(summary->pmax) )
+                    repair_bounding_box = TRUE;
+            }
             
             if (repair_bounding_box) {
+                fprintf(stderr, "  Reparing Bounding Box...\n");
                 err = LASHeader_SetMin( header, 
                                         LASPoint_GetX(summary->pmin), 
                                         LASPoint_GetY(summary->pmin), 
@@ -711,7 +728,7 @@ int main(int argc, char *argv[])
                                       );
                 if (err) {
                     print_error("Could not set minimum for header ");
-                    exit(-1);
+                    exit(1);
                 }
                 err = LASHeader_SetMax( header, 
                                         LASPoint_GetX(summary->pmax), 
@@ -720,243 +737,58 @@ int main(int argc, char *argv[])
                                       );
                 if (err) {
                     print_error("Could not set minimum for header ");
-                    exit(-1);
+                    exit(1);
                 }
 
             }
 
+
             for (i = 0; i < 5; i++) {
+
                 if (LASHeader_GetPointRecordsByReturnCount(header, i) != summary->number_of_points_by_return[i]) 
                 {
                     update_return_counts = TRUE;
+                    break;
                 }
             }
             
             if (update_return_counts) {
-                printf("supposed to update return counts\n");
+                fprintf(stderr, "  Reparing Point Count by Return...\n");
                 for (i = 0; i < 5; i++) {
                     LASHeader_SetPointRecordsByReturnCount(header, i, summary->number_of_points_by_return[i]);
-                    printf("update_return_counts...\n");
                 }                
+            }
+            
+
+
+
+            if (reader) {
+                LASReader_Destroy(reader);
+                reader = NULL;
             }
                 
             writer = LASWriter_Create(file_name, header, LAS_MODE_APPEND);
             if (!writer) {
-                print_error("Problem creating LASWriterH object");
+                print_error("Problem creating LASWriterH object for append");
     	        LASHeader_Destroy(header);
                 header = NULL;
-                exit(-1);
+                exit(1);
             }
             LASWriter_Destroy(writer);
             writer = NULL;
             LASHeader_Destroy(header);
             header = NULL;            
-        }             
             
-        }
         
         LASPoint_Destroy(summary->pmin);
         LASPoint_Destroy(summary->pmax);
         free(summary);
-        
-    }   
+    }
+}   
     
      if (reader) LASReader_Destroy(reader);
      if (header) LASHeader_Destroy(header);
      
 
-/*
-    //     if (repair_header || repair_bounding_box || change_header)
-    //     {
-    //       if (file_name)
-    //       {
-    //         if (strstr(file_name, ".gz"))
-    //         {
-    //           fprintf(stderr, "ERROR: cannot change header of gzipped input files\n");
-    //           repair_header = repair_bounding_box = change_header = false;
-    //         }
-    //         else
-    //         {
-    //           file = fopen(file_name, "rb+");
-    //           if (file == 0)
-    //           {
-    //             fprintf (stderr, "ERROR: could reopen file '%s' for changing header\n", file_name);
-    //             repair_header = repair_bounding_box = change_header = false;
-    //           }
-    //         }
-    //       }
-    //       else if (ilas)
-    //       {
-    //         fprintf(stderr, "ERROR: cannot change header of piped input\n");
-    //         repair_header = repair_bounding_box = change_header = false;
-    //       }
-    //       else
-    //       {
-    //         fprintf (stderr, "ERROR: no input specified\n");
-    //         usage();
-    //       }
-    //     }
-    // 
-    //     fprintf(stderr, "  x %d %d\n",point_min.x, point_max.x);
-    //     fprintf(stderr, "  y %d %d\n",point_min.y, point_max.y);
-    //     fprintf(stderr, "  z %d %d\n",point_min.z, point_max.z);
-    //     fprintf(stderr, "  intensity %d %d\n",point_min.intensity, point_max.intensity);
-    //     fprintf(stderr, "  edge_of_flight_line %d %d\n",point_min.edge_of_flight_line, point_max.edge_of_flight_line);
-    //     fprintf(stderr, "  scan_direction_flag %d %d\n",point_min.scan_direction_flag, point_max.scan_direction_flag);
-    //     fprintf(stderr, "  number_of_returns_of_given_pulse %d %d\n",point_min.number_of_returns_of_given_pulse, point_max.number_of_returns_of_given_pulse);
-    //     fprintf(stderr, "  return_number %d %d\n",point_min.return_number, point_max.return_number);
-    //     fprintf(stderr, "  classification %d %d\n",point_min.classification, point_max.classification);
-    //     fprintf(stderr, "  scan_angle_rank %d %d\n",point_min.scan_angle_rank, point_max.scan_angle_rank);
-    //     fprintf(stderr, "  user_data %d %d\n",point_min.user_data, point_max.user_data);
-    //     fprintf(stderr, "  point_source_ID %d %d\n",point_min.point_source_ID, point_max.point_source_ID);
-    //     fprintf(stderr, "  gps_time %f %f\n",gps_time_min, gps_time_max);
-    //     
-    //     if (change_header)
-    //     {
-    //       if (system_identifier)
-    //       {
-    //         fseek(file, 26, SEEK_SET);
-    //         fwrite(system_identifier, sizeof(char), 32, file);
-    //       }
-    //       if (generating_software)
-    //       {
-    //         fseek(file, 58, SEEK_SET);
-    //         fwrite(generating_software, sizeof(char), 32, file);
-    //       }
-    //       if (file_creation_day || file_creation_year)
-    //       {
-    //         fseek(file, 90, SEEK_SET);
-    //         fwrite(&file_creation_day, sizeof(unsigned short), 1, file);
-    //         fwrite(&file_creation_year, sizeof(unsigned short), 1, file);
-    //       }
-    //     }
-    // 
-    //     if (number_of_point_records != header->number_of_point_records)
-    //     {
-    //       fprintf(stderr, "real number of points (%d) is different from header number of points (%d) %s\n", number_of_point_records, header->number_of_point_records, repair_header ? "(repaired)" : "");
-    //       if (repair_header)
-    //       {
-    //         fseek(file, 107, SEEK_SET);
-    //         fwrite(&number_of_point_records, sizeof(unsigned int), 5, file);
-    //       }
-    //     }
-    // 
-    //     bool report = false;
-    //     for (i = 1; i < 6; i++) if (header->number_of_points_by_return[i-1] != number_of_points_by_return[i]) report = true;
-    //     if (report)
-    //     {
-    //       fprintf(stderr, "actual number of points by return is different:"); 
-    //       for (i = 1; i < 6; i++) fprintf(stderr, " %d", number_of_points_by_return[i]); 
-    //       fprintf(stderr, " %s\n", repair_header ? "(repaired)" : "");
-    //       if (repair_header)
-    //       {
-    //         fseek(file, 111, SEEK_SET);
-    //         fwrite(&(number_of_points_by_return[1]), sizeof(unsigned int), 5, file);
-    //       }
-    //     }
-    // 
-    //     if (number_of_points_by_return[0]) fprintf(stderr, "WARNING: there are %d points with return number 0\n", number_of_points_by_return[0]); 
-    //     if (number_of_points_by_return[6]) fprintf(stderr, "WARNING: there are %d points with return number 6\n", number_of_points_by_return[6]); 
-    //     if (number_of_points_by_return[7]) fprintf(stderr, "WARNING: there are %d points with return number 7\n", number_of_points_by_return[7]); 
-    // 
-    //     report = false;
-    //     for (i = 1; i < 8; i++) if (number_of_returns_of_given_pulse[i]) report = true;
-    //     if (report)
-    //     {
-    //       fprintf(stderr, "overview over number of returns of given pulse:"); 
-    //       for (i = 1; i < 8; i++) fprintf(stderr, " %d", number_of_returns_of_given_pulse[i]);
-    //       fprintf(stderr, "\n"); 
-    //     }
-    // 
-    //     if (number_of_returns_of_given_pulse[0]) fprintf(stderr, "WARNING: there are %d points with a number of returns of given pulse of 0\n", number_of_returns_of_given_pulse[0]); 
-    // 
-    //     report = false;
-    //     for (i = 0; i < 32; i++) if (classification[i]) report = true;
-    //     if (classification_synthetic || classification_keypoint ||  classification_withheld) report = true;
-    // 
-    //     if (report)
-    //     {
-    //       fprintf(stderr, "histogram of classification of points:\n"); 
-    //       for (i = 0; i < 32; i++) if (classification[i]) fprintf(stderr, " %8d %s (%d)\n", classification[i], LASpointClassification[i], i);
-    //       if (classification_synthetic) fprintf(stderr, " +-> flagged as synthetic: %d\n", classification_synthetic);
-    //       if (classification_keypoint) fprintf(stderr,  " +-> flagged as keypoints: %d\n", classification_keypoint);
-    //       if (classification_withheld) fprintf(stderr,  " +-> flagged as withheld:  %d\n", classification_withheld);
-    //     }
-    // 
-    //     if (repair_bounding_box)
-    //     {
-    //       fprintf(stderr, "repairing bounding box\n");
-    //       fseek(file, 179, SEEK_SET);
-    //       fwrite(&(max[0]), sizeof(double), 1, file);
-    //       fwrite(&(min[0]), sizeof(double), 1, file);
-    //       fwrite(&(max[1]), sizeof(double), 1, file);
-    //       fwrite(&(min[1]), sizeof(double), 1, file);
-    //       fwrite(&(max[2]), sizeof(double), 1, file);
-    //       fwrite(&(min[2]), sizeof(double), 1, file);
-    //     }
-    //     else
-    //     {
-    //       if (max[0] > header->max_x)
-    //       {
-    //         fprintf(stderr, "real max x larger than header max x by %lf %s\n", max[0] - header->max_x);
-    //         if (repair_header)
-    //         {
-    //           fseek(file, 179, SEEK_SET);
-    //           fwrite(&(max[0]), sizeof(double), 1, file);
-    //         }
-    //       }
-    //       if (min[0] < header->min_x)
-    //       {
-    //         fprintf(stderr, "real min x smaller than header min x by %lf %s\n", header->min_x - min[0], repair_header ? "(repaired)" : "");
-    //         if (repair_header)
-    //         {
-    //           fseek(file, 187, SEEK_SET);
-    //           fwrite(&(min[0]), sizeof(double), 1, file);
-    //         }
-    //       }
-    //       if (max[1] > header->max_y)
-    //       {
-    //         fprintf(stderr, "real max y larger than header max y by %lf %s\n", max[1] - header->max_y, repair_header ? "(repaired)" : "");
-    //         if (repair_header)
-    //         {
-    //           fseek(file, 195, SEEK_SET);
-    //           fwrite(&(max[1]), sizeof(double), 1, file);
-    //         }
-    //       }
-    //       if (min[1] < header->min_y)
-    //       {
-    //         fprintf(stderr, "real min y smaller than header min y by %lf %s\n", header->min_y - min[1], repair_header ? "(repaired)" : "");
-    //         if (repair_header)
-    //         {
-    //           fseek(file, 203, SEEK_SET);
-    //           fwrite(&(min[1]), sizeof(double), 1, file);
-    //         }
-    //       }
-    //       if (max[2] > header->max_z)
-    //       {
-    //         fprintf(stderr, "real max z larger than header max z by %lf %s\n", max[2] - header->max_z, repair_header ? "(repaired)" : "");
-    //         if (repair_header)
-    //         {
-    //           fseek(file, 211, SEEK_SET);
-    //           fwrite(&(max[2]), sizeof(double), 1, file);
-    //         }
-    //       }
-    //       if (min[2] < header->min_z)
-    //       {
-    //         fprintf(stderr, "real min z smaller than header min z by %lf %s\n", header->min_z - min[2], repair_header ? "(repaired)" : "");
-    //         if (repair_header)
-    //         {
-    //           fseek(file, 219, SEEK_SET);
-    //           fwrite(&(min[2]), sizeof(double), 1, file);
-    //         }
-    //       }
-    //     }
-    //   }
-    // 
-    //   if (repair_header || change_header)
-    //   {
-    //     fclose(file);
-    //   }
-*/
   return 0;
 }
