@@ -347,7 +347,8 @@ int main(int argc, char *argv[])
 
             for (i = 0; i < 5; i++) {
 
-                if (LASHeader_GetPointRecordsByReturnCount(header, i) != summary->number_of_points_by_return[i]) 
+                if (LASHeader_GetPointRecordsByReturnCount(header, i) != 
+                    summary->number_of_points_by_return[i]) 
                 {
                     update_return_counts = TRUE;
                     break;
@@ -357,7 +358,9 @@ int main(int argc, char *argv[])
             if (update_return_counts) {
                 fprintf(stderr, "  Reparing Point Count by Return...\n");
                 for (i = 0; i < 5; i++) {
-                    LASHeader_SetPointRecordsByReturnCount(header, i, summary->number_of_points_by_return[i]);
+                    LASHeader_SetPointRecordsByReturnCount( header,  
+                                                            i, 
+                                                            summary->number_of_points_by_return[i]);
                 }                
             }
             
