@@ -53,11 +53,11 @@ am_las2txt_OBJECTS = las2txt.$(OBJEXT)
 las2txt_OBJECTS = $(am_las2txt_OBJECTS)
 las2txt_LDADD = $(LDADD)
 las2txt_DEPENDENCIES = ../src/liblas.la
-am_lasinfo_OBJECTS = lasinfo.$(OBJEXT)
+am_lasinfo_OBJECTS = lasinfo.$(OBJEXT) lascommon.$(OBJEXT)
 lasinfo_OBJECTS = $(am_lasinfo_OBJECTS)
 lasinfo_LDADD = $(LDADD)
 lasinfo_DEPENDENCIES = ../src/liblas.la
-am_lasmerge_OBJECTS = lasmerge.$(OBJEXT)
+am_lasmerge_OBJECTS = lasmerge.$(OBJEXT) lascommon.$(OBJEXT)
 lasmerge_OBJECTS = $(am_lasmerge_OBJECTS)
 lasmerge_LDADD = $(LDADD)
 lasmerge_DEPENDENCIES = ../src/liblas.la
@@ -190,11 +190,12 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 INCLUDES = -I../include/liblas/capi -I../include
-lasinfo_SOURCES = lasinfo.c 
+lasinfo_SOURCES = lasinfo.c lascommon.c
 las2las_SOURCES = las2las.c
-lasmerge_SOURCES = lasmerge.c
+lasmerge_SOURCES = lasmerge.c lascommon.c
 las2txt_SOURCES = las2txt.c
 txt2las_SOURCES = txt2las.c
+test_SOURCES = test.cpp
 LDADD = ../src/liblas.la
 all: all-am
 
@@ -281,6 +282,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/las2las.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/las2txt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lascommon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lasinfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lasmerge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/txt2las.Po@am__quote@
