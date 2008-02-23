@@ -19,6 +19,9 @@
 
 #include "liblas.h"
 
+LASPointSummary* SummarizePoints(LASReaderH reader);
+void print_point_summary(LASPointSummary* summary, LASHeaderH header);
+void print_header(LASHeaderH header, const char* file_name);
 
 void usage()
 {
@@ -97,7 +100,8 @@ int main(int argc, char *argv[])
     int largest_int = smallest_int-1-20;
 
     int same = TRUE;
-    
+    LASPointSummary* summary = NULL;
+
     for (i = 1; i < argc; i++)
     {
         if (    strcmp(argv[i],"-h") == 0 ||
@@ -249,24 +253,14 @@ int main(int argc, char *argv[])
     {
         reader = LASReader_Create(file_names_in[i]);
         if (!reader) { 
-            fprintf(stdout, 
-                    "Error! %d, %s, in method %s\n",
-                    LASError_GetLastErrorNum(),
-                    LASError_GetLastErrorMsg(),
-                    LASError_GetLastErrorMethod()
-                    ); 
+                LASError_Print("Could not get LASReader "); 
                 exit(1);
             } 
       
             header = LASReader_GetHeader(reader);
             if (!header) { 
-                fprintf(stdout, 
-                        "Error! %d, %s, in method %s\n",
-                        LASError_GetLastErrorNum(),
-                        LASError_GetLastErrorMsg(),
-                        LASError_GetLastErrorMethod()
-                        ); 
-                    exit(1);
+                LASError_Print("Could not get LASHeader "); 
+                exit(1);
             } 
 
 
@@ -403,19 +397,14 @@ int main(int argc, char *argv[])
 
     if (file_name_out == NULL && !use_stdout)
     {
-        fprintf(stderr, "no output specified. exiting ...\n");
+        LASError_Print("no output was specified "); 
         exit(1);
     }
 
     writer = LASWriter_Create(file_name_out, merged_header, LAS_MODE_WRITE);
     if (!writer) { 
-        fprintf(stderr, 
-                "Error! %d, %s, in method %s\n",
-                LASError_GetLastErrorNum(),
-                LASError_GetLastErrorMsg(),
-                LASError_GetLastErrorMethod()
-                ); 
-            exit(1);
+        LASError_Print("Could not create LASWriter "); 
+        exit(1);
     } 
 
     if (verbose) ptime("starting second pass.");
@@ -425,23 +414,13 @@ int main(int argc, char *argv[])
     {
         reader = LASReader_Create(file_names_in[i]);
         if (!reader) { 
-            fprintf(stdout, 
-                    "Error! %d, %s, in method %s\n",
-                    LASError_GetLastErrorNum(),
-                    LASError_GetLastErrorMsg(),
-                    LASError_GetLastErrorMethod()
-                    ); 
-                exit(1);
+            LASError_Print("Could not get LASReader ");
+            exit(1);
         } 
         header = LASReader_GetHeader(reader);
         if (!header) { 
-            fprintf(stdout, 
-                    "Error! %d, %s, in method %s\n",
-                    LASError_GetLastErrorNum(),
-                    LASError_GetLastErrorMsg(),
-                    LASError_GetLastErrorMethod()
-                    ); 
-                exit(1);
+            LASError_Print("Could not get LASHeader ");
+            exit(1);
         } 
 
         same = TRUE;
@@ -477,11 +456,39 @@ int main(int argc, char *argv[])
         }
 
         LASReader_Destroy(reader);
+        reader = NULL;
     }
 
     LASWriter_Destroy(writer);
 
     if (verbose) ptime("done.");
 
+    if (verbose) {
+        reader = LASReader_Create(file_name_out);
+        if (!reader) { 
+            LASError_Print("Could not open file ");
+            exit(1);
+        } 
+      
+        header = LASReader_GetHeader(reader);
+        if (!header) { 
+            LASError_Print("Could not get LASHeader ");
+            exit(1);
+        } 
+
+        print_header(header, file_name_out);        
+        summary = SummarizePoints(reader);
+        print_point_summary(summary, header);
+        
+        LASHeader_Destroy(header);
+        header = NULL;            
+        LASReader_Destroy(reader);
+        reader = NULL;
+        
+        LASPoint_Destroy(summary->pmin);
+        LASPoint_Destroy(summary->pmax);
+        free(summary);
+    }
+    
     return 0;
 }
