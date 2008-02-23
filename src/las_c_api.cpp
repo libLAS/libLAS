@@ -1007,6 +1007,7 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader, int 
         if (p==files.end()) {
 
             LASFile lasfile;
+
             lasfile = LASFile(filename, *header, (liblas::LASFile::Mode)mode);
             LASWriter* writer = NULL;
             try {

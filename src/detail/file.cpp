@@ -55,11 +55,18 @@ FileImpl::FileImpl(std::string const& filename, LASHeader const& header, int mod
     else
     {
         std::ios::openmode m;
-        if (mode == 2) // append mode
-            m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
-        else
-            m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
+        if ( (mode > 2) || (mode < 1)) {
+            throw std::runtime_error("File mode must be eWrite or eAppend");
+        }
         
+        // append mode 
+        if (mode == 2) {
+            m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
+        }
+        // write mode
+        else {
+            m = std::ios::out | std::ios::binary | std::ios::ate;
+        }
         m_ostrm = new std::ofstream(m_filename.c_str(), m);
 
         if (!m_ostrm->good())

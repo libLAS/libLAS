@@ -28,7 +28,7 @@ LAS_C_START
 
 #define LAS_MODE_READ 0
 #define LAS_MODE_WRITE 1
-#define LAS_MODE_APPEND 0
+#define LAS_MODE_APPEND 2
 
 typedef enum
 {

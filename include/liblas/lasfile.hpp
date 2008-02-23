@@ -24,7 +24,7 @@ public:
     {
         eRead = 0,
         eWrite = 1,
-        eAppend = 1
+        eAppend = 2
     };
 
     LASFile();

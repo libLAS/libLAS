@@ -52,7 +52,7 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     // std::ios::in *and* std::ios::out, otherwise it should return false 
     // and we won't adjust the point count.
     
-    if (beginning != end) {
+    if ((beginning != end) && ((uint32_t)end != 0)) {
         m_pointCount = ((uint32_t) end - header.GetDataOffset())/header.GetDataRecordLength();
 
         // Position to the beginning of the file to start writing the header
@@ -176,7 +176,6 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     if (m_pointCount != 0)
         m_ofs.seekp(0, std::ios::end);
  
-
 }
 
 void WriterImpl::UpdateHeader(LASHeader const& header)
@@ -195,7 +194,6 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
 void WriterImpl::WritePointRecord(detail::PointRecord const& record)
 {
     // Write point data record format 0
-
     if (0 == m_pointCount)
     {
         // Two bytes of point data start signature, required by LAS 1.0
@@ -210,6 +208,7 @@ void WriterImpl::WritePointRecord(detail::PointRecord const& record)
     detail::write_n(m_ofs, record, sizeof(record));
 
     ++m_pointCount;
+
 }
 
 void WriterImpl::WritePointRecord(detail::PointRecord const& record, double const& time)
