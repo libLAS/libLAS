@@ -238,7 +238,7 @@ int main(int argc, char *argv[])
                   LASError_GetLastErrorMsg(),
                   LASError_GetLastErrorMethod()
                  ); 
-          exit(-1);
+          exit(1);
       } 
       
       header = LASReader_GetHeader(reader);
@@ -249,7 +249,7 @@ int main(int argc, char *argv[])
                   LASError_GetLastErrorMsg(),
                   LASError_GetLastErrorMethod()
                  ); 
-          exit(-1);
+          exit(1);
       } 
 
 
