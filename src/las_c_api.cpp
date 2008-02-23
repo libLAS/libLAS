@@ -990,7 +990,7 @@ int LASHeader_Equal(const LASHeaderH hHeader1, const LASHeaderH hHeader2) {
     return (header1 == header2);
 }
 
-LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
+LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader, int mode) {
     VALIDATE_POINTER1(hHeader, "LASWriter_Create", NULL); 
     
     if (filename == NULL) {
@@ -1007,7 +1007,7 @@ LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader) {
         if (p==files.end()) {
 
             LASFile lasfile;
-            lasfile = LASFile(filename, *header);
+            lasfile = LASFile(filename, *header, (liblas::LASFile::Mode)mode);
             LASWriter* writer = NULL;
             try {
                 writer = &(lasfile.GetWriter());

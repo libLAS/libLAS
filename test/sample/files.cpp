@@ -49,7 +49,7 @@ int main()
             LASFile f;
             {
                 LASFile f0;
-                LASFile f1("test2.las", liblas::LASHeader());
+                LASFile f1("test2.las", liblas::LASHeader(), liblas::LASFile::eWrite);
                 LASFile f2("test.las"); // throws if file missing
 
                 std::list<LASFile> files;

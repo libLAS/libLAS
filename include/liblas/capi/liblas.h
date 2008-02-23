@@ -26,6 +26,10 @@ LAS_C_START
 #endif
 */
 
+#define LAS_MODE_READ 0
+#define LAS_MODE_WRITE 1
+#define LAS_MODE_APPEND 0
+
 typedef enum
 {
     LE_None = 0,
@@ -143,7 +147,7 @@ LAS_DLL double LASHeader_GetMaxY(const LASHeaderH hHeader);
 LAS_DLL double LASHeader_GetMaxZ(const LASHeaderH hHeader);
 LAS_DLL LASError LASHeader_SetMax(LASHeaderH hHeader, double x, double y, double z);
 
-LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader);
+LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader, int mode);
 LAS_DLL LASError LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoint);
 LAS_DLL LASError LASWriter_WriteHeader(const LASWriterH hWriter, const LASHeaderH hHeader);
 LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);

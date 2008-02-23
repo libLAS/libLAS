@@ -32,6 +32,9 @@ private:
     // Blocked copying operations, declared but not defined.
     Writer(Writer const& other);
     Writer& operator=(Writer const& rhs);
+    
+
+
 };
 
 class WriterFactory

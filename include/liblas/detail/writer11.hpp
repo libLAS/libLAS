@@ -34,6 +34,7 @@ private:
 
     std::ostream& m_ofs;
     liblas::uint32_t m_pointCount;
+
 };
 
 }}} // namespace liblas::detail::v11

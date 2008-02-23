@@ -44,8 +44,8 @@ FileImpl::FileImpl(std::string const& filename)
     assert(0 == m_ostrm);
 }
 
-FileImpl::FileImpl(std::string const& filename, LASHeader const& header)
-    : m_mode(1), m_filename(filename),
+FileImpl::FileImpl(std::string const& filename, LASHeader const& header, int mode)
+    : m_mode(mode), m_filename(filename),
         m_istrm(0), m_ostrm(0), m_reader(0), m_writer(0), m_header(header)
 {
     if (filename == "stdout")
@@ -54,8 +54,13 @@ FileImpl::FileImpl(std::string const& filename, LASHeader const& header)
     }
     else
     {
-        std::ios::openmode const mode = std::ios::out | std::ios::binary | std::ios::ate;
-        m_ostrm = new std::ofstream(m_filename.c_str(), mode);
+        std::ios::openmode m;
+        if (mode == 2) // append mode
+            m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
+        else
+            m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
+        
+        m_ostrm = new std::ofstream(m_filename.c_str(), m);
 
         if (!m_ostrm->good())
         {

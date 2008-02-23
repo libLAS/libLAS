@@ -23,12 +23,13 @@ public:
     enum Mode
     {
         eRead = 0,
-        eWrite = 1
+        eWrite = 1,
+        eAppend = 1
     };
 
     LASFile();
     LASFile(std::string const& filename);
-    LASFile(std::string const& filename, LASHeader const& header);
+    LASFile(std::string const& filename, LASHeader const& header, Mode mode);
     LASFile(LASFile const& other);
     LASFile& operator=(LASFile const& rhs);
 

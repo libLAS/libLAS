@@ -121,24 +121,28 @@ PointSummary* SummarizePoints(LASReaderH reader) {
     summary->classification_synthetic = 0;
     summary->classification_keypoint = 0;
     summary->classification_withheld = 0;
-        
+    
+
 
 
     p  = LASReader_GetNextPoint(reader);
     
     if (!p) {
-        print_error("Not able to fetch a point.  LASReaderH is invalid");
+        if (LASError_GetLastErrorNum()) 
+            print_error("Not able to fetch a point.  LASReaderH is invalid");
+        else
+            print_error("File does not contain any points to read.");
         exit(-1);
     }
 
     summary->pmin = LASPoint_Copy(p);
     summary->pmax = LASPoint_Copy(p);
 
+    /* If we got this far we have one point */
+    i = 1;
     while (p)
     {
-        i++;
-
-        
+    
         summary->x = LASPoint_GetX(p);
         LASPoint_SetX(summary->pmin, MIN(summary->x, LASPoint_GetX(summary->pmin)));
         LASPoint_SetX(summary->pmax, MAX(summary->x, LASPoint_GetX(summary->pmax)));
@@ -182,9 +186,14 @@ PointSummary* SummarizePoints(LASReaderH reader) {
         summary->user_data = LASPoint_GetUserData(p);
         LASPoint_SetUserData(summary->pmin, MIN(summary->user_data, LASPoint_GetUserData(summary->pmin)));
         LASPoint_SetUserData(summary->pmax, MAX(summary->user_data, LASPoint_GetUserData(summary->pmax)));  
-                                
+
         summary->number_of_point_records = i;
-        summary->number_of_points_by_return[LASPoint_GetReturnNumber(p)-1]++;
+
+        if (LASPoint_GetReturnNumber(p))
+            summary->number_of_points_by_return[LASPoint_GetReturnNumber(p)-1]++;
+        else
+            summary->number_of_points_by_return[LASPoint_GetReturnNumber(p)]++;        
+
         summary->number_of_returns_of_given_pulse[LASPoint_GetNumberOfReturns(p)]++;
         
         cls = LASPoint_GetClassification(p);
@@ -199,6 +208,13 @@ PointSummary* SummarizePoints(LASReaderH reader) {
 
           */
         p  = LASReader_GetNextPoint(reader);
+
+        if (LASError_GetLastErrorNum()) {
+            print_error("Not able to fetch point");
+            exit(-1);
+        }
+        
+        i++;
     }
     
     return summary; 
@@ -631,7 +647,7 @@ int main(int argc, char *argv[])
             reader = NULL;
         }
         
-        writer = LASWriter_Create(file_name, header);
+        writer = LASWriter_Create(file_name, header, LAS_MODE_APPEND);
         if (!writer) {
             print_error("Problem creating LASWriterH object");
 	        LASHeader_Destroy(header);
@@ -643,7 +659,6 @@ int main(int argc, char *argv[])
         writer = NULL;
         if (header) LASHeader_Destroy(header);
         header = NULL;
-        exit(0);
     }
     
     if (check_points)
@@ -725,7 +740,7 @@ int main(int argc, char *argv[])
                 }                
             }
                 
-            writer = LASWriter_Create(file_name, header);
+            writer = LASWriter_Create(file_name, header, LAS_MODE_APPEND);
             if (!writer) {
                 print_error("Problem creating LASWriterH object");
     	        LASHeader_Destroy(header);

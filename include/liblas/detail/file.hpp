@@ -25,7 +25,7 @@ class FileImpl
 public:
 
     FileImpl(std::string const& filename);
-    FileImpl(std::string const& filename, LASHeader const& header);
+    FileImpl(std::string const& filename, LASHeader const& header, int mode);
     ~FileImpl();
 
     std::string GetName() const;

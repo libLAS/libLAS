@@ -24,8 +24,8 @@ LASFile::LASFile(std::string const& filename)
 {
 }
 
-LASFile::LASFile(std::string const& filename, LASHeader const& header)
-    : m_pimpl(new detail::FileImpl(filename, header))
+LASFile::LASFile(std::string const& filename, LASHeader const& header, Mode mode)
+    : m_pimpl(new detail::FileImpl(filename, header, mode))
 {
 }
 
@@ -57,6 +57,8 @@ LASFile::Mode LASFile::GetMode() const
         return eRead;
     else if (mode == 1)
         return eWrite;
+    else if (mode == 2)
+        return eAppend;
 
     assert("SHOULD NEVER GET HERE");
     return eRead;

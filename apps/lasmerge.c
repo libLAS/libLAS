@@ -326,7 +326,7 @@ int main(int argc, char *argv[])
   }
 */
 
-  writer = LASWriter_Create(file_name_out, merged_header);
+  writer = LASWriter_Create(file_name_out, merged_header, LAS_MODE_WRITE);
   if (!writer) { 
       fprintf(stderr, 
               "Error! %d, %s, in method %s\n",

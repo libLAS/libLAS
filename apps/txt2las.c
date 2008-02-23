@@ -696,7 +696,7 @@ int main(int argc, char *argv[])
 
 /*	  // open output file
 */
-  writer = LASWriter_Create(file_name_out, header);
+  writer = LASWriter_Create(file_name_out, header, LAS_MODE_WRITE);
   if (!writer) { 
       fprintf(stderr, 
               "Error! %d, %s, in method %s\n",

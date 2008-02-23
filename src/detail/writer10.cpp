@@ -22,6 +22,7 @@ namespace liblas { namespace detail { namespace v10 {
 WriterImpl::WriterImpl(std::ostream& ofs) :
     Base(), m_ofs(ofs), m_pointCount(0)
 {
+
 }
 
 std::size_t WriterImpl::GetVersion() const
@@ -34,6 +35,29 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     uint8_t n1 = 0;
     uint16_t n2 = 0;
     uint32_t n4 = 0;
+
+    // Seek to the beginning
+    m_ofs.seekp(0, std::ios::beg);
+    std::ios::pos_type beginning = m_ofs.tellp();
+
+    // Seek to the end
+    m_ofs.seekp(0, std::ios::end);
+    std::ios::pos_type end = m_ofs.tellp();
+    
+    // Figure out how many points we already have.  Each point record 
+    // should be 20 bytes long, and header.GetDataOffset tells
+    // us the location to start counting points from.  
+    
+    // This test should only be true if we were opened in both 
+    // std::ios::in *and* std::ios::out, otherwise it should return false 
+    // and we won't adjust the point count.
+    
+    if (beginning != end) {
+        m_pointCount = ((uint32_t) end - header.GetDataOffset())/header.GetDataRecordLength();
+
+        // Position to the beginning of the file to start writing the header
+        m_ofs.seekp(0, std::ios::beg);
+    }
 
     // 1. File Signature
     std::string filesig(header.GetFileSignature());
@@ -146,6 +170,13 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     // 30-31. Max/Min Z
     detail::write_n(m_ofs, header.GetMaxZ(), sizeof(double));
     detail::write_n(m_ofs, header.GetMinZ(), sizeof(double));
+ 
+    // If we already have points, we're going to put it at the end of the file.  
+    // If we don't have any points,  we're going to leave it where it is.
+    if (m_pointCount != 0)
+        m_ofs.seekp(0, std::ios::end);
+ 
+
 }
 
 void WriterImpl::UpdateHeader(LASHeader const& header)
@@ -158,6 +189,7 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
 
         detail::write_n(m_ofs, m_pointCount , sizeof(m_pointCount));
     }
+
 }
 
 void WriterImpl::WritePointRecord(detail::PointRecord const& record)
@@ -194,4 +226,5 @@ void WriterImpl::WritePointRecord(detail::PointRecord const& record, double cons
 std::ostream& WriterImpl::GetStream() {
     return m_ofs;
 }
+
 }}} // namespace liblas::detail::v10

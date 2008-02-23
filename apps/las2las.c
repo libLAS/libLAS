@@ -408,7 +408,7 @@ int main(int argc, char *argv[])
 
   fprintf(stderr, "second pass reading %d and writing %d points ...\n", LASHeader_GetPointRecordsCount(header), surviving_number_of_point_records);
 
-  writer = LASWriter_Create(file_name_out, surviving_header);
+  writer = LASWriter_Create(file_name_out, surviving_header, LAS_MODE_APPEND);
   if (!writer) { 
       fprintf(stderr, 
               "Error! %d, %s, in method %s\n",
