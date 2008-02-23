@@ -21,11 +21,6 @@ typedef void *LASHeaderH;
 LAS_C_START
 
 
-/*#ifndef _WIN32
-#include <stdint.h>
-#endif
-*/
-
 #define LAS_MODE_READ 0
 #define LAS_MODE_WRITE 1
 #define LAS_MODE_APPEND 2
@@ -39,12 +34,38 @@ typedef enum
     LE_Fatal = 4
 } LASError;
 
+typedef struct  {
+
+    double t;
+    double x, y, z;
+    uint16_t intensity;
+    uint8_t cls;
+    uint8_t scan_angle;
+    uint8_t user_data;
+    uint16_t retnum;
+    uint16_t numret;
+    uint16_t scandir;
+    uint16_t fedge;
+    long rgpsum;    
+    int number_of_point_records;
+    int number_of_points_by_return[8];
+    int number_of_returns_of_given_pulse[8];
+    int classification[32];
+    int classification_synthetic;
+    int classification_keypoint;
+    int classification_withheld;
+    LASPointH pmax;
+    LASPointH pmin;
+} LASPointSummary;
+
+
 LAS_DLL void LASError_Reset(void);
 LAS_DLL void LASError_Pop(void);
 LAS_DLL LASError LASError_GetLastErrorNum(void);
 LAS_DLL const char * LASError_GetLastErrorMsg(void);
 LAS_DLL const char * LASError_GetLastErrorMethod(void);
 LAS_DLL int LASError_GetErrorCount(void);
+LAS_DLL void LASError_Print(const char* message);
 
 LAS_DLL LASReaderH LASReader_Create(const char * filename);
 LAS_DLL LASPointH LASReader_GetNextPoint(const LASReaderH hReader);

@@ -20,7 +20,7 @@ typedef void *LASHeaderH;
 #include <string>
 #include <stack>
 #include <map>
-//#include <cstdio>
+#include <cstdio>
 #include <exception>
 
 #include <iostream>
@@ -1116,5 +1116,24 @@ void LASWriter_Destroy(LASWriterH hWriter)
     }
 
     hWriter=NULL;
+}
+
+void LASError_Print(char* message) {
+
+    if (LASError_GetErrorCount()) {
+        fprintf(stdout, 
+            "%s: %s (%d) from method %s\n",
+            message,
+            LASError_GetLastErrorMsg(),
+            LASError_GetLastErrorNum(),
+            LASError_GetLastErrorMethod()
+        ); 
+    } else {
+        fprintf(stdout, 
+            "You have encountered an error. '%s'\n",
+            message
+        );         
+    }
+
 }
 } // extern "C"
