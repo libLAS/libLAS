@@ -178,6 +178,7 @@ int main(int argc, char *argv[])
                 )
         {
             use_stdout = TRUE;
+            file_name_out = "stdout";
         }
 
         else if (i == argc - 2 && num_file_name_in == 0 && file_name_out == 0)
