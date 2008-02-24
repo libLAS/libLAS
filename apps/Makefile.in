@@ -33,7 +33,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = lasinfo$(EXEEXT) las2las$(EXEEXT) lasmerge$(EXEEXT) \
-	las2txt$(EXEEXT) txt2las$(EXEEXT)
+	las2txt$(EXEEXT) txt2las$(EXEEXT) test$(EXEEXT)
 subdir = apps
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -49,7 +49,7 @@ am_las2las_OBJECTS = las2las.$(OBJEXT)
 las2las_OBJECTS = $(am_las2las_OBJECTS)
 las2las_LDADD = $(LDADD)
 las2las_DEPENDENCIES = ../src/liblas.la
-am_las2txt_OBJECTS = las2txt.$(OBJEXT)
+am_las2txt_OBJECTS = las2txt.$(OBJEXT) lascommon.$(OBJEXT)
 las2txt_OBJECTS = $(am_las2txt_OBJECTS)
 las2txt_LDADD = $(LDADD)
 las2txt_DEPENDENCIES = ../src/liblas.la
@@ -61,6 +61,10 @@ am_lasmerge_OBJECTS = lasmerge.$(OBJEXT) lascommon.$(OBJEXT)
 lasmerge_OBJECTS = $(am_lasmerge_OBJECTS)
 lasmerge_LDADD = $(LDADD)
 lasmerge_DEPENDENCIES = ../src/liblas.la
+am_test_OBJECTS = test.$(OBJEXT)
+test_OBJECTS = $(am_test_OBJECTS)
+test_LDADD = $(LDADD)
+test_DEPENDENCIES = ../src/liblas.la
 am_txt2las_OBJECTS = txt2las.$(OBJEXT)
 txt2las_OBJECTS = $(am_txt2las_OBJECTS)
 txt2las_LDADD = $(LDADD)
@@ -77,10 +81,20 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 SOURCES = $(las2las_SOURCES) $(las2txt_SOURCES) $(lasinfo_SOURCES) \
-	$(lasmerge_SOURCES) $(txt2las_SOURCES)
+	$(lasmerge_SOURCES) $(test_SOURCES) $(txt2las_SOURCES)
 DIST_SOURCES = $(las2las_SOURCES) $(las2txt_SOURCES) \
-	$(lasinfo_SOURCES) $(lasmerge_SOURCES) $(txt2las_SOURCES)
+	$(lasinfo_SOURCES) $(lasmerge_SOURCES) $(test_SOURCES) \
+	$(txt2las_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -193,14 +207,14 @@ INCLUDES = -I../include/liblas/capi -I../include
 lasinfo_SOURCES = lasinfo.c lascommon.c
 las2las_SOURCES = las2las.c
 lasmerge_SOURCES = lasmerge.c lascommon.c
-las2txt_SOURCES = las2txt.c
+las2txt_SOURCES = las2txt.c lascommon.c
 txt2las_SOURCES = txt2las.c
 test_SOURCES = test.cpp
 LDADD = ../src/liblas.la
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -270,6 +284,9 @@ lasinfo$(EXEEXT): $(lasinfo_OBJECTS) $(lasinfo_DEPENDENCIES)
 lasmerge$(EXEEXT): $(lasmerge_OBJECTS) $(lasmerge_DEPENDENCIES) 
 	@rm -f lasmerge$(EXEEXT)
 	$(LINK) $(lasmerge_OBJECTS) $(lasmerge_LDADD) $(LIBS)
+test$(EXEEXT): $(test_OBJECTS) $(test_DEPENDENCIES) 
+	@rm -f test$(EXEEXT)
+	$(CXXLINK) $(test_OBJECTS) $(test_LDADD) $(LIBS)
 txt2las$(EXEEXT): $(txt2las_OBJECTS) $(txt2las_DEPENDENCIES) 
 	@rm -f txt2las$(EXEEXT)
 	$(LINK) $(txt2las_OBJECTS) $(txt2las_LDADD) $(LIBS)
@@ -285,6 +302,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lascommon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lasinfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lasmerge.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/txt2las.Po@am__quote@
 
 .c.o:
@@ -307,6 +325,27 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+.cpp.o:
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cpp.lo:
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
 mostlyclean-libtool:
 	-rm -f *.lo
