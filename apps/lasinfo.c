@@ -31,7 +31,7 @@ void print_header(LASHeaderH header, const char* file_name);
 void usage()
 {
     fprintf(stderr,"----------------------------------------------------------\n");
-    fprintf(stderr,"    lasinfo usage:\n");
+    fprintf(stderr,"    lasinfo (version %s) usage:\n", LAS_GetVersion());
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr,"\n");
 
@@ -57,11 +57,15 @@ void usage()
                     "--generating_software \"this is a test (-:\"  --file_creation 8 2007\n");
     fprintf(stderr,"\n");
 
+    fprintf(stderr,"Print this output:\n");
+    fprintf(stderr, "  lasinfo --help\n");
+    fprintf(stderr,"\n");
+    
     fprintf(stderr, "For more information, see the full documentation for lasinfo at:\n"
                     " http://liblas.org/browser/trunk/doc/lasinfo.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
-    exit(1);
+    exit(0);
 }
 
 
