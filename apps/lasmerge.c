@@ -27,7 +27,7 @@ void usage()
 {
 
     fprintf(stderr,"----------------------------------------------------------\n");
-    fprintf(stderr,"    lasmerge usage:\n");
+    fprintf(stderr,"    lasmerge (version %s) usage:\n", LAS_GetVersion());
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr,"\n");
 
@@ -59,11 +59,11 @@ void usage()
     fprintf(stderr, "  lasmerge --help\n");
     fprintf(stderr,"\n");
     
-    fprintf(stderr, "For more information, see the full documentation for lasinfo at:\n"
+    fprintf(stderr, "For more information, see the full documentation for lasmerge at:\n"
                     " http://liblas.org/browser/trunk/doc/lasmerge.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
     
-    exit(1);
+    exit(0);
 }
 
 void ptime(const char *const msg)
