@@ -1136,4 +1136,8 @@ void LASError_Print(char* message) {
     }
 
 }
+
+const char * LAS_GetVersion() {
+    return PACKAGE_VERSION;
+}
 } // extern "C"
