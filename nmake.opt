@@ -1,5 +1,5 @@
-LAS_VERSION=10
-
+LAS_VERSION=0.9
+PACKAGE_VERSION="0.9.0"
 LAS_LIB = liblas.lib
 LAS_DLL = liblas$(LAS_VERSION).dll
 LAS_LIB_DLL = liblas_i.lib
@@ -23,7 +23,7 @@ LAS_LIB_DLL = liblas_i.lib
 
 
 
-CFLAGS= $(OPTFLAGS) $(INCLUDES)
+CFLAGS= $(OPTFLAGS) /DPACKAGE_VERSION=\"$(PACKAGE_VERSION)\"  $(INCLUDES) 
 
 .c.obj:	
 	$(CC) $(CFLAGS) /c $*.c /Fo$*.obj
