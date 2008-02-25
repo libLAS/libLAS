@@ -10,11 +10,14 @@ LAS_OBJS	=	laswriter.obj \
                 las_c_api.obj \
                 laspoint.obj \
                 lasheader.obj \
+                lasfile.obj \
                 detail\reader.obj \
                 detail\reader10.obj \
                 detail\reader11.obj \
                 detail\writer.obj \
-                detail\writer10.obj
+                detail\writer10.obj \
+                detail\writer11.obj \
+                detail\file.obj
                 
 default: $(LAS_DLL)
 
