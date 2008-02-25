@@ -1,16 +1,77 @@
-****************************************************************
-  LASreader and LASwriter
-****************************************************************
+***************************************************************
+libLAS -- A C++ library for reading and writing LAS LiDAR data 
+***************************************************************
 
+This library is available under the terms of the `BSD License`_ 
+for reading and writing LAS `LIDAR`_ data. It was originally developed by 
+`Martin Isenburg and Jonathan Shewchuk`_ of the  University of North Carolina. 
+Continuing development by Mateusz Loskot and Howard Butler is supported by 
+the `IGSB`_ of the Iowa DNR for use in its state-wide `LIDAR`_ project.
 
+The library currently only reads/writes LAS 1.0 and 1.1 data.  LAS 2.0 support
+is not scheduled to be developed in the near future.  The library provides 
+both a C and a C++ API along with some utility applications for manipulating 
+LAS files (they utilize the C API).  
 
-This is the API for reading and writing LAS files from and to the
-standard format (\*.las) as defined by (www.lasformat.org).
-try these sources for sample lidar data in LAS format:
+Limitations
+~~~~~~~~~~~~~~~~~~~~~~~
 
-http://www.geoict.net/LidarData/Data/OptechSampleLAS.zip
+As of version 0.9.0, the following is not supported:
 
-http://www.qcoherent.com/data/LP360_Sample_Data.rar
+ - Variable length headers (will be complete by 1.0.0)
+ - Spatial reference interpretation
+ - txt2las (port to new library is not complete)
+ - lasdiff (port to new library is not complete)
 
-http://www.appliedimagery.com/Serpent%20Mound%20Model%20LAS%20Data.las
+Installation
+~~~~~~~~~~~~~~~~~~~~~~~
 
+See INSTALL for notes how to install libLAS on unix-like platforms.  Windows 
+installation should be a simple as copying the dll and library executables to 
+a path in which you wish to run them from.
+
+-------------------------
+LAS Format Specifications
+-------------------------
+
+LAS Format standard documents in PDF format:
+
+* `LAS 2.0 Format Standard`_ (2007-05-01) - *Proposed*
+* `LAS 1.1 Format Standard`_ (2005-05-07)
+* `LAS 1.0 Format Standard`_ (2003-05-09)
+
+The LAS Format Standard is maintained by `ASPRS Standards Committee`_.
+
+-------------
+Mailing lists 
+-------------
+
+* liblas-devel - http://mail.hobu.net/mailman/listinfo/liblas-devel
+* liblas-commits - http://mail.hobu.net/mailman/listinfo/liblas-commits
+
+---------------------
+Subversion Repository
+---------------------
+
+The SVN repository URL is available at http://liblas.org/svn
+
+* svn checkout http://liblas.org/svn/trunk/
+
+-----------------
+License
+-----------------
+
+libLAS is `BSD licensed <http://www.opensource.org/licenses/bsd-license.php>`_.  
+See LICENSE.txt for a copy of the license.
+
+.. _`LIDAR`: http://en.wikipedia.org/wiki/LIDAR
+.. _`IGSB`: http://www.igsb.uiowa.edu/
+.. _`Martin Isenburg`: http://www.cs.unc.edu/~isenburg/
+.. _`LAStools`: http://www.cs.unc.edu/~isenburg/lastools/
+.. _`Martin Isenburg and Jonathan Shewchuk`: http://www.cs.unc.edu/~isenburg/lastools/
+.. _`LAS Format`: http://www.lasformat.org/
+.. _`LAS 2.0 Format Standard`: http://www.asprs.org/society/divisions/ppd/standards/asprs_las_format_v20.pdf
+.. _`LAS 1.1 Format Standard`: http://www.asprs.org/society/divisions/ppd/standards/asprs_las_format_v11.pdf
+.. _`LAS 1.0 Format Standard`: http://www.asprs.org/society/divisions/ppd/standards/asprs_las_format_v10.pdf
+.. _`ASPRS Standards Committee`: http://www.asprs.org/society/divisions/ppd/standards/standards_comm.htm
+.. _`BSD License`: http://www.opensource.org/licenses/bsd-license.php
