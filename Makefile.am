@@ -1,6 +1,6 @@
 
 
-SUBDIRS = src apps
+SUBDIRS = src apps include
 
 
 

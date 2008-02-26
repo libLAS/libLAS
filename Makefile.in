@@ -174,7 +174,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = src apps
+SUBDIRS = src apps include
 all: all-recursive
 
 .SUFFIXES:
