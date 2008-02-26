@@ -58,7 +58,9 @@ ENDIF (WIN32)
 #############################################################
 # List of directories to process
 
-SUBDIRS( src test )
+SUBDIRS( src include test )
+
+
 
 
 
