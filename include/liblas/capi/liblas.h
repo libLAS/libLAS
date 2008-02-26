@@ -63,8 +63,8 @@ LAS_DLL const char* LAS_GetVersion();
 LAS_DLL void LASError_Reset(void);
 LAS_DLL void LASError_Pop(void);
 LAS_DLL LASError LASError_GetLastErrorNum(void);
-LAS_DLL const char * LASError_GetLastErrorMsg(void);
-LAS_DLL const char * LASError_GetLastErrorMethod(void);
+LAS_DLL char * LASError_GetLastErrorMsg(void);
+LAS_DLL char * LASError_GetLastErrorMethod(void);
 LAS_DLL int LASError_GetErrorCount(void);
 LAS_DLL void LASError_Print(const char* message);
 
