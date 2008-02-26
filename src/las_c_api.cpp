@@ -46,15 +46,13 @@ typedef enum
     LE_Fatal = 4
 } LASErrorEnum;
 
-std::ifstream g_ifs;
-std::ofstream g_ofs;
 
-std::stack<LASError > errors;
 
 typedef std::map<std::string, LASFile> StrLASFileMap;
 typedef std::map<std::string, LASFile>::const_iterator StrLASFileMapIt;
 
-StrLASFileMap files;
+static StrLASFileMap files;
+static std::stack<LASError > errors;
 
 #define VALIDATE_POINTER0(ptr, func) \
    do { if( NULL == ptr ) \
@@ -1140,7 +1138,7 @@ LAS_DLL void LASError_Print(char* message) {
 }
 
 LAS_DLL const char * LAS_GetVersion() {
-    return PACKAGE_VERSION;
+    return strdup(PACKAGE_VERSION);
 }
 
 LAS_C_END
