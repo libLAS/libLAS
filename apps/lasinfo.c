@@ -61,7 +61,7 @@ void usage()
     fprintf(stderr, "  lasinfo --help\n");
     fprintf(stderr,"\n");
     
-    fprintf(stderr, "For more information, see the full documentation for lasinfo at:\n"
+    fprintf(stderr, "\nFor more information, see the full documentation for lasinfo at:\n"
                     " http://liblas.org/browser/trunk/doc/lasinfo.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
             )
         {
             usage();
+            exit(0);
         }
         else if (   strcmp(argv[i],"--input") == 0  ||
                     strcmp(argv[i],"-input") == 0   ||
