@@ -69,7 +69,7 @@ void usage()
     fprintf(stderr," possible are 'percent', 'dollar', 'semicolon', 'komma',\n");
     fprintf(stderr," 'star', 'colon', or 'semicolon' as that special character.\n");
 
-    fprintf(stderr, "For more information, see the full documentation for las2txt at:\n"
+    fprintf(stderr, "\nFor more information, see the full documentation for las2txt at:\n"
                     " http://liblas.org/browser/trunk/doc/las2txt.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
             )
         {
             usage();
+            exit(0);
         }
         else if (   strcmp(argv[i],"-v") == 0 ||
                     strcmp(argv[i],"--verbose") == 0
