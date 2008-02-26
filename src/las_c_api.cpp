@@ -95,21 +95,21 @@ LAS_DLL int LASError_GetLastErrorNum(void){
     }
 }
 
-LAS_DLL const char* LASError_GetLastErrorMsg(void){
+LAS_DLL char* LASError_GetLastErrorMsg(void){
     if (errors.empty()) 
         return NULL;
     else {
         LASError err = errors.top();
-        return err.GetMessage().c_str();
+        return strdup(err.GetMessage().c_str());
     }
 }
 
-LAS_DLL const char* LASError_GetLastErrorMethod(void){
+LAS_DLL char* LASError_GetLastErrorMethod(void){
     if (errors.empty()) 
         return NULL;
     else {
         LASError err = errors.top();
-        return err.GetMethod().c_str();
+        return strdup(err.GetMethod().c_str());
     }
 }
 
@@ -1120,14 +1120,20 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
 
 LAS_DLL void LASError_Print(const char* message) {
 
+    char* errmsg= NULL;
+    char* errmethod = NULL;
+    errmsg = LASError_GetLastErrorMsg();
+    errmethod = LASError_GetLastErrorMethod();
     if (LASError_GetErrorCount()) {
         fprintf(stdout, 
             "%s: %s (%d) from method %s\n",
             message,
-            LASError_GetLastErrorMsg(),
+            errmsg,
             LASError_GetLastErrorNum(),
-            LASError_GetLastErrorMethod()
+            errmethod
         ); 
+        if (errmsg) free(errmsg);
+        if (errmethod) free(errmethod);
     } else {
         fprintf(stdout, 
             "You have encountered an error. '%s'\n",
