@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
             )
         {
             usage();
+            exit(0);
         }
         else if (   strcmp(argv[i],"-v") == 0 ||
                     strcmp(argv[i],"--verbose") == 0
