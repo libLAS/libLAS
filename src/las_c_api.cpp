@@ -179,8 +179,8 @@ void LASReader_Destroy(LASReaderH hReader)
             LASReader& freader = f.GetReader();
 
             try {
-                std::ifstream& a = dynamic_cast<std::ifstream&>(freader.GetStream());
-                std::ifstream& r = dynamic_cast<std::ifstream&>(reader->GetStream());
+                std::ifstream& a = static_cast<std::ifstream&>(freader.GetStream());
+                std::ifstream& r = static_cast<std::ifstream&>(reader->GetStream());
                 if (&a == &r) {
                     files.erase(p);
                     hReader = NULL;
@@ -190,7 +190,7 @@ void LASReader_Destroy(LASReaderH hReader)
         
             } catch (std::bad_cast const& e)
             {
-                std::istream& a = dynamic_cast<std::istream&>(freader.GetStream());
+                std::istream& a = static_cast<std::istream&>(freader.GetStream());
                 std::istream& r = reader->GetStream();
                 if (&a == &r) {
                     files.erase(p);
@@ -1082,8 +1082,8 @@ void LASWriter_Destroy(LASWriterH hWriter)
             LASWriter& fwriter = f.GetWriter();
 
             try {
-                std::ofstream& a = dynamic_cast<std::ofstream&>(fwriter.GetStream());
-                std::ofstream& r = dynamic_cast<std::ofstream&>(writer->GetStream());
+                std::ofstream& a = static_cast<std::ofstream&>(fwriter.GetStream());
+                std::ofstream& r = static_cast<std::ofstream&>(writer->GetStream());
                 if (&a == &r) {
                     files.erase(p);
                     hWriter = NULL;
@@ -1092,7 +1092,7 @@ void LASWriter_Destroy(LASWriterH hWriter)
         
             } catch (std::bad_cast const& e)
             {
-                std::ostream& a = dynamic_cast<std::ostream&>(fwriter.GetStream());
+                std::ostream& a = static_cast<std::ostream&>(fwriter.GetStream());
                 std::ostream& r = writer->GetStream();
                 if (&a == &r) {
                     files.erase(p);
