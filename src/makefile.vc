@@ -29,7 +29,7 @@ $(LAS_LIB):	$(LAS_OBJS)
 	
 $(LAS_DLL):	$(LAS_LIB)
 	link /dll  \
-	   $(LAS_OBJS) \
+	   $(LAS_OBJS) $(LAS_LIB) \
 	   /out:$(LAS_DLL) /implib:$(LAS_LIB_DLL)
 	if exist $(LAS_DLL).manifest mt -manifest $(LAS_DLL).manifest -outputresource:$(LAS_DLL);2   
 
