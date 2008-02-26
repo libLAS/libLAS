@@ -33,3 +33,6 @@ clean:
 	-del *.exe
 	-del *.manifest
 	-del *.bak
+
+install: default
+    xcopy /y /r /d /f *.exe $(BINDIR)
