@@ -8,6 +8,10 @@ INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
 
 BUILD_DEBUG = NO
 
+LAS_HOME=C:\cvs\liblas\trunk\
+
+BINDIR=$(LAS_HOME)\bin
+
 
 !IF "$(BUILD_DEBUG)" == "YES"
 OPTFLAGS=	/nologo /MDd /EHsc /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /DDEBUG /D_DEBUG /Fd$(LAS_ROOT)\las.pdb

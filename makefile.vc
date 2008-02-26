@@ -30,3 +30,10 @@ clean:
 	$(MAKE) /f makefile.vc clean
 	cd ..
 
+install: src_dir apps_dir
+    -mkdir $(BINDIR)
+    cd src
+    $(MAKE) /f makefile.vc install
+    cd ..
+    cd apps
+    $(MAKE) /f makefile.vc install
