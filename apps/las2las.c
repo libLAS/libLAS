@@ -55,7 +55,7 @@ void usage()
     fprintf(stderr,"\n");
 
 
-    fprintf(stderr, "For more information, see the full documentation for las2las at:\n"
+    fprintf(stderr, "\nFor more information, see the full documentation for las2las at:\n"
                     " http://liblas.org/browser/trunk/doc/las2las.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
@@ -116,6 +116,7 @@ int main(int argc, char *argv[])
             )
         {
             usage();
+            exit(0);
         }
         else if (   strcmp(argv[i],"-v") == 0 ||
                     strcmp(argv[i],"--verbose") == 0
