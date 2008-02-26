@@ -19,8 +19,8 @@
 //  07 Mar 2007 - converted to header only
 //  20 Jan 2008 - removed dependency of Boost and modified for libLAS (by Mateusz Loskot)
 //
-#ifndef LIBLAS_GUID_HPP
-#define LIBLAS_GUID_HPP
+#ifndef LIBLAS_GUID_HPP_INCLUDED
+#define LIBLAS_GUID_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/sha1.hpp>
@@ -54,13 +54,6 @@ public:
         if (0 == str)
             throw_invalid_argument();
         construct(std::string(str));
-    }
-
-    explicit guid(wchar_t const* const str)
-    {
-        if (0 == str)
-            throw_invalid_argument();
-        construct(std::wstring(str));
     }
 
     template <typename ch, typename char_traits, typename alloc>
@@ -130,18 +123,15 @@ public:
     {
         return to_basic_string<std::string::value_type, std::string::traits_type, std::string::allocator_type>();
     }
-
-    std::wstring to_wstring() const
-    {
-       return to_basic_string<std::wstring::value_type, std::wstring::traits_type, std::wstring::allocator_type>();
-    }
     
     template <typename ch, typename char_traits, typename alloc>
     std::basic_string<ch, char_traits, alloc> to_basic_string() const
     {
         std::basic_string<ch, char_traits, alloc> s;
         std::basic_stringstream<ch, char_traits, alloc> ss;
-        if (!(ss << *this) || !(ss >> s))
+        liblas::guid const& g = *this;
+        ss << g;
+        if (!ss || !(ss >> s))
         {
             throw std::runtime_error("failed to convert guid to string");
         }
@@ -226,11 +216,8 @@ public:
         return iosbase;
     }
     
-    template <typename ch, typename char_traits> 
-    friend std::basic_ostream<ch, char_traits>& operator<<(std::basic_ostream<ch, char_traits> &os, guid const& g);
-
-    template <typename ch, typename char_traits> 
-    friend std::basic_istream<ch, char_traits>& operator>>(std::basic_istream<ch, char_traits> &is, guid &g);
+    friend std::ostream& operator<<(std::ostream& os, guid const& g);
+    friend std::istream& operator>>(std::istream& is, guid &g);
 
 private:
 
@@ -357,8 +344,7 @@ private:
     liblas::uint8_t data_[static_size];
 };
 
-template <typename ch, typename char_traits>
-std::basic_ostream<ch, char_traits>& operator<<(std::basic_ostream<ch, char_traits> &os, guid const& g)
+inline std::ostream& operator<<(std::ostream& os, guid const& g)
 {
     using namespace std;
 
@@ -366,9 +352,9 @@ std::basic_ostream<ch, char_traits>& operator<<(std::basic_ostream<ch, char_trai
     // use Boost I/O State Savers for safe RAII.
     std::ios_base::fmtflags flags_saver(os.flags());
     std::streamsize width_saver(os.width());
-    ch fill_saver(os.fill());
+    std::ostream::char_type fill_saver(os.fill());
 
-    const typename basic_ostream<ch, char_traits>::sentry ok(os);
+    const std::ostream::sentry ok(os);
     if (ok)
     {
         bool showbraces = guid::get_showbraces(os);
@@ -400,18 +386,17 @@ std::basic_ostream<ch, char_traits>& operator<<(std::basic_ostream<ch, char_trai
     return os;
 }
 
-template <typename ch, typename char_traits>
-std::basic_istream<ch, char_traits>& operator>>(std::basic_istream<ch, char_traits> &is, guid &g)
+inline std::istream& operator>>(std::istream& is, guid &g)
 {
     using namespace std;
 
+    typedef std::istream::char_type char_type;
     guid temp_guid;
-
-    const typename basic_istream<ch, char_traits>::sentry ok(is);
+    const std::istream::sentry ok(is);
     if (ok)
     {
-        ch c;
-        c = static_cast<ch>(is.peek());
+        char_type c;
+        c = static_cast<char_type>(is.peek());
         bool bHaveBraces = false;
         if (c == '{')
         {
@@ -421,7 +406,7 @@ std::basic_istream<ch, char_traits>& operator>>(std::basic_istream<ch, char_trai
 
         for (size_t i = 0; i < temp_guid.static_size && is; ++i)
         {
-            std::basic_stringstream<ch, char_traits> ss;
+            std::stringstream ss;
 
             // read 2 characters into stringstream
             is >> c; ss << c;
@@ -472,4 +457,4 @@ std::basic_istream<ch, char_traits>& operator>>(std::basic_istream<ch, char_trai
 
 } //namespace liblas
 
-#endif // LIBLAS_GUID_HPP
+#endif // LIBLAS_GUID_HPP_INCLUDED
