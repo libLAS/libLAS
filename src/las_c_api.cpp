@@ -89,25 +89,28 @@ LAS_DLL void LASError_Pop(void) {
 LAS_DLL int LASError_GetLastErrorNum(void){
     if (errors.empty())
         return 0;
-    else
+    else {
         LASError err = errors.top();
         return err.GetCode();
+    }
 }
 
 LAS_DLL const char* LASError_GetLastErrorMsg(void){
     if (errors.empty()) 
         return NULL;
-    else
+    else {
         LASError err = errors.top();
         return err.GetMessage().c_str();
+    }
 }
 
 LAS_DLL const char* LASError_GetLastErrorMethod(void){
     if (errors.empty()) 
         return NULL;
-    else
+    else {
         LASError err = errors.top();
         return err.GetMethod().c_str();
+    }
 }
 
 LAS_DLL void LASError_PushError(int code, const char *message, const char *method) {
