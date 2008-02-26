@@ -87,30 +87,27 @@ LAS_DLL void LASError_Pop(void) {
 }
 
 LAS_DLL int LASError_GetLastErrorNum(void){
-    if (errors.empty()) return 0;
-    if (errors.size() > 0) {
+    if (errors.empty())
+        return 0;
+    else
         LASError err = errors.top();
         return err.GetCode();
-    }
-    return 0;
 }
 
 LAS_DLL const char* LASError_GetLastErrorMsg(void){
-    if (errors.empty()) return NULL;
-    if (errors.size() > 0) {
+    if (errors.empty()) 
+        return NULL;
+    else
         LASError err = errors.top();
         return err.GetMessage().c_str();
-    }
-    return NULL;
 }
 
 LAS_DLL const char* LASError_GetLastErrorMethod(void){
-    if (errors.empty()) return NULL;
-    if (errors.size() > 0) {
+    if (errors.empty()) 
+        return NULL;
+    else
         LASError err = errors.top();
         return err.GetMethod().c_str();
-    }
-    return NULL;    
 }
 
 LAS_DLL void LASError_PushError(int code, const char *message, const char *method) {
@@ -1118,7 +1115,7 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
     hWriter=NULL;
 }
 
-LAS_DLL void LASError_Print(char* message) {
+LAS_DLL void LASError_Print(const char* message) {
 
     if (LASError_GetErrorCount()) {
         fprintf(stdout, 
