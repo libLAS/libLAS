@@ -46,3 +46,7 @@ clean:
 	-del *.manifest
 	for %d in ( $(LAS_OBJS) ) do \
 		del %d	
+
+install: $(LAS_DLL)
+    echo $(BINDIR)
+    xcopy /y /r /d /f $(LAS_DLL) $(BINDIR)
