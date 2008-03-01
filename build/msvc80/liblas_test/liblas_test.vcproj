@@ -207,6 +207,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\test\unit\lasrecordheader_test.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\test\unit\liblas_test_suite.cpp"
 			>
 		</File>

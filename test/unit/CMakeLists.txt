@@ -8,6 +8,7 @@ SET( LIBLAS_TEST_SRC
     guid_test.cpp
     laspoint_test.cpp
     lasheader_test.cpp
+    lasrecordheader_test.cpp
     liblas_test_suite.cpp
 )
 

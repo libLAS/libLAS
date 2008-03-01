@@ -276,6 +276,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\lasrecordheader.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\laswriter.cpp"
 				>
 			</File>

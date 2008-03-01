@@ -24,6 +24,7 @@ SET( LIBLAS_HEADERS
     ../include/liblas/lasfile.hpp
     ../include/liblas/lasheader.hpp
     ../include/liblas/laspoint.hpp
+    ../include/liblas/lasrecordheader.hpp
     ../include/liblas/lasreader.hpp
     ../include/liblas/lasrecordheader.hpp
     ../include/liblas/laswriter.hpp
@@ -41,6 +42,7 @@ SET( LIBLAS_SRC
     laserror.cpp
     laspoint.cpp
     lasheader.cpp
+    lasrecordheader.cpp
     lasreader.cpp
     laswriter.cpp
     lasfile.cpp
