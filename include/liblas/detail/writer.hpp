@@ -25,6 +25,8 @@ public:
     virtual void UpdateHeader(LASHeader const& header) = 0;
     virtual void WritePointRecord(PointRecord const& record) = 0;
     virtual void WritePointRecord(PointRecord const& record, double const& time) = 0;
+
+    // TODO: fix constness
     virtual std::ostream& GetStream() = 0;
 
 private:
@@ -32,9 +34,6 @@ private:
     // Blocked copying operations, declared but not defined.
     Writer(Writer const& other);
     Writer& operator=(Writer const& rhs);
-    
-
-
 };
 
 class WriterFactory

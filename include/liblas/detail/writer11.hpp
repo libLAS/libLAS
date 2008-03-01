@@ -28,13 +28,14 @@ public:
     void UpdateHeader(LASHeader const& header);
     void WritePointRecord(PointRecord const& record);
     void WritePointRecord(PointRecord const& record, double const& time);
+
+    // TODO: fix constness
     std::ostream& GetStream();
     
 private:
 
     std::ostream& m_ofs;
     liblas::uint32_t m_pointCount;
-
 };
 
 }}} // namespace liblas::detail::v11

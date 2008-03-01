@@ -17,8 +17,7 @@
 #include <memory>
 #include <cstdlib> // std::size_t
 
-namespace liblas
-{
+namespace liblas {
 
 /// \todo To be documented.
 class LASReader

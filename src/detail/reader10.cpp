@@ -12,6 +12,7 @@
 #include <liblas/laspoint.hpp>
 // std
 #include <fstream>
+#include <iostream>
 #include <cstdlib> // std::size_t
 #include <cassert>
 #include <stdexcept>
@@ -240,13 +241,14 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
 
     if (m_current < m_size)
     {
-        try {
+        try
+        {
             detail::read_n(record, m_ifs, sizeof(PointRecord));
-            ++m_current;
-            
+            ++m_current;    
         }
-        // we reached the end of the file
-        catch (std::out_of_range const& e) {
+        catch (std::out_of_range const& e) // we reached the end of the file
+        {
+            std::cerr << e.what() << std::endl;
             return false;
         }
 

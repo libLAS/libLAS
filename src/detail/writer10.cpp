@@ -222,7 +222,8 @@ void WriterImpl::WritePointRecord(detail::PointRecord const& record, double cons
     detail::write_n(m_ofs, time, sizeof(double));
 }
 
-std::ostream& WriterImpl::GetStream() {
+std::ostream& WriterImpl::GetStream()
+{
     return m_ofs;
 }
 
