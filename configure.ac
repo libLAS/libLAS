@@ -66,6 +66,33 @@ AC_DEFUN([AC_HAVE_LONG_LONG],
   rm -f conftest*
 ])
 
+dnl ###########################################################
+dnl GDAL
+dnl ###########################################################
+AC_ARG_WITH(gdal,[  --with-gdal=ARG         Path to gdal-config],,)
+if test "$with_gdal" = "yes" -o "$with_gdal" = "" ; then
+  AC_PATH_PROG(GDAL_CONFIG, gdal-config, no)
+else
+  if test "`basename xx/$with_gdal`" = "gdal-config" ; then
+    AC_MSG_RESULT([GDAL enabled with provided gdal-config])
+    GDAL_CONFIG="$with_gdal"
+  else
+    AC_MSG_ERROR([--with-gdal should have yes or a path to gdal-config])
+  fi
+fi
+if test "$GDAL_CONFIG" != "no" ; then
+  VERSION=`$GDAL_CONFIG --version`
+  AC_MSG_RESULT([$GDAL_CONFIG reports version $VERSION])
+  LIBS="`$GDAL_CONFIG --libs` $LIBS"
+  GDAL_INC=`$GDAL_CONFIG --cflags`
+  GDAL_PREFIX=`$GDAL_CONFIG --prefix`
+  OGR=`$GDAL_CONFIG --ogr-enabled`
+  if test "$OGR" != "yes" ; then
+  	AC_MSG_ERROR([$GDAL_CONFIG says OGR is not enabled])
+  fi
+fi
+AC_SUBST(GDAL_INC GDAL_PREFIX)
+
 AC_HAVE_LONG_LONG
 
 dnl Checks for library functions.
@@ -92,4 +119,5 @@ LOC_MSG([  Installation directory...: ${prefix}])
 LOC_MSG([  C compiler...............: ${CC} ${CFLAGS}])
 LOC_MSG([  C++ compiler.............: ${CXX} ${CXXFLAGS}])
 LOC_MSG([  Debugging support........: ${enable_debug}])
+LOC_MSG([  GDAL support........: ${with_gdal}])
 LOC_MSG()
