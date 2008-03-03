@@ -37,6 +37,7 @@ FileImpl::FileImpl(std::string const& filename)
         }
     }
 
+    // TODO: apply RAII
     assert(0 != m_istrm);
     m_reader = new LASReader(*m_istrm);
     m_header = m_reader->GetHeader();
@@ -76,6 +77,7 @@ FileImpl::FileImpl(std::string const& filename, LASHeader const& header, int mod
         }
     }
 
+    // TODO: apply RAII
     assert(0 != m_ostrm);
     m_writer = new LASWriter(*m_ostrm, m_header);
 
