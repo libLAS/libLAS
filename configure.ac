@@ -70,8 +70,9 @@ dnl ###########################################################
 dnl GDAL
 dnl ###########################################################
 AC_ARG_WITH(gdal,[  --with-gdal=ARG         Path to gdal-config],,)
-if test "$with_gdal" = "yes" -o "$with_gdal" = "" ; then
-  AC_PATH_PROG(GDAL_CONFIG, gdal-config, no)
+if test "$with_gdal" = "no" -o "$with_gdal" = "" ; then
+  GDAL_CONFIG="$with_gdal"
+dnl  AC_PATH_PROG(GDAL_CONFIG, gdal-config, no)
 else
   if test "`basename xx/$with_gdal`" = "gdal-config" ; then
     AC_MSG_RESULT([GDAL enabled with provided gdal-config])
