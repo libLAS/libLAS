@@ -77,8 +77,8 @@ int main(int argc, char *argv[])
     int use_stdout = FALSE;
     char* file_name_in = 0;
     char* file_name_out = 0;
-    int clip_xy_min[2];
-    int clip_xy_max[2];
+    double *clip_xy_min = NULL;
+    double *clip_xy_max = NULL;
     int clip = FALSE;
     int remove_extra_header = FALSE;
     int elim_return = 0;
@@ -155,14 +155,16 @@ int main(int argc, char *argv[])
                     strcmp(argv[i],"-clip_xy") == 0 
                 )
         {
+            clip_xy_min = (double*) malloc (2 * sizeof(double));
+            clip_xy_max = (double*) malloc( 2 * sizeof(double));
             i++;
-            clip_xy_min[0] = atoi(argv[i]);
+            clip_xy_min[0] = atof(argv[i]);
             i++;
-            clip_xy_min[1] = atoi(argv[i]);
+            clip_xy_min[1] = atof(argv[i]);
             i++;
-            clip_xy_max[0] = atoi(argv[i]);
+            clip_xy_max[0] = atof(argv[i]);
             i++;
-            clip_xy_max[1] = atoi(argv[i]);
+            clip_xy_max[1] = atof(argv[i]);
             clip = TRUE;
         }
         else if (   strcmp(argv[i],"--eliminate_return") == 0  ||
@@ -552,7 +554,7 @@ int main(int argc, char *argv[])
     fprintf(stderr, "second pass reading %d and writing %d points ...\n", LASHeader_GetPointRecordsCount(header), surviving_number_of_point_records);
 
     if (use_stdout) file_name_out = "stdout";
-    writer = LASWriter_Create(file_name_out, surviving_header, LAS_MODE_APPEND);
+    writer = LASWriter_Create(file_name_out, surviving_header, LAS_MODE_WRITE);
     if (!writer) { 
         LASError_Print("Could not open file to write");
         exit(1);
@@ -569,6 +571,22 @@ int main(int argc, char *argv[])
   }
 */
 
+  LASReader_Destroy(reader);
+  reader = NULL;
+  if (file_name_in)
+  {
+      reader = LASReader_Create(file_name_in);
+    if (!reader) { 
+        LASError_Print("Could not open file to read");
+        exit(1);
+    } 
+  }
+  else
+  {
+      LASError_Print("no input specified");
+      usage();
+      exit(1);
+  }
 
     p = LASReader_GetNextPoint(reader);
     if (!p) {
@@ -580,44 +598,56 @@ int main(int argc, char *argv[])
     }
     
     while (p) {
+        printf("fetching...");
 
         if (last_only && LASPoint_GetReturnNumber(p) != LASPoint_GetNumberOfReturns(p))
         {
+            printf("last_only...");
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         if (first_only && LASPoint_GetReturnNumber(p) != 1)
         {
+            printf("first_only...");
             p = LASReader_GetNextPoint(reader);
             continue;
 
         }
         if (clip_xy_min && (LASPoint_GetX(p) < clip_xy_min[0] || LASPoint_GetY(p) < clip_xy_min[1]))
         {
+            printf("clip_xy_min...");
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         if (clip_xy_max && (LASPoint_GetX(p) > clip_xy_max[0] || LASPoint_GetY(p) > clip_xy_max[1]))
         {
+            printf("\nclip_xy_max...");
+            printf("LASPoint_GetX(p): %.2f ", LASPoint_GetX(p));
+            printf("clip_xy_max[0] %.2f ", clip_xy_max[0]);
+            printf("clip_xy_max[1] %.2f\n ", clip_xy_max[1]);
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         if (elim_return && (elim_return & (1 << LASPoint_GetReturnNumber(p))))
         {
+            printf("elim_return...");
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         if (elim_scan_angle_above && (LASPoint_GetScanAngleRank(p) > elim_scan_angle_above || LASPoint_GetScanAngleRank(p) < -elim_scan_angle_above))
         {
+            printf("elim_scan_anble...");
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         if (elim_intensity_below && LASPoint_GetIntensity(p) < elim_intensity_below)
         {
+            printf("elim_intensity...");
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         LASWriter_WritePoint(writer,p);
+        printf("Writing point...");
 
         p  = LASReader_GetNextPoint(reader);
     }
