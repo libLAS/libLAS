@@ -598,56 +598,44 @@ int main(int argc, char *argv[])
     }
     
     while (p) {
-        printf("fetching...");
 
         if (last_only && LASPoint_GetReturnNumber(p) != LASPoint_GetNumberOfReturns(p))
         {
-            printf("last_only...");
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         if (first_only && LASPoint_GetReturnNumber(p) != 1)
         {
-            printf("first_only...");
             p = LASReader_GetNextPoint(reader);
             continue;
 
         }
         if (clip_xy_min && (LASPoint_GetX(p) < clip_xy_min[0] || LASPoint_GetY(p) < clip_xy_min[1]))
         {
-            printf("clip_xy_min...");
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         if (clip_xy_max && (LASPoint_GetX(p) > clip_xy_max[0] || LASPoint_GetY(p) > clip_xy_max[1]))
         {
-            printf("\nclip_xy_max...");
-            printf("LASPoint_GetX(p): %.2f ", LASPoint_GetX(p));
-            printf("clip_xy_max[0] %.2f ", clip_xy_max[0]);
-            printf("clip_xy_max[1] %.2f\n ", clip_xy_max[1]);
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         if (elim_return && (elim_return & (1 << LASPoint_GetReturnNumber(p))))
         {
-            printf("elim_return...");
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         if (elim_scan_angle_above && (LASPoint_GetScanAngleRank(p) > elim_scan_angle_above || LASPoint_GetScanAngleRank(p) < -elim_scan_angle_above))
         {
-            printf("elim_scan_anble...");
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         if (elim_intensity_below && LASPoint_GetIntensity(p) < elim_intensity_below)
         {
-            printf("elim_intensity...");
             p = LASReader_GetNextPoint(reader);
             continue;
         }
         LASWriter_WritePoint(writer,p);
-        printf("Writing point...");
 
         p  = LASReader_GetNextPoint(reader);
     }
