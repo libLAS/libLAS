@@ -306,7 +306,6 @@ int main(int argc, char *argv[])
 {
     int i;
     int dry = FALSE;
-    int use_stdin = FALSE;
     int verbose = FALSE;
     char* file_name_in = 0;
     char* file_name_out = 0;
@@ -448,21 +447,24 @@ int main(int argc, char *argv[])
             i++;
             file_creation_year = (unsigned short)atoi(argv[i]);
         }
-        else if (   strcmp(argv[i], "--stdin") == 0 ||
-                    strcmp(argv[i], "-ilas") == 0
-                ) 
-        {
-            use_stdin = TRUE;
-        }
-        else if (i == argc - 2 && file_name_in == NULL && file_name_out == NULL)
+        else if (   i == argc - 2 
+                    && file_name_in == NULL && 
+                    file_name_out == NULL
+                )
         {
             file_name_in = argv[i];
         }
-        else if (i == argc - 1 && file_name_in == NULL && file_name_out == NULL)
+        else if (   i == argc - 1 && 
+                    file_name_in == NULL && 
+                    file_name_out == NULL
+                )
         {
             file_name_in = argv[i];
         }
-        else if (i == argc - 1 && file_name_in && file_name_out == NULL)
+        else if (   i == argc - 1 && 
+                    file_name_in && 
+                    file_name_out == NULL
+                )
         {
             file_name_out = argv[i];
         }
@@ -473,13 +475,7 @@ int main(int argc, char *argv[])
     {
         int len = strlen(file_name_in);
         file_name_out = strdup(file_name_in);
-        if (file_name_out[len-3] == '.' || 
-            file_name_out[len-2] == 'g' || 
-            file_name_out[len-1] == 'z'
-           )
-        {
-            len = len - 4;
-        }
+
         while (len > 0 && file_name_out[len] != '.')
         {
             len--;
@@ -496,9 +492,9 @@ int main(int argc, char *argv[])
     if (file_name_in == NULL && file_name_out == NULL)
     {
         LASError_Print("both input and output filenames are null!");
+        usage();
         exit(1);
     }
-
 
     file_in = fopen(file_name_in, "r");
 
@@ -508,436 +504,305 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-/*    // create a cheaper parse string that only looks for 'x' 'y' 'z' and 'r'
-*/
-      parse_less = strdup(parse_string);
-      for (i = 0; i < (int)strlen(parse_string); i++)
-      {
-          if (parse_less[i] != 'x' && parse_less[i] != 'y' && parse_less[i] != 'z' && parse_less[i] != 'r') 
-          {
-              parse_less[i] = 's';
-          }
-      }
-      do
-      {
-          parse_less[i] = '\0';
-          i--;
-      } while (parse_less[i] == 's');
-/*
-      // first pass to figure out the bounding box and number of returns
-*/
-
-    fprintf(stderr, "first pass over file '%s' with parse '%s'\n", file_name_in, parse_less);
-
-/*    // read the first line
-*/
-      while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
-      {
-          if (parse(parse_less, line, xyz, &point, &gps_time))
-          {
-/*            // init the bounding box
-*/
-              VecCopy3dv(xyz_min, xyz);
-              VecCopy3dv(xyz_max, xyz);
-
-/*            // mark that we found the first point
-*/
-              number_of_point_records = 1;
-
-/*            // create return histogram
-*/
-              number_of_points_by_return[LASPoint_GetReturnNumber(point)]++;
-/*            // we can stop this loop
-*/
-              break;
-          }
-          else
-          {
-              fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, parse_less);
-          }
-      }
-
-/*    // did we manage to parse a line
-*/
-      if (number_of_point_records != 1)
-      {
-          fprintf(stderr, "ERROR: could not parse any lines with '%s'\n", parse_less);
-          exit(1);
-      }
-
-/*    // loop over the remaining lines
-*/
-      while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
-      {
-          if (parse(parse_less, line, xyz, &point, &gps_time))
-          {
-/*            // update bounding box
-*/
-              VecUpdateMinMax3dv(xyz_min, xyz_max, xyz);
-
-/*            // count points
-*/
-              number_of_point_records++;
-
-/*            // create return histogram
-*/
-              number_of_points_by_return[LASPoint_GetReturnNumber(point)]++;
-          }
-          else
-          {
-              fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, parse_less);
-          }
-      }
-
-/*    // output some stats
-*/    
-      if (verbose)
-      {
-          fprintf(stderr, "npoints %d min %g %g %g max %g %g %g\n", number_of_point_records, xyz_min[0], xyz_min[1], xyz_min[2], xyz_max[0], xyz_max[1], xyz_max[2]);
-          fprintf(stderr, "return histogram %d %d %d %d %d %d %d %d\n", number_of_points_by_return[0], number_of_points_by_return[1], number_of_points_by_return[2], number_of_points_by_return[3], number_of_points_by_return[4], number_of_points_by_return[5], number_of_points_by_return[6], number_of_points_by_return[7]);
-      }
-
-/*    // close the input file
-*/    
-      fclose(file_in);
-
-/*    // compute bounding box after quantization
-*/
-
-
-      for (i = 0; i < 3; i++)
-      {
-          xyz_min_quant[i] = (int)(0.5 + (xyz_min[i] - xyz_offset[i]) / xyz_scale[i]);
-          xyz_max_quant[i] = (int)(0.5 + (xyz_max[i] - xyz_offset[i]) / xyz_scale[i]);
-      }
-
-
-
-      for (i = 0; i < 3; i++)
-      {
-          xyz_min_dequant[i] = xyz_offset[i] + (xyz_min_quant[i] * xyz_scale[i]);
-          xyz_max_dequant[i] = xyz_offset[i] + (xyz_max_quant[i] * xyz_scale[i]);
-      }
-
-/*    // make sure there is not sign flip
-*/
-
-#define log_xor !=0==!
-
-      for (i = 0; i < 3; i++)
-      {
-          if ((xyz_min[i] > 0) log_xor (xyz_min_dequant[i] > 0))
-          {
-              fprintf(stderr, "WARNING: quantization sign flip for %s min coord %g -> %g. use offset or scale up\n", (i ? (i == 1 ? "y" : "z") : "x"), xyz_min[i], xyz_min_dequant[i]);
-          }
-          if ((xyz_max[i] > 0) log_xor (xyz_max_dequant[i] > 0))
-          {
-              fprintf(stderr, "WARNING: quantization sign flip for %s max coord %g -> %g. use offset or scale up\n", (i ? (i == 1 ? "y" : "z") : "x"), xyz_max[i], xyz_max_dequant[i]);
-          }
-      }
-
-#undef log_xor
-
-/*    // populate the header
-*/
-      
-      header = LASHeader_Create();
-
-      if (system_identifier) LASHeader_SetSystemId(header, system_identifier);
-      if (generating_software) LASHeader_SetSoftwareId(header, generating_software);
-      LASHeader_SetCreationDOY(header, file_creation_day);
-      LASHeader_SetCreationYear(header, file_creation_year);
-      
-
-      if (strstr(parse_string,"t"))
-      {
-          LASHeader_SetDataFormatId(header, 1);
-
-      }
-      else
-      {
-          LASHeader_SetDataFormatId(header, 0);
-      }
-      LASHeader_SetPointRecordsCount(header, number_of_point_records);
-      LASHeader_SetScale(header, xyz_scale[0], xyz_scale[1], xyz_scale[2]);
-      LASHeader_SetOffset(header, xyz_offset[0], xyz_offset[1], xyz_offset[2]);
-      LASHeader_SetMin(header, xyz_min_dequant[0], xyz_min_dequant[1], xyz_min_dequant[2]);
-      LASHeader_SetMax(header, xyz_max_dequant[0], xyz_max_dequant[1], xyz_max_dequant[2]);
-      LASHeader_SetPointRecordsByReturnCount(header, 0, number_of_points_by_return[1]);
-      LASHeader_SetPointRecordsByReturnCount(header, 1, number_of_points_by_return[2]);
-      LASHeader_SetPointRecordsByReturnCount(header, 2, number_of_points_by_return[3]);
-      LASHeader_SetPointRecordsByReturnCount(header, 3, number_of_points_by_return[4]);
-      LASHeader_SetPointRecordsByReturnCount(header, 4, number_of_points_by_return[5]);
-
-
-
-/*    // reopen input file for the second pass
-*/
-      file_in = fopen(file_name_in, "r");
-
-      if (file_in == 0)
-      {
-          fprintf(stderr, "ERROR: could not open '%s' for second pass\n",file_name_in);
-          exit(1);
-      }
-
-/*    // open the output pipe
-*/
-
-    
-/*      
-    if (laswriter->open(stdout, &header, olaz ? 1 : 0) == false)
-      {
-          fprintf(stderr, "ERROR: could not open laswriter\n");
-          exit(1);
-      }
-
-    fprintf(stderr, "second pass over file '%s' with parse '%s' writing to '%s'\n", file_name_in, parse_string, file_name_out ? file_name_out : "stdout");
-
-      // loop over points
-
-      while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
-      {
-          if (parse(parse_string, line, xyz, &point, &gps_time))
-          {
-              point.x = (int)(0.5 + (xyz[0] - xyz_offset[0]) / xyz_scale[0]);
-              point.y = (int)(0.5 + (xyz[1] - xyz_offset[1]) / xyz_scale[1]);
-              point.z = (int)(0.5 + (xyz[2] - xyz_offset[2]) / xyz_scale[2]);
-              laswriter->write_point(&point, gps_time);
-              number_of_point_records--;
-          }
-          else
-          {
-              fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, parse_string);
-          }
-      }
-
-      if (number_of_point_records)
-      {
-          fprintf(stderr, "WARNING: second pass has different number of points (%d instead of %d)\n", header.number_of_point_records - number_of_point_records, header.number_of_point_records);
-      }
-
-      LASWriter_Destroy(writer);
-
-      if (verbose)
-      {
-          fprintf(stderr, "done.\n");
-      }
-
-      fclose(file_in);
-  }
-  else
-  {
-*/
-/*
-    // because the output goes to a file we can do everything in a single pass
-    // and compute the header information along the way and then set it at the
-    // end by fopen() the file with "rb+"
-
-    // open input file
-*/
-
-    if (file_name_in)
-      {
-
-          file_in = fopen(file_name_in, "r");
-
-          if (file_in == NULL)
-          {
-              LASError_Print("Could not open input file");
-              exit(1);
-          }
-      }
-
-/*    // open output file
-*/
-      printf("Creating file...\n");
-  writer = LASWriter_Create(file_name_out, header, LAS_MODE_WRITE);
-  if (!writer) { 
-      fprintf(stderr, 
-              "Error! %d, %s, in method %s\n",
-              LASError_GetLastErrorNum(),
-              LASError_GetLastErrorMsg(),
-              LASError_GetLastErrorMethod()
-             ); 
-      exit(1);
-  }     
-
-
-    fprintf(stderr, "scanning %s with parse '%s' writing to %s\n", file_name_in ? file_name_in : "stdin" , parse_string, file_name_out);
-
-/*    // read the first line
-*/
-      while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
-      {
-          if (parse(parse_string, line, xyz, &point, &gps_time))
-          {
-/*            // init the bounding box
-*/
-              VecCopy3dv(xyz_min, xyz);
-              VecCopy3dv(xyz_max, xyz);
-
-/*            // we found the first point
-*/
-              number_of_point_records = 1;
-
-/*            // create return histogram
-*/
-              number_of_points_by_return[LASPoint_GetReturnNumber(point)]++;
-/*        // compute the quantized x, y, and z values
-*/
-              LASPoint_SetX(point, 0.5 + (xyz[0] - xyz_offset[0]) / xyz_scale[0]);
-              LASPoint_SetY(point, 0.5 + (xyz[1] - xyz_offset[1]) / xyz_scale[1]);
-              LASPoint_SetX(point, 0.5 + (xyz[2] - xyz_offset[2]) / xyz_scale[2]);
-
-/*        // write the first point
-*/
-              LASWriter_WritePoint(writer, point);
-
-/*            // we can stop this loop
-*/
-              break;
-          }
-          else
-          {
-              fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, parse_string);
-          }
-      }
-
-/*    // did we manage to parse a line
-*/
-      if (number_of_point_records != 1)
-      {
-          fprintf(stderr, "ERROR: could not parse any lines with '%s'\n", parse_string);
-          exit(1);
-      }
-
-/*    // loop over the remaining lines
-*/
-      while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
-      {
-          if (parse(parse_string, line, xyz, &point, &gps_time))
-          {
-
-/*            // update bounding box
-*/
-              VecUpdateMinMax3dv(xyz_min, xyz_max, xyz);
-
-/*            // count points
-*/
-              number_of_point_records++;
-
-/*            // create return histogram
-*/
-              number_of_points_by_return[LASPoint_GetReturnNumber(point)]++;
-/*        // compute the quantized x, y, and z values
-*/
-              LASPoint_SetX(point, 0.5 + (xyz[0] - xyz_offset[0]) / xyz_scale[0]);
-              LASPoint_SetY(point, 0.5 + (xyz[1] - xyz_offset[1]) / xyz_scale[1]);
-              LASPoint_SetX(point, 0.5 + (xyz[2] - xyz_offset[2]) / xyz_scale[2]);
-
-/*        // write the first point
-  */
-              LASWriter_WritePoint(writer, point);
-          }
-          else
-          {
-              fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", line, parse_string);
-          }
-      }
-
-/*    // done writing the points
-*/
-
-/*    if (file_in != stdin) fclose(file_in);
-*/
-
-      LASWriter_Destroy(writer);
-
-/*    // output some stats
-*/
-      
-      if (verbose)
-      {
-          fprintf(stderr, "npoints %d min %g %g %g max %g %g %g\n", number_of_point_records, xyz_min[0], xyz_min[1], xyz_min[2], xyz_max[0], xyz_max[1], xyz_max[2]);
-          fprintf(stderr, "return histogram %d %d %d %d %d %d %d %d\n", number_of_points_by_return[0], number_of_points_by_return[1], number_of_points_by_return[2], number_of_points_by_return[3], number_of_points_by_return[4], number_of_points_by_return[5], number_of_points_by_return[6], number_of_points_by_return[7]);
-      }
-
-/*    // compute bounding box after quantization
-*/
-
-
-      for (i = 0; i < 3; i++)
-      {
-          xyz_min_quant[i] = (int)(0.5 + (xyz_min[i] - xyz_offset[i]) / xyz_scale[i]);
-          xyz_max_quant[i] = (int)(0.5 + (xyz_max[i] - xyz_offset[i]) / xyz_scale[i]);
-      }
-
-
-
-      for (i = 0; i < 3; i++)
-      {
-          xyz_min_dequant[i] = xyz_offset[i] + (xyz_min_quant[i] * xyz_scale[i]);
-          xyz_max_dequant[i] = xyz_offset[i] + (xyz_max_quant[i] * xyz_scale[i]);
-      }
-
-/*    // make sure there is not sign flip
-*/
-
-#define log_xor !=0==!
-
-      for (i = 0; i < 3; i++)
-      {
-          if ((xyz_min[i] > 0) log_xor (xyz_min_dequant[i] > 0))
-          {
-              fprintf(stderr, "WARNING: quantization sign flip for %s min coord %g -> %g. use offset or scale up\n", (i ? (i == 1 ? "y" : "z") : "x"), xyz_min[i], xyz_min_dequant[i]);
-          }
-          if ((xyz_max[i] > 0) log_xor (xyz_max_dequant[i] > 0))
-          {
-              fprintf(stderr, "WARNING: quantization sign flip for %s max coord %g -> %g. use offset or scale up\n", (i ? (i == 1 ? "y" : "z") : "x"), xyz_max[i], xyz_max_dequant[i]);
-          }
-      }
-
-#undef log_xor
-
-/*    // re-open output file to rewrite the missing header information
-
-
-      file_out = fopen(file_name_out, "rb+");
-    
-    if (file_out == 0)
+    /* create a cheaper parse string that only looks for 'x' 'y' 'z' and 'r' */
+    parse_less = strdup(parse_string);
+    for (i = 0; i < (int)strlen(parse_string); i++)
     {
-            fprintf(stderr, "ERROR: could not open re-output file '%s'\n",file_name_out);
-            exit(1);
-      }
+        if (parse_less[i] != 'x' && 
+            parse_less[i] != 'y' && 
+            parse_less[i] != 'z' && 
+            parse_less[i] != 'r') 
+        {
+            parse_less[i] = 's';
+        }
+    }
 
-    // rewrite the information
+    do
+    {
+        parse_less[i] = '\0';
+        printf("nuking %d for %c\n", i, parse_less[i]);
+        i--;
+    } while (parse_less[i] == 's');
+    
+    
+    /* first pass to figure out the bounding box and number of returns */
+    if (verbose) {
+        fprintf(stderr, 
+                "first pass over file '%s' with parse '%s'\n", 
+                file_name_in, 
+                parse_less);
+    }
 
+    /* read the first line */
+    while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
+    {
+        if (parse(parse_less, line, xyz, &point, &gps_time))
+        {
+            /* init the bounding box */
+            VecCopy3dv(xyz_min, xyz);
+            VecCopy3dv(xyz_max, xyz);
 
+            /* mark that we found the first point */
+            number_of_point_records = 1;
 
-    fseek(file_out, 107, SEEK_SET);
-    fwrite(&number_of_point_records, sizeof(unsigned int), 5, file_out);
+            /* create return histogram */
+            number_of_points_by_return[LASPoint_GetReturnNumber(point)]++;
+            
+            /* we can stop this loop */
+            break;
+        }
+        else
+        {
+            fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", 
+                    line, 
+                    parse_less);
+        }
+    }
 
-    fseek(file_out, 111, SEEK_SET);
-    fwrite(&(number_of_points_by_return[1]), sizeof(unsigned int), 5, file_out);
+    /* did we manage to parse a line? */
+    if (number_of_point_records != 1)
+    {
+        fprintf(stderr, "ERROR: could not parse any lines with '%s'\n", 
+                parse_less);
+        exit(1);
+    }
 
-    fseek(file_out, 179, SEEK_SET);
-    fwrite(&(xyz_max_dequant[0]), sizeof(double), 1, file_out);
-    fwrite(&(xyz_min_dequant[0]), sizeof(double), 1, file_out);
-    fwrite(&(xyz_max_dequant[1]), sizeof(double), 1, file_out);
-    fwrite(&(xyz_min_dequant[1]), sizeof(double), 1, file_out);
-    fwrite(&(xyz_max_dequant[2]), sizeof(double), 1, file_out);
-    fwrite(&(xyz_min_dequant[2]), sizeof(double), 1, file_out);
+    /* loop over the remaining lines */
+    while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
+    {
+        if (parse(parse_less, line, xyz, &point, &gps_time))
+        {
+            /* update bounding box */
+            VecUpdateMinMax3dv(xyz_min, xyz_max, xyz);
 
-    // close the rewritten file
+            /* count points */
+            number_of_point_records++;
 
-    fclose(file_out);
-*/
+            /* create return histogram */
+            number_of_points_by_return[LASPoint_GetReturnNumber(point)]++;
+        }
+        else
+        {
+            fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", 
+            line, 
+            parse_less);
+        }
+    }
 
+    /* output some stats */
     if (verbose)
-      {
-          fprintf(stderr, "done.\n");
-      }
+    {
+        fprintf(stderr, 
+                "npoints %d min %g %g %g max %g %g %g\n", 
+                number_of_point_records, 
+                xyz_min[0], 
+                xyz_min[1], 
+                xyz_min[2], 
+                xyz_max[0], 
+                xyz_max[1], 
+                xyz_max[2]
+                );
+        fprintf(stderr, 
+                "return histogram %d %d %d %d %d %d %d %d\n", 
+                number_of_points_by_return[0], 
+                number_of_points_by_return[1], 
+                number_of_points_by_return[2], 
+                number_of_points_by_return[3], 
+                number_of_points_by_return[4], 
+                number_of_points_by_return[5], 
+                number_of_points_by_return[6], 
+                number_of_points_by_return[7]
+                );
+    }
+
+    /* close the input file */    
+      fclose(file_in);
+
+    /*  compute bounding box after quantization */
+    for (i = 0; i < 3; i++)
+    {
+        xyz_min_quant[i] = (int)(0.5 + (xyz_min[i] - xyz_offset[i]) / xyz_scale[i]);
+        xyz_max_quant[i] = (int)(0.5 + (xyz_max[i] - xyz_offset[i]) / xyz_scale[i]);
+    }
+
+    for (i = 0; i < 3; i++)
+    {
+        xyz_min_dequant[i] = xyz_offset[i] + (xyz_min_quant[i] * xyz_scale[i]);
+        xyz_max_dequant[i] = xyz_offset[i] + (xyz_max_quant[i] * xyz_scale[i]);
+    }
+
+
+#define log_xor !=0==!
+
+    /* make sure there is not sign flip */
+    for (i = 0; i < 3; i++)
+    {
+        if ((xyz_min[i] > 0) log_xor (xyz_min_dequant[i] > 0))
+        {
+            fprintf(stderr, 
+                    "WARNING: quantization sign flip for %s min coord %g -> %g. use offset or scale up\n", 
+                    (i ? (i == 1 ? "y" : "z") : "x"), 
+                    xyz_min[i], 
+                    xyz_min_dequant[i]
+                   );
+        }
+        if ((xyz_max[i] > 0) log_xor (xyz_max_dequant[i] > 0))
+        {
+            fprintf(stderr, 
+                    "WARNING: quantization sign flip for %s max coord %g -> %g. use offset or scale up\n", 
+                    (i ? (i == 1 ? "y" : "z") : "x"), 
+                    xyz_max[i], 
+                    xyz_max_dequant[i]
+                   );
+        }
+    }
+
+#undef log_xor
+
+    /* populate the header */
+      
+    header = LASHeader_Create();
+
+    if (system_identifier) LASHeader_SetSystemId(header, system_identifier);
+    if (generating_software) LASHeader_SetSoftwareId(header, generating_software);
+    LASHeader_SetCreationDOY(header, file_creation_day);
+    LASHeader_SetCreationYear(header, file_creation_year);
+      
+
+    if (strstr(parse_string,"t"))
+    {
+        LASHeader_SetDataFormatId(header, 1);
+    }
+    else
+    {
+        LASHeader_SetDataFormatId(header, 0);
+    }
+    LASHeader_SetPointRecordsCount(header, number_of_point_records);
+    LASHeader_SetScale(header, xyz_scale[0], xyz_scale[1], xyz_scale[2]);
+    LASHeader_SetOffset(header, xyz_offset[0], xyz_offset[1], xyz_offset[2]);
+    LASHeader_SetMin(header, xyz_min_dequant[0], xyz_min_dequant[1], xyz_min_dequant[2]);
+    LASHeader_SetMax(header, xyz_max_dequant[0], xyz_max_dequant[1], xyz_max_dequant[2]);
+    LASHeader_SetPointRecordsByReturnCount(header, 0, number_of_points_by_return[1]);
+    LASHeader_SetPointRecordsByReturnCount(header, 1, number_of_points_by_return[2]);
+    LASHeader_SetPointRecordsByReturnCount(header, 2, number_of_points_by_return[3]);
+    LASHeader_SetPointRecordsByReturnCount(header, 3, number_of_points_by_return[4]);
+    LASHeader_SetPointRecordsByReturnCount(header, 4, number_of_points_by_return[5]);
+
+
+
+    /* reopen input file for the second pass */
+    file_in = fopen(file_name_in, "r");
+
+    if (file_in == 0)
+    {
+        fprintf(stderr, "ERROR: could not open '%s' for second pass\n",file_name_in);
+        exit(1);
+    }
+
+    /*
+        because the output goes to a file we can do everything in a 
+        single pass and compute the header information along the way 
+    */
+    
+    /* open output file */
+    printf("Creating file...\n");
+    writer = LASWriter_Create(file_name_out, header, LAS_MODE_WRITE);
+    if (!writer) { 
+        LASError_Print("Could not open file for write mode ");
+        exit(1);
+    }     
+
+    if (verbose) {
+        fprintf(stderr, 
+                "scanning %s with parse '%s' writing to %s\n", 
+                file_name_in , 
+                parse_string, 
+                file_name_out
+               );
+    }
+    
+
+    /* read the first line */
+    while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
+    {
+        if (parse(parse_string, line, xyz, &point, &gps_time))
+        {
+            /* init the bounding box */
+            VecCopy3dv(xyz_min, xyz);
+            VecCopy3dv(xyz_max, xyz);
+
+            /* mark that we found the first point */
+            number_of_point_records = 1;
+
+            /* create return histogram */
+            number_of_points_by_return[LASPoint_GetReturnNumber(point)]++;
+            
+            /* compute the quantized x, y, and z values */
+            LASPoint_SetX(point, 0.5 + (xyz[0] - xyz_offset[0]) / xyz_scale[0]);
+            LASPoint_SetY(point, 0.5 + (xyz[1] - xyz_offset[1]) / xyz_scale[1]);
+            LASPoint_SetX(point, 0.5 + (xyz[2] - xyz_offset[2]) / xyz_scale[2]);
+
+            /* write the first point */
+            LASWriter_WritePoint(writer, point);
+            printf("Writing point...");
+              
+            /* we can stop this loop */
+            break;
+        }
+        else
+        {
+            fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", 
+                    line, 
+                    parse_string);
+        }
+    }
+
+    /* did we manage to parse a line? */
+    if (number_of_point_records != 1)
+    {
+        fprintf(stderr, "ERROR: could not parse any lines with '%s'\n", 
+                parse_less);
+        exit(1);
+    }
+
+    /* loop over the remaining lines */
+    while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
+    {
+        if (parse(parse_string, line, xyz, &point, &gps_time))
+        {
+            /* update bounding box */
+            VecUpdateMinMax3dv(xyz_min, xyz_max, xyz);
+
+            /* count points */
+            number_of_point_records++;
+
+            /* create return histogram */
+            number_of_points_by_return[LASPoint_GetReturnNumber(point)]++;
+
+            /* compute the quantized x, y, and z values */
+            LASPoint_SetX(point, 0.5 + (xyz[0] - xyz_offset[0]) / xyz_scale[0]);
+            LASPoint_SetY(point, 0.5 + (xyz[1] - xyz_offset[1]) / xyz_scale[1]);
+            LASPoint_SetX(point, 0.5 + (xyz[2] - xyz_offset[2]) / xyz_scale[2]);
+
+            /* write the first point */
+            LASWriter_WritePoint(writer, point);
+        }
+        else
+        {
+            fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", 
+            line, 
+            parse_string);
+        }
+    }
+
+
+    /* close up stuff */
+    fclose(file_in);
+    LASWriter_Destroy(writer);
+    if (verbose)
+    {
+        fprintf(stderr, "done.\n");
+    }
 
 
     return 0;
