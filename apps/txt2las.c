@@ -96,7 +96,7 @@ static int parse(const char* parse_string, const char* line, double* xyz, LASPoi
     const char* p = parse_string;
     const char* l = line;
 
-    point = LASPoint_Create();
+
     while (p[0])
     {
         /* // we expect the x coordinate */
@@ -329,6 +329,7 @@ int main(int argc, char *argv[])
     char* parse_less = NULL;
     LASHeaderH header = NULL;
     LASWriterH writer = NULL;
+    LASError err;
 
     int xyz_min_quant[3] = {0, 0, 0};
     int xyz_max_quant[3] = {0, 0, 0};
@@ -536,7 +537,8 @@ int main(int argc, char *argv[])
     /* read the first line */
     while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
     {
-        if (parse(parse_less, line, xyz, &point, &gps_time))
+        point = LASPoint_Create();
+        if (parse(parse_less, line, xyz, point, &gps_time))
         {
             /* init the bounding box */
             VecCopy3dv(xyz_min, xyz);
@@ -556,7 +558,10 @@ int main(int argc, char *argv[])
             fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", 
                     line, 
                     parse_less);
+
         }
+        LASPoint_Destroy(point);
+        point = NULL;
     }
 
     /* did we manage to parse a line? */
@@ -570,7 +575,8 @@ int main(int argc, char *argv[])
     /* loop over the remaining lines */
     while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
     {
-        if (parse(parse_less, line, xyz, &point, &gps_time))
+        point = LASPoint_Create();
+        if (parse(parse_less, line, xyz, point, &gps_time))
         {
             /* update bounding box */
             VecUpdateMinMax3dv(xyz_min, xyz_max, xyz);
@@ -586,7 +592,10 @@ int main(int argc, char *argv[])
             fprintf(stderr, "WARNING: cannot parse '%s' with '%s'. skipping ...\n", 
             line, 
             parse_less);
+
         }
+        LASPoint_Destroy(point);
+        point = NULL;
     }
 
     /* output some stats */
@@ -671,6 +680,7 @@ int main(int argc, char *argv[])
 
     if (strstr(parse_string,"t"))
     {
+        fprintf(stderr, "Setting to LAS version 1.1!!!\n");
         LASHeader_SetDataFormatId(header, 1);
     }
     else
@@ -725,7 +735,8 @@ int main(int argc, char *argv[])
     /* read the first line */
     while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
     {
-        if (parse(parse_string, line, xyz, &point, &gps_time))
+        point = LASPoint_Create();
+        if (parse(parse_string, line, xyz, point, &gps_time))
         {
             /* init the bounding box */
             VecCopy3dv(xyz_min, xyz);
@@ -738,13 +749,16 @@ int main(int argc, char *argv[])
             number_of_points_by_return[LASPoint_GetReturnNumber(point)]++;
             
             /* compute the quantized x, y, and z values */
-            LASPoint_SetX(point, 0.5 + (xyz[0] - xyz_offset[0]) / xyz_scale[0]);
-            LASPoint_SetY(point, 0.5 + (xyz[1] - xyz_offset[1]) / xyz_scale[1]);
-            LASPoint_SetX(point, 0.5 + (xyz[2] - xyz_offset[2]) / xyz_scale[2]);
+            LASPoint_SetX(point, xyz[0]);
+            LASPoint_SetY(point, xyz[1]);
+            LASPoint_SetZ(point, xyz[2]);
 
             /* write the first point */
-            LASWriter_WritePoint(writer, point);
-            printf("Writing point...");
+            err = LASWriter_WritePoint(writer, point);
+            if (err) {
+                LASError_Print("could not write point");
+                exit(1);
+            }
               
             /* we can stop this loop */
             break;
@@ -755,6 +769,8 @@ int main(int argc, char *argv[])
                     line, 
                     parse_string);
         }
+        LASPoint_Destroy(point);
+        point = NULL;
     }
 
     /* did we manage to parse a line? */
@@ -768,6 +784,7 @@ int main(int argc, char *argv[])
     /* loop over the remaining lines */
     while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
     {
+        point = LASPoint_Create();
         if (parse(parse_string, line, xyz, &point, &gps_time))
         {
             /* update bounding box */
@@ -780,12 +797,17 @@ int main(int argc, char *argv[])
             number_of_points_by_return[LASPoint_GetReturnNumber(point)]++;
 
             /* compute the quantized x, y, and z values */
-            LASPoint_SetX(point, 0.5 + (xyz[0] - xyz_offset[0]) / xyz_scale[0]);
-            LASPoint_SetY(point, 0.5 + (xyz[1] - xyz_offset[1]) / xyz_scale[1]);
-            LASPoint_SetX(point, 0.5 + (xyz[2] - xyz_offset[2]) / xyz_scale[2]);
+            LASPoint_SetX(point, xyz[0]);
+            LASPoint_SetY(point, xyz[1]);
+            LASPoint_SetZ(point, xyz[2]);
 
             /* write the first point */
-            LASWriter_WritePoint(writer, point);
+            err = LASWriter_WritePoint(writer, point);
+            if (err) {
+                LASError_Print("could not write point");
+                exit(1);
+            }
+
         }
         else
         {
@@ -793,6 +815,8 @@ int main(int argc, char *argv[])
             line, 
             parse_string);
         }
+        LASPoint_Destroy(point);
+        point = NULL;
     }
 
 
