@@ -4,7 +4,7 @@ dnl This is main autoconf bootstrap script of libLAS project.
 dnl
 m4_define([liblas_version_major], [0])
 m4_define([liblas_version_minor], [9])
-m4_define([liblas_version_micro], [0])
+m4_define([liblas_version_micro], [1])
 m4_define([liblas_version],
           [liblas_version_major.liblas_version_minor.liblas_version_micro])
 
@@ -70,9 +70,12 @@ dnl ###########################################################
 dnl GDAL
 dnl ###########################################################
 AC_ARG_WITH(gdal,[  --with-gdal=ARG         Path to gdal-config],,)
+AC_MSG_CHECKING([for GDAL])
+
 if test "$with_gdal" = "no" -o "$with_gdal" = "" ; then
-  GDAL_CONFIG="$with_gdal"
-dnl  AC_PATH_PROG(GDAL_CONFIG, gdal-config, no)
+  GDAL_CONFIG="no"
+  AC_MSG_RESULT([no])
+dnl AC_PATH_PROG(GDAL_CONFIG, gdal-config, no)
 else
   if test "`basename xx/$with_gdal`" = "gdal-config" ; then
     AC_MSG_RESULT([GDAL enabled with provided gdal-config])
@@ -93,6 +96,7 @@ if test "$GDAL_CONFIG" != "no" ; then
   fi
 fi
 AC_SUBST(GDAL_INC GDAL_PREFIX)
+AM_CONDITIONAL([GDAL_IS_CONFIG], [test $GDAL_CONFIG != no])
 
 AC_HAVE_LONG_LONG
 
@@ -120,5 +124,5 @@ LOC_MSG([  Installation directory...: ${prefix}])
 LOC_MSG([  C compiler...............: ${CC} ${CFLAGS}])
 LOC_MSG([  C++ compiler.............: ${CXX} ${CXXFLAGS}])
 LOC_MSG([  Debugging support........: ${enable_debug}])
-LOC_MSG([  GDAL support........: ${with_gdal}])
+LOC_MSG([  GDAL support........: ${GDAL_CONFIG}])
 LOC_MSG()
