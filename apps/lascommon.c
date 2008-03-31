@@ -163,6 +163,8 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
 void print_point_summary(LASPointSummary* summary, LASHeaderH header) {
 
     long rgpsum = 0;
+    long pbretsum = 0;
+    
     int i = 0;
 
     if (!summary) {LASError_Print("Point Summary does not exist!"); exit(1);}
@@ -224,6 +226,15 @@ void print_point_summary(LASPointSummary* summary, LASHeaderH header) {
                     LASPoint_GetClassification(summary->pmin),
                     LASPoint_GetClassification(summary->pmax)
                     );
+
+    fprintf(stderr, "\n  Number of Points by Return\n");
+    fprintf(stderr, "---------------------------------------------------------\n");
+
+    for (i = 0; i < 5; i++) {
+        pbretsum = pbretsum + summary->number_of_points_by_return[i];
+        fprintf(stderr, "\t(%d) %d", i,summary->number_of_points_by_return[i]);
+    }
+    fprintf(stderr, "\n Total Points: %ld\n", pbretsum); 
                     
     fprintf(stderr, "\n  Number of Returns by Pulse\n");
     fprintf(stderr, "---------------------------------------------------------\n");
