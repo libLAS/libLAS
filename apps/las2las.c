@@ -42,8 +42,8 @@ void usage()
     fprintf(stderr,"  las2las -i in.las -eliminate_scan_angle_above 15 -o out.las\n");
     fprintf(stderr,"\n");
 
-    fprintf(stderr,"Eliminate intensities below 1000 and write to stdout:\n");
-    fprintf(stderr,"  las2las -i in.las -eliminate_intensity_below 1000 --stdout > out.las\n");
+    fprintf(stderr,"Eliminate intensities below 1000 and classifications that equal 2 (ground) and write to stdout:\n");
+    fprintf(stderr,"  las2las -i in.las -eliminate_intensity_below 1000 --eliminate_class 2 --stdout > out.las\n");
     fprintf(stderr,"\n");
     
     fprintf(stderr,"Capture only first returns and clip to bounding box:\n");
@@ -84,6 +84,7 @@ int main(int argc, char *argv[])
     int elim_return = 0;
     int elim_scan_angle_above = 0;
     int elim_intensity_below = 0;
+    int elim_class = 0;
     int first_only = FALSE;
     int last_only = FALSE;
 
@@ -105,6 +106,7 @@ int main(int argc, char *argv[])
     int eliminated_return = 0;
     int eliminated_scan_angle = 0;
     int eliminated_intensity = 0;
+    int eliminated_class = 0;
     int eliminated_first_only = 0;
     int eliminated_last_only = 0;
 
@@ -184,6 +186,15 @@ int main(int argc, char *argv[])
         {
             i++;
             elim_scan_angle_above = atoi(argv[i]);
+        }
+        else if (   strcmp(argv[i],"--eliminate_class") == 0  ||
+                    strcmp(argv[i],"-eliminate_class") == 0   ||
+                    strcmp(argv[i],"-elim_class") == 0       ||
+                    strcmp(argv[i],"--class") == 0
+                )        
+        {
+            i++;
+            elim_class = atoi(argv[i]);
         }
         else if (   strcmp(argv[i],"--eliminate_intensity_below") == 0  ||
                     strcmp(argv[i],"-eliminate_intensity_below") == 0   ||
@@ -308,6 +319,12 @@ int main(int argc, char *argv[])
             p = LASReader_GetNextPoint(reader);
             continue;
         }
+        if (elim_class && ( elim_class == LASPoint_GetClassification(p)))
+        {
+            eliminated_class++;
+            p = LASReader_GetNextPoint(reader);
+            continue;
+        }        
         if (elim_intensity_below && LASPoint_GetIntensity(p) < elim_intensity_below)
         {
             eliminated_intensity++;
@@ -403,6 +420,10 @@ int main(int argc, char *argv[])
         fprintf(stderr, 
                 "eliminated based on last returns only: %d\n", 
                 eliminated_last_only);
+    if (eliminated_class) 
+        fprintf(stderr, 
+                "eliminated classification: %d\n", 
+                eliminated_class);
     if (clipped) 
         fprintf(stderr, 
                 "clipped: %d\n", 
