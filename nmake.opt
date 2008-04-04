@@ -1,5 +1,5 @@
-LAS_VERSION=0.9.1
-PACKAGE_VERSION="0.9.1"
+LAS_VERSION=0.9.2
+PACKAGE_VERSION="0.9.2"
 LAS_LIB = liblas.lib
 LAS_DLL = liblas$(LAS_VERSION).dll
 LAS_LIB_DLL = liblas_i.lib
