@@ -381,3 +381,83 @@ void print_header(LASHeaderH header, const char* file_name) {
     free(pszSoftwareId);
     
 }
+
+void RepairHeader(LASHeaderH header, LASPointSummary* summary) {
+
+    int repair_bounding_box = FALSE;
+    int update_return_counts = FALSE;    
+    int err = 0;
+    int i = 0;
+ 
+    if (! header) {
+        LASError_Print("Inputted header to RepairHeader was NULL ");
+        exit(1);
+    } 
+
+    if (! summary) {
+        LASError_Print("Inputted summary to RepairHeader was NULL ");
+        exit(1);
+
+    } 
+
+
+    if (! repair_bounding_box) {
+        if ( LASHeader_GetMinX(header) != LASPoint_GetX(summary->pmin) )
+            repair_bounding_box = TRUE;
+        if ( LASHeader_GetMinY(header) != LASPoint_GetY(summary->pmin) )
+            repair_bounding_box = TRUE;
+        if ( LASHeader_GetMinZ(header) != LASPoint_GetZ(summary->pmin) )
+            repair_bounding_box = TRUE;
+
+        if ( LASHeader_GetMaxX(header) != LASPoint_GetX(summary->pmax) )
+            repair_bounding_box = TRUE;
+        if ( LASHeader_GetMaxY(header) != LASPoint_GetY(summary->pmax) )
+            repair_bounding_box = TRUE;
+        if ( LASHeader_GetMaxZ(header) != LASPoint_GetZ(summary->pmax) )
+            repair_bounding_box = TRUE;
+    }
+    
+    if (repair_bounding_box) {
+        fprintf(stderr, "  Reparing Bounding Box...\n");
+        err = LASHeader_SetMin( header, 
+                                LASPoint_GetX(summary->pmin), 
+                                LASPoint_GetY(summary->pmin), 
+                                LASPoint_GetZ(summary->pmin)
+                              );
+        if (err) {
+            LASError_Print("Could not set minimum for header ");
+            exit(1);
+        }
+        err = LASHeader_SetMax( header, 
+                                LASPoint_GetX(summary->pmax), 
+                                LASPoint_GetY(summary->pmax), 
+                                LASPoint_GetZ(summary->pmax)
+                              );
+        if (err) {
+            LASError_Print("Could not set minimum for header ");
+            exit(1);
+        }
+
+    }
+
+
+    for (i = 0; i < 5; i++) {
+
+        if (LASHeader_GetPointRecordsByReturnCount(header, i) != 
+            summary->number_of_points_by_return[i]) 
+        {
+            update_return_counts = TRUE;
+            break;
+        }
+    }
+    
+    if (update_return_counts) {
+        fprintf(stderr, "  Reparing Point Count by Return...\n");
+        for (i = 0; i < 5; i++) {
+            LASHeader_SetPointRecordsByReturnCount( header,  
+                                                    i, 
+                                                    summary->number_of_points_by_return[i]);
+        }                
+    }   
+
+}

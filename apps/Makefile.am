@@ -1,7 +1,7 @@
 INCLUDES = -I../include/liblas/capi -I../include
 
 lasinfo_SOURCES = lasinfo.c lascommon.c
-las2las_SOURCES = las2las.c
+las2las_SOURCES = las2las.c lascommon.c
 lasmerge_SOURCES = lasmerge.c lascommon.c
 las2txt_SOURCES = las2txt.c lascommon.c
 txt2las_SOURCES = txt2las.c

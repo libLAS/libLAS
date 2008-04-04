@@ -19,6 +19,11 @@
 
 #include "liblas.h"
 
+LASPointSummary* SummarizePoints(LASReaderH reader);
+void print_point_summary(LASPointSummary* summary, LASHeaderH header);
+void print_header(LASHeaderH header, const char* file_name);
+void RepairHeader(LASHeaderH header, LASPointSummary* summary) ;
+
 void usage()
 {
     fprintf(stderr,"----------------------------------------------------------\n");
@@ -111,7 +116,9 @@ int main(int argc, char *argv[])
     int eliminated_last_only = 0;
 
     double minx, maxx, miny, maxy, minz, maxz;
-  
+    
+    LASPointSummary* summary = NULL;
+    
     for (i = 1; i < argc; i++) {
         if (    strcmp(argv[i],"-h") == 0 ||
                 strcmp(argv[i],"--help") == 0
@@ -592,22 +599,23 @@ int main(int argc, char *argv[])
   }
 */
 
-  LASReader_Destroy(reader);
-  reader = NULL;
-  if (file_name_in)
-  {
-      reader = LASReader_Create(file_name_in);
-    if (!reader) { 
-        LASError_Print("Could not open file to read");
+    
+    LASReader_Destroy(reader);
+    reader = NULL;
+    if (file_name_in)
+    {
+        reader = LASReader_Create(file_name_in);
+        if (!reader) { 
+            LASError_Print("Could not open file to read");
+            exit(1);
+        } 
+    }
+    else
+    {
+        LASError_Print("no input specified");
+        usage();
         exit(1);
-    } 
-  }
-  else
-  {
-      LASError_Print("no input specified");
-      usage();
-      exit(1);
-  }
+    }
 
     p = LASReader_GetNextPoint(reader);
     if (!p) {
@@ -664,8 +672,40 @@ int main(int argc, char *argv[])
     LASWriter_Destroy(writer);
     LASReader_Destroy(reader);
     LASHeader_Destroy(header);
+    LASHeader_Destroy(surviving_header);
     LASPoint_Destroy(surviving_point_max);
     LASPoint_Destroy(surviving_point_min);
+
+    reader = LASReader_Create(file_name_out);
+    if (!reader) { 
+        LASError_Print("Could not open file to read");
+        exit(1);
+    }
+    header = LASReader_GetHeader(reader);
+    if (!header) { 
+        LASError_Print("Could not read header");
+        exit(1);
+    } 
+    summary = SummarizePoints(reader);
+    print_point_summary(summary, header);
+    RepairHeader(header, summary) ;
+
+    if (reader) {
+        LASReader_Destroy(reader);
+        reader = NULL;
+    }
+        
+    writer = LASWriter_Create(file_name_out, header, LAS_MODE_APPEND);
+    if (!writer) {
+        LASError_Print("Problem creating LASWriterH object for append");
+        LASHeader_Destroy(header);
+        header = NULL;
+        exit(1);
+    }
+    LASWriter_Destroy(writer);
+    writer = NULL;
+    LASHeader_Destroy(header);
+    header = NULL;   
 
     if (verbose) ptime("done.");
 
