@@ -66,13 +66,13 @@ fast_install=needless
 
 # The host system.
 host_alias=
-host=i686-apple-darwin9.2.0
-host_os=darwin9.2.0
+host=i686-apple-darwin9.2.2
+host_os=darwin9.2.2
 
 # The build system.
 build_alias=
-build=i686-apple-darwin9.2.0
-build_os=darwin9.2.0
+build=i686-apple-darwin9.2.2
+build_os=darwin9.2.2
 
 # An echo program that does not interpret backslashes.
 echo="/bin/echo"
@@ -7234,13 +7234,13 @@ fast_install=needless
 
 # The host system.
 host_alias=
-host=i686-apple-darwin9.2.0
-host_os=darwin9.2.0
+host=i686-apple-darwin9.2.2
+host_os=darwin9.2.2
 
 # The build system.
 build_alias=
-build=i686-apple-darwin9.2.0
-build_os=darwin9.2.0
+build=i686-apple-darwin9.2.2
+build_os=darwin9.2.2
 
 # An echo program that does not interpret backslashes.
 echo="/bin/echo"
@@ -7539,13 +7539,13 @@ fast_install=needless
 
 # The host system.
 host_alias=
-host=i686-apple-darwin9.2.0
-host_os=darwin9.2.0
+host=i686-apple-darwin9.2.2
+host_os=darwin9.2.2
 
 # The build system.
 build_alias=
-build=i686-apple-darwin9.2.0
-build_os=darwin9.2.0
+build=i686-apple-darwin9.2.2
+build_os=darwin9.2.2
 
 # An echo program that does not interpret backslashes.
 echo="/bin/echo"
