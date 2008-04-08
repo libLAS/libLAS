@@ -107,7 +107,6 @@ LAS_DLL LASPointH LASPoint_Create(void);
 LAS_DLL LASPointH LASPoint_Copy(const LASPointH);
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint);
 
-LAS_DLL int LASHeader_Read(LASHeaderH hHeader);
 LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader);
 LAS_DLL void LASHeader_Destroy(LASHeaderH hHeader);
 LAS_DLL LASHeaderH LASHeader_Copy(const LASHeaderH hHeader);
