@@ -22,17 +22,16 @@ def check_void(result, func, cargs):
         msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
         las.LASError_Reset()
         raise LASException(msg)
-    return True
+    return result
 
 def check_value(result, func, cargs):
     "Error checking proper value returns"
     count = las.LASError_GetErrorCount()
-    print 'error count:' % count
     if count != 0:
         msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
         las.LASError_Reset()
         raise LASException(msg)
-    return True
+    return result
                     
 try:
     from numpy import array, ndarray
