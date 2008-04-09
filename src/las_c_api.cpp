@@ -445,7 +445,7 @@ LAS_DLL LASErrorEnum LASPoint_SetFlightLineEdge(LASPointH hPoint, liblas::uint16
     VALIDATE_POINTER1(hPoint, "LASPoint_SetFlightLineEdge", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetScanDirection(value);
+            ((LASPoint*) hPoint)->SetFlightLineEdge(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetFlightLineEdge");
