@@ -1,7 +1,7 @@
 import atexit, os, re, sys
 import ctypes
 
-from ctypes import c_char_p, Structure, CDLL, CFUNCTYPE, POINTER
+from ctypes import PyDLL
 
 class LASException(Exception):
     "libLAS exception, indicates a libLAS-related error."
@@ -67,7 +67,7 @@ las.LASError_GetLastErrorMethod.restype = ctypes.c_char_p
 
 las.LASError_GetErrorCount.restype=ctypes.c_int
 
-las.LASReader_Create.argtypes = [c_char_p]
+las.LASReader_Create.argtypes = [ctypes.c_char_p]
 las.LASReader_Create.restype = ctypes.c_void_p
 las.LASReader_Create.errcheck = check_void
 
