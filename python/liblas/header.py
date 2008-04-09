@@ -10,7 +10,8 @@ class Header(object):
         self.owned = owned
     def __del__(self):
         if self.owned:
-            core.las.LASHeader_Destroy(self.handle)
+            if self.handle and core:
+                core.las.LASHeader_Destroy(self.handle)
     
     def get_filesignature(self):
         """Returns the file signature for the file.  It should always be LASF"""
