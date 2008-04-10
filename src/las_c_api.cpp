@@ -238,6 +238,28 @@ LAS_DLL const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
 
 }
 
+LAS_DLL const LASPointH LASReader_GetPointAt(const LASReaderH hReader, liblas::uint32_t position)
+{
+    VALIDATE_POINTER1(hReader, "LASReader_GetPointAt", NULL);
+
+    try {
+        LASReader *reader = ((LASReader*) hReader);
+        if (reader->ReadPointAt((std::size_t) position)) 
+            // return (LASPointH) new LASPoint(reader->GetPoint());
+            return (LASPointH) &(reader->GetPoint());
+        else 
+            return NULL;
+    } catch (std::out_of_range const& e) {
+        return NULL;
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_GetPointAt");
+        return NULL;
+    }
+ 
+    return NULL;
+
+}
 LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader)
 {
     VALIDATE_POINTER1(hReader, "LASReader_GetHeader", NULL);

@@ -70,6 +70,7 @@ LAS_DLL void LASError_Print(const char* message);
 
 LAS_DLL LASReaderH LASReader_Create(const char * filename);
 LAS_DLL LASPointH LASReader_GetNextPoint(const LASReaderH hReader);
+LAS_DLL LASPointH LASReader_GetPointAt(const LASReaderH hReader, uint32_t position);
 
 LAS_DLL void LASReader_Destroy(LASReaderH hReader);
 
