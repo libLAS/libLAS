@@ -42,7 +42,22 @@
   630323.57 4834500.0
   630320.96 4834500.0
   630280.89 4834500.0
-  
+
+  >>> points = []
+  >>> for i in f:
+  ...   points.append(i)
+  ...   print i # doctest: +ELLIPSIS
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+
+  >>> len(points)
+  8  
 
   >>> del f
   
