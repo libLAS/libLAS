@@ -31,7 +31,19 @@
 
   >>> len(points)
   8
+
+  >>> for p in points:
+  ...   print p.x, p.y
+  630262.3 4834500.0
+  630282.45 4834500.0
+  630300.08 4834500.0
+  630346.83 4834500.0
+  630327.59 4834500.0
+  630323.57 4834500.0
+  630320.96 4834500.0
+  630280.89 4834500.0
   
+
   >>> del f
   
   >>> f = file.File('junk.las', mode="w", header=header)
@@ -42,6 +54,15 @@
 
   >>> for i in points:
   ...    f.write_point(i)
+  
+  >>> points = file.File('junk.las')
+  Traceback (most recent call last):
+  ...
+  LASException: ('File %s is already open.  Close the file or delete the reference to it', 'junk.las')
+  
+  >>> f.close()
+  >>> f.header
+  
   
   >>> import os
   >>> os.remove('junk.las')

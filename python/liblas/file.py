@@ -2,16 +2,31 @@ import core
 import header as lasheader
 import point
 
+files = []
+
 class File(object):
     def __init__(self, filename, header=None, mode='r'):
         self.filename = filename
         self._header = None
         self.handle = None
         
+        #check in the registry if we already have the file open
+        for f in files:
+            if f.filename == filename:
+                if f.mode == mode:
+                    return f
+                else:
+                    raise core.LASException("File %s is already open.  Close the file or delete the reference to it", filename)
+                    # # close up the file
+                    # files.remove(f)
+                    # f.__del__()
+                    # f.handle = None
+                    
         if mode == 'r' or mode =='rb':
             self.handle = core.las.LASReader_Create(self.filename)
             self.mode = 0
             self._header = lasheader.Header(handle = core.las.LASReader_GetHeader(self.handle))
+            files.append(self)
         if mode == 'w' and '+' not in mode:
             if not header:
                 self._header = lasheader.Header(handle = core.las.LASHeader_Create())
@@ -19,19 +34,29 @@ class File(object):
                 self._header = header
             self.handle = core.las.LASWriter_Create(self.filename, self._header.handle, 1)
             self.mode = 1
+            files.append(self)
         if '+' in mode and 'r' not in mode:
             if not header:
                 reader = core.las.LASReader_Create(self.filename)
                 self._header = lasheader.Header(handle = core.las.LASReader_GetHeader(reader))
                 core.las.LASReader_Destroy(reader)
-            self.handle = core.las.LASWriter_Create(self.filename, header.handle, 2)
+            else:
+                self._header = header
+            self.handle = core.las.LASWriter_Create(self.filename, self._header.handle, 2)
             self.mode = 2
+            files.append(self)
     def __del__(self):
         if not self.handle: return
+        self.close()
+
+    def close(self):
         if self.mode == 0 :
             core.las.LASReader_Destroy(self.handle)
         else:
             core.las.LASWriter_Destroy(self.handle)
+        self._header = None
+        self.handle = None
+        
     def get_header(self):
         """Returns the liblas.header.Header for the file"""
         return self._header
