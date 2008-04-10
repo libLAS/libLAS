@@ -1,0 +1,4 @@
+  >>> from liblas import file
+  >>> f = file.File('../test/data/TO_core_last_clip.las')
+  
+  >>> f.header
