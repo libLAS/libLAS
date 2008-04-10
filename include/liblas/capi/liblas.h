@@ -144,7 +144,7 @@ LAS_DLL uint8_t LASHeader_GetDataFormatId(const LASHeaderH hHeader);
 LAS_DLL uint16_t LASHeader_GetDataRecordLength(const LASHeaderH hHeader);
 LAS_DLL LASError LASHeader_SetDataFormatId(const LASHeaderH hHeader, int value);
 LAS_DLL uint32_t LASHeader_GetPointRecordsCount(const LASHeaderH hHeader);
-LAS_DLL void LASHeader_SetPointRecordsCount(const LASHeaderH hHeader, uint32_t value);
+LAS_DLL LASError LASHeader_SetPointRecordsCount(const LASHeaderH hHeader, uint32_t value);
 LAS_DLL uint32_t LASHeader_GetPointRecordsByReturnCount(const LASHeaderH hHeader, int index);
 LAS_DLL LASError LASHeader_SetPointRecordsByReturnCount(const LASHeaderH hHeader, int index, uint32_t value);
 
