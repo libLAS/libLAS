@@ -3,9 +3,12 @@ import datetime
 import time
 
 class Point(object):
-    def __init__(self, owned=True, handle=None):
+    def __init__(self, owned=True, handle=None, copy=False):
         if handle:
-            self.handle = handle
+            if copy:
+                self.handle = core.las.LASPoint_Copy(handle)
+            else:
+                self.handle = handle
         else:
             self.handle = core.las.LASPoint_Create()
         self.owned = owned

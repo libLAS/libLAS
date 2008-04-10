@@ -1,4 +1,47 @@
   >>> from liblas import file
   >>> f = file.File('../test/data/TO_core_last_clip.las')
   
-  >>> f.header
+  >>> f.header # doctest: +ELLIPSIS
+  <liblas.header.Header object at ...>
+  
+  >>> f.header.point_records_count
+  8L
+  
+  >>> header = f.header
+  >>> p = f.get_point(0)
+  >>> p.x, p.y, p.z
+  (630262.30000000005, 4834500.0, 51.530000000000001)
+  
+  >>> p = f.get_point(6)
+  >>> p.x, p.y, p.z
+  (54.730000000000004, 173671.70000000001, 10.24)
+  
+  >>> points = []
+  >>> for i in f:
+  ...   points.append(i)
+  ...   print i # doctest: +ELLIPSIS
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+
+  >>> len(points)
+  8
+  
+  >>> del f
+  
+  >>> f = file.File('junk.las', mode="w", header=header)
+  >>> header.offset
+  [-0.0, -0.0, -0.0]
+  >>> header.min
+  [630262.30000000005, 4834500.0, 50.899999999999999]
+
+  >>> for i in points:
+  ...    f.write_point(i)
+  
+  >>> import os
+  >>> os.remove('junk.las')

@@ -24,6 +24,14 @@ def check_void(result, func, cargs):
         raise LASException(msg)
     return result
 
+def check_void_done(result, func, cargs):
+    "Error checking for void* returns that might be empty with no error"
+    if not bool(result):
+        if las.LASError_GetErrorCount():
+            msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
+            las.LASError_Reset()
+            raise LASException(msg)
+    return result
 def check_value(result, func, cargs):
     "Error checking proper value returns"
     count = las.LASError_GetErrorCount()
@@ -73,7 +81,11 @@ las.LASReader_Create.errcheck = check_void
 
 las.LASReader_GetNextPoint.restype=ctypes.c_void_p
 las.LASReader_GetNextPoint.argtypes = [ctypes.c_void_p]
-las.LASReader_GetNextPoint.errcheck = check_void
+las.LASReader_GetNextPoint.errcheck = check_void_done
+
+las.LASReader_GetPointAt.restype = ctypes.c_void_p
+las.LASReader_GetPointAt.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
+las.LASReader_GetPointAt.errcheck = check_void_done
 
 las.LASPoint_GetX.restype = ctypes.c_double
 las.LASPoint_GetX.argtypes = [ctypes.c_void_p]
@@ -347,3 +359,4 @@ las.LASWriter_WriteHeader.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASWriter_WriteHeader.errcheck = check_return
 
 las.LASWriter_Destroy.argtypes = [ctypes.c_void_p]
+las.LASWriter_Destroy.errcheck = check_void_done
