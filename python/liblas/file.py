@@ -49,6 +49,7 @@ class File(object):
             core.las.LASReader_Destroy(self.handle)
         else:
             core.las.LASWriter_Destroy(self.handle)
+        files.remove(self.filename)
         self._header = None
         self.handle = None
         

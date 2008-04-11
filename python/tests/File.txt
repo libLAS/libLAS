@@ -70,15 +70,29 @@
   >>> for i in points:
   ...    f.write(i)
   
-  >>> points = file.File('junk.las')
+  >>> pts = file.File('junk.las')
   Traceback (most recent call last):
   ...
   LASException: ('File %s is already open.  Close the file or delete the reference to it', 'junk.las')
   
-  >>> iter(f)[0]
   >>> f.close()
   >>> f.header
+
+  >>> del f
+  >>> f = file.File('junk.las', mode='w+', header=header)
   
+  >>> for i in points:
+  ...    f.write(i)
+  
+  >>> f.close()
+  
+  >>> f = file.File('junk.las')
+  >>> cnt = 0
+  >>> for i in f:
+  ...     cnt += 1
+  
+  >>> cnt
+  16
   
   >>> import os
   >>> os.remove('junk.las')
