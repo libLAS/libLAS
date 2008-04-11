@@ -188,10 +188,12 @@ int main(int argc, char *argv[])
         else if (   strcmp(argv[i],"--file_creation") == 0   ||
                     strcmp(argv[i],"-file_creation") == 0)
         {
+            /* XXX - mloskot: Consider replacing atoi with strtol,
+               see http://www.iso-9899.info/wiki/Converting */
             i++;
-            file_creation_day = (unsigned short)atoi(argv[i]);
+            file_creation_day = (uint8_t)atoi(argv[i]);
             i++;
-            file_creation_year = (unsigned short)atoi(argv[i]);
+            file_creation_year = (uint8_t)atoi(argv[i]);
             change_header = TRUE;
         }
                       
