@@ -1,0 +1,36 @@
+#from Shapely http://trac.gispython.org/projects/PCL/browser/Shapely/trunk/tests/test_doctests.py
+
+import doctest
+import unittest
+import glob
+import os
+
+optionflags = (doctest.REPORT_ONLY_FIRST_FAILURE |
+               doctest.NORMALIZE_WHITESPACE |
+               doctest.ELLIPSIS)
+
+def list_doctests():
+    return [filename
+            for filename
+            in glob.glob(os.path.join(os.path.dirname(__file__), '*.txt'))]
+
+def open_file(filename, mode='r'):
+    """Helper function to open files from within the tests package."""
+    return open(os.path.join(os.path.dirname(__file__), filename), mode)
+
+def setUp(test):
+    test.globs.update(dict(
+            open_file = open_file,
+            ))
+
+def test_suite():
+    return unittest.TestSuite(
+        [doctest.DocFileSuite(os.path.basename(filename),
+                              optionflags=optionflags,
+                              setUp=setUp)
+         for filename
+         in list_doctests()])
+
+if __name__ == "__main__":
+    runner = unittest.TextTestRunner(verbosity=1)
+    runner.run(test_suite())

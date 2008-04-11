@@ -1,0 +1,67 @@
+
+  >>> from liblas import point
+  >>> p = point.Point()
+  
+  >>> p.x
+  0.0
+  >>> p.x = 1.0
+  >>> p.x
+  1.0
+
+  >>> p.y
+  0.0
+  >>> p.y = 1.0
+  >>> p.y
+  1.0
+
+  >>> p.z
+  0.0
+  >>> p.z = 1.0
+  >>> p.z
+  1.0
+
+  >>> p.return_number
+  0
+  >>> p.return_number = 3
+  >>> p.return_number
+  3
+  
+  >>> p.number_of_returns
+  0
+  >>> p.number_of_returns = 4
+  >>> p.number_of_returns
+  4
+  
+  >>> p.flightline_edge
+  0
+  >>> p.flightline_edge = 1
+  >>> p.flightline_edge
+  1
+  
+  >>> p.scan_flags
+  163
+  
+  >>> p.classification
+  0
+  >>> p.classification = 3
+  >>> p.classification
+  3
+  
+  >>> p.user_data
+  0
+  >>> p.user_data = 163446
+  >>> p.user_data
+  118
+  
+  >>> p.scan_angle
+  0
+  >>> p.scan_angle = 45
+  >>> p.scan_angle
+  45
+  
+  >>> import datetime
+  >>> t = datetime.datetime(2008,3,19)
+  >>> p.time = t
+  >>> p.time
+  datetime.datetime(2008, 3, 19, 0, 0, 0, 2)
+   

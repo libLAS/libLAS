@@ -1,0 +1,39 @@
+
+LAS_ROOT = .
+
+!INCLUDE nmake.opt
+
+CC=     cl
+LINK=   link
+
+default: src_dir apps_dir
+
+src_dir:
+    cd src
+    $(MAKE) /f makefile.vc 
+    cd ..
+
+apps_dir:
+    cd apps
+    $(MAKE) /f makefile.vc
+    cd ..
+
+clean:
+	-del *.obj 
+	-del *.lib
+	-del *.pdb
+	-del *.bak
+	cd src
+	$(MAKE) /f makefile.vc clean
+	cd ..
+	cd apps
+	$(MAKE) /f makefile.vc clean
+	cd ..
+
+install: src_dir apps_dir
+    -mkdir $(BINDIR)
+    cd src
+    $(MAKE) /f makefile.vc install
+    cd ..
+    cd apps
+    $(MAKE) /f makefile.vc install

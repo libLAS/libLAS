@@ -1,0 +1,6 @@
+
+
+SUBDIRS = src apps include
+
+
+

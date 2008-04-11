@@ -1,0 +1,37 @@
+PACKAGE_VERSION=0.9.3
+LAS_LIB = liblas.lib
+LAS_DLL = liblas$(PACKAGE_VERSION).dll
+LAS_LIB_DLL = liblas_i.lib
+
+INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
+
+BUILD_DEBUG = NO
+
+LAS_HOME=C:\cvs\liblas\trunk\
+
+
+BINDIR=$(LAS_HOME)\bin
+PYDLL_DIR = $(LAS_HOME)\python
+
+!IF "$(BUILD_DEBUG)" == "YES"
+OPTFLAGS=	/nologo /MDd /EHsc /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /DDEBUG /D_DEBUG /Fd$(LAS_ROOT)\las.pdb
+LAS_LIB = liblas_d.lib
+LAS_DLL = liblas$(PACKAGE_VERSION)_d.dll
+LAS_LIB_DLL = liblas_i.lib
+!ELSE
+OPTFLAGS=	/nologo /MD /EHsc /Ox /GR  /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /DNDEBUG
+LAS_LIB = liblas.lib
+LAS_DLL = liblas$(PACKAGE_VERSION).dll
+LAS_LIB_DLL = liblas_i.lib
+!ENDIF
+
+
+
+CFLAGS= $(OPTFLAGS) /DPACKAGE_VERSION=\"$(PACKAGE_VERSION)\"  $(INCLUDES) 
+
+.c.obj:	
+	$(CC) $(CFLAGS) /c $*.c /Fo$*.obj
+
+.cpp.obj:	
+	$(CC) $(CFLAGS) /c $*.cpp /Fo$*.obj
+	

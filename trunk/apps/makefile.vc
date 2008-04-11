@@ -1,0 +1,42 @@
+LAS_ROOT	=	..
+
+!INCLUDE $(LAS_ROOT)\nmake.opt
+
+
+all: default
+
+las2las.exe:
+	$(CC) $(CFLAGS) las2las.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
+
+lasinfo.exe:
+	$(CC) $(CFLAGS) lasinfo.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
+
+#lasdiff.exe:
+#	$(CC) $(CFLAGS) lasdiff.cpp lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+#	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
+
+las2txt.exe:
+	$(CC) $(CFLAGS) las2txt.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
+
+lasmerge.exe:
+	$(CC) $(CFLAGS) lasmerge.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
+
+txt2las.exe:
+	$(CC) $(CFLAGS) txt2las.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
+
+default: las2las.exe lasinfo.exe las2txt.exe lasmerge.exe txt2las.exe
+
+
+clean:
+	-del *.obj
+	-del *.exe
+	-del *.manifest
+	-del *.bak
+
+install: default
+    xcopy /y /r /d /f *.exe $(BINDIR)

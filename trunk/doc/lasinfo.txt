@@ -1,0 +1,119 @@
+****************************************************************
+  lasinfo: converts from binary LAS to a standard ASCII format
+****************************************************************
+
+:Author: Martin Isenburg
+:Contact: isenburg@cs.unc.edu
+:Revision: $Revision$
+:Date: $Date$
+
+.. sectnum::
+
+.. contents::
+    :depth: 3
+    :backlinks: top
+
+lasinfo prints the header contents and a short summary of the points. When 
+there are differences between header info and point content they are reported 
+as a warning.
+
+lasinfo can also be used to modify entries in the header as described below.
+
+Usage
+-----
+
+Simple info
+~~~~~~~~~~~
+
+::
+
+  $ lasinfo lidar.las
+  $ lasinfo --input lidar.las
+
+reports header information.
+
+
+Read from STDIN
+~~~~~~~~~~~~~~~
+
+::
+
+  $ lasinfo --stdin < lidar.las
+
+
+Report Variable Header
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+  
+  $ lasinfo --input lidar.las -variable
+
+also reports the contents of any variable headers there might be.
+
+Read through just the header
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ lasinfo --input lidar.las --nocheck
+
+omits reading over all the points. Only reports header information.
+
+Attempt to repair missing header entries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ lasinfo --input lidar.las --repair
+
+if there are missing or wrong entries in the header they are corrected.
+
+Update bounding box of LAS file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ lasinfo --input lidar.las --repair_boundingbox
+
+reads all points, computes their bounding box, and updates it in the header.
+
+Set file creation date
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+  
+  $ lasinfo -i lidar.las -file_creation 8 2007
+
+sets the file creation day/year in the header to 8/2007.
+
+Set system identifier
+~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ lasinfo -i lidar.las --system_identifier "hello world!"
+
+copies the first 31 characters of the string into the system_identifier 
+field of the header.
+
+Set generating software header field
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+  
+  $ lasinfo -i lidar.las -generating_software "this is a test (-:"
+
+copies the first 31 characters of the string into the generating_software 
+field of the header.
+
+Example data
+------------
+
+try these sources for sample lidar data in LAS format:
+
+http://www.geoict.net/LidarData/Data/OptechSampleLAS.zip
+
+http://www.qcoherent.com/data/LP360_Sample_Data.rar
+
+http://www.appliedimagery.com/Serpent%20Mound%20Model%20LAS%20Data.las
+
