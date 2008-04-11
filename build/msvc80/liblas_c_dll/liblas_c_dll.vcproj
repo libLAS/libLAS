@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="lasinfo"
-	ProjectGUID="{83AF175F-01A1-44ED-9DDA-F716A4C6FD21}"
-	RootNamespace="lasinfo"
+	Name="liblas_c_dll"
+	ProjectGUID="{EC92BE01-CFA3-46C6-998E-810484CC5860}"
+	RootNamespace="liblas_c_dll"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -19,7 +19,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			InheritedPropertySheets="..\liblas.vsprops"
 			CharacterSet="1"
 			>
@@ -41,8 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(LIBLAS_DIR)\include\liblas\capi"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBLAS_C_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -64,7 +63,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				SubSystem="1"
+				SubSystem="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -96,7 +95,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			InheritedPropertySheets="..\liblas.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -118,8 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(LIBLAS_DIR)\include\liblas\capi"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBLAS_C_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -139,7 +137,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -174,16 +172,32 @@
 	</References>
 	<Files>
 		<Filter
-			Name="apps"
+			Name="src"
 			>
 			<File
-				RelativePath="..\..\..\apps\lascommon.c"
+				RelativePath="..\..\..\src\las_c_api.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\apps\lasinfo.c"
+		</Filter>
+		<Filter
+			Name="include"
+			>
+			<Filter
+				Name="capi"
 				>
-			</File>
+				<File
+					RelativePath="..\..\..\include\liblas\capi\las_config.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\liblas\capi\las_version.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\liblas\capi\liblas.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
