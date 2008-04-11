@@ -45,8 +45,12 @@ clean:
 	-del *.bak
 	-del *.manifest
 	for %d in ( $(LAS_OBJS) ) do \
-		del %d	
+		del %d
+	-del $(PYDLL_DIR)\$(LAS_DLL)
+	-del $(PYDLL_DIR)\DLLs\$(LAS_DLL)
 
 install: $(LAS_DLL)
     echo $(BINDIR)
     xcopy /y /r /d /f $(LAS_DLL) $(BINDIR)
+    xcopy /y /r /d /f $(LAS_DLL) $(PYDLL_DIR)
+    xcopy /y /r /d /f $(LAS_DLL) $(PYDLL_DIR)\DLLs
