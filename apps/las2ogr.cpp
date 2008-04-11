@@ -18,7 +18,8 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/cstdint.hpp>
 // ogr
-#include "ogrsf_frmts.h"
+#include <ogrsf_frmts.h>
+#include <ogr_p.h>
 //std
 #include <cassert>
 #include <fstream>
@@ -140,7 +141,28 @@ void create_layer_def(OGRLayer& lyr)
     }
 }
 
-int main(char* argv[], int argc)
+void report_ogr_formats()
+{
+    OGRSFDriverRegistrar* r = 0;
+    r = OGRSFDriverRegistrar::GetRegistrar();
+
+    std::cout << "Supported target formats:";
+
+    for (int i = 0; i < r->GetDriverCount(); ++i)
+    {
+        OGRSFDriver* drv = r->GetDriver(i);
+        assert(0 != drv);
+
+        if (drv->TestCapability(ODrCCreateDataSource))
+        {
+            std::cout << "\n - " << drv->GetName();
+        }
+    }
+
+    std::cout << std::endl;
+}
+
+int main(int argc, char* argv[])
 {
     // TODO:
     // - rename las2shp to las2ogr with ESRI Shapefile as default output format
