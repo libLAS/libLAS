@@ -8,11 +8,11 @@
   8L
   
   >>> header = f.header
-  >>> p = f.get_point(0)
+  >>> p = f.read(0)
   >>> p.x, p.y, p.z
   (630262.30000000005, 4834500.0, 51.530000000000001)
   
-  >>> p = f.get_point(6)
+  >>> p = f.read(6)
   >>> p.x, p.y, p.z
   (54.730000000000004, 173671.70000000001, 10.24)
   
@@ -68,13 +68,14 @@
   [630262.30000000005, 4834500.0, 50.899999999999999]
 
   >>> for i in points:
-  ...    f.write_point(i)
+  ...    f.write(i)
   
   >>> points = file.File('junk.las')
   Traceback (most recent call last):
   ...
   LASException: ('File %s is already open.  Close the file or delete the reference to it', 'junk.las')
   
+  >>> iter(f)[0]
   >>> f.close()
   >>> f.header
   

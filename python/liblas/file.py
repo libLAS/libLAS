@@ -66,7 +66,7 @@ class File(object):
         raise core.LASException("The header can only be set after file creation for files in append mode")
     header = property(get_header)
 
-    def get_point(self, location):
+    def read(self, location):
         if self.mode == 0:
             return point.Point(handle=core.las.LASReader_GetPointAt(self.handle, location), owned= False, copy=True)
 
@@ -84,9 +84,9 @@ class File(object):
                 self.open()
                 
     
-    def write_point(self, pt):
+    def write(self, pt):
         if not isinstance(pt, point.Point):
-            raise core.LASException('cannot write %s, it must be of type liblas.core.point.Point' % pt)
+            raise core.LASException('cannot write %s, it must be of type liblas.point.Point' % pt)
         if self.mode == 1 or self.mode == 2:
             core.las.LASWriter_WritePoint(self.handle, pt.handle)
 
