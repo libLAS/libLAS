@@ -6,9 +6,22 @@ install_requires = ['setuptools']
 if version_info[:2] < (2,5):
     install_requires.append('ctypes')
 
+import os
 
+version = file('../nmake.opt').readline().strip()
+version = version.split('=')[1]
+print version
+
+if os.name == 'nt':
+    # Windows NT library
+    lib_name = 'liblas%s.dll' % version
+    data_files=[('DLLs', ['DLLs/%s'% lib_name]),]
+else:
+    data_files = [(),]
+
+print data_files
 setup(name          = 'libLAS',
-      version       = '0.9.2',
+      version       = version,
       description   = 'LAS 1.0/1.1 LiDAR data format reader',
       license       = 'BSD',
       keywords      = 'DEM elevation LIDAR',
@@ -17,6 +30,7 @@ setup(name          = 'libLAS',
       maintainer    = 'Howard Butler',
       maintainer_email  = 'hobu.inc@gmail.com',
       url   = 'http://liblas.org',
+      data_files = data_files,
 #      long_description = readme_text,
       packages      = ['liblas'],
       install_requires = install_requires,

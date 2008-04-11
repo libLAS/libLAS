@@ -49,7 +49,7 @@ except ImportError:
 
 if os.name == 'nt':
     # Windows NT library
-    lib_name = 'liblas0.9.2.dll'
+    lib_name = 'liblas0.9.3.dll'
 elif os.name == 'posix':
     platform = os.uname()[0]
     if platform == 'Darwin':
