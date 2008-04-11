@@ -43,5 +43,10 @@
 #  define MAX(a,b)      ((a>b) ? a : b)
 #endif
 
+/* FIXME -  Ticket #23 */
+#ifdef _MSC_VER
+#define PACKAGE_VERSION "0.9.3"
+#endif
+
 #endif /* LAS_CONFIG_H_INCLUDED */
 

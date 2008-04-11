@@ -1166,6 +1166,13 @@ LAS_DLL void LASError_Print(const char* message) {
 }
 
 LAS_DLL const char * LAS_GetVersion() {
+
+    /* XXX - mloskot: I'd suggest to define PACKAGE_VERSION as static object
+       and return safe const pointer, instead of newly allocated string. */
+
+    /* FIXME - mloskot: Termporarily, I defined PACKAGE_VERSION
+       in las_config.h to solve Visual C++ compilation  (Ticket #23) */
+
     return strdup(PACKAGE_VERSION);
 }
 
