@@ -11,7 +11,10 @@ class Point(object):
                 self.handle = handle
         else:
             self.handle = core.las.LASPoint_Create()
-        self.owned = owned
+        if not copy:
+            self.owned = owned
+        else:
+            self.owned = False
     def __del__(self):
         if self.owned:
             if self.handle and core:
