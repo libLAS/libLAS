@@ -141,7 +141,7 @@ class Header(object):
         
         It can only be 1 (for 1.1 compatible) or 0 (for 1.0 compatible).
         """
-        if value != 1 or value != 0:
+        if value not in [1,0]:
             raise core.LASException("Format ID must be 1 or 0")
         return core.las.LASHeader_SetDataFormatId(self.handle, value)
     dataformat_id = property(get_dataformatid, set_dataformatid)
