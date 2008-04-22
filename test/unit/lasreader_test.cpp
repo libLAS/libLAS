@@ -19,10 +19,50 @@ namespace tut
 { 
     struct lasreader_data
     {
+        std::string file10_;
+
         lasreader_data()
             : file10_(g_test_data_path + "//TO_core_last_clip.las")
         {}
-        std::string file10_;
+
+        void test_file10_point1(liblas::LASPoint const& p)
+        {
+            ensure_distance(p.GetX(), double(630262.30), 0.0001);
+            ensure_distance(p.GetY(), double(4834500), 0.0001);
+            ensure_distance(p.GetZ(), double(51.53), 0.0001);
+            ensure_equals(p.GetIntensity(), 670);
+            ensure_equals(p.GetClassification(), 1);
+            ensure_equals(p.GetScanAngleRank(), 0);
+            ensure_equals(p.GetUserData(), 0);
+            ensure_equals(p.GetScanFlags(), 9);
+            ensure_distance(p.GetTime(), double(413665.23360000004), 0.0001);
+        }
+
+        void test_file10_point2(liblas::LASPoint const& p)
+        {
+            ensure_distance(p.GetX(), double(630282.45), 0.0001);
+            ensure_distance(p.GetY(), double(4834500), 0.0001);
+            ensure_distance(p.GetZ(), double(51.63), 0.0001);
+            ensure_equals(p.GetIntensity(), 350);
+            ensure_equals(p.GetClassification(), 1);
+            ensure_equals(p.GetScanAngleRank(), 0);
+            ensure_equals(p.GetUserData(), 0);
+            ensure_equals(static_cast<unsigned int>(p.GetScanFlags()), 9);
+            ensure_distance(p.GetTime(), double(413665.52880000003), 0.0001);
+        }
+
+        void test_file10_point4(liblas::LASPoint const& p)
+        {
+            ensure_distance(p.GetX(), double(630346.83), 0.0001);
+            ensure_distance(p.GetY(), double(4834500), 0.0001);
+            ensure_distance(p.GetZ(), double(50.90), 0.0001);
+            ensure_equals(p.GetIntensity(), 150);
+            ensure_equals(p.GetClassification(), 1);
+            ensure_equals(p.GetScanAngleRank(), 0);
+            ensure_equals(p.GetUserData(), 0);
+            ensure_equals(static_cast<unsigned int>(p.GetScanFlags()), 18);
+            ensure_distance(p.GetTime(), double(414093.84360000002), 0.0001);
+        }
     };
 
     typedef test_group<lasreader_data> tg;
@@ -111,45 +151,18 @@ namespace tut
 
         // read 1st point
         reader.ReadNextPoint();
-        liblas::LASPoint const& p1 = reader.GetPoint();
-        ensure_distance(p1.GetX(), double(630262.30), 0.0001);
-        ensure_distance(p1.GetY(), double(4834500), 0.0001);
-        ensure_distance(p1.GetZ(), double(51.53), 0.0001);
-        ensure_equals(p1.GetIntensity(), 670);
-        ensure_equals(p1.GetClassification(), 1);
-		ensure_equals(p1.GetScanAngleRank(), 0);
-		ensure_equals(p1.GetUserData(), 0);
-        ensure_equals(p1.GetScanFlags(), 9);
-		ensure_distance(p1.GetTime(), double(413665.23360000004), 0.0001);
+        test_file10_point1(reader.GetPoint());
 
         // read 2nd point
         reader.ReadNextPoint();
-        liblas::LASPoint const& p2 = reader.GetPoint();
-        ensure_distance(p2.GetX(), double(630282.45), 0.0001);
-        ensure_distance(p2.GetY(), double(4834500), 0.0001);
-        ensure_distance(p2.GetZ(), double(51.63), 0.0001);
-        ensure_equals(p2.GetIntensity(), 350);
-        ensure_equals(p2.GetClassification(), 1);
-		ensure_equals(p2.GetScanAngleRank(), 0);
-		ensure_equals(p2.GetUserData(), 0);
-        ensure_equals(static_cast<unsigned int>(p2.GetScanFlags()), 9);
-		ensure_distance(p2.GetTime(), double(413665.52880000003), 0.0001);
+        test_file10_point2(reader.GetPoint());
 
         // read and skip 3rd point
         reader.ReadNextPoint();
 
         // read 4th point
         reader.ReadNextPoint();
-        liblas::LASPoint const& p3 = reader.GetPoint();
-        ensure_distance(p3.GetX(), double(630346.83), 0.0001);
-        ensure_distance(p3.GetY(), double(4834500), 0.0001);
-        ensure_distance(p3.GetZ(), double(50.90), 0.0001);
-        ensure_equals(p3.GetIntensity(), 150);
-        ensure_equals(p3.GetClassification(), 1);
-		ensure_equals(p3.GetScanAngleRank(), 0);
-		ensure_equals(p3.GetUserData(), 0);
-        ensure_equals(static_cast<unsigned int>(p3.GetScanFlags()), 18);
-		ensure_distance(p3.GetTime(), double(414093.84360000002), 0.0001);
+        test_file10_point4(reader.GetPoint());
 
         // read and count remaining points from 5 to 8
         unsigned short c = 0;
@@ -158,6 +171,63 @@ namespace tut
             ++c;
         }
         ensure_equals(c, 4);
+    }
+
+    // Test ReadPointAt and GetPoint pair
+    template<>
+    template<>
+    void to::test<5>()
+    {
+        std::ifstream ifs;
+        ifs.open(file10_.c_str(), std::ios::in | std::ios::binary);
+        liblas::LASReader reader(ifs);
+
+        // read 1st point
+        reader.ReadPointAt(0);
+        test_file10_point1(reader.GetPoint());
+
+        // read 4th point
+        reader.ReadPointAt(3);
+        test_file10_point4(reader.GetPoint());
+
+        // read back to 2nd point
+        reader.ReadPointAt(1);
+        test_file10_point2(reader.GetPoint());
+    }
+
+    // Test operator[] and GetPoint pair
+    template<>
+    template<>
+    void to::test<6>()
+    {
+        std::ifstream ifs;
+        ifs.open(file10_.c_str(), std::ios::in | std::ios::binary);
+        liblas::LASReader reader(ifs);
+
+        // read 1st point
+        test_file10_point1(reader[0]);
+
+        // read 4th point
+        test_file10_point4(reader[3]);
+
+        // read back to 2nd point
+        test_file10_point2(reader[1]);
+    }
+
+    // Test GetStream method
+    template<>
+    template<>
+    void to::test<7>()
+    {
+        std::ifstream ifs;
+        ifs.open(file10_.c_str(), std::ios::in | std::ios::binary);
+        liblas::LASReader reader(ifs);
+
+        std::istream& is = reader.GetStream();
+
+        std::istream const* const p1 = &ifs;
+        std::istream const* const p2 = &is;
+        ensure_equals(ifs, is); // same streams
     }
 }
 
