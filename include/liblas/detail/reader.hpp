@@ -37,6 +37,7 @@ protected:
     std::streamoff m_offset;
     uint32_t m_size;
     uint32_t m_current;
+    uint32_t m_recordlength;
 
 private:
 

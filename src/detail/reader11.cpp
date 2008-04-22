@@ -167,7 +167,8 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     m_offset = header.GetDataOffset();
     m_size = header.GetPointRecordsCount();
-
+    m_recordlength = header.GetDataRecordLength();
+    
     return true;
 }
 
@@ -229,7 +230,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record)
     if (m_size <= n)
         return false;
 
-    std::streamsize pos = (static_cast<std::streamsize>(n) * LASHeader::ePointSize0) + m_offset;
+    std::streamsize pos = (static_cast<std::streamsize>(n) * m_recordlength) + m_offset;
 
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
