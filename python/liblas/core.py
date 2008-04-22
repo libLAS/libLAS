@@ -48,18 +48,29 @@ except ImportError:
     HAS_NUMPY = False
 
 if os.name == 'nt':
-    # Windows NT library
+    # stolen from Shapely
+    # http://trac.gispython.org/projects/PCL/browser/Shapely/trunk/shapely/geos.py
     lib_name = 'liblas0.9.3.dll'
+    try:
+        local_dlls = os.path.abspath(os.__file__ + "../../../DLLs")
+        original_path = os.environ['PATH']
+        os.environ['PATH'] = "%s;%s" % (local_dlls, original_path)
+        las = ctypes.CDLL(lib_name)
+    except (ImportError, WindowsError):
+        raise
+
+
 elif os.name == 'posix':
     platform = os.uname()[0]
     if platform == 'Darwin':
         lib_name = 'liblas.dylib'
     else:
         lib_name = 'liblas.so'
+    las = ctypes.CDLL(lib_name)
 else:
     raise LASException('Unsupported OS "%s"' % os.name)
 
-las = ctypes.CDLL(lib_name)
+
 
 
 las.LAS_GetVersion.restype=ctypes.c_char_p
