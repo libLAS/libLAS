@@ -92,7 +92,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Running libLAS test suite $(ProjectName).exe"
-				CommandLine="cd $(OutDir)&#x0D;&#x0A;$(ProjectName).exe&#x0D;&#x0A;"
+				CommandLine="cd $(OutDir)&#x0D;&#x0A;$(ProjectName).exe ../../../test/data&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -207,7 +207,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\test\unit\lasreader_test.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\test\unit\lasrecordheader_test.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\test\unit\liblas_test.hpp"
 			>
 		</File>
 		<File
