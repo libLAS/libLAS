@@ -192,7 +192,7 @@ namespace tut
 
         std::string sysid1("Short Sys Id"); // 12 bytes
         std::string::size_type const len1 = sysid1.size();
-        std::string sysid2("Long System Identifier - and some garbage"); // 41 bytes
+        std::string sysid2("Long System Identifier - XXX YYY"); // 32 bytes
         std::string::size_type const len2 = sysid2.size();
 
         LASHeader h;
@@ -202,12 +202,10 @@ namespace tut
         ensure_equals(h.GetSystemId().size(), len1);
         ensure_equals(h.GetSystemId(true).size(), 32);
 
-        // TODO: Should we allow passing longer identifier than 32 bytes
-        //       and truncate it implicitly, so the following test will pass?
-        //h.SetSystemId(sysid2);
-        //ensure_equals(h.GetSystemId(), sysid2.substr(0, 32));
-        //ensure_equals(h.GetSystemId().size(), len2);
-        //ensure_equals(h.GetSystemId(true).size(), 32);
+        h.SetSystemId(sysid2);
+        ensure_equals(h.GetSystemId(), sysid2);
+        ensure_equals(h.GetSystemId().size(), len2);
+        ensure_equals(h.GetSystemId(true).size(), 32);
     }
 
     // Test Get/SetSoftwareId
@@ -217,16 +215,21 @@ namespace tut
     {
         using liblas::LASHeader;
 
-        std::string softd1("Short Soft Id"); // 13 bytes
-        std::string::size_type const len1 = softd1.size();
+        std::string softid1("Short Soft Id"); // 13 bytes
+        std::string::size_type const len1 = softid1.size();
+        std::string softid2("Long Software Identifier - XX YY"); // 32 bytes
+        std::string::size_type const len2 = softid2.size();
 
         LASHeader h;
-        h.SetSoftwareId(softd1);
-        ensure_equals(h.GetSoftwareId(), softd1);
+        h.SetSoftwareId(softid1);
+        ensure_equals(h.GetSoftwareId(), softid1);
         ensure_equals(h.GetSoftwareId().size(), len1);
         ensure_equals(h.GetSoftwareId(true).size(), 32);
 
-        // TODO: What about passing longer value and implicit truncation?
+        h.SetSoftwareId(softid2);
+        ensure_equals(h.GetSoftwareId(), softid2);
+        ensure_equals(h.GetSoftwareId().size(), len2);
+        ensure_equals(h.GetSoftwareId(true).size(), 32);
     }
 
     // Test GetPointRecordsByReturnCount
