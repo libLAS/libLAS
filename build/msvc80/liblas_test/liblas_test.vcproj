@@ -195,6 +195,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\..\..\test\unit\common.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\test\unit\common.hpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\test\unit\guid_test.cpp"
 			>
 		</File>
@@ -212,6 +220,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\test\unit\lasrecordheader_test.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\test\unit\laswriter_test.cpp"
 			>
 		</File>
 		<File

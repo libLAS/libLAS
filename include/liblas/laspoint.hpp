@@ -18,7 +18,9 @@
 
 namespace liblas {
 
-/// \todo To be documented.
+/// Definition of point data record.
+///
+/// \todo TODO: Think about last 1-byte field in record Point Source ID (LAS 1.1)
 class LASPoint
 {
 public:
