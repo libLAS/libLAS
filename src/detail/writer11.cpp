@@ -26,7 +26,7 @@ WriterImpl::WriterImpl(std::ostream& ofs) :
 
 std::size_t WriterImpl::GetVersion() const
 {
-    return eLASVersion10;
+    return eLASVersion11;
 }
 
 void WriterImpl::WriteHeader(LASHeader const& header)
