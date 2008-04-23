@@ -468,7 +468,8 @@ void LASHeader::SetMin(double x, double y, double z)
 
 void LASHeader::Init()
 {
-    // Initialize public header block with default values
+    // Initialize public header block with default
+    // values according to LAS 1.1
 
     m_versionMajor = 1;
     m_versionMinor = 1;
@@ -485,7 +486,7 @@ void LASHeader::Init()
     m_projectId1 = uint32_t();
     std::memset(m_projectId4, 0, sizeof(m_projectId4)); 
 
-    m_dataOffset = eHeaderSize + eDataSignatureSize;
+    m_dataOffset = eHeaderSize; // excluding 2 bytes of Point Data Start Signature
     m_recordsCount = 0;
     m_pointRecordsCount = 0;
 
