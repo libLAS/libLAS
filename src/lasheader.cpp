@@ -56,15 +56,12 @@ LASHeader::LASHeader(LASHeader const& other) :
 
     p = std::memcpy(m_signature, other.m_signature, eFileSignatureSize);
     assert(p == m_signature);
-//    m_signature = other.m_signature;
     p = std::memcpy(m_projectId4, other.m_projectId4, eProjectId4Size); 
     assert(p == m_projectId4);
     p = std::memcpy(m_systemId, other.m_systemId, eSystemIdSize);
     assert(p == m_systemId);
-//    m_systemId = other.m_systemId;
     p = std::memcpy(m_softwareId, other.m_softwareId, eSoftwareIdSize);
     assert(p == m_softwareId);
-//    m_softwareId = other.m_softwareId;
     std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
     assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
 
@@ -77,7 +74,6 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         void* p = 0;
         p = std::memcpy(m_signature, rhs.m_signature, eFileSignatureSize);
         assert(p == m_signature);
-//        m_signature = rhs.m_signature;
         m_sourceId = rhs.m_sourceId;
         m_reserved = rhs.m_reserved;
         m_projectId1 = rhs.m_projectId1;
@@ -89,10 +85,8 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         m_versionMinor = rhs.m_versionMinor;
         p = std::memcpy(m_systemId, rhs.m_systemId, eSystemIdSize);
         assert(p == m_systemId);
-        //m_systemId = rhs.m_systemId;
         p = std::memcpy(m_softwareId, rhs.m_softwareId, eSoftwareIdSize);
         assert(p == m_softwareId);
-        //m_softwareId = rhs.m_softwareId;
         m_createDOY = rhs.m_createDOY;
         m_createYear = rhs.m_createYear;
         m_headerSize = rhs.m_headerSize;
@@ -146,7 +140,7 @@ bool LASHeader::operator==(LASHeader const& other) const
 
 std::string LASHeader::GetFileSignature() const
 {
-    return m_signature;
+    return std::string(m_signature, eFileSignatureSize);
 }
 
 void LASHeader::SetFileSignature(std::string const& v)
@@ -214,7 +208,8 @@ void LASHeader::SetVersionMinor(uint8_t v)
 
 std::string LASHeader::GetSystemId(bool pad /*= false*/) const
 {
-    std::string tmp(m_systemId);
+    // copy array of chars and trim zeros if smaller than 32 bytes
+    std::string tmp(std::string(m_systemId, eSystemIdSize).c_str());
 
     // pad right side with spaces
     if (pad && tmp.size() < eSystemIdSize)
@@ -238,9 +233,9 @@ void LASHeader::SetSystemId(std::string const& v)
     std::strncpy(m_systemId, v.c_str(), eSystemIdSize);
 }
 
-std::string  LASHeader::GetSoftwareId(bool pad /*= false*/) const
+std::string LASHeader::GetSoftwareId(bool pad /*= false*/) const
 {
-    std::string tmp(m_softwareId);
+    std::string tmp(std::string(m_softwareId, eSoftwareIdSize).c_str());
 
     // pad right side with spaces
     if (pad && tmp.size() < eSoftwareIdSize)
