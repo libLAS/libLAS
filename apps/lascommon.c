@@ -137,6 +137,9 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
         summary->number_of_returns_of_given_pulse[LASPoint_GetNumberOfReturns(p)]++;
         
         cls = LASPoint_GetClassification(p);
+        LASPoint_SetClassification(summary->pmin, MIN(cls, LASPoint_GetClassification(summary->pmin)));
+        LASPoint_SetClassification(summary->pmax, MAX(cls, LASPoint_GetClassification(summary->pmax)));  
+
         summary->classification[(cls & 31)]++;            
         if (cls & 32) summary->classification_synthetic++;          
         if (cls & 64) summary->classification_keypoint++; 
