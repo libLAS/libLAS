@@ -30,6 +30,7 @@ LASWriter::~LASWriter()
 //    std::cout.flags ( std::ios::right | std::ios::hex | std::ios::showbase );
 //    std::cout << "Stream Flags: " <<GetStream().flags() << std::endl;
     // This is the problem
+    // TODO - mloskot: What is the problem with the above?
     m_pimpl->UpdateHeader(m_header);
 }
 
@@ -52,6 +53,9 @@ bool LASWriter::WritePoint(LASPoint const& point)
     m_record.intensity = point.GetIntensity();
     m_record.flags = point.GetScanFlags();
     m_record.classification = point.GetClassification();
+    m_record.scan_angle_rank = point.GetScanAngleRank();
+    m_record.user_data = point.GetUserData();
+    m_record.point_source_id = 0; // TODO: How to handle this in portable way, for LAS 1.0 and 1.1
 
     if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
         m_pimpl->WritePointRecord(m_record);
