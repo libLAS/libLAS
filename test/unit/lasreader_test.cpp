@@ -225,9 +225,7 @@ namespace tut
 
         std::istream& is = reader.GetStream();
 
-        std::istream const* const p1 = &ifs;
-        std::istream const* const p2 = &is;
-        ensure_equals(ifs, is); // same streams
+        ensure_equals(ifs, is);
     }
 }
 

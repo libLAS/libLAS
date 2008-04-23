@@ -270,8 +270,6 @@ namespace tut
 
         std::ostream& os = writer.GetStream();
 
-        std::ostream const* const p1 = &ofs;
-        std::ostream const* const p2 = &os;
         ensure_equals(ofs, os); // same streams
     }
 }
