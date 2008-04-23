@@ -35,6 +35,7 @@ void test_default_header(liblas::LASHeader const& h)
     ensure_equals("wrong default minor version",
         h.GetVersionMinor(), 1);
 
+    std::string x = h.GetSystemId();
     ensure_equals("wrong default system id",
         h.GetSystemId(), LASHeader::SystemIdentifier);
     ensure_equals("wrong default software id",

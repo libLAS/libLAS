@@ -30,6 +30,13 @@ namespace tut
                 file10_(g_test_data_path + "//TO_core_last_clip.las")
         {}
 
+        ~laswriter_data()
+        {
+            // remove temporary file after each test case
+            int const rc = std::remove(tmpfile_.c_str());
+            ensure_equals(rc, 0);
+        }
+
         void test_file10_point1(liblas::LASPoint const& p)
         {
             ensure_distance(p.GetX(), double(630262.30), 0.0001);
@@ -106,9 +113,6 @@ namespace tut
             liblas::LASHeader const& hdr_default = reader.GetHeader();
             test_default_header(hdr_default);
         }
-
-        int const rc = std::remove(tmpfile_.c_str());
-        ensure_equals(rc, 0);
     }
 
     // Test WritePoint method
@@ -201,9 +205,74 @@ namespace tut
             ensure_equals(point.GetScanAngleRank(), 90);
             ensure_equals(point.GetUserData(), 0);
         }
+    }
 
-        int const rc = std::remove(tmpfile_.c_str());
-        ensure_equals(rc, 0);
+    
+    // Test WriteHeader method
+    template<>
+    template<>
+    void to::test<3>()
+    {
+        {
+            std::ofstream ofs;
+            ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
+
+            liblas::LASHeader header;
+            liblas::LASWriter writer(ofs, header);
+
+            // test initially written header
+            liblas::LASHeader const& hdr_default = writer.GetHeader();
+            test_default_header(hdr_default);
+
+            // update some header data and overwrite header block
+            header.SetFileSourceId(65535);
+            header.SetSystemId("Unit Test libLAS System");
+            header.SetSoftwareId("Unit Test libLAS Software");
+            header.SetCreationDOY(100);
+            header.SetCreationYear(2008);
+            header.SetScale(1.123, 2.123, 3.123);
+            header.SetOffset(4.321, 5.321, 6.321);
+
+            writer.WriteHeader(header);
+        }
+
+        // read and check updated header block
+        {
+            std::ifstream ifs;
+            ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
+            liblas::LASReader reader(ifs);
+
+            liblas::LASHeader const& header = reader.GetHeader();
+            ensure_equals(header.GetFileSourceId(), 65535);
+            ensure_equals(header.GetSystemId(), std::string("Unit Test libLAS System"));
+            ensure_equals(header.GetSoftwareId(), std::string("Unit Test libLAS Software"));
+            ensure_equals(header.GetCreationDOY(), 100);
+            ensure_equals(header.GetCreationYear(), 2008);
+            ensure_equals(header.GetScaleX(), 1.123);
+            ensure_equals(header.GetScaleY(), 2.123);
+            ensure_equals(header.GetScaleZ(), 3.123);
+            ensure_equals(header.GetOffsetX(), 4.321);
+            ensure_equals(header.GetOffsetY(), 5.321);
+            ensure_equals(header.GetOffsetZ(), 6.321);
+        }
+    }
+
+    // Test GetStream method
+    template<>
+    template<>
+    void to::test<4>()
+    {
+        std::ofstream ofs;
+        ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
+
+        liblas::LASHeader header;
+        liblas::LASWriter writer(ofs, header);
+
+        std::ostream& os = writer.GetStream();
+
+        std::ostream const* const p1 = &ofs;
+        std::ostream const* const p2 = &os;
+        ensure_equals(ofs, os); // same streams
     }
 }
 
