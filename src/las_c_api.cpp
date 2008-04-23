@@ -187,7 +187,7 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader)
                 }
 
         
-            } catch (std::bad_cast const& e)
+            } catch (std::bad_cast const& /* e */)
             {
                 std::istream& a = static_cast<std::istream&>(freader.GetStream());
                 std::istream& r = reader->GetStream();
@@ -204,7 +204,7 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader)
                 return;
             }
     
-        }  catch (std::runtime_error const& e) 
+        }  catch (std::runtime_error const& /* e */) 
         {
             continue;
         }
@@ -226,7 +226,7 @@ LAS_DLL const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
             return (LASPointH) &(reader->GetPoint());
         else 
             return NULL;
-    } catch (std::out_of_range const& e) {
+    } catch (std::out_of_range const& /* e */) {
         return NULL;
     } catch (std::exception const& e)
     {
@@ -249,7 +249,7 @@ LAS_DLL const LASPointH LASReader_GetPointAt(const LASReaderH hReader, liblas::u
             return (LASPointH) &(reader->GetPoint());
         else 
             return NULL;
-    } catch (std::out_of_range const& e) {
+    } catch (std::out_of_range const& /* e */) {
         return NULL;
     } catch (std::exception const& e)
     {
@@ -1112,7 +1112,7 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
                     return;
                 }
         
-            } catch (std::bad_cast const& e)
+            } catch (std::bad_cast const& /* e */)
             {
                 std::ostream& a = static_cast<std::ostream&>(fwriter.GetStream());
                 std::ostream& r = writer->GetStream();
@@ -1129,7 +1129,7 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
                 return ;
             }
     
-        }  catch (std::runtime_error const& e) 
+        }  catch (std::runtime_error const& /* e */) 
         {
             continue;
         }
