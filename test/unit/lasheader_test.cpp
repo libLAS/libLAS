@@ -11,71 +11,13 @@
 #include <tut/tut.hpp>
 #include <string>
 #include <stdexcept>
+#include "common.hpp"
 
 namespace tut
 { 
     struct lasheader_data
     {
         liblas::LASHeader m_default;
-
-        void test_default_header(liblas::LASHeader const& h)
-        {
-            using liblas::LASHeader;
-
-            ensure_equals("wrong default file signature",
-                h.GetFileSignature(), LASHeader::FileSignature);
-
-            ensure_equals("wrong default file source id",
-                h.GetFileSourceId(), 0);
-            ensure_equals("wrong default reserved value",
-                h.GetReserved(), 0);
-
-            liblas::guid g;
-            ensure_equals("wrong default project guid",
-                h.GetProjectId(), g);
-
-            ensure_equals("wrong default major version",
-                h.GetVersionMajor(), 1);
-            ensure_equals("wrong default minor version",
-                h.GetVersionMinor(), 1);
-
-            ensure_equals("wrong default system id",
-                h.GetSystemId(), LASHeader::SystemIdentifier);
-            ensure_equals("wrong default software id",
-                h.GetSoftwareId(), LASHeader::SoftwareIdentifier);
-
-            ensure_equals("wrong default creation day-of-year",
-                h.GetCreationDOY(), 0);
-            ensure_equals("wrong default creation year",
-                h.GetCreationYear(), 0);
-            ensure_equals("wrong default header size",
-                h.GetHeaderSize(), liblas::uint16_t(227));
-            ensure_equals("wrong default data offset",
-                h.GetDataOffset(), liblas::uint32_t(229));
-            ensure_equals("wrong default records count",
-                h.GetRecordsCount(), liblas::uint32_t(0));
-            ensure_equals("wrong default data format id",
-                h.GetDataFormatId(), LASHeader::ePointFormat0);
-            ensure_equals("wrong default data record length",
-                h.GetDataRecordLength(), LASHeader::ePointSize0);
-            ensure_equals("wrong default point records count",
-                h.GetPointRecordsCount(), liblas::uint32_t(0));
-
-            ensure_equals("wrong default X scale", h.GetScaleX(), double(0.01));
-            ensure_equals("wrong default Y scale", h.GetScaleY(), double(0.01));
-            ensure_equals("wrong default Z scale", h.GetScaleZ(), double(0.01));
-
-            ensure_equals("wrong default X offset", h.GetOffsetX(), double(0));
-            ensure_equals("wrong default Y offset", h.GetOffsetY(), double(0));
-            ensure_equals("wrong default Z offset", h.GetOffsetZ(), double(0));
-
-            ensure_equals("wrong default min X", h.GetMinX(), double(0));
-            ensure_equals("wrong default max X", h.GetMaxX(), double(0));
-            ensure_equals("wrong default min Y", h.GetMinY(), double(0));
-            ensure_equals("wrong default max Y", h.GetMaxY(), double(0));
-            ensure_equals("wrong default min Z", h.GetMinZ(), double(0));
-            ensure_equals("wrong default max Z", h.GetMaxZ(), double(0));
-        }
     };
 
     typedef test_group<lasheader_data> tg;
