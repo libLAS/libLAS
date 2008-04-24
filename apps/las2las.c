@@ -664,6 +664,11 @@ int main(int argc, char *argv[])
             p = LASReader_GetNextPoint(reader);
             continue;
         }
+        if (elim_class && ( elim_class == LASPoint_GetClassification(p)))
+        {
+            p = LASReader_GetNextPoint(reader);
+            continue;
+        }
         LASWriter_WritePoint(writer,p);
 
         p  = LASReader_GetNextPoint(reader);
