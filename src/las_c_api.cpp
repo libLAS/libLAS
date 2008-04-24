@@ -1147,7 +1147,7 @@ LAS_DLL void LASError_Print(const char* message) {
     errmsg = LASError_GetLastErrorMsg();
     errmethod = LASError_GetLastErrorMethod();
     if (LASError_GetErrorCount()) {
-        fprintf(stdout, 
+        fprintf(stderr, 
             "%s: %s (%d) from method %s\n",
             message,
             errmsg,
@@ -1157,7 +1157,7 @@ LAS_DLL void LASError_Print(const char* message) {
         if (errmsg) free(errmsg);
         if (errmethod) free(errmethod);
     } else {
-        fprintf(stdout, 
+        fprintf(stderr, 
             "You have encountered an error. '%s'\n",
             message
         );         

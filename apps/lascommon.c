@@ -304,76 +304,76 @@ void print_header(LASHeaderH header, const char* file_name) {
     fprintf(stderr, "---------------------------------------------------------\n");
 
 
-    fprintf(stdout, "  File Name: %s\n", file_name);
+    fprintf(stderr, "  File Name: %s\n", file_name);
     
     if (strcmp(pszSignature,"LASF") !=0) {
         LASError_Print("File signature is not 'LASF'... aborting");
         exit(1);
     }
-    fprintf(stdout, "  Version:                    %d.%d\n", 
+    fprintf(stderr, "  Version:                    %d.%d\n", 
                     LASHeader_GetVersionMajor(header), 
                     LASHeader_GetVersionMinor(header));
 
-    fprintf(stdout, "  Source ID:                  %d\n", 
+    fprintf(stderr, "  Source ID:                  %d\n", 
                     LASHeader_GetFileSourceId(header) ) ;
 
-    fprintf(stdout, "  Reserved:                   %d\n", 
+    fprintf(stderr, "  Reserved:                   %d\n", 
                     LASHeader_GetReserved(header) );
 
-    fprintf(stdout, "  Project ID/GUID:           '%s'\n", 
+    fprintf(stderr, "  Project ID/GUID:           '%s'\n", 
                     pszProjectId);
 
-    fprintf(stdout, "  System Identifier:         '%s'\n", 
+    fprintf(stderr, "  System Identifier:         '%s'\n", 
                     pszSystemId);
 
-    fprintf(stdout, "  Generating Software:       '%s'\n", 
+    fprintf(stderr, "  Generating Software:       '%s'\n", 
                     pszSoftwareId);
 
-    fprintf(stdout, "  File Creation Day/Year:    %d/%d\n", 
+    fprintf(stderr, "  File Creation Day/Year:    %d/%d\n", 
                     LASHeader_GetCreationDOY(header), 
                     LASHeader_GetCreationYear(header));
 
-    fprintf(stdout, "  Header Size                %d\n", 
+    fprintf(stderr, "  Header Size                %d\n", 
                     LASHeader_GetHeaderSize(header));
 
-    fprintf(stdout, "  Offset to Point Data       %d\n", 
+    fprintf(stderr, "  Offset to Point Data       %d\n", 
                     LASHeader_GetDataOffset(header));
 
-    fprintf(stdout, "  Number Var. Length Records %d\n", 
+    fprintf(stderr, "  Number Var. Length Records %d\n", 
                     LASHeader_GetRecordsCount(header));
 
-    fprintf(stdout, "  Point Data Format          %d\n", 
+    fprintf(stderr, "  Point Data Format          %d\n", 
                     LASHeader_GetDataFormatId(header));
 
-    fprintf(stdout, "  Point Data Record Length   %d\n", 
+    fprintf(stderr, "  Point Data Record Length   %d\n", 
                     LASHeader_GetDataRecordLength(header));
 
-    fprintf(stdout, "  Number of Point Records    %d\n", 
+    fprintf(stderr, "  Number of Point Records    %d\n", 
                     LASHeader_GetPointRecordsCount(header));
 
-    fprintf(stdout, "  Number of Points by Return %d %d %d %d %d\n", 
+    fprintf(stderr, "  Number of Points by Return %d %d %d %d %d\n", 
                     LASHeader_GetPointRecordsByReturnCount(header, 0), 
                     LASHeader_GetPointRecordsByReturnCount(header, 1), 
                     LASHeader_GetPointRecordsByReturnCount(header, 2), 
                     LASHeader_GetPointRecordsByReturnCount(header, 3), 
                     LASHeader_GetPointRecordsByReturnCount(header, 4));
 
-    fprintf(stdout, "  Scale Factor X Y Z         %.6f %.6f %.6f\n", 
+    fprintf(stderr, "  Scale Factor X Y Z         %.6f %.6f %.6f\n", 
                     LASHeader_GetScaleX(header), 
                     LASHeader_GetScaleY(header),
                     LASHeader_GetScaleZ(header));
 
-    fprintf(stdout, "  Offset X Y Z               %.6f %.6f %.6f\n", 
+    fprintf(stderr, "  Offset X Y Z               %.6f %.6f %.6f\n", 
                     LASHeader_GetOffsetX(header), 
                     LASHeader_GetOffsetY(header), 
                     LASHeader_GetOffsetZ(header));
 
-    fprintf(stdout, "  Min X Y Z                  %.6f %.6f %.6f\n",
+    fprintf(stderr, "  Min X Y Z                  %.6f %.6f %.6f\n",
                     LASHeader_GetMinX(header), 
                     LASHeader_GetMinY(header), 
                     LASHeader_GetMinZ(header));
 
-    fprintf(stdout, "  Max X Y Z                  %.6f %.6f %.6f\n", 
+    fprintf(stderr, "  Max X Y Z                  %.6f %.6f %.6f\n", 
                     LASHeader_GetMaxX(header), 
                     LASHeader_GetMaxY(header), 
                     LASHeader_GetMaxZ(header));
