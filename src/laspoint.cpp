@@ -110,8 +110,8 @@ void LASPoint::SetFlightLineEdge(uint16_t const& edge)
 
 void LASPoint::SetScanAngleRank(int8_t const& rank)
 {
-    if (eScanAngleRankMin > rank || rank > eScanAngleRankMax)
-        throw std::out_of_range("scan angle rank out of range");
+    // if (eScanAngleRankMin > rank || rank > eScanAngleRankMax)
+    //     throw std::out_of_range("scan angle rank out of range");
 
     m_angleRank = rank;
 }
