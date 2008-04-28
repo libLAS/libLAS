@@ -98,6 +98,8 @@ public:
 
     bool equal(LASPoint const& other) const;
 
+    bool Validate() const;
+    
 private:
 
     static std::size_t const coords_size = 3;
