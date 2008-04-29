@@ -25,6 +25,18 @@ class LASPoint
 {
 public:
 
+    enum DataMemberFlag
+    {
+        eReturnNumber = 1,
+        eNumberOfReturns = 2,
+        eScanDirection = 4,
+        eFlightLineEdge = 8,
+        eClassification = 16,
+        eScanAngleRank = 32,
+        eTime = 64
+    };
+
+
     enum ClassificationType
     {
         eCreated = 0,

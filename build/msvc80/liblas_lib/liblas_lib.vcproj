@@ -155,6 +155,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\liblas\exception.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\liblas\guid.hpp"
 					>
 				</File>

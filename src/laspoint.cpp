@@ -8,6 +8,7 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/cstdint.hpp>
+#include <liblas/exception.hpp>
 #include <liblas/detail/utility.hpp>
 // std
 #include <cstring>
@@ -128,28 +129,36 @@ bool LASPoint::equal(LASPoint const& other) const
 
 bool LASPoint::Validate() const
 {
-    
-    if (eScanAngleRankMin > this->GetScanAngleRank() || this->GetScanAngleRank() > eScanAngleRankMax)
-        throw std::out_of_range("scan angle rank out of range");
-
-    if (this->GetFlightLineEdge() > 0x01)
-        throw std::out_of_range("edge of flight line out of range");
-
-    if (this->GetScanDirection() > 0x01)
-        throw std::out_of_range("scan direction flag out of range");
-
-    if (this->GetNumberOfReturns() > 0x07)
-        throw std::out_of_range("number of returns out of range");
+    unsigned int flags = 0;
 
     if (this->GetReturnNumber() > 0x07)
-        throw std::out_of_range("return number out of range");
+        flags |= eReturnNumber;
+
+    if (this->GetNumberOfReturns() > 0x07)
+        flags |= eNumberOfReturns;
+
+    if (this->GetScanDirection() > 0x01)
+        flags |= eScanDirection;
+
+    if (this->GetFlightLineEdge() > 0x01)
+        flags |= eFlightLineEdge;
+
+    if (this->GetClassification() > 31)
+        flags |= eClassification;
+
+    if (eScanAngleRankMin > this->GetScanAngleRank()
+        || this->GetScanAngleRank() > eScanAngleRankMax)
+    {
+        flags |= eScanAngleRank;
+    }
 
     if (this->GetTime() < 0.0)
-        throw std::out_of_range("time value is < 0 ");
-    
-    if (this->GetClassification() > 31)
-        throw std::out_of_range("classification value is > 31");
+        flags |= eTime;    
 
+    if (flags > 0)
+    {
+        throw invalid_point_data("point data members out of range", flags);
+    }
 
     return true;
 }
