@@ -43,9 +43,7 @@ LASHeader const& LASWriter::GetHeader() const
 bool LASWriter::WritePoint(LASPoint const& point)
 {
 
-    try {
-        point.Validate();
-    } catch (std::out_of_range& e) {
+    if (!point.IsValid())
         return false;
     }
     // TODO: Move composition of point record deep into writer implementation
