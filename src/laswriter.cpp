@@ -26,11 +26,6 @@ LASWriter::LASWriter(std::ostream& ofs, LASHeader const& header) :
 LASWriter::~LASWriter()
 {
     assert(0 != m_pimpl.get());
-//    printf("Destroying LASWriter ... Stream is: %d Pimpl STream is: %d \n", GetStream().good(),m_pimpl->GetStream().good());
-//    std::cout.flags ( std::ios::right | std::ios::hex | std::ios::showbase );
-//    std::cout << "Stream Flags: " <<GetStream().flags() << std::endl;
-    // This is the problem
-    // TODO - mloskot: What is the problem with the above?
     m_pimpl->UpdateHeader(m_header);
 }
 
@@ -46,6 +41,14 @@ LASHeader const& LASWriter::GetHeader() const
 
 bool LASWriter::WritePoint(LASPoint const& point)
 {
+    return WritePoint(point, true);
+}
+
+bool LASWriter::WritePoint(LASPoint const& point, bool validate) {
+
+    if (validate) {
+        point.Validate();
+    }
     // TODO: Move composition of point record deep into writer implementation
     m_record.x = static_cast<uint32_t>((point.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX());
     m_record.y = static_cast<uint32_t>((point.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
@@ -64,7 +67,6 @@ bool LASWriter::WritePoint(LASPoint const& point)
 
     return true;
 }
-
 std::ostream& LASWriter::GetStream() {
     return m_pimpl->GetStream();
 }
