@@ -42,10 +42,11 @@ LASHeader const& LASWriter::GetHeader() const
 
 bool LASWriter::WritePoint(LASPoint const& point)
 {
-
     if (!point.IsValid())
+    {
         return false;
     }
+
     // TODO: Move composition of point record deep into writer implementation
     m_record.x = static_cast<uint32_t>((point.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX());
     m_record.y = static_cast<uint32_t>((point.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
