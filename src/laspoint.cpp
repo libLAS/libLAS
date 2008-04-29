@@ -153,4 +153,32 @@ bool LASPoint::Validate() const
 
     return true;
 }
+
+
+bool LASPoint::IsValid() const
+{
+    
+    if (eScanAngleRankMin > this->GetScanAngleRank() || this->GetScanAngleRank() > eScanAngleRankMax)
+        return false;
+
+    if (this->GetFlightLineEdge() > 0x01)
+        return false;
+
+    if (this->GetScanDirection() > 0x01)
+        return false;
+
+    if (this->GetNumberOfReturns() > 0x07)
+        return false;
+
+    if (this->GetReturnNumber() > 0x07)
+        return false;
+
+    if (this->GetTime() < 0.0)
+        return false;
+    
+    if (this->GetClassification() > 31)
+        return false;
+
+    return true;
+}
 } // namespace liblas

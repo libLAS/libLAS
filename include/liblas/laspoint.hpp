@@ -99,6 +99,7 @@ public:
     bool equal(LASPoint const& other) const;
 
     bool Validate() const;
+    bool IsValid() const;
     
 private:
 
