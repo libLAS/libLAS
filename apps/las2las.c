@@ -47,10 +47,14 @@ void usage()
     fprintf(stderr,"  las2las -i in.las -eliminate_scan_angle_above 15 -o out.las\n");
     fprintf(stderr,"\n");
 
-    fprintf(stderr,"Eliminate intensities below 1000 and classifications that equal 2 (ground) and write to stdout:\n");
-    fprintf(stderr,"  las2las -i in.las -eliminate_intensity_below 1000 --eliminate_class 2 --stdout > out.las\n");
+    fprintf(stderr,"Eliminate intensities below 1000:\n");
+    fprintf(stderr,"  las2las -i in.las -eliminate_intensity_below 1000--stdout > out.las\n");
     fprintf(stderr,"\n");
-    
+
+    fprintf(stderr,"Eliminate intensities below 1000 and classifications that equal 2 (ground):\n");
+    fprintf(stderr,"  las2las -i in.las --eliminate_class 2 --out out.las\n");
+    fprintf(stderr,"\n");
+        
     fprintf(stderr,"Capture only first returns and clip to bounding box:\n");
     fprintf(stderr,"  las2las -i in.las -first_only -clip 63000000 483450000 63050000 483500000 -o out.las\n");
     fprintf(stderr,"\n");
