@@ -26,6 +26,7 @@ LASWriter::LASWriter(std::ostream& ofs, LASHeader const& header) :
 LASWriter::~LASWriter()
 {
     assert(0 != m_pimpl.get());
+
     m_pimpl->UpdateHeader(m_header);
 }
 
@@ -41,13 +42,11 @@ LASHeader const& LASWriter::GetHeader() const
 
 bool LASWriter::WritePoint(LASPoint const& point)
 {
-    return WritePoint(point, true);
-}
 
-bool LASWriter::WritePoint(LASPoint const& point, bool validate) {
-
-    if (validate) {
+    try {
         point.Validate();
+    } catch (std::out_of_range& e) {
+        return false;
     }
     // TODO: Move composition of point record deep into writer implementation
     m_record.x = static_cast<uint32_t>((point.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX());
@@ -60,6 +59,7 @@ bool LASWriter::WritePoint(LASPoint const& point, bool validate) {
     m_record.user_data = point.GetUserData();
     m_record.point_source_id = 0; // TODO: How to handle this in portable way, for LAS 1.0 and 1.1
 
+
     if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
         m_pimpl->WritePointRecord(m_record);
     else
@@ -67,6 +67,7 @@ bool LASWriter::WritePoint(LASPoint const& point, bool validate) {
 
     return true;
 }
+
 std::ostream& LASWriter::GetStream() {
     return m_pimpl->GetStream();
 }

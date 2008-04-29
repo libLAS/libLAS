@@ -31,7 +31,6 @@ public:
     std::size_t GetVersion() const;
     LASHeader const& GetHeader() const;
     bool WritePoint(LASPoint const& point);
-    bool WritePoint(LASPoint const& point, bool validate);
 
     // Allow fetching of the stream
     std::ostream& GetStream();
