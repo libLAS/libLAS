@@ -25,6 +25,8 @@ public:
     {}
 
     /// Return flags identifying invalid point data members.
+    /// Flags are composed with composed with LASPoint::DataMemberFlag.
+    /// Testing flags example: bool timeValid = e.who() & eTime;
     unsigned int who() const
     {
         return m_who;
