@@ -58,9 +58,6 @@ void LASPoint::SetCoordinates(LASHeader const& header, double x, double y, doubl
 
 void LASPoint::SetReturnNumber(uint16_t const& num)
 {
-    if (num > 0x07)
-        throw std::out_of_range("return number out of range");
-
     // Store value in bits 1,2,3
     uint8_t val = static_cast<uint8_t>(num);
     uint16_t const begin = 1;
@@ -71,9 +68,6 @@ void LASPoint::SetReturnNumber(uint16_t const& num)
 
 void LASPoint::SetNumberOfReturns(uint16_t const& num)
 {
-    if (num > 0x07)
-        throw std::out_of_range("number of returns out of range");
-
     // Store value in bits 4,5,6
     uint8_t val = static_cast<uint8_t>(num);
     uint16_t const begin = 4;
@@ -84,9 +78,6 @@ void LASPoint::SetNumberOfReturns(uint16_t const& num)
 
 void LASPoint::SetScanDirection(uint16_t const& dir)
 {
-    if (dir > 0x01)
-        throw std::out_of_range("scan direction flag out of range");
-    
     // Store value in bit 7th
     uint8_t val = static_cast<uint8_t>(dir);
     uint16_t const begin = 7;
@@ -97,9 +88,6 @@ void LASPoint::SetScanDirection(uint16_t const& dir)
 
 void LASPoint::SetFlightLineEdge(uint16_t const& edge)
 {
-    if (edge > 0x01)
-        throw std::out_of_range("edge of flight line out of range");
-
     // Store value in bit 8th
     uint8_t val = static_cast<uint8_t>(edge);
     uint16_t const begin = 8;
@@ -110,9 +98,6 @@ void LASPoint::SetFlightLineEdge(uint16_t const& edge)
 
 void LASPoint::SetScanAngleRank(int8_t const& rank)
 {
-    // if (eScanAngleRankMin > rank || rank > eScanAngleRankMax)
-    //     throw std::out_of_range("scan angle rank out of range");
-
     m_angleRank = rank;
 }
 
