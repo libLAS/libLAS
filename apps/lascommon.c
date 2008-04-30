@@ -167,10 +167,14 @@ void print_point(LASPointH point) {
 
     fprintf(stderr, "---------------------------------------------------------\n");
     
-    fprintf(stderr, "  X,Y,Z: \t\t%.6f,%.6f,%.6f\n", 
+    fprintf(stderr, "  X: \t\t%.6f\n", 
                     LASPoint_GetX(point),
+                    );
+    fprintf(stderr, "  Y: \t\t%.6f\n", 
                     LASPoint_GetY(point),
-                    LASPoint_GetZ(point)
+                    );
+    fprintf(stderr, "  Z: \t\t%.6f\n", 
+                    LASPoint_GetZ(point),
                     );
     fprintf(stderr, "  Time:\t\t\t%.6f\n", 
                     LASPoint_GetTime(point)
