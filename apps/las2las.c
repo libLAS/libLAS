@@ -31,8 +31,8 @@ void usage()
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr,"\n");
 
-    fprintf(stderr,"Clip las file to a bounding box:\n");
-    fprintf(stderr,"  las2las -i in.las -clip 63000000 483450000 63050000 483500000 -o out.las\n");
+    fprintf(stderr,"Clip las file to a bounding box, throwing out points that have invalid data:\n");
+    fprintf(stderr,"  las2las -i in.las -clip 63000000 483450000 63050000 483500000 -o out.las --skip_invalid\n");
     fprintf(stderr,"\n");
 
     fprintf(stderr,"Read from stdin, eliminate intensities below 2000, and write to stdout:\n");
@@ -96,7 +96,8 @@ int main(int argc, char *argv[])
     int elim_class = 0;
     int first_only = FALSE;
     int last_only = FALSE;
-
+    int skip_invalid = FALSE;
+    
     LASReaderH reader = NULL;
     LASHeaderH header = NULL;
     LASHeaderH surviving_header = NULL;
@@ -136,7 +137,13 @@ int main(int argc, char *argv[])
             )
         {
             verbose = TRUE;
-        } 
+        }
+        else if (   strcmp(argv[i],"-s") == 0 ||
+                    strcmp(argv[i],"--skip_invalid") == 0
+            )
+        {
+            skip_invalid = TRUE;
+        }
         else if (   strcmp(argv[i],"--input") == 0  ||
                     strcmp(argv[i],"-input") == 0   ||
                     strcmp(argv[i],"-i") == 0       ||
@@ -632,6 +639,10 @@ int main(int argc, char *argv[])
     
     while (p) {
 
+        if (skip_invalid && !LASPoint_IsValid(p)) {
+            p = LASReader_GetNextPoint(reader);
+            continue;
+        }
         if (last_only && LASPoint_GetReturnNumber(p) != LASPoint_GetNumberOfReturns(p))
         {
             p = LASReader_GetNextPoint(reader);
