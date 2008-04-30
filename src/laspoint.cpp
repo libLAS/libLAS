@@ -167,7 +167,9 @@ bool LASPoint::Validate() const
 bool LASPoint::IsValid() const
 {
     
-    if (eScanAngleRankMin > this->GetScanAngleRank() || this->GetScanAngleRank() > eScanAngleRankMax)
+    if( eScanAngleRankMin > this->GetScanAngleRank() 
+        || this->GetScanAngleRank() > eScanAngleRankMax
+      )
         return false;
 
     if (this->GetFlightLineEdge() > 0x01)
