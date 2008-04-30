@@ -349,5 +349,64 @@ namespace tut
                 liblas::LASPoint::eTime);
         }
     }
+
+    // Test IsValid method
+    template<>
+    template<>
+    void to::test<15>()
+    {
+        {
+            liblas::LASPoint p;
+            liblas::uint16_t const outofrange = 8;
+            p.SetReturnNumber(outofrange);
+            // XXX: Bit flag overflowed, so point data recognized as valid
+            //ensure_not(p.IsValid());
+        }
+
+        {
+            liblas::LASPoint p;
+            liblas::uint16_t const outofrange = 8;
+            p.SetNumberOfReturns(outofrange);
+            // XXX: Bit flag overflowed, so point data recognized as valid
+            //ensure_not(p.IsValid());
+        }
+
+        {
+            liblas::LASPoint p;
+            liblas::uint16_t const outofrange = 2;
+            p.SetScanDirection(outofrange);
+            // XXX: Bit flag overflowed, so point data recognized as valid
+            //ensure_not(p.IsValid());
+        }
+
+        {
+            liblas::LASPoint p;
+            liblas::uint16_t const outofrange = 2;
+            p.SetFlightLineEdge(outofrange);
+            // XXX: Bit flag overflowed, so point data recognized as valid
+            //ensure_not(p.IsValid());
+        }
+
+        {
+            liblas::LASPoint p;
+            liblas::uint16_t const errclass = 32;
+            p.SetClassification(errclass);
+            ensure_not(p.IsValid());
+        }
+
+        {
+            liblas::LASPoint p;
+            liblas::int8_t const outofrange = 91;
+            p.SetScanAngleRank(outofrange);
+            ensure_not(p.IsValid());
+        }
+
+        {
+            liblas::LASPoint p;
+            double const errtime = -9.87654321; // negative time invalid
+            p.SetTime(errtime);
+            ensure_not(p.IsValid());
+        }
+    }
 }
 
