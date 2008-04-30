@@ -80,5 +80,35 @@ void test_default_header(liblas::LASHeader const& h)
     ensure_equals("wrong default max Z", h.GetMaxZ(), double(0));
 }
 
+void test_default_point(liblas::LASPoint const& p)
+{
+    ensure_equals("wrong default X coordinate",
+        p.GetX(), double(0));
+    ensure_equals("wrong default Y coordinate",
+        p.GetY(), double(0));
+    ensure_equals("wrong default Z coordinate",
+        p.GetZ(), double(0));
+    ensure_equals("wrong defualt intensity",
+        p.GetIntensity(), 0);
+    ensure_equals("wrong defualt return number",
+        p.GetReturnNumber(), 0);
+    ensure_equals("wrong defualt number of returns",
+        p.GetNumberOfReturns(), 0);
+    ensure_equals("wrong defualt scan direction",
+        p.GetScanDirection(), 0);
+    ensure_equals("wrong defualt edge of flight line",
+        p.GetFlightLineEdge(), 0);
+    ensure_equals("wrong defualt classification",
+        p.GetClassification(), 0);
+    ensure_equals("wrong defualt scan angle rank",
+        p.GetScanAngleRank(), 0);
+    ensure_equals("wrong defualt user data value",
+        p.GetUserData(), 0);
+    ensure_equals("wrong defualt time",
+        p.GetTime(), double(0));
+
+    ensure("invalid defualt point record", p.IsValid());
+}
+
 }
 

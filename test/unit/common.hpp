@@ -6,12 +6,18 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/liblas.hpp>
+#include <liblas/laspoint.hpp>
 #include <liblas/lasheader.hpp>
+
 
 namespace tut
 {
 
+// Common test procedure for default constructed point data.
+void test_default_point(liblas::LASPoint const& p);
+
+// Common test procedure for default constructed header data.
 void test_default_header(liblas::LASHeader const& h);
 
-}
+} // namespace tut
 
