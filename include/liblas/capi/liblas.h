@@ -102,7 +102,8 @@ LAS_DLL uint8_t LASPoint_GetScanAngleRank(const LASPointH);
 LAS_DLL LASError LASPoint_SetScanAngleRank(LASPointH hPoint, uint8_t value);
 LAS_DLL uint8_t LASPoint_GetUserData(const LASPointH);
 LAS_DLL LASError LASPoint_SetUserData(LASPointH hPoint, uint8_t value);
-
+LAS_DLL int LASPoint_Validate(LASPointH hPoint);
+LAS_DLL int LASPoint_IsValid(LASPointH hPoint);
 
 LAS_DLL LASPointH LASPoint_Create(void);
 LAS_DLL LASPointH LASPoint_Copy(const LASPointH);

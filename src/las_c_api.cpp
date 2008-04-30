@@ -10,6 +10,7 @@
 #include <liblas/laserror.hpp>
 #include <liblas/laswriter.hpp>
 #include <liblas/lasfile.hpp>
+#include <liblas/exception.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/capi/las_config.h>
 
@@ -226,8 +227,8 @@ LAS_DLL const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
             return (LASPointH) &(reader->GetPoint());
         else 
             return NULL;
-    } catch (std::out_of_range const& e /*e */) {
-        LASError_PushError(LE_Failure, e.what(), "LASReader_GetNextPoint out_of_range");
+    } catch (invalid_point_data const& e /*e */) {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_GetNextPoint Invalid Point");
         return NULL;
     } catch (std::exception const& e)
     {
@@ -250,7 +251,8 @@ LAS_DLL const LASPointH LASReader_GetPointAt(const LASReaderH hReader, liblas::u
             return (LASPointH) &(reader->GetPoint());
         else 
             return NULL;
-    } catch (std::out_of_range const& /* e */) {
+    } catch (invalid_point_data const& e /*e */) {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_GetPointAt Invalid Point");
         return NULL;
     } catch (std::exception const& e)
     {
@@ -608,6 +610,29 @@ LAS_DLL int LASPoint_Equal(const LASPointH hPoint1, const LASPointH hPoint2) {
 
     return (point1 == point2);
 
+}
+
+LAS_DLL int LASPoint_Validate(LASPointH hPoint) {
+
+    VALIDATE_POINTER1(hPoint, "LASPoint_Validate", LE_Failure);
+
+    try {
+            ((LASPoint*) hPoint)->Validate();
+    } catch (invalid_point_data const& e /*e */) {
+        return e.who();
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_Validate");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL int LASPoint_IsValid(LASPointH hPoint) {
+
+    VALIDATE_POINTER1(hPoint, "LASPoint_IsValid", LE_Failure);
+    return ((LASPoint*) hPoint)->IsValid();
 }
 
 LAS_DLL char* LASHeader_GetFileSignature(const LASHeaderH hHeader) {
@@ -1037,7 +1062,6 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
                 writer = &(lasfile.GetWriter());
             }
             catch (...) {
-              //  files.erase(filename);
                 throw std::runtime_error("LASWriter_Create rethrowing");
             }
 
@@ -1060,9 +1084,16 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
 LAS_DLL LASErrorEnum LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoint) {
 
     VALIDATE_POINTER1(hPoint, "LASWriter_WritePoint", LE_Failure);
+    int ret;
 
     try {
-            ((LASWriter*) hWriter)->WritePoint(*((LASPoint*) hPoint));
+            ret = ((LASWriter*) hWriter)->WritePoint(*((LASPoint*) hPoint));
+            if (!ret) {
+                LASError_PushError( LE_Warning, 
+                                    "Failed to write point because it was invalid", 
+                                    "LASWriter_WritePoint");
+                return LE_Warning;                
+            }
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_WritePoint");
