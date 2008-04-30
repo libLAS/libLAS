@@ -163,6 +163,38 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
     return summary; 
 }
 
+void print_point(LASPointH point) {
+
+    fprintf(stderr, "---------------------------------------------------------\n");
+    
+    fprintf(stderr, "  X,Y,Z: \t\t%.6f,%.6f,%.6f\n", 
+                    LASPoint_GetX(point),
+                    LASPoint_GetY(point),
+                    LASPoint_GetZ(point)
+                    );
+    fprintf(stderr, "  Time:\t\t\t%.6f\n", 
+                    LASPoint_GetTime(point)
+                    );
+    fprintf(stderr, "  Return Number:\t%d\n", 
+                    LASPoint_GetReturnNumber(point)
+                    );
+    fprintf(stderr, "  Return Count:\t\t%d\n", 
+                    LASPoint_GetNumberOfReturns(point)
+                    );
+    fprintf(stderr, "  Flightline Edge:\t%d\n", 
+                    LASPoint_GetFlightLineEdge(point)
+                    );
+    fprintf(stderr, "  Intensity:\t\t%d\n",
+                    LASPoint_GetIntensity(point)
+                    );
+    fprintf(stderr, "  Scan Direction Flag:\t%d\n",
+                    LASPoint_GetScanDirection(point)
+                    );
+    fprintf(stderr, "  Classification:\t%d\n",
+                    LASPoint_GetClassification(point)
+                    );
+
+}
 void print_point_summary(LASPointSummary* summary, LASHeaderH header) {
 
     long rgpsum = 0;
