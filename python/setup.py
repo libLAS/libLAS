@@ -17,7 +17,7 @@ if os.name == 'nt':
     lib_name = 'liblas%s.dll' % version
     data_files=[('DLLs', ['DLLs/%s'% lib_name]),]
 else:
-    data_files = [(),]
+    data_files = None
 
 print data_files
 setup(name          = 'libLAS',
