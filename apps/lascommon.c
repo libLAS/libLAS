@@ -168,13 +168,13 @@ void print_point(LASPointH point) {
     fprintf(stderr, "---------------------------------------------------------\n");
     
     fprintf(stderr, "  X: \t\t%.6f\n", 
-                    LASPoint_GetX(point),
+                    LASPoint_GetX(point)
                     );
     fprintf(stderr, "  Y: \t\t%.6f\n", 
-                    LASPoint_GetY(point),
+                    LASPoint_GetY(point)
                     );
     fprintf(stderr, "  Z: \t\t%.6f\n", 
-                    LASPoint_GetZ(point),
+                    LASPoint_GetZ(point)
                     );
     fprintf(stderr, "  Time:\t\t\t%.6f\n", 
                     LASPoint_GetTime(point)
@@ -194,6 +194,10 @@ void print_point(LASPointH point) {
     fprintf(stderr, "  Scan Direction Flag:\t%d\n",
                     LASPoint_GetScanDirection(point)
                     );
+    fprintf(stderr, "  Scan Angle Rank:\t%d\n",
+                    LASPoint_GetScanAngleRank(point)
+                    );
+                    
     fprintf(stderr, "  Classification:\t%d\n",
                     LASPoint_GetClassification(point)
                     );
@@ -260,6 +264,10 @@ void print_point_summary(LASPointSummary* summary, LASHeaderH header) {
     fprintf(stderr, "  Scan Direction Flag:\t%d,%d\n",
                     LASPoint_GetScanDirection(summary->pmin),
                     LASPoint_GetScanDirection(summary->pmax)
+                    );
+    fprintf(stderr, "  Scan Angle Rank:\t%d,%d\n",
+                    LASPoint_GetScanAngleRank(summary->pmin),
+                    LASPoint_GetScanAngleRank(summary->pmax)
                     );
     fprintf(stderr, "  Classification:\t%d,%d\n",
                     LASPoint_GetClassification(summary->pmin),
