@@ -553,15 +553,15 @@ LAS_DLL double LASPoint_GetTime(const LASPointH hPoint) {
     return value;
 }
 
-LAS_DLL liblas::uint8_t LASPoint_GetScanAngleRank(const LASPointH hPoint) {
+LAS_DLL liblas::int8_t LASPoint_GetScanAngleRank(const LASPointH hPoint) {
     
     VALIDATE_POINTER1(hPoint, "LASPoint_GetScanAngleRank", 0);
     
-    liblas::uint8_t value = ((LASPoint*) hPoint)->GetScanAngleRank();
+    liblas::int8_t value = ((LASPoint*) hPoint)->GetScanAngleRank();
     return value;
 }
 
-LAS_DLL LASErrorEnum LASPoint_SetScanAngleRank(LASPointH hPoint, liblas::uint8_t value) {
+LAS_DLL LASErrorEnum LASPoint_SetScanAngleRank(LASPointH hPoint, liblas::int8_t value) {
 
     VALIDATE_POINTER1(hPoint, "LASPoint_SetScanAngleRank", LE_Failure);
 
