@@ -143,9 +143,6 @@ bool LASPoint::Validate() const
     if (this->GetFlightLineEdge() > 0x01)
         flags |= eFlightLineEdge;
 
-    if (this->GetClassification() > 31)
-        flags |= eClassification;
-
     if (eScanAngleRankMin > this->GetScanAngleRank()
         || this->GetScanAngleRank() > eScanAngleRankMax)
     {
@@ -185,9 +182,6 @@ bool LASPoint::IsValid() const
         return false;
 
     if (this->GetTime() < 0.0)
-        return false;
-    
-    if (this->GetClassification() > 31)
         return false;
 
     return true;
