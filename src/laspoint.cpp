@@ -149,9 +149,6 @@ bool LASPoint::Validate() const
         flags |= eScanAngleRank;
     }
 
-    if (this->GetTime() < 0.0)
-        flags |= eTime;    
-
     if (flags > 0)
     {
         throw invalid_point_data("point data members out of range", flags);
@@ -181,8 +178,6 @@ bool LASPoint::IsValid() const
     if (this->GetReturnNumber() > 0x07)
         return false;
 
-    if (this->GetTime() < 0.0)
-        return false;
 
     return true;
 }
