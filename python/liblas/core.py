@@ -175,11 +175,11 @@ las.LASPoint_SetTime.restype = ctypes.c_int
 las.LASPoint_SetTime.argtypes = [ctypes.c_void_p, ctypes.c_double]
 las.LASPoint_SetTime.errcheck = check_return
 
-las.LASPoint_GetScanAngleRank.restype = ctypes.c_ubyte
+las.LASPoint_GetScanAngleRank.restype = ctypes.c_int8
 las.LASPoint_GetScanAngleRank.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetScanAngleRank.errcheck = check_value
 las.LASPoint_SetScanAngleRank.restype = ctypes.c_int
-las.LASPoint_SetScanAngleRank.argtypes = [ctypes.c_void_p, ctypes.c_ubyte]
+las.LASPoint_SetScanAngleRank.argtypes = [ctypes.c_void_p, ctypes.c_int8]
 las.LASPoint_SetScanAngleRank.errcheck = check_return
 
 las.LASPoint_GetUserData.restype = ctypes.c_ubyte
