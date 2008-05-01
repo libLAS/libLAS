@@ -93,6 +93,7 @@ int main(int argc, char *argv[])
     int i;
     int use_stdin = FALSE;
     int use_stdout = FALSE;
+    int skip_invalid = FALSE;
 
     int verbose = FALSE;
     char* file_name_in = 0;
@@ -121,7 +122,13 @@ int main(int argc, char *argv[])
             )
         {
             verbose = TRUE;
-        }  
+        }
+        else if (   strcmp(argv[i],"-s") == 0 ||
+                    strcmp(argv[i],"--skip_invalid") == 0
+            )
+        {
+            skip_invalid = TRUE;
+        }   
         else if (   strcmp(argv[i], "--parse") == 0 ||
                     strcmp(argv[i], "-parse") == 0 
                 )
@@ -452,6 +459,14 @@ int main(int argc, char *argv[])
     p = LASReader_GetNextPoint(reader);
     while (p)
     {
+        if (skip_invalid && !LASPoint_IsValid(p)) {
+            if (verbose) {
+                LASError_Print("Skipping writing invalid point...");
+            }
+            p = LASReader_GetNextPoint(reader);
+            continue;
+        }
+        
         i = 0;
         while (TRUE)
         {
@@ -475,7 +490,7 @@ int main(int argc, char *argv[])
                 break;
             /* // the intensity */
             case 'i': 
-            fprintf(file_out, "%d", LASPoint_GetIntensity(p));
+                fprintf(file_out, "%d", LASPoint_GetIntensity(p));
                 break;
             /* the scan angle */
             case 'a':
