@@ -39,13 +39,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-// // $Id$
-//
-// (C) Copyright Phil Vachon 2008, philippe@cowpig.ca
-// Distributed under the BSD License
-// (See accompanying file LICENSE.txt or copy at
-// http://www.opensource.org/licenses/bsd-license.php)
-//
 #ifndef LIBLAS_LASRECORDHEADER_HPP_INCLUDED
 #define LIBLAS_LASRECORDHEADER_HPP_INCLUDED
 
