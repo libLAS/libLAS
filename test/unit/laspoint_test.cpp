@@ -257,20 +257,6 @@ namespace tut
         m_default.SetClassification(endclass);
         ensure_equals("invalid classification",
             m_default.GetClassification(), endclass);
-
-        try
-        {
-            liblas::uint16_t const errclass = 32;
-            m_default.SetClassification(errclass);
-            m_default.Validate(); // throws
-
-            ensure("std::invalid_point_data not thrown", false);
-        }
-        catch (liblas::invalid_point_data const& e)
-        {
-            ensure_equals(e.who() & liblas::LASPoint::eClassification,
-                liblas::LASPoint::eClassification);
-        }
     }
 
     // Test Get/SetScanAngleRank
@@ -334,20 +320,6 @@ namespace tut
 
         ensure_equals("invalid time",
             m_default.GetTime(), time);
-
-        try
-        {
-            double const errtime = -9.87654321; // negative time invalid
-            m_default.SetTime(errtime);
-            m_default.Validate(); // throws
-
-            ensure("invalid_point_data not thrown", false);
-        }
-        catch (liblas::invalid_point_data const& e)
-        {
-            ensure_equals(e.who() & liblas::LASPoint::eTime,
-                liblas::LASPoint::eTime);
-        }
     }
 
     // Test IsValid method
@@ -389,22 +361,8 @@ namespace tut
 
         {
             liblas::LASPoint p;
-            liblas::uint16_t const errclass = 32;
-            p.SetClassification(errclass);
-            ensure_not(p.IsValid());
-        }
-
-        {
-            liblas::LASPoint p;
             liblas::int8_t const outofrange = 91;
             p.SetScanAngleRank(outofrange);
-            ensure_not(p.IsValid());
-        }
-
-        {
-            liblas::LASPoint p;
-            double const errtime = -9.87654321; // negative time invalid
-            p.SetTime(errtime);
             ensure_not(p.IsValid());
         }
     }
