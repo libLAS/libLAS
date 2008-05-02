@@ -506,5 +506,5 @@ void RepairHeader(LASHeaderH header, LASPointSummary* summary) {
                                                     summary->number_of_points_by_return[i]);
         }                
     }   
-
 }
+
