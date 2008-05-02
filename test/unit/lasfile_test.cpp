@@ -30,7 +30,7 @@ namespace tut
         ~lasfile_data()
         {
             // remove temporary file after each test case
-            int const rc = std::remove(tmpfile_.c_str());
+            std::remove(tmpfile_.c_str());
         }
     };
 
@@ -69,6 +69,7 @@ namespace tut
         try
         {
             liblas::LASWriter& writer = file.GetWriter();
+            ensure_equals(writer.GetVersion(), liblas::eLASVersion10);
             ensure("std::runtime_error not thrown", false);
         }
         catch (std::runtime_error const& e)
@@ -87,6 +88,7 @@ namespace tut
         try
         {
             liblas::LASFile file(tmpfile_, header, liblas::LASFile::eRead);
+            ensure_equals(file.GetName(), tmpfile_);
             ensure("std::runtime_error not thrown", false);
         }
         catch (std::runtime_error const& e)
@@ -117,6 +119,7 @@ namespace tut
         try
         {
             liblas::LASReader& reader = file.GetReader();
+            ensure_equals(reader.GetVersion(), liblas::eLASVersion10);
             ensure("std::runtime_error not thrown", false);
         }
         catch (std::runtime_error const& e)
