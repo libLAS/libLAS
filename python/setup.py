@@ -10,7 +10,6 @@ import os
 
 version = file('../nmake.opt').readline().strip()
 version = version.split('=')[1]
-print version
 
 if os.name == 'nt':
     # Windows NT library
@@ -19,7 +18,6 @@ if os.name == 'nt':
 else:
     data_files = None
 
-print data_files
 setup(name          = 'libLAS',
       version       = version,
       description   = 'LAS 1.0/1.1 LiDAR data format reader',
