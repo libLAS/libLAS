@@ -110,5 +110,41 @@ void test_default_point(liblas::LASPoint const& p)
     ensure("invalid defualt point record", p.IsValid());
 }
 
+void test_file10_header(liblas::LASHeader const& h)
+{
+    ensure_equals(h.GetFileSignature(), liblas::LASHeader::FileSignature);
+    ensure_equals(h.GetFileSourceId(), 0);
+    ensure_equals(h.GetReserved(), 0);
+
+    liblas::guid g;
+    ensure(g.is_null());
+    ensure_equals(h.GetProjectId(), g);
+
+    ensure_equals(h.GetVersionMajor(), 1);
+    ensure_equals(h.GetVersionMinor(), 0);
+    ensure_equals(h.GetSystemId(), std::string(""));
+    ensure_equals(h.GetSoftwareId(), std::string("TerraScan"));
+    ensure_equals(h.GetCreationDOY(), 0);
+    ensure_equals(h.GetCreationYear(), 0);
+    ensure_equals(h.GetHeaderSize(), liblas::uint16_t(227));
+    ensure_equals(h.GetDataOffset(), liblas::uint32_t(229));
+    ensure_equals(h.GetRecordsCount(), liblas::uint32_t(0));
+    ensure_equals(h.GetDataFormatId(), liblas::LASHeader::ePointFormat1);
+    ensure_equals(h.GetDataRecordLength(), liblas::LASHeader::ePointSize1);
+    ensure_equals(h.GetPointRecordsCount(), liblas::uint32_t(8));
+    ensure_equals(h.GetScaleX(), double(0.01));
+    ensure_equals(h.GetScaleY(), double(0.01));
+    ensure_equals(h.GetScaleZ(), double(0.01));
+    ensure_equals(h.GetOffsetX(), double(-0));
+    ensure_equals(h.GetOffsetY(), double(-0));
+    ensure_equals(h.GetOffsetZ(), double(-0));
+    ensure_equals(h.GetMinX(), double(630262.3));
+    ensure_equals(h.GetMaxX(), double(630346.83));
+    ensure_equals(h.GetMinY(), double(4834500));
+    ensure_equals(h.GetMaxY(), double(4834500));
+    ensure_equals(h.GetMinZ(), double(50.9));
+    ensure_equals(h.GetMaxZ(), double(55.26));
+}
+
 }
 

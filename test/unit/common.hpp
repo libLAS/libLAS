@@ -19,5 +19,8 @@ void test_default_point(liblas::LASPoint const& p);
 // Common test procedure for default constructed header data.
 void test_default_header(liblas::LASHeader const& h);
 
+// Test of header data in trunk/test/data/TO_core_last_clip.las file
+void test_file10_header(liblas::LASHeader const& h);
+
 } // namespace tut
 
