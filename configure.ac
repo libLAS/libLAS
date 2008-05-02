@@ -109,6 +109,8 @@ AC_CONFIG_FILES([
     src/Makefile
     src/detail/Makefile
     apps/Makefile
+    test/Makefile
+    test/unit/Makefile
 ])
 
 AC_OUTPUT

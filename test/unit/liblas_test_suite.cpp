@@ -20,13 +20,23 @@ namespace tut
 
 int main(int argc, char* argv[])
 {
-    if (2 != argc)
+
+    if (1 == argc)
+    {
+        tut::g_test_data_path = "../data"; // default path
+    }
+    else if (2 == argc)
+    {
+        tut::g_test_data_path = argv[1];
+    }
+    else
     {
         std::cout << "Usage: liblas_test <test data path>\n";
         return 1;
     }
 
-    tut::g_test_data_path = argv[1];
+
+    std::cout << "libLAS Test Suite:\n==================";
 
     tut::reporter reporter;
     tut::runner.get().set_callback(&reporter);

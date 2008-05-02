@@ -1,6 +1,1 @@
-
-
-SUBDIRS = src apps include
-
-
-
+SUBDIRS = src apps include test

@@ -163,9 +163,9 @@ namespace tut
             // read 1st point
             reader.ReadNextPoint();
             point = reader.GetPoint();
-            ensure_distance(point.GetX(), 10.0, 0.0001);
-            ensure_distance(point.GetY(), 20.0, 0.0001);
-            ensure_distance(point.GetZ(), 30.0, 0.0001);
+            ensure_distance(point.GetX(), 10.0, 0.1);
+            ensure_distance(point.GetY(), 20.0, 0.1);
+            ensure_distance(point.GetZ(), 30.0, 0.1);
             ensure_equals(point.GetIntensity(), 5);
             ensure_equals(point.GetReturnNumber(), 1);
             ensure_equals(point.GetNumberOfReturns(), 1);
@@ -178,9 +178,9 @@ namespace tut
             // read 3rd point
             reader.ReadNextPoint();
             point = reader.GetPoint();
-            ensure_distance(point.GetX(), 40.0, 0.0001);
-            ensure_distance(point.GetY(), 50.0, 0.0001);
-            ensure_distance(point.GetZ(), 60.0, 0.0001);
+            ensure_distance(point.GetX(), 40.0, 0.1);
+            ensure_distance(point.GetY(), 50.0, 0.1);
+            ensure_distance(point.GetZ(), 60.0, 0.1);
             ensure_equals(point.GetIntensity(), 5);
             ensure_equals(point.GetReturnNumber(), 1);
             ensure_equals(point.GetNumberOfReturns(), 1);
@@ -193,9 +193,9 @@ namespace tut
             // read 1st point
             reader.ReadNextPoint();
             point = reader.GetPoint();
-            ensure_distance(point.GetX(), 70.0, 0.0001);
-            ensure_distance(point.GetY(), 80.0, 0.0001);
-            ensure_distance(point.GetZ(), 90.0, 0.0001);
+            ensure_distance(point.GetX(), 70.0, 0.1);
+            ensure_distance(point.GetY(), 80.0, 0.1);
+            ensure_distance(point.GetZ(), 90.0, 0.1);
             ensure_equals(point.GetIntensity(), 5);
             ensure_equals(point.GetReturnNumber(), 1);
             ensure_equals(point.GetNumberOfReturns(), 1);
