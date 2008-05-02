@@ -80,7 +80,7 @@ namespace tut
     typedef test_group<laswriter_data> tg;
     typedef tg::object to;
 
-    tg test_group_lasreader("liblas::LASWriter");
+    tg test_group_laswriter("liblas::LASWriter");
 
     // Test user-declared constructor
     template<>
