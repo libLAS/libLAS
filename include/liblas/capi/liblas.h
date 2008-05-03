@@ -99,8 +99,8 @@ typedef struct  {
 } LASPointSummary;
 
 
-/* Returns the version string for this library.
- @return the version string for this library.
+/** Returns the version string for this library.
+ *  @return the version string for this library.
 */
 LAS_DLL const char* LAS_GetVersion();
 
