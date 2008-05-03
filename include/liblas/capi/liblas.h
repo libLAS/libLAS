@@ -99,8 +99,8 @@ typedef struct  {
 } LASPointSummary;
 
 
-/// Fetches the compiled-in version string
-/// @return the version string for this library
+/// Returns the version string for this library.
+/// @return the version string for this library.
 LAS_DLL const char* LAS_GetVersion();
 
 /// Resets the error stack for the libLAS C API.  
@@ -110,15 +110,19 @@ LAS_DLL void LASError_Reset(void);
 LAS_DLL void LASError_Pop(void);
 
 /// Returns the error number of the last error on the error stack.
+/// @return the error number of the last error on the error stack.
 LAS_DLL LASError LASError_GetLastErrorNum(void);
 
-/// Returns the error message of the last error on the error stack.
+/// Returns the name of the method the last error message happened in.
+/// @return the name of the method the last error message happened in.
 LAS_DLL char * LASError_GetLastErrorMsg(void);
 
-/// Returns the name of the method the last error message happened in
+/// Returns the name of the method the last error message happened in.
+/// @return the name of the method the last error message happened in.
 LAS_DLL char * LASError_GetLastErrorMethod(void);
 
 /// Returns the number of error messages on the error stack.
+/// @return the number of error messages on the error stack.
 LAS_DLL int LASError_GetErrorCount(void);
 
 /// Prints the last error message in the error stack to stderr.  If 
@@ -130,11 +134,32 @@ LAS_DLL void LASError_Print(const char* message);
 /// Creates a LASReaderH object that can be used to read LASHeaderH and 
 /// LASPointH objects with.  The LASReaderH must not be created with a 
 /// filename that is opened for read or write by any other API functions.
-/// @return LASReaderH opaque pointer to a LASReader instance.
+/// @return opaque pointer to a LASReaderH instance.
 /// @param filename Filename to open for read 
 LAS_DLL LASReaderH LASReader_Create(const char * filename);
 
+/// Reads the next available point on the LASReaderH instance.  If no point 
+/// is available to read, NULL is returned.  If an error happens during 
+/// the reading of the next available point, an error will be added to the 
+/// error stack and can be returned with the LASError_GetLastError* methods.
+/// @param hReader the opaque handle to the LASReaderH 
+/// @return an opaque handle to a LASPointH object, or NULL if no point is 
+/// available to read or an error occured.  Use the 
+/// LASError_GetLastError* methods to confirm the existence of an error 
+/// if NULL is returned.
 LAS_DLL LASPointH LASReader_GetNextPoint(const LASReaderH hReader);
+
+/// Reads a LASPointH from the given position in the LAS file represented 
+/// by the LASReaderH instance.  If no point is available at that location, 
+/// NULL is returned.  If an error happens during the reading of the point, 
+/// an error will be added to the error stack and can be returned with the 
+/// LASError_GetLastError* methods.
+/// @param hReader the opaque handle to the LASReaderH
+/// @param position the integer position of the point in the file to read.
+/// @return an opaque handle to a LASPointH object, or NULL if no point is 
+/// available at the given location or an error occured.  Use the 
+/// LASError_GetLastError* methods to confirm the existence of an error 
+/// if NULL is returned.
 LAS_DLL LASPointH LASReader_GetPointAt(const LASReaderH hReader, uint32_t position);
 
 LAS_DLL void LASReader_Destroy(LASReaderH hReader);
