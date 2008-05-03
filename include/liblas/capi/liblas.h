@@ -99,7 +99,10 @@ typedef struct  {
 } LASPointSummary;
 
 
+/// Fetches the compiled-in version string
+/// @return the version string for this library
 LAS_DLL const char* LAS_GetVersion();
+
 LAS_DLL void LASError_Reset(void);
 LAS_DLL void LASError_Pop(void);
 LAS_DLL LASError LASError_GetLastErrorNum(void);
