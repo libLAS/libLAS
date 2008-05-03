@@ -103,15 +103,36 @@ typedef struct  {
 /// @return the version string for this library
 LAS_DLL const char* LAS_GetVersion();
 
+/// Resets the error stack for the libLAS C API.  
 LAS_DLL void LASError_Reset(void);
+
+/// Pops the top error off of the error stack for the libLAS C API.
 LAS_DLL void LASError_Pop(void);
+
+/// Returns the error number of the last error on the error stack.
 LAS_DLL LASError LASError_GetLastErrorNum(void);
+
+/// Returns the error message of the last error on the error stack.
 LAS_DLL char * LASError_GetLastErrorMsg(void);
+
+/// Returns the name of the method the last error message happened in/
 LAS_DLL char * LASError_GetLastErrorMethod(void);
+
+/// Returns the number of error messages on the error stack.
 LAS_DLL int LASError_GetErrorCount(void);
+
+/// Prints the last error message in the error stack to stderr.  If 
+/// there is no error on the error stack, only the @param message is printed.
+/// The function does not alter the error stack in any way.
+/// @param message Message to include in the stderr output
 LAS_DLL void LASError_Print(const char* message);
 
+/// Creates a LASReaderH object that can be used to read LASHeaderH and 
+/// LASPointH objects with.  The LASReaderH must not be created with a 
+/// filename that is opened for read or write by any other API functions.
+/// @param filename Filename to open for read 
 LAS_DLL LASReaderH LASReader_Create(const char * filename);
+
 LAS_DLL LASPointH LASReader_GetNextPoint(const LASReaderH hReader);
 LAS_DLL LASPointH LASReader_GetPointAt(const LASReaderH hReader, uint32_t position);
 
