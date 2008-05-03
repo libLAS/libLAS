@@ -190,12 +190,55 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader);
 /* Point operations                                                         */
 /****************************************************************************/
 
-
+/** Returns the X value for the point.  This value is not scaled or offset
+ *  by any header values and stands on its own.  If you need points to have 
+ *  a scale and/or offset applied, this must be done in conjunction with the 
+ *  header values after the value is read.
+ *  @param hPoint the opaque pointer to the LASPointH instance  
+ *  @return the X value for the LASPointH
+*/
 LAS_DLL double LASPoint_GetX(const LASPointH hPoint);
+
+/** Sets the X value for the point.  This value must be scaled or offset 
+ *  by any header values before being set.
+ *  @param hPoint the opaque pointer to the LASPointH instance
+ *  @param value the double value to set for the X value of the point
+ *  @return an error number if an error occured during the setting of the point.
+*/
 LAS_DLL LASError LASPoint_SetX(LASPointH hPoint, double value);
+
+/** Returns the Y value for the point.  This value is not scaled or offset
+ *  by any header values and stands on its own.  If you need points to have 
+ *  a scale and/or offset applied, this must be done in conjunction with the 
+ *  header values after the value is read.
+ *  @param hPoint the opaque pointer to the LASPointH instance  
+ *  @return the Y value for the LASPointH
+*/
 LAS_DLL double LASPoint_GetY(const LASPointH hPoint);
+
+/** Sets the Y value for the point.  This value must be scaled or offset 
+ *  by any header values before being set.
+ *  @param hPoint the opaque pointer to the LASPointH instance
+ *  @param value the double value to set for the Y value of the point
+ *  @return an error number if an error occured during the setting of the point.
+*/
 LAS_DLL LASError LASPoint_SetY(LASPointH hPoint, double value);
+
+/** Returns the Z value for the point.  This value is not scaled or offset
+ *  by any header values and stands on its own.  If you need points to have 
+ *  a scale and/or offset applied, this must be done in conjunction with the 
+ *  header values after the value is read.
+ *  @param hPoint the opaque pointer to the LASPointH instance  
+ *  @return the Z value for the LASPointH
+*/
 LAS_DLL double LASPoint_GetZ(const LASPointH hPoint);
+
+/** Sets the Z value for the point.  This value must be scaled or offset 
+ *  by any header values before being set.
+ *  @param hPoint the opaque pointer to the LASPointH instance
+ *  @param value the double value to set for the Z value of the point
+ *  @return an error number if an error occured during the setting of the point.
+*/
 LAS_DLL LASError LASPoint_SetZ(LASPointH hPoint, double value);
 
 LAS_DLL uint16_t LASPoint_GetIntensity(const LASPointH hPoint);
