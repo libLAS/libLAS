@@ -99,9 +99,14 @@ typedef struct  {
 } LASPointSummary;
 
 
-/// Returns the version string for this library.
-/// @return the version string for this library.
+/* Returns the version string for this library.
+ @return the version string for this library.
+*/
 LAS_DLL const char* LAS_GetVersion();
+
+/****************************************************************************/
+/* Error handling                                                           */
+/****************************************************************************/
 
 /// Resets the error stack for the libLAS C API.  
 LAS_DLL void LASError_Reset(void);
@@ -130,6 +135,10 @@ LAS_DLL int LASError_GetErrorCount(void);
 /// The function does not alter the error stack in any way.
 /// @param message Message to include in the stderr output
 LAS_DLL void LASError_Print(const char* message);
+
+/****************************************************************************/
+/* Reader operations                                                        */
+/****************************************************************************/
 
 /// Creates a LASReaderH object that can be used to read LASHeaderH and 
 /// LASPointH objects with.  The LASReaderH must not be created with a 
@@ -162,35 +171,42 @@ LAS_DLL LASPointH LASReader_GetNextPoint(const LASReaderH hReader);
 /// if NULL is returned.
 LAS_DLL LASPointH LASReader_GetPointAt(const LASReaderH hReader, uint32_t position);
 
+/// Closes the file for reading operations represented by the LASReaderH instance.
+/// @param hReader the opqaue handle to the LASReaderH
 LAS_DLL void LASReader_Destroy(LASReaderH hReader);
 
-LAS_DLL double LASPoint_GetX(const LASPointH);
+/****************************************************************************/
+/* Point operations                                                         */
+/****************************************************************************/
+
+
+LAS_DLL double LASPoint_GetX(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetX(LASPointH hPoint, double value);
-LAS_DLL double LASPoint_GetY(const LASPointH);
+LAS_DLL double LASPoint_GetY(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetY(LASPointH hPoint, double value);
-LAS_DLL double LASPoint_GetZ(const LASPointH);
+LAS_DLL double LASPoint_GetZ(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetZ(LASPointH hPoint, double value);
 
-LAS_DLL uint16_t LASPoint_GetIntensity(const LASPointH);
+LAS_DLL uint16_t LASPoint_GetIntensity(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetIntensity(LASPointH hPoint, uint16_t value);
 
-LAS_DLL uint16_t LASPoint_GetReturnNumber(const LASPointH);
+LAS_DLL uint16_t LASPoint_GetReturnNumber(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetReturnNumber(LASPointH hPoint, uint16_t value);
-LAS_DLL uint16_t LASPoint_GetNumberOfReturns(const LASPointH);
+LAS_DLL uint16_t LASPoint_GetNumberOfReturns(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetNumberOfReturns(LASPointH hPoint, uint16_t value);
-LAS_DLL uint16_t LASPoint_GetScanDirection(const LASPointH);
+LAS_DLL uint16_t LASPoint_GetScanDirection(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetScanDirection(LASPointH hPoint, uint16_t value);
-LAS_DLL uint16_t LASPoint_GetFlightLineEdge(const LASPointH);
+LAS_DLL uint16_t LASPoint_GetFlightLineEdge(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetFlightLineEdge(LASPointH hPoint, uint16_t value);
-LAS_DLL uint8_t LASPoint_GetScanFlags(const LASPointH);
+LAS_DLL uint8_t LASPoint_GetScanFlags(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetScanFlags(LASPointH hPoint, uint8_t value);
-LAS_DLL uint8_t LASPoint_GetClassification(const LASPointH);
+LAS_DLL uint8_t LASPoint_GetClassification(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetClassification(LASPointH hPoint, uint8_t value);
-LAS_DLL double LASPoint_GetTime(const LASPointH);
+LAS_DLL double LASPoint_GetTime(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetTime(LASPointH hPoint, double value);
-LAS_DLL int8_t LASPoint_GetScanAngleRank(const LASPointH);
+LAS_DLL int8_t LASPoint_GetScanAngleRank(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetScanAngleRank(LASPointH hPoint, int8_t value);
-LAS_DLL uint8_t LASPoint_GetUserData(const LASPointH);
+LAS_DLL uint8_t LASPoint_GetUserData(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetUserData(LASPointH hPoint, uint8_t value);
 LAS_DLL int LASPoint_Validate(LASPointH hPoint);
 LAS_DLL int LASPoint_IsValid(LASPointH hPoint);
