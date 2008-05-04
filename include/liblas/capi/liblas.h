@@ -347,11 +347,46 @@ LAS_DLL LASError LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH 
 LAS_DLL LASError LASWriter_WriteHeader(const LASWriterH hWriter, const LASHeaderH hHeader);
 LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);
 
+/****************************************************************************/
+/* GUID Operations                                                          */
+/****************************************************************************/
+
+/** Returns the GUID value for the header as an opaque LASGuidH pointer.
+ *  @param hHeader the opaque pointer to the LASHeaderH
+ *  @return the GUID value for the header as an opaque LASGuidH pointer.
+*/
 LAS_DLL LASGuidH LASHeader_GetGUID(const LASHeaderH hHeader);
+
+/** Returns a new random GUID.
+ *  @return a new random GUID
+*/
 LAS_DLL LASGuidH LASGuid_Create();
+
+/** Creates a new GUID opaque pointer using the given string.  
+ *  @param string A GUID string in the form "00000000-0000-0000-0000-000000000000"
+ *  An example GUID might be something like '8388F1B8-AA1B-4108-BCA3-6BC68E7B062E'
+ *  @return the GUID value as an opaque LASGuidH pointer.
+*/
 LAS_DLL LASGuidH LASGuid_CreateFromString(const char* string);
+
+/** Destroys a GUID opaque pointer and removes it from the heap
+ *  @param hId the GUID value to destroy as an opaque LASGuidH pointer.
+*/
 LAS_DLL void LASGuid_Destroy(LASGuidH hId);
+
+/** Determines if two GUIDs are equal.
+ *  @param hId1 the first GUID
+ *  @param hId2 the second GUID
+ *  @return 0 if false, 1 if true.  Use the LASError_GetLastError* methods to 
+ *  determine if an error occured during the operation of this function.
+*/
 LAS_DLL int LASGuid_Equals(LASGuidH hId1, LASGuidH hId2);
+
+/** Returns a string representation of the GUID opqaue pointer.  The caller 
+ *  owns the string.
+ *  @param hId the LASGuidH pointer
+ *  @return a string representation of the GUID opaque pointer.
+*/
 LAS_DLL char* LASGuid_AsString(LASGuidH hId);
 
 
