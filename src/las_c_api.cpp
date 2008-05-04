@@ -53,6 +53,7 @@ typedef void *LASWriterH;
 typedef void *LASReaderH;
 typedef void *LASPointH;
 typedef void *LASHeaderH;
+typedef void *LASGuidH;
 
 #include <string>
 #include <stack>
@@ -319,7 +320,7 @@ LAS_DLL LASPointH LASPoint_Copy(const LASPointH hPoint) {
 }
 
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint) {
-    VALIDATE_POINTER0(hPoint, "LASPoint_GetX");
+    VALIDATE_POINTER0(hPoint, "LASPoint_Destroy");
     delete (LASPoint*) hPoint;
     hPoint = NULL;
 }
@@ -698,6 +699,23 @@ LAS_DLL char* LASHeader_GetProjectId(const LASHeaderH hHeader) {
     liblas::guid id = ((LASHeader*) hHeader)->GetProjectId();
     return strdup(id.to_string().c_str());
 }
+
+LAS_DLL LASErrorEnum LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetGUID", LE_Failure);
+
+    try {
+        liblas::guid* id = (liblas::guid*) hId;
+        
+        ((LASHeader*) hHeader)->SetProjectId(*id);    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetGUID");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
 
 LAS_DLL liblas::uint8_t LASHeader_GetVersionMajor(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetVersionMajor", 0);
@@ -1241,6 +1259,66 @@ LAS_DLL const char * LAS_GetVersion() {
        in las_config.h to solve Visual C++ compilation  (Ticket #23) */
 
     return strdup(PACKAGE_VERSION);
+}
+
+LAS_DLL LASGuidH LASHeader_GetGUID(const LASHeaderH hHeader) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetGUID", 0);
+    
+    liblas::guid id = ((LASHeader*) hHeader)->GetProjectId();
+    return (LASGuidH) new liblas::guid(id);
+}
+
+LAS_DLL LASGuidH LASGuid_Create() {
+    liblas::guid random;
+    try {
+        random = liblas::guid::create();
+        return (LASGuidH) new liblas::guid(random);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASGuid_Create");
+        return NULL;
+    }
+}
+
+LAS_DLL LASGuidH LASGuid_CreateFromString(const char* string) {
+    VALIDATE_POINTER1(string, "LASGuid_CreateFromString", NULL);    
+    liblas::guid id;
+    try {
+        id = liblas::guid::guid(string);
+        return (LASGuidH) new liblas::guid(id);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASGuid_CreateFromString");
+        return NULL;
+    }
+}
+
+LAS_DLL void LASGuid_Destroy(LASGuidH hId) {
+    VALIDATE_POINTER0(hId, "LASGuid_Destroy");
+    delete (liblas::guid*) hId;
+    hId = NULL;
+}
+
+LAS_DLL int LASGuid_Equals(LASGuidH hId1, LASGuidH hId2) {
+    VALIDATE_POINTER1(hId1, "LASGuid_Equals", LE_Failure);
+    VALIDATE_POINTER1(hId2, "LASGuid_Equals", LE_Failure);
+
+    liblas::guid* id1 = (liblas::guid*)hId1;
+    liblas::guid* id2 = (liblas::guid*)hId2;
+    try {
+
+        return( *id1 == *id2);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASGuid_Equals");
+        return LE_Failure;
+    }
+}
+
+LAS_DLL char* LASGuid_AsString(LASGuidH hId) {
+    VALIDATE_POINTER1(hId, "LASGuid_AsString", 0);
+    liblas::guid* id= (liblas::guid*)hId;
+    return strdup(id->to_string().c_str());
 }
 
 LAS_C_END

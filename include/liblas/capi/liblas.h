@@ -57,6 +57,7 @@ typedef void *LASWriterH;
 typedef void *LASReaderH;
 typedef void *LASPointH;
 typedef void *LASHeaderH;
+typedef void *LASGuidH;
 
 LAS_C_START
 
@@ -241,7 +242,17 @@ LAS_DLL double LASPoint_GetZ(const LASPointH hPoint);
 */
 LAS_DLL LASError LASPoint_SetZ(LASPointH hPoint, double value);
 
+/** Returns the intensity value for the point.  This value is the pulse return 
+  * magnitude, it is optional, and it is LiDAR system specific.
+ *  @return the intensity value for the point.
+*/
 LAS_DLL uint16_t LASPoint_GetIntensity(const LASPointH hPoint);
+
+/** Sets the intensity value for the point.
+ *  @param hPoint the opaque pointer to the LASPointH instance
+ *  @param value the value to set the intensity to
+ *  @return an error number if an error occured.
+*/
 LAS_DLL LASError LASPoint_SetIntensity(LASPointH hPoint, uint16_t value);
 
 LAS_DLL uint16_t LASPoint_GetReturnNumber(const LASPointH hPoint);
@@ -279,6 +290,7 @@ LAS_DLL uint16_t LASHeader_GetFileSourceId(const LASHeaderH hHeader);
 
 
 LAS_DLL char *LASHeader_GetProjectId(const LASHeaderH hHeader);
+LAS_DLL LASError LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId);
 
 LAS_DLL uint8_t LASHeader_GetVersionMajor(const LASHeaderH hHeader);
 LAS_DLL LASError LASHeader_SetVersionMajor(LASHeaderH hHeader, uint8_t value);
@@ -334,6 +346,14 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
 LAS_DLL LASError LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoint);
 LAS_DLL LASError LASWriter_WriteHeader(const LASWriterH hWriter, const LASHeaderH hHeader);
 LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);
+
+LAS_DLL LASGuidH LASHeader_GetGUID(const LASHeaderH hHeader);
+LAS_DLL LASGuidH LASGuid_Create();
+LAS_DLL LASGuidH LASGuid_CreateFromString(const char* string);
+LAS_DLL void LASGuid_Destroy(LASGuidH hId);
+LAS_DLL int LASGuid_Equals(LASGuidH hId1, LASGuidH hId2);
+LAS_DLL char* LASGuid_AsString(LASGuidH hId);
+
 
 LAS_C_END
 #endif

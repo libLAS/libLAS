@@ -1,5 +1,6 @@
 import core
 import datetime
+import guid
 
 class Header(object):
     def __init__(self, owned=True, handle=None):
@@ -26,6 +27,13 @@ class Header(object):
         """Returns the ProjectID/GUID for the file.  libLAS does not currently support setting this value from Python"""
         return core.las.LASHeader_GetProjectId(self.handle)
     project_id = property(get_projectid)
+    
+    def get_guid(self):
+        """Returns the GUID for the file as a liblas.guid.GUID"""
+        return guid.GUID(handle=core.las.LASHeader_GetGUID(self.handle))
+    def set_guid(self, value):
+        """Sets the GUID for the file.  It must be a liblas.guid.GUID"""
+        return core.las.LASHeader_SetGUID(self.handle, value.handle)
     
     def get_majorversion(self):
         """Returns the major version for the file.  Expect this value to always be 1"""

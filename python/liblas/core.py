@@ -371,3 +371,28 @@ las.LASWriter_WriteHeader.errcheck = check_return
 
 las.LASWriter_Destroy.argtypes = [ctypes.c_void_p]
 las.LASWriter_Destroy.errcheck = check_void_done
+
+las.LASGuid_Destroy.argtypes = [ctypes.c_void_p]
+las.LASGuid_Destroy.errcheck = check_void_done
+
+las.LASGuid_AsString.argtypes = [ctypes.c_void_p]
+las.LASGuid_AsString.errcheck = check_value
+las.LASGuid_AsString.restype = ctypes.c_char_p
+
+las.LASGuid_Equals.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASGuid_Equals.restype = ctypes.c_int
+las.LASGuid_Equals.errcheck = check_value
+
+las.LASGuid_CreateFromString.argtypes =[ctypes.c_char_p]
+las.LASGuid_CreateFromString.errcheck = check_void
+las.LASGuid_CreateFromString.restype = ctypes.c_void_p
+
+las.LASGuid_Create.errcheck = check_void
+las.LASGuid_Create.restype = ctypes.c_void_p
+
+las.LASHeader_GetGUID.argtypes = [ctypes.c_void_p]
+las.LASHeader_GetGUID.errcheck = check_void
+las.LASHeader_GetGUID.restype = ctypes.c_void_p
+las.LASHeader_SetGUID.argtypes = [ctypes.c_void_p]
+las.LASHeader_SetGUID.errcheck = check_return
+las.LASHeader_SetGUID.restype = ctypes.c_int
