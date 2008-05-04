@@ -243,7 +243,7 @@ LAS_DLL double LASPoint_GetZ(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetZ(LASPointH hPoint, double value);
 
 /** Returns the intensity value for the point.  This value is the pulse return 
-  * magnitude, it is optional, and it is LiDAR system specific.
+ *  magnitude, it is optional, and it is LiDAR system specific.
  *  @return the intensity value for the point.
 */
 LAS_DLL uint16_t LASPoint_GetIntensity(const LASPointH hPoint);
@@ -342,9 +342,46 @@ LAS_DLL double LASHeader_GetMaxY(const LASHeaderH hHeader);
 LAS_DLL double LASHeader_GetMaxZ(const LASHeaderH hHeader);
 LAS_DLL LASError LASHeader_SetMax(LASHeaderH hHeader, double x, double y, double z);
 
+/****************************************************************************/
+/* Writer Operations                                                        */
+/****************************************************************************/
+
+/** Creates a new LASWriterH for write operations on LAS files.  The file may 
+ *  be opened in either LAS_MODE_APPEND or LAS_MODE_WRITE, but the file cannot 
+ *  be open by another other operations (another LASReaderH or LASWriterH).  
+ *  @param filename The filename to open to write
+ *  @param hHeader an opaque pointer to a LASHeaderH that will be written to 
+ *  the file as part of the opening for write operation.
+ *  @param mode a mode value to denote whether to open for write or append 
+ *  operations.  Valid values are LAS_MODE_APPEND and LAS_MODE_WRITE.
+*/
 LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader, int mode);
+
+/** Writes a point to the file.  The location of where the point is writen is 
+ *  determined by the mode the file is opened in, and what the last operation was.  
+ *  For example, if the file was opened for append, the next point would be written 
+ *  at the end of the file.  Likewise, if the file is opened in write mode, even 
+ *  if the file already existed, the next WritePoint operation will happen at the 
+ *  end of the header and all of the existing points in the file will be overwritten.
+ *  @param hWriter opaque pointer to the LASWriterH instance
+ *  @param hPoint the opaque LASPointH pointer to write
+ *  @return LE_None if no error occurred during the write operation.
+*/
 LAS_DLL LASError LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoint);
+
+/** Overwrites the header for the file represented by the LASWriterH.  It does 
+ *  not matter if the file is opened for append or for write.
+ *  @param hWriter opaque pointer to the LASWriterH instance
+ *  @param hHeader LASHeaderH instance to write into the file
+ *  @return LE_None if no error occurred during the operation.
+*/
+
 LAS_DLL LASError LASWriter_WriteHeader(const LASWriterH hWriter, const LASHeaderH hHeader);
+
+/** Destroys the LASWriterH instance, effectively closing the file and performing 
+ *  housekeeping operations.
+ *  @param hWriter LASWriterH instance to close
+*/
 LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);
 
 /****************************************************************************/
