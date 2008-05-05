@@ -320,21 +320,110 @@ LAS_DLL uint16_t LASPoint_GetFlightLineEdge(const LASPointH hPoint);
  *  @return LASError value determine success or failure.
 */
 LAS_DLL LASError LASPoint_SetFlightLineEdge(LASPointH hPoint, uint16_t value);
+
+/** Returns all of the scan flags for the point -- Return number, number of 
+ *  returns, flightline edge, scan direction, and scan angle rank.
+ *  @param hPoint LASPointH instance
+ *  @return all of the scan flags for the point
+*/
 LAS_DLL uint8_t LASPoint_GetScanFlags(const LASPointH hPoint);
+
+/** Sets all of the scan flags for the point.  No validation is done. 
+ *  @param hPoint LASPointH instance
+ *  @param value the value to set for the flags
+ *  @return LASError value determine success or failure.
+*/
 LAS_DLL LASError LASPoint_SetScanFlags(LASPointH hPoint, uint8_t value);
+
+/** Returns the classification for the point
+ *  @param hPoint LASPointH instance
+ *  @return the classification for the point
+*/
 LAS_DLL uint8_t LASPoint_GetClassification(const LASPointH hPoint);
+
+/** Sets the classification for the point.  No validation is done. 
+ *  @param hPoint LASPointH instance
+ *  @param value the value to set for the classification
+ *  @return LASError value determine success or failure.
+*/
 LAS_DLL LASError LASPoint_SetClassification(LASPointH hPoint, uint8_t value);
+
+/** Returns the time for the point
+ *  @param hPoint LASPointH instance
+ *  @return the time for the point
+*/
 LAS_DLL double LASPoint_GetTime(const LASPointH hPoint);
+
+/** Sets the time for the point.  No validation is done. 
+ *  @param hPoint LASPointH instance
+ *  @param value the value to set for the time
+ *  @return LASError value determine success or failure.
+*/
 LAS_DLL LASError LASPoint_SetTime(LASPointH hPoint, double value);
+
+/** Returns the scan angle for the point
+ *  @param hPoint LASPointH instance
+ *  @return the scan angle for the point
+*/
 LAS_DLL int8_t LASPoint_GetScanAngleRank(const LASPointH hPoint);
+
+/** Sets the scan angle for the point.  No validation is done. 
+ *  @param hPoint LASPointH instance
+ *  @param value the value to set for the scan angle
+ *  @return LASError value determine success or failure.
+*/
 LAS_DLL LASError LASPoint_SetScanAngleRank(LASPointH hPoint, int8_t value);
+
+/** Returns the arbitrary user data for the point
+ *  @param hPoint LASPointH instance
+ *  @return the arbitrary user data for the point
+*/
 LAS_DLL uint8_t LASPoint_GetUserData(const LASPointH hPoint);
+
+/** Sets the arbitrary user data for the point.  No validation is done. 
+ *  @param hPoint LASPointH instance
+ *  @param value the value to set for the arbitrary user data
+ *  @return LASError value determine success or failure.
+*/
 LAS_DLL LASError LASPoint_SetUserData(LASPointH hPoint, uint8_t value);
+
+/** Returns a bitfield representing the validity of various members
+ *  enum DataMemberFlag
+ {
+     eReturnNumber = 1,
+     eNumberOfReturns = 2,
+     eScanDirection = 4,
+     eFlightLineEdge = 8,
+     eClassification = 16,
+     eScanAngleRank = 32,
+     eTime = 64
+ };
+ *  @param hPoint LASPointH instance
+ *  @return bitfield representing the validity of various members.
+*/
 LAS_DLL int LASPoint_Validate(LASPointH hPoint);
+
+/** Returns a boolean whether or not the point is valid
+ *  @param hPoint LASPointH instance
+ *  @return a boolean (1 or 0) whether or not the point is valid.
+*/
 LAS_DLL int LASPoint_IsValid(LASPointH hPoint);
 
+/** Creates a new empty LASPointH instance 
+ *  @return LASPointH instance.  If the value is NULL use the 
+ *  LASError_GetLastError* methods to determine the problem
+*/
 LAS_DLL LASPointH LASPoint_Create(void);
+
+/** Creates a copy of a LASPointH instance
+ *  @param hPoint the LASPointH instance to copy 
+ *  @return new LASPointH instance.  If the value is NULL use the 
+ *  LASError_GetLastError* methods to determine the problem
+*/
 LAS_DLL LASPointH LASPoint_Copy(const LASPointH);
+
+/** Destroys/deletes a LASPointH instance
+*/
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint);
 
 
