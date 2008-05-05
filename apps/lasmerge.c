@@ -458,6 +458,7 @@ int main(int argc, char *argv[])
             }
         }
 
+        LASHeader_Destroy(header);
         LASReader_Destroy(reader);
         reader = NULL;
     }
