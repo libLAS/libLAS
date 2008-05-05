@@ -322,17 +322,17 @@ int main(int argc, char *argv[])
     {
         fprintf(stderr, "  number_of_point_records %d\n", 
                 LASHeader_GetPointRecordsCount(merged_header));
-        fprintf(stdout, "  number of points by return %d %d %d %d %d\n", 
+        fprintf(stderr, "  number of points by return %d %d %d %d %d\n", 
                         LASHeader_GetPointRecordsByReturnCount(merged_header, 0),
                         LASHeader_GetPointRecordsByReturnCount(merged_header, 1), 
                         LASHeader_GetPointRecordsByReturnCount(merged_header, 2), 
                         LASHeader_GetPointRecordsByReturnCount(merged_header, 3), 
                         LASHeader_GetPointRecordsByReturnCount(merged_header, 4));
-        fprintf(stdout, "  min x y z                  %.6f %.6f %.6f\n", 
+        fprintf(stderr, "  min x y z                  %.6f %.6f %.6f\n", 
                         LASHeader_GetMinX(merged_header), 
                         LASHeader_GetMinY(merged_header), 
                         LASHeader_GetMinZ(merged_header));
-        fprintf(stdout, "  max x y z                  %.6f %.6f %.6f\n", 
+        fprintf(stderr, "  max x y z                  %.6f %.6f %.6f\n", 
                         LASHeader_GetMaxX(merged_header), 
                         LASHeader_GetMaxY(merged_header), 
                         LASHeader_GetMaxZ(merged_header));
@@ -461,7 +461,8 @@ int main(int argc, char *argv[])
         LASReader_Destroy(reader);
         reader = NULL;
     }
-
+    
+    LASHeader_Destroy(merged_header);
     LASWriter_Destroy(writer);
 
     if (verbose) ptime("done.");
