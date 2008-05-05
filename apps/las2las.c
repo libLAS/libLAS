@@ -711,6 +711,12 @@ int main(int argc, char *argv[])
     print_point_summary(summary, header);
     RepairHeader(header, summary) ;
 
+    if (summary) {
+        LASPoint_Destroy(summary->pmin);
+        LASPoint_Destroy(summary->pmax);
+        free(summary);
+    }
+
     if (reader) {
         LASReader_Destroy(reader);
         reader = NULL;
