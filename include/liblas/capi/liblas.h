@@ -187,6 +187,14 @@ LAS_DLL LASPointH LASReader_GetPointAt(const LASReaderH hReader, uint32_t positi
 */
 LAS_DLL void LASReader_Destroy(LASReaderH hReader);
 
+/** Returns a LASHeaderH representing the header for the file
+ *  @param hReader the LASReaderH instance
+ *  @return a LASHeaderH representing the header for the file.  NULL is returned 
+ *  in the event of an error.  Use the LASError_GetLastError* methods to check
+ *  in the event of a NULL return.
+*/
+LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader);
+
 /****************************************************************************/
 /* Point operations                                                         */
 /****************************************************************************/
@@ -255,13 +263,62 @@ LAS_DLL uint16_t LASPoint_GetIntensity(const LASPointH hPoint);
 */
 LAS_DLL LASError LASPoint_SetIntensity(LASPointH hPoint, uint16_t value);
 
+/** Returns the return number for the point.  The return number is "the pulse
+ *  return number for a given output pulse."  The first return number starts with
+ *  the value 1.
+ *  @param hPoint LASPointH instance
+ *  @return a return number, valid from 1-6, for the point.  Use the LASError 
+ *  methods to determine if an error occurred during this operation if 0 
+ *  is returned.
+*/
 LAS_DLL uint16_t LASPoint_GetReturnNumber(const LASPointH hPoint);
+
+/** Sets the return number for the point.  Valid values are from 1-6.
+ *  @param hPoint LASPointH instance
+ *  @param value the value to set for the return number
+ *  @return LASError value determine success or failure.
+*/
 LAS_DLL LASError LASPoint_SetReturnNumber(LASPointH hPoint, uint16_t value);
+
+/** Returns the total number of returns for a given pulse.
+ *  @param hPoint LASPointH instance
+ *  @return total number of returns for this pulse.
+*/
 LAS_DLL uint16_t LASPoint_GetNumberOfReturns(const LASPointH hPoint);
+
+/** Sets the number of returns for the point.  Valid values are from 1-5.
+ *  @param hPoint LASPointH instance
+ *  @param value the value to set for the number of returns
+ *  @return LASError value determine success or failure.
+*/
 LAS_DLL LASError LASPoint_SetNumberOfReturns(LASPointH hPoint, uint16_t value);
+
+/** Returns the scan direction for a given pulse.
+ *  @param hPoint LASPointH instance
+ *  @return the scan direction for a given pulse.
+*/
 LAS_DLL uint16_t LASPoint_GetScanDirection(const LASPointH hPoint);
+
+/** Sets the scan direction for a given pulse.  Valid values are 0 or 1, with 
+ *  1 being a positive scan direction and 0 being a negative scan direction.
+ *  @param hPoint LASPointH instance
+ *  @param value the value to set for scan direction
+ *  @return LASError value determine success or failure.
+*/
 LAS_DLL LASError LASPoint_SetScanDirection(LASPointH hPoint, uint16_t value);
+
+/** Returns whether or not a given pulse is an edge point
+ *  @param hPoint LASPointH instance
+ *  @return whether or not a given pulse is an edge point.
+*/
 LAS_DLL uint16_t LASPoint_GetFlightLineEdge(const LASPointH hPoint);
+
+/** Sets the edge marker for a given pulse.  Valid values are 0 or 1, with 
+ *  1 being an edge point and 0 being interior.
+ *  @param hPoint LASPointH instance
+ *  @param value the value to set for flightline edge
+ *  @return LASError value determine success or failure.
+*/
 LAS_DLL LASError LASPoint_SetFlightLineEdge(LASPointH hPoint, uint16_t value);
 LAS_DLL uint8_t LASPoint_GetScanFlags(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetScanFlags(LASPointH hPoint, uint8_t value);
@@ -280,7 +337,7 @@ LAS_DLL LASPointH LASPoint_Create(void);
 LAS_DLL LASPointH LASPoint_Copy(const LASPointH);
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint);
 
-LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader);
+
 LAS_DLL void LASHeader_Destroy(LASHeaderH hHeader);
 LAS_DLL LASHeaderH LASHeader_Copy(const LASHeaderH hHeader);
 LAS_DLL LASHeaderH LASHeader_Create(void);
