@@ -1,5 +1,6 @@
 import atexit, os, re, sys
 import ctypes
+from ctypes.util import find_library
 
 from ctypes import PyDLL
 
@@ -40,7 +41,18 @@ def check_value(result, func, cargs):
         las.LASError_Reset()
         raise LASException(msg)
     return result
-                    
+
+def check_value_free(result, func, cargs):
+    "Error checking proper value returns"
+    count = las.LASError_GetErrorCount()
+    if count != 0:
+        msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
+        las.LASError_Reset()
+        raise LASException(msg)
+    retval = ctypes.string_at(result)[:]
+    free(result)
+    return retval
+
 try:
     from numpy import array, ndarray
     HAS_NUMPY = True
@@ -56,6 +68,11 @@ if os.name == 'nt':
         original_path = os.environ['PATH']
         os.environ['PATH'] = "%s;%s" % (local_dlls, original_path)
         las = ctypes.CDLL(lib_name)
+        def free(m):
+            try:
+                free = ctypes.cdll.msvcrt.free(m)
+            except WindowsError:
+                pass
     except (ImportError, WindowsError):
         raise
 
@@ -64,19 +81,28 @@ elif os.name == 'posix':
     platform = os.uname()[0]
     if platform == 'Darwin':
         lib_name = 'liblas.dylib'
+        free = ctypes.CDLL(find_library('libc')).free
     else:
         lib_name = 'liblas.so'
+        free = ctypes.CDLL(find_library('libc.so.6')).free
     las = ctypes.CDLL(lib_name)
 else:
     raise LASException('Unsupported OS "%s"' % os.name)
 
 
 
+def get_version():
+    func = las.LAS_GetVersion
+    size = ctypes.c_int()
+    def errcheck(result, func, argtuple):
+        retval = ctypes.string_at(result, size.value)[:]
+        free(result)
+        return result
+    func.errcheck = errcheck
+    return func()
 
-las.LAS_GetVersion.restype=ctypes.c_char_p
-version = las.LAS_GetVersion()
-#las.LASError_Reset()
-#las.LASError_Pop()
+#version = las.LAS_GetVersion()
+version = get_version()
 
 las.LASError_GetLastErrorNum.restype = ctypes.c_int
 
@@ -209,17 +235,15 @@ las.LASHeader_Copy.errcheck = check_void
 las.LASHeader_Create.restype = ctypes.c_void_p
 las.LASHeader_Create.errcheck = check_void
 
-las.LASHeader_GetFileSignature.restype = ctypes.c_char_p
 las.LASHeader_GetFileSignature.argtypes = [ctypes.c_void_p]
-las.LASHeader_GetFileSignature.errcheck = check_value
+las.LASHeader_GetFileSignature.errcheck = check_value_free
 
 las.LASHeader_GetFileSourceId.restype = ctypes.c_ushort
 las.LASHeader_GetFileSourceId.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetFileSourceId.errcheck = check_value
 
-las.LASHeader_GetProjectId.restype = ctypes.c_char_p
 las.LASHeader_GetProjectId.argtypes = [ctypes.c_void_p]
-las.LASHeader_GetProjectId.errcheck = check_value
+las.LASHeader_GetProjectId.errcheck = check_value_free
 
 las.LASHeader_GetVersionMajor.restype = ctypes.c_ubyte
 las.LASHeader_GetVersionMajor.argtypes = [ctypes.c_void_p]
@@ -235,16 +259,14 @@ las.LASHeader_SetVersionMinor.restype = ctypes.c_int
 las.LASHeader_SetVersionMinor.argtypes = [ctypes.c_void_p, ctypes.c_ubyte]
 las.LASHeader_SetVersionMinor.errcheck = check_return
 
-las.LASHeader_GetSystemId.restype = ctypes.c_char_p
 las.LASHeader_GetSystemId.argtypes = [ctypes.c_void_p]
-las.LASHeader_GetSystemId.errcheck = check_value
+las.LASHeader_GetSystemId.errcheck = check_value_free
 las.LASHeader_SetSystemId.restype = ctypes.c_int
 las.LASHeader_SetSystemId.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 las.LASHeader_SetSystemId.errcheck = check_return
 
-las.LASHeader_GetSoftwareId.restype = ctypes.c_char_p
 las.LASHeader_GetSoftwareId.argtypes = [ctypes.c_void_p]
-las.LASHeader_GetSoftwareId.errcheck = check_value
+las.LASHeader_GetSoftwareId.errcheck = check_value_free
 las.LASHeader_SetSoftwareId.restype = ctypes.c_int
 las.LASHeader_SetSoftwareId.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 las.LASHeader_SetSoftwareId.errcheck = check_return
@@ -376,8 +398,7 @@ las.LASGuid_Destroy.argtypes = [ctypes.c_void_p]
 las.LASGuid_Destroy.errcheck = check_void_done
 
 las.LASGuid_AsString.argtypes = [ctypes.c_void_p]
-las.LASGuid_AsString.errcheck = check_value
-las.LASGuid_AsString.restype = ctypes.c_char_p
+las.LASGuid_AsString.errcheck = check_value_free
 
 las.LASGuid_Equals.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASGuid_Equals.restype = ctypes.c_int
@@ -396,3 +417,4 @@ las.LASHeader_GetGUID.restype = ctypes.c_void_p
 las.LASHeader_SetGUID.argtypes = [ctypes.c_void_p]
 las.LASHeader_SetGUID.errcheck = check_return
 las.LASHeader_SetGUID.restype = ctypes.c_int
+
