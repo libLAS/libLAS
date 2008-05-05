@@ -90,7 +90,7 @@
 
 /* FIXME -  Ticket #23 */
 #ifdef _MSC_VER
-#define PACKAGE_VERSION "0.9.5"
+#define PACKAGE_VERSION "0.9.6"
 #endif
 
 #endif /* LAS_CONFIG_H_INCLUDED */
