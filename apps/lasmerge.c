@@ -313,7 +313,8 @@ int main(int argc, char *argv[])
             LASHeader_SetMin(merged_header, minx, miny, minz);
             LASHeader_SetMax(merged_header, maxx, maxy, maxz);
         }
-    
+        
+        LASHeader_Destroy(header);
         LASReader_Destroy(reader);
     }
 
