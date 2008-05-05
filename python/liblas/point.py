@@ -14,7 +14,7 @@ class Point(object):
         if not copy:
             self.owned = owned
         else:
-            self.owned = False
+            self.owned = True
     def __del__(self):
         if self.owned:
             if self.handle and core:
@@ -148,3 +148,4 @@ class Point(object):
         t = time.mktime(value.timetuple())
         core.las.LASPoint_SetTime(self.handle,t)
     time = property(get_time, set_time)
+
