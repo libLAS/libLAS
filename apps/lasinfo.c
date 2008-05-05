@@ -392,14 +392,15 @@ int main(int argc, char *argv[])
             header = NULL;            
             
         
-        LASPoint_Destroy(summary->pmin);
-        LASPoint_Destroy(summary->pmax);
     }
     if (summary) {
         LASPoint_Destroy(summary->pmin);
         LASPoint_Destroy(summary->pmax);
         free(summary);
+
     }
+    free(summary);
+
 }   
     
      if (reader) LASReader_Destroy(reader);
