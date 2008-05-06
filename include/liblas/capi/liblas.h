@@ -426,12 +426,34 @@ LAS_DLL LASPointH LASPoint_Copy(const LASPointH);
 */
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint);
 
+/****************************************************************************/
+/* Header operations                                                        */
+/****************************************************************************/
 
-LAS_DLL void LASHeader_Destroy(LASHeaderH hHeader);
+/** Copies a LASHeaderH instance
+ *  @param hHeader the LASHeaderH to copy
+ *  @return a LASHeaderH instance or NULL on error
+*/
 LAS_DLL LASHeaderH LASHeader_Copy(const LASHeaderH hHeader);
+
+/** Creates an empty LASHeaderH with default values
+*/
 LAS_DLL LASHeaderH LASHeader_Create(void);
 
+/** Destroys/deletes a LASHeader instance
+*/
+LAS_DLL void LASHeader_Destroy(LASHeaderH hHeader);
+
+/** Returns the file signature the the file.  This should always be 'LASF'
+ *  @param hHeader LASHeaderH instance
+ *  @return the file signature the the file.  This should always be 'LASF'
+*/
 LAS_DLL char *LASHeader_GetFileSignature(const LASHeaderH hHeader);
+
+/** Returns the file source id for the file.  It is a number from 1-65535
+ *  @param hHeader LASHeaderH instance
+ *  @return the file source id for the file.
+*/
 LAS_DLL uint16_t LASHeader_GetFileSourceId(const LASHeaderH hHeader);
 
 
