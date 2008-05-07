@@ -50,6 +50,7 @@
 
 namespace liblas {
 
+/// \todo to be documented
 class LASFile
 {
 public:

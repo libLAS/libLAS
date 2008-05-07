@@ -66,6 +66,9 @@ LAS_C_START
 #define LAS_MODE_WRITE 1
 #define LAS_MODE_APPEND 2
 
+/**
+ * \todo to be documented
+ */
 typedef enum
 {
     LE_None = 0,
@@ -75,6 +78,9 @@ typedef enum
     LE_Fatal = 4
 } LASError;
 
+/**
+ * \todo to be documented
+ */
 typedef struct  {
 
     double t;
@@ -457,6 +463,9 @@ LAS_DLL char *LASHeader_GetFileSignature(const LASHeaderH hHeader);
 LAS_DLL uint16_t LASHeader_GetFileSourceId(const LASHeaderH hHeader);
 
 
+/**
+ * \todo to be documented (and other C API functions).
+ */
 LAS_DLL char *LASHeader_GetProjectId(const LASHeaderH hHeader);
 LAS_DLL LASError LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId);
 
