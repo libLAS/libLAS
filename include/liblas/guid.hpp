@@ -3,10 +3,11 @@
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
  * Purpose:  GUID implementation
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Author:   Andy Tompkins (modified by Mateusz Loskot)
  *
- * This file has been stolen from <boost/cstdint.hpp> and
- * modified for libLAS purposes.
+ * This file has been stolen from the Boost Vault and
+ * modified for libLAS purposes. Here is the original code posted:
+ * http://lists.boost.org/boost-users/2007/04/27397.php
  * 
  * (C) Copyright 2006 Andy Tompkins.
  * (C) Copyright 2008 Mateusz Loskot, mateusz@loskot.net.
@@ -75,16 +76,31 @@
 
 namespace liblas {
 
-/// \todo To be documented.
+/// Definition of Globally Unique Identifier type.
+/// The GUID is a 16-byte (128-bit) number.
+/// This class is used to represent value stored as Project Identifier
+/// in public header block (see LASHeader) of a LAS file.
+/// All files in a unique project should have the same value of
+/// the Project Identifier. It is used together with File Source ID to
+/// uniquely identify every LAS, globally.
+///
+/// \see About GUID in Wikipedia http://en.wikipedia.org/wiki/Globally_Unique_Identifier 
 class guid
 {
 public:
 
+    /// Default constructor initializes GUID as null.
+    /// \exception nothrow
+    /// \post guid::is_null() == true.
     guid() /* throw() */
     {
         std::fill(data_, data_ + static_size, 0);
     }
 
+    /// Initializes from textual representation of valid GUID.
+    /// \param str - non-null pointer to string with GUID text.
+    /// \exception std::invalid_argument if construction failed.
+    /// \post guid::is_null() == false.
     explicit guid(char const* const str)
     {
         if (0 == str)
@@ -92,25 +108,42 @@ public:
         construct(std::string(str));
     }
 
+    /// Initializes from textual representation of valid GUID.
+    /// \param str - string with GUID text.
+    /// \exception std::invalid_argument if construction failed.
+    /// \post guid::is_null() == false.
     template <typename ch, typename char_traits, typename alloc>
     explicit guid(std::basic_string<ch, char_traits, alloc> const& str)
     {
         construct(str);
     }
 
+    /// Initializes from 4-fields structure.
+    /// \param d1 - field of first 32 bits of GUID number.
+    /// \param d2 - field of subsequent 16 bits of GUID number.
+    /// \param d3 - third field of 16 bits of GUID number.
+    /// \param d4 - last 64 bits of GUID number.
+    /// \exception std::invalid_argument if construction failed.
+    /// \post guid::is_null() == false.
     guid(liblas::uint32_t const& d1, liblas::uint16_t const& d2, liblas::uint16_t const& d3, liblas::uint8_t const (&d4)[8])
     {
         construct(d1, d2, d3, d4);
     }
 
+    /// Copy constructor.
+    /// \exception nothrow
     guid(guid const& rhs) /* throw() */
     {
         std::copy(rhs.data_, rhs.data_ + static_size, data_);
     }
 
+    /// Destructor.
+    /// \exception nothrow
     ~guid() /* throw() */
     {}
 
+    /// Assignment operator.
+    /// \exception nothrow
     guid& operator=(guid const& rhs) /* throw() */
     {
         if (&rhs != this)
@@ -120,46 +153,78 @@ public:
         return *this;
     }
 
+    /// Equality operator.
+    /// \exception nothrow
     bool operator==(guid const& rhs) const /* throw() */
     {
         return std::equal(data_, data_ + static_size, rhs.data_);
     }
 
+    /// Inequality operator.
+    /// \exception nothrow
     bool operator!=(guid const& rhs) const /* throw() */
     {
         return (!(*this == rhs));
     }
 
+    /// Less-than operator.
+    /// \param rhs - GUID object on the right-hand side of the comparison.
+    /// \return true if the GUID on the left-hand side is lexicographically less
+    /// than GUID on the right side; false otherwise.
+    /// \exception nothrow
     bool operator<(guid const& rhs) const /* throw() */
     {
         return std::lexicographical_compare(data_, data_ + static_size, rhs.data_, rhs.data_ + static_size);
     }
     
+    /// More-than operator.
+    /// \param rhs - GUID object on the right-hand side of the comparison.
+    /// \return true if the GUID on the left-hand side is not lexicographically less
+    /// than GUID on the right side; false otherwise.
+    /// \exception nothrow
     bool operator>(guid const& rhs) const /* throw() */
     {
         return std::lexicographical_compare(rhs.data_, rhs.data_ + static_size, data_, data_ + static_size);
     }
 
+    /// Less-than-or-equal-to operator.
+    /// \param rhs - GUID object on the right-hand side of the comparison.
+    /// \exception nothrow
     bool operator<=(guid const& rhs) const /* throw() */
     {
         return (*this == rhs) || (*this < rhs);
     }
 
+    /// More-than-or-equal-to operator.
+    /// \param rhs - GUID object on the right-hand side of the comparison.
+    /// \exception nothrow
     bool operator>=(guid const& rhs) const /* throw() */
     {
         return (*this == rhs) || (*this > rhs);
     }
 
+    /// Test if the GUID object is null GUID or not.
+    /// Null means GUID number value is Zero.
+    /// \return true if the GUID is null; false otherwise
+    /// \exception nothrow
     bool is_null() const /* throw() */
     {
         return ((*this) == null());
     }
 
+    /// Generate textual representation of the GUID number.
+    /// Specialization for std::string type.
+    /// \return string with textual representation of GUID
+    /// \exception std::runtime_error - thrown on GUID to string conversion failure
+    /// \post guid::to_string().empty() == false.
     std::string to_string() const
     {
         return to_basic_string<std::string::value_type, std::string::traits_type, std::string::allocator_type>();
     }
     
+    /// Generic generator of textual representation of the GUID number.
+    /// \exception std::runtime_error - thrown on GUID to string conversion failure
+    /// \post guid::to_basic_string().empty() == false.
     template <typename ch, typename char_traits, typename alloc>
     std::basic_string<ch, char_traits, alloc> to_basic_string() const
     {
@@ -171,20 +236,34 @@ public:
         {
             throw std::runtime_error("failed to convert guid to string");
         }
+
+        assert(!s.empty());
         return s;
     }
 
+    /// Size of the GUID number in bytes.
+    /// \return The number of bytes is constant for all GUID objects
+    /// and equal to 16 bytes (128-bit number).
     size_t byte_count() const /* throw() */
     {
         return static_size;
     }
 
+
+    /// Send bytes of GUID data to sequenec of bytes using given output iterator.
+    /// \exception nothrow
     template <typename ByteOutputIterator>
     void output_bytes(ByteOutputIterator out) const
     {
         std::copy(data_, data_ + static_size, out);
     }
 
+    /// Separate bytes of GUID data to distinct buffers.
+    /// \param d1 - buffer for first 32 bits of GUID number.
+    /// \param d2 - buffer for 16 bits of second chunk of GUID number.
+    /// \param d3 - buffer for 16 bits of third chunk of GUID number.
+    /// \param d4 - buffer for last 64 bits of GUID number.
+    /// \exception nothrow
     void output_data(liblas::uint32_t& d1, liblas::uint16_t& d2, liblas::uint16_t& d3, liblas::uint8_t (&d4)[8]) const
     {
         d1 = d2 = d3 = 0;
@@ -216,31 +295,46 @@ public:
         }
     }
 
+    /// Null GUID number generator.
+    /// \return null-initialized instance of GUID number.
+    /// \exception nothrow
     static guid const& null() /* throw() */
     {
         static const guid n;
         return n;
     }
 
+    /// Random GUID number generator.
+    /// \return random-initialized instance of GUID number.
+    /// \exception nothrow
     static guid create()
     {
         return create_random_based();
     }
     
+    /// Create GUID number based on calculation of SHA1 has for given name.
+    /// \exception std::runtime_error on GUID creation failure.
     static guid create(guid const& namespace_guid, char const* name, int name_length)
     {
         return create_name_based(namespace_guid, name, name_length);
     }
 
+    /// Return flag indicating if bracket text form of GUID on output is set.
+    /// \exception nothrow
     static inline bool get_showbraces(std::ios_base & iosbase)
     {
         return (iosbase.iword(get_showbraces_index()) != 0);
     }
+
+    /// Request to bracket text form of GUID on output.
+    /// \exception nothrow
     static inline void set_showbraces(std::ios_base & iosbase, bool showbraces)
     {
         iosbase.iword(get_showbraces_index()) = showbraces;
     }
 
+    /// Request to bracket text form of GUID on output.
+    /// \exception nothrow
     static inline std::ios_base& showbraces(std::ios_base& iosbase)
     {
         set_showbraces(iosbase, true);
@@ -252,7 +346,10 @@ public:
         return iosbase;
     }
     
+    /// Overloaded output stream operator for guid type.
     friend std::ostream& operator<<(std::ostream& os, guid const& g);
+
+    /// Overloaded input stream operator for guid type.
     friend std::istream& operator>>(std::istream& is, guid &g);
 
 private:
@@ -302,7 +399,7 @@ private:
     }
 
     //random number based
-    static guid create_random_based()
+    static guid create_random_based() // throw()
     {
         guid result;
         static bool init_rand = true;
