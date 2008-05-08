@@ -414,7 +414,7 @@ las.LASGuid_Create.restype = ctypes.c_void_p
 las.LASHeader_GetGUID.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetGUID.errcheck = check_void
 las.LASHeader_GetGUID.restype = ctypes.c_void_p
-las.LASHeader_SetGUID.argtypes = [ctypes.c_void_p]
-las.LASHeader_SetGUID.errcheck = check_return
+las.LASHeader_SetGUID.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASHeader_SetGUID.errcheck = check_value
 las.LASHeader_SetGUID.restype = ctypes.c_int
 

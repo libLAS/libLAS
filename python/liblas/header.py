@@ -34,6 +34,7 @@ class Header(object):
     def set_guid(self, value):
         """Sets the GUID for the file.  It must be a liblas.guid.GUID"""
         return core.las.LASHeader_SetGUID(self.handle, value.handle)
+    guid = property(get_guid, set_guid)
     
     def get_majorversion(self):
         """Returns the major version for the file.  Expect this value to always be 1"""
