@@ -98,6 +98,40 @@ fi
 AC_SUBST(GDAL_INC GDAL_PREFIX)
 AM_CONDITIONAL([GDAL_IS_CONFIG], [test $GDAL_CONFIG != no])
 
+dnl ---------------------------------------------------------------------------
+dnl Select a libgeotiff library to use.
+dnl ---------------------------------------------------------------------------
+
+AC_ARG_WITH(geotiff,[  --with-geotiff=ARG    Libgeotiff library to use (yes or path)],,)
+AC_MSG_CHECKING([for libgeotiff])
+if test "$with_geotiff" = "no" -o "$with_geotiff" = "" ; then
+  GEOTIFF_CONFIG="no"
+  AC_MSG_RESULT([no])
+
+else
+
+  GEOTIFF_SETTING=external
+  dnl We now require libgeotiff 1.2.1 (for XTIFFClientOpen). 
+  dnl first check if $with_geotiff/lib has the library:
+  AC_CHECK_LIB(geotiff,XTIFFClientOpen,GEOTIFF_CONFIG=external,GEOTIFF_CONFIG=no,-L$with_geotiff/lib)
+fi
+
+if test "$GEOTIFF_CONFIG" != "no" ; then
+
+  if test $GEOTIFF_CONFIG = "external" ; then
+    LIBS="-L$with_geotiff/lib -lgeotiff $LIBS"
+    if test  -d $with_geotiff/include ; then
+      GEOTIFF_INC = "-I$with_geotiff/include"
+      AC_MSG_RESULT([using libgeotiff from $with_geotiff/include]) 
+    fi
+  fi
+
+fi
+
+AC_SUBST(GEOTIFF_INC GEOTIFF_PREFIX)
+AM_CONDITIONAL([GEOTIFF_IS_CONFIG], [test $GEOTIFF_CONFIG != no])
+
+
 AC_HAVE_LONG_LONG
 
 dnl Checks for library functions.
@@ -127,4 +161,6 @@ LOC_MSG([  C compiler...............: ${CC} ${CFLAGS}])
 LOC_MSG([  C++ compiler.............: ${CXX} ${CXXFLAGS}])
 LOC_MSG([  Debugging support........: ${enable_debug}])
 LOC_MSG([  GDAL support........: ${GDAL_CONFIG}])
+LOC_MSG([  GeoTIFF SRS support........: ${GEOTIFF_CONFIG}])
+
 LOC_MSG()
