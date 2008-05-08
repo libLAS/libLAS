@@ -463,60 +463,282 @@ LAS_DLL char *LASHeader_GetFileSignature(const LASHeaderH hHeader);
 LAS_DLL uint16_t LASHeader_GetFileSourceId(const LASHeaderH hHeader);
 
 
-/**
- * \todo to be documented (and other C API functions).
- */
+/** Returns the project id for the header as a GUID string
+ *  @return the project id for the header as a GUID string
+*/
 LAS_DLL char *LASHeader_GetProjectId(const LASHeaderH hHeader);
+
+/** Sets the project id/GUID for the header
+ *  @param hHeader LASHeaderH instance
+ *  @param hId LASGuidH instance to set the GUID for the header to
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId);
 
+/** Returns the major version number for the header.  This value is expected 
+ *  to always be 1.
+ *  @param hHeader LASHeaderH instance
+ *  @return major version number for the header.
+*/
 LAS_DLL uint8_t LASHeader_GetVersionMajor(const LASHeaderH hHeader);
+
+/** Sets the major version number for the header.  All values other than 1 
+ *  are invalid.
+ *  @param hHeader LASHeaderH instance
+ *  @param value integer value to set the major version to (only the value 1 is valid)
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetVersionMajor(LASHeaderH hHeader, uint8_t value);
+
+/** Returns the min version number for the header.  This value is expected 
+ *  to be 1 or 0 representing LAS 1.1 or LAS 1.0
+ *  @param hHeader LASHeaderH instance
+ *  @return minor version number for the header.
+*/
 LAS_DLL uint8_t LASHeader_GetVersionMinor(const LASHeaderH hHeader);
+
+/** Sets the minor version number for the header.  All values other than 1 or 0 
+ *  are invalid.
+ *  @param hHeader LASHeaderH instance
+ *  @param value integer value to set the minor version to (only the values 1 or 0 are valid)
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetVersionMinor(LASHeaderH hHeader, uint8_t value);
 
+/** Returns the System ID for the header.  The caller assumes ownership of the returned string
+ *  @return the system id for the header as a character array
+*/
 LAS_DLL char *LASHeader_GetSystemId(const LASHeaderH hHeader);
+
+/** Sets the System ID for the header.  By default, this value is "libLAS" if it 
+ *  is not explicitly set.  See the LAS specification for details on what this
+ *  value should logically be set to.
+ *  @param hHeader LASHeaderH instance
+ *  @param value the value to set as the System ID for the header
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetSystemId(LASHeaderH hHeader, const char* value);
 
+/** Returns the Software ID for the header.  The caller assumes ownership of the returned string
+ *  @return the software id for the header as a character array
+*/
 LAS_DLL char *LASHeader_GetSoftwareId(const LASHeaderH hHeader);
+
+/** Sets the Software ID for the header.  By default, this value is "libLAS 1.0" if it 
+ *  is not explicitly set.  See the LAS specification for details on what this
+ *  value should logically be set to.
+ *  @param hHeader LASHeaderH instance
+ *  @param value the value to set as the Software ID for the header
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* value);
 
+/** Returns the reserved value for the header.  This should aways be 0.
+ *  @return the reserved value for the header.
+*/
 LAS_DLL int16_t LASHeader_GetReserved(const LASHeaderH hHeader);
 
+/** Returns the file creation day of the year.  The values start from 1, being January 1st, 
+ *  and end at 365 or 366 being December 31st, depending on leap year.
+ *  @return the day of the year as an integer starting from 1 for the file creation.
+*/
 LAS_DLL int16_t LASHeader_GetCreationDOY(const LASHeaderH hHeader);
+
+/** Sets the file creation day of the year.  The values start from 1, being January 1st.  No
+ *  date validation is done
+ *  @param hHeader LASHeaderH instance
+ *  @param value the value to set as the creation day
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetCreationDOY(LASHeaderH hHeader, uint16_t value);
+
+/** Returns the file creation year.  This is a four digit number representing the 
+ *  year for the file, ie 2003, 2008, etc.
+ *  @return the creation year for the file or 0 if none is set
+*/
 LAS_DLL int16_t LASHeader_GetCreationYear(const LASHeaderH hHeader);
+
+/** Sets the file creation year.  This should be a four digit number representing
+ *  the year for the file, ie 2003, 2008, etc.  No validation on the value is done
+ *  @param hHeader LASHeaderH instance
+ *  @param value the value to set for the creation year
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetCreationYear(LASHeaderH hHeader, uint16_t value);
 
-
+/** Returns the size of the header for the file in bytes.
+ *  @return the size of the header for the file in bytes.
+*/
 LAS_DLL uint16_t LASHeader_GetHeaderSize(const LASHeaderH hHeader);
+
+/** Returns the byte offset to the start of actual point data for the file
+ *  @param hHeader LASHeaderH instance
+ *  @return the type offset to the start of actual point data for the file
+*/
 LAS_DLL uint32_t LASHeader_GetDataOffset(const LASHeaderH hHeader);
+
+/** Returns the number of variable length records in the header
+ *  @param hHeader LASHeaderH instance
+ *  @return the number of variable length records in the header
+*/
 LAS_DLL uint32_t LASHeader_GetRecordsCount(const LASHeaderH hHeader);
-LAS_DLL uint8_t LASHeader_GetDataFormatId(const LASHeaderH hHeader);
+
+/** Returns the record length for the points based on their data format id in bytes
+ *  @param hHeader LASHeaderH instance
+ *  @return the record length for the points based on their data format id in bytes
+*/
 LAS_DLL uint16_t LASHeader_GetDataRecordLength(const LASHeaderH hHeader);
+
+/** Returns the data format id.  If this value is 1, the point data have time values
+ *  associated with them.  If it is 0, the point data do not have time values.  
+ *  @param hHeader LASHeaderH instance
+ *  @return the data format id for the file.
+*/
+LAS_DLL uint8_t LASHeader_GetDataFormatId(const LASHeaderH hHeader);
+
+/** Sets the data format id for the file.  The value should be 1 or 0, with 1 being
+ *  points that contain time values and 0 being points that do not.
+ *  @param hHeader LASHeaderH instance
+ *  @param value the value for the data format id, 1 or 0 are valid values.
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetDataFormatId(const LASHeaderH hHeader, int value);
+
+/** Returns the number of point records in the file.  This value may not reflect the actual 
+ *  number of point records in the file.
+ *  @param hHeader LASHeaderH instance
+ *  @return the number of point records in the file
+*/
 LAS_DLL uint32_t LASHeader_GetPointRecordsCount(const LASHeaderH hHeader);
+
+/** Sets the number of point records for the file.
+ *  @param hHeader LASHeaderH instance
+ *  @param value the long integer to set for the number of point records in the file
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetPointRecordsCount(const LASHeaderH hHeader, uint32_t value);
+
+/** Returns the number of point records by return.
+ *  @param hHeader LASHeaderH instance
+ *  @param index the return number to fetch the count for
+ *  @return the number of point records for a given return
+*/
 LAS_DLL uint32_t LASHeader_GetPointRecordsByReturnCount(const LASHeaderH hHeader, int index);
+
+/** Sets the number of point records for a given return
+ *  @param hHeader LASHeaderH instance
+ *  @param index the return number to set the count for
+ *  @param value the number of point records for the return 
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetPointRecordsByReturnCount(const LASHeaderH hHeader, int index, uint32_t value);
 
+/** Return the X scale factor
+ *  @param hHeader LASHeaderH instance
+ *  @return the X scale factor
+*/
 LAS_DLL double LASHeader_GetScaleX(const LASHeaderH hHeader);
+
+/** Return the Y scale factor
+ *  @param hHeader LASHeaderH instance
+ *  @return the Y scale factor
+*/
 LAS_DLL double LASHeader_GetScaleY(const LASHeaderH hHeader);
+
+/** Return the Z scale factor
+ *  @param hHeader LASHeaderH instance
+ *  @return the Z scale factor
+*/
 LAS_DLL double LASHeader_GetScaleZ(const LASHeaderH hHeader);
+
+/** Sets the scale factors
+ *  @param hHeader LASHeaderH instance
+ *  @param x the x scale factor
+ *  @param y the y scale factor
+ *  @param z the z scale factor
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetScale(LASHeaderH hHeader, double x, double y, double z);
 
+/** Return the X offset
+ *  @param hHeader LASHeaderH instance
+ *  @return the X offset
+*/
 LAS_DLL double LASHeader_GetOffsetX(const LASHeaderH hHeader);
+
+/** Return the Y offset
+ *  @param hHeader LASHeaderH instance
+ *  @return the Y offset
+*/
 LAS_DLL double LASHeader_GetOffsetY(const LASHeaderH hHeader);
+
+/** Return the Z offset
+ *  @param hHeader LASHeaderH instance
+ *  @return the Z offset
+*/
 LAS_DLL double LASHeader_GetOffsetZ(const LASHeaderH hHeader);
+
+/** Sets the offset values
+ *  @param hHeader LASHeaderH instance
+ *  @param x the x offset
+ *  @param y the y offset
+ *  @param z the z offset
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetOffset(LASHeaderH hHeader, double x, double y, double z);
 
+/** Return the minimum x value
+ *  @param hHeader LASHeaderH instance
+ *  @return the minimum x value
+*/
 LAS_DLL double LASHeader_GetMinX(const LASHeaderH hHeader);
+
+/** Return the minimum y value
+ *  @param hHeader LASHeaderH instance
+ *  @return the minimum y value
+*/
 LAS_DLL double LASHeader_GetMinY(const LASHeaderH hHeader);
+
+/** Return the minimum z value
+ *  @param hHeader LASHeaderH instance
+ *  @return the minimum z value
+*/
 LAS_DLL double LASHeader_GetMinZ(const LASHeaderH hHeader);
+
+/** Sets the minimum values
+ *  @param hHeader LASHeaderH instance
+ *  @param x the x minimum
+ *  @param y the y minimum
+ *  @param z the z minimum
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetMin(LASHeaderH hHeader, double x, double y, double z);
 
+/** Return the maximum x value
+ *  @param hHeader LASHeaderH instance
+ *  @return the maximum x value
+*/
 LAS_DLL double LASHeader_GetMaxX(const LASHeaderH hHeader);
+
+/** Return the maximum y value
+ *  @param hHeader LASHeaderH instance
+ *  @return the maximum y value
+*/
 LAS_DLL double LASHeader_GetMaxY(const LASHeaderH hHeader);
+
+/** Return the maximum z value
+ *  @param hHeader LASHeaderH instance
+ *  @return the maximum z value
+*/
 LAS_DLL double LASHeader_GetMaxZ(const LASHeaderH hHeader);
+
+/** Sets the maximum values
+ *  @param hHeader LASHeaderH instance
+ *  @param x the x maximum
+ *  @param y the y maximum
+ *  @param z the z maximum
+ *  @return LASError enum
+*/
 LAS_DLL LASError LASHeader_SetMax(LASHeaderH hHeader, double x, double y, double z);
 
 /****************************************************************************/
