@@ -576,6 +576,7 @@ int main(int argc, char *argv[])
     surviving_header = LASHeader_Copy(header);
 
     LASHeader_SetPointRecordsCount(header, surviving_number_of_point_records);
+    LASHeader_SetSystemId(header, "MODIFIED");
 
     for (i = 0; i < 5; i++) LASHeader_SetPointRecordsByReturnCount(header, i, surviving_number_of_points_by_return[i]);
 

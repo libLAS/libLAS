@@ -296,6 +296,8 @@ int main(int argc, char *argv[])
                                                     LASHeader_GetPointRecordsByReturnCount(merged_header,4) + 
                                                     LASHeader_GetPointRecordsByReturnCount(header,4));
 
+            LASHeader_SetSystemId(merged_header, "MERGED");
+
             minx = LASHeader_GetMinX(merged_header);
             maxx = LASHeader_GetMaxX(merged_header);
             miny = LASHeader_GetMinY(merged_header);
