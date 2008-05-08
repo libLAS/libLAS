@@ -83,7 +83,9 @@ class File(object):
             else:
                 self.close()
                 self.open()
-                
+    
+    def __len__(self):
+        return self.header.point_records_count
     
     def write(self, pt):
         if not isinstance(pt, point.Point):
