@@ -121,7 +121,7 @@ if test "$GEOTIFF_CONFIG" != "no" ; then
   if test $GEOTIFF_CONFIG = "external" ; then
     LIBS="-L$with_geotiff/lib -lgeotiff $LIBS"
     if test  -d $with_geotiff/include ; then
-      GEOTIFF_INC = "-I$with_geotiff/include"
+      GEOTIFF_INC="-I$with_geotiff/include"
       AC_MSG_RESULT([using libgeotiff from $with_geotiff/include]) 
     fi
   fi
