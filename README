@@ -1,4 +1,4 @@
-==============================================================================
+
 libLAS - LAS 1.0/1.1 ASPRS LiDAR data translation toolset
 ==============================================================================
 
@@ -114,9 +114,9 @@ About Trac
 ------------------------------------------------------------------------------
 
 * `Trac <http://trac.edgewall.org/>`_ Open Source Project
-* :trac:`TracGuide` - Built-in Documentation
+* `TracGuide <http://trac.edgewall.org/wiki/TracGuide>` - Built-in Documentation
 * `TracFaq <http://trac.edgewall.org/wiki/TracFaq>`_ - Frequently Asked Questions
-* :trac:`TracSupport` - Trac Support
+* `TracSupport <http://liblas.org/wiki/TracSupport>` - Trac Support
 * `reStructuredText Support in Trac <http://bitten.edgewall.org/wiki/WikiRestructuredText>`_
 
 
