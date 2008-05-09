@@ -55,6 +55,26 @@ format standard documents are available in PDF format:
 * `LAS 1.1 Format Standard`_ (2005-05-07)
 * `LAS 1.0 Format Standard`_ (2003-05-09)
 
+Documentation
+------------------------------------------------------------------------------
+
+Library Documents
+..............................................................................
+
+* `LAS Format Elements`_ - comparison of elements of LAS Format 1.0 and 1.1  
+* `Software`_ - list of geospatial software with reading and writing capabilities of LAS Format
+* `Resources`_ - list of LiDAR/LAS resources
+* `Tutorials`_ - Tutorials on C++ and Python APIs
+
+Utilities
+..............................................................................
+
+* `las2las`_
+* `lasinfo`_
+* `las2txt`_
+* `txt2las`_
+* `lasmerge`_
+
 Authors
 ------------------------------------------------------------------------------
 
@@ -89,12 +109,6 @@ License
 libLAS is available under the terms of the `BSD License`_. 
 See `License`_ for a copy.
 
-libLAS Wiki
-------------------------------------------------------------------------------
-
-* :trac:`LASElements LAS Format Elements` - comparison of elements of LAS Format 1.0 and 1.1  
-* :trac:`Software` - list of geospatial software with reading and writing capabilities of LAS Format
-* :trac:`Resources` - list of LiDAR/LAS resources
 
 About Trac
 ------------------------------------------------------------------------------
@@ -122,4 +136,13 @@ About Trac
 .. _`Mateusz Loskot`: http://mateusz.loskot.net
 .. _`Phil Vachon`: http://www.geoscan.info
 .. _`BSD license`: http://www.opensource.org/licenses/bsd-license.php
+.. _`LAS Format Elements`: http://liblas.org/wiki/LASElements
+.. _`Tutorials`: http://liblas.org/wiki/Tutorial
+.. _`Software`: http://liblas.org/wiki/Software
+.. _`Resources`: http://liblas.org/wiki/Resources
 .. _`License`: http://liblas.org/wiki/License
+.. _`las2las`: http://liblas.org/browser/trunk/doc/las2las.txt
+.. _`las2txt`: http://liblas.org/browser/trunk/doc/las2txt.txt
+.. _`lasinfo`: http://liblas.org/browser/trunk/doc/lasinfo.txt
+.. _`lasmerge`: http://liblas.org/browser/trunk/doc/lasmerge.txt
+.. _`txt2las`: http://liblas.org/browser/trunk/doc/txt2las.txt
