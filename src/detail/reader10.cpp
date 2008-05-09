@@ -44,6 +44,12 @@
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+
+#ifdef HAVE_LIBGEOTIFF
+#include <geotiff.h>
+#include <geo_simpletags.h>
+#endif /* HAVE_LIBGEOTIFF */
+
 // std
 #include <fstream>
 #include <iostream>
@@ -202,17 +208,20 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     // TODO: Under construction
     //       Testing reading of VLRecords with GeoKeys
-    //ReadGeoreference(header);
+    ReadGeoreference(header);
 
     return true;
 }
 
 bool ReaderImpl::ReadGeoreference(LASHeader const& header)
 {
+#ifndef HAVE_LIBGEOTIFF
+    return false;
+#else
     // TODO: Under construction
-
     VLRHeader vlrh = { 0 };
     std::string const uid("LASF_Projection");
+    ST_TIFF *st = ST_Create();
 
     m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
 
@@ -222,34 +231,27 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
 
         if (uid == vlrh.userId && 34735 == vlrh.recordId)
         {
-            std::cout << "GeoKeyDirectoryTag: " << vlrh.recordId << std::endl;
-
-            GeoKeysHeader gkh = { 0 };
-            read_n(gkh, m_ifs, sizeof(GeoKeysHeader));
-
-            std::cout << "--Header: " << gkh.keyDirectoryVersion << " ; " << gkh.keyRevision << " ; " << gkh.minorRevision << " ; " << gkh.numberOfKeys << std::endl;
-
-            for (uint16_t j = 0; j < gkh.numberOfKeys; ++j)
-            {
-                GeoKeyEntry gke = { 0 };
-                read_n(gke, m_ifs, sizeof(GeoKeyEntry));
-
-                std::cout << "---KeyEntry: " << gke.keyId << " ; " << gke.tiffTagLocation<< " ; " << gke.count << " ; " <<  gke.valueOffset << std::endl;
-            }
+            int count = vlrh.recordLengthAfterHeader / sizeof(short);
+            uint16_t *geokeys = new uint16_t[count];
+            read_n(geokeys, m_ifs, vlrh.recordLengthAfterHeader);
+            ST_SetKey( st, vlrh.recordId, count, STT_SHORT, geokeys );
+            delete[] geokeys;
         }
         else if (uid == vlrh.userId && 34736 == vlrh.recordId)
         {
-            std::cout << "GeoDoubleParamsTag: " << vlrh.recordId << std::endl;
-
-            std::istream::pos_type const pos = m_ifs.tellg();
-            m_ifs.seekg(pos + std::istream::pos_type(vlrh.recordLengthAfterHeader));
+            int count = vlrh.recordLengthAfterHeader / sizeof(double);
+            double *values = new double[count];
+            read_n(values, m_ifs, vlrh.recordLengthAfterHeader);
+            ST_SetKey( st, vlrh.recordId, count, STT_DOUBLE, values );
+            delete[] values;
         }
         else if (uid == vlrh.userId && 34737 == vlrh.recordId)
         {
-            std::cout << "GeoAsciiParamsTag: " << vlrh.recordId << std::endl;
-
-            std::istream::pos_type const pos = m_ifs.tellg();
-            m_ifs.seekg(pos + std::istream::pos_type(vlrh.recordLengthAfterHeader));
+            int count = vlrh.recordLengthAfterHeader / sizeof(char);
+            char *values = new char[count];
+            read_n(values, m_ifs, vlrh.recordLengthAfterHeader);
+            ST_SetKey( st, vlrh.recordId, count, STT_ASCII, values );
+            delete[] values;
         }
         else
         {
@@ -258,7 +260,13 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
         }
     }
 
+    GTIF *gtif = GTIFNewSimpleTags( st );
+    GTIFPrint(gtif,0,0);
+    GTIFFree( gtif );
+    ST_Destroy( st );
+    
     return true;
+#endif /* def HAVE_LIBGEOTIFF */
 }
 
 bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
