@@ -1,6 +1,7 @@
 from setuptools import setup, Extension
 from sys import version_info
 
+readme = file('../README','rb').read()
 # Require ctypes egg only for Python < 2.5
 install_requires = ['setuptools']
 if version_info[:2] < (2,5):
@@ -20,7 +21,7 @@ else:
 
 setup(name          = 'libLAS',
       version       = version,
-      description   = 'LAS 1.0/1.1 LiDAR data format reader',
+      description   = 'LAS 1.0/1.1 LiDAR data format translation',
       license       = 'BSD',
       keywords      = 'DEM elevation LIDAR',
       author        = 'Howard Butler',
@@ -29,7 +30,7 @@ setup(name          = 'libLAS',
       maintainer_email  = 'hobu.inc@gmail.com',
       url   = 'http://liblas.org',
       data_files = data_files,
-#      long_description = readme_text,
+      long_description = readme,
       packages      = ['liblas'],
       install_requires = install_requires,
       test_suite = 'tests.test_suite',
