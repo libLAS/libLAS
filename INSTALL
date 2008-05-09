@@ -18,8 +18,7 @@ by default in /usr/local might look like:
     make
     make install
 
-Alternatively, the only additional extensions that configure 
-supports are to enable debugging information:
+Configure libLAS for debugging and install in my home directory:
 
 ::
 
@@ -30,5 +29,4 @@ Windows
 
 Copy the windows package zip file into a directory of your 
 choosing and unzip.  You should be able to run the utility 
-applications or link your applications to the .lib file 
-provided.
+applications.
