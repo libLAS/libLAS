@@ -1,68 +1,111 @@
-***************************************************************
-libLAS -- A C++ library for reading and writing LAS LiDAR data 
-***************************************************************
+==============================================================================
+libLAS - LAS 1.0/1.1 ASPRS LiDAR data translation toolset
+==============================================================================
 
-This library is available under the terms of the `BSD License`_ 
-for reading and writing LAS `LIDAR`_ data. It was originally developed by 
-`Martin Isenburg and Jonathan Shewchuk`_ of the  University of North Carolina. 
-Continuing development by Mateusz Loskot and Howard Butler is supported by 
-the `IGSB`_ of the Iowa DNR for use in its state-wide `LIDAR`_ project.
+libLAS is a BSD library for reading and writing ASPRS LAS version 1.0 and 1.1 
+data.  LAS-formatted data is heavily used in `LiDAR`_ processing operations, and 
+the LAS format is a sequential binary format used to store data from sensors 
+and as intermediate processing storage by some applications.  
 
-The library currently only reads/writes LAS 1.0 and 1.1 data.  LAS 2.0 support
-is not scheduled to be developed in the near future.  The library provides 
-both a C and a C++ API along with some utility applications for manipulating 
-LAS files (they utilize the C API).  
+libLAS is available under the terms of the `BSD License`_. It builds on work 
+by `Martin Isenburg and Jonathan Shewchuk`_ of the  University of North 
+Carolina in their `LAStools`_ project.  The base C++ library that reads 
+and writes LAS 1.0/1.1 data was replaced with new development, and Martin's 
+tools were ported to use this new code.
 
-Limitations
-~~~~~~~~~~~~~~~~~~~~~~~
+libLAS' initial development was supported by the `IGSB`_ of the Iowa DNR 
+for use in its state-wide `LIDAR`_ project.
 
-As of version 0.9.0, the following is not supported:
+Download
+------------------------------------------------------------------------------
 
- - Variable length headers (will be complete by 1.0.0)
- - Spatial reference interpretation
- - txt2las (port to new library is not complete)
- - lasdiff (port to new library is not complete)
+The latest version of libLAS can be downloaded from
+http://liblas.org/wiki/Releases
 
-Installation
-~~~~~~~~~~~~~~~~~~~~~~~
+FAQ
+------------------------------------------------------------------------------
 
-See INSTALL for notes how to install libLAS on unix-like platforms.  Windows 
-installation should be a simple as copying the dll and library executables to 
-a path in which you wish to run them from.
+The FAQ is available from http://liblas.org/wiki/FAQ
 
--------------------------
+State of the Library
+------------------------------------------------------------------------------
+
+libLAS provides excellent coverage of the ASPRS LAS 1.0 and 1.1 specifications, 
+but it only provides weak support for the concept of variable length records.  
+Notably, libLAS concentrates on reading and writing point data for processing 
+pipelines and it does not concentrate on vendor-specific items for which 
+variable length records would likely be used.  It is hoped that libLAS' 
+coverage of these items will be improved in the future.  Contact the `Authors`_ 
+if you have money burning a hole in your pocket to implement these items :)
+
+Another deficiency with libLAS as of version 0.9.6 is lack of support for 
+coordinate reference systems descriptions and storage.  These are also part 
+of the variable length header operations, but they are required as specified 
+in the 1.0 and 1.1 spec.  It is hoped that libLAS will support these operations 
+through the optional linkage of libgeotiff by the time 1.0 is released.
+
 LAS Format Specifications
--------------------------
+------------------------------------------------------------------------------
 
-LAS Format standard documents in PDF format:
+The LAS Format Standard is maintained by `ASPRS Standards Committee`_. LAS 
+format standard documents are available in PDF format:
 
-* `LAS 2.0 Format Standard`_ (2007-05-01) - *Proposed*
+* `LAS 2.0 Format Standard`_ (2007-08-17) - *Proposed*
+* `LAS 1.2 Format Standard`_ (2008-05-02) - *Proposed*
 * `LAS 1.1 Format Standard`_ (2005-05-07)
 * `LAS 1.0 Format Standard`_ (2003-05-09)
 
-The LAS Format Standard is maintained by `ASPRS Standards Committee`_.
+Authors
+------------------------------------------------------------------------------
 
--------------
-Mailing lists 
--------------
+The libLAS development team are:
+
+ * `Howard Butler`_
+ * `Mateusz Loskot`_
+ * `Phil Vachon`_
+
+Special thanks to `Martin Isenburg and Jonathan Shewchuk`_ for their
+`LAStools`_ pioneering implementation of the ASPRS LAS standard that made 
+development of the libLAS library possible.
+
+Mailing Lists
+------------------------------------------------------------------------------
 
 * liblas-devel - http://mail.hobu.net/mailman/listinfo/liblas-devel
 * liblas-commits - http://mail.hobu.net/mailman/listinfo/liblas-commits
 
----------------------
-Subversion Repository
----------------------
+Subversion Tree
+------------------------------------------------------------------------------
 
 The SVN repository URL is available at http://liblas.org/svn
 
-* svn checkout http://liblas.org/svn/trunk/
+::
 
------------------
+    svn checkout http://liblas.org/svn/trunk/
+
 License
------------------
+------------------------------------------------------------------------------
 
-libLAS is `BSD licensed <http://www.opensource.org/licenses/bsd-license.php>`_.  
-See LICENSE.txt for a copy of the license.
+libLAS is available under the terms of the `BSD License`_. 
+See `License`_ for a copy.
+
+libLAS Wiki
+------------------------------------------------------------------------------
+
+* :trac:`LASElements LAS Format Elements` - comparison of elements of LAS Format 1.0 and 1.1  
+* :trac:`Software` - list of geospatial software with reading and writing capabilities of LAS Format
+* :trac:`Resources` - list of LiDAR/LAS resources
+
+About Trac
+------------------------------------------------------------------------------
+
+* `Trac <http://trac.edgewall.org/>`_ Open Source Project
+* :trac:`TracGuide` - Built-in Documentation
+* `TracFaq <http://trac.edgewall.org/wiki/TracFaq>`_ - Frequently Asked Questions
+* :trac:`TracSupport` - Trac Support
+* `reStructuredText Support in Trac <http://bitten.edgewall.org/wiki/WikiRestructuredText>`_
+
+
 
 .. _`LIDAR`: http://en.wikipedia.org/wiki/LIDAR
 .. _`IGSB`: http://www.igsb.uiowa.edu/
@@ -70,8 +113,13 @@ See LICENSE.txt for a copy of the license.
 .. _`LAStools`: http://www.cs.unc.edu/~isenburg/lastools/
 .. _`Martin Isenburg and Jonathan Shewchuk`: http://www.cs.unc.edu/~isenburg/lastools/
 .. _`LAS Format`: http://www.lasformat.org/
-.. _`LAS 2.0 Format Standard`: http://www.asprs.org/society/divisions/ppd/standards/asprs_las_format_v20.pdf
-.. _`LAS 1.1 Format Standard`: http://www.asprs.org/society/divisions/ppd/standards/asprs_las_format_v11.pdf
-.. _`LAS 1.0 Format Standard`: http://www.asprs.org/society/divisions/ppd/standards/asprs_las_format_v10.pdf
+.. _`LAS 2.0 Format Standard`: http://liblas.org/raw-attachment/wiki/WikiStart/incitsl1_las_format_v20.pdf
+.. _`LAS 1.2 Format Standard`: http://liblas.org/raw-attachment/wiki/WikiStart/LAS1_2_Final.pdf
+.. _`LAS 1.1 Format Standard`: http://liblas.org/raw-attachment/wiki/WikiStart/asprs_las_format_v11.pdf
+.. _`LAS 1.0 Format Standard`: http://liblas.org/raw-attachment/wiki/WikiStart/asprs_las_format_v10.pdf
 .. _`ASPRS Standards Committee`: http://www.asprs.org/society/divisions/ppd/standards/standards_comm.htm
-.. _`BSD License`: http://www.opensource.org/licenses/bsd-license.php
+.. _`Howard Butler`: http://hobu.biz
+.. _`Mateusz Loskot`: http://mateusz.loskot.net
+.. _`Phil Vachon`: http://www.geoscan.info
+.. _`BSD license`: http://www.opensource.org/licenses/bsd-license.php
+.. _`License`: http://liblas.org/wiki/License
