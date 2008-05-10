@@ -16,12 +16,6 @@ tools were ported to use this new code.
 libLAS' initial development was supported by the `IGSB`_ of the Iowa DNR 
 for use in its state-wide `LIDAR`_ project.
 
-Download
-------------------------------------------------------------------------------
-
-The latest version of libLAS can be downloaded from
-http://liblas.org/wiki/Releases
-
 FAQ
 ------------------------------------------------------------------------------
 
@@ -44,8 +38,17 @@ of the variable length header operations, but they are required as specified
 in the 1.0 and 1.1 spec.  It is hoped that libLAS will support these operations 
 through the optional linkage of libgeotiff by the time 1.0 is released.
 
-LAS Format Specifications
+Download
 ------------------------------------------------------------------------------
+
+The latest version of libLAS can be downloaded from
+http://liblas.org/wiki/Releases
+
+Documentation
+------------------------------------------------------------------------------
+
+LAS Format Specifications
+..............................................................................
 
 The LAS Format Standard is maintained by `ASPRS Standards Committee`_. LAS 
 format standard documents are available in PDF format:
@@ -54,9 +57,6 @@ format standard documents are available in PDF format:
 * `LAS 1.2 Format Standard`_ (2008-05-02) - *Proposed*
 * `LAS 1.1 Format Standard`_ (2005-05-07)
 * `LAS 1.0 Format Standard`_ (2003-05-09)
-
-Documentation
-------------------------------------------------------------------------------
 
 Library Documents
 ..............................................................................
@@ -114,9 +114,9 @@ About Trac
 ------------------------------------------------------------------------------
 
 * `Trac <http://trac.edgewall.org/>`_ Open Source Project
-* `TracGuide <http://trac.edgewall.org/wiki/TracGuide>` - Built-in Documentation
+* `TracGuide <http://trac.edgewall.org/wiki/TracGuide>`_ - Built-in Documentation
 * `TracFaq <http://trac.edgewall.org/wiki/TracFaq>`_ - Frequently Asked Questions
-* `TracSupport <http://liblas.org/wiki/TracSupport>` - Trac Support
+* `TracSupport <http://liblas.org/wiki/TracSupport>`_ - Trac Support
 * `reStructuredText Support in Trac <http://bitten.edgewall.org/wiki/WikiRestructuredText>`_
 
 
