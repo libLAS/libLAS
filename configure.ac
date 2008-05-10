@@ -72,10 +72,9 @@ dnl ###########################################################
 AC_ARG_WITH(gdal,[  --with-gdal=ARG         Path to gdal-config],,)
 AC_MSG_CHECKING([for GDAL])
 
+GDAL_CONFIG="no"
 if test "$with_gdal" = "no" -o "$with_gdal" = "" ; then
-  GDAL_CONFIG="no"
   AC_MSG_RESULT([no])
-dnl AC_PATH_PROG(GDAL_CONFIG, gdal-config, no)
 else
   if test "`basename xx/$with_gdal`" = "gdal-config" ; then
     AC_MSG_RESULT([GDAL enabled with provided gdal-config])
@@ -96,7 +95,7 @@ if test "$GDAL_CONFIG" != "no" ; then
   fi
 fi
 AC_SUBST(GDAL_INC GDAL_PREFIX)
-AM_CONDITIONAL([GDAL_IS_CONFIG], [test $GDAL_CONFIG != no])
+AM_CONDITIONAL([GDAL_IS_CONFIG], [test ! x$GDAL_CONFIG = xno])
 
 dnl ---------------------------------------------------------------------------
 dnl Select a libgeotiff library to use.
@@ -112,7 +111,7 @@ if test "$with_geotiff" = "no" -o "$with_geotiff" = "" ; then
 
 else
 
-  GEOTIFF_SETTING=external
+  GEOTIFF_CONFIG=external
   dnl We now require libgeotiff 1.2.1 (for XTIFFClientOpen). 
   dnl first check if $with_geotiff/lib has the library:
   AC_CHECK_LIB(geotiff,XTIFFClientOpen,GEOTIFF_CONFIG=external,GEOTIFF_CONFIG=no,-L$with_geotiff/lib)
@@ -131,7 +130,7 @@ if test "$GEOTIFF_CONFIG" != "no" ; then
 fi
 
 AC_SUBST(GEOTIFF_INC GEOTIFF_PREFIX)
-AM_CONDITIONAL([GEOTIFF_IS_CONFIG], [test $GEOTIFF_CONFIG != no])
+AM_CONDITIONAL([GEOTIFF_IS_CONFIG], [test ! x$GEOTIFF_CONFIG = xno])
 
 
 AC_HAVE_LONG_LONG
