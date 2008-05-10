@@ -1,10 +1,8 @@
-#if GEOTIFF_IS_CONFIG
-EXTRA_DEFS = -DHAVE_LIBGEOTIFF
-#else
-EXTRA_DEFS = 
-#endif
+INCLUDES = -I../../include -I../../include/detail
 
-INCLUDES = -I../../include -I../../include/detail @GEOTIFF_INC@ $(EXTRA_DEFS)
+if GEOTIFF_IS_CONFIG
+AM_CPPFLAGS=@GEOTIFF_INC@ -DHAVE_LIBGEOTIFF=1
+endif
 
 noinst_LTLIBRARIES = liblasdetail.la
 liblasdetail_la_SOURCES = reader.cpp reader10.cpp reader11.cpp writer.cpp writer10.cpp writer11.cpp file.cpp

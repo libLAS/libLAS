@@ -132,7 +132,6 @@ fi
 AC_SUBST(GEOTIFF_INC GEOTIFF_PREFIX)
 AM_CONDITIONAL([GEOTIFF_IS_CONFIG], [test ! x$GEOTIFF_CONFIG = xno])
 
-
 AC_HAVE_LONG_LONG
 
 dnl Checks for library functions.
