@@ -104,8 +104,10 @@ dnl ---------------------------------------------------------------------------
 
 AC_ARG_WITH(geotiff,[  --with-geotiff=ARG    Libgeotiff library to use (yes or path)],,)
 AC_MSG_CHECKING([for libgeotiff])
+
+GEOTIFF_CONFIG="no"
 if test "$with_geotiff" = "no" -o "$with_geotiff" = "" ; then
-  GEOTIFF_CONFIG="no"
+
   AC_MSG_RESULT([no])
 
 else
@@ -160,7 +162,9 @@ LOC_MSG([  Installation directory...: ${prefix}])
 LOC_MSG([  C compiler...............: ${CC} ${CFLAGS}])
 LOC_MSG([  C++ compiler.............: ${CXX} ${CXXFLAGS}])
 LOC_MSG([  Debugging support........: ${enable_debug}])
-LOC_MSG([  GDAL support........: ${GDAL_CONFIG}])
-LOC_MSG([  GeoTIFF SRS support........: ${GEOTIFF_CONFIG}])
+LOC_MSG([  GDAL support.............: ${GDAL_CONFIG} ${GDAL_INC}])
+LOC_MSG([  GeoTIFF SRS support......: ${GEOTIFF_CONFIG} ${GEOTIFF_INC}])
+LOC_MSG()
+LOC_MSG([  LIBS.....................: ${LIBS}])
 
 LOC_MSG()
