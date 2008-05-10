@@ -148,8 +148,8 @@ namespace liblas
 */
 
 #ifndef UINT64_C
-# if ULONG_MAX != 0xffffffff
-#  if ULONG_MAX == 18446744073709551615 /* 2**64 - 1 */
+# if ULONG_MAX != 0xffffffffu
+#  if ULONG_MAX == 18446744073709551615u /* 2**64 - 1 */
     typedef long                int64_t;
     typedef unsigned long       uint64_t;
 #  else
