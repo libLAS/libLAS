@@ -48,6 +48,9 @@
 #ifdef HAVE_LIBGEOTIFF
 #include <geotiff.h>
 #include <geo_simpletags.h>
+#include "geo_normalize.h"
+#include "geo_simpletags.h"
+#include "geovalues.h"
 #endif /* HAVE_LIBGEOTIFF */
 
 // std
@@ -261,6 +264,11 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
     }
 
     GTIF *gtif = GTIFNewSimpleTags( st );
+    GTIFDefn	defn;
+    if (GTIFGetDefn(gtif, &defn)) 
+    {
+         printf( "PROJ.4 Definition: %s\n", GTIFGetProj4Defn(&defn));
+    }
     GTIFPrint(gtif,0,0);
     GTIFFree( gtif );
     ST_Destroy( st );
