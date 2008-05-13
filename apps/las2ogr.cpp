@@ -18,8 +18,9 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/cstdint.hpp>
 // ogr
-#include <ogrsf_frmts.h>
-#include <ogr_p.h>
+#include <ogr_api.h>
+// #include <ogrsf_frmts.h>
+// #include <ogr_p.h>
 //std
 #include <cassert>
 #include <fstream>
@@ -94,68 +95,92 @@ private:
     T* p_;
 };
 
-void create_layer_def(OGRLayer& lyr)
+OGRFieldDefnH create_field(const char* name, OGRFieldType type, int width, int precision ) {
+
+    OGRFieldDefnH fld;
+    fld= OGR_Fld_Create(name, type);
+    OGR_Fld_SetWidth(fld, width);
+    OGR_Fld_SetPrecision(fld, precision);
+
+    return fld;
+    
+}
+void create_layer_def(OGRLayerH lyr)
 {
+    OGRErr err;
     std::string fldname("return_num");
-    OGRFieldDefn fld(fldname.c_str(), OFTReal);
-    fld.SetWidth(1);
-    fld.SetPrecision(0);
-    if (OGRERR_NONE != lyr.CreateField(&fld))
+    
+    OGRFieldDefnH fld;
+    
+    fld = create_field("return_num", OFTInteger, 10, 0);
+    err = OGR_L_CreateField(lyr, fld, 0);
+    if (OGRERR_NONE != err)
     {
-        throw std::runtime_error(fldname + " field cration failed");
+        throw std::runtime_error("return_num field creation failed");
     }
+    
+    OGR_Fld_Destroy(fld);
 
-    fldname = "angle";
-    fld.Set(fldname.c_str(), OFTReal, 3, 0);
-    if (OGRERR_NONE != lyr.CreateField(&fld))
+    fld = create_field("angle", OFTInteger, 10, 0);
+    err = OGR_L_CreateField(lyr, fld, 0);
+    if (OGRERR_NONE != err)
     {
-        throw std::runtime_error(fldname + " field cration failed");
+        throw std::runtime_error("angle field cration failed");
     }
+    
+    OGR_Fld_Destroy(fld);
+    
+    fld = create_field("intensity", OFTInteger, 10, 0);
+    err = OGR_L_CreateField(lyr, fld, 0);
+    if (OGRERR_NONE != err)
+    {
+        throw std::runtime_error("intensity field cration failed");
+    }
+    
+    OGR_Fld_Destroy(fld);
 
-    fldname = "intensity";
-    fld.Set(fldname.c_str(), OFTReal, 3, 0);
-    if (OGRERR_NONE != lyr.CreateField(&fld))
+    fld = create_field("asprsclass", OFTInteger, 10, 0);
+    err = OGR_L_CreateField(lyr, fld, 0);
+    if (OGRERR_NONE != err)
     {
-        throw std::runtime_error(fldname + " field cration failed");
+        throw std::runtime_error("asprsclass field creation failed");
     }
+    
+    OGR_Fld_Destroy(fld);
 
-    fldname = "asprsclass";
-    fld.Set(fldname.c_str(), OFTReal, 3, 0);
-    if (OGRERR_NONE != lyr.CreateField(&fld))
+    fld = create_field("return_tot", OFTInteger, 10, 0);
+    err = OGR_L_CreateField(lyr, fld, 0);
+    if (OGRERR_NONE != err)
     {
-        throw std::runtime_error(fldname + " field cration failed");
+        throw std::runtime_error("return_tot field creation failed");
     }
+    
+    OGR_Fld_Destroy(fld);
 
-    fldname = "return_tot";
-    fld.Set(fldname.c_str(), OFTReal, 3, 0);
-    if (OGRERR_NONE != lyr.CreateField(&fld))
+    fld = create_field("gpstime", OFTReal, 10, 0);
+    err = OGR_L_CreateField(lyr, fld, 0);
+    if (OGRERR_NONE != err)
     {
-        throw std::runtime_error(fldname + " field cration failed");
+        throw std::runtime_error("gpstime field cration failed");
     }
+    
+    OGR_Fld_Destroy(fld);
 
-    fldname = "gps_time";
-    fld.Set(fldname.c_str(), OFTReal, 13, 6);
-    if (OGRERR_NONE != lyr.CreateField(&fld))
-    {
-        throw std::runtime_error(fldname + " field cration failed");
-    }
 }
 
 void report_ogr_formats()
 {
-    OGRSFDriverRegistrar* r = 0;
-    r = OGRSFDriverRegistrar::GetRegistrar();
 
     std::cout << "Supported target formats:";
 
-    for (int i = 0; i < r->GetDriverCount(); ++i)
+    for (int i = 0; i < OGRGetDriverCount(); ++i)
     {
-        OGRSFDriver* drv = r->GetDriver(i);
+        OGRSFDriverH drv = OGRGetDriver(i);
         assert(0 != drv);
 
-        if (drv->TestCapability(ODrCCreateDataSource))
+        if (OGR_Dr_TestCapability(drv,"ODrCCreateDataSource"))
         {
-            std::cout << "\n - " << drv->GetName();
+            std::cout << "\n - " << OGR_Dr_GetName(drv);
         }
     }
 
@@ -217,8 +242,8 @@ int main(int argc, char* argv[])
             throw std::runtime_error(ogrname + " datasource  cration failed");
         }
 
-        OGRLayer* lyr = 0;
-        lyr = ds->CreateLayer(lyrname.c_str(), 0, wkbPoint25D, 0);
+        OGRLayerH lyr = 0;
+        lyr = OGR_DS_CreateLayer(ds, lyrname.c_str(), 0, wkbPoint25D, 0);
         if (0 == lyr)
         {
             throw std::runtime_error(ogrname + " layer  cration failed");
