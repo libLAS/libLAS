@@ -234,7 +234,7 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
 
         if (uid == vlrh.userId && 34735 == vlrh.recordId)
         {
-            int count = vlrh.recordLengthAfterHeader / sizeof(short);
+            int16_t count = vlrh.recordLengthAfterHeader / sizeof(int16_t);
             uint16_t *geokeys = new uint16_t[count];
             read_n(geokeys, m_ifs, vlrh.recordLengthAfterHeader);
             ST_SetKey( st, vlrh.recordId, count, STT_SHORT, geokeys );
@@ -250,7 +250,7 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
         }
         else if (uid == vlrh.userId && 34737 == vlrh.recordId)
         {
-            int count = vlrh.recordLengthAfterHeader / sizeof(char);
+            uint8_t count = vlrh.recordLengthAfterHeader / sizeof(uint8_t);
             char *values = new char[count];
             read_n(values, m_ifs, vlrh.recordLengthAfterHeader);
             ST_SetKey( st, vlrh.recordId, count, STT_ASCII, values );
