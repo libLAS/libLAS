@@ -229,9 +229,7 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
         std::vector<uint8_t> data;
         data.resize( count );
 
-        unsigned char *ptr = &(data[0]); // we need a real variable because
-                                         // read_n() is f'ing evil magic. 
-        read_n(ptr, m_ifs, count );
+        read_n(data.front(), m_ifs, count );
          
         LASVLR vlr;
         vlr.SetReserved(vlrh.reserved);
