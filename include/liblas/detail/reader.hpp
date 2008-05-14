@@ -63,6 +63,7 @@ public:
     virtual bool ReadNextPoint(PointRecord& record, double& time) = 0;
     virtual bool ReadPointAt(std::size_t n, PointRecord& record) = 0;
     virtual bool ReadPointAt(std::size_t n, PointRecord& record, double& time) = 0;
+    virtual bool ReadVLR(LASHeader& header) = 0;
 
     virtual std::istream& GetStream() = 0;
     

@@ -45,6 +45,7 @@
 
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/lasrecordheader.hpp>
 #include <liblas/detail/fwd.hpp>
 // std
 #include <iosfwd>
@@ -65,9 +66,11 @@ public:
     std::size_t GetVersion() const;
     LASHeader const& GetHeader() const;
     LASPoint const& GetPoint() const;
+    std::vector<LASVLR> const& GetVLRs() const;
     
     bool ReadNextPoint();
     bool ReadPointAt(std::size_t n);
+    bool ReadVLR();
 
     // The operator is not const because it updates file stream position.
     LASPoint const& operator[](std::size_t n);
@@ -88,6 +91,7 @@ private:
     LASHeader m_header;
     LASPoint m_point;
     detail::PointRecord m_record;
+    std::vector<LASVLR> m_vlrs;
 
 };
 

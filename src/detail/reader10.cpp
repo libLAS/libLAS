@@ -41,6 +41,7 @@
 
 #include <liblas/detail/reader10.hpp>
 #include <liblas/detail/utility.hpp>
+#include <liblas/lasrecordheader.hpp>
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
@@ -209,13 +210,46 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     m_size = header.GetPointRecordsCount();
     m_recordlength = header.GetDataRecordLength();
 
+
+    return true;
+}
+
+bool ReaderImpl::ReadVLR(LASHeader& header) {
+    
+    VLRHeader vlrh = { 0 };
+
+    m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
+ 
+    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
+    {
+        read_n(vlrh, m_ifs, sizeof(VLRHeader));
+
+        int16_t count = vlrh.recordLengthAfterHeader / sizeof(uint8_t);
+        uint8_t *rawdata = new uint8_t[count];
+         
+        read_n(rawdata, m_ifs, vlrh.recordLengthAfterHeader);
+         
+        std::vector<uint8_t> data;
+        for (int j=0; j< count; ++j) {
+            data.push_back(rawdata[j]);
+        }
+         
+        LASVLR vlr;
+        vlr.SetReserved(vlrh.reserved);
+        vlr.SetUserId(std::string(vlrh.userId));
+        vlr.SetDescription(std::string(vlrh.description));
+        vlr.SetRecordLength(vlrh.recordLengthAfterHeader);
+        vlr.SetRecordId(vlrh.recordId);
+        vlr.SetData(data);
+        delete[] rawdata;
+        header.AddVLR(vlr);
+    }
     // TODO: Under construction
     //       Testing reading of VLRecords with GeoKeys
     ReadGeoreference(header);
 
     return true;
 }
-
 bool ReaderImpl::ReadGeoreference(LASHeader const& header)
 {
 #ifndef HAVE_LIBGEOTIFF
@@ -226,50 +260,96 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
     std::string const uid("LASF_Projection");
     ST_TIFF *st = ST_Create();
 
-    m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
+//    m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
 
-    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
+    printf("Records count: %d\n", (int)header.GetRecordsCount());
+
+    for (uint16_t i = 0; i < header.GetRecordsCount(); ++i)
     {
-        read_n(vlrh, m_ifs, sizeof(VLRHeader));
+        LASVLR record = header.GetVLR(i);
+        std::vector<uint8_t> data = record.GetData();
 
-        if (uid == vlrh.userId && 34735 == vlrh.recordId)
+        printf("record.GetUserId(): '%s' record.GetRecordId: %d\n", record.GetUserId(true).c_str(), record.GetRecordId());
+        if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
         {
-            int16_t count = vlrh.recordLengthAfterHeader / sizeof(int16_t);
+            printf("uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId()\n");
+
+            int16_t count = data.size()/sizeof(int16_t);
+
+            printf("count for int16_t: %d\n", count);
             uint16_t *geokeys = new uint16_t[count];
-            read_n(geokeys, m_ifs, vlrh.recordLengthAfterHeader);
-            ST_SetKey( st, vlrh.recordId, count, STT_SHORT, geokeys );
+            for (int j = 0; j< count; ++j) {
+                geokeys[j] = (uint16_t)data[j];
+            }
+            ST_SetKey( st, record.GetRecordId(), count, STT_SHORT, geokeys );
             delete[] geokeys;
+            
         }
-        else if (uid == vlrh.userId && 34736 == vlrh.recordId)
+
+        if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
         {
-            int count = vlrh.recordLengthAfterHeader / sizeof(double);
-            double *values = new double[count];
-            read_n(values, m_ifs, vlrh.recordLengthAfterHeader);
-            ST_SetKey( st, vlrh.recordId, count, STT_DOUBLE, values );
-            delete[] values;
-        }
-        else if (uid == vlrh.userId && 34737 == vlrh.recordId)
+            printf("uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId()\n");
+
+            int count = data.size() / sizeof(double);
+            printf("count for int: %d\n", count);
+
+            double *geokeys = new double[count];
+            for (int j = 0; j< count; ++j) {
+                geokeys[j] = (double)data[j];
+            }
+            ST_SetKey( st, record.GetRecordId(), count, STT_DOUBLE, geokeys );
+            delete[] geokeys;
+
+        }        
+
+        if (uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId())
         {
-            uint8_t count = vlrh.recordLengthAfterHeader / sizeof(uint8_t);
-            char *values = new char[count];
-            read_n(values, m_ifs, vlrh.recordLengthAfterHeader);
-            ST_SetKey( st, vlrh.recordId, count, STT_ASCII, values );
-            delete[] values;
-        }
-        else
-        {
-            std::istream::pos_type const pos = m_ifs.tellg();
-            m_ifs.seekg(pos + std::istream::pos_type(vlrh.recordLengthAfterHeader));
-        }
+            printf("uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId()\n");
+
+            uint8_t count = data.size()/sizeof(uint8_t);
+            
+            printf("count for string: %d data.size(): %d", count, (int)data.size());
+
+            char *geokeys = new char[count];
+            for (int j = 0; j< count; ++j) {
+                geokeys[j] = (uint8_t)data[j];
+            }
+//            geokeys[count] = '\0';
+            printf("Geokeys: '%s'", geokeys);
+            ST_SetKey( st, record.GetRecordId(), count, STT_ASCII, geokeys );
+            delete[] geokeys;
+
+
+        }        
+        // else if (uid == record.GetUserId() && record.GetRecordId())
+        // {
+        //     int count = vlrh.recordLengthAfterHeader / sizeof(double);
+        //     double *values = new double[count];
+        //     read_n(values, m_ifs, vlrh.recordLengthAfterHeader);
+        //     ST_SetKey( st, vlrh.recordId, count, STT_DOUBLE, values );
+        //     delete[] values;
+        // }
+        // else if (uid == record.GetUserId() && record.GetRecordId())
+        // {
+        //     uint8_t count = vlrh.recordLengthAfterHeader / sizeof(uint8_t);
+        //     char *values = new char[count];
+        //     read_n(values, m_ifs, vlrh.recordLengthAfterHeader);
+        //     ST_SetKey( st, vlrh.recordId, count, STT_ASCII, values );
+        //     delete[] values;
+        // }
+     //   else
+        // {
+        //     std::istream::pos_type const pos = m_ifs.tellg();
+        //     m_ifs.seekg(pos + std::istream::pos_type(vlrh.recordLengthAfterHeader));
+        // }
     }
 
     GTIF *gtif = GTIFNewSimpleTags( st );
-    GTIFDefn	defn;
+    GTIFDefn defn;
     if (GTIFGetDefn(gtif, &defn)) 
     {
-         printf( "PROJ.4 Definition: %s\n", GTIFGetProj4Defn(&defn));
+         printf( "char PROJ.4 Definition: %s\n", GTIFGetProj4Defn(&defn));
     }
-    GTIFPrint(gtif,0,0);
     GTIFFree( gtif );
     ST_Destroy( st );
     

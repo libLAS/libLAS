@@ -45,70 +45,96 @@
 #include <liblas/cstdint.hpp>
 // std
 #include <string>
+#include <vector>
 
 namespace liblas {
 
 /// Representation of variable-length record data.
-class LASRecordHeader
+class LASVLR
 {
 public:
 
     /// Default constructor.
     /// Zero-initialization of record data.
     /// \exception No throw
-    LASRecordHeader();
+    LASVLR(); 
 
     /// Copy constructor.
     /// Construction of new record object as a copy of existing one.
     /// \exception No throw
-    LASRecordHeader(LASRecordHeader const& other);
+    LASVLR(LASVLR const& other);
+    
+    ~LASVLR();
 
     /// Assignment operator.
     /// Construction and initializition of record object by
     /// assignment of another one.
     /// \exception No throw
-    LASRecordHeader& operator=(LASRecordHeader const& rhs);
+    LASVLR& operator=(LASVLR const& rhs);
 
     /// Get record signature (LAS 1.0) or reserved bytes (LAS 1.1).
     /// \exception No throw
     uint16_t GetReserved() const;
+    
+    void SetReserved(uint16_t);
 
     /// Get identifier of user which created the record.
     /// The character data is up to 16 bytes long.
     /// \exception No throw
-    std::string const& GetUserId() const;
+    std::string GetUserId(bool pad /*= false*/);
+    
+    void SetUserId(std::string const&);
 
     /// Get identifier of record.
     /// The record ID is closely related to the user ID.
     /// \exception No throw
     uint16_t GetRecordId() const;
+    
+    void SetRecordId(uint16_t);
 
     /// Get record length after the header.
     /// \exception No throw
-    uint16_t GeRecordLength() const;
+    uint16_t GetRecordLength() const;
+    
+    void SetRecordLength(uint16_t);
 
     /// Get text description of data in the record.
     /// The character data is up to 32 bytes long.
     /// \exception No throw
-    std::string const& GetDescription() const;
+    std::string GetDescription(bool pad /*= false*/);
+    
+    void SetDescription(std::string const&);
+
+    /// Get the data for this VLR
+    std::vector<uint8_t> GetData() const;
+    
+    void SetData(std::vector<uint8_t> const&);
 
     /// Compare actual header object against the other.
     /// \exception No throw
-    bool equal(LASRecordHeader const& other) const;
+    bool equal(LASVLR const& other) const;
 
 private:
 
+    enum
+    {
+        eUIDSize = 16,
+        eDescriptionSize = 32
+    };
+    
     uint16_t m_reserved;
     uint16_t m_recordId;
     uint16_t m_recordLength; // after header
-    std::string m_userId; // [16]
-    std::string m_desc; // [32]
+
+    char m_userId[eUIDSize];
+    char m_desc[eDescriptionSize];
+    std::vector<uint8_t> m_data;
 };
 
 /// Equality operator.
-/// Implemented in terms of LASRecordHeader::equal member function.
+/// Implemented in terms of LASVLR::equal member function.
 /// \exception No throw
-inline bool operator==(LASRecordHeader const& lhs, LASRecordHeader const& rhs)
+inline bool operator==(LASVLR const& lhs, LASVLR const& rhs)
 {
     return lhs.equal(rhs);
 }
@@ -116,7 +142,7 @@ inline bool operator==(LASRecordHeader const& lhs, LASRecordHeader const& rhs)
 /// Inequality operator.
 /// Implemented in terms of LASRecordHeader::equal member function.
 /// \exception No throw
-inline bool operator!=(LASRecordHeader const& lhs, LASRecordHeader const& rhs)
+inline bool operator!=(LASVLR const& lhs, LASVLR const& rhs)
 {
     return (!(lhs == rhs));
 }

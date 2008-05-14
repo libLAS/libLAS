@@ -98,6 +98,8 @@ LASHeader::LASHeader(LASHeader const& other) :
     assert(p == m_softwareId);
     std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
     assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
+    
+    std::vector<LASVLR>(other.m_vlrs).swap(m_vlrs);
 
 }
 
@@ -133,6 +135,7 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         std::vector<uint32_t>(rhs.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
         assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
 
+        std::vector<LASVLR>(rhs.m_vlrs).swap(m_vlrs);
         m_scales = rhs.m_scales;
         m_offsets = rhs.m_offsets;
         m_extents = rhs.m_extents;
@@ -181,8 +184,6 @@ void LASHeader::SetFileSignature(std::string const& v)
 {
     if (0 != v.compare(0, eFileSignatureSize, FileSignature))
         throw std::invalid_argument("invalid file signature");
-
-//    m_signature = v;
 
     std::strncpy(m_signature, v.c_str(), eFileSignatureSize);
 }
@@ -260,8 +261,6 @@ void LASHeader::SetSystemId(std::string const& v)
 {
     if (v.size() > eSystemIdSize)
         throw std::invalid_argument("system id too long");
-    
-//    m_systemId = v;
 
     std::fill(m_systemId, m_systemId + eSystemIdSize, 0);
     std::strncpy(m_systemId, v.c_str(), eSystemIdSize);
@@ -495,6 +494,13 @@ void LASHeader::SetMin(double x, double y, double z)
     m_extents.min = detail::Point<double>(x, y, z);
 }
 
+void LASHeader::AddVLR(LASVLR const& v) 
+{
+    m_vlrs.push_back(v);
+}
+LASVLR const& LASHeader::GetVLR(int index) const {
+    return m_vlrs[index];
+}
 void LASHeader::Init()
 {
     // Initialize public header block with default

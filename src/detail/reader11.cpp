@@ -44,6 +44,8 @@
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/lasrecordheader.hpp>
+
 // std
 #include <fstream>
 #include <cstdlib> // std::size_t
@@ -291,6 +293,14 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record, double& time)
 
 std::istream& ReaderImpl::GetStream() {
     return m_ifs;
+}
+
+bool ReaderImpl::ReadVLR(LASHeader& header) {
+    
+    VLRHeader vlrh = { 0 };
+    LASVLR vlr;
+
+    return true;
 }
 
 }}} // namespace liblas::detail::v11

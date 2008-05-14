@@ -46,6 +46,7 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
+#include <liblas/lasrecordheader.hpp>
 //std
 #include <string>
 #include <vector>
@@ -290,6 +291,9 @@ public:
     /// Set minimum values of extent of X, Y and Z coordinates.
     void SetMin(double x, double y, double z);
 
+    void AddVLR(LASVLR const& v);
+    LASVLR const& GetVLR(int index) const;
+    
 private:
     
     typedef detail::Point<double> PointScales;
@@ -342,6 +346,7 @@ private:
     PointScales m_scales;
     PointOffsets m_offsets;
     PointExtents m_extents;
+    std::vector<LASVLR> m_vlrs;
 };
 
 } // namespace liblas

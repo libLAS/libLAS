@@ -8,6 +8,7 @@
  ******************************************************************************
  * Copyright (c) 2008, Phil Vachon
  * Copyright (c) 2008, Mateusz Loskot, mateusz@loskot.net
+ * Copyright (c) 2008, Howard Butler, hobu.inc@gmail.com
  *
  * All rights reserved.
  * 
@@ -42,64 +43,161 @@
 
 #include <liblas/lasrecordheader.hpp>
 #include <liblas/cstdint.hpp>
+
 // std
+#include <algorithm>
+#include <stdexcept>
 #include <string>
+#include <vector>
+#include <cstring> // std::memset, std::memcpy, std::strncpy
+#include <cassert>
 
 namespace liblas {
 
-LASRecordHeader::LASRecordHeader() :
+LASVLR::LASVLR() :
     m_reserved(0), m_recordId(0), m_recordLength(0)
 {    
+    std::memset(m_userId, 0, eUIDSize);
+    std::memset(m_desc, 0, eDescriptionSize);
+    
+    m_data.resize(40);
+
 }
 
-LASRecordHeader::LASRecordHeader(LASRecordHeader const& other) :
+LASVLR::LASVLR(LASVLR const& other) :
     m_reserved(other.m_reserved),
     m_recordId(other.m_recordId),
-    m_recordLength(other.m_recordLength),
-    m_userId(other.m_userId),
-    m_desc(other.m_desc)
+    m_recordLength(other.m_recordLength)
 {
+    void* p = 0;
+
+    p = std::memcpy(m_userId, other.m_userId, eUIDSize);
+    assert(p == m_userId);
+
+    p = std::memcpy(m_desc, other.m_desc, eDescriptionSize);
+    assert(p == m_desc);
+    
+    std::vector<uint8_t>(other.m_data).swap(m_data);
 }
 
-LASRecordHeader& LASRecordHeader::operator=(LASRecordHeader const& rhs)
+LASVLR::~LASVLR()
 {
+
+}
+
+LASVLR& LASVLR::operator=(LASVLR const& rhs)
+{
+    void* p = 0;
     if (this != &rhs)
     {
         m_reserved = rhs.m_reserved;
         m_recordId = rhs.m_recordId;
         m_recordLength = rhs.m_recordLength;
-        m_userId = rhs.m_userId;
-        m_desc = rhs.m_desc;
+
+        p = std::memcpy(m_userId, rhs.m_userId, eUIDSize);
+        assert(p == m_userId);
+
+        p = std::memcpy(m_desc, rhs.m_desc, eDescriptionSize);
+        assert(p == m_desc);
+
+        std::vector<uint8_t>(rhs.m_data).swap(m_data);
     }
     return (*this);
 }
 
-uint16_t LASRecordHeader::GetReserved() const
+uint16_t LASVLR::GetReserved() const
 {
     return m_reserved;
 }
 
-std::string const& LASRecordHeader::GetUserId() const
+void LASVLR::SetReserved(uint16_t id)
 {
-    return m_userId;
+    m_reserved = id;
 }
 
-uint16_t LASRecordHeader::GetRecordId() const
+std::string LASVLR::GetUserId(bool pad /*= false*/)
+{
+    // copy array of chars and trim zeros if smaller than 32 bytes
+    std::string tmp(std::string(m_userId, eUIDSize).c_str());
+
+    // pad right side with spaces
+    if (pad && tmp.size() < eUIDSize)
+    {
+        tmp.resize(eUIDSize, 0);
+        assert(tmp.size() == eUIDSize);
+    }
+
+    assert(tmp.size() <= eUIDSize);
+    return tmp;
+}
+
+void LASVLR::SetUserId(std::string const& v)
+{
+    if (v.size() > eUIDSize)
+        throw std::invalid_argument("user id too long");
+    
+
+    std::fill(m_userId, m_userId + eUIDSize, 0);
+    std::strncpy(m_userId, v.c_str(), eUIDSize);
+}
+
+
+uint16_t LASVLR::GetRecordId() const
 {
     return m_recordId;
 }
 
-uint16_t LASRecordHeader::GeRecordLength() const
+void LASVLR::SetRecordId(uint16_t v) {
+    m_recordId = v;
+}
+
+uint16_t LASVLR::GetRecordLength() const
 {
     return m_recordLength;
 }
 
-std::string const& LASRecordHeader::GetDescription() const
-{
-    return m_desc;
+void LASVLR::SetRecordLength(uint16_t v) {
+    m_recordLength = v;
 }
 
-bool LASRecordHeader::equal(LASRecordHeader const& other) const
+std::string LASVLR::GetDescription(bool pad /*= false*/)
+{
+    // copy array of chars and trim zeros if smaller than 32 bytes
+    std::string tmp(std::string(m_desc, eDescriptionSize).c_str());
+
+    // pad right side with spaces
+    if (pad && tmp.size() < eDescriptionSize)
+    {
+        tmp.resize(eDescriptionSize, 0);
+        assert(tmp.size() == eDescriptionSize);
+    }
+
+    assert(tmp.size() <= eDescriptionSize);
+    return tmp;
+}
+
+void LASVLR::SetDescription(std::string const& v)
+{
+    if (v.size() > eDescriptionSize)
+        throw std::invalid_argument("description is too long");
+    
+
+    std::fill(m_desc, m_desc + eDescriptionSize, 0);
+    std::strncpy(m_desc, v.c_str(), eDescriptionSize);
+}
+
+
+std::vector<uint8_t> LASVLR::GetData() const
+{
+    return m_data;
+}
+
+void LASVLR::SetData(const std::vector<uint8_t>& v) 
+{
+    std::vector<uint8_t> m_data(v);
+}
+
+bool LASVLR::equal(LASVLR const& other) const
 {
     return (m_recordId == other.m_recordId
             && m_userId == other.m_userId 

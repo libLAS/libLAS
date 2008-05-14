@@ -77,9 +77,9 @@ struct GeoKeyEntry
   uint16_t valueOffset;
 };
 
-struct VariableLengthRecordHeader
+class VariableLengthRecord
 {
-    VariableLengthRecordHeader()
+    VariableLengthRecord()
         : reserved(0), record_id(0), record_length_after_header(0)
     {
         std::memset(user_id, 0, eUserIdSize);
@@ -97,6 +97,7 @@ struct VariableLengthRecordHeader
     uint16_t record_id;
     uint16_t record_length_after_header;
     int8_t description[eDescriptionSize];
+    uint8_t data;
 };
 
 struct PointRecord

@@ -63,6 +63,7 @@ public:
     bool ReadNextPoint(PointRecord& record, double& time);
     bool ReadPointAt(std::size_t n, PointRecord& record);
     bool ReadPointAt(std::size_t n, PointRecord& record, double& time);
+    bool ReadVLR(LASHeader& header);
 
     std::istream& GetStream();
 private:
