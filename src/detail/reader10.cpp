@@ -224,15 +224,14 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
     {
         read_n(vlrh, m_ifs, sizeof(VLRHeader));
 
-        int16_t count = vlrh.recordLengthAfterHeader / sizeof(uint8_t);
-        uint8_t *rawdata = new uint8_t[count];
-         
-        read_n(rawdata, m_ifs, vlrh.recordLengthAfterHeader);
+        int16_t count = vlrh.recordLengthAfterHeader;
          
         std::vector<uint8_t> data;
-        for (int j=0; j< count; ++j) {
-            data.push_back(rawdata[j]);
-        }
+        data.resize( count );
+
+        unsigned char *ptr = &(data[0]); // we need a real variable because
+                                         // read_n() is f'ing evil magic. 
+        read_n(ptr, m_ifs, count );
          
         LASVLR vlr;
         vlr.SetReserved(vlrh.reserved);
@@ -241,7 +240,7 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
         vlr.SetRecordLength(vlrh.recordLengthAfterHeader);
         vlr.SetRecordId(vlrh.recordId);
         vlr.SetData(data);
-        delete[] rawdata;
+
         header.AddVLR(vlr);
     }
     // TODO: Under construction
@@ -277,13 +276,9 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
             int16_t count = data.size()/sizeof(int16_t);
 
             printf("count for int16_t: %d\n", count);
-            uint16_t *geokeys = new uint16_t[count];
-            for (int j = 0; j< count; ++j) {
-                geokeys[j] = (uint16_t)data[j];
-            }
-            ST_SetKey( st, record.GetRecordId(), count, STT_SHORT, geokeys );
-            delete[] geokeys;
-            
+
+            ST_SetKey( st, record.GetRecordId(), count, STT_SHORT, 
+                       &(data[0]) );
         }
 
         if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
@@ -293,13 +288,8 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
             int count = data.size() / sizeof(double);
             printf("count for int: %d\n", count);
 
-            double *geokeys = new double[count];
-            for (int j = 0; j< count; ++j) {
-                geokeys[j] = (double)data[j];
-            }
-            ST_SetKey( st, record.GetRecordId(), count, STT_DOUBLE, geokeys );
-            delete[] geokeys;
-
+            ST_SetKey( st, record.GetRecordId(), count, STT_DOUBLE, 
+                       &(data[0]) );
         }        
 
         if (uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId())
@@ -309,42 +299,15 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
             uint8_t count = data.size()/sizeof(uint8_t);
             
             printf("count for string: %d data.size(): %d", count, (int)data.size());
-
-            char *geokeys = new char[count];
-            for (int j = 0; j< count; ++j) {
-                geokeys[j] = (uint8_t)data[j];
-            }
-//            geokeys[count] = '\0';
-            printf("Geokeys: '%s'", geokeys);
-            ST_SetKey( st, record.GetRecordId(), count, STT_ASCII, geokeys );
-            delete[] geokeys;
-
-
-        }        
-        // else if (uid == record.GetUserId() && record.GetRecordId())
-        // {
-        //     int count = vlrh.recordLengthAfterHeader / sizeof(double);
-        //     double *values = new double[count];
-        //     read_n(values, m_ifs, vlrh.recordLengthAfterHeader);
-        //     ST_SetKey( st, vlrh.recordId, count, STT_DOUBLE, values );
-        //     delete[] values;
-        // }
-        // else if (uid == record.GetUserId() && record.GetRecordId())
-        // {
-        //     uint8_t count = vlrh.recordLengthAfterHeader / sizeof(uint8_t);
-        //     char *values = new char[count];
-        //     read_n(values, m_ifs, vlrh.recordLengthAfterHeader);
-        //     ST_SetKey( st, vlrh.recordId, count, STT_ASCII, values );
-        //     delete[] values;
-        // }
-     //   else
-        // {
-        //     std::istream::pos_type const pos = m_ifs.tellg();
-        //     m_ifs.seekg(pos + std::istream::pos_type(vlrh.recordLengthAfterHeader));
-        // }
+            ST_SetKey( st, record.GetRecordId(), count, STT_ASCII, 
+                       &(data[0]) );
+        }
     }
 
     GTIF *gtif = GTIFNewSimpleTags( st );
+
+    //GTIFPrint(gtif,0,0);
+
     GTIFDefn defn;
     if (GTIFGetDefn(gtif, &defn)) 
     {

@@ -194,7 +194,7 @@ std::vector<uint8_t> LASVLR::GetData() const
 
 void LASVLR::SetData(const std::vector<uint8_t>& v) 
 {
-    std::vector<uint8_t> m_data(v);
+    m_data = v;
 }
 
 bool LASVLR::equal(LASVLR const& other) const
