@@ -106,7 +106,7 @@ public:
     void SetDescription(std::string const&);
 
     /// Get the data for this VLR
-    std::vector<uint8_t> GetData() const;
+    std::vector<uint8_t> const& GetData() const;
     
     void SetData(std::vector<uint8_t> const&);
 

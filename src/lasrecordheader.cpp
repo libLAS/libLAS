@@ -187,7 +187,7 @@ void LASVLR::SetDescription(std::string const& v)
 }
 
 
-std::vector<uint8_t> LASVLR::GetData() const
+std::vector<uint8_t> const&  LASVLR::GetData() const
 {
     return m_data;
 }
