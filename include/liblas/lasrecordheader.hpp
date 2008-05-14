@@ -81,7 +81,7 @@ public:
     /// Get identifier of user which created the record.
     /// The character data is up to 16 bytes long.
     /// \exception No throw
-    std::string GetUserId(bool pad /*= false*/);
+    std::string GetUserId(bool pad /*= false*/) const;
     
     void SetUserId(std::string const&);
 
@@ -101,7 +101,7 @@ public:
     /// Get text description of data in the record.
     /// The character data is up to 32 bytes long.
     /// \exception No throw
-    std::string GetDescription(bool pad /*= false*/);
+    std::string GetDescription(bool pad /*= false*/) const;
     
     void SetDescription(std::string const&);
 

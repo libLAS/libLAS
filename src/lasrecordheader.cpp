@@ -115,7 +115,7 @@ void LASVLR::SetReserved(uint16_t id)
     m_reserved = id;
 }
 
-std::string LASVLR::GetUserId(bool pad /*= false*/)
+std::string LASVLR::GetUserId(bool pad /*= false*/) const
 {
     // copy array of chars and trim zeros if smaller than 32 bytes
     std::string tmp(std::string(m_userId, eUIDSize).c_str());
@@ -160,7 +160,7 @@ void LASVLR::SetRecordLength(uint16_t v) {
     m_recordLength = v;
 }
 
-std::string LASVLR::GetDescription(bool pad /*= false*/)
+std::string LASVLR::GetDescription(bool pad /*= false*/) const
 {
     // copy array of chars and trim zeros if smaller than 32 bytes
     std::string tmp(std::string(m_desc, eDescriptionSize).c_str());
@@ -200,8 +200,8 @@ void LASVLR::SetData(const std::vector<uint8_t>& v)
 bool LASVLR::equal(LASVLR const& other) const
 {
     return (m_recordId == other.m_recordId
-            && m_userId == other.m_userId 
-            && m_desc == other.m_desc
+            && std::string(m_userId) == std::string(other.m_userId) 
+            && std::string(m_desc) == std::string(other.m_desc)
             && m_reserved == other.m_reserved
             && m_recordLength == other.m_recordLength);
 }
