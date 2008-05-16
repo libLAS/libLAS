@@ -8,6 +8,7 @@
 		Name="VCCLCompilerTool"
 		AdditionalIncludeDirectories="&quot;$(LIBLAS_DIR)\include&quot;;&quot;$(LIBLAS_DIR)\include\liblas\capi&quot;"
 		PreprocessorDefinitions="USE_VLD;_CRT_SECURE_NO_WARNINGS"
+		WarningLevel="4"
 	/>
 	<UserMacro
 		Name="LIBLAS_DIR"
