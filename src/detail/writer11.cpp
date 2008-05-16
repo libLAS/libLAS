@@ -154,7 +154,7 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     // At this point, no variable length records are written,
     // so  data offset is equal to header size (227)
     // TODO: This value must be updated after new variable length record is added.
-    n4 = header.GetHeaderSize();
+    n4 = header.GetDataOffset();
     detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 16. Number of variable length records
@@ -205,10 +205,14 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     detail::write_n(m_ofs, header.GetMaxZ(), sizeof(double));
     detail::write_n(m_ofs, header.GetMinZ(), sizeof(double));
 
+    WriteVLR(header);
+
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
     if (m_pointCount != 0)
         m_ofs.seekp(0, std::ios::end);
+    
+
 }
 
 void WriterImpl::UpdateHeader(LASHeader const& header)
@@ -243,6 +247,28 @@ void WriterImpl::WritePointRecord(detail::PointRecord const& record, double cons
     WritePointRecord(record);
 
     detail::write_n(m_ofs, time, sizeof(double));
+}
+
+void WriterImpl::WriteVLR(LASHeader const& header) 
+{
+    printf("Writing VLR records in writer11.cpp... \n");
+
+    m_ofs.seekp(header.GetHeaderSize(), std::ios::beg);
+ 
+    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
+    {
+         
+        LASVLR vlr = header.GetVLR(i);
+        
+        detail::write_n(m_ofs, vlr.GetReserved(), sizeof(uint16_t));
+        detail::write_n(m_ofs, vlr.GetUserId(true).c_str(), 16);
+        detail::write_n(m_ofs, vlr.GetRecordId(), sizeof(uint16_t));
+        detail::write_n(m_ofs, vlr.GetRecordLength(), sizeof(uint16_t));
+        detail::write_n(m_ofs, vlr.GetDescription(true).c_str(), 32);
+        std::vector<uint8_t> data = vlr.GetData();
+        detail::write_n(m_ofs, data.front(), data.size());
+    }
+
 }
 
 std::ostream& WriterImpl::GetStream()

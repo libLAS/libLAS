@@ -219,7 +219,7 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
     VLRHeader vlrh = { 0 };
 
     m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
- 
+    
     for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
     {
         read_n(vlrh, m_ifs, sizeof(VLRHeader));
@@ -244,7 +244,6 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
     // TODO: Under construction
     //       Testing reading of VLRecords with GeoKeys
     ReadGeoreference(header);
-
     return true;
 }
 bool ReaderImpl::ReadGeoreference(LASHeader const& header)
@@ -254,59 +253,37 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
     return false;
 #else
     // TODO: Under construction
-    VLRHeader vlrh = { 0 };
+
     std::string const uid("LASF_Projection");
     ST_TIFF *st = ST_Create();
-
-//    m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
-
-    printf("Records count: %d\n", (int)header.GetRecordsCount());
 
     for (uint16_t i = 0; i < header.GetRecordsCount(); ++i)
     {
         LASVLR record = header.GetVLR(i);
         std::vector<uint8_t> data = record.GetData();
-
-        printf("record.GetUserId(): '%s' record.GetRecordId: %d\n", record.GetUserId(true).c_str(), record.GetRecordId());
         if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
         {
-            printf("uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId()\n");
-
             int16_t count = data.size()/sizeof(int16_t);
-
-            printf("count for int16_t: %d\n", count);
-
             ST_SetKey( st, record.GetRecordId(), count, STT_SHORT, 
                        &(data[0]) );
         }
 
         if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
         {
-            printf("uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId()\n");
-
             int count = data.size() / sizeof(double);
-            printf("count for int: %d\n", count);
-
             ST_SetKey( st, record.GetRecordId(), count, STT_DOUBLE, 
                        &(data[0]) );
         }        
 
         if (uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId())
         {
-            printf("uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId()\n");
-
             uint8_t count = data.size()/sizeof(uint8_t);
-            
-            printf("count for string: %d data.size(): %d", count, (int)data.size());
             ST_SetKey( st, record.GetRecordId(), count, STT_ASCII, 
                        &(data[0]) );
         }
     }
 
     GTIF *gtif = GTIFNewSimpleTags( st );
-
-    //GTIFPrint(gtif,0,0);
-
     GTIFDefn defn;
     if (GTIFGetDefn(gtif, &defn)) 
     {

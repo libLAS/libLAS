@@ -128,6 +128,7 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         m_headerSize = rhs.m_headerSize;
         m_dataOffset = rhs.m_dataOffset;
         m_recordsCount = rhs.m_recordsCount;
+//        m_recordsCount = 0;
         m_dataFormatId = rhs.m_dataFormatId;
         m_dataRecordLen = rhs.m_dataRecordLen;
         m_pointRecordsCount = rhs.m_pointRecordsCount;
@@ -497,7 +498,12 @@ void LASHeader::SetMin(double x, double y, double z)
 void LASHeader::AddVLR(LASVLR const& v) 
 {
     m_vlrs.push_back(v);
-    m_dataRecordLen = static_cast<uint16_t>(m_vlrs.size());
+    uint32_t size;
+    if (m_vlrs.size() > m_recordsCount ) {
+        m_recordsCount = m_vlrs.size();
+        size = GetDataOffset() + 2 + 16 + 2 + 2 + 32 + v.GetData().size()*sizeof(uint8_t);
+        SetDataOffset(size);
+    }
 }
 
 LASVLR const& LASHeader::GetVLR(uint32_t index) const {
@@ -510,7 +516,7 @@ void LASHeader::DeleteVLR(uint32_t index) {
         throw std::out_of_range("index is out of range");
         
     m_vlrs.erase(m_vlrs.begin() + index);
-    m_dataRecordLen = static_cast<uint16_t>(m_vlrs.size());
+    m_recordsCount = m_vlrs.size();
     
 }
 void LASHeader::Init()

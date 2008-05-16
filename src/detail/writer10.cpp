@@ -148,13 +148,7 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     detail::write_n(m_ofs, n2, sizeof(n2));
 
     // 14. Offset to data
-    // At this point, no variable length records are written, so 
-    // data offset is equal to (header size + data start signature size):
-    // 227 + 2 = 229
-    // TODO: This value must be updated after new variable length record is added.
-    uint32_t const dataSignatureSize = 2;
-    n4 = header.GetHeaderSize() + dataSignatureSize;
-    assert(229 <= n4);
+    n4 = header.GetDataOffset();
     detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 15. Number of variable length records
@@ -204,7 +198,14 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     // 30-31. Max/Min Z
     detail::write_n(m_ofs, header.GetMaxZ(), sizeof(double));
     detail::write_n(m_ofs, header.GetMinZ(), sizeof(double));
- 
+
+    WriteVLR(header);
+
+    uint8_t const sgn1 = 0xCC;
+    uint8_t const sgn2 = 0xDD;
+    detail::write_n(m_ofs, sgn1, sizeof(uint8_t));
+    detail::write_n(m_ofs, sgn2, sizeof(uint8_t));
+
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
     if (m_pointCount != 0)
@@ -227,15 +228,6 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
 
 void WriterImpl::WritePointRecord(detail::PointRecord const& record)
 {
-    // Write point data record format 0
-    if (0 == m_pointCount)
-    {
-        // Two bytes of point data start signature, required by LAS 1.0
-        uint8_t const sgn1 = 0xCC;
-        uint8_t const sgn2 = 0xDD;
-        detail::write_n(m_ofs, sgn1, sizeof(uint8_t));
-        detail::write_n(m_ofs, sgn2, sizeof(uint8_t));
-    }
 
     // TODO: Static assert would be better
     assert(20 == sizeof(record));
@@ -256,6 +248,26 @@ void WriterImpl::WritePointRecord(detail::PointRecord const& record, double cons
     detail::write_n(m_ofs, time, sizeof(double));
 }
 
+void WriterImpl::WriteVLR(LASHeader const& header) 
+{
+
+    m_ofs.seekp(header.GetHeaderSize(), std::ios::beg);
+ 
+    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
+    {
+         
+        LASVLR vlr = header.GetVLR(i);
+        
+        detail::write_n(m_ofs, vlr.GetReserved(), sizeof(uint16_t));
+        detail::write_n(m_ofs, vlr.GetUserId(true).c_str(), 16);
+        detail::write_n(m_ofs, vlr.GetRecordId(), sizeof(uint16_t));
+        detail::write_n(m_ofs, vlr.GetRecordLength(), sizeof(uint16_t));
+        detail::write_n(m_ofs, vlr.GetDescription(true).c_str(), 32);
+        std::vector<uint8_t> data = vlr.GetData();
+        detail::write_n(m_ofs, data.front(), data.size());
+    }
+
+}
 std::ostream& WriterImpl::GetStream()
 {
     return m_ofs;

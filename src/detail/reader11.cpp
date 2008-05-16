@@ -296,16 +296,33 @@ std::istream& ReaderImpl::GetStream()
     return m_ifs;
 }
 
-bool ReaderImpl::ReadVLR(LASHeader& header)
-{    
-    // TODO: To be implemented
+bool ReaderImpl::ReadVLR(LASHeader& header) {
+    
     VLRHeader vlrh = { 0 };
-    LASVLR vlr;
 
-    // TODO: To be removed, when objects are used
-    UNREFERENCED_PARAMETER(header);
-    UNREFERENCED_PARAMETER(vlrh);
-    UNREFERENCED_PARAMETER(vlr);
+    m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
+    
+    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
+    {
+        read_n(vlrh, m_ifs, sizeof(VLRHeader));
+
+        int16_t count = vlrh.recordLengthAfterHeader;
+         
+        std::vector<uint8_t> data;
+        data.resize( count );
+
+        read_n(data.front(), m_ifs, count );
+         
+        LASVLR vlr;
+        vlr.SetReserved(vlrh.reserved);
+        vlr.SetUserId(std::string(vlrh.userId));
+        vlr.SetDescription(std::string(vlrh.description));
+        vlr.SetRecordLength(vlrh.recordLengthAfterHeader);
+        vlr.SetRecordId(vlrh.recordId);
+        vlr.SetData(data);
+
+        header.AddVLR(vlr);
+    }
 
     return true;
 }
