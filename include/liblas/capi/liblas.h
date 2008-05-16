@@ -58,6 +58,7 @@ typedef void *LASReaderH;
 typedef void *LASPointH;
 typedef void *LASHeaderH;
 typedef void *LASGuidH;
+typedef void *LASVLRH;
 
 LAS_C_START
 
@@ -825,6 +826,112 @@ LAS_DLL int LASGuid_Equals(LASGuidH hId1, LASGuidH hId2);
 */
 LAS_DLL char* LASGuid_AsString(LASGuidH hId);
 
+/** Returns the VLR record for the given index.  Use LASHeader_GetRecordsCount to 
+ *  determine the number of VLR records available on the header.
+ *  @param hHeader the LASHeaderH instance
+ *  @param i the index starting from 0 of the VLR to fetch
+ *  @return LASVLRH instance that models the Variable Length Record
+*/
+LAS_DLL LASVLRH LASHeader_GetVLR(const LASHeaderH hHeader, uint32_t i);
+
+/** Deletes a VLR record from the header for the given index.
+ *  @param hHeader the LASHeaderH instance
+ *  @param index the index starting from 0 of the VLR to delete
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASHeader_DeleteVLR(LASHeaderH hHeader, uint32_t index);
+
+/** Adds a VLR record to the header. 
+ *  @param hHeader the LASHeaderH instance
+ *  @param hVLR the VLR to add to the header
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR);
+
+/** Creates a new VLR record
+ *  @return a new VLR record
+*/
+LAS_DLL LASVLRH LASVLR_Create(void);
+
+/** Destroys a VLR record and removes it from the heap
+*/
+LAS_DLL void LASVLR_Destroy(LASVLRH hVLR);
+
+/** Returns the User Id for the VLR 
+ *  @param hVLR the LASVLRH instance
+ *  @return the User Id for the VLR
+*/
+LAS_DLL char* LASVLR_GetUserId(const LASVLRH hVLR);
+
+/** Sets the User Id for the VLR
+ *  @param hVLR the LASVLRH instance
+ *  @param value the value to set for the User Id.  It will be clipped to fit 
+ *  within 16 characters
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASVLR_SetUserId(LASVLRH hVLR, const char* value);
+
+/** Gets the description for the VLR
+ *  @param hVLR the LASVLRH instance
+ *  @return the description for the VLR
+*/ 
+LAS_DLL char* LASVLR_GetDescription(const LASVLRH hVLR);
+
+/** Sets the description for the VLR
+ *  @param hVLR the LASVLRH instance
+ *  @param value the value to set for the description.  It will be clipped to fit 
+ *  within 32 characters
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASVLR_SetDescription(LASVLRH hVLR, const char* value);
+
+/** Returns the record length of the data stored in the VLR
+ *  @param hVLR the LASVLRH instance
+ *  @return the record length of the data stored in the VLR
+*/
+LAS_DLL uint16_t LASVLR_GetRecordLength(const LASVLRH hVLR);
+
+/** Sets the record length of the data stored in the VLR
+ *  @param hVLR the LASVLRH instance
+ *  @param value the length to set for the VLR data length
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASVLR_SetRecordLength(LASVLRH hVLR, uint16_t value);
+
+/** Gets the record id for the VLR
+ *  @param hVLR the LASVLRH instance
+ *  @return the record id for the VLR
+*/
+LAS_DLL uint16_t LASVLR_GetRecordId(const LASVLRH hVLR);
+
+/** Sets the record id for the VLR
+ *  @param hVLR the LASVLRH instance
+ *  @param value the record id to set
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASVLR_SetRecordId(LASVLRH hVLR, uint16_t value);
+
+/** Gets the reserved value of the VLR.  This should be 0 and should aways be 0.
+ *  @param hVLR the LASVLRH instance
+ *  @return the reserved value of the VLR.
+*/
+LAS_DLL uint16_t LASVLR_GetReserved(const LASVLRH hVLR);
+
+/** Sets the reserved value of the VLR.  This should be 0 and you should not 
+ *  have to ever monkey with this value according to the spec.
+ *  @param hVLR the LASVLRH instance
+ *  @param value the value to set for the reserved value
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASVLR_SetReserved(LASVLRH hVLR, uint16_t value);
+
+/** Gets the data stream for the VLR as an array of bytes
+ *  @param hVLR the LASVLRH instance
+ *  @param data a pointer to where place the array
+ *  @param length a pointer to where to place the length of the array
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASVLR_GetData(const LASVLRH hVLR, uint8_t* data, int* length);
 
 LAS_C_END
 #endif

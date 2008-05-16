@@ -46,6 +46,7 @@
 #include <liblas/laswriter.hpp>
 #include <liblas/lasfile.hpp>
 #include <liblas/exception.hpp>
+#include <liblas/lasrecordheader.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/capi/las_config.h>
 
@@ -54,12 +55,14 @@ typedef void *LASReaderH;
 typedef void *LASPointH;
 typedef void *LASHeaderH;
 typedef void *LASGuidH;
+typedef void *LASVLRH;
 
 #include <string>
 #include <stack>
 #include <map>
 #include <cstdio>
 #include <exception>
+#include <vector>
 
 #include <iostream>
 #include <fstream>
@@ -1091,6 +1094,52 @@ LAS_DLL int LASHeader_Equal(const LASHeaderH hHeader1, const LASHeaderH hHeader2
     return (header1 == header2);
 }
 
+LAS_DLL LASGuidH LASHeader_GetGUID(const LASHeaderH hHeader) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetGUID", 0);
+    
+    liblas::guid id = ((LASHeader*) hHeader)->GetProjectId();
+    return (LASGuidH) new liblas::guid(id);
+}
+
+LAS_DLL LASVLRH LASHeader_GetVLR(const LASHeaderH hHeader, liblas::uint32_t i) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetVLR", 0);
+    
+    LASVLR vlr = ((LASHeader*) hHeader)->GetVLR(i);
+    return (LASVLRH) new LASVLR(vlr);
+}
+
+LAS_DLL LASErrorEnum LASHeader_DeleteVLR(LASHeaderH hHeader, liblas::uint32_t index) {
+    
+    VALIDATE_POINTER1(hHeader, "LASHeader_DeleteVLR", LE_Failure);
+
+    try {
+        ((LASHeader*) hHeader)->DeleteVLR(index);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_DeleteVLR");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR) {
+    
+    VALIDATE_POINTER1(hHeader, "LASHeader_AddVLR", LE_Failure);
+    VALIDATE_POINTER1(hVLR, "LASHeader_AddVLR", LE_Failure);
+
+    try {
+        ((LASHeader*) hHeader)->AddVLR(*((LASVLR*)hVLR));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_AddVLR");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
 LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader, int mode) {
     VALIDATE_POINTER1(hHeader, "LASWriter_Create", NULL); 
     
@@ -1261,12 +1310,118 @@ LAS_DLL const char * LAS_GetVersion() {
     return strdup(PACKAGE_VERSION);
 }
 
-LAS_DLL LASGuidH LASHeader_GetGUID(const LASHeaderH hHeader) {
-    VALIDATE_POINTER1(hHeader, "LASHeader_GetGUID", 0);
-    
-    liblas::guid id = ((LASHeader*) hHeader)->GetProjectId();
-    return (LASGuidH) new liblas::guid(id);
+
+
+LAS_DLL LASVLRH LASVLR_Create(void) {
+    return (LASVLRH) new LASVLR();
 }
+
+LAS_DLL void LASVLR_Destroy(LASVLRH hVLR){
+    VALIDATE_POINTER0(hVLR, "LASVLR_Destroy");
+    delete (LASVLR*)hVLR;
+    hVLR = NULL;
+    
+}
+
+LAS_DLL char* LASVLR_GetUserId(const LASVLRH hVLR) {
+    VALIDATE_POINTER1(hVLR, "LASVLR_GetUserId", 0);
+    LASVLR* vlr = (LASVLR*)hVLR;
+    return strdup(vlr->GetUserId(true).c_str());
+}
+
+LAS_DLL LASErrorEnum LASVLR_SetUserId(LASVLRH hVLR, const char* value) {
+    VALIDATE_POINTER1(hVLR, "LASVLR_SetUserId", LE_Failure); 
+
+    try {
+            ((LASVLR*) hVLR)->SetUserId(value);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASVLR_SetUserId");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL char* LASVLR_GetDescription(const LASVLRH hVLR) {
+    VALIDATE_POINTER1(hVLR, "LASVLR_GetDescription", 0);
+    LASVLR* vlr = (LASVLR*)hVLR;
+    return strdup(vlr->GetDescription(true).c_str());
+}
+
+LAS_DLL LASErrorEnum LASVLR_SetDescription(LASVLRH hVLR, const char* value) {
+    VALIDATE_POINTER1(hVLR, "LASVLR_SetDescription", LE_Failure); 
+
+    try {
+            ((LASVLR*) hVLR)->SetDescription(value);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASVLR_SetDescription");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL liblas::uint16_t LASVLR_GetRecordLength(const LASVLRH hVLR) {
+    
+    VALIDATE_POINTER1(hVLR, "LASVLR_GetRecordLength", 0);
+    
+    liblas::uint16_t value = ((LASVLR*) hVLR)->GetRecordLength();
+    return value;
+}
+LAS_DLL LASErrorEnum LASVLR_SetRecordLength(LASVLRH hVLR, liblas::uint16_t value) {
+    VALIDATE_POINTER1(hVLR, "LASVLR_SetRecordLength", LE_Failure);
+    ((LASVLR*) hVLR)->SetRecordLength(value);    
+    return LE_None;
+}
+
+LAS_DLL liblas::uint16_t LASVLR_GetRecordId(const LASVLRH hVLR) {
+    
+    VALIDATE_POINTER1(hVLR, "LASVLR_GetRecordId", 0);
+    
+    liblas::uint16_t value = ((LASVLR*) hVLR)->GetRecordId();
+    return value;
+}
+LAS_DLL LASErrorEnum LASVLR_SetRecordId(LASVLRH hVLR, liblas::uint16_t value) {
+    VALIDATE_POINTER1(hVLR, "LASVLR_SetRecordId", LE_Failure);
+    ((LASVLR*) hVLR)->SetRecordId(value);    
+    return LE_None;
+}
+
+
+LAS_DLL LASErrorEnum LASVLR_SetReserved(LASVLRH hVLR, liblas::uint16_t value) {
+    VALIDATE_POINTER1(hVLR, "LASVLR_SetReserved", LE_Failure);
+    ((LASVLR*) hVLR)->SetReserved(value);    
+    return LE_None;
+}
+
+LAS_DLL liblas::uint16_t LASVLR_GetReserved(const LASVLRH hVLR) {
+    
+    VALIDATE_POINTER1(hVLR, "LASVLR_GetReserved", 0);
+    
+    liblas::uint16_t value = ((LASVLR*) hVLR)->GetReserved();
+    return value;
+}
+
+LAS_DLL LASErrorEnum LASVLR_GetData(const LASVLRH hVLR, liblas::uint8_t* data, int* length) {
+    
+    VALIDATE_POINTER1(hVLR, "LASVLR_GetData", LE_Failure);
+
+    try {
+        std::vector<liblas::uint8_t> *d = new std::vector<liblas::uint8_t>(((LASVLR*) hVLR)->GetData());
+        *data = d->front();
+        *length = d->size();
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASVLR_GetData");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
+
 
 LAS_DLL LASGuidH LASGuid_Create() {
     liblas::guid random;
