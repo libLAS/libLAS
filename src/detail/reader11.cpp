@@ -266,7 +266,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record)
     if (m_size <= n)
         return false;
 
-    std::streamsize pos = (static_cast<std::streamsize>(n) * m_recordlength) + m_offset;
+    std::streamsize const pos = (static_cast<std::streamsize>(n) * m_recordlength) + m_offset;
 
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
@@ -291,14 +291,21 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record, double& time)
     return hasData;
 }
 
-std::istream& ReaderImpl::GetStream() {
+std::istream& ReaderImpl::GetStream()
+{
     return m_ifs;
 }
 
-bool ReaderImpl::ReadVLR(LASHeader& header) {
-    
+bool ReaderImpl::ReadVLR(LASHeader& header)
+{    
+    // TODO: To be implemented
     VLRHeader vlrh = { 0 };
     LASVLR vlr;
+
+    // TODO: To be removed, when objects are used
+    UNREFERENCED_PARAMETER(header);
+    UNREFERENCED_PARAMETER(vlrh);
+    UNREFERENCED_PARAMETER(vlr);
 
     return true;
 }

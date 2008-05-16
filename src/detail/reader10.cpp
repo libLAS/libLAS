@@ -250,6 +250,7 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
 bool ReaderImpl::ReadGeoreference(LASHeader const& header)
 {
 #ifndef HAVE_LIBGEOTIFF
+    UNREFERENCED_PARAMETER(header);
     return false;
 #else
     // TODO: Under construction

@@ -1411,7 +1411,7 @@ LAS_DLL LASErrorEnum LASVLR_GetData(const LASVLRH hVLR, liblas::uint8_t* data, i
     try {
         std::vector<liblas::uint8_t> *d = new std::vector<liblas::uint8_t>(((LASVLR*) hVLR)->GetData());
         *data = d->front();
-        *length = d->size();
+        *length = static_cast<int>(d->size());
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASVLR_GetData");
