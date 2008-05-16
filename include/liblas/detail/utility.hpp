@@ -50,6 +50,18 @@
 #include <cstring>
 #include <cassert>
 
+//
+// Private macros definition
+//
+
+#ifndef UNREFERENCED_PARAMETER
+#define UNREFERENCED_PARAMETER(param) (param)
+#endif
+
+//
+// Private utilities for internal use in libLAS
+//
+
 namespace liblas { namespace detail {
 
 struct VLRHeader
