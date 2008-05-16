@@ -575,10 +575,10 @@ int main(int argc, char *argv[])
 
     surviving_header = LASHeader_Copy(header);
 
-    LASHeader_SetPointRecordsCount(header, surviving_number_of_point_records);
-    LASHeader_SetSystemId(header, "MODIFIED");
+    LASHeader_SetPointRecordsCount(surviving_header, surviving_number_of_point_records);
+    LASHeader_SetSystemId(surviving_header, "MODIFIED");
 
-    for (i = 0; i < 5; i++) LASHeader_SetPointRecordsByReturnCount(header, i, surviving_number_of_points_by_return[i]);
+    for (i = 0; i < 5; i++) LASHeader_SetPointRecordsByReturnCount(surviving_header, i, surviving_number_of_points_by_return[i]);
 
     minx = LASPoint_GetX(surviving_point_min) * LASHeader_GetScaleX(surviving_header) + LASHeader_GetOffsetX(surviving_header);
     maxx = LASPoint_GetX(surviving_point_max) * LASHeader_GetScaleX(surviving_header) + LASHeader_GetOffsetX(surviving_header);
@@ -592,9 +592,10 @@ int main(int argc, char *argv[])
 /*  if (remove_extra_header) surviving_header.offset_to_point_data = surviving_header.header_size;
 */
 
-    fprintf(stderr, "second pass reading %d and writing %d points ...\n", LASHeader_GetPointRecordsCount(header), surviving_number_of_point_records);
+    fprintf(stderr, "second pass reading %d and writing %d points ...\n", LASHeader_GetPointRecordsCount(surviving_header), surviving_number_of_point_records);
 
     if (use_stdout) file_name_out = "stdout";
+    
     writer = LASWriter_Create(file_name_out, surviving_header, LAS_MODE_WRITE);
     if (!writer) { 
         LASError_Print("Could not open file to write");
@@ -703,6 +704,7 @@ int main(int argc, char *argv[])
         LASError_Print("Could not open file to read");
         exit(1);
     }
+
     header = LASReader_GetHeader(reader);
     if (!header) { 
         LASError_Print("Could not read header");
@@ -722,7 +724,7 @@ int main(int argc, char *argv[])
         LASReader_Destroy(reader);
         reader = NULL;
     }
-        
+    
     writer = LASWriter_Create(file_name_out, header, LAS_MODE_APPEND);
     if (!writer) {
         LASError_Print("Problem creating LASWriterH object for append");
