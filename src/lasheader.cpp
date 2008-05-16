@@ -497,9 +497,21 @@ void LASHeader::SetMin(double x, double y, double z)
 void LASHeader::AddVLR(LASVLR const& v) 
 {
     m_vlrs.push_back(v);
+    m_dataRecordLen = m_vlrs.size();
 }
-LASVLR const& LASHeader::GetVLR(int index) const {
+
+LASVLR const& LASHeader::GetVLR(uint32_t index) const {
     return m_vlrs[index];
+}
+
+void LASHeader::DeleteVLR(uint32_t index) {
+    
+    if (index >= m_vlrs.size())
+        throw std::out_of_range("index is out of range");
+        
+    m_vlrs.erase(m_vlrs.begin() + index);
+    m_dataRecordLen = m_vlrs.size();
+    
 }
 void LASHeader::Init()
 {

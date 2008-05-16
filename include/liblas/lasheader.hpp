@@ -292,7 +292,8 @@ public:
     void SetMin(double x, double y, double z);
 
     void AddVLR(LASVLR const& v);
-    LASVLR const& GetVLR(int index) const;
+    LASVLR const& GetVLR(uint32_t index) const;
+    void DeleteVLR(uint32_t index);
     
 private:
     
