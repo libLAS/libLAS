@@ -742,6 +742,21 @@ LAS_DLL double LASHeader_GetMaxZ(const LASHeaderH hHeader);
 */
 LAS_DLL LASError LASHeader_SetMax(LASHeaderH hHeader, double x, double y, double z);
 
+/** Returns the proj.4 string describing the spatial reference of the 
+ *  header if it is available
+ *  @param hHeader LASHeaderH instance
+ *  @return the proj.4 string or NULL if none is available.  The caller
+ *  owns the string.
+*/
+LAS_DLL char* LASHeader_GetProj4(LASHeaderH hHeader);
+
+/** Sets the proj4 stirng describing the spatial reference of the header.
+ *  @param hHeader LASHeaderH instance
+ *  @param value the proj4 string to set for the header
+ *  @return LASError enum
+*/
+LAS_DLL LASError LASHeader_SetProj4(LASHeaderH hHeader, const char* value);
+
 /****************************************************************************/
 /* Writer Operations                                                        */
 /****************************************************************************/

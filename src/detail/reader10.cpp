@@ -243,10 +243,9 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
     }
     // TODO: Under construction
     //       Testing reading of VLRecords with GeoKeys
-    ReadGeoreference(header);
     return true;
 }
-bool ReaderImpl::ReadGeoreference(LASHeader const& header)
+bool ReaderImpl::ReadGeoreference(LASHeader& header)
 {
 #ifndef HAVE_LIBGEOTIFF
     UNREFERENCED_PARAMETER(header);
@@ -283,16 +282,19 @@ bool ReaderImpl::ReadGeoreference(LASHeader const& header)
         }
     }
 
-    GTIF *gtif = GTIFNewSimpleTags( st );
-    GTIFDefn defn;
-    if (GTIFGetDefn(gtif, &defn)) 
-    {
-         printf( "char PROJ.4 Definition: %s\n", GTIFGetProj4Defn(&defn));
+    if (st->key_count) {
+        GTIF *gtif = GTIFNewSimpleTags( st );
+        GTIFDefn defn;
+        if (GTIFGetDefn(gtif, &defn)) 
+        {
+            header.SetProj4(std::string(GTIFGetProj4Defn(&defn)));
+        }
+        GTIFFree( gtif );
+        ST_Destroy( st );
+        return true;
+    } else {
+        return false;
     }
-    GTIFFree( gtif );
-    ST_Destroy( st );
-    
-    return true;
 #endif /* def HAVE_LIBGEOTIFF */
 }
 

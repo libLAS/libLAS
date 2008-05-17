@@ -152,6 +152,8 @@ void LASReader::Init()
     if (!ret)
         throw std::runtime_error("public vlr header block reading failure");
     
+    m_pimpl->ReadGeoreference(m_header);
+    
 }
 
 void LASReader::MakePoint(double const& time)

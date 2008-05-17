@@ -83,8 +83,8 @@ LASHeader::LASHeader(LASHeader const& other) :
     m_pointRecordsCount(other.m_pointRecordsCount),
     m_scales(other.m_scales),
     m_offsets(other.m_offsets),
-
-    m_extents(other.m_extents)
+    m_extents(other.m_extents),
+    m_proj4(other.m_proj4)
 {
     void* p = 0;
 
@@ -140,6 +140,7 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         m_scales = rhs.m_scales;
         m_offsets = rhs.m_offsets;
         m_extents = rhs.m_extents;
+        m_proj4 = rhs.m_proj4;
     }
     return *this;
 }
@@ -171,6 +172,7 @@ bool LASHeader::operator==(LASHeader const& other) const
     if (m_scales != other.m_scales) return false;
     if (m_offsets != other.m_offsets) return false;
     if (m_extents != other.m_extents) return false;
+    if (m_proj4 != other.m_proj4) return false;
     
     return true;
 }
@@ -506,11 +508,13 @@ void LASHeader::AddVLR(LASVLR const& v)
     }
 }
 
-LASVLR const& LASHeader::GetVLR(uint32_t index) const {
+LASVLR const& LASHeader::GetVLR(uint32_t index) const 
+{
     return m_vlrs[index];
 }
 
-void LASHeader::DeleteVLR(uint32_t index) {
+void LASHeader::DeleteVLR(uint32_t index) 
+{
     
     if (index >= m_vlrs.size())
         throw std::out_of_range("index is out of range");
@@ -518,6 +522,17 @@ void LASHeader::DeleteVLR(uint32_t index) {
     m_vlrs.erase(m_vlrs.begin() + index);
     m_recordsCount = m_vlrs.size();
     
+}
+
+    /// Fetch the Georeference as a proj.4 string
+std::string LASHeader::GetProj4() const 
+{
+    return m_proj4;
+}
+    
+void LASHeader::SetProj4(std::string const& v)
+{
+    m_proj4 = v;
 }
 void LASHeader::Init()
 {

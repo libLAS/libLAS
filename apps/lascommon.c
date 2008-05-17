@@ -337,12 +337,14 @@ void print_header(LASHeaderH header, const char* file_name) {
     char *pszProjectId = NULL;
     char *pszSystemId = NULL;
     char *pszSoftwareId = NULL;
+    char *pszProj4 = NULL;
 
     pszSignature = LASHeader_GetFileSignature(header);
     pszProjectId = LASHeader_GetProjectId(header);
     pszSystemId = LASHeader_GetSystemId(header);
     pszSoftwareId = LASHeader_GetSoftwareId(header);
-
+    pszProj4 = LASHeader_GetProj4(header);
+    
     fprintf(stderr, "\n---------------------------------------------------------\n");
     fprintf(stderr, "  Header Summary\n");
     fprintf(stderr, "---------------------------------------------------------\n");
@@ -421,12 +423,15 @@ void print_header(LASHeaderH header, const char* file_name) {
                     LASHeader_GetMaxX(header), 
                     LASHeader_GetMaxY(header), 
                     LASHeader_GetMaxZ(header));
+    
+    fprintf(stderr, " Spatial Reference           %s\n",
+                    pszProj4);
 
     free(pszSignature);
     free(pszProjectId);
     free(pszSystemId);
     free(pszSoftwareId);
-    
+    free(pszProj4);
 }
 
 void RepairHeader(LASHeaderH header, LASPointSummary* summary) {

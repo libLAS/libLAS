@@ -291,9 +291,20 @@ public:
     /// Set minimum values of extent of X, Y and Z coordinates.
     void SetMin(double x, double y, double z);
 
+    /// Adds a variable length record to the header
     void AddVLR(LASVLR const& v);
+    
+    /// Returns a VLR 
     LASVLR const& GetVLR(uint32_t index) const;
+
+    /// Removes a VLR from the the header
     void DeleteVLR(uint32_t index);
+    
+    /// Fetch the Georeference as a proj.4 string
+    std::string GetProj4() const;
+    
+    /// Set the Georeference as a proj.4 string
+    void SetProj4(std::string const& v);
     
 private:
     
@@ -348,6 +359,7 @@ private:
     PointOffsets m_offsets;
     PointExtents m_extents;
     std::vector<LASVLR> m_vlrs;
+    std::string m_proj4;
 };
 
 } // namespace liblas

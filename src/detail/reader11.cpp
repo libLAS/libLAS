@@ -46,6 +46,15 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lasrecordheader.hpp>
 
+
+#ifdef HAVE_LIBGEOTIFF
+#include <geotiff.h>
+#include <geo_simpletags.h>
+#include "geo_normalize.h"
+#include "geo_simpletags.h"
+#include "geovalues.h"
+#endif /* HAVE_LIBGEOTIFF */
+
 // std
 #include <fstream>
 #include <cstdlib> // std::size_t
@@ -325,6 +334,59 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
     }
 
     return true;
+}
+
+bool ReaderImpl::ReadGeoreference(LASHeader& header)
+{
+#ifndef HAVE_LIBGEOTIFF
+    UNREFERENCED_PARAMETER(header);
+    return false;
+#else
+    // TODO: Under construction
+
+    std::string const uid("LASF_Projection");
+    ST_TIFF *st = ST_Create();
+
+    for (uint16_t i = 0; i < header.GetRecordsCount(); ++i)
+    {
+        LASVLR record = header.GetVLR(i);
+        std::vector<uint8_t> data = record.GetData();
+        if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
+        {
+            int16_t count = data.size()/sizeof(int16_t);
+            ST_SetKey( st, record.GetRecordId(), count, STT_SHORT, 
+                       &(data[0]) );
+        }
+
+        if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
+        {
+            int count = data.size() / sizeof(double);
+            ST_SetKey( st, record.GetRecordId(), count, STT_DOUBLE, 
+                       &(data[0]) );
+        }        
+
+        if (uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId())
+        {
+            uint8_t count = data.size()/sizeof(uint8_t);
+            ST_SetKey( st, record.GetRecordId(), count, STT_ASCII, 
+                       &(data[0]) );
+        }
+    }
+
+    if (st->key_count) {
+        GTIF *gtif = GTIFNewSimpleTags( st );
+        GTIFDefn defn;
+        if (GTIFGetDefn(gtif, &defn)) 
+        {
+            header.SetProj4(std::string(GTIFGetProj4Defn(&defn)));
+        }
+        GTIFFree( gtif );
+        ST_Destroy( st );
+        return true;
+    } else {
+        return false;
+    }
+#endif /* def HAVE_LIBGEOTIFF */
 }
 
 }}} // namespace liblas::detail::v11
