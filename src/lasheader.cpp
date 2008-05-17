@@ -502,7 +502,7 @@ void LASHeader::AddVLR(LASVLR const& v)
     if (m_vlrs.size() > m_recordsCount ) {
         m_recordsCount = m_vlrs.size();
         size = GetDataOffset() + 2 + 16 + 2 + 2 + 32 + v.GetData().size()*sizeof(uint8_t);
-        SetDataOffset(size);
+        SetDataOffset(size + GetDataOffset());
     }
 }
 
