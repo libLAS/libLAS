@@ -379,6 +379,13 @@ las.LASHeader_SetMax.restype = ctypes.c_int
 las.LASHeader_SetMax.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double, ctypes.c_double]
 las.LASHeader_SetMax.errcheck = check_return
 
+las.LASHeader_GetProj4.argtypes = [ctypes.c_void_p]
+las.LASHeader_GetProj4.errcheck = check_value_free
+las.LASHeader_SetProj4.restype = ctypes.c_int
+las.LASHeader_SetProj4.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+las.LASHeader_SetProj4.errcheck = check_return
+
+
 las.LASWriter_Create.restype = ctypes.c_void_p
 las.LASWriter_Create.argtypes = [ctypes.c_char_p, ctypes.c_void_p, ctypes.c_int]
 las.LASWriter_Create.errcheck = check_void

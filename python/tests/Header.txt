@@ -80,3 +80,9 @@
   
   >>> h.header_size
   227
+  
+  >>> h.proj4
+  ''
+  >>> h.proj4 = '+proj=utm +zone=17 +ellps=WGS84 +units=m'
+  >>> h.proj4
+  '+proj=utm +zone=17 +ellps=WGS84 +units=m'
