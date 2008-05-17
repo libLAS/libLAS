@@ -385,6 +385,15 @@ las.LASHeader_SetProj4.restype = ctypes.c_int
 las.LASHeader_SetProj4.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 las.LASHeader_SetProj4.errcheck = check_return
 
+las.LASHeader_GetVLR.argtypes = [ctypes.c_void_p, ctypes.c_int]
+las.LASHeader_GetVLR.errcheck = check_void
+las.LASHeader_GetVLR.restype = ctypes.c_void_p
+
+las.LASHeader_DeleteVLR.argtypes = [ctypes.c_void_p, ctypes.c_int]
+las.LASHeader_DeleteVLR.errcheck = check_return
+
+las.LASHeader_AddVLR.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASHeader_AddVLR.errcheck = check_return
 
 las.LASWriter_Create.restype = ctypes.c_void_p
 las.LASWriter_Create.argtypes = [ctypes.c_char_p, ctypes.c_void_p, ctypes.c_int]
@@ -424,4 +433,43 @@ las.LASHeader_GetGUID.restype = ctypes.c_void_p
 las.LASHeader_SetGUID.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASHeader_SetGUID.errcheck = check_value
 las.LASHeader_SetGUID.restype = ctypes.c_int
+
+las.LASVLR_Create.errcheck = check_void
+las.LASVLR_Create.restype = ctypes.c_void_p
+
+las.LASVLR_Destroy.argtypes = [ctypes.c_void_p]
+las.LASVLR_Destroy.errcheck = check_void_done
+
+las.LASVLR_GetUserId.argtypes = [ctypes.c_void_p]
+las.LASVLR_GetUserId.errcheck = check_value_free
+las.LASVLR_SetUserId.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+las.LASVLR_SetUserId.errcheck = check_return
+las.LASVLR_SetUserId.restype = ctypes.c_int
+
+las.LASVLR_GetDescription.argtypes = [ctypes.c_void_p]
+las.LASVLR_GetDescription.errcheck = check_value_free
+las.LASVLR_SetDescription.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+las.LASVLR_SetDescription.errcheck = check_return
+las.LASVLR_SetDescription.restype = ctypes.c_int
+
+las.LASVLR_GetRecordLength.argtypes = [ctypes.c_void_p]
+las.LASVLR_GetRecordLength.errcheck = check_value
+las.LASVLR_GetRecordLength.restype = ctypes.c_ushort
+las.LASVLR_SetRecordLength.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
+las.LASVLR_SetRecordLength.errcheck = check_return
+las.LASVLR_SetRecordLength.restype = ctypes.c_int
+
+las.LASVLR_GetRecordId.argtypes = [ctypes.c_void_p]
+las.LASVLR_GetRecordId.errcheck = check_value
+las.LASVLR_GetRecordId.restype = ctypes.c_ushort
+las.LASVLR_SetRecordId.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
+las.LASVLR_SetRecordId.errcheck = check_return
+las.LASVLR_SetRecordId.restype = ctypes.c_int
+
+las.LASVLR_GetReserved.argtypes = [ctypes.c_void_p]
+las.LASVLR_GetReserved.errcheck = check_value
+las.LASVLR_GetReserved.restype = ctypes.c_ushort
+las.LASVLR_SetReserved.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
+las.LASVLR_SetReserved.errcheck = check_return
+las.LASVLR_SetReserved.restype = ctypes.c_int
 
