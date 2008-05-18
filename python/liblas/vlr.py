@@ -42,27 +42,44 @@
  """
 import core
 
-class GUID(object):
-    def __init__(self, key=None, handle=None):
-        self.handle = None
+class VLR(object):
+    def __init__(self, owned=True, handle=None):
         if handle:
             self.handle = handle
         else:
-            if not key:
-                self.handle = core.las.LASGuid_Create()
-            else:
-                self.handle = core.las.LASGuid_CreateFromString(key)
+            self.handle = core.las.LASVLR_Create()
+        self.owned = owned
     def __del__(self):
-        if self.handle:
-            core.las.LASGuid_Destroy(self.handle)
+        if self.owned:
+            if self.handle and core:
+                core.las.LASVLR_Destroy(self.handle)
     
-    def __str__(self):
-        return core.las.LASGuid_AsString(self.handle)
-    
-    def __eq__(self, other):
-        if isinstance(other, GUID):
-            return bool(core.las.LASGuid_Equals(self.handle, other.handle))
-        raise core.LASException("GUID can only be compared to other GUIDs, not %s" % type(other))
-    
-    def __repr__(self):
-        return self.__str__()
+    def get_userid(self):
+        return core.las.LASVLR_GetUserId(self.handle)
+    def set_userid(self, value):
+        return core.las.LASVLR_SetUserId(self.handle, value)
+    userid = property(get_userid, set_userid)
+
+    def get_description(self):
+        return core.las.LASVLR_GetDescription(self.handle)
+    def set_description(self, value):
+        return core.las.LASVLR_SetDescription(self.handle, value)
+    description = property(get_description, set_description)
+
+    def get_recordlength(self):
+        return core.las.LASVLR_GetRecordLength(self.handle)
+    def set_recordlength(self, value):
+        return core.las.LASVLR_SetRecordLength(self.handle, value)
+    recordlength = property(get_recordlength, set_recordlength)
+
+    def get_recordid(self):
+        return core.las.LASVLR_GetRecordId(self.handle)
+    def set_recordid(self, value):
+        return core.las.LASVLR_SetRecordId(self.handle, value)
+    recordid = property(get_recordid, set_recordid)
+
+    def get_reserved(self):
+        return core.las.LASVLR_GetReserved(self.handle)
+    def set_reserved(self, value):
+        return core.las.LASVLR_SetReserved(self.handle, value)
+    reserved = property(get_reserved, set_reserved)

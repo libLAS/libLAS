@@ -1,0 +1,20 @@
+  >>> from liblas import vlr
+  >>> v = vlr.VLR()
+  >>> v.reserved
+  0
+  >>> v.recordid
+  0
+  >>> v.recordid = 2
+  >>> v.recordid
+  2
+  >>> v.userid
+  ''
+  >>> v.userid = 'liblas.org'
+  >>> v.userid
+  'liblas.org'
+  
+  >>> v.description
+  ''
+  >>> v.description = 'libLAS'
+  >>> v.description
+  'libLAS'
