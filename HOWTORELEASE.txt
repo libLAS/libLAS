@@ -13,7 +13,7 @@ General Notes
 ------------------------------------------------------------------------------
 
 The libLAS library is very conservative with regards to API linkages.  
-Specifically, major versions (1.0, 2.0, ..., X.0) of the library should be 
+    Specifically, major versions (1.0, 2.0, ..., X.0) of the library should be 
 released if the C API changes in any significant way, especially if you are 
 removing or changing API functions.  It is desirable that minor versions 
 (1.1, 1.2, ..., 1.X) of the library are API compatible for the C++ APIs, 
@@ -27,10 +27,70 @@ Release Process
   - nmake.opt
   - include/liblas/capi/las_config.h
 
-2) 
-..............................................................................
+2) Update README to include any relevant info about the release that 
+   might have changed.
 
+3) Build Windows version
 
+  - Issue nmake and nmake install commands
+  
+  ::
+      
+      nmake /f makefile.vc clean
+      nmake /f makefile.vc
+      nmake /f makefile.vc install
 
+  - Build Python bindings for Python 2.4 and Python 2.5 
+  
+  ::
+      
+      python setup.py bdist_wininst
+      python setup.py bdist_egg
+ 
+  - Upload Python bindings to PyPI
+  
+  ::
+      
+      # ensure a .pypirc file exists here with login info
+      set HOME=C:\Docume~1\hobu.FIRE-WINDOWS
+      c:\python24\python.exe setup.py sdist upload
+      c:\python24\python.exe setup.py bdist_wininst upload
+      c:\python24\python.exe setup.py bdist_egg upload
+      c:\python25\python.exe setup.py bdist_egg upload
+      
+  - Create a zip file from the .\bin directory.  This will contain the 
+    utilities and relevant DLLs.  The Python bindings are packaged with their 
+    own copies of the DLLs.  I usually call this file liblas$(VERSION).zip.
+    
 
-.. _`LIDAR`: http://en.wikipedia.org/wiki/LIDAR
+4) Make the source distribution
+
+  ::
+      
+      make dist
+
+5) Only bz2 files can be uploaded to trac, so gunzip the dist file and 
+   recompress it as bz2.
+
+       
+6) Generate MD5 sums 
+
+  ::
+      
+      md5 las-0.9.7.tar.bz2
+      md5 liblas0.9.7.zip
+
+6) Create a new release page on http://liblas.org/wiki/Releases
+
+7) Upload windows and source package as attachments to the new release page.
+
+8) Tag the release
+
+  ::
+      
+      svn cp http://liblas.org/svn/trunk http://liblas.org/svn/tags/0.9.7
+
+9) Write the release notes.  Place a copy of the release notes on the release 
+   page you created as well as send an email to liblas-devel announcing the 
+   new release.
+
