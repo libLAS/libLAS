@@ -3,11 +3,15 @@ LAS_LIB = liblas.lib
 LAS_DLL = liblas$(PACKAGE_VERSION).dll
 LAS_LIB_DLL = liblas_i.lib
 
-INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
+GEOTIFF_HOME=C:\cvs\buildkit\geotiff\libgeotiff
+GEOTIFF_LIB = $(GEOTIFF_HOME)\geotiff_i.lib
+
+INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi -I$(GEOTIFF_HOME)
 
 BUILD_DEBUG = NO
 
 LAS_HOME=C:\cvs\liblas\trunk\
+
 
 
 BINDIR=$(LAS_HOME)\bin
@@ -27,7 +31,7 @@ LAS_LIB_DLL = liblas_i.lib
 
 
 
-CFLAGS= $(OPTFLAGS) /DPACKAGE_VERSION=\"$(PACKAGE_VERSION)\"  $(INCLUDES) 
+CFLAGS= $(OPTFLAGS) /DPACKAGE_VERSION=\"$(PACKAGE_VERSION)\" /DHAVE_LIBGEOTIFF=1 $(INCLUDES) 
 
 .c.obj:	
 	$(CC) $(CFLAGS) /c $*.c /Fo$*.obj
