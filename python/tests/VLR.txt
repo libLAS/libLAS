@@ -18,3 +18,20 @@
   >>> v.description = 'libLAS'
   >>> v.description
   'libLAS'
+  
+  >>> from liblas import file
+  >>> f = file.File('../test/data/srs.las')
+  >>> h = f.header
+  >>> h.records_count
+  3L
+  >>> h.proj4
+  '+proj=utm +zone=17 +ellps=WGS84 +units=m '
+  >>> v = h.GetVLR(0)
+  >>> v.recordid
+  34735
+  >>> v.userid
+  'LASF_Projection'
+  
+  >>> data = v.data
+  >>> len(data)
+

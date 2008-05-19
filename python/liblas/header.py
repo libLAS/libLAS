@@ -351,3 +351,8 @@ class Header(object):
     def set_proj4(self, value):
         return core.las.LASHeader_SetProj4(self.handle, value)
     proj4 = property(get_proj4, set_proj4)
+    
+    def GetVLR(self, value):
+        return vlr.VLR(handle=core.las.LASHeader_GetVLR(self.handle, value))
+
+
