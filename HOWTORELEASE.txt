@@ -12,8 +12,8 @@ This document describes the process for releasing a new version of libLAS.
 General Notes
 ------------------------------------------------------------------------------
 
-The libLAS library is very conservative with regards to API linkages.  
-    Specifically, major versions (1.0, 2.0, ..., X.0) of the library should be 
+The libLAS library is very conservative with regards to API linkages. 
+Specifically, major versions (1.0, 2.0, ..., X.0) of the library should be 
 released if the C API changes in any significant way, especially if you are 
 removing or changing API functions.  It is desirable that minor versions 
 (1.1, 1.2, ..., 1.X) of the library are API compatible for the C++ APIs, 
