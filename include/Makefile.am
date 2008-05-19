@@ -1,6 +1,7 @@
 lasdir = $(includedir)/liblas
 
 las_HEADERS =		liblas/cstdint.hpp \
+                    liblas/exception.hpp \
 					    liblas/guid.hpp \
 					    liblas/iterator.hpp \
 					    liblas/laserror.hpp \
