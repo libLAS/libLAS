@@ -11,6 +11,7 @@ LAS_OBJS	=	laswriter.obj \
                 laspoint.obj \
                 lasheader.obj \
                 lasfile.obj \
+                lasrecordheader.obj \
                 detail\reader.obj \
                 detail\reader10.obj \
                 detail\reader11.obj \
@@ -25,7 +26,7 @@ all: default
 
 $(LAS_LIB):	$(LAS_OBJS)
     if exist $(LAS_LIB) del $(LAS_LIB)
-	lib /nologo /out:$(LAS_LIB) $(LAS_OBJS)
+	lib /nologo /out:$(LAS_LIB) $(LAS_OBJS) $(GEOTIFF_LIB)
 	
 $(LAS_DLL):	$(LAS_LIB)
 	link /dll  \
