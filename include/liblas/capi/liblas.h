@@ -757,6 +757,28 @@ LAS_DLL char* LASHeader_GetProj4(LASHeaderH hHeader);
 */
 LAS_DLL LASError LASHeader_SetProj4(LASHeaderH hHeader, const char* value);
 
+/** Returns the VLR record for the given index.  Use LASHeader_GetRecordsCount to 
+ *  determine the number of VLR records available on the header.
+ *  @param hHeader the LASHeaderH instance
+ *  @param i the index starting from 0 of the VLR to fetch
+ *  @return LASVLRH instance that models the Variable Length Record
+*/
+LAS_DLL LASVLRH LASHeader_GetVLR(const LASHeaderH hHeader, uint32_t i);
+
+/** Deletes a VLR record from the header for the given index.
+ *  @param hHeader the LASHeaderH instance
+ *  @param index the index starting from 0 of the VLR to delete
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASHeader_DeleteVLR(LASHeaderH hHeader, uint32_t index);
+
+/** Adds a VLR record to the header. 
+ *  @param hHeader the LASHeaderH instance
+ *  @param hVLR the VLR to add to the header
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR);
+
 /****************************************************************************/
 /* Writer Operations                                                        */
 /****************************************************************************/
@@ -841,27 +863,9 @@ LAS_DLL int LASGuid_Equals(LASGuidH hId1, LASGuidH hId2);
 */
 LAS_DLL char* LASGuid_AsString(LASGuidH hId);
 
-/** Returns the VLR record for the given index.  Use LASHeader_GetRecordsCount to 
- *  determine the number of VLR records available on the header.
- *  @param hHeader the LASHeaderH instance
- *  @param i the index starting from 0 of the VLR to fetch
- *  @return LASVLRH instance that models the Variable Length Record
-*/
-LAS_DLL LASVLRH LASHeader_GetVLR(const LASHeaderH hHeader, uint32_t i);
-
-/** Deletes a VLR record from the header for the given index.
- *  @param hHeader the LASHeaderH instance
- *  @param index the index starting from 0 of the VLR to delete
- *  @return LASErrorEnum
-*/
-LAS_DLL LASError LASHeader_DeleteVLR(LASHeaderH hHeader, uint32_t index);
-
-/** Adds a VLR record to the header. 
- *  @param hHeader the LASHeaderH instance
- *  @param hVLR the VLR to add to the header
- *  @return LASErrorEnum
-*/
-LAS_DLL LASError LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR);
+/****************************************************************************/
+/* VLR Operations                                                           */
+/****************************************************************************/
 
 /** Creates a new VLR record
  *  @return a new VLR record
@@ -946,7 +950,7 @@ LAS_DLL LASError LASVLR_SetReserved(LASVLRH hVLR, uint16_t value);
  *  @param length a pointer to where to place the length of the array
  *  @return LASErrorEnum
 */
-LAS_DLL LASError LASVLR_GetData(const LASVLRH hVLR, uint8_t* data, int* length);
+LAS_DLL LASError LASVLR_GetData(const LASVLRH hVLR, uint8_t** data, int* length);
 
 LAS_C_END
 #endif
