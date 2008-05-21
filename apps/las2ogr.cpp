@@ -19,8 +19,6 @@
 #include <liblas/cstdint.hpp>
 // ogr
 #include <ogr_api.h>
-// #include <ogrsf_frmts.h>
-// #include <ogr_p.h>
 //std
 #include <cassert>
 #include <fstream>
@@ -29,70 +27,55 @@
 #include <string>
 
 template <typename T>
-class raii_wrapper
+class ogr_wrapper
 {
-    typedef void(*deleter_type)(T* p);
+    typedef void(*deleter_type)(T p);
 
 public:
 
-    explicit raii_wrapper(T* p)
-        : p_(p), del_(0)
-    {}
-
-    raii_wrapper(T* p, deleter_type d)
+    ogr_wrapper(T p, deleter_type d)
         : p_(p), del_(d)
     {}
 
-    ~raii_wrapper()
+    ~ogr_wrapper()
     {
         do_delete(p_);
     }
 
-    void reset(T* p)
+    void reset(T p)
     {
         do_delete(p_);
         p_= p;
     }
 
-    T* get() const
+    operator T()
+    {
+        return get();
+    }
+
+    T get() const
     {
         return p_;
     }
 
-    T* operator->() const
-    {
-        return p_;
-    }
-
-    T& operator*() const
-    {
-        return (*p_);
-    }
-
-    void swap(raii_wrapper& other)
+    void swap(ogr_wrapper& other)
     {
         std::swap(p_, other.p_);
     }
 
 private:
 
-    raii_wrapper(raii_wrapper const& other);
-    raii_wrapper& operator=(raii_wrapper const& rhs);
+    ogr_wrapper(ogr_wrapper const& other);
+    ogr_wrapper& operator=(ogr_wrapper const& rhs);
 
-    void do_delete(T* p)
+    void do_delete(T p)
     {
-        if (del_)
-        {
-            del_(p);
-        }
-        else
-        {
-            delete p;
-        }
+        assert(del_);
+        del_(p);
     }
 
     deleter_type del_;
-    T* p_;
+    T p_;
 };
 
 OGRFieldDefnH create_field(const char* name, OGRFieldType type, int width, int precision ) {
@@ -103,17 +86,16 @@ OGRFieldDefnH create_field(const char* name, OGRFieldType type, int width, int p
     OGR_Fld_SetPrecision(fld, precision);
 
     return fld;
-    
 }
+
 void create_layer_def(OGRLayerH lyr)
 {
-    OGRErr err;
+    assert(0 != lyr);
+
     std::string fldname("return_num");
-    
-    OGRFieldDefnH fld;
-    
-    fld = create_field("return_num", OFTInteger, 10, 0);
-    err = OGR_L_CreateField(lyr, fld, 0);
+
+    OGRFieldDefnH fld = create_field("return_num", OFTInteger, 10, 0);
+    OGRErr err = OGR_L_CreateField(lyr, fld, 0);
     if (OGRERR_NONE != err)
     {
         throw std::runtime_error("return_num field creation failed");
@@ -165,7 +147,6 @@ void create_layer_def(OGRLayerH lyr)
     }
     
     OGR_Fld_Destroy(fld);
-
 }
 
 void report_ogr_formats()
@@ -200,8 +181,8 @@ int main(int argc, char* argv[])
     try
     {
         // TODO: input params should come from argv
-        std::string lasname("d:\\data\\lidar\\LDR030828_213450_0.LAS");
-        //std::string lasname("D:\\data\\lidar\\gilmer\\000001.las");
+        //std::string lasname("d:\\data\\lidar\\LDR030828_213450_0.LAS");
+        std::string lasname("D:\\data\\lidar\\gilmer\\000001.las");
         std::string ogrname("cloud.shp");
 
         //
@@ -228,16 +209,15 @@ int main(int argc, char* argv[])
                   << "\n - layer: " << lyrname
                   << std::endl;
         
-        OGRSFDriver* drv = 0;
-        drv = OGRSFDriverRegistrar::GetRegistrar()->GetDriverByName(drvname.c_str());
+        OGRSFDriverH drv = OGRGetDriverByName(drvname.c_str());
         if (0 == drv)
         {
             throw std::runtime_error(drvname + " driver not available");
         }
-
-        raii_wrapper<OGRDataSource> ds(drv->CreateDataSource(ogrname.c_str()),
-                                       OGRDataSource::DestroyDataSource);
-        if (0 == ds.get())
+ 
+        ogr_wrapper<OGRDataSourceH> ds(OGR_Dr_CreateDataSource(drv, ogrname.c_str(), 0),
+                                       OGR_DS_Destroy);
+        if (0 == ds)
         {
             throw std::runtime_error(ogrname + " datasource  cration failed");
         }
@@ -250,31 +230,36 @@ int main(int argc, char* argv[])
         }
        
         // Prepare layer schema
-        create_layer_def(*lyr);
+        create_layer_def(lyr);
 
         //
         // Translation of points cloud to features set
         //
         std::cout << "Translating " << reader.GetHeader().GetPointRecordsCount() << " points...";
 
-        raii_wrapper<OGRFeature> feat(OGRFeature::CreateFeature(lyr->GetLayerDefn()),
-                                      OGRFeature::DestroyFeature);
+        ogr_wrapper<OGRFeatureH> feat(OGR_F_Create(OGR_L_GetLayerDefn(lyr)),
+                                      OGR_F_Destroy);
 
         while (reader.ReadNextPoint())
         {
             liblas::LASPoint const& p = reader.GetPoint();   
 
-            feat->SetField(0, p.GetReturnNumber());
-            feat->SetField(1, p.GetScanAngleRank());
-            feat->SetField(2, p.GetIntensity());
-            feat->SetField(3, p.GetClassification());
-            feat->SetField(4, p.GetNumberOfReturns());
-            feat->SetField(5, p.GetTime());
+            OGR_F_SetFieldInteger(feat, 0, p.GetReturnNumber());
+            OGR_F_SetFieldInteger(feat, 1, p.GetScanAngleRank());
+            OGR_F_SetFieldInteger(feat, 2, p.GetIntensity());
+            OGR_F_SetFieldInteger(feat, 3, p.GetClassification());
+            OGR_F_SetFieldInteger(feat, 4, p.GetNumberOfReturns());
+            OGR_F_SetFieldDouble(feat, 5, p.GetTime());
 
-            OGRPoint gp(p.GetX(), p.GetY(), p.GetZ());
-            feat->SetGeometry(&gp); 
+            ogr_wrapper<OGRGeometryH> geom(OGR_G_CreateGeometry(wkbPoint25D),
+                                           OGR_G_DestroyGeometry);
+            OGR_G_SetPoint(geom, 0, p.GetX(), p.GetY(), p.GetZ());
+            if (OGRERR_NONE != OGR_F_SetGeometry(feat, geom))
+            {
+                throw std::runtime_error("geometry creation failed");
+            }
 
-            if (OGRERR_NONE != lyr->CreateFeature(feat.get()))
+            if (OGRERR_NONE != OGR_L_CreateFeature(lyr, feat))
             {
                 throw std::runtime_error("feature creation failed");
             }

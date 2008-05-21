@@ -179,10 +179,6 @@
 				RelativePath="..\..\..\apps\las2ogr.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\apps\lascommon.c"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>
