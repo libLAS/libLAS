@@ -275,7 +275,6 @@ inline void read_n<PointRecord>(PointRecord& dest, std::istream& src, std::strea
     if (!src)
         throw std::runtime_error("detail::liblas::read_n input stream is not readable");
 
-    // Read bytes into buffer
     src.read(detail::as_buffer(dest), num);
     check_stream_state(src);
 
@@ -292,6 +291,22 @@ inline void read_n<PointRecord>(PointRecord& dest, std::istream& src, std::strea
 }
 
 template <>
+inline void read_n<VLRHeader>(VLRHeader& dest, std::istream& src, std::streamsize const& num)
+{
+    // TODO: Review and redesign errors handling logic if necessary
+    if (!src)
+        throw std::runtime_error("detail::liblas::read_n input stream is not readable");
+
+    src.read(detail::as_buffer(dest), num);
+    check_stream_state(src);
+
+    // Fix little-endian
+    LIBLAS_SWAP_BYTES(dest.reserved);
+    LIBLAS_SWAP_BYTES(dest.recordId);
+    LIBLAS_SWAP_BYTES(dest.recordLengthAfterHeader);
+}
+
+template <>
 inline void read_n<std::string>(std::string& dest, std::istream& src, std::streamsize const& num)
 {
     assert(dest.max_size() >= static_cast<std::string::size_type>(num));
@@ -300,7 +315,7 @@ inline void read_n<std::string>(std::string& dest, std::istream& src, std::strea
     if (!src)
         throw std::runtime_error("detail::liblas::read_n input stream is not readable");
 
-    // Read bytes into buffer
+    // Read bytes into temporary buffer then assign as string
     char* buf = new char[num];
     src.read(buf, num);
     dest.assign(buf, num);
@@ -342,6 +357,22 @@ inline void write_n<PointRecord>(std::ostream& dest, PointRecord const& src, std
     LIBLAS_SWAP_BYTES(tmp.user_data);
     LIBLAS_SWAP_BYTES(tmp.point_source_id);
 
+    dest.write(detail::as_bytes(tmp), num);
+    check_stream_state(dest);
+}
+
+template <>
+inline void write_n<VLRHeader>(std::ostream& dest, VLRHeader const& src, std::streamsize const& num)
+{
+    if (!dest)
+        throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
+
+    // Fix little-endian
+    VLRHeader& tmp = const_cast<VLRHeader&>(src);
+    LIBLAS_SWAP_BYTES(tmp.reserved);
+    LIBLAS_SWAP_BYTES(tmp.recordId);
+    LIBLAS_SWAP_BYTES(tmp.recordLengthAfterHeader);
+    
     dest.write(detail::as_bytes(tmp), num);
     check_stream_state(dest);
 }
