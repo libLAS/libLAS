@@ -13,15 +13,24 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lasinfo", "lasinfo\lasinfo.
 		{EC92BE01-CFA3-46C6-998E-810484CC5860} = {EC92BE01-CFA3-46C6-998E-810484CC5860}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "las2ogr", "las2ogr\las2ogr.vcproj", "{0CE46FF7-F5B6-4EE2-B8EE-37B5555CAC62}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EC92BE01-CFA3-46C6-998E-810484CC5860} = {EC92BE01-CFA3-46C6-998E-810484CC5860}
-		{208417AE-D08E-4938-AC26-A16ABD55AA5B} = {208417AE-D08E-4938-AC26-A16ABD55AA5B}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblas_c_dll", "liblas_c_dll\liblas_c_dll.vcproj", "{EC92BE01-CFA3-46C6-998E-810484CC5860}"
 	ProjectSection(ProjectDependencies) = postProject
 		{208417AE-D08E-4938-AC26-A16ABD55AA5B} = {208417AE-D08E-4938-AC26-A16ABD55AA5B}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{711FD426-D0B5-4176-BE24-34560B4E701E}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\AUTHORS = ..\..\AUTHORS
+		..\..\ChangeLog = ..\..\ChangeLog
+		..\..\CMakeLists.txt = ..\..\CMakeLists.txt
+		..\..\COPYING = ..\..\COPYING
+		..\..\HOWTORELEASE.txt = ..\..\HOWTORELEASE.txt
+		..\..\INSTALL = ..\..\INSTALL
+		..\..\LICENSE.txt = ..\..\LICENSE.txt
+		..\..\makefile.vc = ..\..\makefile.vc
+		..\..\NEWS = ..\..\NEWS
+		..\..\nmake.opt = ..\..\nmake.opt
+		..\..\README = ..\..\README
 	EndProjectSection
 EndProject
 Global
@@ -42,10 +51,6 @@ Global
 		{83AF175F-01A1-44ED-9DDA-F716A4C6FD21}.Debug|Win32.Build.0 = Debug|Win32
 		{83AF175F-01A1-44ED-9DDA-F716A4C6FD21}.Release|Win32.ActiveCfg = Release|Win32
 		{83AF175F-01A1-44ED-9DDA-F716A4C6FD21}.Release|Win32.Build.0 = Release|Win32
-		{0CE46FF7-F5B6-4EE2-B8EE-37B5555CAC62}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0CE46FF7-F5B6-4EE2-B8EE-37B5555CAC62}.Debug|Win32.Build.0 = Debug|Win32
-		{0CE46FF7-F5B6-4EE2-B8EE-37B5555CAC62}.Release|Win32.ActiveCfg = Release|Win32
-		{0CE46FF7-F5B6-4EE2-B8EE-37B5555CAC62}.Release|Win32.Build.0 = Release|Win32
 		{EC92BE01-CFA3-46C6-998E-810484CC5860}.Debug|Win32.ActiveCfg = Debug|Win32
 		{EC92BE01-CFA3-46C6-998E-810484CC5860}.Debug|Win32.Build.0 = Debug|Win32
 		{EC92BE01-CFA3-46C6-998E-810484CC5860}.Release|Win32.ActiveCfg = Release|Win32
