@@ -468,7 +468,7 @@ int main(int argc, char *argv[])
         }
         
         i = 0;
-        while (TRUE)
+        for (;;)
         {
             switch (parse_string[i])
             {
