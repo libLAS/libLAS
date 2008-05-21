@@ -13,5 +13,6 @@
 	<UserMacro
 		Name="LIBLAS_DIR"
 		Value="..\..\..\"
+		PerformEnvironmentSet="true"
 	/>
 </VisualStudioPropertySheet>

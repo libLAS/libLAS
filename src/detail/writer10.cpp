@@ -56,7 +56,6 @@ namespace liblas { namespace detail { namespace v10 {
 WriterImpl::WriterImpl(std::ostream& ofs) :
     Base(), m_ofs(ofs), m_pointCount(0)
 {
-
 }
 
 std::size_t WriterImpl::GetVersion() const
@@ -210,7 +209,6 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     // If we don't have any points,  we're going to leave it where it is.
     if (m_pointCount != 0)
         m_ofs.seekp(0, std::ios::end);
- 
 }
 
 void WriterImpl::UpdateHeader(LASHeader const& header)
@@ -223,18 +221,15 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
 
         detail::write_n(m_ofs, m_pointCount , sizeof(m_pointCount));
     }
-
 }
 
 void WriterImpl::WritePointRecord(detail::PointRecord const& record)
 {
-
     // TODO: Static assert would be better
     assert(20 == sizeof(record));
     detail::write_n(m_ofs, record, sizeof(record));
 
     ++m_pointCount;
-
 }
 
 void WriterImpl::WritePointRecord(detail::PointRecord const& record, double const& time)
@@ -250,24 +245,22 @@ void WriterImpl::WritePointRecord(detail::PointRecord const& record, double cons
 
 void WriterImpl::WriteVLR(LASHeader const& header) 
 {
-
     m_ofs.seekp(header.GetHeaderSize(), std::ios::beg);
- 
+
     for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
     {
-         
         LASVLR vlr = header.GetVLR(i);
-        
+
         detail::write_n(m_ofs, vlr.GetReserved(), sizeof(uint16_t));
         detail::write_n(m_ofs, vlr.GetUserId(true).c_str(), 16);
         detail::write_n(m_ofs, vlr.GetRecordId(), sizeof(uint16_t));
         detail::write_n(m_ofs, vlr.GetRecordLength(), sizeof(uint16_t));
         detail::write_n(m_ofs, vlr.GetDescription(true).c_str(), 32);
-        std::vector<uint8_t> data = vlr.GetData();
+        std::vector<uint8_t> const& data = vlr.GetData();
         detail::write_n(m_ofs, data.front(), data.size());
     }
-
 }
+
 std::ostream& WriterImpl::GetStream()
 {
     return m_ofs;

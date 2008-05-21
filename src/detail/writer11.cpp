@@ -251,13 +251,10 @@ void WriterImpl::WritePointRecord(detail::PointRecord const& record, double cons
 
 void WriterImpl::WriteVLR(LASHeader const& header) 
 {
-    printf("Writing VLR records in writer11.cpp... \n");
-
     m_ofs.seekp(header.GetHeaderSize(), std::ios::beg);
  
     for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
     {
-         
         LASVLR vlr = header.GetVLR(i);
         
         detail::write_n(m_ofs, vlr.GetReserved(), sizeof(uint16_t));
@@ -265,10 +262,9 @@ void WriterImpl::WriteVLR(LASHeader const& header)
         detail::write_n(m_ofs, vlr.GetRecordId(), sizeof(uint16_t));
         detail::write_n(m_ofs, vlr.GetRecordLength(), sizeof(uint16_t));
         detail::write_n(m_ofs, vlr.GetDescription(true).c_str(), 32);
-        std::vector<uint8_t> data = vlr.GetData();
+        std::vector<uint8_t> const& data = vlr.GetData();
         detail::write_n(m_ofs, data.front(), data.size());
     }
-
 }
 
 std::ostream& WriterImpl::GetStream()

@@ -258,7 +258,6 @@ void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
     if (!dest)
         throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
 
-
     dest.write(detail::as_bytes(src), num);
 
     // Test stream state bits

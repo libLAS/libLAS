@@ -20,6 +20,11 @@ namespace tut
         laserror_data()
             : code(101), msg("Test message"), method("foo")
         {}
+
+        private:
+            // non-copyable type
+            laserror_data(laserror_data const&);
+            laserror_data& operator=(laserror_data const&);
     };
 
     typedef test_group<laserror_data> tg;
