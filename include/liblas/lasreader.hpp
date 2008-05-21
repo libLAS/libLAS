@@ -76,7 +76,7 @@ public:
     LASPoint const& operator[](std::size_t n);
 
     // Allow fetching of the stream
-    std::istream& GetStream();
+    std::istream& GetStream() const;
     
 private:
 

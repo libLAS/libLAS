@@ -62,10 +62,8 @@ public:
     void UpdateHeader(LASHeader const& header);
     void WritePointRecord(PointRecord const& record);
     void WritePointRecord(PointRecord const& record, double const& time);
-    
     void WriteVLR(LASHeader const& header);
-    // TODO: fix constness
-    std::ostream& GetStream();
+    std::ostream& GetStream() const;
     
 private:
 

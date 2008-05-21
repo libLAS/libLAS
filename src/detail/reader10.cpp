@@ -226,9 +226,9 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
         int16_t count = vlrh.recordLengthAfterHeader;
          
         std::vector<uint8_t> data;
-        data.resize( count );
+        data.resize(count);
 
-        read_n(data.front(), m_ifs, count );
+        read_n(data.front(), m_ifs, count);
          
         LASVLR vlr;
         vlr.SetReserved(vlrh.reserved);
@@ -240,8 +240,10 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
 
         header.AddVLR(vlr);
     }
+
     // TODO: Under construction
     //       Testing reading of VLRecords with GeoKeys
+    
     return true;
 }
 bool ReaderImpl::ReadGeoreference(LASHeader& header)
@@ -380,7 +382,9 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record, double& time)
     return hasData;
 }
 
-std::istream& ReaderImpl::GetStream() {
+std::istream& ReaderImpl::GetStream() const
+{
     return m_ifs;
 }
+
 }}} // namespace liblas::detail::v10

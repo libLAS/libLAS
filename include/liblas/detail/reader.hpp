@@ -65,8 +65,7 @@ public:
     virtual bool ReadPointAt(std::size_t n, PointRecord& record, double& time) = 0;
     virtual bool ReadVLR(LASHeader& header) = 0;
     virtual bool ReadGeoreference(LASHeader& header) = 0; 
-
-    virtual std::istream& GetStream() = 0;
+    virtual std::istream& GetStream() const = 0;
     
 protected:
     

@@ -261,7 +261,7 @@ void WriterImpl::WriteVLR(LASHeader const& header)
     }
 }
 
-std::ostream& WriterImpl::GetStream()
+std::ostream& WriterImpl::GetStream() const
 {
     return m_ofs;
 }

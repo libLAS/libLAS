@@ -58,12 +58,9 @@ public:
     virtual void WriteHeader(LASHeader const& header) = 0;
     virtual void UpdateHeader(LASHeader const& header) = 0;
     virtual void WritePointRecord(PointRecord const& record) = 0;
-    virtual void WritePointRecord(PointRecord const& record, double const& time) = 0;
-    
+    virtual void WritePointRecord(PointRecord const& record, double const& time) = 0;    
     virtual void WriteVLR(LASHeader const& header) = 0;
-
-    // TODO: fix constness
-    virtual std::ostream& GetStream() = 0;
+    virtual std::ostream& GetStream() const = 0;
 
 private:
 

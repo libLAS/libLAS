@@ -62,11 +62,10 @@ public:
     bool ReadNextPoint(PointRecord& record, double& time);
     bool ReadPointAt(std::size_t n, PointRecord& record);
     bool ReadPointAt(std::size_t n, PointRecord& record, double& time);
-
     bool ReadVLR(LASHeader& header);
     bool ReadGeoreference(LASHeader& header); 
+    std::istream& GetStream() const;
 
-    std::istream& GetStream();
 private:
 
     std::istream& m_ifs;

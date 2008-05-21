@@ -101,7 +101,8 @@ bool LASWriter::WritePoint(LASPoint const& point)
     return true;
 }
 
-std::ostream& LASWriter::GetStream() {
+std::ostream& LASWriter::GetStream() const
+{
     return m_pimpl->GetStream();
 }
 

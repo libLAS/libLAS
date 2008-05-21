@@ -300,7 +300,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record, double& time)
     return hasData;
 }
 
-std::istream& ReaderImpl::GetStream()
+std::istream& ReaderImpl::GetStream() const
 {
     return m_ifs;
 }

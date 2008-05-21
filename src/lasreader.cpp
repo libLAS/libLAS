@@ -174,7 +174,8 @@ void LASReader::MakePoint(double const& time)
     m_point.SetTime(time);
 }
 
-std::istream& LASReader::GetStream() {
+std::istream& LASReader::GetStream() const
+{
     return m_pimpl->GetStream();
 }
 
