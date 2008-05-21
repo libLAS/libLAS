@@ -59,7 +59,7 @@ namespace tut
             ensure_equals(p.GetClassification(), 1);
             ensure_equals(p.GetScanAngleRank(), 0);
             ensure_equals(p.GetUserData(), 0);
-            ensure_equals(static_cast<unsigned int>(p.GetScanFlags()), 9);
+            ensure_equals(p.GetScanFlags(), 9);
             ensure_distance(p.GetTime(), double(413665.52880000003), 0.0001);
         }
 
@@ -72,7 +72,7 @@ namespace tut
             ensure_equals(p.GetClassification(), 1);
             ensure_equals(p.GetScanAngleRank(), 0);
             ensure_equals(p.GetUserData(), 0);
-            ensure_equals(static_cast<unsigned int>(p.GetScanFlags()), 18);
+            ensure_equals(p.GetScanFlags(), 18);
             ensure_distance(p.GetTime(), double(414093.84360000002), 0.0001);
         }
     };
@@ -96,7 +96,7 @@ namespace tut
             liblas::LASHeader header;
             liblas::LASWriter writer(ofs, header);
 
-            ensure_equals(writer.GetVersion(), liblas::eLASVersion11);
+            ensure_equals<std::size_t>(writer.GetVersion(), liblas::eLASVersion11);
 
             liblas::LASHeader const& hdr_default = writer.GetHeader();
             test_default_header(hdr_default);
@@ -108,7 +108,7 @@ namespace tut
             ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
             liblas::LASReader reader(ifs);
 
-            ensure_equals(reader.GetVersion(), liblas::eLASVersion11);
+            ensure_equals<std::size_t>(reader.GetVersion(), liblas::eLASVersion11);
             
             liblas::LASHeader const& hdr_default = reader.GetHeader();
             test_default_header(hdr_default);

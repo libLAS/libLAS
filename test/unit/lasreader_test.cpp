@@ -35,7 +35,7 @@ namespace tut
             ensure_equals(p.GetClassification(), liblas::uint8_t(1));
             ensure_equals(p.GetScanAngleRank(), 0);
             ensure_equals(p.GetUserData(), 3);
-            ensure_equals(static_cast<unsigned int>(p.GetScanFlags()), 9);
+            ensure_equals(p.GetScanFlags(), 9);
             ensure_distance(p.GetTime(), double(413665.23360000004), 0.0001);
         }
 
@@ -48,7 +48,7 @@ namespace tut
             ensure_equals(p.GetClassification(), 1);
             ensure_equals(p.GetScanAngleRank(), 0);
             ensure_equals(p.GetUserData(), 3);
-            ensure_equals(static_cast<unsigned int>(p.GetScanFlags()), 9);
+            ensure_equals(p.GetScanFlags(), 9);
             ensure_distance(p.GetTime(), double(413665.52880000003), 0.0001);
         }
 
@@ -61,7 +61,7 @@ namespace tut
             ensure_equals(p.GetClassification(), 1);
             ensure_equals(p.GetScanAngleRank(), 0);
             ensure_equals(p.GetUserData(), 4);
-            ensure_equals(static_cast<unsigned int>(p.GetScanFlags()), 18);
+            ensure_equals(p.GetScanFlags(), 18);
             ensure_distance(p.GetTime(), double(414093.84360000002), 0.0001);
         }
     };
@@ -80,7 +80,7 @@ namespace tut
         ifs.open(file10_.c_str(), std::ios::in | std::ios::binary);
         liblas::LASReader reader(ifs);
 
-        ensure_equals(reader.GetVersion(), liblas::eLASVersion10);
+        ensure_equals<std::size_t>(reader.GetVersion(), liblas::eLASVersion10);
     }
 
     // Test reading header
