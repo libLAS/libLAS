@@ -1,8 +1,8 @@
-
+# $Id$
+#
 LAS_ROOT	=	..
 
 !INCLUDE $(LAS_ROOT)\nmake.opt
-
 
 LAS_OBJS	=	laswriter.obj \
                 lasreader.obj \
@@ -34,16 +34,12 @@ $(LAS_DLL):	$(LAS_LIB)
 	   /out:$(LAS_DLL) /implib:$(LAS_LIB_DLL)
 	if exist $(LAS_DLL).manifest mt -manifest $(LAS_DLL).manifest -outputresource:$(LAS_DLL);2   
 
-
-
-
-
-
 clean:
-	-del *.obj 
-	-del *.lib
-	-del *.dll
 	-del *.bak
+	-del *.dll
+	-del *.exp
+	-del *.lib
+	-del *.obj 
 	-del *.manifest
 	for %d in ( $(LAS_OBJS) ) do \
 		del %d

@@ -1,4 +1,7 @@
-
+# $Id$
+#
+# Main libLAS makefile for use with NMAKE and Microsoft Visual C++
+#
 LAS_ROOT = .
 
 !INCLUDE nmake.opt
@@ -19,10 +22,10 @@ apps_dir:
     cd ..
 
 clean:
-	-del *.obj 
-	-del *.lib
-	-del *.pdb
 	-del *.bak
+	-del *.lib
+	-del *.obj 
+	-del *.pdb
 	cd src
 	$(MAKE) /f makefile.vc clean
 	cd ..

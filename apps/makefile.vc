@@ -1,7 +1,8 @@
+# $Id$
+#
 LAS_ROOT	=	..
 
 !INCLUDE $(LAS_ROOT)\nmake.opt
-
 
 all: default
 
@@ -31,12 +32,11 @@ txt2las.exe:
 
 default: las2las.exe lasinfo.exe las2txt.exe lasmerge.exe txt2las.exe
 
-
 clean:
-	-del *.obj
+	-del *.bak
 	-del *.exe
 	-del *.manifest
-	-del *.bak
+	-del *.obj
 
 install: default
     xcopy /y /r /d /f *.exe $(BINDIR)
