@@ -93,4 +93,30 @@
 #endif
 
 
+#if defined(LIBLAS_BIG_ENDIAN)
+# define LIBLAS_SWAP_BYTES(p) \
+    do { \
+        char* first = static_cast<char*>(static_cast<void*>(&p)); \
+        char* last = first + sizeof(p) - 1; \
+        for(; first < last; ++first, --last) { \
+            char const x = *last; \
+            *last = *first; \
+            *first = x; \
+        }} while(false)
+
+# define LIBLAS_SWAP_BYTES_N(p, n) \
+    do { \
+        char* first = static_cast<char*>(static_cast<void*>(&p)); \
+        char* last = first + n - 1; \
+        for(; first < last; ++first, --last) { \
+            char const x = *last; \
+            *last = *first; \
+            *first = x; \
+        }} while(false)
+
+#else
+# define LIBLAS_SWAP_BYTES
+# define LIBLAS_SWAP_BYTES_N
+#endif  // LIBLAS_BIG_ENDIAN
+
 #endif // LIBLAS_DETAIL_ENDIAN_HPP_INCLUDED
