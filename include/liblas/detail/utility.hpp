@@ -273,15 +273,15 @@ void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
 template <typename T> 
 bool compare_doubles(const T& actual, const T& expected) 
 { 
-const T epsilon = std::numeric_limits<T>::epsilon();  
-const T diff = actual - expected; 
- 
-if ( !((diff <= epsilon) && (diff >= -epsilon )) ) 
-{ 
-    return false; 
-} 
+    const T epsilon = std::numeric_limits<T>::epsilon();  
+    const T diff = actual - expected; 
 
-return true;
+    if ( !((diff <= epsilon) && (diff >= -epsilon )) ) 
+    { 
+        return false; 
+    } 
+
+    return true;
 }
 
 }} // namespace liblas::detail
