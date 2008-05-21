@@ -93,9 +93,9 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     }
 
     // 1. File Signature
-    std::string filesig(header.GetFileSignature());
+    std::string const filesig(header.GetFileSignature());
     assert(filesig.size() == 4);
-    detail::write_n(m_ofs, filesig.c_str(), 4);
+    detail::write_n(m_ofs, filesig, 4);
     
     // 2. Reserved
     n4 = header.GetReserved();
@@ -126,12 +126,12 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     // 9. System ID
     std::string sysid(header.GetSystemId(true));
     assert(sysid.size() == 32);
-    detail::write_n(m_ofs, sysid.c_str(), 32);
+    detail::write_n(m_ofs, sysid, 32);
     
     // 10. Generating Software ID
     std::string softid(header.GetSoftwareId(true));
     assert(softid.size() == 32);
-    detail::write_n(m_ofs, softid.c_str(), 32);
+    detail::write_n(m_ofs, softid, 32);
 
     // 11. Flight Date Julian
     n2 = header.GetCreationDOY();

@@ -93,9 +93,9 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     }
     
     // 1. File Signature
-    std::string filesig(header.GetFileSignature());
+    std::string const filesig(header.GetFileSignature());
     assert(filesig.size() == 4);
-    detail::write_n(m_ofs, filesig.c_str(), 4);
+    detail::write_n(m_ofs, filesig, 4);
     
     // 2. File Source ID
     n2 = header.GetFileSourceId();
@@ -128,14 +128,14 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     detail::write_n(m_ofs, n1, sizeof(n1));
 
     // 10. System ID
-    std::string sysid(header.GetSystemId(true));
+    std::string const sysid(header.GetSystemId(true));
     assert(sysid.size() == 32);
-    detail::write_n(m_ofs, sysid.c_str(), 32);
+    detail::write_n(m_ofs, sysid, 32);
     
     // 11. Generating Software ID
-    std::string softid(header.GetSoftwareId(true));
+    std::string const softid(header.GetSoftwareId(true));
     assert(softid.size() == 32);
-    detail::write_n(m_ofs, softid.c_str(), 32);
+    detail::write_n(m_ofs, softid, 32);
 
     // 12. File Creation Day of Year
     n2 = header.GetCreationDOY();
@@ -211,8 +211,6 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     // If we don't have any points,  we're going to leave it where it is.
     if (m_pointCount != 0)
         m_ofs.seekp(0, std::ios::end);
-    
-
 }
 
 void WriterImpl::UpdateHeader(LASHeader const& header)

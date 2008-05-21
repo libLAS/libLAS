@@ -86,8 +86,8 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     double x2 = 0;
     double y2 = 0;
     double z2 = 0;
-    char buf[32] = { 0 };
-    char fsig[4] = { 0 };
+    std::string buf;
+    std::string fsig;
 
     m_ifs.seekg(0);
 
@@ -124,11 +124,11 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     header.SetVersionMinor(n1);
 
     // 10. System ID
-    read_n(buf, m_ifs, sizeof(buf));
+    read_n(buf, m_ifs, 32);
     header.SetSystemId(buf);
 
     // 11. Generating Software ID
-    read_n(buf, m_ifs, sizeof(buf));
+    read_n(buf, m_ifs, 32);
     header.SetSoftwareId(buf);
 
     // 12. File Creation Day of Year

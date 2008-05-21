@@ -44,7 +44,9 @@
 #define LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
+#include <liblas/detail/endian.hpp>
 #include <iosfwd>
+#include <algorithm>
 #include <sstream>
 #include <stdexcept>
 #include <cstring>
@@ -199,6 +201,20 @@ inline T generate_random_byte()
     return static_cast<T>(rnd);
 }
 
+template <typename T> 
+bool compare_doubles(const T& actual, const T& expected) 
+{ 
+    const T epsilon = std::numeric_limits<T>::epsilon();  
+    const T diff = actual - expected; 
+
+    if ( !((diff <= epsilon) && (diff >= -epsilon )) ) 
+    { 
+        return false; 
+    } 
+
+    return true;
+}
+
 template<typename T>
 inline char* as_buffer(T& data)
 {
@@ -223,64 +239,121 @@ inline char const* as_bytes(T const* data)
     return static_cast<char const*>(static_cast<void const*>(data));
 }
 
+template <typename C, typename T>
+inline void check_stream_state(std::basic_ios<C, T>& srtm)
+{
+#if defined(DEBUG) || defined(_DEBUG)
+    // Test stream state bits
+    if (srtm.eof())
+        throw std::out_of_range("end of file encountered");
+    else if (srtm.fail())
+        throw std::runtime_error("non-fatal I/O error occured");
+    else if (srtm.bad())
+        throw std::runtime_error("fatal I/O error occured");
+#endif
+}
+
 template <typename T>
-void read_n(T& dest, std::istream& src, std::streamsize const& num)
+inline void read_n(T& dest, std::istream& src, std::streamsize const& num)
 {
     // TODO: Review and redesign errors handling logic if necessary
+    if (!src)
+        throw std::runtime_error("detail::liblas::read_n input stream is not readable");
 
+    src.read(detail::as_buffer(dest), num);
+
+    // Fix little-endian
+    LIBLAS_SWAP_BYTES_N(dest, num);
+
+    check_stream_state(src);
+}
+
+template <>
+inline void read_n<PointRecord>(PointRecord& dest, std::istream& src, std::streamsize const& num)
+{
+    // TODO: Review and redesign errors handling logic if necessary
     if (!src)
         throw std::runtime_error("detail::liblas::read_n input stream is not readable");
 
     // Read bytes into buffer
     src.read(detail::as_buffer(dest), num);
-    
-    // Test stream state bits
-    if (src.eof())
-        throw std::out_of_range("end of file encountered");
-    else if (src.fail())
-        throw std::runtime_error("non-fatal I/O error occured");
-    else if (src.bad())
-        throw std::runtime_error("fatal I/O error occured");
+    check_stream_state(src);
 
-    // Poor man test of data consistency
-    std::streamsize const rn = src.gcount();
-    if (num != rn)
-    {
-        std::ostringstream os;
-        os << "read only " << rn << " bytes of " << num;
-        throw std::runtime_error(os.str());
-    }
+    // Fix little-endian
+    LIBLAS_SWAP_BYTES(dest.x);
+    LIBLAS_SWAP_BYTES(dest.y);
+    LIBLAS_SWAP_BYTES(dest.z);
+    LIBLAS_SWAP_BYTES(dest.intensity);
+    LIBLAS_SWAP_BYTES(dest.flags);
+    LIBLAS_SWAP_BYTES(dest.classification);
+    LIBLAS_SWAP_BYTES(dest.scan_angle_rank);
+    LIBLAS_SWAP_BYTES(dest.user_data);
+    LIBLAS_SWAP_BYTES(dest.point_source_id);
+}
+
+template <>
+inline void read_n<std::string>(std::string& dest, std::istream& src, std::streamsize const& num)
+{
+    assert(dest.max_size() >= static_cast<std::string::size_type>(num));
+
+    // TODO: Review and redesign errors handling logic if necessary
+    if (!src)
+        throw std::runtime_error("detail::liblas::read_n input stream is not readable");
+
+    // Read bytes into buffer
+    char* buf = new char[num];
+    src.read(buf, num);
+    dest.assign(buf, num);
+    delete [] buf;
+
+    assert(dest.size() == static_cast<std::string::size_type>(num));
+    check_stream_state(src);
 }
 
 template <typename T>
-void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
+inline void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
 {
     if (!dest)
         throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
 
-    dest.write(detail::as_bytes(src), num);
+    // Fix little-endian
+    T& tmp = const_cast<T&>(src);
+    LIBLAS_SWAP_BYTES_N(tmp, num);
 
-    // Test stream state bits
-    if (dest.eof())
-        throw std::out_of_range("end of file encountered");
-    else if (dest.fail())
-        throw std::runtime_error("non-fatal I/O error occured");
-    else if (dest.bad())
-        throw std::runtime_error("fatal I/O error occured");
+    dest.write(detail::as_bytes(tmp), num);
+    check_stream_state(dest);
 }
 
-template <typename T> 
-bool compare_doubles(const T& actual, const T& expected) 
-{ 
-    const T epsilon = std::numeric_limits<T>::epsilon();  
-    const T diff = actual - expected; 
+template <>
+inline void write_n<PointRecord>(std::ostream& dest, PointRecord const& src, std::streamsize const& num)
+{
+    if (!dest)
+        throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
 
-    if ( !((diff <= epsilon) && (diff >= -epsilon )) ) 
-    { 
-        return false; 
-    } 
+    // Fix little-endian
+    PointRecord& tmp = const_cast<PointRecord&>(src);
+    LIBLAS_SWAP_BYTES(tmp.x);
+    LIBLAS_SWAP_BYTES(tmp.y);
+    LIBLAS_SWAP_BYTES(tmp.z);
+    LIBLAS_SWAP_BYTES(tmp.intensity);
+    LIBLAS_SWAP_BYTES(tmp.flags);
+    LIBLAS_SWAP_BYTES(tmp.classification);
+    LIBLAS_SWAP_BYTES(tmp.scan_angle_rank);
+    LIBLAS_SWAP_BYTES(tmp.user_data);
+    LIBLAS_SWAP_BYTES(tmp.point_source_id);
 
-    return true;
+    dest.write(detail::as_bytes(tmp), num);
+    check_stream_state(dest);
+}
+
+template <>
+inline void write_n<std::string>(std::ostream& dest, std::string const& src, std::streamsize const& num)
+{
+    if (!dest)
+        throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
+
+    dest.write(src.c_str(), num);
+    check_stream_state(dest);
 }
 
 }} // namespace liblas::detail
