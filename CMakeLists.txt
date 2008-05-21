@@ -9,6 +9,7 @@
 PROJECT( libLAS )
 
 SET( LIBLAS_LIB_NAME liblas )
+SET( LIBLAS_C_LIB_NAME liblas_c )
 
 #############################################################
 # CMake settings
@@ -58,7 +59,12 @@ ENDIF (WIN32)
 #############################################################
 # List of directories to process
 
-SUBDIRS( src include test )
+SUBDIRS(
+    include
+    src
+    apps
+    test
+)
 
 
 
