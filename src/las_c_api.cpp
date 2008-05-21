@@ -63,9 +63,9 @@ typedef void *LASVLRH;
 #include <cstdio>
 #include <exception>
 #include <vector>
-
-#include <iostream>
+#include <sstream> // std::stringstream
 #include <fstream>
+#include <iostream>
 using namespace liblas;
 
 LAS_C_START
@@ -94,27 +94,29 @@ typedef std::map<std::string, LASFile>::const_iterator StrLASFileMapIt;
 static StrLASFileMap files;
 static std::stack<LASError > errors;
 
+#ifdef _MSC_VER
+# pragma warning(disable: 4127) // warning C4127: conditional expression is constant
+#endif
+
 #define VALIDATE_POINTER0(ptr, func) \
-   do { if( NULL == ptr ) \
-      { \
+   do { if( NULL == ptr ) { \
         LASErrorEnum const ret = LE_Failure; \
         std::ostringstream msg; \
         msg << "Pointer \'" << #ptr << "\' is NULL in \'" << (func) <<"\'."; \
         std::string message(msg.str()); \
-        LASError_PushError( ret, \
-           message.c_str(), (func)); \
-         return; }} while(0)
+        LASError_PushError( ret, message.c_str(), (func)); \
+        return; \
+   }} while(0)
 
 #define VALIDATE_POINTER1(ptr, func, rc) \
-   do { if( NULL == ptr ) \
-      { \
+   do { if( NULL == ptr ) { \
         LASErrorEnum const ret = LE_Failure; \
         std::ostringstream msg; \
         msg << "Pointer \'" << #ptr << "\' is NULL in \'" << (func) <<"\'."; \
         std::string message(msg.str()); \
-        LASError_PushError( ret, \
-           message.c_str(), (func)); \
-        return (rc); }} while(0)
+        LASError_PushError( ret, message.c_str(), (func)); \
+        return (rc); \
+   }} while(0)
 
 LAS_DLL void LASError_Reset(void) {
     if (errors.empty()) return;
@@ -268,15 +270,12 @@ LAS_DLL const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
             return NULL;
     } catch (invalid_point_data const& e /*e */) {
         LASError_PushError(LE_Failure, e.what(), "LASReader_GetNextPoint Invalid Point");
-        return NULL;
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASReader_GetNextPoint");
-        return NULL;
     }
  
     return NULL;
-
 }
 
 LAS_DLL const LASPointH LASReader_GetPointAt(const LASReaderH hReader, liblas::uint32_t position)
@@ -292,11 +291,9 @@ LAS_DLL const LASPointH LASReader_GetPointAt(const LASReaderH hReader, liblas::u
             return NULL;
     } catch (invalid_point_data const& e /*e */) {
         LASError_PushError(LE_Failure, e.what(), "LASReader_GetPointAt Invalid Point");
-        return NULL;
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASReader_GetPointAt");
-        return NULL;
     }
  
     return NULL;
@@ -859,9 +856,9 @@ LAS_DLL liblas::uint32_t LASHeader_GetRecordsCount(const LASHeaderH hHeader) {
 
 LAS_DLL liblas::uint8_t LASHeader_GetDataFormatId(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetDataFormatId", 0);
-
-    unsigned char value = ((LASHeader*) hHeader)->GetDataFormatId();
-    return value;
+    
+    LASHeader::PointFormat id = ((LASHeader*) hHeader)->GetDataFormatId();
+    return static_cast<liblas::uint8_t>(id);
 }
 
 LAS_DLL LASErrorEnum LASHeader_SetDataFormatId(LASHeaderH hHeader, int value) {
@@ -1506,3 +1503,6 @@ LAS_DLL char* LASGuid_AsString(LASGuidH hId) {
 
 LAS_C_END
 
+#ifdef _MSC_VER
+# pragma warning(default: 4127) // enable warning C4127: conditional expression is constant
+#endif
