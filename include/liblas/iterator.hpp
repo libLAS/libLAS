@@ -49,7 +49,11 @@
 
 namespace liblas {
 
-/// \todo To be documented.
+/// Input iterator associated with liblas::LASReader.
+/// It allows to read LAS file records in similar way to elements of STL container,
+/// as well as apply STL algorithms that accept pair of input iterators.
+/// \sa About Input Iterator at http://www.sgi.com/tech/stl/InputIterator.html
+///
 template <typename T>
 class reader_iterator
 {
@@ -61,10 +65,13 @@ public:
     typedef T const& reference;
     typedef ptrdiff_t difference_type;
 
+    /// Initializes iterator pointing to pass-the-end.
     reader_iterator()
         : m_reader(0)
     {}
 
+    /// Initializes iterator pointing to beginning of LAS file sequence.
+    /// No ownership transfer of reader object occurs.
     reader_iterator(liblas::LASReader& reader)
         : m_reader(&reader)
     {
@@ -72,17 +79,23 @@ public:
         getval();
     }
 
+    /// Dereference operator.
+    /// It is implemented in terms of LASReader::GetPoint function.
     reference operator*() const
     {
         assert(0 != m_reader);
         return m_reader->GetPoint();
     }
 
+    /// Pointer-to-member operator.
+    /// It is implemented in terms of LASReader::GetPoint function.
     pointer operator->() const
     {
         return &(operator*());
     }
 
+    /// Pre-increment opertor.
+    /// Moves iterator to next record by calling LASReader::ReadNextPoint.
     reader_iterator& operator++()
     {
         assert(0 != m_reader);
@@ -90,6 +103,8 @@ public:
         return (*this);
     }
 
+    /// Post-increment opertor.
+    /// Moves iterator to next record by calling LASReader::ReadNextPoint.
     reader_iterator operator++(int)
     {
         reader_iterator tmp(*this);
@@ -97,6 +112,8 @@ public:
         return tmp;
     }
 
+    /// Compare passed iterator to this.
+    /// Determine if both iterators apply to the same instance of LASReader class.
     bool equal(reader_iterator const& rhs) const
     {
         return m_reader == rhs.m_reader;
@@ -115,21 +132,24 @@ private:
     liblas::LASReader* m_reader;
 };
 
-/// \todo To be documented.
+/// Equality operator implemented in terms of reader_iterator::equal
 template <typename T>
 bool operator==(reader_iterator<T> const& lhs, reader_iterator<T> const& rhs)
 {
     return lhs.equal(rhs);
 }
 
-/// \todo To be documented.
+/// Inequality operator implemented in terms of reader_iterator::equal
 template <typename T>
 bool operator!=(reader_iterator<T> const& lhs, reader_iterator<T> const& rhs)
 {
     return (!(lhs == rhs));
 }
 
-/// \todo To be documented.
+/// Output iterator associated with liblas::LASWriter.
+/// It allows to store a sequence of records into LAS file.
+/// \sa About Output Iterator at http://www.sgi.com/tech/stl/OutputIterator.html
+///
 template <typename T>
 class writer_iterator
 {
@@ -141,12 +161,17 @@ public:
     typedef T const& reference;
     typedef void difference_type;
 
+    /// Initialize iterator with given writer.
+    /// The writer position is not changed.
+    /// No ownership transfer of writer object occurs.
     writer_iterator(liblas::LASWriter& writer)
         : m_writer(&writer)
     {
         assert(0 != m_writer);
     }
 
+    /// Dereference assignment operator.
+    /// Implemented in terms of LASWriter::WritePoint function.
     writer_iterator& operator=(reference value) 
     {
         assert(0 != m_writer);
@@ -157,18 +182,21 @@ public:
         return (*this);
     }
 
+    /// Dereference operator.
     writer_iterator& operator*()
     {
         // pretend to return designated value
         return (*this);
     }
 
+    /// Pre-increment operator.
     writer_iterator& operator++()
     {
         // pretend to preincrement
         return (*this);
     }
 
+    /// Post-increment operator.
     writer_iterator operator++(int)
     {
         // pretend to postincrement
@@ -182,10 +210,10 @@ private:
 
 // Declare specializations for user's convenience
 
-/// \todo To be documented.
+/// Public specialization of LASReader input iterator for liblas::LASPoint type.
 typedef reader_iterator<LASPoint> lasreader_iterator;
 
-/// \todo To be documented.
+/// Public specialization of LASWriter output iterator for liblas::LASPoint type.
 typedef writer_iterator<LASPoint> laswriter_iterator;
 
 } // namespace liblas
