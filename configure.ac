@@ -28,6 +28,8 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
+dnl Check platform endianness
+AC_C_BIGENDIAN
 
 dnl Checks for header files.
 AC_CHECK_HEADERS([string.h],, [AC_MSG_ERROR([cannot find string.h, bailing out])])
