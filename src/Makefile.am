@@ -3,6 +3,11 @@ SUBDIRS = detail .
 
 INCLUDES = -I../include -I../include/detail
 
+if GEOTIFF_IS_CONFIG
+AM_CPPFLAGS=@GEOTIFF_INC@ -DHAVE_LIBGEOTIFF=1
+endif
+
+
 lib_LTLIBRARIES = liblas.la
 
 liblas_la_SOURCES = \
