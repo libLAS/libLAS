@@ -115,8 +115,9 @@
         }} while(false)
 
 #else
-# define LIBLAS_SWAP_BYTES
-# define LIBLAS_SWAP_BYTES_N
+# define LIBLAS_SWAP_BYTES(p) do {} while(false)
+# define LIBLAS_SWAP_BYTES_N(p, n) do {} while(false)
 #endif  // LIBLAS_BIG_ENDIAN
 
 #endif // LIBLAS_DETAIL_ENDIAN_HPP_INCLUDED
+

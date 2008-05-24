@@ -57,7 +57,7 @@
 //
 
 #ifndef UNREFERENCED_PARAMETER
-#define UNREFERENCED_PARAMETER(param) (param)
+#define UNREFERENCED_PARAMETER(param) ((void)param)
 #endif
 
 //
