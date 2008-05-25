@@ -257,7 +257,8 @@ void WriterImpl::WriteVLR(LASHeader const& header)
         detail::write_n(m_ofs, vlr.GetRecordLength(), sizeof(uint16_t));
         detail::write_n(m_ofs, vlr.GetDescription(true).c_str(), 32);
         std::vector<uint8_t> const& data = vlr.GetData();
-        detail::write_n(m_ofs, data.front(), data.size());
+        std::streamsize const size = static_cast<std::streamsize>(data.size());
+        detail::write_n(m_ofs, data.front(), size);
     }
 }
 

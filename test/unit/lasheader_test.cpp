@@ -115,10 +115,19 @@ namespace tut
         h1.SetFileSourceId(id2);
         ensure_equals(h1.GetFileSourceId(), id2);
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable: 4305) //  truncation from 'int' to 'liblas::uint16_t'
+# pragma warning(disable: 4309) // conditional expression is constant.
+#endif
         // Unsigned overflow
         // Likely compiler warning: truncation from int to liblas::uint16_t
         h1.SetFileSourceId(id2 + 1);
         ensure_equals(h1.GetFileSourceId(), overflowed);
+
+#ifdef _MSC_VER
+# pragma warning(push)
+#endif
     }
 
     // Test GetReserved
