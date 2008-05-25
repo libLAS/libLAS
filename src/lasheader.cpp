@@ -500,10 +500,13 @@ void LASHeader::SetMin(double x, double y, double z)
 void LASHeader::AddVLR(LASVLR const& v) 
 {
     m_vlrs.push_back(v);
-    uint32_t size;
-    if (m_vlrs.size() > m_recordsCount ) {
-        m_recordsCount = m_vlrs.size();
-        size = GetDataOffset() + 2 + 16 + 2 + 2 + 32 + v.GetData().size()*sizeof(uint8_t);
+    uint32_t size = 0;
+    if (m_vlrs.size() > m_recordsCount)
+    {
+        m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
+
+        // FIXME: Explain the magic numbers below
+        size = GetDataOffset() + 2 + 16 + 2 + 2 + 32 + v.GetData().size() * sizeof(uint8_t);
         SetDataOffset(size + GetDataOffset());
     }
 }
@@ -514,14 +517,12 @@ LASVLR const& LASHeader::GetVLR(uint32_t index) const
 }
 
 void LASHeader::DeleteVLR(uint32_t index) 
-{
-    
+{    
     if (index >= m_vlrs.size())
         throw std::out_of_range("index is out of range");
         
     m_vlrs.erase(m_vlrs.begin() + index);
-    m_recordsCount = m_vlrs.size();
-    
+    m_recordsCount = static_cast<uint32_t>(m_vlrs.size());   
 }
 
     /// Fetch the Georeference as a proj.4 string

@@ -39,7 +39,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-//
 #ifndef LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 #define LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 
@@ -253,6 +252,11 @@ inline void check_stream_state(std::basic_ios<C, T>& srtm)
 #endif
 }
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable: 4127) // conditional expression is constant.
+#endif
+
 template <typename T>
 inline void read_n(T& dest, std::istream& src, std::streamsize const& num)
 {
@@ -386,6 +390,10 @@ inline void write_n<std::string>(std::ostream& dest, std::string const& src, std
     dest.write(src.c_str(), num);
     check_stream_state(dest);
 }
+
+#ifdef _MSC_VER
+# pragma warning(push)
+#endif
 
 }} // namespace liblas::detail
 

@@ -45,8 +45,6 @@
  * defined the BOOST_ENDIAN macro.
  ****************************************************************************/
 
-
-
 #ifndef LIBLAS_DETAIL_ENDIAN_HPP_INCLUDED
 #define LIBLAS_DETAIL_ENDIAN_HPP_INCLUDED
 
