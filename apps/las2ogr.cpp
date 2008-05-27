@@ -19,7 +19,6 @@
 #include <liblas/cstdint.hpp>
 // ogr
 #include <ogr_api.h>
-#include <ogrsf_frmts.h>
 //std
 #include <cassert>
 #include <fstream>
