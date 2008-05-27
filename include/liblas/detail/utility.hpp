@@ -241,6 +241,8 @@ inline char const* as_bytes(T const* data)
 template <typename C, typename T>
 inline void check_stream_state(std::basic_ios<C, T>& srtm)
 {
+    // NOTE: Detailed stream check disabled in optimized
+    //       builds to increase performance.
 #if defined(DEBUG) || defined(_DEBUG)
     // Test stream state bits
     if (srtm.eof())
@@ -249,6 +251,8 @@ inline void check_stream_state(std::basic_ios<C, T>& srtm)
         throw std::runtime_error("non-fatal I/O error occured");
     else if (srtm.bad())
         throw std::runtime_error("fatal I/O error occured");
+#else
+    UNREFERENCED_PARAMETER(srtm);
 #endif
 }
 
