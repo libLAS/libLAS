@@ -19,6 +19,7 @@
 #include <liblas/cstdint.hpp>
 // ogr
 #include <ogr_api.h>
+#include <ogrsf_frmts.h>
 //std
 #include <cassert>
 #include <fstream>
@@ -78,8 +79,8 @@ private:
     T p_;
 };
 
-OGRFieldDefnH create_field(const char* name, OGRFieldType type, int width, int precision ) {
-
+OGRFieldDefnH create_field(const char* name, OGRFieldType type, int width, int precision)
+{
     OGRFieldDefnH fld;
     fld= OGR_Fld_Create(name, type);
     OGR_Fld_SetWidth(fld, width);
@@ -151,84 +152,132 @@ void create_layer_def(OGRLayerH lyr)
 
 void report_ogr_formats()
 {
-
-    std::cout << "Supported target formats:";
+    std::cerr << "Supported OGR formats:";
 
     for (int i = 0; i < OGRGetDriverCount(); ++i)
     {
         OGRSFDriverH drv = OGRGetDriver(i);
         assert(0 != drv);
 
-        if (OGR_Dr_TestCapability(drv,"ODrCCreateDataSource"))
+        if (OGR_Dr_TestCapability(drv, ODrCCreateDataSource))
         {
-            std::cout << "\n - " << OGR_Dr_GetName(drv);
+            std::cerr << "\n - " << OGR_Dr_GetName(drv);
         }
     }
 
-    std::cout << std::endl;
+    std::cerr << "\nMore details at http://gdal.org/ogr/ogr_formats.html" << std::endl;
+}
+
+void usage()
+{
+    std::cerr << "Usage: las2ogr OPTIONS\nOptions are:\n"
+        << "\t-h print this message\n"
+        << "\t-i <infile>\tinput ASPRS LAS file\n"
+        << "\t-o <outfile>\toutput file\n"
+        << "\t-f <format>\tOGR format for output file\n"
+        << "\t-formats\tlist supported OGR formats\n";       
 }
 
 int main(int argc, char* argv[])
 {
-    // TODO:
-    // - rename las2shp to las2ogr with ESRI Shapefile as default output format
-    // - input params parsing
-    // - usage info
-    // - progress info
-
-    OGRRegisterAll();
+    int rc = 0;
 
     try
     {
-        // TODO: input params should come from argv
-        //std::string lasname("d:\\data\\lidar\\LDR030828_213450_0.LAS");
-        std::string lasname("D:\\data\\lidar\\gilmer\\000001.las");
-        std::string ogrname("cloud.shp");
+        OGRRegisterAll();
+
+        // Parse command-line options
+        std::string in_file;
+        std::string out_file;
+        std::string out_frmt;
+        {
+            int on_arg = 1;
+            while (on_arg < argc)
+            {
+                std::string arg(argv[on_arg]);
+                if (arg == "-h")
+                {
+                    usage();
+                    return 0;
+                }
+                else if (arg == "-formats")
+                {
+                    report_ogr_formats();
+                    return 0;
+                }
+                else if (arg == "-i" && (on_arg + 1 < argc))
+                {   
+                    ++on_arg;
+                    assert(on_arg < argc);
+                    in_file = argv[on_arg];
+                }
+                else if (arg == "-o" && (on_arg + 1 < argc))
+                {
+                    ++on_arg;
+                    assert(on_arg < argc);
+                    out_file = argv[on_arg];
+                    out_frmt = "ESRI Shapefile"; // default output format
+                }
+                else if (arg == "-f" && (on_arg + 1 < argc))
+                {
+                    ++on_arg;
+                    assert(on_arg < argc);
+                    out_frmt = argv[on_arg];
+                }
+                else
+                {
+                    throw std::runtime_error(std::string("unrecognized parameter: ") + arg);
+                }
+                ++on_arg;
+            }
+
+            if (in_file.empty() || out_file.empty() || out_frmt.empty())
+            {
+                throw std::runtime_error("missing input paremeters");
+            }
+        }
 
         //
         // Source
         //
-        std::cout << "Source:" << "\n - dataset: " << lasname << std::endl;
+        std::cout << "Source:" << "\n - dataset: " << in_file << std::endl;
 
         std::ifstream ifs;
-        if (!liblas::Open(ifs, lasname.c_str()))
+        if (!liblas::Open(ifs, in_file.c_str()))
         {
-            throw std::runtime_error(std::string("Can not open ") + lasname);
+            throw std::runtime_error(std::string("Can not open \'") + in_file + "\'");
         }
         liblas::LASReader reader(ifs);
 
         //
         // Target
         //
-        std::string const drvname("ESRI Shapefile");
-        std::string const lyrname(ogrname.substr(0, ogrname.find_last_of('.')));
+        std::string const lyrname(out_file.substr(0, out_file.find_last_of('.')));
 
         std::cout << "Target:" 
-                  << "\n - format: " << drvname
-                  << "\n - dataset: " << ogrname
-                  << "\n - layer: " << lyrname
-                  << std::endl;
-        
-        OGRSFDriverH drv = OGRGetDriverByName(drvname.c_str());
+            << "\n - format: " << out_frmt
+            << "\n - dataset: " << out_file
+            << "\n - layer: " << lyrname
+            << std::endl;
+
+        OGRSFDriverH drv = OGRGetDriverByName(out_frmt.c_str());
         if (0 == drv)
         {
-            throw std::runtime_error(drvname + " driver not available");
-        }
- 
-        ogr_wrapper<OGRDataSourceH> ds(OGR_Dr_CreateDataSource(drv, ogrname.c_str(), 0),
-                                       OGR_DS_Destroy);
-        if (0 == ds)
-        {
-            throw std::runtime_error(ogrname + " datasource  cration failed");
+            throw std::runtime_error(out_frmt + " driver not available");
         }
 
-        OGRLayerH lyr = 0;
-        lyr = OGR_DS_CreateLayer(ds, lyrname.c_str(), 0, wkbPoint25D, 0);
+        ogr_wrapper<OGRDataSourceH> ds(OGR_Dr_CreateDataSource(drv, out_file.c_str(), 0), OGR_DS_Destroy);
+        if (0 == ds)
+        {
+            throw std::runtime_error(out_file + " datasource  cration failed");
+        }
+
+        OGRLayerH lyr = OGR_DS_CreateLayer(ds, lyrname.c_str(), 0, wkbPoint25D, 0);
         if (0 == lyr)
         {
-            throw std::runtime_error(ogrname + " layer  cration failed");
+            throw std::runtime_error(out_file + " layer  cration failed");
         }
-       
+
         // Prepare layer schema
         create_layer_def(lyr);
 
@@ -237,8 +286,7 @@ int main(int argc, char* argv[])
         //
         std::cout << "Translating " << reader.GetHeader().GetPointRecordsCount() << " points...";
 
-        ogr_wrapper<OGRFeatureH> feat(OGR_F_Create(OGR_L_GetLayerDefn(lyr)),
-                                      OGR_F_Destroy);
+        ogr_wrapper<OGRFeatureH> feat(OGR_F_Create(OGR_L_GetLayerDefn(lyr)), OGR_F_Destroy);
 
         while (reader.ReadNextPoint())
         {
@@ -251,8 +299,7 @@ int main(int argc, char* argv[])
             OGR_F_SetFieldInteger(feat, 4, p.GetNumberOfReturns());
             OGR_F_SetFieldDouble(feat, 5, p.GetTime());
 
-            ogr_wrapper<OGRGeometryH> geom(OGR_G_CreateGeometry(wkbPoint25D),
-                                           OGR_G_DestroyGeometry);
+            ogr_wrapper<OGRGeometryH> geom(OGR_G_CreateGeometry(wkbPoint25D), OGR_G_DestroyGeometry);
             OGR_G_SetPoint(geom, 0, p.GetX(), p.GetY(), p.GetZ());
             if (OGRERR_NONE != OGR_F_SetGeometry(feat, geom))
             {
@@ -270,12 +317,14 @@ int main(int argc, char* argv[])
     catch (std::exception const& e)
     {
         std::cerr << "Error: " << e.what() << std::endl;
+        rc = -1;
     }
     catch (...)
     {
         std::cerr << "Unknown error\n";
+        rc = -1;
     }
 
-    return 0;
+    return rc;
 }
 
