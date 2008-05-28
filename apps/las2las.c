@@ -23,7 +23,7 @@ LASPointSummary* SummarizePoints(LASReaderH reader);
 void print_point_summary(LASPointSummary* summary, LASHeaderH header);
 void print_point(LASPointH point);
 void print_header(LASHeaderH header, const char* file_name);
-void RepairHeader(LASHeaderH header, LASPointSummary* summary) ;
+void repair_header(LASHeaderH header, LASPointSummary* summary) ;
 
 void usage()
 {
@@ -712,7 +712,7 @@ int main(int argc, char *argv[])
     } 
     summary = SummarizePoints(reader);
     print_point_summary(summary, header);
-    RepairHeader(header, summary) ;
+    repair_header(header, summary) ;
 
     if (summary) {
         LASPoint_Destroy(summary->pmin);

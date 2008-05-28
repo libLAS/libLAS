@@ -434,7 +434,7 @@ void print_header(LASHeaderH header, const char* file_name) {
     free(pszProj4);
 }
 
-void RepairHeader(LASHeaderH header, LASPointSummary* summary) {
+void repair_header(LASHeaderH header, LASPointSummary* summary) {
 
     int repair_bounding_box = FALSE;
     int update_return_counts = FALSE;    
@@ -442,12 +442,12 @@ void RepairHeader(LASHeaderH header, LASPointSummary* summary) {
     int i = 0;
  
     if (! header) {
-        LASError_Print("Inputted header to RepairHeader was NULL ");
+        LASError_Print("Inputted header to repair_header was NULL ");
         exit(1);
     } 
 
     if (! summary) {
-        LASError_Print("Inputted summary to RepairHeader was NULL ");
+        LASError_Print("Inputted summary to repair_header was NULL ");
         exit(1);
 
     } 
