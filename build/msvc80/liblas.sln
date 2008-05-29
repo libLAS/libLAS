@@ -38,6 +38,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "las2ogr", "las2ogr\las2ogr.
 		{208417AE-D08E-4938-AC26-A16ABD55AA5B} = {208417AE-D08E-4938-AC26-A16ABD55AA5B}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "las2las", "las2las\las2las.vcproj", "{9BE9762E-DF68-4628-81B0-A4192A4BA3A5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EC92BE01-CFA3-46C6-998E-810484CC5860} = {EC92BE01-CFA3-46C6-998E-810484CC5860}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -64,6 +69,10 @@ Global
 		{0CE46FF7-F5B6-4EE2-B8EE-37B5555CAC62}.Debug|Win32.Build.0 = Debug|Win32
 		{0CE46FF7-F5B6-4EE2-B8EE-37B5555CAC62}.Release|Win32.ActiveCfg = Release|Win32
 		{0CE46FF7-F5B6-4EE2-B8EE-37B5555CAC62}.Release|Win32.Build.0 = Release|Win32
+		{9BE9762E-DF68-4628-81B0-A4192A4BA3A5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9BE9762E-DF68-4628-81B0-A4192A4BA3A5}.Debug|Win32.Build.0 = Debug|Win32
+		{9BE9762E-DF68-4628-81B0-A4192A4BA3A5}.Release|Win32.ActiveCfg = Release|Win32
+		{9BE9762E-DF68-4628-81B0-A4192A4BA3A5}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
