@@ -26,6 +26,9 @@
 #include <stdexcept>
 #include <string>
 
+// Anonymous namespace for local definitions
+namespace { 
+
 template <typename T>
 class ogr_wrapper
 {
@@ -71,12 +74,44 @@ private:
     void do_delete(T p)
     {
         assert(del_);
-        del_(p);
+        if (0 != p)
+            del_(p);
     }
 
     deleter_type del_;
     T p_;
 };
+
+bool term_progress(std::ostream& os, double complete)
+{
+    static int lastTick = -1;
+    int tick = static_cast<int>(complete * 40.0);
+
+    tick = std::min(40, std::max(0, tick));
+
+    // Have we started a new progress run?  
+    if (tick < lastTick && lastTick >= 39)
+        lastTick = -1;
+
+    if (tick <= lastTick)
+        return true;
+
+    while (tick > lastTick)
+    {
+        lastTick++;
+        if (lastTick % 4 == 0)
+            os << (lastTick / 4) * 10;
+        else
+            os << ".";
+    }
+
+    if( tick == 40 )
+        os << " - done.\n";
+    else
+        os.flush();
+
+    return true;
+}
 
 OGRFieldDefnH create_field(const char* name, OGRFieldType type, int width, int precision)
 {
@@ -149,9 +184,9 @@ void create_layer_def(OGRLayerH lyr)
     OGR_Fld_Destroy(fld);
 }
 
-void report_ogr_formats()
+void report_ogr_formats(std::ostream& os)
 {
-    std::cerr << "Supported OGR formats:";
+    os << "Supported OGR formats:";
 
     for (int i = 0; i < OGRGetDriverCount(); ++i)
     {
@@ -160,11 +195,11 @@ void report_ogr_formats()
 
         if (OGR_Dr_TestCapability(drv, ODrCCreateDataSource))
         {
-            std::cerr << "\n - " << OGR_Dr_GetName(drv);
+            os << "\n - " << OGR_Dr_GetName(drv);
         }
     }
 
-    std::cerr << "\nMore details at http://gdal.org/ogr/ogr_formats.html" << std::endl;
+    os << "\nMore details at http://gdal.org/ogr/ogr_formats.html" << std::endl;
 }
 
 void usage()
@@ -176,6 +211,8 @@ void usage()
         << "\t-f <format>\tOGR format for output file\n"
         << "\t-formats\tlist supported OGR formats\n";       
 }
+
+} // anonymous namespace
 
 int main(int argc, char* argv[])
 {
@@ -201,7 +238,7 @@ int main(int argc, char* argv[])
                 }
                 else if (arg == "-formats")
                 {
-                    report_ogr_formats();
+                    report_ogr_formats(std::cout);
                     return 0;
                 }
                 else if (arg == "-i" && (on_arg + 1 < argc))
@@ -283,10 +320,13 @@ int main(int argc, char* argv[])
         //
         // Translation of points cloud to features set
         //
-        std::cout << "Translating " << reader.GetHeader().GetPointRecordsCount() << " points...";
+        liblas::uint32_t i = 0;
+        liblas::uint32_t const size = reader.GetHeader().GetPointRecordsCount();
+
+        std::cout << "Translating " << size << " points:\n";
 
         ogr_wrapper<OGRFeatureH> feat(OGR_F_Create(OGR_L_GetLayerDefn(lyr)), OGR_F_Destroy);
-
+        
         while (reader.ReadNextPoint())
         {
             liblas::LASPoint const& p = reader.GetPoint();   
@@ -309,9 +349,12 @@ int main(int argc, char* argv[])
             {
                 throw std::runtime_error("feature creation failed");
             }
+
+            term_progress(std::cout, (i + 1) / static_cast<double>(size));
+            i++;
         }
 
-        std::cout << "done!\n";
+        //std::cout << "done!\n";
     }
     catch (std::exception const& e)
     {
