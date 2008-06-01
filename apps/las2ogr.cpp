@@ -20,11 +20,12 @@
 // ogr
 #include <ogr_api.h>
 //std
-#include <cassert>
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <cassert>
 
 // Anonymous namespace for local definitions
 namespace { 
@@ -354,7 +355,7 @@ int main(int argc, char* argv[])
             i++;
         }
 
-        //std::cout << "done!\n";
+        std::cout << std::endl;
     }
     catch (std::exception const& e)
     {
