@@ -79,8 +79,8 @@ private:
             del_(p);
     }
 
-    deleter_type del_;
     T p_;
+    deleter_type del_;
 };
 
 bool term_progress(std::ostream& os, double complete)
