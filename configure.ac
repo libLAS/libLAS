@@ -71,7 +71,8 @@ AC_DEFUN([AC_HAVE_LONG_LONG],
 dnl ###########################################################
 dnl GDAL
 dnl ###########################################################
-AC_ARG_WITH(gdal,[  --with-gdal=ARG         Path to gdal-config],,)
+AC_ARG_WITH([gdal],
+    AC_HELP_STRING([--with-gdal=ARG], [Path to gdal-config]),,)
 AC_MSG_CHECKING([for GDAL])
 
 GDAL_CONFIG="no"
@@ -96,7 +97,8 @@ if test "$GDAL_CONFIG" != "no" ; then
   	AC_MSG_ERROR([$GDAL_CONFIG says OGR is not enabled])
   fi
 fi
-AC_SUBST(GDAL_INC GDAL_PREFIX)
+AC_SUBST([GDAL_INC])
+AC_SUBST([GDAL_PREFIX])
 AM_CONDITIONAL([GDAL_IS_CONFIG], [test ! x$GDAL_CONFIG = xno])
 
 dnl ---------------------------------------------------------------------------
