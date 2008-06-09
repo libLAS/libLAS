@@ -349,7 +349,12 @@ int main(int argc, char *argv[])
             continue;
         }
         surviving_number_of_point_records++;
-        surviving_number_of_points_by_return[LASPoint_GetReturnNumber(p)-1]++;
+
+        if (LASPoint_GetReturnNumber(p))
+            surviving_number_of_points_by_return[LASPoint_GetReturnNumber(p)-1]++;
+        else
+            surviving_number_of_points_by_return[LASPoint_GetReturnNumber(p)]++;        
+
         if (first_surviving_point)
         {
             surviving_point_min = LASPoint_Copy(p);
