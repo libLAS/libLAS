@@ -69,8 +69,6 @@ void usage()
                     " http://liblas.org/browser/trunk/doc/las2las.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
-    exit(0);
-
 }
 
 void ptime(const char *const msg)
