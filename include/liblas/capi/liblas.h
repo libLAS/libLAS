@@ -53,12 +53,13 @@
 #include <liblas/cstdint.hpp>
 
 
-typedef void *LASWriterH;
-typedef void *LASReaderH;
-typedef void *LASPointH;
-typedef void *LASHeaderH;
-typedef void *LASGuidH;
-typedef void *LASVLRH;
+typedef struct LASWriterHS *LASWriterH;
+typedef struct LASReaderHS *LASReaderH;
+typedef struct LASPointHS *LASPointH;
+typedef struct LASHeaderHS *LASHeaderH;
+typedef struct LASGuidHS *LASGuidH;
+typedef struct LASVLRHS *LASVLRH;
+
 
 LAS_C_START
 

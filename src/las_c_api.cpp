@@ -50,12 +50,14 @@
 #include <liblas/guid.hpp>
 #include <liblas/capi/las_config.h>
 
-typedef void *LASWriterH;
-typedef void *LASReaderH;
-typedef void *LASPointH;
-typedef void *LASHeaderH;
-typedef void *LASGuidH;
-typedef void *LASVLRH;
+typedef struct LASWriterHS *LASWriterH;
+typedef struct LASReaderHS *LASReaderH;
+typedef struct LASPointHS *LASPointH;
+typedef struct LASHeaderHS *LASHeaderH;
+typedef struct LASGuidHS *LASGuidH;
+typedef struct LASVLRHS *LASVLRH;
+
+
 
 #include <string>
 #include <stack>
