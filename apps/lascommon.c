@@ -338,12 +338,24 @@ void print_header(LASHeaderH header, const char* file_name) {
     char *pszSystemId = NULL;
     char *pszSoftwareId = NULL;
     char *pszProj4 = NULL;
+    
+    char *pszVLRUser = NULL;
+    char *pszVLRDescription = NULL;
+    uint16_t nVLRLength = 0;
+    uint16_t nVLRRecordId = 0;
+    
+    LASVLRH pVLR = NULL;
 
+    uint32_t nVLR = 0;
+    int i = 0;
+    
     pszSignature = LASHeader_GetFileSignature(header);
     pszProjectId = LASHeader_GetProjectId(header);
     pszSystemId = LASHeader_GetSystemId(header);
     pszSoftwareId = LASHeader_GetSoftwareId(header);
     pszProj4 = LASHeader_GetProj4(header);
+    
+    nVLR = LASHeader_GetRecordsCount(header);
     
     fprintf(stderr, "\n---------------------------------------------------------\n");
     fprintf(stderr, "  Header Summary\n");
@@ -427,6 +439,37 @@ void print_header(LASHeaderH header, const char* file_name) {
     fprintf(stderr, " Spatial Reference           %s\n",
                     pszProj4);
 
+    if (nVLR) {
+        
+    fprintf(stderr, "\n---------------------------------------------------------\n");
+    fprintf(stderr, "  VLR Summary\n");
+    fprintf(stderr, "---------------------------------------------------------\n");
+
+        for (i = 0; i < nVLR; i++) {
+            pVLR = LASHeader_GetVLR(header, i);
+
+            if (LASError_GetLastErrorNum()) {
+                LASError_Print("Unable to fetch VLR");
+                exit(1);
+            }
+            
+            pszVLRUser = LASVLR_GetUserId(pVLR);
+            pszVLRDescription = LASVLR_GetDescription(pVLR);
+            nVLRLength = LASVLR_GetRecordLength(pVLR);
+            nVLRRecordId = LASVLR_GetRecordId(pVLR);
+            
+
+            fprintf(stderr, "   User: '%s' - Description: '%s'\n", pszVLRUser, pszVLRDescription);
+            fprintf(stderr, "   ID: %d Length: %d\n\n", nVLRRecordId, nVLRLength);
+            
+            LASVLR_Destroy(pVLR);
+            pVLR = NULL;
+            
+            free(pszVLRUser);
+            free(pszVLRDescription);
+        }
+        
+    }
     free(pszSignature);
     free(pszProjectId);
     free(pszSystemId);
