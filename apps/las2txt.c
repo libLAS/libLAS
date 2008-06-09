@@ -73,7 +73,6 @@ void usage()
                     " http://liblas.org/browser/trunk/doc/las2txt.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
-    exit(0);
 }
 
 

@@ -37,7 +37,6 @@ void usage()
     fprintf(stderr, "\nFor more information, see the full documentation for lasdiff at:\n"
                     " http://liblas.org/browser/trunk/doc/lasdiff.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
-    exit(1);
 }
 
 static int lidardouble2string(char* string, double value0, double value1)

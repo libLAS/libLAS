@@ -72,7 +72,6 @@ void usage()
                     " http://liblas.org/browser/trunk/doc/txt2las.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
-    exit(0);
 }
 
 static void VecUpdateMinMax3dv(double min[3], double max[3], const double v[3])

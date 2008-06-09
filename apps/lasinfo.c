@@ -65,7 +65,6 @@ void usage()
                     " http://liblas.org/browser/trunk/doc/lasinfo.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
-    exit(0);
 }
 
 

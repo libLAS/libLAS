@@ -62,8 +62,7 @@ void usage()
     fprintf(stderr, "For more information, see the full documentation for lasmerge at:\n"
                     " http://liblas.org/browser/trunk/doc/lasmerge.txt\n");
     fprintf(stderr,"----------------------------------------------------------\n");
-    
-    exit(0);
+
 }
 
 void ptime(const char *const msg)
@@ -202,6 +201,7 @@ int main(int argc, char *argv[])
     {
         fprintf(stderr, "ERROR: no input specified\n");
         usage();
+        exit(1);
     }
 
     if (    num_file_name_in == 1 && 
