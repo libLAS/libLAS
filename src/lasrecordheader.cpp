@@ -206,4 +206,16 @@ bool LASVLR::equal(LASVLR const& other) const
             && m_recordLength == other.m_recordLength);
 }
 
+uint32_t LASVLR::GetTotalSize() const
+{
+    // Signature 2 bytes
+    // UserID 16 bytes
+    // RecordID 2 bytes
+    // RecordLength after Header 2 bytes
+    // Description 32 bytes
+    // Data length -- size of the data's vector * the size of uint8_t
+    uint32_t size = 2 + 16 + 2 + 2 + 32 + GetData().size() * sizeof(uint8_t);
+    return size;
+
+}
 } // namespace liblas

@@ -114,6 +114,9 @@ public:
     /// \exception No throw
     bool equal(LASVLR const& other) const;
 
+    /// Get the total size of the VLR in bytes
+    uint32_t GetTotalSize() const;
+    
 private:
 
     enum
