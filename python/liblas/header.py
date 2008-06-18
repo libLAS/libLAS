@@ -355,4 +355,6 @@ class Header(object):
     def GetVLR(self, value):
         return vlr.VLR(handle=core.las.LASHeader_GetVLR(self.handle, value))
 
+    def DeleteVLR(self, value):
+        core.las.LASHeader_DeleteVLR(self.handle, value)
 

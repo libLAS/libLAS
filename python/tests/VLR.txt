@@ -32,6 +32,12 @@
   >>> v.userid
   'LASF_Projection'
   
-  >>> data = v.data
-  >>> len(data)
+#  >>> data = v.data
+#  >>> len(data)
 
+  # Ensure the offset is updated when a VLR is deleted
+  >>> h.data_offset
+  759L
+  >>> h.DeleteVLR(0)
+  >>> h.data_offset
+  633L
