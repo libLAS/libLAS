@@ -283,8 +283,10 @@ int main(int argc, char *argv[])
         exit(1);
     } 
 
-    if (verbose) ptime("start.");
-    fprintf(stderr, "first pass reading %d points ...\n", LASHeader_GetPointRecordsCount(header));
+    if (verbose) {
+        ptime("start.");
+        fprintf(stderr, "first pass reading %d points ...\n", LASHeader_GetPointRecordsCount(header));
+    }
 
     p  = LASReader_GetNextPoint(reader);
 
@@ -595,8 +597,13 @@ int main(int argc, char *argv[])
 /*  if (remove_extra_header) surviving_header.offset_to_point_data = surviving_header.header_size;
 */
 
-    fprintf(stderr, "second pass reading %d and writing %d points ...\n", LASHeader_GetPointRecordsCount(surviving_header), surviving_number_of_point_records);
-
+    if (verbose) {
+        fprintf(stderr, 
+                "second pass reading %d and writing %d points ...\n", 
+                LASHeader_GetPointRecordsCount(surviving_header), 
+                surviving_number_of_point_records);
+    }
+    
     if (use_stdout) file_name_out = "stdout";
     
     writer = LASWriter_Create(file_name_out, surviving_header, LAS_MODE_WRITE);
@@ -714,7 +721,9 @@ int main(int argc, char *argv[])
         exit(1);
     } 
     summary = SummarizePoints(reader);
-    print_point_summary(summary, header);
+    if (verbose) {
+        print_point_summary(summary, header);
+    }
     repair_header(header, summary) ;
 
     if (summary) {
