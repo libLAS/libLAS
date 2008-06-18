@@ -53,6 +53,18 @@
 #include <cstring> // std::memset, std::memcpy, std::strncpy
 #include <cassert>
 
+
+#ifdef HAVE_LIBGEOTIFF
+#include <geotiff.h>
+#include <geo_simpletags.h>
+#include "geo_normalize.h"
+#include "geo_simpletags.h"
+#include "geovalues.h"
+#include "geotiffio.h"   /* public interface        */
+#include "geo_tiffp.h" /* external TIFF interface */
+#include "geo_keyp.h"  /* private interface       */
+#endif /* HAVE_LIBGEOTIFF */
+
 namespace liblas
 {
 
@@ -500,14 +512,10 @@ void LASHeader::SetMin(double x, double y, double z)
 void LASHeader::AddVLR(LASVLR const& v) 
 {
     m_vlrs.push_back(v);
-    uint32_t size = 0;
     if (m_vlrs.size() > m_recordsCount)
     {
         m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
-
-        // FIXME: Explain the magic numbers below
-        size = GetDataOffset() + 2 + 16 + 2 + 2 + 32 + v.GetData().size() * sizeof(uint8_t);
-        SetDataOffset(size + GetDataOffset());
+        SetDataOffset(v.GetTotalSize() + GetDataOffset());
     }
 }
 
@@ -520,12 +528,21 @@ void LASHeader::DeleteVLR(uint32_t index)
 {    
     if (index >= m_vlrs.size())
         throw std::out_of_range("index is out of range");
-        
-    m_vlrs.erase(m_vlrs.begin() + index);
-    m_recordsCount = static_cast<uint32_t>(m_vlrs.size());   
+
+    std::vector<LASVLR>::iterator i = m_vlrs.begin() + index;
+
+    // Deal with the dataoffset when deleting
+    uint32_t size = (*i).GetTotalSize();
+
+    m_vlrs.erase(i);
+    m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
+    
+    SetDataOffset(GetDataOffset() - size);
+    
 }
 
-    /// Fetch the Georeference as a proj.4 string
+
+/// Fetch the Georeference as a proj.4 string
 std::string LASHeader::GetProj4() const 
 {
     return m_proj4;
@@ -534,6 +551,9 @@ std::string LASHeader::GetProj4() const
 void LASHeader::SetProj4(std::string const& v)
 {
     m_proj4 = v;
+    ClearGeoKeyVLRs();
+    SetGeoreference();
+    printf("SetProj4 called...\n");
 }
 void LASHeader::Init()
 {
@@ -577,6 +597,139 @@ void LASHeader::Init()
     SetScale(0.01, 0.01, 0.01);
 }
 
+void LASHeader::ClearGeoKeyVLRs()
+{
+
+    std::string const uid("LASF_Projection");
+
+    uint32_t beg_size = 0;
+    uint32_t end_size = 0;
+
+    std::vector<LASVLR> vlrs = m_vlrs;
+    std::vector<LASVLR>::const_iterator i;
+    std::vector<LASVLR>::iterator j;
+
+    for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i)
+    {
+        LASVLR record = *i;
+        beg_size += (*i).GetTotalSize();
+
+        uint16_t id = record.GetRecordId();
+        const char* user = record.GetUserId(true).c_str();
+        
+        if (uid == user && 34735 == id)
+        {
+            // Geotiff SHORT key
+            for(j = vlrs.begin(); j != vlrs.end(); ++j) {
+                if (*j == *i) {
+                    vlrs.erase(j);
+                    break;
+                }
+            }
+        }
+
+        if (uid == user && 34736 == id)
+        {
+            // Geotiff DOUBLE key
+            for(j = vlrs.begin(); j != vlrs.end(); ++j) {
+                if (*j == *i) {
+                    vlrs.erase(j);
+                    break;
+                }
+            }
+        }        
+
+        if (uid == user && 34737 == id)
+        {
+            // Geotiff ASCII key
+            for(j = vlrs.begin(); j != vlrs.end(); ++j) {
+                if (*j == *i) {
+                    vlrs.erase(j);
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Copy our list of surviving VLRs back to our member variable
+    // and update header information
+    m_vlrs = vlrs;
+    m_recordsCount = m_vlrs.size();
+    
+    // Calculate a new data offset size
+    for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i) 
+    {
+        end_size += (*i).GetTotalSize();
+    }
+
+    uint32_t size = 0;
+    uint32_t const dataSignatureSize = 2;
+    
+    // Add the signature if we're a 1.0 file    
+    if (eVersionMinorMin == m_versionMinor) {
+        size = end_size + dataSignatureSize; 
+    } else {
+        size = end_size;
+    }
+
+    SetDataOffset(GetHeaderSize()+size);
+
+}
+void LASHeader::SetGeoreference() 
+{
+#ifndef HAVE_LIBGEOTIFF
+
+#else
+    int ret = 0;
+    ST_TIFF *st = ST_Create();
+    GTIF *gt = GTIFNewSimpleTags( st );    
+
+    ret = GTIFSetFromProj4(gt, GetProj4().c_str());
+    if (!ret) {
+        throw std::invalid_argument("proj.4 string is invalid or unsupported");
+    }
+    ret = GTIFWriteKeys(gt);
+    if (!ret) {
+        throw std::runtime_error("The geotiff keys could not be written");
+    }
+
+    printf("num keys: %d\n", gt->gt_num_keys);
+
+    GTIFPrint(gt, 0, 0);
+    
+    void* kdata = NULL;
+    void* ddata = NULL;
+    void* adata = NULL;
+    int atype, dtype, ktype, acount, dcount, kcount;
+
+    ret = ST_GetKey(st, GTIFF_GEOKEYDIRECTORY, &kcount, &ktype, &kdata);
+    if (ret) {
+        
+        LASVLR record;
+        int i = 0;
+        record.SetRecordId(34735);
+        record.SetUserId("LASF_Projection");
+        std::vector<uint8_t> data;
+
+        // Shorts are 2 bytes in length
+        uint32_t length = 2*kcount;
+        data.resize(length);
+        record.SetRecordLength(length);
+        
+        // Copy the data into the data vector
+        
+    }
+    
+    printf("GTIFF_GEOKEYDIRECTORY count is %d return %d\n", kcount, ret);
+    
+    ret = ST_GetKey(st, GTIFF_ASCIIPARAMS, &acount, &atype, &adata);
+    printf("GTIFF_ASCIIPARAMS count is %d return %d\n", acount, ret);
+
+    ret = ST_GetKey(st, GTIFF_DOUBLEPARAMS, &dcount, &dtype, &ddata);
+    printf("GTIFF_DOUBLEPARAMS count is %d return %d\n", dcount, ret);
+
+#endif
+}
 
 
 } // namespace liblas

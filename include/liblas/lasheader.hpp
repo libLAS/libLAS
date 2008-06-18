@@ -299,7 +299,7 @@ public:
 
     /// Removes a VLR from the the header
     void DeleteVLR(uint32_t index);
-    
+
     /// Fetch the Georeference as a proj.4 string
     std::string GetProj4() const;
     
@@ -331,6 +331,8 @@ private:
     // Private function members
     //
     void Init();
+    void SetGeoreference();
+    void ClearGeoKeyVLRs();
 
     //
     // Private data members
