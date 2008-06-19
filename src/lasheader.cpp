@@ -707,6 +707,8 @@ void LASHeader::SetGeoreference()
     // header.  We're going to rewrite them to be totally derived from the 
     // proj4 string.
     ClearGeoKeyVLRs();
+    
+    if (GetProj4().empty()) return;
 
     ret = GTIFSetFromProj4(gt, GetProj4().c_str());
     if (!ret) {
