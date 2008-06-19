@@ -63,11 +63,14 @@ std::size_t WriterImpl::GetVersion() const
     return eLASVersion11;
 }
 
-void WriterImpl::WriteHeader(LASHeader const& header)
+void WriterImpl::WriteHeader(LASHeader& header)
 {
     uint8_t n1 = 0;
     uint16_t n2 = 0;
     uint32_t n4 = 0;
+
+    // Rewrite the georeference VLR entries if they exist
+    header.SetGeoreference();
 
     // Seek to the beginning
     m_ofs.seekp(0, std::ios::beg);
@@ -204,7 +207,7 @@ void WriterImpl::WriteHeader(LASHeader const& header)
     // 31-32. Max/Min Z
     detail::write_n(m_ofs, header.GetMaxZ(), sizeof(double));
     detail::write_n(m_ofs, header.GetMinZ(), sizeof(double));
-
+    
     WriteVLR(header);
 
     // If we already have points, we're going to put it at the end of the file.  

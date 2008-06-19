@@ -512,11 +512,32 @@ void LASHeader::SetMin(double x, double y, double z)
 void LASHeader::AddVLR(LASVLR const& v) 
 {
     m_vlrs.push_back(v);
-    if (m_vlrs.size() > m_recordsCount)
+
+    uint32_t end_size = 0;
+    std::vector<LASVLR>::const_iterator i;
+        
+    // Calculate a new data offset size
+    for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i) 
     {
-        m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
-        SetDataOffset(v.GetTotalSize() + GetDataOffset());
+        end_size += (*i).GetTotalSize();
     }
+
+    uint32_t size = 0;
+    uint32_t const dataSignatureSize = 2;
+    
+    // Add the signature if we're a 1.0 file    
+    if (eVersionMinorMin == m_versionMinor) {
+        size = end_size + dataSignatureSize; 
+    } else {
+        size = end_size;
+    }
+
+    SetDataOffset(GetHeaderSize()+size);
+
+    // We're assuming that the reader or writer has reset 
+    // the VLR count to 0 before adding them back with AddVLR  
+    // FIXME I think this is still broken - hobu
+    m_recordsCount += 1;
 }
 
 LASVLR const& LASHeader::GetVLR(uint32_t index) const 
@@ -541,20 +562,18 @@ void LASHeader::DeleteVLR(uint32_t index)
     
 }
 
-
 /// Fetch the Georeference as a proj.4 string
 std::string LASHeader::GetProj4() const 
 {
     return m_proj4;
 }
-    
+
+       
 void LASHeader::SetProj4(std::string const& v)
 {
     m_proj4 = v;
-    ClearGeoKeyVLRs();
-    SetGeoreference();
-    printf("SetProj4 called...\n");
 }
+
 void LASHeader::Init()
 {
     // Initialize public header block with default
@@ -683,6 +702,11 @@ void LASHeader::SetGeoreference()
     int ret = 0;
     ST_TIFF *st = ST_Create();
     GTIF *gt = GTIFNewSimpleTags( st );    
+    
+    // Wipe out any existing VLRs that represent geotiff keys on the 
+    // header.  We're going to rewrite them to be totally derived from the 
+    // proj4 string.
+    ClearGeoKeyVLRs();
 
     ret = GTIFSetFromProj4(gt, GetProj4().c_str());
     if (!ret) {
@@ -693,16 +717,16 @@ void LASHeader::SetGeoreference()
         throw std::runtime_error("The geotiff keys could not be written");
     }
 
-    printf("num keys: %d\n", gt->gt_num_keys);
-
-    GTIFPrint(gt, 0, 0);
     
-    void* kdata = NULL;
-    void* ddata = NULL;
-    void* adata = NULL;
+    short* kdata = NULL;
+    short kvalue;
+    double dvalue;
+    double* ddata = NULL;
+    char* adata = NULL;
+    char* avalue = NULL;
     int atype, dtype, ktype, acount, dcount, kcount;
 
-    ret = ST_GetKey(st, GTIFF_GEOKEYDIRECTORY, &kcount, &ktype, &kdata);
+    ret = ST_GetKey(st, GTIFF_GEOKEYDIRECTORY, &kcount, &ktype, (void**)&kdata);
     if (ret) {
         
         LASVLR record;
@@ -713,20 +737,96 @@ void LASHeader::SetGeoreference()
 
         // Shorts are 2 bytes in length
         uint32_t length = 2*kcount;
-        data.resize(length);
+
         record.SetRecordLength(length);
         
         // Copy the data into the data vector
-        
+        for (i=0; i<kcount;i++) {
+            kvalue = kdata[i];
+            
+            uint8_t* v = reinterpret_cast<uint8_t*>(&kvalue); 
+            
+            data.push_back(v[0]);
+            data.push_back(v[1]);
+            
+        }
+        record.SetData(data);
+
+        AddVLR(record);
     }
     
-    printf("GTIFF_GEOKEYDIRECTORY count is %d return %d\n", kcount, ret);
-    
-    ret = ST_GetKey(st, GTIFF_ASCIIPARAMS, &acount, &atype, &adata);
-    printf("GTIFF_ASCIIPARAMS count is %d return %d\n", acount, ret);
 
-    ret = ST_GetKey(st, GTIFF_DOUBLEPARAMS, &dcount, &dtype, &ddata);
-    printf("GTIFF_DOUBLEPARAMS count is %d return %d\n", dcount, ret);
+    // FIXME We don't handle ASCII keys yet
+    
+    // ret = ST_GetKey(st, GTIFF_ASCIIPARAMS, &acount, &atype, (void**)&adata);
+    // if (ret) {
+    //     
+    //     LASVLR record;
+    //     int i = 0;
+    //     record.SetRecordId(34737);
+    //     record.SetUserId("LASF_Projection");
+    //     std::vector<uint8_t> data;
+    // 
+    //     uint32_t length = acount;
+    //     record.SetRecordLength(length);
+    //     
+    //     // Copy the data into the data vector
+    // 
+    //     for (i=0; i<acount;i++) {
+    //         avalue = adata[i];
+    //         
+    //         uint8_t* v =  reinterpret_cast<uint8_t*>(&avalue);
+    //         
+    //         data.push_back(v[0]);
+    //         data.push_back(v[1]);
+    //         data.push_back(v[2]);
+    //         data.push_back(v[3]);
+    //         data.push_back(v[4]);
+    //         data.push_back(v[5]);
+    //         data.push_back(v[6]);
+    //         data.push_back(v[7]);
+    //         
+    //     }
+    //     record.SetData(data);
+    //     AddVLR(record);
+    // }
+
+
+
+    ret = ST_GetKey(st, GTIFF_DOUBLEPARAMS, &dcount, &dtype, (void**)&ddata);
+
+    if (ret) {
+        
+        LASVLR record;
+        int i = 0;
+        record.SetRecordId(34736);
+        record.SetUserId("LASF_Projection");
+        std::vector<uint8_t> data;
+
+        // Doubles are 8 bytes in length
+        uint32_t length = 8*dcount;
+        record.SetRecordLength(length);
+        
+        // Copy the data into the data vector
+        for (i=0; i<dcount;i++) {
+            dvalue = ddata[i];
+            
+            uint8_t* v =  reinterpret_cast<uint8_t*>(&dvalue);
+            
+            data.push_back(v[0]);
+            data.push_back(v[1]);
+            data.push_back(v[2]);
+            data.push_back(v[3]);
+            data.push_back(v[4]);
+            data.push_back(v[5]);
+            data.push_back(v[6]);
+            data.push_back(v[7]);
+            
+        }
+        record.SetData(data);
+        AddVLR(record);
+    }
+
 
 #endif
 }

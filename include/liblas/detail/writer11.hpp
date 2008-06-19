@@ -58,7 +58,7 @@ public:
     
     WriterImpl(std::ostream& ofs);
     std::size_t GetVersion() const;
-    void WriteHeader(LASHeader const& header);
+    void WriteHeader(LASHeader& header);
     void UpdateHeader(LASHeader const& header);
     void WritePointRecord(PointRecord const& record);
     void WritePointRecord(PointRecord const& record, double const& time);

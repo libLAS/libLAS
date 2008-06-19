@@ -70,7 +70,7 @@ public:
     std::ostream& GetStream() const;
     
     // Allow in-place writing of header
-    void WriteHeader(LASHeader const& header);
+    void WriteHeader(LASHeader& header);
     
 private:
     

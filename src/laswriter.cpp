@@ -106,7 +106,7 @@ std::ostream& LASWriter::GetStream() const
     return m_pimpl->GetStream();
 }
 
-void LASWriter::WriteHeader(LASHeader const& header)
+void LASWriter::WriteHeader(LASHeader& header)
 {
     m_pimpl->WriteHeader(header);
     m_header = header;

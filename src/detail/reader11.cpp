@@ -310,17 +310,18 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
     VLRHeader vlrh = { 0 };
 
     m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
-    
-    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
+    uint32_t count = header.GetRecordsCount();
+    header.SetRecordsCount(0);
+    for (uint32_t i = 0; i < count; ++i)
     {
         read_n(vlrh, m_ifs, sizeof(VLRHeader));
 
         int16_t count = vlrh.recordLengthAfterHeader;
          
         std::vector<uint8_t> data;
-        data.resize( count );
+        data.resize(count);
 
-        read_n(data.front(), m_ifs, count );
+        read_n(data.front(), m_ifs, count);
          
         LASVLR vlr;
         vlr.SetReserved(vlrh.reserved);
@@ -332,10 +333,9 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
 
         header.AddVLR(vlr);
     }
-
+    
     return true;
 }
-
 bool ReaderImpl::ReadGeoreference(LASHeader& header)
 {
 #ifndef HAVE_LIBGEOTIFF

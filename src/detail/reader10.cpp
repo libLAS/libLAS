@@ -52,6 +52,8 @@
 #include "geo_normalize.h"
 #include "geo_simpletags.h"
 #include "geovalues.h"
+#include <geo_tiffp.h>
+#include <geo_keyp.h>
 #endif /* HAVE_LIBGEOTIFF */
 
 // std
@@ -218,8 +220,9 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
     VLRHeader vlrh = { 0 };
 
     m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
-    
-    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
+    uint32_t count = header.GetRecordsCount();
+    header.SetRecordsCount(0);
+    for (uint32_t i = 0; i < count; ++i)
     {
         read_n(vlrh, m_ifs, sizeof(VLRHeader));
 
@@ -240,12 +243,10 @@ bool ReaderImpl::ReadVLR(LASHeader& header) {
 
         header.AddVLR(vlr);
     }
-
-    // TODO: Under construction
-    //       Testing reading of VLRecords with GeoKeys
     
     return true;
 }
+
 bool ReaderImpl::ReadGeoreference(LASHeader& header)
 {
 #ifndef HAVE_LIBGEOTIFF
@@ -290,6 +291,12 @@ bool ReaderImpl::ReadGeoreference(LASHeader& header)
         {
             header.SetProj4(std::string(GTIFGetProj4Defn(&defn)));
         }
+
+// #ifdef DEBUG
+//         printf("Geotiff from reader...\n");
+//         GTIFPrint(gtif, 0, 0);
+// #endif
+// 
         GTIFFree( gtif );
         ST_Destroy( st );
         return true;

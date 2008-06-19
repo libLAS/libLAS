@@ -306,6 +306,8 @@ public:
     /// Set the Georeference as a proj.4 string
     void SetProj4(std::string const& v);
     
+    void SetGeoreference();
+    
 private:
     
     typedef detail::Point<double> PointScales;
@@ -331,7 +333,6 @@ private:
     // Private function members
     //
     void Init();
-    void SetGeoreference();
     void ClearGeoKeyVLRs();
 
     //

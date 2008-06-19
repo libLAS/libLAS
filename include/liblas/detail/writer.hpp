@@ -55,7 +55,7 @@ public:
     Writer();
     virtual ~Writer();
     virtual std::size_t GetVersion() const = 0;
-    virtual void WriteHeader(LASHeader const& header) = 0;
+    virtual void WriteHeader(LASHeader& header) = 0;
     virtual void UpdateHeader(LASHeader const& header) = 0;
     virtual void WritePointRecord(PointRecord const& record) = 0;
     virtual void WritePointRecord(PointRecord const& record, double const& time) = 0;    
