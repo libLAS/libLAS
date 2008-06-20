@@ -784,7 +784,7 @@ int main(int argc, char *argv[])
     while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
     {
         point = LASPoint_Create();
-        if (parse(parse_string, line, xyz, &point, &gps_time))
+        if (parse(parse_string, line, xyz, point, &gps_time))
         {
             /* update bounding box */
             VecUpdateMinMax3dv(xyz_min, xyz_max, xyz);
