@@ -52,8 +52,6 @@
 #include "geo_normalize.h"
 #include "geo_simpletags.h"
 #include "geovalues.h"
-#include <geo_tiffp.h>
-#include <geo_keyp.h>
 #endif /* HAVE_LIBGEOTIFF */
 
 // std
