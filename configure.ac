@@ -2,9 +2,9 @@ dnl $Id$
 dnl
 dnl This is main autoconf bootstrap script of libLAS project.
 dnl
-m4_define([liblas_version_major], [0])
-m4_define([liblas_version_minor], [9])
-m4_define([liblas_version_micro], [7])
+m4_define([liblas_version_major], [1])
+m4_define([liblas_version_minor], [0])
+m4_define([liblas_version_micro], [0b1])
 m4_define([liblas_version],
           [liblas_version_major.liblas_version_minor.liblas_version_micro])
 

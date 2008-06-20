@@ -51,8 +51,8 @@
 #endif
 
 #ifndef LAS_RELEASE_DATE
-#  define LAS_RELEASE_DATE     20071203
+#  define LAS_RELEASE_DATE     20080620
 #endif
 #ifndef LAS_RELEASE_NAME
-#  define LAS_RELEASE_NAME     "1.0.0"
+#  define LAS_RELEASE_NAME     "1.0.0b1"
 #endif

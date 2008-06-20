@@ -26,19 +26,62 @@ State of the Library
 
 libLAS provides excellent coverage of the ASPRS LAS 1.0 and 1.1 specifications, 
 and it provides support for copying variable length records from one file to 
-another.  As of 0.9.7, support for creating your own variable length records 
-is limited to the C++ API only.  libLAS concentrates on reading and writing 
+another.  As of 1.0.0-beta-1, support for creating your own variable length records 
+is limited to the C and C++ APIs.  libLAS concentrates on reading and writing 
 point data for processing pipelines from C++, C, and Python.  Contact the 
 `Authors`_ if you have money burning a hole in your pocket to implement more 
 sophisticated support for LAS format items.
 
-libLAS also provides support for reading spatial reference system descriptions 
-from LAS 1.0 and 1.1 files as of version 0.9.7.  `libgeotiff`_ 1.2.5 must be 
+libLAS also provides support for reading and writing spatial reference system descriptions 
+from LAS 1.0 and 1.1 files as of version 1.0.0-beta-1.  `libgeotiff`_ 1.2.5 
+(not yet released as of 6/20/2008) must be 
 linked with libLAS to provide reading support for spatial reference systems.  
-The 0.9.7 Windows binaries come provided with libgeotiff, but those folks 
+The 1.0.0-beta-1 Windows binaries come provided with libgeotiff, but those folks 
 building libLAS on their own platforms must use the --with-geotiff configure-time 
 switch to tell libLAS where the library is located.
- 
+
+Features of libLAS
+------------------------------------------------------------------------------
+
+Open Source
+..............................................................................
+
+libLAS is open source software.  You can embed it in your own applications 
+(and even resell it) as long as you follow the crediting restriction of the BSD 
+license.  
+
+Multiple APIs
+..............................................................................
+
+libLAS supports has C, C++, and Python APIs.  This allows you to easily embed 
+libLAS in your own programs, or use the Python API for some one-off scripting.  
+
+Spatial Reference System Support
+..............................................................................
+
+Linked against the latest version of `libgeotiff`_, you can set and get the spatial reference 
+systems of LAS files using simple `proj.4`_ coordinate system definitions.  
+
+Simple Variable Length Record Abstraction
+..............................................................................
+
+libLAS provides a sensible abstraction for working with variable length records (VLR) 
+in LAS files, and it transparently manages the VLRs related to spatial referencing 
+systems for you.  
+
+Command-line Utilities
+..............................................................................
+
+libLAS provides ports of the `LAStools`_ utilities by Martin Isenburg for doing 
+things like translating from one version of the LAS format to another, inspecting 
+header information, and translating LAS data to and from text.
+
+Cross-platform operation
+..............................................................................
+
+libLAS is known to work on MSVC 7.1+ (Windows) and GCC4.1+ (OS X and Linux) platforms 
+on both big- and little-endian architectures.
+
 Download
 ------------------------------------------------------------------------------
 
@@ -174,3 +217,4 @@ See `License`_ for a copy.
 .. _`LAS Doxygen Docs`: http://liblas.org/doxygen/
 .. _`How To Release libLAS`: http://liblas.org/wiki/HowToRelease
 .. _`libgeotiff`: http://www.remotesensing.org/geotiff/geotiff.html
+.. _`proj.4`: http://proj.maptools.org/
