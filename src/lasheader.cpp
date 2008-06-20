@@ -591,7 +591,7 @@ void LASHeader::Init()
     ptm = gmtime(&now);
     
     m_createDOY = ptm->tm_yday;
-    m_createYear = ptm->tm_year;
+    m_createYear = ptm->tm_year + 1900;
     
     m_headerSize = eHeaderSize;
 

@@ -23,8 +23,11 @@
   >>> h.minor_version
   1
 
-  >>> h.date
   >>> import datetime
+  >>> now = datetime.datetime.now()
+  >>> today = datetime.datetime(now.year, now.month,now.day)
+  >>> h.date == today
+  True
   >>> t = datetime.datetime(2008,3,19)
   >>> h.date = t
   >>> h.date
