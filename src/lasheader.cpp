@@ -61,8 +61,6 @@
 #include "geo_simpletags.h"
 #include "geovalues.h"
 #include "geotiffio.h"   /* public interface        */
-#include "geo_tiffp.h" /* external TIFF interface */
-#include "geo_keyp.h"  /* private interface       */
 #endif /* HAVE_LIBGEOTIFF */
 
 namespace liblas
@@ -728,7 +726,8 @@ void LASHeader::SetGeoreference()
     char* avalue = NULL;
     int atype, dtype, ktype, acount, dcount, kcount;
 
-    ret = ST_GetKey(st, GTIFF_GEOKEYDIRECTORY, &kcount, &ktype, (void**)&kdata);
+    //GTIFF_GEOKEYDIRECTORY == 34735
+    ret = ST_GetKey(st, 34735, &kcount, &ktype, (void**)&kdata);
     if (ret) {
         
         LASVLR record;
@@ -759,8 +758,8 @@ void LASHeader::SetGeoreference()
     
 
     // FIXME We don't handle ASCII keys yet
-    
-    // ret = ST_GetKey(st, GTIFF_ASCIIPARAMS, &acount, &atype, (void**)&adata);
+    // GTIFF_ASCIIPARAMS == 34737
+    // ret = ST_GetKey(st, 34737, &acount, &atype, (void**)&adata);
     // if (ret) {
     //     
     //     LASVLR record;
@@ -794,8 +793,8 @@ void LASHeader::SetGeoreference()
     // }
 
 
-
-    ret = ST_GetKey(st, GTIFF_DOUBLEPARAMS, &dcount, &dtype, (void**)&ddata);
+    // GTIFF_DOUBLEPARAMS == 34736
+    ret = ST_GetKey(st, 34736, &dcount, &dtype, (void**)&ddata);
 
     if (ret) {
         
