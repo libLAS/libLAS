@@ -335,7 +335,7 @@ int main(int argc, char *argv[])
 
     if (verbose)
     {
-        print_header(reader, file_name_in);
+        print_header(header, file_name_in);
     }
 
     if (header_comment_sign)
