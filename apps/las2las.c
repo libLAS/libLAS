@@ -25,6 +25,9 @@ void print_point(LASPointH point);
 void print_header(LASHeaderH header, const char* file_name);
 void repair_header(LASHeaderH header, LASPointSummary* summary) ;
 
+#define LAS_FORMAT_10 0
+#define LAS_FORMAT_11 1
+
 void usage()
 {
     fprintf(stderr,"----------------------------------------------------------\n");
@@ -96,6 +99,7 @@ int main(int argc, char *argv[])
     int first_only = FALSE;
     int last_only = FALSE;
     int skip_invalid = FALSE;
+    int format = LAS_FORMAT_11;
     
     LASReaderH reader = NULL;
     LASHeaderH header = NULL;
@@ -186,6 +190,24 @@ int main(int argc, char *argv[])
             clip_xy_max[1] = atof(argv[i]);
             clip = TRUE;
         }
+        else if (   strcmp(argv[i],"--format") == 0   ||
+                    strcmp(argv[i],"-f") == 0    ||
+                    strcmp(argv[i],"-format") == 0 
+                )
+        {
+            i++;
+            if (strcmp(argv[i], "1.0") == 0) {
+                format = LAS_FORMAT_10;
+            }
+            else if (strcmp(argv[i], "1.1") == 0) {
+                format = LAS_FORMAT_11;
+            } 
+            else {
+                LASError_Print("Format must be specified as 1.0 or 1.1");
+            }
+
+        }
+
         else if (   strcmp(argv[i],"--eliminate_return") == 0  ||
                     strcmp(argv[i],"-eliminate_return") == 0   ||
                     strcmp(argv[i],"-elim_return") == 0       ||
@@ -593,6 +615,12 @@ int main(int argc, char *argv[])
 
     minz = LASPoint_GetZ(surviving_point_min) * LASHeader_GetScaleZ(surviving_header) + LASHeader_GetOffsetZ(surviving_header);
     maxz = LASPoint_GetZ(surviving_point_max) * LASHeader_GetScaleZ(surviving_header) + LASHeader_GetOffsetZ(surviving_header);
+    
+    if (format == LAS_FORMAT_10) {
+        LASHeader_SetVersionMinor(surviving_header, 0);
+    } else {
+        LASHeader_SetVersionMinor(surviving_header, 1);
+    }
 
 /*  if (remove_extra_header) surviving_header.offset_to_point_data = surviving_header.header_size;
 */
