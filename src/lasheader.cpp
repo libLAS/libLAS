@@ -52,6 +52,7 @@
 #include <vector>
 #include <cstring> // std::memset, std::memcpy, std::strncpy
 #include <cassert>
+#include <time.h>
 
 
 #ifdef HAVE_LIBGEOTIFF
@@ -582,9 +583,15 @@ void LASHeader::Init()
     m_dataFormatId = ePointFormat0;
     m_dataRecordLen = ePointSize0;
 
-    // TODO: Use current date
-    m_createDOY = 0;
-    m_createYear = 0;
+
+    time_t now;
+    tm *ptm;
+
+    time(&now);
+    ptm = gmtime(&now);
+    
+    m_createDOY = ptm->tm_yday;
+    m_createYear = ptm->tm_year;
     
     m_headerSize = eHeaderSize;
 
