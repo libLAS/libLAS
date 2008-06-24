@@ -297,15 +297,16 @@ public:
     /// Returns a VLR 
     LASVLR const& GetVLR(uint32_t index) const;
 
-    /// Removes a VLR from the the header
+    /// Removes a VLR from the the header.
     void DeleteVLR(uint32_t index);
 
-    /// Fetch the Georeference as a proj.4 string
+    /// Fetch the georeference as a PROJ.4 definition string.
     std::string GetProj4() const;
     
-    /// Set the Georeference as a proj.4 string
+    /// Set the georeference as a proj.4 string
     void SetProj4(std::string const& v);
     
+	/// Rewrite variable-length record with georeference infomation, if available.
     void SetGeoreference();
     
 private:

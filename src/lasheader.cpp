@@ -590,8 +590,8 @@ void LASHeader::Init()
     time(&now);
     ptm = gmtime(&now);
     
-    m_createDOY = ptm->tm_yday;
-    m_createYear = ptm->tm_year + 1900;
+    m_createDOY = static_cast<uint16_t>(ptm->tm_yday);
+    m_createYear = static_cast<uint16_t>(ptm->tm_year + 1900);
     
     m_headerSize = eHeaderSize;
 
@@ -678,7 +678,7 @@ void LASHeader::ClearGeoKeyVLRs()
     // Copy our list of surviving VLRs back to our member variable
     // and update header information
     m_vlrs = vlrs;
-    m_recordsCount = m_vlrs.size();
+    m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
     
     // Calculate a new data offset size
     for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i) 
@@ -705,25 +705,35 @@ void LASHeader::SetGeoreference()
 
 #else
     int ret = 0;
-    ST_TIFF *st = ST_Create();
-    GTIF *gt = GTIFNewSimpleTags( st );    
     
+	// TODO - mloskot: probable lack of RAII here.
+	// Who is the owner of st and gt pointees?
+
+	ST_TIFF* st = ST_Create();
+    assert(0 != st);
+
+	GTIF* gt = GTIFNewSimpleTags( st );    
+    assert(0 != gt);
+	
     // Wipe out any existing VLRs that represent geotiff keys on the 
     // header.  We're going to rewrite them to be totally derived from the 
     // proj4 string.
     ClearGeoKeyVLRs();
     
-    if (GetProj4().empty()) return;
+    if (GetProj4().empty())
+		return;
 
     ret = GTIFSetFromProj4(gt, GetProj4().c_str());
-    if (!ret) {
-        throw std::invalid_argument("proj.4 string is invalid or unsupported");
-    }
-    ret = GTIFWriteKeys(gt);
-    if (!ret) {
-        throw std::runtime_error("The geotiff keys could not be written");
+    if (!ret)
+	{
+        throw std::invalid_argument("PROJ.4 string is invalid or unsupported");
     }
 
+    ret = GTIFWriteKeys(gt);
+    if (!ret)
+	{
+        throw std::runtime_error("The geotiff keys could not be written");
+    }
     
     short* kdata = NULL;
     short kvalue;
@@ -735,8 +745,8 @@ void LASHeader::SetGeoreference()
 
     //GTIFF_GEOKEYDIRECTORY == 34735
     ret = ST_GetKey(st, 34735, &kcount, &ktype, (void**)&kdata);
-    if (ret) {
-        
+    if (ret)
+	{    
         LASVLR record;
         int i = 0;
         record.SetRecordId(34735);
@@ -749,20 +759,20 @@ void LASHeader::SetGeoreference()
         record.SetRecordLength(length);
         
         // Copy the data into the data vector
-        for (i=0; i<kcount;i++) {
+        for (i = 0; i < kcount; i++)
+		{
             kvalue = kdata[i];
             
             uint8_t* v = reinterpret_cast<uint8_t*>(&kvalue); 
             
             data.push_back(v[0]);
             data.push_back(v[1]);
-            
         }
+
         record.SetData(data);
 
         AddVLR(record);
     }
-    
 
     // FIXME We don't handle ASCII keys yet
     // GTIFF_ASCIIPARAMS == 34737
@@ -803,8 +813,8 @@ void LASHeader::SetGeoreference()
     // GTIFF_DOUBLEPARAMS == 34736
     ret = ST_GetKey(st, 34736, &dcount, &dtype, (void**)&ddata);
 
-    if (ret) {
-        
+    if (ret)
+	{       
         LASVLR record;
         int i = 0;
         record.SetRecordId(34736);
@@ -816,7 +826,8 @@ void LASHeader::SetGeoreference()
         record.SetRecordLength(length);
         
         // Copy the data into the data vector
-        for (i=0; i<dcount;i++) {
+        for (i=0; i<dcount;i++)
+		{
             dvalue = ddata[i];
             
             uint8_t* v =  reinterpret_cast<uint8_t*>(&dvalue);
@@ -828,15 +839,13 @@ void LASHeader::SetGeoreference()
             data.push_back(v[4]);
             data.push_back(v[5]);
             data.push_back(v[6]);
-            data.push_back(v[7]);
-            
+            data.push_back(v[7]);   
         }
-        record.SetData(data);
+        
+		record.SetData(data);
         AddVLR(record);
     }
-
-
-#endif
+#endif // HAVE_LIBGEOTIFF
 }
 
 
