@@ -15,6 +15,6 @@
 	/>
 	<UserMacro
 		Name="GDAL_DIR"
-		Value="C:\Program Files\FWTools2.2.0"
+		Value="c:\OSGeo4W\apps\gdal-dev"
 	/>
 </VisualStudioPropertySheet>
