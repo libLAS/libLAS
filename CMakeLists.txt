@@ -18,6 +18,10 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.4.0 )
 
 SET( CMAKE_COLOR_MAKEFILE ON )
 
+# set path to additional CMake modules
+SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/build/cmake ${CMAKE_MODULE_PATH})
+
+
 #############################################################
 # Building general settings
 
@@ -55,6 +59,18 @@ ELSE (WIN32)
 
     ENDIF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 ENDIF (WIN32)
+
+#############################################################
+# Search for dependencies
+
+# optinal GeoTIFF support
+FIND_PACKAGE(GeoTIFF)
+
+IF (GEOTIFF_FOUND)
+	#TODO: Use to generate config.h
+	#SET (HAVE_LIBGEOTIFF TRUE)
+	ADD_DEFINITIONS( -D HAVE_LIBGEOTIFF )
+ENDIF (GEOTIFF_FOUND)
 
 #############################################################
 # List of directories to process
