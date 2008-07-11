@@ -1,18 +1,32 @@
+# $Id$
+#
+# nmake.opt - main configuration file for NMAKE makefiles
+#
+# Set BUILD_DEBUG balue to YES if you want to make debug build
+# and to prepare not optimized binaries.
+BUILD_DEBUG = NO
+
+# libLAS package settings
 PACKAGE_VERSION=1.0.0b1
 LAS_LIB = liblas.lib
 LAS_DLL = liblas$(PACKAGE_VERSION).dll
 LAS_LIB_DLL = liblas_i.lib
 
-GEOTIFF_HOME=C:\cvs\buildkit\geotiff\libgeotiff
+INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
+
+# GeoTIFF Support
+# Uncomment the folling line to build GeoTIFF support for reading and
+# writing LAS files with Coordinate Systems information.
+#GEOTIFF_HOME=C:\cvs\buildkit\geotiff\libgeotiff
+
+!IFDEF GEOTIFF_HOME
 GEOTIFF_LIB = $(GEOTIFF_HOME)\geotiff_i.lib
-
-INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi -I$(GEOTIFF_HOME)
-
-BUILD_DEBUG = NO
+GEOTIFF_INCLUDE = -I$(GEOTIFF_HOME)
+INCLUDES += $(GEOTIFF_INCLUDE)
+!ENDIF
+# End of GeoTIFF Support
 
 LAS_HOME=C:\cvs\liblas\trunk\
-
-
 
 BINDIR=$(LAS_HOME)\bin
 PYDLL_DIR = $(LAS_HOME)\python
@@ -29,13 +43,14 @@ LAS_DLL = liblas$(PACKAGE_VERSION).dll
 LAS_LIB_DLL = liblas_i.lib
 !ENDIF
 
+CFLAGS= $(OPTFLAGS) /DPACKAGE_VERSION=\"$(PACKAGE_VERSION)\"  $(INCLUDES) 
 
-
-CFLAGS= $(OPTFLAGS) /DPACKAGE_VERSION=\"$(PACKAGE_VERSION)\" /DHAVE_LIBGEOTIFF=1 $(INCLUDES) 
+!IFDEF GEOTIFF_HOME
+CFLAGS += /DHAVE_LIBGEOTIFF=1
+!ENDIF
 
 .c.obj:	
 	$(CC) $(CFLAGS) /c $*.c /Fo$*.obj
 
 .cpp.obj:	
 	$(CC) $(CFLAGS) /c $*.cpp /Fo$*.obj
-	
