@@ -445,7 +445,7 @@ void print_header(LASHeaderH header, const char* file_name) {
     fprintf(stderr, "  VLR Summary\n");
     fprintf(stderr, "---------------------------------------------------------\n");
 
-        for (i = 0; i < nVLR; i++) {
+        for (i = 0; i < (int)nVLR; i++) {
             pVLR = LASHeader_GetVLR(header, i);
 
             if (LASError_GetLastErrorNum()) {

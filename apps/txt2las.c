@@ -148,7 +148,7 @@ static int parse(const char* parse_string, const char* line, double* xyz, LASPoi
                 fprintf(stderr, 
                         "WARNING: intensity %g is out of range of unsigned short\n", 
                         temp_f);
-            LASPoint_SetIntensity(point, temp_f);
+            LASPoint_SetIntensity(point, (int)temp_f);
 /*          point->intensity = (unsigned short)temp_f; */
             /* // then advance to next white space*/
             while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t') l++; 
@@ -164,7 +164,7 @@ static int parse(const char* parse_string, const char* line, double* xyz, LASPoi
                 fprintf(stderr, 
                         "WARNING: scan angle %g is out of range of char\n", 
                         temp_f);
-            LASPoint_SetScanAngleRank(point, temp_f);
+            LASPoint_SetScanAngleRank(point, (int)temp_f);
 /*          point->scan_angle_rank = (char)temp_f; */
             /* // then advance to next white space*/
             while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t') l++; 
