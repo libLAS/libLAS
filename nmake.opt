@@ -17,16 +17,17 @@ INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
 # GeoTIFF Support
 # Uncomment the folling line to build GeoTIFF support for reading and
 # writing LAS files with Coordinate Systems information.
-#GEOTIFF_HOME=C:\cvs\buildkit\geotiff\libgeotiff
+GEOTIFF_HOME=C:\cvs\buildkit\geotiff\libgeotiff
 
 !IFDEF GEOTIFF_HOME
 GEOTIFF_LIB = $(GEOTIFF_HOME)\geotiff_i.lib
 GEOTIFF_INCLUDE = -I$(GEOTIFF_HOME)
-INCLUDES += $(GEOTIFF_INCLUDE)
+INCLUDES = $(INCLUDES) $(GEOTIFF_INCLUDE)
 !ENDIF
+
 # End of GeoTIFF Support
 
-LAS_HOME=C:\cvs\liblas\trunk\
+LAS_HOME=C:\cvs\liblas\trunk
 BINDIR=$(LAS_HOME)\bin
 PYDLL_DIR = $(LAS_HOME)\python
 
@@ -45,7 +46,7 @@ LAS_LIB_DLL = liblas_i.lib
 CFLAGS= $(OPTFLAGS) /DPACKAGE_VERSION=\"$(PACKAGE_VERSION)\"  $(INCLUDES) 
 
 !IFDEF GEOTIFF_HOME
-CFLAGS += /DHAVE_LIBGEOTIFF=1
+CFLAGS = $(CFLAGS) /DHAVE_LIBGEOTIFF=1
 !ENDIF
 
 .c.obj:	
