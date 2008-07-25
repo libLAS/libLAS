@@ -1,6 +1,6 @@
 /***************************************************************************
  * $Id$
- * $Date: 2008-02-05 08:51:53 +0100 (Tue, 05 Feb 2008) $
+ * $Date$
  *
  * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
  * Purpose: LAS translation to ASCII text with optional configuration
