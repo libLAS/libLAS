@@ -1,4 +1,4 @@
-// $Id: read.cpp 376 2008-02-10 16:24:31Z mloskot $
+// $Id$
 //
 // (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
 // Distributed under the BSD License
