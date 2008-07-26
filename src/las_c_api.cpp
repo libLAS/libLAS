@@ -59,15 +59,16 @@ typedef struct LASVLRHS *LASVLRH;
 
 
 
-#include <string>
-#include <stack>
-#include <map>
-#include <cstdio>
 #include <exception>
-#include <vector>
-#include <sstream> // std::stringstream
 #include <fstream>
 #include <iostream>
+#include <map>
+#include <sstream> // std::stringstream
+#include <string>
+#include <stack>
+#include <typeinfo>
+#include <vector>
+#include <cstdio>
 using namespace liblas;
 
 LAS_C_START

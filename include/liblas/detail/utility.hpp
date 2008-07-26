@@ -44,10 +44,11 @@
 
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/endian.hpp>
-#include <iosfwd>
 #include <algorithm>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
+#include <iosfwd>
 #include <cstring>
 #include <cassert>
 

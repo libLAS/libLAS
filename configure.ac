@@ -168,5 +168,6 @@ LOC_MSG([  GDAL support.............: ${GDAL_CONFIG} ${GDAL_INC}])
 LOC_MSG([  GeoTIFF SRS support......: ${GEOTIFF_CONFIG} ${GEOTIFF_INC}])
 LOC_MSG()
 LOC_MSG([  LIBS.....................: ${LIBS}])
-
+LOC_MSG()
+LOC_MSG([  libLAS - http://liblas.org])
 LOC_MSG()
