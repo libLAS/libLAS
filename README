@@ -34,8 +34,8 @@ sophisticated support for LAS format items.
 
 libLAS also provides support for reading and writing spatial reference system descriptions 
 from LAS 1.0 and 1.1 files as of version 1.0.0-beta-1.  `libgeotiff`_ 1.2.5 
-(not yet released as of 6/20/2008) must be 
-linked with libLAS to provide reading support for spatial reference systems.  
+(released in `7/28/2008`_) must be linked with libLAS to provide reading support
+for spatial reference systems.  
 The 1.0.0-beta-1 Windows binaries come provided with libgeotiff, but those folks 
 building libLAS on their own platforms must use the --with-geotiff configure-time 
 switch to tell libLAS where the library is located.
@@ -217,4 +217,5 @@ See `License`_ for a copy.
 .. _`LAS Doxygen Docs`: http://liblas.org/doxygen/
 .. _`How To Release libLAS`: http://liblas.org/wiki/HowToRelease
 .. _`libgeotiff`: http://www.remotesensing.org/geotiff/geotiff.html
+.. _`7/28/2008`: http://lists.maptools.org/pipermail/geotiff/2008-July/000501.html
 .. _`proj.4`: http://proj.maptools.org/
