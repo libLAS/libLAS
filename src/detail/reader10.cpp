@@ -45,21 +45,20 @@
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-
+// GeoTIFF
 #ifdef HAVE_LIBGEOTIFF
 #include <geotiff.h>
 #include <geo_simpletags.h>
 #include "geo_normalize.h"
 #include "geo_simpletags.h"
 #include "geovalues.h"
-#endif /* HAVE_LIBGEOTIFF */
-
+#endif // HAVE_LIBGEOTIFF
 // std
 #include <fstream>
 #include <iostream>
-#include <cstdlib> // std::size_t
-#include <cassert>
 #include <stdexcept>
+#include <cstdlib> // std::size_t, std::free
+#include <cassert>
 
 namespace liblas { namespace detail { namespace v10 {
 
@@ -213,8 +212,8 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     return true;
 }
 
-bool ReaderImpl::ReadVLR(LASHeader& header) {
-    
+bool ReaderImpl::ReadVLR(LASHeader& header)
+{
     VLRHeader vlrh = { 0 };
 
     m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
@@ -249,12 +248,11 @@ bool ReaderImpl::ReadGeoreference(LASHeader& header)
 {
 #ifndef HAVE_LIBGEOTIFF
     UNREFERENCED_PARAMETER(header);
-    return false;
 #else
-    // TODO: Under construction
 
     std::string const uid("LASF_Projection");
-    ST_TIFF *st = ST_Create();
+
+    detail::raii_wrapper<ST_TIFF> st(ST_Create(), ST_Destroy);
 
     for (uint16_t i = 0; i < header.GetRecordsCount(); ++i)
     {
@@ -263,45 +261,42 @@ bool ReaderImpl::ReadGeoreference(LASHeader& header)
         if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
         {
             int16_t count = data.size()/sizeof(int16_t);
-            ST_SetKey( st, record.GetRecordId(), count, STT_SHORT, 
-                       &(data[0]) );
+            ST_SetKey(st.get(), record.GetRecordId(), count, STT_SHORT, &(data[0]));
         }
 
         if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
         {
             int count = data.size() / sizeof(double);
-            ST_SetKey( st, record.GetRecordId(), count, STT_DOUBLE, 
-                       &(data[0]) );
+            ST_SetKey(st.get(), record.GetRecordId(), count, STT_DOUBLE, &(data[0]));
         }        
 
         if (uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId())
         {
             uint8_t count = data.size()/sizeof(uint8_t);
-            ST_SetKey( st, record.GetRecordId(), count, STT_ASCII, 
-                       &(data[0]) );
+            ST_SetKey(st.get(), record.GetRecordId(), count, STT_ASCII, &(data[0]));
         }
     }
 
-    if (st->key_count) {
-        GTIF *gtif = GTIFNewSimpleTags( st );
+    if (st.get()->key_count)
+    {
+        raii_wrapper<GTIF> gtif(GTIFNewSimpleTags(st.get()), GTIFFree);
+
         GTIFDefn defn;
-        if (GTIFGetDefn(gtif, &defn)) 
+        if (GTIFGetDefn(gtif.get(), &defn)) 
         {
-            header.SetProj4(std::string(GTIFGetProj4Defn(&defn)));
+            char* proj4def = GTIFGetProj4Defn(&defn);
+            std::string tmp(proj4def);
+            std::free(proj4def);
+
+            header.SetProj4(tmp);
         }
 
-// #ifdef DEBUG
-//         printf("Geotiff from reader...\n");
-//         GTIFPrint(gtif, 0, 0);
-// #endif
-// 
-        GTIFFree( gtif );
-        ST_Destroy( st );
         return true;
-    } else {
-        return false;
     }
+
 #endif /* def HAVE_LIBGEOTIFF */
+
+    return false;
 }
 
 bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
@@ -393,3 +388,4 @@ std::istream& ReaderImpl::GetStream() const
 }
 
 }}} // namespace liblas::detail::v10
+

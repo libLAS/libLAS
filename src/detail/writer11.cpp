@@ -275,3 +275,4 @@ std::ostream& WriterImpl::GetStream() const
 }
 
 }}} // namespace liblas::detail::v11
+

@@ -44,6 +44,15 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
+// GeoTIFF
+#ifdef HAVE_LIBGEOTIFF
+#include <geotiff.h>
+#include <geo_simpletags.h>
+#include "geo_normalize.h"
+#include "geo_simpletags.h"
+#include "geovalues.h"
+#include "geotiffio.h"
+#endif // HAVE_LIBGEOTIFF
 //std
 #include <algorithm>
 #include <fstream>
@@ -52,17 +61,8 @@
 #include <vector>
 #include <cstring> // std::memset, std::memcpy, std::strncpy
 #include <cassert>
-#include <time.h>
+#include <ctime>
 
-
-#ifdef HAVE_LIBGEOTIFF
-#include <geotiff.h>
-#include <geo_simpletags.h>
-#include "geo_normalize.h"
-#include "geo_simpletags.h"
-#include "geovalues.h"
-#include "geotiffio.h"   /* public interface        */
-#endif /* HAVE_LIBGEOTIFF */
 
 namespace liblas
 {
@@ -584,11 +584,11 @@ void LASHeader::Init()
     m_dataRecordLen = ePointSize0;
 
 
-    time_t now;
-    tm *ptm;
+    std::time_t now;
+    std::tm *ptm;
 
-    time(&now);
-    ptm = gmtime(&now);
+    std::time(&now);
+    ptm = std::gmtime(&now);
     
     m_createDOY = static_cast<uint16_t>(ptm->tm_yday);
     m_createYear = static_cast<uint16_t>(ptm->tm_year + 1900);
@@ -623,7 +623,6 @@ void LASHeader::Init()
 
 void LASHeader::ClearGeoKeyVLRs()
 {
-
     std::string const uid("LASF_Projection");
 
     uint32_t beg_size = 0;
@@ -638,41 +637,48 @@ void LASHeader::ClearGeoKeyVLRs()
         LASVLR record = *i;
         beg_size += (*i).GetTotalSize();
 
-        uint16_t id = record.GetRecordId();
-        const char* user = record.GetUserId(true).c_str();
-        
-        if (uid == user && 34735 == id)
+        std::string user = record.GetUserId(true);
+        if (uid == user.c_str())
         {
-            // Geotiff SHORT key
-            for(j = vlrs.begin(); j != vlrs.end(); ++j) {
-                if (*j == *i) {
-                    vlrs.erase(j);
-                    break;
-                }
-            }
-        }
+            uint16_t id = record.GetRecordId();
 
-        if (uid == user && 34736 == id)
-        {
-            // Geotiff DOUBLE key
-            for(j = vlrs.begin(); j != vlrs.end(); ++j) {
-                if (*j == *i) {
-                    vlrs.erase(j);
-                    break;
+            if (34735 == id)
+            {
+                // Geotiff SHORT key
+                for(j = vlrs.begin(); j != vlrs.end(); ++j)
+                {
+                    if (*j == *i)
+                    {
+                        vlrs.erase(j);
+                        break;
+                    }
                 }
             }
-        }        
-
-        if (uid == user && 34737 == id)
-        {
-            // Geotiff ASCII key
-            for(j = vlrs.begin(); j != vlrs.end(); ++j) {
-                if (*j == *i) {
-                    vlrs.erase(j);
-                    break;
+            else if (34736 == id)
+            {
+                // Geotiff DOUBLE key
+                for(j = vlrs.begin(); j != vlrs.end(); ++j)
+                {
+                    if (*j == *i)
+                    {
+                        vlrs.erase(j);
+                        break;
+                    }
+                }
+            }        
+            else if (34737 == id)
+            {
+                // Geotiff ASCII key
+                for (j = vlrs.begin(); j != vlrs.end(); ++j)
+                {
+                    if (*j == *i)
+                    {
+                        vlrs.erase(j);
+                        break;
+                    }
                 }
             }
-        }
+        } // uid == user
     }
     
     // Copy our list of surviving VLRs back to our member variable
@@ -690,9 +696,12 @@ void LASHeader::ClearGeoKeyVLRs()
     uint32_t const dataSignatureSize = 2;
     
     // Add the signature if we're a 1.0 file    
-    if (eVersionMinorMin == m_versionMinor) {
+    if (eVersionMinorMin == m_versionMinor)
+    {
         size = end_size + dataSignatureSize; 
-    } else {
+    }
+    else
+    {
         size = end_size;
     }
 
@@ -703,17 +712,14 @@ void LASHeader::SetGeoreference()
 {
 #ifndef HAVE_LIBGEOTIFF
 
+    ;
+
 #else
+
     int ret = 0;
     
-	// TODO - mloskot: probable lack of RAII here.
-	// Who is the owner of st and gt pointees?
-
-	ST_TIFF* st = ST_Create();
-    assert(0 != st);
-
-	GTIF* gt = GTIFNewSimpleTags( st );    
-    assert(0 != gt);
+    detail::raii_wrapper<ST_TIFF> st(ST_Create(), ST_Destroy);
+    detail::raii_wrapper<GTIF> gt(GTIFNewSimpleTags(st.get()), GTIFFree);    
 	
     // Wipe out any existing VLRs that represent geotiff keys on the 
     // header.  We're going to rewrite them to be totally derived from the 
@@ -723,28 +729,29 @@ void LASHeader::SetGeoreference()
     if (GetProj4().empty())
 		return;
 
-    ret = GTIFSetFromProj4(gt, GetProj4().c_str());
+    ret = GTIFSetFromProj4(gt.get(), GetProj4().c_str());
     if (!ret)
 	{
         throw std::invalid_argument("PROJ.4 string is invalid or unsupported");
     }
 
-    ret = GTIFWriteKeys(gt);
+    ret = GTIFWriteKeys(gt.get());
     if (!ret)
 	{
         throw std::runtime_error("The geotiff keys could not be written");
     }
     
     short* kdata = NULL;
-    short kvalue;
-    double dvalue;
+    short kvalue = 0;
     double* ddata = NULL;
-    char* adata = NULL;
-    char* avalue = NULL;
-    int atype, dtype, ktype, acount, dcount, kcount;
+    double dvalue = 0;
+    int dtype = 0;
+    int dcount = 0;
+    int ktype = 0;
+    int kcount = 0;
 
     //GTIFF_GEOKEYDIRECTORY == 34735
-    ret = ST_GetKey(st, 34735, &kcount, &ktype, (void**)&kdata);
+    ret = ST_GetKey(st.get(), 34735, &kcount, &ktype, (void**)&kdata);
     if (ret)
 	{    
         LASVLR record;
@@ -776,7 +783,7 @@ void LASHeader::SetGeoreference()
 
     // FIXME We don't handle ASCII keys yet
     // GTIFF_ASCIIPARAMS == 34737
-    // ret = ST_GetKey(st, 34737, &acount, &atype, (void**)&adata);
+    // ret = ST_GetKey(st.get(), 34737, &acount, &atype, (void**)&adata);
     // if (ret) {
     //     
     //     LASVLR record;
@@ -811,7 +818,7 @@ void LASHeader::SetGeoreference()
 
 
     // GTIFF_DOUBLEPARAMS == 34736
-    ret = ST_GetKey(st, 34736, &dcount, &dtype, (void**)&ddata);
+    ret = ST_GetKey(st.get(), 34736, &dcount, &dtype, (void**)&ddata);
 
     if (ret)
 	{       
@@ -848,5 +855,5 @@ void LASHeader::SetGeoreference()
 #endif // HAVE_LIBGEOTIFF
 }
 
-
 } // namespace liblas
+

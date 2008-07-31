@@ -218,4 +218,6 @@ uint32_t LASVLR::GetTotalSize() const
     return size;
 
 }
+
 } // namespace liblas
+

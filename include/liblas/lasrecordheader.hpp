@@ -153,3 +153,4 @@ inline bool operator!=(LASVLR const& lhs, LASVLR const& rhs)
 } // namespace liblas
 
 #endif // LIBLAS_LASRECORDHEADER_HPP_INCLUDED
+

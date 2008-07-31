@@ -66,6 +66,62 @@
 
 namespace liblas { namespace detail {
 
+/// Simple RAII wrapper.
+/// It's dedicated to use with types associated with custom deleter,
+/// opaque pointers and C API objects.
+template <typename T>
+class raii_wrapper
+{
+    typedef void(*deleter_type)(T* p);
+
+public:
+
+    raii_wrapper(T* p, deleter_type d)
+        : p_(p), del_(d)
+    {
+        assert(0 != p_);
+        assert(0 != del_);
+    }
+
+    ~raii_wrapper()
+    {
+        do_delete(p_);
+    }
+
+    void reset(T* p)
+    {
+        do_delete(p_);
+        p_= p;
+    }
+
+    T* get() const
+    {
+        return p_;
+    }
+
+    void swap(raii_wrapper& other)
+    {
+        std::swap(p_, other.p_);
+    }
+
+private:
+
+    raii_wrapper(raii_wrapper const& other);
+    raii_wrapper& operator=(raii_wrapper const& rhs);
+
+    void do_delete(T* p)
+    {
+        assert(del_);
+        if (0 != p)
+            del_(p);
+    }
+
+    T* p_;
+    deleter_type del_;
+};
+
+
+/// Definition of variable-length record header.
 struct VLRHeader
 {
   uint16_t reserved;
