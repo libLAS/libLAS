@@ -604,7 +604,7 @@ LAS_DLL uint8_t LASHeader_GetDataFormatId(const LASHeaderH hHeader);
  *  @param value the value for the data format id, 1 or 0 are valid values.
  *  @return LASError enum
 */
-LAS_DLL LASError LASHeader_SetDataFormatId(const LASHeaderH hHeader, int value);
+LAS_DLL LASError LASHeader_SetDataFormatId(const LASHeaderH hHeader, uint8_t value);
 
 /** Returns the number of point records in the file.  This value may not reflect the actual 
  *  number of point records in the file.
