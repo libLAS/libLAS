@@ -1,4 +1,5 @@
-INCLUDES = -I../include/liblas/capi -I../include
+AM_CFLAGS = @GDAL_INC@ -I../include/liblas/capi -I../include
+AM_CXXFLAGS = @GDAL_INC@ -I../include
 
 lasinfo_SOURCES = lasinfo.c lascommon.c
 las2las_SOURCES = las2las.c lascommon.c

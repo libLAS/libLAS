@@ -75,6 +75,7 @@ AC_ARG_WITH([gdal],
     AC_HELP_STRING([--with-gdal=ARG], [Path to gdal-config]),,)
 AC_MSG_CHECKING([for GDAL])
 
+HAVE_GDAL="no"
 GDAL_CONFIG="no"
 if test "$with_gdal" = "no" -o "$with_gdal" = "" ; then
   AC_MSG_RESULT([no])
@@ -96,6 +97,8 @@ if test "$GDAL_CONFIG" != "no" ; then
   if test "$OGR" != "yes" ; then
   	AC_MSG_ERROR([$GDAL_CONFIG says OGR is not enabled])
   fi
+  
+  HAVE_GDAL="yes"
 fi
 AC_SUBST([GDAL_INC])
 AC_SUBST([GDAL_PREFIX])
@@ -108,6 +111,7 @@ dnl ---------------------------------------------------------------------------
 AC_ARG_WITH(geotiff,[  --with-geotiff=ARG    Libgeotiff library to use (yes or path)],,)
 AC_MSG_CHECKING([for libgeotiff])
 
+HAVE_GEOTIFF="no"
 GEOTIFF_CONFIG="no"
 if test "$with_geotiff" = "no" -o "$with_geotiff" = "" ; then
 
@@ -118,7 +122,10 @@ else
   GEOTIFF_CONFIG=external
   dnl We now require libgeotiff 1.2.1 (for XTIFFClientOpen). 
   dnl first check if $with_geotiff/lib has the library:
-  AC_CHECK_LIB(geotiff,XTIFFClientOpen,GEOTIFF_CONFIG=external,GEOTIFF_CONFIG=no,-L$with_geotiff/lib)
+  AC_CHECK_LIB([geotiff], [XTIFFClientOpen],
+               [GEOTIFF_CONFIG=external],
+               [GEOTIFF_CONFIG=no],
+               [-L$with_geotiff/lib])
 fi
 
 if test "$GEOTIFF_CONFIG" != "no" ; then
@@ -130,6 +137,8 @@ if test "$GEOTIFF_CONFIG" != "no" ; then
       AC_MSG_RESULT([using libgeotiff from $with_geotiff/include]) 
     fi
   fi
+
+  HAVE_GEOTIFF="yes"
 
 fi
 
@@ -164,8 +173,20 @@ LOC_MSG([  Installation directory...: ${prefix}])
 LOC_MSG([  C compiler...............: ${CC} ${CFLAGS}])
 LOC_MSG([  C++ compiler.............: ${CXX} ${CXXFLAGS}])
 LOC_MSG([  Debugging support........: ${enable_debug}])
-LOC_MSG([  GDAL support.............: ${GDAL_CONFIG} ${GDAL_INC}])
-LOC_MSG([  GeoTIFF SRS support......: ${GEOTIFF_CONFIG} ${GEOTIFF_INC}])
+LOC_MSG([  GDAL support.............: ${HAVE_GDAL}])
+if test "${HAVE_GDAL}" != "no" ; then
+    LOC_MSG([   - gdal-config...........: ${GDAL_CONFIG}])
+    if test -n "${GDAL_INC}" ; then
+        LOC_MSG([   - INCLUDE directories...: ${GDAL_INC}])
+    fi
+fi
+LOC_MSG([  GeoTIFF SRS support......: ${HAVE_GEOTIFF}])
+if test "${HAVE_GEOTIFF}" != "no" ; then
+    LOC_MSG([   - libgeotiff............: ${GEOTIFF_CONFIG}])
+    if test -n "${GEOTIFF_INC}" ; then
+        LOC_MSG([   - INCLUDE directories...: ${GEOTIFF_INC}])
+    fi
+fi
 LOC_MSG()
 LOC_MSG([  LIBS.....................: ${LIBS}])
 LOC_MSG()
