@@ -544,7 +544,7 @@ LAS_DLL int16_t LASHeader_GetReserved(const LASHeaderH hHeader);
  *  and end at 365 or 366 being December 31st, depending on leap year.
  *  @return the day of the year as an integer starting from 1 for the file creation.
 */
-LAS_DLL int16_t LASHeader_GetCreationDOY(const LASHeaderH hHeader);
+LAS_DLL uint16_t LASHeader_GetCreationDOY(const LASHeaderH hHeader);
 
 /** Sets the file creation day of the year.  The values start from 1, being January 1st.  No
  *  date validation is done
@@ -558,7 +558,7 @@ LAS_DLL LASError LASHeader_SetCreationDOY(LASHeaderH hHeader, uint16_t value);
  *  year for the file, ie 2003, 2008, etc.
  *  @return the creation year for the file or 0 if none is set
 */
-LAS_DLL int16_t LASHeader_GetCreationYear(const LASHeaderH hHeader);
+LAS_DLL uint16_t LASHeader_GetCreationYear(const LASHeaderH hHeader);
 
 /** Sets the file creation year.  This should be a four digit number representing
  *  the year for the file, ie 2003, 2008, etc.  No validation on the value is done
