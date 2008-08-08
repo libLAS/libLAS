@@ -204,6 +204,7 @@ int main(int argc, char *argv[])
         {
             usage();
             exit(1);
+            fprintf(stderr, "ERROR: unknown argument '%s'\n",argv[i]);
         }
     }
       

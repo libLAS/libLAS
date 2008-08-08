@@ -270,6 +270,12 @@ int main(int argc, char *argv[])
         {
             file_name_out = argv[i];
         }
+        else 
+        {
+            fprintf(stderr, "ERROR: unknown argument '%s'\n",argv[i]);
+            usage();
+            exit(1);
+        }
     } /* end looping through argc/argv */
 
 
