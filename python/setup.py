@@ -15,7 +15,7 @@ version = version.split('=')[1]
 if os.name == 'nt':
     # Windows NT library
     lib_name = 'liblas%s.dll' % version
-    data_files=[('DLLs', ['DLLs/%s'% lib_name, 'DLLs/geotiff.dll','DLLs/libtiff.dll']),]
+    data_files=[('dll', ['dll/%s'% lib_name, 'dll/geotiff.dll','dll/libtiff.dll']),]
 else:
     data_files = None
 
