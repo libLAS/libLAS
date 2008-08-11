@@ -89,7 +89,7 @@
 #endif
 
 /* FIXME -  Ticket #23 */
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #define PACKAGE_VERSION "1.0.0b1"
 #endif
 
