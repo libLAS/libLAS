@@ -54,14 +54,12 @@
 #define LIBLAS_CSTDINT_HPP_INCLUDED
 
 #ifdef LIBLAS_C_API
-#include <limits.h>
-
-#ifndef _WIN32
-#include <stdint.h>
-#endif /* _WIN32 */
-
-#else
-#include <climits>
+#  include <limits.h>
+#  ifndef _MSV_VER
+#    include <stdint.h>
+#  endif /* _MSC_VER */
+#else /* LIBLAS_C_API */
+#  include <climits>
 namespace liblas
 {
 #endif /* LIBLAS_C_API */
@@ -172,5 +170,4 @@ namespace liblas
 #endif /* LIBLAS_C_API */
 
 #endif /* LIBLAS_CSTDINT_HPP_INCLUDED */
-
 
