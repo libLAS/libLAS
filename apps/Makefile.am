@@ -1,5 +1,8 @@
-AM_CFLAGS = @GDAL_INC@ -I../include/liblas/capi -I../include
-AM_CXXFLAGS = @GDAL_INC@ -I../include
+if GDAL_IS_CONFIG
+GDAL_CPPFLAGS = @GDAL_INC@ -DHAVE_GDAL=1
+endif
+
+AM_CPPFLAGS = $(GDAL_CPPFLAGS) -I../include/liblas/capi -I../include
 
 lasinfo_SOURCES = lasinfo.c lascommon.c
 las2las_SOURCES = las2las.c lascommon.c

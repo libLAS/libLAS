@@ -1,12 +1,11 @@
 
 SUBDIRS = detail .
 
-INCLUDES = -I../include -I../include/detail
-
 if GEOTIFF_IS_CONFIG
-AM_CPPFLAGS=@GEOTIFF_INC@ -DHAVE_LIBGEOTIFF=1
+GEOTIFF_CPPFLAGS = @GEOTIFF_INC@ -DHAVE_LIBGEOTIFF=1
 endif
 
+AM_CPPFLAGS = $(GEOTIFF_CPPFLAGS) -I../include -I../include/detail
 
 lib_LTLIBRARIES = liblas.la
 
