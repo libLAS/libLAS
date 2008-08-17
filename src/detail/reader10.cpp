@@ -231,7 +231,7 @@ bool ReaderImpl::ReadVLR(LASHeader& header)
         std::vector<uint8_t> data;
         data.resize(length);
 
-        read_n(data.front(), m_ifs, count);
+        read_n(data.front(), m_ifs, length);
          
         LASVLR vlr;
         vlr.SetReserved(vlrh.reserved);
