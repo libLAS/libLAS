@@ -223,10 +223,13 @@ bool ReaderImpl::ReadVLR(LASHeader& header)
     {
         read_n(vlrh, m_ifs, sizeof(VLRHeader));
 
-        int16_t count = vlrh.recordLengthAfterHeader;
+        uint16_t length = vlrh.recordLengthAfterHeader;
+        if (length < 1) {
+            throw std::domain_error("VLR record length must be at least 1 byte long");
+        }
          
         std::vector<uint8_t> data;
-        data.resize(count);
+        data.resize(length);
 
         read_n(data.front(), m_ifs, count);
          

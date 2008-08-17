@@ -310,17 +310,24 @@ bool ReaderImpl::ReadVLR(LASHeader& header)
     m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
     uint32_t count = header.GetRecordsCount();
     header.SetRecordsCount(0);
+    
     for (uint32_t i = 0; i < count; ++i)
     {
-        read_n(vlrh, m_ifs, sizeof(VLRHeader));
 
-        int16_t count = vlrh.recordLengthAfterHeader;
+        read_n(vlrh, m_ifs, sizeof(VLRHeader));
+        
+
+        uint16_t length = vlrh.recordLengthAfterHeader;
+        
+        if (length < 1) {
+            throw std::domain_error("VLR record length must be at least 1 byte long");
+        }
          
         std::vector<uint8_t> data;
-        data.resize(count);
+        data.resize(length);
 
-        read_n(data.front(), m_ifs, count);
-         
+        read_n(data.front(), m_ifs, length);
+
         LASVLR vlr;
         vlr.SetReserved(vlrh.reserved);
         vlr.SetUserId(std::string(vlrh.userId));
@@ -330,8 +337,9 @@ bool ReaderImpl::ReadVLR(LASHeader& header)
         vlr.SetData(data);
 
         header.AddVLR(vlr);
+
     }
-    
+
     return true;
 }
 bool ReaderImpl::ReadGeoreference(LASHeader& header)
