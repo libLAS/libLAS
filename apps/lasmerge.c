@@ -21,7 +21,7 @@
 
 LASPointSummary* SummarizePoints(LASReaderH reader);
 void print_point_summary(LASPointSummary* summary, LASHeaderH header);
-void print_header(LASHeaderH header, const char* file_name);
+void print_header(LASHeaderH header, const char* file_name, int bSkipVLR);
 
 void usage()
 {
@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
 {
     int i;
     int verbose = FALSE;
+    int skip_vlr = FALSE;
     int num_file_name_in = 0;
     int alloced_file_name_in = 32;
     char** file_names_in = (char**)malloc(sizeof(char*)*alloced_file_name_in);
@@ -180,7 +181,11 @@ int main(int argc, char *argv[])
             use_stdout = TRUE;
             file_name_out = "stdout";
         }
-
+        else if (   strcmp(argv[i],"--skip_vlr") == 0   ||
+                    strcmp(argv[i],"--no_vlr") == 0)
+        {
+            skip_vlr = TRUE;
+        } 
         else if (i == argc - 2 && num_file_name_in == 0 && file_name_out == 0)
         {
             file_names_in[0] = argv[i];
@@ -489,7 +494,7 @@ int main(int argc, char *argv[])
             exit(1);
         } 
 
-        print_header(header, file_name_out);        
+        print_header(header, file_name_out, skip_vlr);        
         summary = SummarizePoints(reader);
         print_point_summary(summary, header);
         

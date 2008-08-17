@@ -331,7 +331,7 @@ void print_point_summary(LASPointSummary* summary, LASHeaderH header) {
 
 
 
-void print_header(LASHeaderH header, const char* file_name) {
+void print_header(LASHeaderH header, const char* file_name, int bSkipVLR) {
 
     char *pszSignature = NULL;
     char *pszProjectId = NULL;
@@ -439,7 +439,7 @@ void print_header(LASHeaderH header, const char* file_name) {
     fprintf(stderr, " Spatial Reference           %s\n",
                     pszProj4);
 
-    if (nVLR) {
+    if (nVLR && !bSkipVLR) {
         
     fprintf(stderr, "\n---------------------------------------------------------\n");
     fprintf(stderr, "  VLR Summary\n");

@@ -22,7 +22,7 @@
 LASPointSummary* SummarizePoints(LASReaderH reader);
 void print_point_summary(LASPointSummary* summary, LASHeaderH header);
 void print_point(LASPointH point);
-void print_header(LASHeaderH header, const char* file_name);
+void print_header(LASHeaderH header, const char* file_name, int bSkipVLR);
 void repair_header(LASHeaderH header, LASPointSummary* summary) ;
 
 #define LAS_FORMAT_10 0

@@ -26,7 +26,7 @@
 
 LASPointSummary* SummarizePoints(LASReaderH reader);
 void print_point_summary(LASPointSummary* summary, LASHeaderH header);
-void print_header(LASHeaderH header, const char* file_name);
+void print_header(LASHeaderH header, const char* file_name, int bSkipVLR);
 
 void usage()
 {
@@ -84,6 +84,7 @@ int main(int argc, char *argv[])
     int repair_bounding_box = FALSE;
     int use_stdin = FALSE;
     int update_return_counts = FALSE;
+    int skip_vlr = FALSE;
 
 
     char *system_identifier = NULL;
@@ -195,7 +196,11 @@ int main(int argc, char *argv[])
             file_creation_year = (uint8_t)atoi(argv[i]);
             change_header = TRUE;
         }
-                      
+        else if (   strcmp(argv[i],"--skip_vlr") == 0   ||
+                    strcmp(argv[i],"--no_vlr") == 0)
+        {
+            skip_vlr = TRUE;
+        }            
         else if (i == argc - 1 && file_name == NULL)
         {
             file_name = argv[i];
@@ -232,7 +237,7 @@ int main(int argc, char *argv[])
 
     
     
-    print_header(header, file_name);
+    print_header(header, file_name, skip_vlr);
     
     if (change_header) {
         if (system_identifier) {
