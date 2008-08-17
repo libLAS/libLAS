@@ -40,19 +40,22 @@ void usage()
     fprintf(stderr,"\n");
 
     fprintf(stderr,"Checking point information:\n");
-    fprintf(stderr,"  lasinfo --check lidar.las\n");
+    fprintf(stderr,"  lasinfo --input lidar.las --check\n");
     fprintf(stderr,"\n");
 
-    fprintf(stderr,"Reading from stdin:\n");
-    fprintf(stderr,"  lasinfo --stdin -c < lidar.las\n");
+    fprintf(stderr,"Print header info and point summary and redirect output to a file:\n");
+    fprintf(stderr,"  lasinfo --check --input lidar.las 2> output.txt\n");
+    fprintf(stderr,"\n");
+    
+    fprintf(stderr,"Read from stdin, scan the points, and skip printing VLR info:\n");
+    fprintf(stderr,"  lasinfo --stdin --check --skip_vlr < lidar.las\n");
     fprintf(stderr,"\n");
 
     fprintf(stderr,"Repairing header info to reflect point data:\n");
     fprintf(stderr,"  lasinfo -i lidar.las --repair\n");
-    fprintf(stderr,"  lasinfo -i lidar.las --repair_bounding_box\n");
     fprintf(stderr,"\n");
 
-    fprintf(stderr,"Altering header inf:\n");
+    fprintf(stderr,"Altering header info:\n");
     fprintf(stderr, "  lasinfo -i lidar.las --system_identifier \"hello world!\" "
                     "--generating_software \"this is a test (-:\"  --file_creation 8 2007\n");
     fprintf(stderr,"\n");
