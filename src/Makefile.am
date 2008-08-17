@@ -19,6 +19,6 @@ liblas_la_SOURCES = \
 	lasfile.cpp \
 	las_c_api.cpp
 
-liblas_la_LIBADD = 	detail/liblasdetail.la
+liblas_la_LIBADD = 	detail/liblasdetail.a
 
 liblas_la_LDFLAGS = -version-info 1:0:0
