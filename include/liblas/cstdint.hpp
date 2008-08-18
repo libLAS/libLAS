@@ -55,7 +55,7 @@
 
 #ifdef LIBLAS_C_API
 #  include <limits.h>
-#  ifndef _MSV_VER
+#  ifndef _MSC_VER
 #    include <stdint.h>
 #  endif /* _MSC_VER */
 #else /* LIBLAS_C_API */
