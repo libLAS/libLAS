@@ -761,7 +761,7 @@ void LASHeader::SetGeoreference()
         std::vector<uint8_t> data;
 
         // Shorts are 2 bytes in length
-        uint32_t length = 2*kcount;
+        uint16_t length = 2*kcount;
 
         record.SetRecordLength(length);
         
@@ -829,7 +829,7 @@ void LASHeader::SetGeoreference()
         std::vector<uint8_t> data;
 
         // Doubles are 8 bytes in length
-        uint32_t length = 8*dcount;
+        uint16_t length = 8*dcount;
         record.SetRecordLength(length);
         
         // Copy the data into the data vector
