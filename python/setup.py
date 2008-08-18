@@ -9,8 +9,12 @@ if version_info[:2] < (2,5):
 
 import os
 
-version = file('../nmake.opt').readline().strip()
-version = version.split('=')[1]
+opt = file('../nmake.opt','rb')
+for line in opt:
+    line = line.strip()
+    if line.startswith('PACKAGE_VERSION'):
+        
+        version = line.split('=')[1]
 
 if os.name == 'nt':
     # Windows NT library
