@@ -7,9 +7,9 @@
 BUILD_DEBUG = NO
 
 # libLAS package settings
-PACKAGE_VERSION=1.0.0b1
+
 LAS_LIB = liblas.lib
-LAS_DLL = liblas$(PACKAGE_VERSION).dll
+LAS_DLL = liblas.dll
 LAS_LIB_DLL = liblas_i.lib
 
 INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
@@ -17,11 +17,11 @@ INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
 # GeoTIFF Support
 # Uncomment the folling line to build GeoTIFF support for reading and
 # writing LAS files with Coordinate Systems information.
-GEOTIFF_HOME=C:\cvs\buildkit\geotiff\libgeotiff
+GEOTIFF_HOME=C:\osgeo4w
 
 !IFDEF GEOTIFF_HOME
-GEOTIFF_LIB = $(GEOTIFF_HOME)\geotiff_i.lib
-GEOTIFF_INCLUDE = -I$(GEOTIFF_HOME)
+GEOTIFF_LIB = $(GEOTIFF_HOME)\lib\geotiff_i.lib
+GEOTIFF_INCLUDE = -I$(GEOTIFF_HOME)\include
 INCLUDES = $(INCLUDES) $(GEOTIFF_INCLUDE)
 !ENDIF
 
@@ -34,16 +34,16 @@ PYDLL_DIR = $(LAS_HOME)\python
 !IF "$(BUILD_DEBUG)" == "YES"
 OPTFLAGS= /nologo /MDd /EHsc /Zi /W4 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /DDEBUG /D_DEBUG /Fd$(LAS_ROOT)\las.pdb
 LAS_LIB = liblas_d.lib
-LAS_DLL = liblas$(PACKAGE_VERSION)_d.dll
+LAS_DLL = liblas_d.dll
 LAS_LIB_DLL = liblas_i.lib
 !ELSE
 OPTFLAGS=/nologo /MD /EHsc /Ox /GR /W3 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /DNDEBUG
 LAS_LIB = liblas.lib
-LAS_DLL = liblas$(PACKAGE_VERSION).dll
+LAS_DLL = liblas.dll
 LAS_LIB_DLL = liblas_i.lib
 !ENDIF
 
-CFLAGS= $(OPTFLAGS) /DPACKAGE_VERSION=\"$(PACKAGE_VERSION)\"  $(INCLUDES) 
+CFLAGS= $(OPTFLAGS) $(INCLUDES) 
 
 !IFDEF GEOTIFF_HOME
 CFLAGS = $(CFLAGS) /DHAVE_LIBGEOTIFF=1
