@@ -45,6 +45,15 @@ import datetime
 import guid
 import vlr
 
+def leap_year(year):
+    if (year % 400) == 0:
+        return True
+    elif (year % 100) == 0:
+        return True
+    elif (year % 4) == 0:
+        return True
+    return False
+    
 class Header(object):
     def __init__(self, owned=True, handle=None):
         if handle:
@@ -138,11 +147,12 @@ class Header(object):
         """
         day = core.las.LASHeader_GetCreationDOY(self.handle)
         year = core.las.LASHeader_GetCreationYear(self.handle)
-        
         if year == 0 and day == 0:
             return None
-        
-        return datetime.datetime(year,1,1)+datetime.timedelta(day)
+        if not leap_year(year):
+            return datetime.datetime(year,1,1)+datetime.timedelta(day)
+        else:
+            return datetime.datetime(year,1,1)+datetime.timedelta(day-1)
     def set_date(self, value=datetime.datetime.now()):
         """Set the header's date from a datetime.datetime instance.
 
@@ -158,7 +168,10 @@ class Header(object):
         datetime.datetime(2008, 3, 19, 0, 0)
         """
         delta = value - datetime.datetime(value.year,1,1)
-        core.las.LASHeader_SetCreationDOY(self.handle, delta.days)
+        if not leap_year(value.year):
+            core.las.LASHeader_SetCreationDOY(self.handle, delta.days)
+        else:
+            core.las.LASHeader_SetCreationDOY(self.handle, delta.days + 1)
         core.las.LASHeader_SetCreationYear(self.handle, value.year)
     date = property(get_date, set_date)
     
