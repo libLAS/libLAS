@@ -104,7 +104,7 @@ except ImportError:
 if os.name == 'nt':
     # stolen from Shapely
     # http://trac.gispython.org/projects/PCL/browser/Shapely/trunk/shapely/geos.py
-    lib_name = 'liblas0.9.6.dll'
+    lib_name = 'liblas.dll'
     try:
         local_dlls = os.path.abspath(os.__file__ + "../../../DLLs")
         original_path = os.environ['PATH']
@@ -317,18 +317,18 @@ las.LASHeader_GetReserved.restype = ctypes.c_short
 las.LASHeader_GetReserved.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetReserved.errcheck = check_value
 
-las.LASHeader_GetCreationDOY.restype = ctypes.c_short
+las.LASHeader_GetCreationDOY.restype = ctypes.c_ushort
 las.LASHeader_GetCreationDOY.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetCreationDOY.errcheck = check_value
 las.LASHeader_SetCreationDOY.restype = ctypes.c_int
-las.LASHeader_SetCreationDOY.argtypes = [ctypes.c_void_p, ctypes.c_short]
+las.LASHeader_SetCreationDOY.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
 las.LASHeader_SetCreationDOY.errcheck = check_return
 
-las.LASHeader_GetCreationYear.restype = ctypes.c_short
+las.LASHeader_GetCreationYear.restype = ctypes.c_ushort
 las.LASHeader_GetCreationYear.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetCreationYear.errcheck = check_value
 las.LASHeader_SetCreationYear.restype = ctypes.c_int
-las.LASHeader_SetCreationYear.argtypes = [ctypes.c_void_p, ctypes.c_short]
+las.LASHeader_SetCreationYear.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
 las.LASHeader_SetCreationYear.errcheck = check_return
 
 las.LASHeader_GetHeaderSize.restype = ctypes.c_ushort
