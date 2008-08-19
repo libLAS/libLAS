@@ -26,7 +26,7 @@ State of the Library
 
 libLAS provides excellent coverage of the ASPRS LAS 1.0 and 1.1 specifications, 
 and it provides support for copying variable length records from one file to 
-another.  As of 1.0.0-beta-1, support for creating your own variable length records 
+another.  As of 1.0.0-beta-2, support for creating your own variable length records 
 is limited to the C and C++ APIs.  libLAS concentrates on reading and writing 
 point data for processing pipelines from C++, C, and Python.  Contact the 
 `Authors`_ if you have money burning a hole in your pocket to implement more 
@@ -36,7 +36,7 @@ libLAS also provides support for reading and writing spatial reference system de
 from LAS 1.0 and 1.1 files as of version 1.0.0-beta-1.  `libgeotiff`_ 1.2.5 
 (released in `7/28/2008`_) must be linked with libLAS to provide reading support
 for spatial reference systems.  
-The 1.0.0-beta-1 Windows binaries come provided with libgeotiff, but those folks 
+The 1.0.0-beta-2 Windows binaries require that OSGeo4W is installed, but those folks 
 building libLAS on their own platforms must use the --with-geotiff configure-time 
 switch to tell libLAS where the library is located.
 

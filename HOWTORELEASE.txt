@@ -24,8 +24,8 @@ Release Process
 1) Increment Version Numbers
  
   - configure.ac
-  - nmake.opt
-  - include/liblas/capi/las_config.h
+  - include/liblas/capi/las_version.h
+  - python/setup.py
 
 2) Update README to include any relevant info about the release that 
    might have changed.
@@ -43,7 +43,7 @@ Release Process
   - Build Python bindings for Python 2.4 and Python 2.5 
   
   ::
-      
+      cd python
       python setup.py bdist_wininst
       python setup.py bdist_egg
  
@@ -53,6 +53,7 @@ Release Process
       
       # ensure a .pypirc file exists here with login info
       set HOME=C:\Docume~1\hobu.FIRE-WINDOWS
+      c:\python24\python.exe setup.py register
       c:\python24\python.exe setup.py sdist upload
       c:\python24\python.exe setup.py bdist_wininst upload
       c:\python24\python.exe setup.py bdist_egg upload
