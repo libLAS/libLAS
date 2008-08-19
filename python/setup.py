@@ -9,16 +9,11 @@ if version_info[:2] < (2,5):
 
 import os
 
-opt = file('../nmake.opt','rb')
-for line in opt:
-    line = line.strip()
-    if line.startswith('PACKAGE_VERSION'):
-        
-        version = line.split('=')[1]
+version = '1.0.0b2'
 
 if os.name == 'nt':
     # Windows NT library
-    lib_name = 'liblas%s.dll' % version
+    lib_name = 'liblas.dll' 
     data_files=[('dll', ['dll/%s'% lib_name, 'dll/geotiff.dll','dll/libtiff.dll']),]
 else:
     data_files = None
