@@ -35,8 +35,14 @@ clean:
 
 install: src_dir apps_dir
     -mkdir $(BINDIR)
+    -mkdir $(BINDIR)\lib
+    -mkdir $(BINDIR)\include\liblas
     cd src
     $(MAKE) /f makefile.vc install
     cd ..
     cd apps
     $(MAKE) /f makefile.vc install
+    cd ..
+    xcopy /y /r /d /f src\liblas_i.lib $(BINDIR)\lib
+    xcopy /y /r /d /f src\liblas.lib $(BINDIR)\lib
+    xcopy /y /r /d /f /s include\liblas $(BINDIR)\include\liblas
