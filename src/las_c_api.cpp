@@ -1333,7 +1333,15 @@ LAS_DLL const char * LAS_GetVersion() {
     /* FIXME - mloskot: Termporarily, I defined PACKAGE_VERSION
        in las_config.h to solve Visual C++ compilation  (Ticket #23) */
 
-    return strdup(PACKAGE_VERSION);
+    std::ostringstream output;
+        
+//    output << LIBLAS_VERSION_MAJOR;
+//    output << "." << LIBLAS_VERSION_MINOR;
+//    output << "." << LIBLAS_VERSION_REV;
+//    output << "." << LIBLAS_VERSION_BUILD;
+    output << LIBLAS_RELEASE_NAME;
+    std::string out(output.str());
+    return strdup(out.c_str());
 }
 
 
