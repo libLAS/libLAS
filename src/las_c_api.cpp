@@ -49,6 +49,7 @@
 #include <liblas/lasrecordheader.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/capi/las_config.h>
+#include <liblas/capi/las_version.h>
 
 typedef struct LASWriterHS *LASWriterH;
 typedef struct LASReaderHS *LASReaderH;
