@@ -590,7 +590,7 @@ void LASHeader::Init()
     std::time(&now);
     ptm = std::gmtime(&now);
     
-    m_createDOY = static_cast<uint16_t>(ptm->tm_yday - 1);
+    m_createDOY = static_cast<uint16_t>(ptm->tm_yday);
     m_createYear = static_cast<uint16_t>(ptm->tm_year + 1900);
     
     m_headerSize = eHeaderSize;
