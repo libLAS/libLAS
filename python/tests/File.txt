@@ -62,8 +62,8 @@
   >>> del f
   
   >>> f = file.File('junk.las', mode="w", header=header)
-  >>> header.offset
-  [-0.0, -0.0, -0.0]
+  >>> sum(header.offset)
+  0.0
   >>> header.min
   [630262.30000000005, 4834500.0, 50.899999999999999]
 
@@ -94,5 +94,6 @@
   >>> cnt
   16
   
+  >>> f.close()
   >>> import os
   >>> os.remove('junk.las')
