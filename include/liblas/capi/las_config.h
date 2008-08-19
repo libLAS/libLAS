@@ -88,25 +88,6 @@
 #define strdup _strdup
 #endif
 
-#ifndef LIBLAS_VERSION_MAJOR
-#  define LIBLAS_VERSION_MAJOR    1
-#  define LIBLAS_VERSION_MINOR    0
-#  define LIBLAS_VERSION_REV      0
-#  define LIBLAS_VERSION_BUILD    0
-#endif
-
-#ifndef LIBLAS_VERSION_NUM
-#  define LIBLAS_VERSION_NUM      (LIBLAS_VERSION_MAJOR*1000+LIBLAS_VERSION_MINOR*100+LIBLAS_VERSION_REV*10+LIBLAS_VERSION_BUILD)
-#endif
-
-#ifndef LIBLAS_RELEASE_DATE
-#  define LIBLAS_RELEASE_DATE     20080000
-#endif
-
-#ifndef LIBLAS_RELEASE_NAME
-#  define LIBLAS_RELEASE_NAME     "1.0.0b1"
-#endif
-
 
 #endif /* LAS_CONFIG_H_INCLUDED */
 

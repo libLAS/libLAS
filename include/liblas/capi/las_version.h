@@ -39,20 +39,22 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LAS_VERSION_MAJOR
-#  define LAS_VERSION_MAJOR    1
-#  define LAS_VERSION_MINOR    0
-#  define LAS_VERSION_REV      0
-#  define LAS_VERSION_BUILD    0
+
+#ifndef LIBLAS_VERSION_MAJOR
+#  define LIBLAS_VERSION_MAJOR    1
+#  define LIBLAS_VERSION_MINOR    0
+#  define LIBLAS_VERSION_REV      0
+#  define LIBLAS_VERSION_BUILD    0
 #endif
 
-#ifndef LAS_VERSION_NUM
-#  define LAS_VERSION_NUM      (LAS_VERSION_MAJOR*1000+LAS_VERSION_MINOR*100+LAS_VERSION_REV*10+LAS_VERSION_BUILD)
+#ifndef LIBLAS_VERSION_NUM
+#  define LIBLAS_VERSION_NUM      (LIBLAS_VERSION_MAJOR*1000+LIBLAS_VERSION_MINOR*100+LIBLAS_VERSION_REV*10+LIBLAS_VERSION_BUILD)
 #endif
 
-#ifndef LAS_RELEASE_DATE
-#  define LAS_RELEASE_DATE     20080620
+#ifndef LIBLAS_RELEASE_DATE
+#  define LIBLAS_RELEASE_DATE     20080000
 #endif
-#ifndef LAS_RELEASE_NAME
-#  define LAS_RELEASE_NAME     "1.0.0b1"
+
+#ifndef LIBLAS_RELEASE_NAME
+#  define LIBLAS_RELEASE_NAME     "1.0.0b2"
 #endif
