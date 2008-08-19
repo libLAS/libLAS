@@ -39,6 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
+#ifndef LAS_VERSION_H_INCLUDED
+#define LAS_VERSION_H_INCLUDED
 
 #ifndef LIBLAS_VERSION_MAJOR
 #  define LIBLAS_VERSION_MAJOR    1
@@ -58,3 +60,5 @@
 #ifndef LIBLAS_RELEASE_NAME
 #  define LIBLAS_RELEASE_NAME     "1.0.0b2"
 #endif
+
+#endif /* LAS_VERSION_H_INCLUDED */
