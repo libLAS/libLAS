@@ -1,1 +1,1 @@
-SUBDIRS = src apps include test doc
+SUBDIRS = src apps include test

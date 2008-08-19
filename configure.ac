@@ -203,8 +203,6 @@ AC_CONFIG_FILES([
     apps/Makefile
     test/Makefile
     test/unit/Makefile
-    doc/Makefile
-    doc/man/Makefile
 ])
 
 AC_OUTPUT
