@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
                         file_names_in = (char**)realloc(file_names_in,sizeof(char*)*alloced_file_name_in);
                     }
                     file_names_in[num_file_name_in] = strdup(line);
-                    i = strlen(file_names_in[num_file_name_in]) - 1;
+                    i = (int)strlen(file_names_in[num_file_name_in]) - 1;
                     while ( i && 
                             file_names_in[num_file_name_in][i] != 's' && 
                             file_names_in[num_file_name_in][i] != 'S' && 
