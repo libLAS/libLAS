@@ -214,9 +214,8 @@ uint32_t LASVLR::GetTotalSize() const
     // RecordLength after Header 2 bytes
     // Description 32 bytes
     // Data length -- size of the data's vector * the size of uint8_t
-    uint32_t size = 2 + 16 + 2 + 2 + 32 + GetData().size() * sizeof(uint8_t);
-    return size;
-
+    std::size_t const sum = 2 + 16 + 2 + 2 + 32 + GetData().size() * sizeof(uint8_t);
+    return static_cast<uint32_t>(sum);
 }
 
 } // namespace liblas
