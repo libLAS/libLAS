@@ -479,7 +479,7 @@ int main(int argc, char *argv[])
     /* create output file name if none specified and no piped output requested */
     if (file_name_out == NULL && file_name_in != NULL)
     {
-        int len = strlen(file_name_in);
+        int len = (int)strlen(file_name_in);
         file_name_out = strdup(file_name_in);
 
         while (len > 0 && file_name_out[len] != '.')
