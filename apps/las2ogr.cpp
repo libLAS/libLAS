@@ -9,6 +9,7 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
+#ifdef HAVE_GDAL
 #if defined(_MSC_VER) && defined(USE_VLD)
 #include <vld.h>
 #endif
@@ -370,4 +371,5 @@ int main(int argc, char* argv[])
 
     return rc;
 }
+#endif // #ifdef HAVE_GDAL
 
