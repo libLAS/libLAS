@@ -111,7 +111,7 @@ typedef struct  {
 /** Returns the version string for this library.
  *  @return the version string for this library.
 */
-LAS_DLL const char* LAS_GetVersion();
+LAS_DLL char* LAS_GetVersion();
 
 /****************************************************************************/
 /* Error handling                                                           */
@@ -464,11 +464,26 @@ LAS_DLL char *LASHeader_GetFileSignature(const LASHeaderH hHeader);
 */
 LAS_DLL uint16_t LASHeader_GetFileSourceId(const LASHeaderH hHeader);
 
+/** Sets the FileSource ID value for the header.  By default, this value is "0" if it 
+ *  is not explicitly set.  See the LAS specification for details on what this
+ *  value should logically be set to.
+ *  @param hHeader LASHeaderH instance
+ *  @param value the value to set as the FileSource ID value for the header
+ *  @return LASError enum
+*/
+LAS_DLL LASError LASHeader_SetFileSourceId(LASHeaderH hHeader, uint16_t value);
 
 /** Returns the project id for the header as a GUID string
  *  @return the project id for the header as a GUID string
 */
 LAS_DLL char *LASHeader_GetProjectId(const LASHeaderH hHeader);
+
+/** Sets the project id/GUID for the header
+ *  @param hHeader LASHeaderH instance
+ *  @param value character value GUID to set the header value to
+ *  @return LASError enum
+*/
+LAS_DLL LASError LASHeader_SetProjectId(LASHeaderH hHeader, const char* value);
 
 /** Sets the project id/GUID for the header
  *  @param hHeader LASHeaderH instance
@@ -538,7 +553,16 @@ LAS_DLL LASError LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* value);
 /** Returns the reserved value for the header.  This should aways be 0.
  *  @return the reserved value for the header.
 */
-LAS_DLL int16_t LASHeader_GetReserved(const LASHeaderH hHeader);
+LAS_DLL uint16_t LASHeader_GetReserved(const LASHeaderH hHeader);
+
+/** Sets the Reserved value for the header.  By default, this value is "0" if it 
+ *  is not explicitly set.  See the LAS specification for details on what this
+ *  value should logically be set to.
+ *  @param hHeader LASHeaderH instance
+ *  @param value the value to set as the reserved value for the header
+ *  @return LASError enum
+*/
+LAS_DLL LASError LASHeader_SetReserved(LASHeaderH hHeader, uint16_t value);
 
 /** Returns the file creation day of the year.  The values start from 1, being January 1st, 
  *  and end at 365 or 366 being December 31st, depending on leap year.

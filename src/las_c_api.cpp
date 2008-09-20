@@ -690,11 +690,24 @@ LAS_DLL liblas::uint16_t LASHeader_GetFileSourceId(const LASHeaderH hHeader) {
     return value;
 }
 
+LAS_DLL LASErrorEnum LASHeader_SetFileSourceId(LASHeaderH hHeader, liblas::uint16_t value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetFileSourceId", LE_Failure);
+    ((LASHeader*) hHeader)->SetFileSourceId(value);    
+    return LE_None;
+}
+
+
 LAS_DLL liblas::uint16_t LASHeader_GetReserved(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetReserved", 0);
 
     unsigned short value = ((LASHeader*) hHeader)->GetReserved();
     return value;
+}
+
+LAS_DLL LASErrorEnum LASHeader_SetReserved(LASHeaderH hHeader, liblas::uint16_t value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetReserved", LE_Failure);
+    ((LASHeader*) hHeader)->SetReserved(value);    
+    return LE_None;
 }
 
 LAS_DLL char* LASHeader_GetProjectId(const LASHeaderH hHeader) {
@@ -704,13 +717,13 @@ LAS_DLL char* LASHeader_GetProjectId(const LASHeaderH hHeader) {
     return strdup(id.to_string().c_str());
 }
 
-LAS_DLL LASErrorEnum LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId) {
-    VALIDATE_POINTER1(hHeader, "LASHeader_SetGUID", LE_Failure);
+LAS_DLL LASErrorEnum LASHeader_SetProjectId(LASHeaderH hHeader, const char* value) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetProjectId", LE_Failure);
 
     try {
-        liblas::guid* id = (liblas::guid*) hId;
-        
-        ((LASHeader*) hHeader)->SetProjectId(*id);    
+        liblas::guid id;
+        id = liblas::guid::guid(value);
+        ((LASHeader*) hHeader)->SetProjectId(id);    
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetGUID");
@@ -719,7 +732,6 @@ LAS_DLL LASErrorEnum LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId) {
 
     return LE_None;
 }
-
 
 LAS_DLL liblas::uint8_t LASHeader_GetVersionMajor(const LASHeaderH hHeader) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetVersionMajor", 0);
@@ -1102,6 +1114,23 @@ LAS_DLL LASGuidH LASHeader_GetGUID(const LASHeaderH hHeader) {
     return (LASGuidH) new liblas::guid(id);
 }
 
+
+LAS_DLL LASErrorEnum LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetGUID", LE_Failure);
+
+    try {
+        liblas::guid* id = (liblas::guid*) hId;
+        
+        ((LASHeader*) hHeader)->SetProjectId(*id);    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetGUID");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
 LAS_DLL LASVLRH LASHeader_GetVLR(const LASHeaderH hHeader, liblas::uint32_t i) {
     VALIDATE_POINTER1(hHeader, "LASHeader_GetVLR", 0);
     
@@ -1326,7 +1355,7 @@ LAS_DLL void LASError_Print(const char* message) {
 
 }
 
-LAS_DLL const char * LAS_GetVersion() {
+LAS_DLL char * LAS_GetVersion() {
 
     /* XXX - mloskot: I'd suggest to define PACKAGE_VERSION as static object
        and return safe const pointer, instead of newly allocated string. */

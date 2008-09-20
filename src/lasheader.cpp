@@ -219,6 +219,13 @@ uint16_t LASHeader::GetReserved() const
     return m_reserved;
 }
 
+void LASHeader::SetReserved(uint16_t v)
+{
+    // TODO: Should we warn or throw about type overflow occuring when
+    //       user passes 65535 + 1 = 0
+    m_reserved = v;
+}
+
 liblas::guid LASHeader::GetProjectId() const
 {
     return liblas::guid(m_projectId1, m_projectId2, m_projectId3, m_projectId4);

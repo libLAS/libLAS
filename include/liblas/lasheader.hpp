@@ -133,6 +133,11 @@ public:
     /// \note This field is always filled with 0.
     uint16_t GetReserved() const;
 
+    /// Set reserved value for the header identifier.
+    /// \param v - should be set to a value between 1 and 65535.
+    /// \exception No throw
+    void SetReserved(uint16_t v);
+
     /// Get project identifier.
     /// \return Global Unique Identifier as an instance of liblas::guid class.
     guid GetProjectId() const;
