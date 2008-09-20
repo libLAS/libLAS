@@ -416,7 +416,7 @@ void print_header(LASHeaderH header, const char* file_name, int bSkipVLR) {
                     LASHeader_GetPointRecordsByReturnCount(header, 3), 
                     LASHeader_GetPointRecordsByReturnCount(header, 4));
 
-    fprintf(stderr, "  Scale Factor X Y Z         %.6f %.6f %.6f\n", 
+    fprintf(stderr, "  Scale Factor X Y Z         %.6g %.6g %.6g\n", 
                     LASHeader_GetScaleX(header), 
                     LASHeader_GetScaleY(header),
                     LASHeader_GetScaleZ(header));
