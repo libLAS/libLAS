@@ -4,21 +4,22 @@ LAS_ROOT	=	..
 
 !INCLUDE $(LAS_ROOT)\nmake.opt
 
-LAS_OBJS	=	laswriter.obj \
-                lasreader.obj \
-                laserror.obj \
-                las_c_api.obj \
-                laspoint.obj \
-                lasheader.obj \
-                lasfile.obj \
-                lasrecordheader.obj \
-                detail\reader.obj \
-                detail\reader10.obj \
-                detail\reader11.obj \
-                detail\writer.obj \
-                detail\writer10.obj \
-                detail\writer11.obj \
-                detail\file.obj
+LAS_OBJS = \
+    laswriter.obj \
+    lasreader.obj \
+    laserror.obj \
+    las_c_api.obj \
+    laspoint.obj \
+    lasheader.obj \
+    lasfile.obj \
+    lasrecordheader.obj \
+    detail\reader.obj \
+    detail\reader10.obj \
+    detail\reader11.obj \
+    detail\writer.obj \
+    detail\writer10.obj \
+    detail\writer11.obj \
+    detail\file.obj
 
 RES = Version.res
 
@@ -28,13 +29,13 @@ all: default
 
 $(LAS_LIB):	$(LAS_OBJS)
     if exist $(LAS_LIB) del $(LAS_LIB)
-	lib /nologo /out:$(LAS_LIB) $(LAS_OBJS) $(GEOTIFF_LIB)
+    $(LINK) /lib /nologo /out:$(LAS_LIB) $(LAS_OBJS) $(GEOTIFF_LIB)
 	
 $(LAS_DLL):	$(LAS_LIB) $(RES)
-	link /dll  \
-	   $(LAS_OBJS) $(LAS_LIB) Version.res \
-	   /out:$(LAS_DLL) /implib:$(LAS_LIB_DLL)
-	if exist $(LAS_DLL).manifest mt -manifest $(LAS_DLL).manifest -outputresource:$(LAS_DLL);2   
+    $(LINK) /dll \
+            $(LAS_OBJS) $(LAS_LIB) Version.res \
+            /out:$(LAS_DLL) /implib:$(LAS_LIB_DLL)
+    if exist $(LAS_DLL).manifest mt -manifest $(LAS_DLL).manifest -outputresource:$(LAS_DLL);2   
 
 Version.res:
     rc -fo Version.res -r -I..\include\liblas\capi -I..\include -D_MSC_VER Version.rc

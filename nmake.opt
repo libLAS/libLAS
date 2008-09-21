@@ -31,6 +31,7 @@ LAS_HOME=C:\cvs\liblas\trunk
 BINDIR=$(LAS_HOME)\bin
 PYDLL_DIR = $(LAS_HOME)\python
 
+# Compilation flags for Release and Debug modes
 !IF "$(BUILD_DEBUG)" == "YES"
 OPTFLAGS= /nologo /MDd /EHsc /Zi /W4 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /DDEBUG /D_DEBUG /Fd$(LAS_ROOT)\las.pdb
 LAS_LIB = liblas_d.lib
@@ -48,6 +49,17 @@ CFLAGS= $(OPTFLAGS) $(INCLUDES)
 !IFDEF GEOTIFF_HOME
 CFLAGS = $(CFLAGS) /DHAVE_LIBGEOTIFF=1
 !ENDIF
+# End of compilation flags settings
+
+# Compiler executable
+CC = cl.exe
+
+# Linker executable
+# - Dynamic-Linked Libraries
+# $(LINK) /dll
+# - Static Libraries (use of lib.exe wrapper is not portable, see VC++ Toolkit 2003)
+# $(LINK) /lib
+LINK = link.exe
 
 .c.obj:	
 	$(CC) $(CFLAGS) /c $*.c /Fo$*.obj
