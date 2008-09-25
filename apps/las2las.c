@@ -20,10 +20,10 @@
 #include "liblas.h"
 
 LASPointSummary* SummarizePoints(LASReaderH reader);
-void print_point_summary(LASPointSummary* summary, LASHeaderH header);
-void print_point(LASPointH point);
-void print_header(LASHeaderH header, const char* file_name, int bSkipVLR);
-void repair_header(LASHeaderH header, LASPointSummary* summary) ;
+void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header);
+void print_point(FILE *file, LASPointH point);
+void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSkipVLR);
+void repair_header(FILE *file, LASHeaderH header, LASPointSummary* summary) ;
 
 #define LAS_FORMAT_10 0
 #define LAS_FORMAT_11 1
@@ -756,9 +756,9 @@ int main(int argc, char *argv[])
     } 
     summary = SummarizePoints(reader);
     if (verbose) {
-        print_point_summary(summary, header);
+        print_point_summary(stderr, summary, header);
     }
-    repair_header(header, summary) ;
+    repair_header(stderr, header, summary) ;
 
     if (summary) {
         LASPoint_Destroy(summary->pmin);

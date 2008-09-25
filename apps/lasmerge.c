@@ -20,8 +20,8 @@
 #include "liblas.h"
 
 LASPointSummary* SummarizePoints(LASReaderH reader);
-void print_point_summary(LASPointSummary* summary, LASHeaderH header);
-void print_header(LASHeaderH header, const char* file_name, int bSkipVLR);
+void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header);
+void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSkipVLR);
 
 void usage()
 {
@@ -494,9 +494,9 @@ int main(int argc, char *argv[])
             exit(1);
         } 
 
-        print_header(header, file_name_out, skip_vlr);        
+        print_header(stderr, header, file_name_out, skip_vlr);        
         summary = SummarizePoints(reader);
-        print_point_summary(summary, header);
+        print_point_summary(stderr, summary, header);
         
         LASHeader_Destroy(header);
         header = NULL;            

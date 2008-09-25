@@ -25,8 +25,8 @@
 
 
 LASPointSummary* SummarizePoints(LASReaderH reader);
-void print_point_summary(LASPointSummary* summary, LASHeaderH header);
-void print_header(LASHeaderH header, const char* file_name, int bSkipVLR);
+void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header);
+void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSkipVLR);
 
 void usage()
 {
@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
 
     
     
-    print_header(header, file_name, skip_vlr);
+    print_header(stdout, header, file_name, skip_vlr);
     
     if (change_header) {
         if (system_identifier) {
@@ -298,12 +298,12 @@ int main(int argc, char *argv[])
         
         if (!summary)
             summary = SummarizePoints(reader);
-        print_point_summary(summary, header);
+        print_point_summary(stdout, summary, header);
         
         if (repair_header) {
-            fprintf(stderr, "\n---------------------------------------------------------\n");
-            fprintf(stderr, "  Repair Summary\n");
-            fprintf(stderr, "---------------------------------------------------------\n");
+            fprintf(stdout, "\n---------------------------------------------------------\n");
+            fprintf(stdout, "  Repair Summary\n");
+            fprintf(stdout, "---------------------------------------------------------\n");
 
             
             if (use_stdin) {
@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
             }
             
             if (repair_bounding_box) {
-                fprintf(stderr, "  Reparing Bounding Box...\n");
+                fprintf(stdout, "  Reparing Bounding Box...\n");
                 err = LASHeader_SetMin( header, 
                                         LASPoint_GetX(summary->pmin), 
                                         LASPoint_GetY(summary->pmin), 
@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
             }
             
             if (update_return_counts) {
-                fprintf(stderr, "  Reparing Point Count by Return...\n");
+                fprintf(stdout, "  Reparing Point Count by Return...\n");
                 for (i = 0; i < 5; i++) {
                     LASHeader_SetPointRecordsByReturnCount( header,  
                                                             i, 

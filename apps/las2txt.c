@@ -18,7 +18,7 @@
 
 #include "liblas.h"
 
-void print_header(LASHeaderH header, const char* file_name);
+void print_header(FILE *file, LASHeaderH header, const char* file_name);
 
 void usage()
 {
@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
 
     if (verbose)
     {
-        print_header(header, file_name_in);
+        print_header(stderr, header, file_name_in);
     }
 
     if (header_comment_sign)
