@@ -56,5 +56,6 @@ clean:
 install: $(LAS_DLL)
     echo $(BINDIR)
     xcopy /y /r /d /f $(LAS_DLL) $(BINDIR)
+    xcopy /y /r /d /f $(LAS_DLL) $(OSGEO4W_DIR)\lib\bin
     xcopy /y /r /d /f $(LAS_DLL) $(PYDLL_DIR)
     xcopy /y /r /d /f $(LAS_DLL) $(PYDLL_DIR)\DLLs

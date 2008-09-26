@@ -12,6 +12,9 @@ LAS_LIB = liblas.lib
 LAS_DLL = liblas1.dll
 LAS_LIB_DLL = liblas_i.lib
 
+# only used for filenames of packages
+PACKAGE_VERSION = 1.0.0-b3
+
 INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
 
 # GeoTIFF Support
@@ -41,6 +44,7 @@ INCLUDES = $(INCLUDES) $(GDAL_INCLUDE)
 
 LAS_HOME=C:\cvs\liblas\trunk
 BINDIR=$(LAS_HOME)\bin
+OSGEO4W_DIR = $(LAS_HOME)\osgeo4w
 PYDLL_DIR = $(LAS_HOME)\python
 
 # Compilation flags for Release and Debug modes

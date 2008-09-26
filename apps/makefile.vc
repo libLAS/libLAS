@@ -50,3 +50,4 @@ clean:
 
 install: default
     xcopy /y /r /d /f *.exe $(BINDIR)
+    xcopy /y /r /d /f *.exe $(OSGEO4W_DIR)\lib\bin
