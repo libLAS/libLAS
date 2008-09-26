@@ -84,11 +84,6 @@ private:
     T p_;
     deleter_type del_;
 
-protected:
-    bool operator==(T const& other) {
-        return get() == other.get();
-    }
-
 };
 
 bool term_progress(std::ostream& os, double complete)
