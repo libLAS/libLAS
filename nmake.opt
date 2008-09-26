@@ -25,6 +25,18 @@ GEOTIFF_INCLUDE = -I$(GEOTIFF_HOME)\include
 INCLUDES = $(INCLUDES) $(GEOTIFF_INCLUDE)
 !ENDIF
 
+# GDAL/OGR Support
+# Uncomment the folling line to build OGR support for 
+# the las2ogr command
+#GDAL_HOME=C:\osgeo4w
+
+!IFDEF GEOTIFF_HOME
+GDAL_LIB = $(GDAL_HOME)\lib\gdal_i.lib
+GDAL_INCLUDE = -I$(GDAL_HOME)\include
+INCLUDES = $(INCLUDES) $(GDAL_INCLUDE)
+!ENDIF
+
+
 # End of GeoTIFF Support
 
 LAS_HOME=C:\cvs\liblas\trunk
@@ -51,6 +63,11 @@ CFLAGS= $(OPTFLAGS) $(INCLUDES)
 !IFDEF GEOTIFF_HOME
 CFLAGS = $(CFLAGS) /DHAVE_LIBGEOTIFF=1
 !ENDIF
+
+!IFDEF GDAL_HOME
+CFLAGS = $(CFLAGS) /DHAVE_GDAL=1
+!ENDIF
+
 # End of compilation flags settings
 
 # Compiler executable
