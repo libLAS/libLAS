@@ -182,9 +182,9 @@ struct PointRecord
         point_source_id(0)
     {}
 
-    uint32_t x;
-    uint32_t y;
-    uint32_t z;
+    int32_t x;
+    int32_t y;
+    int32_t z;
     uint16_t intensity;
     uint8_t flags; // TODO: Replace with portable std::bitset<8>
     uint8_t classification;
