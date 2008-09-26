@@ -16,6 +16,22 @@ tools were ported to use this new code.
 libLAS' initial development was supported by the `IGSB`_ of the Iowa DNR 
 for use in its state-wide `LIDAR`_ project.
 
+
+Download
+------------------------------------------------------------------------------
+
+The latest version of libLAS can be downloaded from
+http://liblas.org/wiki/Releases
+
+Binaries
+..............................................................................
+
+Windows binaries of libLAS are provided in two forms.  The easiest form is 
+to obtain `OSGeo4W`_ and select the libLAS package to install.  Alternatively, 
+you can download a Windows package with full spatial reference support from 
+the release page.  GDAL support is *not* provided with either package, however.  
+We hope to resolve this by the 1.0.0 final release.
+
 FAQ
 ------------------------------------------------------------------------------
 
@@ -26,7 +42,7 @@ State of the Library
 
 libLAS provides excellent coverage of the ASPRS LAS 1.0 and 1.1 specifications, 
 and it provides support for copying variable length records from one file to 
-another.  As of 1.0.0-beta-2, support for creating your own variable length records 
+another.  As of 1.0.0-beta-3, support for creating your own variable length records 
 is limited to the C and C++ APIs.  libLAS concentrates on reading and writing 
 point data for processing pipelines from C++, C, and Python.  Contact the 
 `Authors`_ if you have money burning a hole in your pocket to implement more 
@@ -35,10 +51,8 @@ sophisticated support for LAS format items.
 libLAS also provides support for reading and writing spatial reference system descriptions 
 from LAS 1.0 and 1.1 files as of version 1.0.0-beta-1.  `libgeotiff`_ 1.2.5 
 (released in `7/28/2008`_) must be linked with libLAS to provide reading support
-for spatial reference systems.  
-The 1.0.0-beta-2 Windows binaries require that OSGeo4W is installed, but those folks 
-building libLAS on their own platforms must use the --with-geotiff configure-time 
-switch to tell libLAS where the library is located.
+for spatial reference systems.  `GDAL`_ is required to use the las2ogr command-line 
+utility for creating shapefiles, etc out of a .LAS file.
 
 Features of libLAS
 ------------------------------------------------------------------------------
@@ -82,11 +96,7 @@ Cross-platform operation
 libLAS is known to work on MSVC 7.1+ (Windows) and GCC4.1+ (OS X and Linux) platforms 
 on both big- and little-endian architectures.
 
-Download
-------------------------------------------------------------------------------
 
-The latest version of libLAS can be downloaded from
-http://liblas.org/wiki/Releases
 
 Documentation
 ------------------------------------------------------------------------------
@@ -130,6 +140,8 @@ The libLAS development team are:
  * `Howard Butler`_
  * `Mateusz Loskot`_
  * `Phil Vachon`_
+ * Martin Vales
+ * `Frank Warmerdam`_
 
 Special thanks to `Martin Isenburg and Jonathan Shewchuk`_ for their
 `LAStools`_ pioneering implementation of the ASPRS LAS standard that made 
@@ -200,6 +212,7 @@ See `License`_ for a copy.
 .. _`Howard Butler`: http://hobu.biz
 .. _`Mateusz Loskot`: http://mateusz.loskot.net
 .. _`Phil Vachon`: http://www.geoscan.info
+.. _`Frank Warmerdam`: http://home.gdal.org/warmerda/
 .. _`BSD license`: http://www.opensource.org/licenses/bsd-license.php
 .. _`LAS Format Elements`: http://liblas.org/wiki/LASElements
 .. _`Tutorials`: http://liblas.org/wiki/Tutorial
@@ -219,3 +232,5 @@ See `License`_ for a copy.
 .. _`libgeotiff`: http://www.remotesensing.org/geotiff/geotiff.html
 .. _`7/28/2008`: http://lists.maptools.org/pipermail/geotiff/2008-July/000501.html
 .. _`proj.4`: http://proj.maptools.org/
+.. _`GDAL`: http://www.gdal.org
+.. _`OSGeo4W`: http://wiki.osgeo.org/wiki/OSGeo_Win32_Installer
