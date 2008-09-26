@@ -57,7 +57,8 @@ public:
     {
         return get();
     }
-
+    
+    
     T get() const
     {
         return p_;
@@ -82,6 +83,12 @@ private:
 
     T p_;
     deleter_type del_;
+
+protected:
+    bool operator==(T const& other) {
+        return get() == other.get();
+    }
+
 };
 
 bool term_progress(std::ostream& os, double complete)
@@ -305,15 +312,15 @@ int main(int argc, char* argv[])
         }
 
         ogr_wrapper<OGRDataSourceH> ds(OGR_Dr_CreateDataSource(drv, out_file.c_str(), 0), OGR_DS_Destroy);
-        if (0 == ds)
+        if (0 == ds.get())
         {
-            throw std::runtime_error(out_file + " datasource  cration failed");
+            throw std::runtime_error(out_file + " datasource creation failed");
         }
 
         OGRLayerH lyr = OGR_DS_CreateLayer(ds, lyrname.c_str(), 0, wkbPoint25D, 0);
         if (0 == lyr)
         {
-            throw std::runtime_error(out_file + " layer  cration failed");
+            throw std::runtime_error(out_file + " layer creation failed");
         }
 
         // Prepare layer schema
