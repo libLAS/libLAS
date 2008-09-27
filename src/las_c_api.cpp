@@ -1468,16 +1468,17 @@ LAS_DLL liblas::uint16_t LASVLR_GetReserved(const LASVLRH hVLR) {
     return value;
 }
 
-LAS_DLL LASErrorEnum LASVLR_GetData(const LASVLRH hVLR, liblas::uint8_t** data, int* length) {
+LAS_DLL LASErrorEnum LASVLR_GetData(const LASVLRH hVLR, liblas::uint8_t* data) {
     
     VALIDATE_POINTER1(hVLR, "LASVLR_GetData", LE_Failure);
 
     try {
-        std::vector<liblas::uint8_t> *d = new std::vector<liblas::uint8_t>(((LASVLR*) hVLR)->GetData());
-        *data = &(d->front());
-        //data = &(d[0])
-        *length = static_cast<int>(d->size());
-        printf("GetData length %d\n", *length);
+        LASVLR* vlr = ((LASVLR*) hVLR);
+        std::vector<liblas::uint8_t> d = vlr->GetData();
+        liblas::uint16_t length = vlr->GetRecordLength();
+        for (liblas::uint16_t i=0; i < length; i++) {
+            data[i] = d[i];
+        }
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASVLR_GetData");
@@ -1488,6 +1489,27 @@ LAS_DLL LASErrorEnum LASVLR_GetData(const LASVLRH hVLR, liblas::uint8_t** data, 
     return LE_None;
 }
 
+LAS_DLL LASErrorEnum LASVLR_SetData(const LASVLRH hVLR, liblas::uint8_t* data, liblas::uint16_t length) {
+    
+    VALIDATE_POINTER1(hVLR, "LASVLR_SetData", LE_Failure);
+
+    try {
+        LASVLR* vlr = ((LASVLR*) hVLR);
+        std::vector<liblas::uint8_t> d;
+        d.resize(length);
+        for (liblas::uint16_t i=0; i < length; i++) {
+            d[i] = data[i];
+        }
+        vlr->SetData(d);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASVLR_GetData");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
 
 LAS_DLL LASGuidH LASGuid_Create() {
     liblas::guid random;

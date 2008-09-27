@@ -515,3 +515,10 @@ las.LASVLR_SetReserved.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
 las.LASVLR_SetReserved.errcheck = check_return
 las.LASVLR_SetReserved.restype = ctypes.c_int
 
+las.LASVLR_GetData.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ubyte)]
+las.LASVLR_GetData.errcheck = check_value
+las.LASVLR_GetData.restype = ctypes.c_int
+
+las.LASVLR_SetData.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ubyte)]
+las.LASVLR_SetData.errcheck = check_value
+las.LASVLR_SetData.restype = ctypes.c_int

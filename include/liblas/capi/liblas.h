@@ -969,13 +969,23 @@ LAS_DLL uint16_t LASVLR_GetReserved(const LASVLRH hVLR);
 */
 LAS_DLL LASError LASVLR_SetReserved(LASVLRH hVLR, uint16_t value);
 
-/** Gets the data stream for the VLR as an array of bytes
+/** Gets the data stream for the VLR as an array of bytes.  The length of this 
+ *  array should be the same as LASVLR_GetRecordLength.  You must allocate it on 
+ *  the heap and you are responsible for its destruction.
  *  @param hVLR the LASVLRH instance
- *  @param data a pointer to where place the array
- *  @param length a pointer to where to place the length of the array
+ *  @param data a pointer to your array where you want the data copied
  *  @return LASErrorEnum
 */
-LAS_DLL LASError LASVLR_GetData(const LASVLRH hVLR, uint8_t** data, int* length);
+LAS_DLL LASError LASVLR_GetData(const LASVLRH hVLR, uint8_t* data);
+
+/** Sets the data stream for the VLR as an array of bytes.  The length of this 
+ *  array should be the same as LASVLR_GetRecordLength.  The data are copied into 
+ *  the VLR structure.
+ *  @param hVLR the LASVLRH instance
+ *  @param data a pointer to your array.  It must be LASVLR_GetRecordLength in size
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASVLR_SetData(const LASVLRH hVLR, uint8_t* data, uint16_t length);
 
 LAS_C_END
 #endif

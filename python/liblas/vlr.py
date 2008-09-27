@@ -86,23 +86,13 @@ class VLR(object):
     reserved = property(get_reserved, set_reserved)
     
     def get_data(self):
-        b = ctypes.pointer(ctypes.c_ubyte())
-        i = ctypes.pointer(ctypes.c_int())
-        core.las.LASVLR_GetData(self.handle, ctypes.byref(b), i)
-        print 'i length: %s' % i.contents.value
-        print 'bvalue : %s' % b.contents
+        length = self.recordlength
+        data = (ctypes.c_ubyte * length)()
+        core.las.LASVLR_GetData(self.handle, data)
+        return data
 
-        t = (ctypes.c_byte*i.contents.value)()
-        print 'b[0:71]: ', b[0:i.contents.value]
-        parray = ctypes.cast(b, ctypes.c_void_p(i.contents.value))
-        print 'parray value' , parray[0:i.contents.value]
-
-        o = ''.join([chr(b[i]) for i in range(i.contents.value)])
-        print 'o: ', o
-        print 'type(parray): ', type(parray)
-#        buf = ctypes.create_string_buffer(i.value)
-#        print type(buf)
-        return ctypes.cast(b, ctypes.c_char_p).value
-#        return ctypes.create_string_buffer(parray, i.contents.value)[:]
-    data = property(get_data)
+    def set_data(self, data):
+        pdata = ctypes.cast(data, ctypes.POINTER(ctypes.c_ubyte))
+        core.las.LASVLR_SetData(self.handle, pdata, self.recordlength)
+    data = property(get_data, set_data)
 
