@@ -3,7 +3,8 @@
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
  * Purpose:  C API for libLAS
- * Author:   Howard Butler, hobu.inc@gmail.com
+ * Author:   Howard Butler, hobu.inc@gmail.com, but I'm not proud of it.  
+ *           I also swiped a lot of it from GDAL.
  *
  ******************************************************************************
  * Copyright (c) 2008, Mateusz Loskot

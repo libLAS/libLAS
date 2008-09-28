@@ -7,6 +7,7 @@
  *
  ******************************************************************************
  * Copyright (c) 2008, Phil Vachon
+ * Copyright (c) 2008, Howard Butler
  *
  * All rights reserved.
  * 

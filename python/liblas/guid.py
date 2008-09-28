@@ -3,7 +3,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Main prototypes for the libLAS C API
+ * Purpose:  Python LASGUID implementation
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************

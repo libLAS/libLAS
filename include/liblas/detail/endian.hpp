@@ -5,7 +5,7 @@
  * Purpose:  Endian macros
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
- * This file has been stolen from <boost/cstdint.hpp> and
+ * This file has been stolen from <boost/endian.hpp> and
  * modified for libLAS purposes.
  * 
  * (C) Copyright Mateusz Loskot 2007, mateusz@loskot.net

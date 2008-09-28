@@ -95,3 +95,4 @@ Release Process
    page you created as well as send an email to liblas-devel announcing the 
    new release.
 
+$Id$

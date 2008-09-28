@@ -234,3 +234,8 @@ See `License`_ for a copy.
 .. _`proj.4`: http://proj.maptools.org/
 .. _`GDAL`: http://www.gdal.org
 .. _`OSGeo4W`: http://wiki.osgeo.org/wiki/OSGeo_Win32_Installer
+
+"""
+
+$Id$
+

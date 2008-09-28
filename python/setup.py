@@ -1,7 +1,15 @@
+"""
+$Id$
+
+"""
 from setuptools import setup, Extension
 from sys import version_info
 
-readme = file('../README','rb').read()
+try:
+    readme = file('../README','rb').read()
+except:
+    readme = ''
+
 # Require ctypes egg only for Python < 2.5
 install_requires = ['setuptools']
 if version_info[:2] < (2,5):
