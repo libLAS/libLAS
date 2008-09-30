@@ -357,93 +357,93 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     
     nVLR = LASHeader_GetRecordsCount(header);
     
-    fprintf(stderr, "\n---------------------------------------------------------\n");
-    fprintf(stderr, "  Header Summary\n");
-    fprintf(stderr, "---------------------------------------------------------\n");
+    fprintf(file, "\n---------------------------------------------------------\n");
+    fprintf(file, "  Header Summary\n");
+    fprintf(file, "---------------------------------------------------------\n");
 
 
-    fprintf(stderr, "  File Name: %s\n", file_name);
+    fprintf(file, "  File Name: %s\n", file_name);
     
     if (strcmp(pszSignature,"LASF") !=0) {
         LASError_Print("File signature is not 'LASF'... aborting");
         exit(1);
     }
-    fprintf(stderr, "  Version:                    %d.%d\n", 
+    fprintf(file, "  Version:                    %d.%d\n", 
                     LASHeader_GetVersionMajor(header), 
                     LASHeader_GetVersionMinor(header));
 
-    fprintf(stderr, "  Source ID:                  %d\n", 
+    fprintf(file, "  Source ID:                  %d\n", 
                     LASHeader_GetFileSourceId(header) ) ;
 
-    fprintf(stderr, "  Reserved:                   %d\n", 
+    fprintf(file, "  Reserved:                   %d\n", 
                     LASHeader_GetReserved(header) );
 
-    fprintf(stderr, "  Project ID/GUID:           '%s'\n", 
+    fprintf(file, "  Project ID/GUID:           '%s'\n", 
                     pszProjectId);
 
-    fprintf(stderr, "  System Identifier:         '%s'\n", 
+    fprintf(file, "  System Identifier:         '%s'\n", 
                     pszSystemId);
 
-    fprintf(stderr, "  Generating Software:       '%s'\n", 
+    fprintf(file, "  Generating Software:       '%s'\n", 
                     pszSoftwareId);
 
-    fprintf(stderr, "  File Creation Day/Year:    %d/%d\n", 
+    fprintf(file, "  File Creation Day/Year:    %d/%d\n", 
                     LASHeader_GetCreationDOY(header), 
                     LASHeader_GetCreationYear(header));
 
-    fprintf(stderr, "  Header Size                %d\n", 
+    fprintf(file, "  Header Size                %d\n", 
                     LASHeader_GetHeaderSize(header));
 
-    fprintf(stderr, "  Offset to Point Data       %d\n", 
+    fprintf(file, "  Offset to Point Data       %d\n", 
                     LASHeader_GetDataOffset(header));
 
-    fprintf(stderr, "  Number Var. Length Records %d\n", 
+    fprintf(file, "  Number Var. Length Records %d\n", 
                     LASHeader_GetRecordsCount(header));
 
-    fprintf(stderr, "  Point Data Format          %d\n", 
+    fprintf(file, "  Point Data Format          %d\n", 
                     LASHeader_GetDataFormatId(header));
 
-    fprintf(stderr, "  Point Data Record Length   %d\n", 
+    fprintf(file, "  Point Data Record Length   %d\n", 
                     LASHeader_GetDataRecordLength(header));
 
-    fprintf(stderr, "  Number of Point Records    %d\n", 
+    fprintf(file, "  Number of Point Records    %d\n", 
                     LASHeader_GetPointRecordsCount(header));
 
-    fprintf(stderr, "  Number of Points by Return %d %d %d %d %d\n", 
+    fprintf(file, "  Number of Points by Return %d %d %d %d %d\n", 
                     LASHeader_GetPointRecordsByReturnCount(header, 0), 
                     LASHeader_GetPointRecordsByReturnCount(header, 1), 
                     LASHeader_GetPointRecordsByReturnCount(header, 2), 
                     LASHeader_GetPointRecordsByReturnCount(header, 3), 
                     LASHeader_GetPointRecordsByReturnCount(header, 4));
 
-    fprintf(stderr, "  Scale Factor X Y Z         %.6g %.6g %.6g\n", 
+    fprintf(file, "  Scale Factor X Y Z         %.6g %.6g %.6g\n", 
                     LASHeader_GetScaleX(header), 
                     LASHeader_GetScaleY(header),
                     LASHeader_GetScaleZ(header));
 
-    fprintf(stderr, "  Offset X Y Z               %.6f %.6f %.6f\n", 
+    fprintf(file, "  Offset X Y Z               %.6f %.6f %.6f\n", 
                     LASHeader_GetOffsetX(header), 
                     LASHeader_GetOffsetY(header), 
                     LASHeader_GetOffsetZ(header));
 
-    fprintf(stderr, "  Min X Y Z                  %.6f %.6f %.6f\n",
+    fprintf(file, "  Min X Y Z                  %.6f %.6f %.6f\n",
                     LASHeader_GetMinX(header), 
                     LASHeader_GetMinY(header), 
                     LASHeader_GetMinZ(header));
 
-    fprintf(stderr, "  Max X Y Z                  %.6f %.6f %.6f\n", 
+    fprintf(file, "  Max X Y Z                  %.6f %.6f %.6f\n", 
                     LASHeader_GetMaxX(header), 
                     LASHeader_GetMaxY(header), 
                     LASHeader_GetMaxZ(header));
     
-    fprintf(stderr, " Spatial Reference           %s\n",
+    fprintf(file, " Spatial Reference           %s\n",
                     pszProj4);
 
     if (nVLR && !bSkipVLR) {
         
-    fprintf(stderr, "\n---------------------------------------------------------\n");
-    fprintf(stderr, "  VLR Summary\n");
-    fprintf(stderr, "---------------------------------------------------------\n");
+    fprintf(file, "\n---------------------------------------------------------\n");
+    fprintf(file, "  VLR Summary\n");
+    fprintf(file, "---------------------------------------------------------\n");
 
         for (i = 0; i < (int)nVLR; i++) {
             pVLR = LASHeader_GetVLR(header, i);
