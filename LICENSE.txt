@@ -1,12 +1,17 @@
 libLAS Main License
 ==============================================================================
 
-Copyright (c) 2007, Martin Isenburg isenburg@cs.unc.edu 
-Copyright (c) 2008, Howard Butler hobu.inc@gmail.com
-Copyright (c) 2008, Mateusz Loskot mateusz@loskot.net
-Copyright (c) 2008, Phil Vachon philippe@cowpig.ca
-Copyright (c) 2008, Frank Warmerdam warmerdam@pobox.com
-Copyright (c) 2008, Martin Rodriguez mrodriguez@stereocarto.com
+Copyright (c) 2007, Martin Isenburg, isenburg at cs.unc.edu 
+
+Copyright (c) 2008, Howard Butler, hobu.inc at gmail.com
+
+Copyright (c) 2008, Mateusz Loskot, mateusz at loskot.net
+
+Copyright (c) 2008, Phil Vachon, philippe at cowpig.ca
+
+Copyright (c) 2008, Frank Warmerdam, warmerdam at pobox.com
+
+Copyright (c) 2008, Martin Rodriguez, mrodriguez at stereocarto.com
 
 All rights reserved.
 
@@ -44,10 +49,14 @@ include/liblas/cstdint.hpp
 This file has been stolen from <boost/cstdint.hpp> and
 modified for libLAS purposes.
 
-(C) Copyright Mateusz Loskot 2007, mateusz@loskot.net
-(C) Copyright Phil Vachon 2007, philippe@cowpig.ca
+(C) Copyright Mateusz Loskot 2007
+
+(C) Copyright Phil Vachon 2007
+
 (C) Copyright John Maddock 2001
+
 (C) Copyright Jens Mauer 2001
+
 (C) Copyright Beman Dawes 1999
  
 Boost Software License - Version 1.0 - August 17th, 2003
@@ -80,8 +89,10 @@ include/liblas/detail/endian.hpp
 This file has been stolen from <boost/endian.hpp> and
 modified for libLAS purposes.
 
-(C) Copyright Mateusz Loskot 2007, mateusz@loskot.net
+(C) Copyright Mateusz Loskot 2007
+
 (C) Copyright Caleb Epstein 2005
+
 (C) Copyright John Maddock 2006
 
 Boost Software License - Version 1.0 - August 17th, 2003
@@ -114,6 +125,7 @@ include/liblas/detail/sha1.hpp
 Copyright (C) 1998
 Paul E. Jones <paulej@arid.us>
 All Rights Reserved.
+
 This software is licensed as "freeware."  Permission to distribute
 this software in source and binary forms is hereby granted without
 a fee.  THIS SOFTWARE IS PROVIDED 'AS IS' AND WITHOUT ANY EXPRESSED
@@ -131,12 +143,14 @@ from the book "The C++ Standard Library - A Tutorial and Reference".  It is
 released under the main libLAS licensing terms.
 
 (C) Copyright Nicolai M. Josuttis 1999
-(C) Copyright Mateusz Loskot 2008, mateusz@loskot.net (modifications)
+
+(C) Copyright Mateusz Loskot 2008, (modifications)
 
 python/tests/test_doctests.py
 ==============================================================================
 
-Copyright (c) 2007, Sean C. Gillies sgillies@frii.com
+Copyright (c) 2007, Sean C. Gillies, sgillies at frii.com
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -166,7 +180,7 @@ POSSIBILITY OF SUCH DAMAGE.
 src/Verson.rc
 ==============================================================================
 
-Copyright (c) 2005, Frank Warmerdam <warmerdam@pobox.com>
+Copyright (c) 2005, Frank Warmerdam, warmerdam at pobox.com
 
 All rights reserved.
 
