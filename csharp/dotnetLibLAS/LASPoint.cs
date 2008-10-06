@@ -55,11 +55,110 @@ using LASHeaderH = System.IntPtr;
 namespace LibLAS
 {
 
-
-
+  
+    /// <summary>
+    /// LASPoint class
+    /// </summary>
     public class LASPoint : IDisposable
     {
+        /// <summary>
+        /// Returns a bitfield representing the validity of various members.
+        /// </summary>
+        public enum DataMemberFlag
+        {
+            /// <summary>
+            /// ReturnNumber property flag.
+            /// </summary>
+            eReturnNumber = 1,
+            /// <summary>
+            /// NumberOfReturns property flag.
+            /// </summary>
+            eNumberOfReturns = 2,
+            /// <summary>
+            /// ScanDirection property flag.
+            /// </summary>
+            eScanDirection = 4,
+            /// <summary>
+            /// FlightLineEdge property flag.
+            /// </summary>
+            eFlightLineEdge = 8,
+            /// <summary>
+            /// Classification property flag.
+            /// </summary>
+            eClassification = 16,
+            /// <summary>
+            /// ScanAngleRank property flag.
+            /// </summary>
+            eScanAngleRank = 32,
+            /// <summary>
+            /// Time property flag.
+            /// </summary>
+            eTime = 64
+        };
+
+
         private LASPointH hPoint;
+
+        /// <summary>
+        /// Create a new LASPoint from the LASPointH opaque structure
+        /// </summary>
+        /// <param name="hLASPoint">LASPointH opaque structure</param>
+        public LASPoint(LASPointH hLASPoint)
+        {
+
+
+            hPoint = hLASPoint;
+
+        }
+
+        /// <summary>
+        /// Create a generic LASPoint
+        /// </summary>
+        public LASPoint()
+        {
+            hPoint = CAPI.LASPoint_Create();
+
+
+
+        }
+
+
+        /// <summary>
+        /// Compare 2 LASPoint to be equal
+        /// </summary>
+        /// <param name="lasPoint">LASPoint object</param>
+        /// <returns>true if lasPoint is equals to the instance.</returns>
+        public bool Equals(LASPoint lasPoint)
+        {
+            if (X == lasPoint.X && Y == lasPoint.Y && Z == lasPoint.Z)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// test is the LASPoint is Valid
+        /// </summary>
+        /// <returns>true is is valid</returns>
+        public bool IsValid()
+        {
+            if (CAPI.LASPoint_IsValid(hPoint) == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// The object user should call this method when they finished with the object. In .NET is magaged by the GC.
+        /// </summary>
         public void Dispose()
         {
 
@@ -69,17 +168,7 @@ namespace LibLAS
         }
 
 
-        enum DataMemberFlag
-        {
-            eReturnNumber = 1,
-            eNumberOfReturns = 2,
-            eScanDirection = 4,
-            eFlightLineEdge = 8,
-            eClassification = 16,
-            eScanAngleRank = 32,
-            eTime = 64
-        };
-
+      
 
         enum ClassificationType
         {
@@ -106,19 +195,51 @@ namespace LibLAS
         };
 
 
-
+        /// <summary>
+        /// gets the opaque pointer to the LASPointH instance.
+        /// </summary>
+        /// <returns>the opaque pointer to the LASPointH instance</returns>
         public LASPointH GetPointer()
         {
             return hPoint;
         }
-        public LASPoint(LASPointH hPoint_)
+
+        /// <summary>
+        /// Copy a LASPoint object creating a new one.
+        /// </summary>
+        /// <returns>a new LASPoint instance copied.</returns>
+        public LASPoint Copy()
         {
-            hPoint = hPoint_;
 
+            LASPointH laspointhTemp = CAPI.LASPoint_Copy(hPoint);
+            return new LASPoint(laspointhTemp);
         }
-        //    LASPoint(LASPoint const& other);
-        //    LASPoint& operator=(LASPoint const& rhs);
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public bool Validate()
+        {
+            int error = CAPI.LASPoint_Validate(hPoint);
+
+            if (error != 0)
+            {
+                LASException e = new LASException("Point data members out of range.");
+                e.Data.Add("DataMemberFlag", error);
+                throw e;
+            }
+
+
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// X value for the point.
+        /// </summary>
+        /// <remarks>This value must be scaled or offset by any header values before being set.</remarks>
         public double X
         {
             get
@@ -137,7 +258,13 @@ namespace LibLAS
                 }
             }
         }
+        
+          
 
+        /// <summary>
+        /// Y value for the point.
+        /// </summary>
+        /// <remarks>This value must be scaled or offset by any header values before being set.</remarks>
         public double Y
         {
             get
@@ -156,6 +283,11 @@ namespace LibLAS
             }
         }
 
+        /// <summary>
+        /// Z value for the point.
+        /// </summary>
+        /// <remarks>This value must be scaled or offset by any header values before being set.</remarks>
+        /// 
         public double Z
         {
             get
@@ -175,9 +307,11 @@ namespace LibLAS
         }
 
 
-        //    void SetCoordinates(double const& x, double const& y, double const& z);
-        //    void SetCoordinates(LASHeader const& header, double x, double y, double z);
-
+        /// <summary>
+        ///  intensity value for the point.
+        /// </summary>
+        /// <remarks>This value is the pulse return magnitude, it is optional, and it is LiDAR system specific. 
+        /// </remarks>
         public UInt16 Intensity
         {
             get
@@ -196,6 +330,10 @@ namespace LibLAS
             }
         }
 
+        /// <summary>
+        ///  scan flags for the point -- Return number, number of returns, flightline edge, scan direction, and scan angle rank.
+        /// </summary>
+        /// <remarks></remarks>
         public byte ScanFlags
         {
             get
@@ -215,6 +353,10 @@ namespace LibLAS
             }
         }
 
+        /// <summary>
+        ///  return number for the point.
+        /// </summary>
+        /// <remarks>The return number is "the pulse return number for a given output pulse."  The first return number starts with the value 1. valid from 1 to 6.</remarks>
         public UInt16 ReturnNumber
         {
             get
@@ -233,7 +375,10 @@ namespace LibLAS
             }
         }
 
-
+        /// <summary>
+        ///  total number of returns for a given pulse.
+        /// </summary>
+        /// <remarks>Valid values are from 1-5. </remarks>
         public UInt16 NumberOfReturns
         {
             get
@@ -252,8 +397,10 @@ namespace LibLAS
             }
         }
 
-
-
+        /// <summary>
+        /// scan direction for a given pulse.
+        /// </summary>
+        /// <remarks>Valid values are 0 or 1, with 1 being a positive scan direction and 0 being a negative scan direction.</remarks>
         public UInt16 ScanDirection
         {
             get
@@ -272,7 +419,10 @@ namespace LibLAS
             }
         }
 
-
+        /// <summary>
+        /// whether or not a given pulse is an edge point.
+        /// </summary>
+        /// <remarks>Valid values are 0 or 1, with 1 being an edge point and 0 being interior.</remarks>
         public UInt16 FlightLineEdge
         {
             get
@@ -291,6 +441,9 @@ namespace LibLAS
             }
         }
 
+        /// <summary>
+        /// classification for the point.
+        /// </summary>
         public byte Classification
         {
             get
@@ -309,8 +462,10 @@ namespace LibLAS
             }
         }
 
-
-        public byte ScanAngleRank
+        /// <summary>
+        /// the scan angle for the point.
+        /// </summary>
+        public SByte ScanAngleRank
         {
             get
             {
@@ -329,6 +484,9 @@ namespace LibLAS
             }
         }
 
+        /// <summary>
+        /// arbitrary user data for the point.
+        /// </summary>
         public byte UserData
         {
             get
@@ -347,6 +505,9 @@ namespace LibLAS
             }
         }
 
+        /// <summary>
+        ///  time for the point.
+        /// </summary>
         public double Time
         {
             get
@@ -362,43 +523,10 @@ namespace LibLAS
 
                     throw e;
                 }
- 
+
 
             }
         }
-
-
-
-
-
-
-
-
-        //    double& operator[](std::size_t const& n);
-        //    double const& operator[](std::size_t const& n) const;
-
-        //    bool equal(LASPoint const& other) const;
-
-        //    bool Validate() const;
-        //    bool IsValid() const;
-
-        //private:
-
-        // static std::size_t const coords_size = 3;
-        // double m_coords[coords_size];
-        //Uint16 m_intensity;
-        //byte m_flags;
-        //byte m_class;
-        //byte m_angleRank;
-        //byte m_userData;
-        //double m_gpsTime;
-
-        //    void throw_out_of_range() const
-        //    {
-        //        throw std::out_of_range("coordinate subscript out of range");
-        //    }
-        //};
-
 
     }
 }

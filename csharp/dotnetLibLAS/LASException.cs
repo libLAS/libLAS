@@ -64,18 +64,28 @@ namespace LibLAS
         LEFatal = 4
     };
 
-
+    /// <summary>
+    /// LASException class
+    /// </summary>
     public class LASException :
         System.ApplicationException
 
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="message">string to show</param>
         public LASException(string message)
             :
             base(message)
         {
 
         }
-
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="value">TODO</param>
+        /// <returns>the string </returns>
         public static string GetString(Int32 value)
         
         {

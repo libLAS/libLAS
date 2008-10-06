@@ -53,33 +53,31 @@ using LASHeaderH = System.IntPtr;
 
 namespace LibLAS
 {
+    /// <summary>
+    /// LASReader class
+    /// </summary>
     public class LASReader : IDisposable
     {
 
         private LASReaderH hReader;
         private LASPoint laspoint;
 
-        // The object user should call this method
-        // when they finished with the object.
-        public void Dispose()
-        {
-
-            CAPI.LASReader_Destroy(hReader);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
-        }
-
-
-
+       
+   
+        /// <summary>
+        /// Creates a LASReaderH object that can be used to read LASHeaderH and LASPointH objects with.
+        /// </summary>
+        /// <remarks>The LASReaderH must not be created with a filename that is opened for read or write by any other API functions. </remarks>
+        /// <param name="filename">filename to open for read</param>
         public LASReader(String filename)
         {
             hReader = CAPI.LASReader_Create(filename);
         }
-        //    ~LASReader();
 
-        //    std::size_t GetVersion() const;
-        //    LASHeader const& GetHeader() const;
-
+        /// <summary>
+        /// Reads the next available point on the LASReaderH instance. 
+        /// </summary>
+        /// <returns>true if we have next point</returns>
         public bool GetNextPoint()
         {
             IntPtr pointer = CAPI.LASReader_GetNextPoint(hReader);
@@ -95,20 +93,32 @@ namespace LibLAS
 
 
         }
+
+        /// <summary>
+        /// get the current LASPoint.
+        /// </summary>
+        /// <returns>current LASPoint object</returns>
         public LASPoint GetPoint()
         {
             return laspoint;
 
         }
-        //    std::vector<LASVLR> const& GetVLRs() const;
-
+        /// <summary>
+        /// Reads a LASPointH from the given position in the LAS file represented by the LASReader instance.
+        /// </summary>
+        /// <remarks> If no point is available at that location, NULL is returned. </remarks>
+        /// <param name="position">the integer position of the point in the file to read.</param>
+        /// <returns>LASPoint object</returns>
         public LASPoint GetPointAt(UInt32 position)
         {
             return new LASPoint(CAPI.LASReader_GetPointAt(hReader, position));
 
         }
 
-
+        /// <summary>
+        /// Get the header for the file associated with this Reader Class.
+        /// </summary>
+        /// <returns>LASHeader representing the header for the file.</returns>
         public LASHeader GetHeader()
         {
             return new LASHeader(CAPI.LASReader_GetHeader(hReader));
@@ -116,32 +126,16 @@ namespace LibLAS
         }
 
 
+        /// <summary>
+        /// The object user should call this method when they finished with the object. In .NET is magaged by the GC.
+        /// </summary>
+        public void Dispose()
+        {
 
-
-
-        //    bool ReadVLR();
-
-        //    // The operator is not const because it updates file stream position.
-        //    LASPoint const& operator[](std::size_t n);
-
-        //    // Allow fetching of the stream
-        //    std::istream& GetStream() const;
-
-        //private:
-
-        //    // Blocked copying operations, declared but not defined.
-        //    LASReader(LASReader const& other);
-        //    LASReader& operator=(LASReader const& rhs);
-
-        //    void Init(); // throws on error
-        //    void MakePoint(double const& time);
-
-        //    const std::auto_ptr<detail::Reader> m_pimpl;
-        //    LASHeader m_header;
-        //    LASPoint m_point;
-        //    detail::PointRecord m_record;
-        //    std::vector<LASVLR> m_vlrs;
-
+            CAPI.LASReader_Destroy(hReader);
+            // Clean up unmanaged resources here.
+            // Dispose other contained disposable objects.
+        }
 
     }
 }

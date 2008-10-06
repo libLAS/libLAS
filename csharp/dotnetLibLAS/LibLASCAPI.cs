@@ -55,17 +55,17 @@ using LASHeaderH = System.IntPtr;
 
 namespace LibLAS
 {
-     class CAPI
+      internal class CAPI
     {
 
 
         /** Returns the version string for this library.
         *  @return the version string for this library.
         */
-        public const string DLL_LAS_VERSION = "liblas1.0.0.dll";
+         public const string DLL_LAS_VERSION = "mingw_liblas1.dll";
 
         [DllImport(DLL_LAS_VERSION)]
-        public static extern String LAS_GetVersion();
+         public static extern String LAS_GetVersion();
 
 
         /****************************************************************************/
@@ -173,6 +173,7 @@ namespace LibLAS
         /****************************************************************************/
         /* Point operations                                                         */
         /****************************************************************************/
+        
 
         /** Returns the X value for the point.  This value is not scaled or offset
         *  by any header values and stands on its own.  If you need points to have 
@@ -363,7 +364,7 @@ namespace LibLAS
         *  @return the scan angle for the point
         */
         [DllImport(DLL_LAS_VERSION)]
-        public static extern byte LASPoint_GetScanAngleRank(LASPointH hPoint);
+        public static extern SByte LASPoint_GetScanAngleRank(LASPointH hPoint);
 
         /** Sets the scan angle for the point.  No validation is done. 
         *  @param hPoint LASPointH instance
@@ -371,7 +372,7 @@ namespace LibLAS
         *  @return LASError value determine success or failure.
         */
         [DllImport(DLL_LAS_VERSION)]
-        public static extern LASError LASPoint_SetScanAngleRank(LASPointH hPoint, byte value);
+         public static extern LASError LASPoint_SetScanAngleRank(LASPointH hPoint, SByte value);
 
         /** Returns the arbitrary user data for the point
         *  @param hPoint LASPointH instance
@@ -403,7 +404,7 @@ namespace LibLAS
         *  @return bitfield representing the validity of various members.
         */
         [DllImport(DLL_LAS_VERSION)]
-        public static extern int LASPoint_Validate(LASPointH hPoint);
+         public static extern int LASPoint_Validate(LASPointH hPoint);
 
         /** Returns a boolean whether or not the point is valid
         *  @param hPoint LASPointH instance
@@ -467,6 +468,8 @@ namespace LibLAS
         [DllImport(DLL_LAS_VERSION)]
         public static extern UInt16 LASHeader_GetFileSourceId(LASHeaderH hHeader);
 
+         [DllImport(DLL_LAS_VERSION)]
+         public static extern LASError LASHeader_SetFileSourceId(LASHeaderH hHeader, UInt16 value);
 
         /** Returns the project id for the header as a GUID string
         *  @return the project id for the header as a GUID string
@@ -1023,10 +1026,10 @@ namespace LibLAS
         *  @return LASErrorEnum
         */
         [DllImport(DLL_LAS_VERSION)]
-        public static extern LASError LASVLR_GetData(LASVLRH hVLR, ref byte[] data, ref int length);
+        public static extern LASError LASVLR_GetData(LASVLRH hVLR, out byte[] data);//, ref int length);
 
-
-
+        [DllImport(DLL_LAS_VERSION)]
+        public static extern LASError LASVLR_SetData(LASVLRH hVLR, ref byte[] data,  int length);
 
 
     }

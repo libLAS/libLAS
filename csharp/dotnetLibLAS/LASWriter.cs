@@ -53,19 +53,35 @@ using LASHeaderH = System.IntPtr;
 
 namespace LibLAS
 {
-
-   public enum LASReadWriteMode
+    /// <summary>
+    /// LASReadWriteMode enum
+    /// </summary>
+    public enum LASReadWriteMode
     {
+        /// <summary>
+        /// Mode of Read
+        /// </summary>
         LASModeRead = 0,
+        /// <summary>
+        /// Mode of Write
+        /// </summary>
         LASModeWrite = 1,
+        /// <summary>
+        /// Mode of ppend
+        /// </summary>
         LASModeAppend = 2
     }
 
-    public  class LASWriter : IDisposable
+    /// <summary>
+    /// LASWriter class
+    /// </summary>
+    public class LASWriter : IDisposable
     {
         private LASWriterH hwriter;
-        // The object user should call this method
-        // when they finished with the object.
+
+        /// <summary>
+        /// The object user should call this method when they finished with the object.
+        /// </summary>
         public void Dispose()
         {
 
@@ -74,20 +90,22 @@ namespace LibLAS
             // Dispose other contained disposable objects.
         }
 
-
+        /// <summary>
+        /// Default constructor of the class
+        /// </summary>
+        /// <param name="filename">string with the path of the LAS file</param>
+        /// <param name="hHeader">LASHeader to add the LAS file</param>
+        /// <param name="mode">mode to use the file by LASReadWriteMode enumeration</param>
         public LASWriter(String filename, LASHeader hHeader, LASReadWriteMode mode)
         {
             hwriter = CAPI.LASWriter_Create(filename, hHeader.GetPointer(), (int)mode);
         }
 
-        
-        //private LASPoint laspoint;
 
-        //         LASWriter(std::ostream& ofs, LASHeader const& header);
-        //    ~LASWriter();
-
-        //    std::size_t GetVersion() const;
-        //    LASHeader const& GetHeader() const;
+        /// <summary>
+        /// Write a new point in the LAS file
+        /// </summary>
+        /// <param name="point">LASPoint to write in the file</param>
         public void WritePoint(LASPoint point)
         {
             LASError error = CAPI.LASWriter_WritePoint(hwriter, point.GetPointer());
@@ -100,22 +118,6 @@ namespace LibLAS
             }
         }
 
-        //    // Allow fetching of the stream
-        //    std::ostream& GetStream() const;
-
-        //    // Allow in-place writing of header
-        //    void WriteHeader(LASHeader& header);
-
-        //private:
-
-        //    // Blocked copying operations, declared but not defined.
-        //    LASWriter(LASWriter const& other);
-        //    LASWriter& operator=(LASWriter const& rhs);
-
-        //    const std::auto_ptr<detail::Writer> m_pimpl;
-
-        //    LASHeader m_header;
-        //    detail::PointRecord m_record;
 
 
     }
