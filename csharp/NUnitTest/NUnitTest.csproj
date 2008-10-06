@@ -38,6 +38,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LASWriterTest.cs" />
+    <Compile Include="LASVariableLengthRecordTest.cs" />
+    <Compile Include="LASGuidTest.cs" />
+    <Compile Include="LASReaderTest.cs" />
+    <Compile Include="LASPointTest.cs" />
     <Compile Include="LASFilesClass.cs" />
     <Compile Include="LASHeaderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

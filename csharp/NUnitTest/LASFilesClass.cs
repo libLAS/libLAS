@@ -4,9 +4,17 @@ using System.Text;
 
 namespace NUnitTest
 {
-     class LASFilesClass
+    static public class LASFilesClass
     {
-        static public string folder = @"F:\test\data\";
-        static public string TO_core_last_zoom = "TO_core_last_zoom";
+        static public string folder = @"C:\las\data";
+        static public string Folder
+        {
+            get
+            {
+                return folder;
+            }
+            //static public string TO_core_last_zoom = "TO_core_last_zoom";
+        }
+
     }
 }
