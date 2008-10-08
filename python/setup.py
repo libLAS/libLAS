@@ -21,7 +21,7 @@ version = '1.0.0b3'
 
 if os.name == 'nt':
     # Windows NT library
-    lib_name = 'liblas.dll' 
+    lib_name = 'liblas1.dll' 
     data_files=[('DLLs', ['DLLs/%s'% lib_name, 'c:\\osgeo4w\\bin\\geotiff.dll','c:\\osgeo4w\\bin\\libtiff.dll','c:\\osgeo4w\\bin\\zlib_osgeo.dll','c:\\osgeo4w\\bin\\jpeg_osgeo.dll']),]
 else:
     data_files = None
