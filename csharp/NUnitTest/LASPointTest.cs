@@ -1,29 +1,65 @@
+/******************************************************************************
+ * $Id$
+ *
+ * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
+ * Purpose:  Test cases of LASPoint class, .NET/Mono bindings
+ * Author:   Martin Vales, martin_gnu@mundo-r.com
+ *
+ ******************************************************************************
+ * Copyright (c) 2008, Martin Vales
+ *
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following 
+ * conditions are met:
+ * 
+ *     * Redistributions of source code must retain the above copyright 
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright 
+ *       notice, this list of conditions and the following disclaimer in 
+ *       the documentation and/or other materials provided 
+ *       with the distribution.
+ *     * Neither the name of the Martin Isenburg or Iowa Department 
+ *       of Natural Resources nor the names of its contributors may be 
+ *       used to endorse or promote products derived from this software 
+ *       without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+ * OF SUCH DAMAGE.
+ ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using LibLAS;
 
-
 namespace NUnitTest
 {
     [TestFixture]
     public class LASPointTest
     {
-
         LASPoint point = new LASPoint();
 
         [SetUp]
         protected void SetUp()
         {
-
-
         }
 
         [Test]
         public void SetPointCoordinates()
         {
-
             LASPoint pointB = new LASPoint();
             pointB.X = 23.0;
 
@@ -47,14 +83,13 @@ namespace NUnitTest
         [Test]
         public void PointValid()
         {
-
             LASPoint pointB = new LASPoint();
             pointB.X = 23.0;
 
             Assert.IsTrue(point.IsValid());
             Assert.IsTrue(pointB.IsValid());
-
         }
+
         [Test]
         public void ReturnNumber()
         {
@@ -79,7 +114,6 @@ namespace NUnitTest
                 Assert.AreEqual((int)e.Data["DataMemberFlag"] & (int)LASPoint.DataMemberFlag.eReturnNumber,
                     (int)LASPoint.DataMemberFlag.eReturnNumber);
             }
-
         }
 
         [Test]
@@ -106,9 +140,7 @@ namespace NUnitTest
                 Assert.AreEqual((int)e.Data["DataMemberFlag"] & (int)LASPoint.DataMemberFlag.eNumberOfReturns,
                     (int)LASPoint.DataMemberFlag.eNumberOfReturns);
             }
-
         }
-
 
         [Test]
         public void ScanDirection()
@@ -122,7 +154,6 @@ namespace NUnitTest
             //point.ScanDirection = num2;
             //Assert.AreEqual(point.ScanDirection, num2);
 
-
             //try
             //{
             //    //out of range
@@ -134,7 +165,6 @@ namespace NUnitTest
             //    Assert.AreEqual((int)e.Data["DataMemberFlag"] & (int)LASPoint.DataMemberFlag.eScanDirection,
             //        (int)LASPoint.DataMemberFlag.eScanDirection);
             //}
-
         }
 
         [Test]
@@ -162,7 +192,6 @@ namespace NUnitTest
                 Assert.AreEqual((int)e.Data["DataMemberFlag"] & (int)LASPoint.DataMemberFlag.eFlightLineEdge,
                     (int)LASPoint.DataMemberFlag.eFlightLineEdge);
             }
-
         }
 
         [Test]
@@ -177,16 +206,13 @@ namespace NUnitTest
             pointS.FlightLineEdge = 1;
             string expected = "10111011";
             byte bits = pointS.ScanFlags;
-            Assert.AreEqual(Convert.ToString(pointS.ScanFlags,2), (expected));
-         
+            Assert.AreEqual(Convert.ToString(pointS.ScanFlags, 2), (expected));
+
             LASPoint pointN;
             pointN = pointS.Copy();
 
             Assert.AreEqual(pointN.ScanFlags, pointS.ScanFlags);
-
-
         }
-
 
         [Test]
         public void Classification()
@@ -213,7 +239,6 @@ namespace NUnitTest
             //    Assert.AreEqual((int)e.Data["DataMemberFlag"] & (int)LASPoint.DataMemberFlag.eClassification,
             //        (int)LASPoint.DataMemberFlag.eClassification);
             //}
-
         }
 
         [Test]
@@ -241,9 +266,7 @@ namespace NUnitTest
                 Assert.AreEqual((int)e.Data["DataMemberFlag"] & (int)LASPoint.DataMemberFlag.eScanAngleRank,
                     (int)LASPoint.DataMemberFlag.eScanAngleRank);
             }
-
         }
-
 
         [Test]
         public void UserData()
@@ -253,10 +276,6 @@ namespace NUnitTest
             byte num1 = 7;
             point.UserData = num1;
             Assert.AreEqual(point.UserData, num1);
-
-
         }
-
     }
 }
-
