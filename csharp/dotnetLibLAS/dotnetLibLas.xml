@@ -4,6 +4,91 @@
         <name>dotnetLibLAS</name>
     </assembly>
     <members>
+        <member name="T:LibLAS.LASException">
+            <summary>
+            LASException class
+            </summary>
+        </member>
+        <member name="M:LibLAS.LASException.#ctor(System.String)">
+            <summary>
+            Default constructor
+            </summary>
+            <param name="message">string to show</param>
+        </member>
+        <member name="M:LibLAS.LASException.GetString(System.Int32)">
+            <summary>
+            TODO
+            </summary>
+            <param name="value">TODO</param>
+            <returns>the string </returns>
+        </member>
+        <member name="T:LibLAS.LASVariableLengthRecord">
+            <summary>
+            LASVariableLengthRecord class
+            </summary>
+        </member>
+        <member name="M:LibLAS.LASVariableLengthRecord.Dispose">
+            <summary>
+            The object user should call this method when they finished with the object.
+            </summary>
+        </member>
+        <member name="M:LibLAS.LASVariableLengthRecord.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:LibLAS.LASVariableLengthRecord.#ctor(System.IntPtr)">
+            <summary>
+            Creates a new variable length record uing the LASVLRH opaque pointer
+            </summary>
+            <param name="hVlrh">LASVLRH opaque pointer</param>
+        </member>
+        <member name="M:LibLAS.LASVariableLengthRecord.GetPointer">
+            <summary>
+            Get the LASVLRH opaque pointer.
+            </summary>
+            <returns>LASVLRH opaque pointer </returns>
+        </member>
+        <member name="M:LibLAS.LASVariableLengthRecord.GetData(System.Byte[]@)">
+            <summary>
+            Gets the data stream for the variable length record as an array of bytes
+            </summary>
+            <param name="data">a empty array of bytes where place the array</param>
+        </member>
+        <member name="M:LibLAS.LASVariableLengthRecord.SetData(System.Byte[]@)">
+            <summary>
+            Sets the data stream for the variable length record as an array of bytes
+            </summary>
+            <param name="data">array of bytes</param>
+        </member>
+        <member name="P:LibLAS.LASVariableLengthRecord.UserId">
+            <summary>
+            the User Id for the variable length record.
+            </summary>
+            <remarks> It will be clipped to fit within 16 characters</remarks>
+        </member>
+        <member name="P:LibLAS.LASVariableLengthRecord.Description">
+            <summary>
+            the description for the variable length record.
+            </summary>
+            <remarks> It will be clipped to fit within 32 characters</remarks>
+        </member>
+        <member name="P:LibLAS.LASVariableLengthRecord.RecordLength">
+            <summary>
+            the record length of the data stored in the variable length record.
+            </summary>
+        </member>
+        <member name="P:LibLAS.LASVariableLengthRecord.RecordId">
+            <summary>
+            the record id for the variable length record.
+            </summary>
+        </member>
+        <member name="P:LibLAS.LASVariableLengthRecord.Reserved">
+            <summary>
+            the reserved value of the variable length record.  
+            </summary>
+            <remarks>This should be 0 and should always be 0.</remarks>
+        </member>
         <member name="T:LibLAS.LASReadWriteMode">
             <summary>
             LASReadWriteMode enum
@@ -419,174 +504,6 @@
         <member name="F:LibLAS.LASHeader.PointSize.ePointSize1">
             Size of point record in data format \e 1
         </member>
-        <member name="T:LibLAS.LASPoint">
-            <summary>
-            LASPoint class
-            </summary>
-        </member>
-        <member name="M:LibLAS.LASPoint.#ctor(System.IntPtr)">
-            <summary>
-            Create a new LASPoint from the LASPointH opaque structure
-            </summary>
-            <param name="hLASPoint">LASPointH opaque structure</param>
-        </member>
-        <member name="M:LibLAS.LASPoint.#ctor">
-            <summary>
-            Create a generic LASPoint
-            </summary>
-        </member>
-        <member name="M:LibLAS.LASPoint.Equals(LibLAS.LASPoint)">
-            <summary>
-            Compare 2 LASPoint to be equal
-            </summary>
-            <param name="lasPoint">LASPoint object</param>
-            <returns>true if lasPoint is equals to the instance.</returns>
-        </member>
-        <member name="M:LibLAS.LASPoint.IsValid">
-            <summary>
-            test is the LASPoint is Valid
-            </summary>
-            <returns>true is is valid</returns>
-        </member>
-        <member name="M:LibLAS.LASPoint.Dispose">
-            <summary>
-            The object user should call this method when they finished with the object. In .NET is magaged by the GC.
-            </summary>
-        </member>
-        <member name="M:LibLAS.LASPoint.GetPointer">
-            <summary>
-            gets the opaque pointer to the LASPointH instance.
-            </summary>
-            <returns>the opaque pointer to the LASPointH instance</returns>
-        </member>
-        <member name="M:LibLAS.LASPoint.Copy">
-            <summary>
-            Copy a LASPoint object creating a new one.
-            </summary>
-            <returns>a new LASPoint instance copied.</returns>
-        </member>
-        <member name="M:LibLAS.LASPoint.Validate">
-             <summary>
-            
-             </summary>
-             <returns></returns>
-        </member>
-        <member name="P:LibLAS.LASPoint.X">
-            <summary>
-            X value for the point.
-            </summary>
-            <remarks>This value must be scaled or offset by any header values before being set.</remarks>
-        </member>
-        <member name="P:LibLAS.LASPoint.Y">
-            <summary>
-            Y value for the point.
-            </summary>
-            <remarks>This value must be scaled or offset by any header values before being set.</remarks>
-        </member>
-        <member name="P:LibLAS.LASPoint.Z">
-            <summary>
-            Z value for the point.
-            </summary>
-            <remarks>This value must be scaled or offset by any header values before being set.</remarks>
-            
-        </member>
-        <member name="P:LibLAS.LASPoint.Intensity">
-            <summary>
-             intensity value for the point.
-            </summary>
-            <remarks>This value is the pulse return magnitude, it is optional, and it is LiDAR system specific. 
-            </remarks>
-        </member>
-        <member name="P:LibLAS.LASPoint.ScanFlags">
-            <summary>
-             scan flags for the point -- Return number, number of returns, flightline edge, scan direction, and scan angle rank.
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="P:LibLAS.LASPoint.ReturnNumber">
-            <summary>
-             return number for the point.
-            </summary>
-            <remarks>The return number is "the pulse return number for a given output pulse."  The first return number starts with the value 1. valid from 1 to 6.</remarks>
-        </member>
-        <member name="P:LibLAS.LASPoint.NumberOfReturns">
-            <summary>
-             total number of returns for a given pulse.
-            </summary>
-            <remarks>Valid values are from 1-5. </remarks>
-        </member>
-        <member name="P:LibLAS.LASPoint.ScanDirection">
-            <summary>
-            scan direction for a given pulse.
-            </summary>
-            <remarks>Valid values are 0 or 1, with 1 being a positive scan direction and 0 being a negative scan direction.</remarks>
-        </member>
-        <member name="P:LibLAS.LASPoint.FlightLineEdge">
-            <summary>
-            whether or not a given pulse is an edge point.
-            </summary>
-            <remarks>Valid values are 0 or 1, with 1 being an edge point and 0 being interior.</remarks>
-        </member>
-        <member name="P:LibLAS.LASPoint.Classification">
-            <summary>
-            classification for the point.
-            </summary>
-        </member>
-        <member name="P:LibLAS.LASPoint.ScanAngleRank">
-            <summary>
-            the scan angle for the point.
-            </summary>
-        </member>
-        <member name="P:LibLAS.LASPoint.UserData">
-            <summary>
-            arbitrary user data for the point.
-            </summary>
-        </member>
-        <member name="P:LibLAS.LASPoint.Time">
-            <summary>
-             time for the point.
-            </summary>
-        </member>
-        <member name="T:LibLAS.LASPoint.DataMemberFlag">
-            <summary>
-            Returns a bitfield representing the validity of various members.
-            </summary>
-        </member>
-        <member name="F:LibLAS.LASPoint.DataMemberFlag.eReturnNumber">
-            <summary>
-            ReturnNumber property flag.
-            </summary>
-        </member>
-        <member name="F:LibLAS.LASPoint.DataMemberFlag.eNumberOfReturns">
-            <summary>
-            NumberOfReturns property flag.
-            </summary>
-        </member>
-        <member name="F:LibLAS.LASPoint.DataMemberFlag.eScanDirection">
-            <summary>
-            ScanDirection property flag.
-            </summary>
-        </member>
-        <member name="F:LibLAS.LASPoint.DataMemberFlag.eFlightLineEdge">
-            <summary>
-            FlightLineEdge property flag.
-            </summary>
-        </member>
-        <member name="F:LibLAS.LASPoint.DataMemberFlag.eClassification">
-            <summary>
-            Classification property flag.
-            </summary>
-        </member>
-        <member name="F:LibLAS.LASPoint.DataMemberFlag.eScanAngleRank">
-            <summary>
-            ScanAngleRank property flag.
-            </summary>
-        </member>
-        <member name="F:LibLAS.LASPoint.DataMemberFlag.eTime">
-            <summary>
-            Time property flag.
-            </summary>
-        </member>
         <member name="T:LibLAS.LASGuid">
             <summary>
             LASGuid class
@@ -651,6 +568,10 @@
         <member name="F:LibLAS.CAPI.DLL_LAS_VERSION">
             Returns the version string for this library.
             @return the version string for this library.
+            
+            If libLAS is built using solution from trunk/build/msvc80/liblas.sln
+            then C API DLL is called liblas_c_dll.dll, so value of the constant below
+            should be updated to "liblas_c_dll.dll".
         </member>
         <member name="M:LibLAS.CAPI.LASError_Reset">
             Resets the error stack for the libLAS C API.  
@@ -1345,90 +1266,173 @@
             @param length a pointer to where to place the length of the array
             @return LASErrorEnum
         </member>
-        <member name="T:LibLAS.LASException">
+        <member name="T:LibLAS.LASPoint">
             <summary>
-            LASException class
+            LASPoint class
             </summary>
         </member>
-        <member name="M:LibLAS.LASException.#ctor(System.String)">
+        <member name="M:LibLAS.LASPoint.#ctor(System.IntPtr)">
             <summary>
-            Default constructor
+            Create a new LASPoint from the LASPointH opaque structure
             </summary>
-            <param name="message">string to show</param>
+            <param name="hLASPoint">LASPointH opaque structure</param>
         </member>
-        <member name="M:LibLAS.LASException.GetString(System.Int32)">
+        <member name="M:LibLAS.LASPoint.#ctor">
             <summary>
-            TODO
-            </summary>
-            <param name="value">TODO</param>
-            <returns>the string </returns>
-        </member>
-        <member name="T:LibLAS.LASVariableLengthRecord">
-            <summary>
-            LASVariableLengthRecord class
+            Create a generic LASPoint
             </summary>
         </member>
-        <member name="M:LibLAS.LASVariableLengthRecord.Dispose">
+        <member name="M:LibLAS.LASPoint.Equals(LibLAS.LASPoint)">
             <summary>
-            The object user should call this method when they finished with the object.
+            Compare 2 LASPoint to be equal
+            </summary>
+            <param name="lasPoint">LASPoint object</param>
+            <returns>true if lasPoint is equals to the instance.</returns>
+        </member>
+        <member name="M:LibLAS.LASPoint.IsValid">
+            <summary>
+            test is the LASPoint is Valid
+            </summary>
+            <returns>true is is valid</returns>
+        </member>
+        <member name="M:LibLAS.LASPoint.Dispose">
+            <summary>
+            The object user should call this method when they finished with the object. In .NET is magaged by the GC.
             </summary>
         </member>
-        <member name="M:LibLAS.LASVariableLengthRecord.#ctor">
+        <member name="M:LibLAS.LASPoint.GetPointer">
             <summary>
-            Default constructor.
+            gets the opaque pointer to the LASPointH instance.
+            </summary>
+            <returns>the opaque pointer to the LASPointH instance</returns>
+        </member>
+        <member name="M:LibLAS.LASPoint.Copy">
+            <summary>
+            Copy a LASPoint object creating a new one.
+            </summary>
+            <returns>a new LASPoint instance copied.</returns>
+        </member>
+        <member name="M:LibLAS.LASPoint.Validate">
+             <summary>
+            
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="P:LibLAS.LASPoint.X">
+            <summary>
+            X value for the point.
+            </summary>
+            <remarks>This value must be scaled or offset by any header values before being set.</remarks>
+        </member>
+        <member name="P:LibLAS.LASPoint.Y">
+            <summary>
+            Y value for the point.
+            </summary>
+            <remarks>This value must be scaled or offset by any header values before being set.</remarks>
+        </member>
+        <member name="P:LibLAS.LASPoint.Z">
+            <summary>
+            Z value for the point.
+            </summary>
+            <remarks>This value must be scaled or offset by any header values before being set.</remarks>
+            
+        </member>
+        <member name="P:LibLAS.LASPoint.Intensity">
+            <summary>
+             intensity value for the point.
+            </summary>
+            <remarks>This value is the pulse return magnitude, it is optional, and it is LiDAR system specific. 
+            </remarks>
+        </member>
+        <member name="P:LibLAS.LASPoint.ScanFlags">
+            <summary>
+             scan flags for the point -- Return number, number of returns, flightline edge, scan direction, and scan angle rank.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:LibLAS.LASPoint.ReturnNumber">
+            <summary>
+             return number for the point.
+            </summary>
+            <remarks>The return number is "the pulse return number for a given output pulse."  The first return number starts with the value 1. valid from 1 to 6.</remarks>
+        </member>
+        <member name="P:LibLAS.LASPoint.NumberOfReturns">
+            <summary>
+             total number of returns for a given pulse.
+            </summary>
+            <remarks>Valid values are from 1-5. </remarks>
+        </member>
+        <member name="P:LibLAS.LASPoint.ScanDirection">
+            <summary>
+            scan direction for a given pulse.
+            </summary>
+            <remarks>Valid values are 0 or 1, with 1 being a positive scan direction and 0 being a negative scan direction.</remarks>
+        </member>
+        <member name="P:LibLAS.LASPoint.FlightLineEdge">
+            <summary>
+            whether or not a given pulse is an edge point.
+            </summary>
+            <remarks>Valid values are 0 or 1, with 1 being an edge point and 0 being interior.</remarks>
+        </member>
+        <member name="P:LibLAS.LASPoint.Classification">
+            <summary>
+            classification for the point.
             </summary>
         </member>
-        <member name="M:LibLAS.LASVariableLengthRecord.#ctor(System.IntPtr)">
+        <member name="P:LibLAS.LASPoint.ScanAngleRank">
             <summary>
-            Creates a new variable length record uing the LASVLRH opaque pointer
-            </summary>
-            <param name="hVlrh">LASVLRH opaque pointer</param>
-        </member>
-        <member name="M:LibLAS.LASVariableLengthRecord.GetPointer">
-            <summary>
-            Get the LASVLRH opaque pointer.
-            </summary>
-            <returns>LASVLRH opaque pointer </returns>
-        </member>
-        <member name="M:LibLAS.LASVariableLengthRecord.GetData(System.Byte[]@)">
-            <summary>
-            Gets the data stream for the variable length record as an array of bytes
-            </summary>
-            <param name="data">a empty array of bytes where place the array</param>
-        </member>
-        <member name="M:LibLAS.LASVariableLengthRecord.SetData(System.Byte[]@)">
-            <summary>
-            Sets the data stream for the variable length record as an array of bytes
-            </summary>
-            <param name="data">array of bytes</param>
-        </member>
-        <member name="P:LibLAS.LASVariableLengthRecord.UserId">
-            <summary>
-            the User Id for the variable length record.
-            </summary>
-            <remarks> It will be clipped to fit within 16 characters</remarks>
-        </member>
-        <member name="P:LibLAS.LASVariableLengthRecord.Description">
-            <summary>
-            the description for the variable length record.
-            </summary>
-            <remarks> It will be clipped to fit within 32 characters</remarks>
-        </member>
-        <member name="P:LibLAS.LASVariableLengthRecord.RecordLength">
-            <summary>
-            the record length of the data stored in the variable length record.
+            the scan angle for the point.
             </summary>
         </member>
-        <member name="P:LibLAS.LASVariableLengthRecord.RecordId">
+        <member name="P:LibLAS.LASPoint.UserData">
             <summary>
-            the record id for the variable length record.
+            arbitrary user data for the point.
             </summary>
         </member>
-        <member name="P:LibLAS.LASVariableLengthRecord.Reserved">
+        <member name="P:LibLAS.LASPoint.Time">
             <summary>
-            the reserved value of the variable length record.  
+             time for the point.
             </summary>
-            <remarks>This should be 0 and should always be 0.</remarks>
+        </member>
+        <member name="T:LibLAS.LASPoint.DataMemberFlag">
+            <summary>
+            Returns a bitfield representing the validity of various members.
+            </summary>
+        </member>
+        <member name="F:LibLAS.LASPoint.DataMemberFlag.eReturnNumber">
+            <summary>
+            ReturnNumber property flag.
+            </summary>
+        </member>
+        <member name="F:LibLAS.LASPoint.DataMemberFlag.eNumberOfReturns">
+            <summary>
+            NumberOfReturns property flag.
+            </summary>
+        </member>
+        <member name="F:LibLAS.LASPoint.DataMemberFlag.eScanDirection">
+            <summary>
+            ScanDirection property flag.
+            </summary>
+        </member>
+        <member name="F:LibLAS.LASPoint.DataMemberFlag.eFlightLineEdge">
+            <summary>
+            FlightLineEdge property flag.
+            </summary>
+        </member>
+        <member name="F:LibLAS.LASPoint.DataMemberFlag.eClassification">
+            <summary>
+            Classification property flag.
+            </summary>
+        </member>
+        <member name="F:LibLAS.LASPoint.DataMemberFlag.eScanAngleRank">
+            <summary>
+            ScanAngleRank property flag.
+            </summary>
+        </member>
+        <member name="F:LibLAS.LASPoint.DataMemberFlag.eTime">
+            <summary>
+            Time property flag.
+            </summary>
         </member>
     </members>
 </doc>

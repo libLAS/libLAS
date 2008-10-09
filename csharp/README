@@ -1,0 +1,26 @@
+
+ .NET/Mono bindings for libLAS - ASPRS LiDAR data translation toolset
+==============================================================================
+
+This directory consists of all components of .NET/Mono bindings for libLAS.
+
+
+Building with Visual Studio 2003/2005/2008 and .NET Framework
+------------------------------------------------------------------------------
+
+Requirements:
+
+* Visual Studio 2003, 2005 or 2008 
+* .NET Framework 1.x, 2.0 or 3.0
+
+TODO: Building instructions
+
+
+Building with Mono
+------------------------------------------------------------------------------
+
+TODO
+
+
+
+$Id$
