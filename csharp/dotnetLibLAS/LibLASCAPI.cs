@@ -58,11 +58,11 @@ namespace LibLAS
         /** Returns the version string for this library.
          * @return the version string for this library.
          * 
-         * If libLAS is built using solution from trunk/build/msvc80/liblas.sln
-         * then C API DLL is called liblas_c_dll.dll, so value of the constant below
-         * should be updated to "liblas_c_dll.dll".
+         * Name liblas1.dll is considered as unified across all builders on Windows platform.
+         * When building libLAS on Windows using NMAKE and makefile.vc, C API DLL is
+         * called liblas1.dll. The same name is used by Visual Studio solution liblas.sln.
          */
-        public const string DLL_LAS_VERSION = "mingw_liblas1.dll";
+        public const string DLL_LAS_VERSION = "liblas1.dll";
 
         [DllImport(DLL_LAS_VERSION)]
         public static extern String LAS_GetVersion();
