@@ -118,7 +118,7 @@ Library Documents
 * `LAS Format Elements`_ - comparison of elements of LAS Format 1.0 and 1.1  
 * `Software`_ - list of geospatial software with reading and writing capabilities of LAS Format
 * `Resources`_ - list of LiDAR/LAS resources
-* `Tutorials`_ - Tutorials on C++ and Python APIs
+* `Tutorials`_ - Tutorials on using libLAS from C++, Python and .NET/Mono languages
 
 Utilities
 ..............................................................................
