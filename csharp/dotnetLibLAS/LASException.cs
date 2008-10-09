@@ -1,6 +1,5 @@
-
 /******************************************************************************
- * 
+ * $Id$ 
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
  * Purpose:  
