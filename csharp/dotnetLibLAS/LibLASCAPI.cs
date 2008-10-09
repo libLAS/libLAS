@@ -1,5 +1,5 @@
 /******************************************************************************
- * 
+ * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
  * Purpose:  
@@ -39,7 +39,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -52,21 +51,21 @@ using LASGuidH = System.IntPtr;
 using LASVLRH = System.IntPtr;
 using LASHeaderH = System.IntPtr;
 
-
 namespace LibLAS
 {
-      internal class CAPI
+    internal class CAPI
     {
-
-
         /** Returns the version string for this library.
-        *  @return the version string for this library.
-        */
-         public const string DLL_LAS_VERSION = "mingw_liblas1.dll";
+         * @return the version string for this library.
+         * 
+         * If libLAS is built using solution from trunk/build/msvc80/liblas.sln
+         * then C API DLL is called liblas_c_dll.dll, so value of the constant below
+         * should be updated to "liblas_c_dll.dll".
+         */
+        public const string DLL_LAS_VERSION = "mingw_liblas1.dll";
 
         [DllImport(DLL_LAS_VERSION)]
-         public static extern String LAS_GetVersion();
-
+        public static extern String LAS_GetVersion();
 
         /****************************************************************************/
         /* Error handling                                                           */
@@ -173,7 +172,7 @@ namespace LibLAS
         /****************************************************************************/
         /* Point operations                                                         */
         /****************************************************************************/
-        
+
 
         /** Returns the X value for the point.  This value is not scaled or offset
         *  by any header values and stands on its own.  If you need points to have 
@@ -372,7 +371,7 @@ namespace LibLAS
         *  @return LASError value determine success or failure.
         */
         [DllImport(DLL_LAS_VERSION)]
-         public static extern LASError LASPoint_SetScanAngleRank(LASPointH hPoint, SByte value);
+        public static extern LASError LASPoint_SetScanAngleRank(LASPointH hPoint, SByte value);
 
         /** Returns the arbitrary user data for the point
         *  @param hPoint LASPointH instance
@@ -404,7 +403,7 @@ namespace LibLAS
         *  @return bitfield representing the validity of various members.
         */
         [DllImport(DLL_LAS_VERSION)]
-         public static extern int LASPoint_Validate(LASPointH hPoint);
+        public static extern int LASPoint_Validate(LASPointH hPoint);
 
         /** Returns a boolean whether or not the point is valid
         *  @param hPoint LASPointH instance
@@ -468,8 +467,8 @@ namespace LibLAS
         [DllImport(DLL_LAS_VERSION)]
         public static extern UInt16 LASHeader_GetFileSourceId(LASHeaderH hHeader);
 
-         [DllImport(DLL_LAS_VERSION)]
-         public static extern LASError LASHeader_SetFileSourceId(LASHeaderH hHeader, UInt16 value);
+        [DllImport(DLL_LAS_VERSION)]
+        public static extern LASError LASHeader_SetFileSourceId(LASHeaderH hHeader, UInt16 value);
 
         /** Returns the project id for the header as a GUID string
         *  @return the project id for the header as a GUID string
@@ -1029,8 +1028,6 @@ namespace LibLAS
         public static extern LASError LASVLR_GetData(LASVLRH hVLR, out byte[] data);//, ref int length);
 
         [DllImport(DLL_LAS_VERSION)]
-        public static extern LASError LASVLR_SetData(LASVLRH hVLR, ref byte[] data,  int length);
-
-
+        public static extern LASError LASVLR_SetData(LASVLRH hVLR, ref byte[] data, int length);
     }
 }
