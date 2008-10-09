@@ -39,7 +39,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -53,7 +52,6 @@ using LASHeaderH = System.IntPtr;
 
 namespace LibLAS
 {
-
     enum LASError
     {
         LENone = 0,
@@ -68,7 +66,6 @@ namespace LibLAS
     /// </summary>
     public class LASException :
         System.ApplicationException
-
     {
         /// <summary>
         /// Default constructor
@@ -78,21 +75,17 @@ namespace LibLAS
             :
             base(message)
         {
-
         }
+
         /// <summary>
         /// TODO
         /// </summary>
         /// <param name="value">TODO</param>
         /// <returns>the string </returns>
         public static string GetString(Int32 value)
-        
         {
             //to do. Implementent enum errors
             return "LibLAS exception";
-
         }
     }
-
-
 }

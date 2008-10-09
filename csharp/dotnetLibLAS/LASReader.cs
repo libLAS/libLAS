@@ -39,7 +39,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -58,12 +57,9 @@ namespace LibLAS
     /// </summary>
     public class LASReader : IDisposable
     {
-
         private LASReaderH hReader;
         private LASPoint laspoint;
 
-       
-   
         /// <summary>
         /// Creates a LASReaderH object that can be used to read LASHeaderH and LASPointH objects with.
         /// </summary>
@@ -81,17 +77,16 @@ namespace LibLAS
         public bool GetNextPoint()
         {
             IntPtr pointer = CAPI.LASReader_GetNextPoint(hReader);
-            
+
             if (IntPtr.Zero != pointer)
-                
             {
                 laspoint = new LASPoint(pointer);
                 return true;
-
             }
-            else { return false; }
-
-
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -101,8 +96,8 @@ namespace LibLAS
         public LASPoint GetPoint()
         {
             return laspoint;
-
         }
+
         /// <summary>
         /// Reads a LASPointH from the given position in the LAS file represented by the LASReader instance.
         /// </summary>
@@ -112,7 +107,6 @@ namespace LibLAS
         public LASPoint GetPointAt(UInt32 position)
         {
             return new LASPoint(CAPI.LASReader_GetPointAt(hReader, position));
-
         }
 
         /// <summary>
@@ -122,20 +116,16 @@ namespace LibLAS
         public LASHeader GetHeader()
         {
             return new LASHeader(CAPI.LASReader_GetHeader(hReader));
-
         }
-
 
         /// <summary>
         /// The object user should call this method when they finished with the object. In .NET is magaged by the GC.
         /// </summary>
         public void Dispose()
         {
-
             CAPI.LASReader_Destroy(hReader);
             // Clean up unmanaged resources here.
             // Dispose other contained disposable objects.
         }
-
     }
 }

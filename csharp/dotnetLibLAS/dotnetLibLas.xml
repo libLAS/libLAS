@@ -183,7 +183,8 @@
         </member>
         <member name="M:LibLAS.LASHeader.Dispose">
             <summary>
-            The object user should call this method when they finished with the object. In .NET is magaged by the GC.
+            The object user should call this method when they finished with the object.
+            In .NET is magaged by the GC.
             </summary>
         </member>
         <member name="M:LibLAS.LASHeader.GetPointer">
@@ -202,7 +203,9 @@
             <summary>
             Default constructor.
             </summary>
-            <remarks>The default constructed header is configured according to the ASPRS LAS 1.1 Specification, point data format set to 0. Other fields filled with 0.</remarks>
+            <remarks>The default constructed header is configured according
+            to the ASPRS LAS 1.1 Specification, point data format set to 0.
+            Other fields filled with 0.</remarks>
         </member>
         <member name="M:LibLAS.LASHeader.Copy">
             <summary>
@@ -362,7 +365,8 @@
             </summary>
             <param name="i">the index starting from 0 of the variable length record to fetch</param>
             <returns>a new variable length record instance</returns>
-            <remarks>Use VariableLengthRecordsCount property to determine the number of variable length records available on the header.</remarks>
+            <remarks>Use VariableLengthRecordsCount property to determine the number of
+            variable length records available on the header.</remarks>
         </member>
         <member name="M:LibLAS.LASHeader.DeleteVariableLengthRecord(System.UInt32)">
             <summary>
@@ -398,31 +402,36 @@
             <summary>
             major component of version of LAS format.
             </summary>
-            <remarks>Always 1  as the only valid value. value between eVersionMajorMin and eVersionMajorMax (always 1).</remarks>
+            <remarks>Always 1 as the only valid value. value between
+            eVersionMajorMin and eVersionMajorMax (always 1).</remarks>
         </member>
         <member name="P:LibLAS.LASHeader.VersionMinor">
             <summary>
             minor component of version of LAS format.
             </summary>
-            <remarks>Valid values are 1 or 0. value between eVersionMinorMin and eVersionMinorMax.</remarks>
+            <remarks>Valid values are 1 or 0. value between
+            eVersionMinorMin and eVersionMinorMax.</remarks>
         </member>
         <member name="P:LibLAS.LASHeader.SystemId">
             <summary>
             system identifier
             </summary>
-            <remarks>Default value is "libLAS" specified as the SystemIdentifier constant. string is padded right with spaces and its length is 32 bytes.</remarks>
+            <remarks>Default value is "libLAS" specified as the SystemIdentifier constant.
+            string is padded right with spaces and its length is 32 bytes.</remarks>
         </member>
         <member name="P:LibLAS.LASHeader.SoftwareId">
             <summary>
             software identifier
             </summary>
-            <remarks>Default value is "libLAS 1.0", specified as the SoftwareIdentifier constant. String is padded right with spaces and its length is 32 bytes.</remarks>
+            <remarks>Default value is "libLAS 1.0", specified as the SoftwareIdentifier constant.
+            String is padded right with spaces and its length is 32 bytes.</remarks>
         </member>
         <member name="P:LibLAS.LASHeader.CreationDOY">
             <summary>
             day of year of file creation date.
             </summary>
-            <remarks>Use full date structure instead of Julian date number. value is lower than number 366.</remarks>
+            <remarks>Use full date structure instead of Julian date number.
+            value is lower than number 366.</remarks>
         </member>
         <member name="P:LibLAS.LASHeader.CreationYear">
             <summary>
@@ -450,7 +459,8 @@
             <summary>
             the data format id for the file.  
             </summary>
-            <remarks>The value should be 1 or 0, with 1 being points that contain time values and 0 being points that do not.</remarks>
+            <remarks>The value should be 1 or 0, with 1 being points that contain
+            time values and 0 being points that do not.</remarks>
         </member>
         <member name="P:LibLAS.LASHeader.DataRecordLength">
             <summary>
@@ -461,7 +471,8 @@
             <summary>
             number of point records in the file.  
             </summary>
-            <remarks>This value may not reflect the actual number of point records in the file.</remarks>
+            <remarks>This value may not reflect the actual number of point
+            records in the file.</remarks>
         </member>
         <member name="P:LibLAS.LASHeader.GUID">
             <summary>

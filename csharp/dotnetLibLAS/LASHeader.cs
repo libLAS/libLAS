@@ -59,7 +59,8 @@ namespace LibLAS
     {
 
         /// <summary>
-        /// The object user should call this method when they finished with the object. In .NET is magaged by the GC.
+        /// The object user should call this method when they finished with the object.
+        /// In .NET is magaged by the GC.
         /// </summary>
         public void Dispose()
         {
@@ -69,18 +70,16 @@ namespace LibLAS
             // Dispose other contained disposable objects.
         }
 
-
-
         enum FormatVersion
         {
             /// Minimum of major component
             eVersionMajorMin = 1,
             ///Maximum of major component        
-            eVersionMajorMax = 1, 
+            eVersionMajorMax = 1,
             /// Minimum of minor component
-            eVersionMinorMin = 0, 
+            eVersionMinorMin = 0,
             /// Maximum of minor component
-            eVersionMinorMax = 1 
+            eVersionMinorMax = 1
         };
 
         /// Versions of point record format.
@@ -89,7 +88,7 @@ namespace LibLAS
             ///Point Data Format \e 0
             ePointFormat0 = 0,
             /// Point Data Format \e 1
-            ePointFormat1 = 1  
+            ePointFormat1 = 1
         };
 
         /// Number of bytes of point record storage in particular format.
@@ -98,9 +97,8 @@ namespace LibLAS
             ///Size of point record in data format \e 0
             ePointSize0 = 20,
             /// Size of point record in data format \e 1
-            ePointSize1 = 28  
+            ePointSize1 = 28
         };
-
 
         //// Official signature of ASPRS LAS file format, always \b "LASF".
         //public static readonly string FileSignature_;
@@ -110,7 +108,6 @@ namespace LibLAS
 
         ////Default software identifier used by libLAS, always \b "libLAS X.Y".
         //public static readonly string SoftwareIdentifier;
-
 
         private LASHeaderH hHeader;
 
@@ -122,7 +119,6 @@ namespace LibLAS
         {
             return hHeader;
         }
-
 
         /// <summary>
         /// LASHeader constructor using the LASHeaderH opaque pointer.
@@ -136,12 +132,13 @@ namespace LibLAS
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <remarks>The default constructed header is configured according to the ASPRS LAS 1.1 Specification, point data format set to 0. Other fields filled with 0.</remarks>
+        /// <remarks>The default constructed header is configured according
+        /// to the ASPRS LAS 1.1 Specification, point data format set to 0.
+        /// Other fields filled with 0.</remarks>
         public LASHeader()
         {
             hHeader = CAPI.LASHeader_Create();
         }
-
 
         /// <summary>
         /// Copy the LASHeader in a new instance
@@ -183,7 +180,6 @@ namespace LibLAS
             return !(lasHeader1 == lasHeader2);
         }
 
-
         /// <summary>
         /// Get ASPRS LAS file signature.
         /// </summary>
@@ -195,7 +191,6 @@ namespace LibLAS
                 return CAPI.LASHeader_GetFileSignature(hHeader);
             }
         }
-
 
         /// <summary>
         /// file source identifier.
@@ -209,16 +204,13 @@ namespace LibLAS
             }
             set
             {
-
                 LASError error = CAPI.LASHeader_SetFileSourceId(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header SetFileSourceId.");
                     throw e;
                 }
-
             }
-
         }
 
         /// <summary>
@@ -231,9 +223,7 @@ namespace LibLAS
             {
                 return CAPI.LASHeader_GetReserved(hHeader);
             }
-
         }
-
 
         /// <summary>
         /// Get project identifier.
@@ -247,12 +237,11 @@ namespace LibLAS
             }
         }
 
-
-
         /// <summary>
         /// major component of version of LAS format.
         /// </summary>
-        /// <remarks>Always 1  as the only valid value. value between eVersionMajorMin and eVersionMajorMax (always 1).</remarks>
+        /// <remarks>Always 1 as the only valid value. value between
+        /// eVersionMajorMin and eVersionMajorMax (always 1).</remarks>
         public byte VersionMajor
         {
             get
@@ -261,22 +250,20 @@ namespace LibLAS
             }
             set
             {
-
                 LASError error = CAPI.LASHeader_SetVersionMajor(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header VersionMajor.");
                     throw e;
                 }
-
             }
         }
-
 
         /// <summary>
         /// minor component of version of LAS format.
         /// </summary>
-        /// <remarks>Valid values are 1 or 0. value between eVersionMinorMin and eVersionMinorMax.</remarks>
+        /// <remarks>Valid values are 1 or 0. value between
+        /// eVersionMinorMin and eVersionMinorMax.</remarks>
         public byte VersionMinor
         {
             get
@@ -286,7 +273,6 @@ namespace LibLAS
             }
             set
             {
-
                 LASError error = CAPI.LASHeader_SetVersionMinor(hHeader, value);
                 if ((Int32)error != 0)
                 {
@@ -299,7 +285,8 @@ namespace LibLAS
         /// <summary>
         /// system identifier
         /// </summary>
-        /// <remarks>Default value is "libLAS" specified as the SystemIdentifier constant. string is padded right with spaces and its length is 32 bytes.</remarks>
+        /// <remarks>Default value is "libLAS" specified as the SystemIdentifier constant.
+        /// string is padded right with spaces and its length is 32 bytes.</remarks>
         public String SystemId
         {
             get
@@ -314,15 +301,14 @@ namespace LibLAS
                     LASException e = new LASException("Exception in Set Header SystemId.");
                     throw e;
                 }
-
             }
         }
-
 
         /// <summary>
         /// software identifier
         /// </summary>
-        /// <remarks>Default value is "libLAS 1.0", specified as the SoftwareIdentifier constant. String is padded right with spaces and its length is 32 bytes.</remarks>
+        /// <remarks>Default value is "libLAS 1.0", specified as the SoftwareIdentifier constant.
+        /// String is padded right with spaces and its length is 32 bytes.</remarks>
         public String SoftwareId
         {
             get
@@ -338,18 +324,14 @@ namespace LibLAS
                     LASException e = new LASException("Exception in Set Header SoftwareId.");
                     throw e;
                 }
-
             }
         }
-
-
-
-
 
         /// <summary>
         /// day of year of file creation date.
         /// </summary>
-        /// <remarks>Use full date structure instead of Julian date number. value is lower than number 366.</remarks>
+        /// <remarks>Use full date structure instead of Julian date number.
+        /// value is lower than number 366.</remarks>
         public UInt16 CreationDOY
         {
             get
@@ -364,12 +346,8 @@ namespace LibLAS
                     LASException e = new LASException("Exception in Set Header CreationDOY.");
                     throw e;
                 }
-
             }
         }
-
-
-
 
         /// <summary>
         /// year of file creation date.
@@ -383,7 +361,6 @@ namespace LibLAS
             }
             set
             {
-
                 LASError error = CAPI.LASHeader_SetCreationYear(hHeader, value);
                 if ((Int32)error != 0)
                 {
@@ -414,9 +391,7 @@ namespace LibLAS
             {
                 return CAPI.LASHeader_GetDataOffset(hHeader);
             }
-
         }
-
 
         /// <summary>
         /// Returns the number of variable length records in the header
@@ -432,12 +407,12 @@ namespace LibLAS
         /// <summary>
         /// the data format id for the file.  
         /// </summary>
-        /// <remarks>The value should be 1 or 0, with 1 being points that contain time values and 0 being points that do not.</remarks>
+        /// <remarks>The value should be 1 or 0, with 1 being points that contain
+        /// time values and 0 being points that do not.</remarks>
         public byte DataFormatId
         {
             get
             {
-
                 return CAPI.LASHeader_GetDataFormatId(hHeader);
             }
             set
@@ -451,8 +426,6 @@ namespace LibLAS
             }
         }
 
-
-
         /// <summary>
         /// return the record length for the points based on their data format id in bytes.
         /// </summary>
@@ -460,17 +433,15 @@ namespace LibLAS
         {
             get
             {
-
                 return CAPI.LASHeader_GetDataRecordLength(hHeader);
             }
-
         }
-
 
         /// <summary>
         /// number of point records in the file.  
         /// </summary>
-        /// <remarks>This value may not reflect the actual number of point records in the file.</remarks>
+        /// <remarks>This value may not reflect the actual number of point
+        /// records in the file.</remarks>
         public UInt32 PointRecordsCount
         {
             get
@@ -489,7 +460,6 @@ namespace LibLAS
                 }
             }
         }
-
 
         /// <summary>
         /// Returns the number of point records by return.
@@ -530,7 +500,6 @@ namespace LibLAS
             return CAPI.LASHeader_GetScaleX(hHeader);
         }
 
-
         /// <summary>
         /// Get scale factor for Y coordinate.
         /// </summary>
@@ -538,7 +507,6 @@ namespace LibLAS
         public double GetScaleY()
         {
             return CAPI.LASHeader_GetScaleY(hHeader);
-
         }
 
         /// <summary>
@@ -549,7 +517,6 @@ namespace LibLAS
         {
             return CAPI.LASHeader_GetScaleZ(hHeader);
         }
-
 
         /// <summary>
         /// Set values of scale factor for X, Y and Z coordinates.
@@ -567,7 +534,6 @@ namespace LibLAS
             }
         }
 
-
         /// <summary>
         /// Get X coordinate offset.
         /// </summary>
@@ -575,9 +541,7 @@ namespace LibLAS
         public double GetOffsetX()
         {
             return CAPI.LASHeader_GetOffsetX(hHeader);
-
         }
-
 
         /// <summary>
         /// Get Y coordinate offset.
@@ -588,7 +552,6 @@ namespace LibLAS
             return CAPI.LASHeader_GetOffsetY(hHeader);
         }
 
-
         /// <summary>
         /// Get Z coordinate offset.
         /// </summary>
@@ -597,7 +560,6 @@ namespace LibLAS
         {
             return CAPI.LASHeader_GetOffsetZ(hHeader);
         }
-
 
         //Set values of X, Y and Z coordinates offset.
         /// <summary>
@@ -641,7 +603,6 @@ namespace LibLAS
         public double GetMaxZ()
         {
             return CAPI.LASHeader_GetMaxZ(hHeader);
-
         }
 
         /// <summary>
@@ -650,12 +611,8 @@ namespace LibLAS
         /// <returns>minimum value of extent of X coordinate.</returns>
         public double GetMinX()
         {
-
             return CAPI.LASHeader_GetMinX(hHeader);
-
-
         }
-
 
         /// <summary>
         /// Get minimum value of extent of Y coordinate.
@@ -663,11 +620,7 @@ namespace LibLAS
         /// <returns>minimum value of extent of Y coordinate.</returns>
         public double GetMinY()
         {
-
             return CAPI.LASHeader_GetMinY(hHeader);
-
-
-
         }
 
         /// <summary>
@@ -676,9 +629,7 @@ namespace LibLAS
         /// <returns>minimum value of extent of Z coordinate.</returns>
         public double GetMinZ()
         {
-
             return CAPI.LASHeader_GetMinZ(hHeader);
-
         }
 
         /// <summary>
@@ -695,7 +646,6 @@ namespace LibLAS
                 LASException e = new LASException("Exception in Set Header SetMax.");
                 throw e;
             }
-
         }
 
         /// <summary>
@@ -733,7 +683,8 @@ namespace LibLAS
         /// </summary>
         /// <param name="i">the index starting from 0 of the variable length record to fetch</param>
         /// <returns>a new variable length record instance</returns>
-        /// <remarks>Use VariableLengthRecordsCount property to determine the number of variable length records available on the header.</remarks>
+        /// <remarks>Use VariableLengthRecordsCount property to determine the number of
+        /// variable length records available on the header.</remarks>
         public LASVariableLengthRecord GetVariableLengthRecord(UInt32 i)
         {
             LASVLRH vlrh = CAPI.LASHeader_GetVLR(hHeader, i);
@@ -774,7 +725,6 @@ namespace LibLAS
                     LASException e = new LASException("Exception in Set Header GUID.");
                     throw e;
                 }
-
             }
         }
 
@@ -797,8 +747,5 @@ namespace LibLAS
                 }
             }
         }
-
     }
-
 }
-

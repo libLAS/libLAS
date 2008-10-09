@@ -39,7 +39,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -53,20 +52,18 @@ using LASHeaderH = System.IntPtr;
 
 namespace LibLAS
 {
-
     /// <summary>
     /// LASVariableLengthRecord class
     /// </summary>
     public class LASVariableLengthRecord : IDisposable
     {
         private LASVLRH hvlrh;
- 
+
         /// <summary>
         /// The object user should call this method when they finished with the object.
         /// </summary>
         public void Dispose()
         {
-
             CAPI.LASVLR_Destroy(hvlrh);
             // Clean up unmanaged resources here.
             // Dispose other contained disposable objects.
@@ -89,11 +86,9 @@ namespace LibLAS
             hvlrh = hVlrh;
         }
 
-
         //public override string ToString()
         //{
         //    return CAPI.LASGuid_AsString(hguid);
-
         //}
 
         /// <summary>
@@ -102,11 +97,8 @@ namespace LibLAS
         /// <returns>LASVLRH opaque pointer </returns>
         public LASVLRH GetPointer()
         {
-
             return hvlrh;
-
         }
-
 
         /// <summary>
         /// the User Id for the variable length record.
@@ -114,28 +106,20 @@ namespace LibLAS
         /// <remarks> It will be clipped to fit within 16 characters</remarks>
         public string UserId
         {
-
             get
             {
-
                 return CAPI.LASVLR_GetUserId(hvlrh);
-
-
             }
 
             set
             {
-
                 LASError error = CAPI.LASVLR_SetUserId(hvlrh, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set VLR UserId.");
-
                     throw e;
                 }
-
             }
-
         }
 
         /// <summary>
@@ -144,28 +128,20 @@ namespace LibLAS
         /// <remarks> It will be clipped to fit within 32 characters</remarks>
         public string Description
         {
-
             get
             {
-
                 return CAPI.LASVLR_GetDescription(hvlrh);
-
-
             }
 
             set
             {
-
                 LASError error = CAPI.LASVLR_SetDescription(hvlrh, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set VLR Description.");
-
                     throw e;
                 }
-
             }
-
         }
 
         /// <summary>
@@ -173,28 +149,20 @@ namespace LibLAS
         /// </summary>
         public UInt16 RecordLength
         {
-
             get
             {
-
                 return CAPI.LASVLR_GetRecordLength(hvlrh);
-
-
             }
 
             set
             {
-
                 LASError error = CAPI.LASVLR_SetRecordLength(hvlrh, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set VLR RecordLength.");
-
                     throw e;
                 }
-
             }
-
         }
 
         /// <summary>
@@ -202,28 +170,20 @@ namespace LibLAS
         /// </summary>
         public UInt16 RecordId
         {
-
             get
             {
-
                 return CAPI.LASVLR_GetRecordId(hvlrh);
-
-
             }
 
             set
             {
-
                 LASError error = CAPI.LASVLR_SetRecordId(hvlrh, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set VLR RecordId.");
-
                     throw e;
                 }
-
             }
-
         }
 
         /// <summary>
@@ -232,28 +192,20 @@ namespace LibLAS
         /// <remarks>This should be 0 and should always be 0.</remarks>
         public UInt16 Reserved
         {
-
             get
             {
-
                 return CAPI.LASVLR_GetReserved(hvlrh);
-
-
             }
 
             set
             {
-
                 LASError error = CAPI.LASVLR_SetReserved(hvlrh, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set VLR Reserved.");
-
                     throw e;
                 }
-
             }
-
         }
 
         /// <summary>
@@ -262,15 +214,12 @@ namespace LibLAS
         /// <param name="data">a empty array of bytes where place the array</param>
         public void GetData(out byte[] data)
         {
-
-            LASError error= CAPI.LASVLR_GetData(hvlrh, out data);
+            LASError error = CAPI.LASVLR_GetData(hvlrh, out data);
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in VLR GetData.");
-
                 throw e;
             }
-
         }
 
         /// <summary>
@@ -279,22 +228,13 @@ namespace LibLAS
         /// <param name="data">array of bytes</param>
         public void SetData(ref byte[] data)
         {
-
             UInt16 lenght = (UInt16)data.Length;
             LASError error = CAPI.LASVLR_SetData(hvlrh, ref data, lenght);
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in VLR SetData.");
-
                 throw e;
             }
-
-
-
         }
-
-
-
     }
 }
-

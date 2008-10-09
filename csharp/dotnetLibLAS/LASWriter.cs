@@ -39,7 +39,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -84,7 +83,6 @@ namespace LibLAS
         /// </summary>
         public void Dispose()
         {
-
             CAPI.LASWriter_Destroy(hwriter);
             // Clean up unmanaged resources here.
             // Dispose other contained disposable objects.
@@ -101,7 +99,6 @@ namespace LibLAS
             hwriter = CAPI.LASWriter_Create(filename, hHeader.GetPointer(), (int)mode);
         }
 
-
         /// <summary>
         /// Write a new point in the LAS file
         /// </summary>
@@ -113,12 +110,8 @@ namespace LibLAS
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in Set Writer WritePoint.");
-
                 throw e;
             }
         }
-
-
-
     }
 }

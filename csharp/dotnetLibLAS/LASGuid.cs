@@ -39,7 +39,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -53,7 +52,6 @@ using LASHeaderH = System.IntPtr;
 
 namespace LibLAS
 {
-
     /// <summary>
     /// LASGuid class
     /// </summary>
@@ -67,7 +65,6 @@ namespace LibLAS
         /// 
         public void Dispose()
         {
-
             CAPI.LASGuid_Destroy(hguid);
             // Clean up unmanaged resources here.
             // Dispose other contained disposable objects.
@@ -107,7 +104,6 @@ namespace LibLAS
         public override string ToString()
         {
             return CAPI.LASGuid_AsString(hguid);
-
         }
 
         /// <summary>
@@ -116,11 +112,8 @@ namespace LibLAS
         /// <returns>the GUID opaque pointer</returns>
         public LASGuidH GetPointer()
         {
-
             return hguid;
-
         }
-
 
         /// <summary>
         /// test if is equal to other object.
@@ -150,8 +143,6 @@ namespace LibLAS
             {
                 return false;
             }
-
-
         }
 
         /// <summary>
@@ -170,15 +161,12 @@ namespace LibLAS
         /// <returns>true if both are equal</returns>
         public bool Equals(LASGuid obj)
         {
-
-
             //if parameter cannot be cast to Guid return false
 
             if ((object)obj == null)
             {
                 return false;
             }
-
 
             if (CAPI.LASGuid_Equals(hguid, obj.GetPointer()) == 1)
             {
@@ -189,7 +177,5 @@ namespace LibLAS
                 return false;
             }
         }
-
-     
     }
 }

@@ -39,7 +39,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -51,11 +50,8 @@ using LASGuidH = System.IntPtr;
 using LASVLRH = System.IntPtr;
 using LASHeaderH = System.IntPtr;
 
-
 namespace LibLAS
 {
-
-  
     /// <summary>
     /// LASPoint class
     /// </summary>
@@ -96,7 +92,6 @@ namespace LibLAS
             eTime = 64
         };
 
-
         private LASPointH hPoint;
 
         /// <summary>
@@ -105,10 +100,7 @@ namespace LibLAS
         /// <param name="hLASPoint">LASPointH opaque structure</param>
         public LASPoint(LASPointH hLASPoint)
         {
-
-
             hPoint = hLASPoint;
-
         }
 
         /// <summary>
@@ -117,11 +109,7 @@ namespace LibLAS
         public LASPoint()
         {
             hPoint = CAPI.LASPoint_Create();
-
-
-
         }
-
 
         /// <summary>
         /// Compare 2 LASPoint to be equal
@@ -161,14 +149,10 @@ namespace LibLAS
         /// </summary>
         public void Dispose()
         {
-
             CAPI.LASPoint_Destroy(hPoint);
             // Clean up unmanaged resources here.
             // Dispose other contained disposable objects.
         }
-
-
-      
 
         enum ClassificationType
         {
@@ -194,7 +178,6 @@ namespace LibLAS
             eScanAngleRankMax = 90
         };
 
-
         /// <summary>
         /// gets the opaque pointer to the LASPointH instance.
         /// </summary>
@@ -210,7 +193,6 @@ namespace LibLAS
         /// <returns>a new LASPoint instance copied.</returns>
         public LASPoint Copy()
         {
-
             LASPointH laspointhTemp = CAPI.LASPoint_Copy(hPoint);
             return new LASPoint(laspointhTemp);
         }
@@ -230,11 +212,8 @@ namespace LibLAS
                 throw e;
             }
 
-
-
             return true;
         }
-
 
         /// <summary>
         /// X value for the point.
@@ -245,7 +224,6 @@ namespace LibLAS
             get
             {
                 return CAPI.LASPoint_GetX(hPoint);
-
             }
             set
             {
@@ -253,13 +231,10 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point X.");
-
                     throw e;
                 }
             }
         }
-        
-          
 
         /// <summary>
         /// Y value for the point.
@@ -277,7 +252,6 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point Y.");
-
                     throw e;
                 }
             }
@@ -300,12 +274,10 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point Z.");
-
                     throw e;
                 }
             }
         }
-
 
         /// <summary>
         ///  intensity value for the point.
@@ -324,7 +296,6 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point Intensity.");
-
                     throw e;
                 }
             }
@@ -346,7 +317,6 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point ScanFlags.");
-
                     throw e;
                 }
 
@@ -369,7 +339,6 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point ReturnNumber.");
-
                     throw e;
                 }
             }
@@ -391,7 +360,6 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point NumberOfReturns.");
-
                     throw e;
                 }
             }
@@ -413,7 +381,6 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point ScanDirection.");
-
                     throw e;
                 }
             }
@@ -435,7 +402,6 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point FlightLineEdge.");
-
                     throw e;
                 }
             }
@@ -456,7 +422,6 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point Classification.");
-
                     throw e;
                 }
             }
@@ -478,7 +443,6 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point ScanAngleRank.");
-
                     throw e;
                 }
             }
@@ -499,7 +463,6 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point UserData.");
-
                     throw e;
                 }
             }
@@ -520,13 +483,9 @@ namespace LibLAS
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point Time.");
-
                     throw e;
                 }
-
-
             }
         }
-
     }
 }
