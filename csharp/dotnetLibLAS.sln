@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual C# Express 2005
+# Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetLibLAS", "dotnetLibLAS\dotnetLibLAS.csproj", "{5652982E-9576-47F1-896A-1B700E6648FA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitTest", "NUnitTest\NUnitTest.csproj", "{E019C630-508C-4F2C-9743-F66423C216F2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5652982E-9576-47F1-896A-1B700E6648FA} = {5652982E-9576-47F1-896A-1B700E6648FA}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorldLAS", "HelloWorldLAS\HelloWorldLAS.csproj", "{85856BBA-7888-4196-9602-740986C7FA98}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5652982E-9576-47F1-896A-1B700E6648FA} = {5652982E-9576-47F1-896A-1B700E6648FA}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
