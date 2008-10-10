@@ -58,7 +58,7 @@
 #endif
 
 #ifndef LIBLAS_RELEASE_NAME
-#define LIBLAS_RELEASE_NAME     "1.0.0b3"
+#define LIBLAS_RELEASE_NAME     "1.0.0"
 #endif
 
 #endif /* LAS_VERSION_H_INCLUDED */
