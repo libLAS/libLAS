@@ -52,15 +52,14 @@ Documentation
 Software Development with libLAS
 ..............................................................................
 
-* `FOSS4G 2008`_ presentation that provides a basic overview of the design 
-   and philosophy of libLAS
-* `LAS Format Elements`_ - comparison of elements of LAS Format 1.0 and 1.1  
-* `Software`_ - a list of geospatial software with reading and writing capabilities of LAS Format
-* `Resources`_ - a list of general LiDAR/LAS resources
+* `FOSS4G 2008`_ presentation that provides a basic overview of the design and philosophy of libLAS
 * `Tutorials`_ - tutorials on using libLAS from C++, Python and .NET/Mono languages
 * `LAS C API`_- doxygen docs that describe the libLAS C API
 * `dotnetLibLAS API`_ - docs for the .NET API
 * `LAS Doxygen Docs`_ - doxygen docs of the entire C/C++ API
+* `LAS Format Elements`_ - comparison of elements of LAS Format 1.0 and 1.1  
+* `Software`_ - a list of geospatial software with reading and writing capabilities of LAS Format
+* `Resources`_ - a list of general LiDAR/LAS resources
 
 LAS Format Specifications
 ..............................................................................
