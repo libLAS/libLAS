@@ -90,6 +90,15 @@ namespace LibLAS
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string GetVersion()
+        {
+            return CAPI.LAS_GetVersion();
+        }
+       
+        /// <summary>
         /// get the current LASPoint.
         /// </summary>
         /// <returns>current LASPoint object</returns>

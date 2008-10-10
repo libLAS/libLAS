@@ -83,7 +83,7 @@ namespace LibLAS
         };
 
         /// Versions of point record format.
-        enum PointFormat
+        public enum PointFormat
         {
             ///Point Data Format \e 0
             ePointFormat0 = 0,
@@ -92,7 +92,7 @@ namespace LibLAS
         };
 
         /// Number of bytes of point record storage in particular format.
-        enum PointSize
+        public enum PointSize
         {
             ///Size of point record in data format \e 0
             ePointSize0 = 20,
@@ -115,7 +115,7 @@ namespace LibLAS
         /// gets the opaque pointer to the LASHeaderH instance.
         /// </summary>
         /// <returns>opaque pointer to the LASHeaderH instance.</returns>
-        public LASHeaderH GetPointer()
+        internal LASHeaderH GetPointer()
         {
             return hHeader;
         }

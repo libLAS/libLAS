@@ -110,7 +110,7 @@ namespace LibLAS
         /// Gets the GUID opaque pointer
         /// </summary>
         /// <returns>the GUID opaque pointer</returns>
-        public LASGuidH GetPointer()
+        internal LASGuidH GetPointer()
         {
             return hguid;
         }

@@ -182,7 +182,7 @@ namespace LibLAS
         /// gets the opaque pointer to the LASPointH instance.
         /// </summary>
         /// <returns>the opaque pointer to the LASPointH instance</returns>
-        public LASPointH GetPointer()
+        internal LASPointH GetPointer()
         {
             return hPoint;
         }
