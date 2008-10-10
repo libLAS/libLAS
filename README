@@ -2,14 +2,14 @@
 libLAS - LAS 1.0/1.1 ASPRS LiDAR data translation toolset
 ==============================================================================
 
-libLAS is a BSD library for reading and writing ASPRS LAS version 1.0 and 1.1 
+libLAS is a C/C++ library for reading and writing ASPRS LAS version 1.0 and 1.1 
 data.  LAS-formatted data is heavily used in `LiDAR`_ processing operations, and 
 the LAS format is a sequential binary format used to store data from sensors 
 and as intermediate processing storage by some applications.  
 
 libLAS is available under the terms of the `BSD License`_. It builds on work 
 by `Martin Isenburg and Jonathan Shewchuk`_ of the  University of North 
-Carolina in their `LAStools`_ project.  The base C++ library that reads 
+Carolina in their `LAStools`_ project.  libLAS' base C++ library that reads 
 and writes LAS 1.0/1.1 data was replaced with new development, and Martin's 
 tools were ported to use this new code.
 
@@ -20,39 +20,69 @@ for use in its state-wide `LIDAR`_ project.
 Download
 ------------------------------------------------------------------------------
 
-The latest version of libLAS can be downloaded from
-http://liblas.org/wiki/Releases
+The 1.0.0 version of libLAS can be downloaded from http://liblas.org/wiki/1.0.0
+
+Older releases may be obtained from http://liblas.org/wiki/Releases
 
 Binaries
 ..............................................................................
 
+
 Windows binaries of libLAS are provided in two forms.  The easiest form is 
 to obtain `OSGeo4W`_ and select the libLAS package to install.  Alternatively, 
 you can download a Windows package with full spatial reference support from 
-the release page.  GDAL support is *not* provided with either package, however.  
-We hope to resolve this by the 1.0.0 final release.
+the release page.  GDAL support is only provided with the `OSGeo4W`_ package, however.
+
+Linux, Mac OS X, and Solaris binaries are not provided.  The source code 
+uses the standard GNU autotools/automake stack for compilation and installation.
+
+
+Documentation
+------------------------------------------------------------------------------
+
+`LAStools`_ / libLAS Command-line Utilities
+..............................................................................
+
+* `las2las`_
+* `lasinfo`_
+* `las2txt`_
+* `txt2las`_
+* `lasmerge`_
+
+Software Development with libLAS
+..............................................................................
+
+* `FOSS4G 2008`_ presentation that provides a basic overview of the design 
+   and philosophy of libLAS
+* `LAS Format Elements`_ - comparison of elements of LAS Format 1.0 and 1.1  
+* `Software`_ - a list of geospatial software with reading and writing capabilities of LAS Format
+* `Resources`_ - a list of general LiDAR/LAS resources
+* `Tutorials`_ - tutorials on using libLAS from C++, Python and .NET/Mono languages
+* `LAS C API`_- doxygen docs that describe the libLAS C API
+* `dotnetLibLAS API`_ - docs for the .NET API
+* `LAS Doxygen Docs`_ - doxygen docs of the entire C/C++ API
+
+LAS Format Specifications
+..............................................................................
+
+The LAS Format Standard is maintained by `ASPRS Standards Committee`_. LAS 
+format standard documents are available in PDF format:
+
+* `LAS 2.0 Format Standard`_ (2007-08-17) - *Proposed*
+* `LAS 1.2 Format Standard`_ (2008-05-02) - *Proposed*
+* `LAS 1.1 Format Standard`_ (2005-05-07)
+* `LAS 1.0 Format Standard`_ (2003-05-09)
+
+License
+------------------------------------------------------------------------------
+
+libLAS is available under the terms of the `BSD License`_. 
+See `License`_ for a copy.
 
 FAQ
 ------------------------------------------------------------------------------
 
 The FAQ is available from http://liblas.org/wiki/FAQ
-
-State of the Library
-------------------------------------------------------------------------------
-
-libLAS provides excellent coverage of the ASPRS LAS 1.0 and 1.1 specifications, 
-and it provides support for copying variable length records from one file to 
-another.  As of 1.0.0-beta-3, support for creating your own variable length records 
-is limited to the C and C++ APIs.  libLAS concentrates on reading and writing 
-point data for processing pipelines from C++, C, and Python.  Contact the 
-`Authors`_ if you have money burning a hole in your pocket to implement more 
-sophisticated support for LAS format items.
-
-libLAS also provides support for reading and writing spatial reference system descriptions 
-from LAS 1.0 and 1.1 files as of version 1.0.0-beta-1.  `libgeotiff`_ 1.2.5 
-(released in `7/28/2008`_) must be linked with libLAS to provide reading support
-for spatial reference systems.  `GDAL`_ is required to use the las2ogr command-line 
-utility for creating shapefiles, etc out of a .LAS file.
 
 Features of libLAS
 ------------------------------------------------------------------------------
@@ -67,8 +97,7 @@ license.
 Multiple APIs
 ..............................................................................
 
-libLAS supports has C, C++, and Python APIs.  This allows you to easily embed 
-libLAS in your own programs, or use the Python API for some one-off scripting.  
+libLAS has C, C++, .NET, and Python APIs.   
 
 Spatial Reference System Support
 ..............................................................................
@@ -97,38 +126,6 @@ libLAS is known to work on MSVC 7.1+ (Windows) and GCC4.1+ (OS X and Linux) plat
 on both big- and little-endian architectures.
 
 
-
-Documentation
-------------------------------------------------------------------------------
-
-LAS Format Specifications
-..............................................................................
-
-The LAS Format Standard is maintained by `ASPRS Standards Committee`_. LAS 
-format standard documents are available in PDF format:
-
-* `LAS 2.0 Format Standard`_ (2007-08-17) - *Proposed*
-* `LAS 1.2 Format Standard`_ (2008-05-02) - *Proposed*
-* `LAS 1.1 Format Standard`_ (2005-05-07)
-* `LAS 1.0 Format Standard`_ (2003-05-09)
-
-Library Documents
-..............................................................................
-
-* `LAS Format Elements`_ - comparison of elements of LAS Format 1.0 and 1.1  
-* `Software`_ - list of geospatial software with reading and writing capabilities of LAS Format
-* `Resources`_ - list of LiDAR/LAS resources
-* `Tutorials`_ - Tutorials on using libLAS from C++, Python and .NET/Mono languages
-
-Utilities
-..............................................................................
-
-* `las2las`_
-* `lasinfo`_
-* `las2txt`_
-* `txt2las`_
-* `lasmerge`_
-
 Development
 ------------------------------------------------------------------------------
 
@@ -156,14 +153,6 @@ The SVN repository URL is available at http://liblas.org/svn
 
     svn checkout http://liblas.org/svn/trunk/
 
-Development Documentation
-..............................................................................
-
-* `Library Design`_
-* `LAS C API`_
-* `LAS Doxygen Docs`_
-* `How To Release libLAS`_
-
 Information about Trac
 ..............................................................................
 
@@ -187,15 +176,6 @@ Mailing Lists
 
 * liblas-devel - http://mail.hobu.net/mailman/listinfo/liblas-devel
 * liblas-commits - http://mail.hobu.net/mailman/listinfo/liblas-commits
-
-
-License
-------------------------------------------------------------------------------
-
-libLAS is available under the terms of the `BSD License`_. 
-See `License`_ for a copy.
-
-
 
 
 .. _`LIDAR`: http://en.wikipedia.org/wiki/LIDAR
@@ -226,6 +206,7 @@ See `License`_ for a copy.
 .. _`txt2las`: http://liblas.org/browser/trunk/doc/txt2las.txt
 .. _`Freenode`: http://freenode.net
 .. _`Library Design`: http://liblas.org/wiki/LibraryDesign
+.. _`FOSS4G 2008`: http://liblas.org/raw-attachment/wiki/WikiStart/liblas_foss4g_2008.pdf
 .. _`LAS C API`: http://liblas.org/doxygen/liblas_8h.html
 .. _`LAS Doxygen Docs`: http://liblas.org/doxygen/
 .. _`How To Release libLAS`: http://liblas.org/wiki/HowToRelease
@@ -234,6 +215,4 @@ See `License`_ for a copy.
 .. _`proj.4`: http://proj.maptools.org/
 .. _`GDAL`: http://www.gdal.org
 .. _`OSGeo4W`: http://wiki.osgeo.org/wiki/OSGeo_Win32_Installer
-
-$Id$
-
+.. _`dotnetLibLAS API`: http://liblas.org/wiki/dotnetapi
