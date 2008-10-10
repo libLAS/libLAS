@@ -13,11 +13,95 @@ Requirements:
 * Visual Studio 2003, 2005 or 2008 
 * .NET Framework 1.x, 2.0 or 3.0
 
-TODO: Building instructions
+Steps:
+
+1. Build libLAS C++ and C DLLs
+
+nmake /f makefile.vc
+
+or
+
+Open trunk/build/msvc80/liblas.sln in VS2005 or VS2008. Build the solution. Successfull build is required for only two projects: liblas_lib.vcproj and liblas_c_dll.vcproj.
+
+2. Load trunk/csharp/dotnetLibLAS.sln in VS2005/2008 and build solution dotnetLibLAS dll.
+
+or
+
+Now, in order to build .NET bindings, one can do:
+
+2.1. cd trunk/csharp
+2.2. nmake -f makefile.vc
+
+To clean:
+
+2.3. nmake -f makefile.vc clean
+
+To rebuild:
+
+2.4. nmake -f makefile.vc rebuild
+
+This makefile is just a tiny proxy calling MSBuild which in turn
+builds the dotnetLibLAS.sln solution. Debug/Release builds is controlled by BUILD_DEBUG variable defined in nmake.opt.
+
+Notes:
+- To build dotnetLibLAS is not mandatory build the native C/C++ library but it is if you want use the .NET bindings.
+- dotnetLibLAS search liblas1.dll according the Dynamic-Link Library Search Order of Windows:
+  http://msdn.microsoft.com/en-us/library/ms682586.aspx
+- If you try the HelloWorldLAS sample and you have a P/Invoke exception, perhaps is because the .NET bindings don`t find the native DLL.
+
+Register the dotnetLibLAS Assembly in the GAC in Windows/.NET and Unix/Mono
+------------------------------------------------------------------------------
+1. Use the sn.exe tool to create a new key file in trunk/csharp/dotnetLibLAS:
+sn -k liblas.snk
+
+2. Add your assembly to the GAC
+
+gacutil /i dotnetLibLAS.dll
+
+To uninstall this assembly from the GAC, use the command:
+
+3. gacutil /u dotnetLibLAS
+
+Notes:
+- This operation is not recomended by now. Remember you need have the Native DLL install in your computer.
+- If your path environment variables aren't set, you'll have to go to the C:\Program Files\Microsoft.NET\FrameworkSDK\Bin\ directory to run sn.exe
+
+Run the test
+------------------------------------------------------------------------------
+dotnetLibLAS use the NUNIT library to testing:
+http://www.nunit.org/index.php
+
+Steps to run the test:
+
+1. Download the last NUNIT version:
+   http://prdownloads.sourceforge.net/nunit/NUnit-2.4.8-net-2.0.msi?download
+
+2. Install NUNIT in your computer to have the NUNIT assembly and the NUNIT applications to run the test.
+
+3. Open the NUNIT test project from trunk/csharp/dotnetLibLAS/NUnitTest
+
+3. Update the nunit.dll reference in the properties of the project.
+
+or
+
+if you have problems delete nunit.dll reference and add it. Previous NUNIT intallation installed nunit.dll in the GAC for you.
+
+4. From Windows Start Menu\Programs menu open the NUnit Gui Runner application.
+   http://www.nunit.org/index.php?p=nunit-gui&r=2.4.8
+
+   or 
+  
+   use the NUnit-Console applications instead:
+   http://www.nunit.org/index.php?p=nunit-console&r=2.4.8
+
+5. Run the test of this assembly:
+   trunk/csharp/csharp/NUnitTest/bin/release/NUnitTest.dll
 
 
 Building with Mono
 ------------------------------------------------------------------------------
+
+
 
 TODO
 
