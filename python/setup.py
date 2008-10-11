@@ -42,7 +42,7 @@ setup(name          = 'libLAS',
       install_requires = install_requires,
       test_suite = 'tests.test_suite',
       classifiers   = [
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: BSD License',
