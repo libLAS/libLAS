@@ -39,6 +39,7 @@ Release Process
       nmake /f makefile.vc clean
       nmake /f makefile.vc
       nmake /f makefile.vc install
+      nmake /f makefile.vc package
 
   - Build Python bindings for Python 2.4 and Python 2.5 
   
