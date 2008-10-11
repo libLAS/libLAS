@@ -26,6 +26,7 @@ Release Process
   - configure.ac
   - include/liblas/capi/las_version.h
   - python/setup.py
+  - nmake.opt
 
 2) Update README to include any relevant info about the release that 
    might have changed.
