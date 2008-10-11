@@ -121,8 +121,8 @@ header information, and translating LAS data to and from text.
 Cross-platform operation
 ..............................................................................
 
-libLAS is known to work on MSVC 7.1+ (Windows) and GCC4.1+ (OS X and Linux) platforms 
-on both big- and little-endian architectures.
+libLAS is known to work on all editions of Microsoft Visual C++ 7.1+ (Windows) and 
+GCC 4.1+ (Mac OS X and Linux) platforms on both big- and little-endian architectures.
 
 
 Development
