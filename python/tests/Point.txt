@@ -60,8 +60,16 @@
   45
   
   >>> import datetime
-  >>> t = datetime.datetime(2008,3,19)
+  >>> t = datetime.datetime(2008,3,19,23,45,45,134)
   >>> p.time = t
   >>> p.time
-  datetime.datetime(2008, 3, 19, 0, 0, 0, 2)
+  datetime.datetime(2008, 3, 19, 23, 45, 45, 134)
+  >>> p.time.microsecond
+  134
+  
+  >>> p.intensity
+  0
+  >>> p.intensity = 120
+  >>> p.intensity
+  120
    

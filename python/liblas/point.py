@@ -43,6 +43,7 @@
 import core
 import datetime
 import time
+import math
 
 class Point(object):
     def __init__(self, owned=True, handle=None, copy=False):
@@ -177,7 +178,12 @@ class Point(object):
 
     def get_time(self):
         t = core.las.LASPoint_GetTime(self.handle)
-        return datetime.datetime(*time.localtime(t)[0:7])
+        floor = math.floor(t)
+        ms = float(t) - floor
+        ms = int(round(ms* 1000000 ))
+        lt = time.localtime(t)
+        return datetime.datetime(lt[0],lt[1],lt[2],lt[3],lt[4],lt[5],ms)
+        
     def set_time(self, value):
         """
         Sets the time of the point from a datetime value
@@ -194,6 +200,9 @@ class Point(object):
         datetime.datetime(2008, 3, 19, 0, 0)
         """
         t = time.mktime(value.timetuple())
+        
+        ms = value.microsecond
+        t = float(t) + ms * 0.000001
         core.las.LASPoint_SetTime(self.handle,t)
     time = property(get_time, set_time)
 
