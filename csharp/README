@@ -101,10 +101,76 @@ if you have problems delete nunit.dll reference and add it. Previous NUNIT intal
 Building with Mono
 ------------------------------------------------------------------------------
 
+To build liblas for MONO you need have installed these dependencies:
+
+1. mono mono-gmcs mono-gac mono-utils
+   mono is the Virtual machine o run the applications.
+   gmcs is the compiler of the c# programming language.
+
+2. In debian (or variants like ubuntu):
+   sudo apt-get install mono mono-gmcs mono-gac mono-utils
+
+Further you could need these dependencies if need unit testing with NUNIT
+
+1. nunit libmono-i18n2.0-cil nunit-console
+   sudo apt-get install libmono-i18n2.0-cil nunit nunit-console
+   nunit is the assembly to link to your unit test projects.
+   nunit-console is the tool to run the tests.
+   
+
+Notes:
+- NUNIT by now have bad support in the linux repositories. Perhaps the best is download it from the official web.
+  You can use the compiled version of NUNIT for windows:
+  http://prdownloads.sourceforge.net/nunit/NUnit-2.4.8-net-2.0.zip?download
+  The basic assemblies are:
+  nunit.core.dll
+  nunit.core.interfaces.dll
+  nunit.framework.dll
+  nunit.util.dll
+  nunit-console.exe
+  nunit-console-runner.dll
+
+Using Monodevelop
+------------------------------------------------------------------------------
+You could install also Monodevelop 1.x if you want have a full IDE for C#.
+The problem i see with this IDE now is it have an own build system. You can open Visual studio projects but with bad support.
+In Monodevelop 2.x (in alpha status yet) you work with visual studio solutions files like native format of the IDE.
+http://monodevelop.com/Release_notes_for_MonoDevelop_2.0_Alpha_1#MSBuild_File_format
+
+Besides msbuild system in MONO is xbuild. This will let us in the future release the dotnetLibLAS bindings with visual studio solutions.
+By now xbuild is not complete.
+http://www.mono-project.com/Microsoft.Build
 
 
-TODO
+Compiling dotnetLibLAS in MONO
+------------------------------------------------------------------------------
+By now dotnetLibLAS is not officially supported by MONO but it's possible use it:
 
+1. You can use the compiled library you have in windows. It's fully compatible.
 
+2. Compile the library by hand.
+   gmcs /target:library /out:dotnetLibLAS.dll *.cs /keyfile:liblas.snk
+   You must run this command in the /trunk/csharp/dotnetLibLAS folder.
+
+3. Autools. TODO
+
+Notes:
+In the project folder you can see this file dotnetLibLAS.dll.config.
+This file maps the linux shared library from the windows native DLL. The names shared libraries in windows and linux are different.
+You need have always this file in your linux applications folder. MONO read this XML file before our dotnetLibLAS assembly.
+
+Run the tests in MONO
+------------------------------------------------------------------------------
+By now you need compile and run the tests by hand.
+
+1. The test are in the folder /trunk/csharp/NUnitTest
+
+2. You need have the assemblies of nunit and dotnetLibLAS referenced to the library.
+
+3. Run this command to compile the library:
+   gmcs /target:library /r:nunit.framework.dll /r:dotnetLibLAS.dll /out:pruebaunit.dll *.cs
+   
+4. Run the tests:
+   mono nunit-console.exe pruebaunit.dll
 
 $Id$
