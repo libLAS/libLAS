@@ -169,6 +169,12 @@ class Point(object):
         core.las.LASPoint_SetUserData(self.handle, value)
     user_data = property(get_user_data, set_user_data)
 
+    def get_intensity(self):
+        return core.las.LASPoint_GetIntensity(self.handle)
+    def set_intensity(self, value):
+        core.las.LASPoint_SetIntensity(self.handle, value)
+    intensity = property(get_intensity, set_intensity)
+
     def get_time(self):
         t = core.las.LASPoint_GetTime(self.handle)
         return datetime.datetime(*time.localtime(t)[0:7])
