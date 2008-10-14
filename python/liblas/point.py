@@ -180,9 +180,15 @@ class Point(object):
         t = core.las.LASPoint_GetTime(self.handle)
         floor = math.floor(t)
         ms = float(t) - floor
+        
+        # clip to 999999
         ms = int(round(ms* 1000000 ))
-        lt = time.localtime(t)
-        return datetime.datetime(lt[0],lt[1],lt[2],lt[3],lt[4],lt[5],ms)
+        if ms > 999999:
+            ms = 999999
+
+        lt = time.gmtime(t)
+        value = datetime.datetime(lt[0],lt[1],lt[2],lt[3],lt[4],lt[5],ms)
+        return value
         
     def set_time(self, value):
         """
@@ -194,7 +200,8 @@ class Point(object):
 
         Example
         -------
-        >>> t = datetime.datetime(2008,3,19)
+        >>> td = datetime.timedelta(hours=6) # my timezone is -6
+        >>> t = datetime.datetime(2008,3,19) -td
         >>> p.time = t
         >>> p.time
         datetime.datetime(2008, 3, 19, 0, 0)

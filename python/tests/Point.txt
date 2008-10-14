@@ -60,12 +60,13 @@
   45
   
   >>> import datetime
-  >>> t = datetime.datetime(2008,3,19,23,45,45,134)
+  >>> td = datetime.timedelta(hours=5) # my timezone is GMT-5
+  >>> t = datetime.datetime(2008,3,19,23,45,45,13434) - td
   >>> p.time = t
   >>> p.time
-  datetime.datetime(2008, 3, 19, 23, 45, 45, 134)
+  datetime.datetime(2008, 3, 19, 23, 45, 45, 13434)
   >>> p.time.microsecond
-  134
+  13434
   
   >>> p.intensity
   0
