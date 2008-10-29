@@ -48,6 +48,7 @@ Documentation
 * `las2txt`_
 * `txt2las`_
 * `lasmerge`_
+* `las2ogr`_
 
 Software Development with libLAS
 ..............................................................................
@@ -203,6 +204,7 @@ Mailing Lists
 .. _`lasinfo`: http://liblas.org/browser/trunk/doc/lasinfo.txt
 .. _`lasmerge`: http://liblas.org/browser/trunk/doc/lasmerge.txt
 .. _`txt2las`: http://liblas.org/browser/trunk/doc/txt2las.txt
+.. _`las2ogr`: http://liblas.org/browser/trunk/doc/las2ogr.txt
 .. _`Freenode`: http://freenode.net
 .. _`Library Design`: http://liblas.org/wiki/LibraryDesign
 .. _`FOSS4G 2008`: http://liblas.org/raw-attachment/wiki/WikiStart/liblas_foss4g_2008.pdf
