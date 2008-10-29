@@ -45,8 +45,10 @@ default: las2las.exe lasinfo.exe las2txt.exe lasmerge.exe txt2las.exe las2ogr.ex
 clean:
 	-del *.bak
 	-del *.exe
+	-del *.ilk
 	-del *.manifest
 	-del *.obj
+	-del *.pdb
 
 install: default
     xcopy /y /r /d /f *.exe $(BINDIR)
