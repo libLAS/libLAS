@@ -519,6 +519,8 @@ LAS_DLL uint8_t LASHeader_GetVersionMinor(const LASHeaderH hHeader);
  *  @param hHeader LASHeaderH instance
  *  @param value integer value to set the minor version to (only the values 1 or 0 are valid)
  *  @return LASError enum
+ *
+ *  @todo TODO: Maybe this should return fatal error if version out of range -- hobu
 */
 LAS_DLL LASError LASHeader_SetVersionMinor(LASHeaderH hHeader, uint8_t value);
 

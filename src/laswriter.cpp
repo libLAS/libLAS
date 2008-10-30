@@ -90,7 +90,8 @@ bool LASWriter::WritePoint(LASPoint const& point)
     m_record.classification = point.GetClassification();
     m_record.scan_angle_rank = point.GetScanAngleRank();
     m_record.user_data = point.GetUserData();
-    m_record.point_source_id = 0; // TODO: How to handle this in portable way, for LAS 1.0 and 1.1
+    // TODO: How to handle this in portable way, for LAS 1.0 and 1.1
+    m_record.point_source_id = 0;
 
 
     if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)

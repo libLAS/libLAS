@@ -55,6 +55,7 @@ namespace liblas {
 /// Definition of point data record.
 ///
 /// \todo TODO: Think about last 1-byte field in record Point Source ID (LAS 1.1)
+///
 class LASPoint
 {
 public:
@@ -142,6 +143,7 @@ public:
     double& operator[](std::size_t const& n);
     double const& operator[](std::size_t const& n) const;
 
+    /// \todo TODO: Should we compare other data members, but not only coordinates?
     bool equal(LASPoint const& other) const;
 
     bool Validate() const;

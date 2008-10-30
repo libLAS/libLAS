@@ -64,6 +64,9 @@ public:
     
     std::size_t GetVersion() const;
     LASHeader const& GetHeader() const;
+
+    /// \todo TODO: Move point record composition deep into writer implementation.
+    /// \todo TODO: How to handle point_source_id in portable way, for LAS 1.0 and 1.1
     bool WritePoint(LASPoint const& point);
 
     // Allow fetching of the stream

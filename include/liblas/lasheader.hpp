@@ -57,6 +57,10 @@ namespace liblas {
 /// The header contains set of generic data and metadata
 /// describing a family of ASPRS LAS files. The header is stored
 /// at the beginning of every valid ASPRS LAS file.
+///
+/// \todo  TODO (low-priority): replace static-size char arrays as data members
+///        with std::string and return const-reference to string object.
+///
 class LASHeader
 {
 public:
@@ -127,10 +131,14 @@ public:
     /// Set file source identifier.
     /// \param v - should be set to a value between 1 and 65535.
     /// \exception No throw
+    ///
+    /// \todo TODO: Should we warn or throw about type overflow when user passes 65535 + 1 = 0
     void SetFileSourceId(uint16_t v);
 
     /// Get value field reserved by the ASPRS LAS Specification.
     /// \note This field is always filled with 0.
+    ///
+    /// \todo TODO: Should we warn or throw about type overflow when user passes 65535 + 1 = 0
     uint16_t GetReserved() const;
 
     /// Set reserved value for the header identifier.
@@ -189,21 +197,21 @@ public:
     void SetSoftwareId(std::string const& v);
 
     /// Get day of year of file creation date.
-    /// \todo Use full date structure instead of Julian date number.
+    /// \todo TODO: Use full date structure instead of Julian date number.
     uint16_t GetCreationDOY() const;
 
     /// Set day of year of file creation date.
     /// \exception std::out_of_range - given value is higher than number 366.
-    /// \todo Use full date structure instead of Julian date number.
+    /// \todo TODO: Use full date structure instead of Julian date number.
     void SetCreationDOY(uint16_t v);
 
     /// Set year of file creation date.
-    /// \todo Remove if full date structure is used.
+    /// \todo TODO: Remove if full date structure is used.
     uint16_t GetCreationYear() const;
 
     /// Get year of file creation date.
     /// \exception std::out_of_range - given value is higher than number 9999.
-    /// \todo Remove if full date structure is used.
+    /// \todo TODO: Remove if full date structure is used.
     void SetCreationYear(uint16_t v);
 
     /// Get number of bytes of generic verion of public header block storage.

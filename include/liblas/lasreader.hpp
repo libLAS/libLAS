@@ -85,6 +85,8 @@ private:
     LASReader& operator=(LASReader const& rhs);
 
     void Init(); // throws on error
+
+    /// \todo TODO: Should we handle m_record.point_source_id ?
     void MakePoint(double const& time);
 
     const std::auto_ptr<detail::Reader> m_pimpl;
