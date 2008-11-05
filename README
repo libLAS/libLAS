@@ -43,11 +43,11 @@ Documentation
 `LAStools`_ / libLAS Command-line Utilities
 ..............................................................................
 
-* `las2las`_
 * `lasinfo`_
+* `lasmerge`_
+* `las2las`_
 * `las2txt`_
 * `txt2las`_
-* `lasmerge`_
 * `las2ogr`_
 
 Software Development with libLAS
