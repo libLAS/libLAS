@@ -22,5 +22,14 @@ void test_default_header(liblas::LASHeader const& h);
 // Test of header data in trunk/test/data/TO_core_last_clip.las file
 void test_file10_header(liblas::LASHeader const& h);
 
+// Test of 1st point record in trunk/test/data/TO_core_last_clip.las file
+void test_file10_point1(liblas::LASPoint const& p);
+
+// Test of 2nd point record in trunk/test/data/TO_core_last_clip.las file
+void test_file10_point2(liblas::LASPoint const& p);
+
+// Test of 4th point record in trunk/test/data/TO_core_last_clip.las file
+void test_file10_point4(liblas::LASPoint const& p);
+
 } // namespace tut
 
