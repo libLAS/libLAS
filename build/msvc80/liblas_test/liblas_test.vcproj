@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="liblas_test"
 	ProjectGUID="{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}"
 	RootNamespace="liblas_test"
@@ -220,6 +220,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\test\unit\laspoint_test.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\test\unit\lasreader_iterator_test.cpp"
 			>
 		</File>
 		<File
