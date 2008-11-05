@@ -11,6 +11,7 @@ SET( LIBLAS_TEST_SRC
     lasfile_test.cpp
     lasheader_test.cpp
     laspoint_test.cpp
+    lasreader_iterator_test.cpp
     lasreader_test.cpp
     lasrecordheader_test.cpp
     laswriter_test.cpp

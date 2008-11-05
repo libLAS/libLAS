@@ -9,12 +9,13 @@ liblas_test_LDADD = \
 	$(NULL)
 
 liblas_test_SOURCES = \
-	guid_test.cpp \
 	common.cpp \
+	guid_test.cpp \
 	laserror_test.cpp \
 	lasfile_test.cpp \
 	lasheader_test.cpp \
 	laspoint_test.cpp \
+	lasreader_iterator_test.cpp \
 	lasreader_test.cpp \
 	lasrecordheader_test.cpp \
 	laswriter_test.cpp \
