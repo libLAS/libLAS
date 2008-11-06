@@ -143,7 +143,10 @@ void LASPoint::SetUserData(uint8_t const& data)
 
 bool LASPoint::equal(LASPoint const& other) const
 {
-    double const epsilon = std::numeric_limits<double>::epsilon(); 
+    // TODO - mloskot: Default epsilon is too small.
+    //                 Is 0.00001 good as tolerance or too wide?
+    //double const epsilon = std::numeric_limits<double>::epsilon(); 
+    double const epsilon = 0.00001;
 
     double const dx = m_coords[0] - other.m_coords[0];
     double const dy = m_coords[1] - other.m_coords[1];
@@ -151,9 +154,9 @@ bool LASPoint::equal(LASPoint const& other) const
 
     // TODO: Should we compare other data members, besides the coordinates?
 
-    if (((dx <= epsilon) && (dx >= -epsilon ))
-        || ((dy <= epsilon) && (dy >= -epsilon ))
-        || ((dz <= epsilon) && (dz >= -epsilon )))
+    if (((dx <= epsilon) && (dx >= -epsilon))
+        && ((dy <= epsilon) && (dy >= -epsilon))
+        && ((dz <= epsilon) && (dz >= -epsilon)))
     {
         return true;
     }
