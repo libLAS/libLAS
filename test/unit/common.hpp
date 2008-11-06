@@ -37,6 +37,7 @@ struct is_xy
 // Functor to calculate bounding box of a set of points
 struct bbox_calculator
 {
+    // bbox object will store operation result
     bbox_calculator(liblas::detail::Extents<double>& bbox)
         : empty(true), bbox(bbox)
     {}
