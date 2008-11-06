@@ -193,19 +193,30 @@ struct PointRecord
     uint16_t point_source_id;
 };
 
+template <typename T> 
+bool compare_distance(const T& actual, const T& expected);
+
 template <typename T>
 struct Point
 {
-    Point() : x(T()), y(T()), z(T()) {}
-    Point(T const& x, T const& y, T const& z) : x(x), y(y), z(z) {}
-    T x;
-    T y;
-    T z;
+    Point()
+        : x(T()), y(T()), z(T())
+    {}
+    
+    Point(T const& x, T const& y, T const& z)
+        : x(x), y(y), z(z)
+    {}
 
     bool equal(Point<T> const& other) const
     {
-        return ((x == other.x) && (y == other.y) && (z == other.z));
+        return (compare_distance(x, other.x)
+                && compare_distance(y, other.y)
+                && compare_distance(z, other.z));
     }
+
+    T x;
+    T y;
+    T z;
 };
 
 template <typename T>
@@ -223,13 +234,18 @@ bool operator!=(Point<T> const& lhs, Point<T> const& rhs)
 template <typename T>
 struct Extents
 {
-    typename detail::Point < T > min;
-    typename detail::Point < T > max;
+    Extents() {}
+    Extents(detail::Point<T> const& min, detail::Point<T> const& max)
+        : min(min), max(max)
+    {}
 
     bool equal(Extents<T> const& other) const
     {
         return (min == other.min && max == other.max);
     }
+
+    typename detail::Point<T> min;
+    typename detail::Point<T> max;
 };
 
 template <typename T>
@@ -258,7 +274,7 @@ inline T generate_random_byte()
 }
 
 template <typename T> 
-bool compare_doubles(const T& actual, const T& expected) 
+bool compare_distance(const T& actual, const T& expected) 
 { 
     const T epsilon = std::numeric_limits<T>::epsilon();  
     const T diff = actual - expected; 
