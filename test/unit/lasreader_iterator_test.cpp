@@ -8,6 +8,7 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/iterator.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/lasreader.hpp>
 #include <liblas/detail/utility.hpp>
 #include <tut/tut.hpp>
 #include <algorithm>
@@ -23,9 +24,13 @@ namespace tut
     struct lasreader_iterator_data
     {
         std::string file10_;
+        std::ifstream ifs_;
+        LASReader reader_;
 
         lasreader_iterator_data()
-            : file10_(g_test_data_path + "//TO_core_last_clip.las")
+            : file10_(g_test_data_path + "//TO_core_last_clip.las"),
+                ifs_(file10_.c_str(), std::ios::in | std::ios::binary),
+                    reader_(ifs_)
         {}
     };
 
@@ -47,9 +52,7 @@ namespace tut
     template<>
     void to::test<2>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader);
+        lasreader_iterator it(reader_);
     }
 
     // Test copy constructor with default initialized iterator
@@ -68,9 +71,7 @@ namespace tut
     template<>
     void to::test<4>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it1(reader);
+        lasreader_iterator it1(reader_);
         lasreader_iterator it2(it1);
 
         ensure(it1 == it2);
@@ -93,9 +94,7 @@ namespace tut
     template<>
     void to::test<6>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it1(reader);
+        lasreader_iterator it1(reader_);
         lasreader_iterator it2;
         it1 = it2;
 
@@ -107,9 +106,7 @@ namespace tut
     template<>
     void to::test<7>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader);
+        lasreader_iterator it(reader_);
 
         test_file10_point1(*it);
     }
@@ -119,9 +116,7 @@ namespace tut
     template<>
     void to::test<8>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader);
+        lasreader_iterator it(reader_);
 
         // test 1st point data record 
         ensure_distance(it->GetX(), double(630262.30), 0.0001);
@@ -140,9 +135,7 @@ namespace tut
     template<>
     void to::test<9>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader); // move to 1st point
+        lasreader_iterator it(reader_); // move to 1st point
         ++it; // move to 2nd record
 
         test_file10_point2(*it);
@@ -153,9 +146,7 @@ namespace tut
     template<>
     void to::test<10>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader); // move to 1st point
+        lasreader_iterator it(reader_); // move to 1st point
         it++; // move to 2nd record
 
         test_file10_point2(*it);
@@ -166,9 +157,7 @@ namespace tut
     template<>
     void to::test<11>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader); // move to 1st point
+        lasreader_iterator it(reader_); // move to 1st point
         lasreader_iterator end;
 
         ensure_not(end == it);
@@ -179,9 +168,7 @@ namespace tut
     template<>
     void to::test<12>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader); // move to 1st point
+        lasreader_iterator it(reader_); // move to 1st point
         lasreader_iterator end;
 
         ensure(end != it);
@@ -192,10 +179,8 @@ namespace tut
     template<>
     void to::test<13>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        uint32_t const cnt = reader.GetHeader().GetPointRecordsCount();
-        lasreader_iterator it(reader); // move to 1st point
+        uint32_t const cnt = reader_.GetHeader().GetPointRecordsCount();
+        lasreader_iterator it(reader_); // move to 1st point
         lasreader_iterator end;
 
         uint32_t s = 0;
@@ -213,10 +198,8 @@ namespace tut
     template<>
     void to::test<14>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        uint32_t const cnt = reader.GetHeader().GetPointRecordsCount();
-        lasreader_iterator it(reader); // move to 1st point
+        uint32_t const cnt = reader_.GetHeader().GetPointRecordsCount();
+        lasreader_iterator it(reader_); // move to 1st point
         lasreader_iterator end;
 
         lasreader_iterator::difference_type const d = std::distance(it, end);
@@ -228,9 +211,7 @@ namespace tut
     template<>
     void to::test<15>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader); // move to 1st point
+        lasreader_iterator it(reader_); // move to 1st point
 
         std::advance(it, 1); // move to 2nd record
         test_file10_point2(*it);
@@ -244,11 +225,8 @@ namespace tut
     template<>
     void to::test<16>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        uint32_t const size = reader.GetHeader().GetPointRecordsCount();
-
-        lasreader_iterator it(reader);
+        uint32_t const size = reader_.GetHeader().GetPointRecordsCount();
+        lasreader_iterator it(reader_);
         lasreader_iterator end;
 
         typedef std::list<LASPoint> list_t;
@@ -284,9 +262,7 @@ namespace tut
         ensure(pt.IsValid());
         test_file10_point2(pt);
 
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader);
+        lasreader_iterator it(reader_);
         lasreader_iterator end;
 
         // Count records equal to given point object
@@ -295,20 +271,18 @@ namespace tut
         ensure_equals(n, expected);
     }
 
-
     // Test std::equal algorithm
     template<>
     template<>
     void to::test<18>()
     {
-        // TODO - mloskot: Can not re-use the reader because libLAS does
+        // TODO - mloskot: Can not re-use the LASReader (object reader_) because libLAS does
         // not support reset operation yet. In order to reuse reader with mre than one iterator
         // we have to provide operation to reset reader (set internal pointer to beginning of LAS file, etc.).
         // So, here we reuse only file stream.
         //LASReader reader(ifs);
 
         std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-     
 
         // Copy LAS records to std::list based cache
         typedef std::list<LASPoint> list_t;
@@ -353,9 +327,7 @@ namespace tut
         ensure(pt.IsValid());
         test_file10_point2(pt);
 
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader);
+        lasreader_iterator it(reader_);
         lasreader_iterator end;
 
         // find 2nd point data record
@@ -370,9 +342,7 @@ namespace tut
     template<>
     void to::test<20>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader);
+        lasreader_iterator it(reader_);
         lasreader_iterator end;
 
         // find 2nd point data record comparing XY coordinates
@@ -387,15 +357,13 @@ namespace tut
     template<>
     void to::test<21>()
     {
-        std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
-        lasreader_iterator it(reader);
+        lasreader_iterator it(reader_);
         lasreader_iterator end;
 
         typedef liblas::detail::Point<double> point_t;
         typedef liblas::detail::Extents<double> bbox_t;
 
-        LASHeader const& h = reader.GetHeader();
+        LASHeader const& h = reader_.GetHeader();
         bbox_t lasbbox(point_t(h.GetMinX(), h.GetMinY(), h.GetMinZ()),
                        point_t(h.GetMaxX(), h.GetMaxY(), h.GetMaxZ()));
 
@@ -405,7 +373,5 @@ namespace tut
 
         ensure(lasbbox == bbox);
     }
-
- 
 }
 
