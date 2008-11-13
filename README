@@ -174,8 +174,8 @@ Find the libLAS developers on IRC on #liblas at `Freenode`_.
 Mailing Lists
 ..............................................................................
 
-* liblas-devel - http://mail.hobu.net/mailman/listinfo/liblas-devel
-* liblas-commits - http://mail.hobu.net/mailman/listinfo/liblas-commits
+* liblas-devel - http://lists.osgeo.org/mailman/listinfo/liblas-devel
+* liblas-commits - http://lists.osgeo.org/mailman/listinfo/liblas-commits
 
 
 .. _`LIDAR`: http://en.wikipedia.org/wiki/LIDAR
