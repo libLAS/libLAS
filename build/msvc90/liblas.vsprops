@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="liblas"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(LIBLAS_DIR)\include&quot;;&quot;$(LIBLAS_DIR)\include\liblas\capi&quot;;&quot;$(OSGEO4W_ROOT)\include&quot;"
+		PreprocessorDefinitions="_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE"
+		WarningLevel="4"
+	/>
+	<UserMacro
+		Name="LIBLAS_DIR"
+		Value="..\..\..\"
+		PerformEnvironmentSet="true"
+	/>
+	<UserMacro
+		Name="OSGEO4W_ROOT"
+		Value="C:\OSGeo4W"
+	/>
+	<UserMacro
+		Name="LAS_C_API_DLL"
+		Value="liblas1"
+	/>
+</VisualStudioPropertySheet>

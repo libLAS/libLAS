@@ -1,0 +1,107 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{711FD426-D0B5-4176-BE24-34560B4E701E}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\AUTHORS = ..\..\AUTHORS
+		..\..\ChangeLog = ..\..\ChangeLog
+		..\..\CMakeLists.txt = ..\..\CMakeLists.txt
+		..\..\COPYING = ..\..\COPYING
+		..\..\HOWTORELEASE.txt = ..\..\HOWTORELEASE.txt
+		..\..\INSTALL = ..\..\INSTALL
+		..\..\LICENSE.txt = ..\..\LICENSE.txt
+		..\..\makefile.vc = ..\..\makefile.vc
+		..\..\NEWS = ..\..\NEWS
+		..\..\nmake.opt = ..\..\nmake.opt
+		..\..\README = ..\..\README
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblas_lib", "liblas_lib\liblas_lib.vcproj", "{208417AE-D08E-4938-AC26-A16ABD55AA5B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblas_test", "liblas_test\liblas_test.vcproj", "{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{208417AE-D08E-4938-AC26-A16ABD55AA5B} = {208417AE-D08E-4938-AC26-A16ABD55AA5B}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lasinfo", "lasinfo\lasinfo.vcproj", "{83AF175F-01A1-44ED-9DDA-F716A4C6FD21}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EC92BE01-CFA3-46C6-998E-810484CC5860} = {EC92BE01-CFA3-46C6-998E-810484CC5860}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblas_c_dll", "liblas_c_dll\liblas_c_dll.vcproj", "{EC92BE01-CFA3-46C6-998E-810484CC5860}"
+	ProjectSection(ProjectDependencies) = postProject
+		{208417AE-D08E-4938-AC26-A16ABD55AA5B} = {208417AE-D08E-4938-AC26-A16ABD55AA5B}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "las2las", "las2las\las2las.vcproj", "{9BE9762E-DF68-4628-81B0-A4192A4BA3A5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EC92BE01-CFA3-46C6-998E-810484CC5860} = {EC92BE01-CFA3-46C6-998E-810484CC5860}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "las2txt", "las2txt\las2txt.vcproj", "{719AD6A1-CD3F-4649-8656-B071CF653E0B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EC92BE01-CFA3-46C6-998E-810484CC5860} = {EC92BE01-CFA3-46C6-998E-810484CC5860}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lasdiff", "lasdiff\lasdiff.vcproj", "{A40F48F5-CC0E-4FDB-BFF5-EC635AB70DEB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EC92BE01-CFA3-46C6-998E-810484CC5860} = {EC92BE01-CFA3-46C6-998E-810484CC5860}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lasmerge", "lasmerge\lasmerge.vcproj", "{90DCFC67-4343-4880-9368-D7EAFB7ABF4F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EC92BE01-CFA3-46C6-998E-810484CC5860} = {EC92BE01-CFA3-46C6-998E-810484CC5860}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "txt2las", "txt2las\txt2las.vcproj", "{C78B8A0D-12CE-49D6-8615-96B9735564D5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EC92BE01-CFA3-46C6-998E-810484CC5860} = {EC92BE01-CFA3-46C6-998E-810484CC5860}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{208417AE-D08E-4938-AC26-A16ABD55AA5B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{208417AE-D08E-4938-AC26-A16ABD55AA5B}.Debug|Win32.Build.0 = Debug|Win32
+		{208417AE-D08E-4938-AC26-A16ABD55AA5B}.Release|Win32.ActiveCfg = Release|Win32
+		{208417AE-D08E-4938-AC26-A16ABD55AA5B}.Release|Win32.Build.0 = Release|Win32
+		{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}.Debug|Win32.Build.0 = Debug|Win32
+		{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}.Release|Win32.ActiveCfg = Release|Win32
+		{EC1C23B9-D9DF-48BA-9FB4-8A439D6006B9}.Release|Win32.Build.0 = Release|Win32
+		{83AF175F-01A1-44ED-9DDA-F716A4C6FD21}.Debug|Win32.ActiveCfg = Debug|Win32
+		{83AF175F-01A1-44ED-9DDA-F716A4C6FD21}.Debug|Win32.Build.0 = Debug|Win32
+		{83AF175F-01A1-44ED-9DDA-F716A4C6FD21}.Release|Win32.ActiveCfg = Release|Win32
+		{83AF175F-01A1-44ED-9DDA-F716A4C6FD21}.Release|Win32.Build.0 = Release|Win32
+		{EC92BE01-CFA3-46C6-998E-810484CC5860}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EC92BE01-CFA3-46C6-998E-810484CC5860}.Debug|Win32.Build.0 = Debug|Win32
+		{EC92BE01-CFA3-46C6-998E-810484CC5860}.Release|Win32.ActiveCfg = Release|Win32
+		{EC92BE01-CFA3-46C6-998E-810484CC5860}.Release|Win32.Build.0 = Release|Win32
+		{9BE9762E-DF68-4628-81B0-A4192A4BA3A5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9BE9762E-DF68-4628-81B0-A4192A4BA3A5}.Debug|Win32.Build.0 = Debug|Win32
+		{9BE9762E-DF68-4628-81B0-A4192A4BA3A5}.Release|Win32.ActiveCfg = Release|Win32
+		{9BE9762E-DF68-4628-81B0-A4192A4BA3A5}.Release|Win32.Build.0 = Release|Win32
+		{719AD6A1-CD3F-4649-8656-B071CF653E0B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{719AD6A1-CD3F-4649-8656-B071CF653E0B}.Debug|Win32.Build.0 = Debug|Win32
+		{719AD6A1-CD3F-4649-8656-B071CF653E0B}.Release|Win32.ActiveCfg = Release|Win32
+		{719AD6A1-CD3F-4649-8656-B071CF653E0B}.Release|Win32.Build.0 = Release|Win32
+		{A40F48F5-CC0E-4FDB-BFF5-EC635AB70DEB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A40F48F5-CC0E-4FDB-BFF5-EC635AB70DEB}.Debug|Win32.Build.0 = Debug|Win32
+		{A40F48F5-CC0E-4FDB-BFF5-EC635AB70DEB}.Release|Win32.ActiveCfg = Release|Win32
+		{A40F48F5-CC0E-4FDB-BFF5-EC635AB70DEB}.Release|Win32.Build.0 = Release|Win32
+		{90DCFC67-4343-4880-9368-D7EAFB7ABF4F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{90DCFC67-4343-4880-9368-D7EAFB7ABF4F}.Debug|Win32.Build.0 = Debug|Win32
+		{90DCFC67-4343-4880-9368-D7EAFB7ABF4F}.Release|Win32.ActiveCfg = Release|Win32
+		{90DCFC67-4343-4880-9368-D7EAFB7ABF4F}.Release|Win32.Build.0 = Release|Win32
+		{C78B8A0D-12CE-49D6-8615-96B9735564D5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C78B8A0D-12CE-49D6-8615-96B9735564D5}.Debug|Win32.Build.0 = Debug|Win32
+		{C78B8A0D-12CE-49D6-8615-96B9735564D5}.Release|Win32.ActiveCfg = Release|Win32
+		{C78B8A0D-12CE-49D6-8615-96B9735564D5}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
