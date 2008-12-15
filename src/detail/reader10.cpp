@@ -263,7 +263,7 @@ bool ReaderImpl::ReadGeoreference(LASHeader& header)
         std::vector<uint8_t> data = record.GetData();
         if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
         {
-            int16_t count = data.size()/sizeof(int16_t);
+            int count = data.size()/sizeof(int16_t);
             ST_SetKey(st.get(), record.GetRecordId(), count, STT_SHORT, &(data[0]));
         }
 
@@ -275,7 +275,7 @@ bool ReaderImpl::ReadGeoreference(LASHeader& header)
 
         if (uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId())
         {
-            uint8_t count = data.size()/sizeof(uint8_t);
+            int count = data.size()/sizeof(uint8_t);
             ST_SetKey(st.get(), record.GetRecordId(), count, STT_ASCII, &(data[0]));
         }
     }
