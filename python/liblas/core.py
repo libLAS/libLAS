@@ -134,18 +134,11 @@ else:
 
 
 def get_version():
-    func = las.LAS_GetVersion
-    size = ctypes.c_int()
-    def errcheck(result, func, argtuple):
-        retval = ctypes.string_at(result, size.value)[:]
-        free(result)
-        return result
-    func.errcheck = errcheck
-    return func()
+    return las.LAS_GetVersion()
 
-#version = las.LAS_GetVersion()
+
+las.LAS_GetVersion.restype = ctypes.c_char_p
 version = get_version()
-
 las.LASError_GetLastErrorNum.restype = ctypes.c_int
 
 las.LASError_GetLastErrorMsg.restype = ctypes.c_char_p
@@ -522,3 +515,4 @@ las.LASVLR_GetData.restype = ctypes.c_int
 las.LASVLR_SetData.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ubyte)]
 las.LASVLR_SetData.errcheck = check_value
 las.LASVLR_SetData.restype = ctypes.c_int
+
