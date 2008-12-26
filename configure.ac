@@ -13,6 +13,7 @@ AC_INIT([las], [liblas_version], [hobu.inc@gmail.com])
 AC_CANONICAL_BUILD
 
 RELEASE_VERSION=liblas_version
+AC_SUBST([RELEASE_VERSION])
 
 dnl #########################################################################
 dnl Default compilation flags
@@ -200,6 +201,7 @@ AC_CONFIG_FILES([
     include/Makefile
     src/Makefile
     apps/Makefile
+    apps/liblas-config
     test/Makefile
     test/unit/Makefile
 ])
