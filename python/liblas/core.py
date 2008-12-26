@@ -98,7 +98,6 @@ def check_value_free(result, func, cargs):
 def free_returned_char_p(result, func, cargs):
 
     size = ctypes.c_int()
-    print result, type(result), dir(result)
     retvalue = ctypes.string_at(result, size.value)[:]
     free(result)
     return retvalue
