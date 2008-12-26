@@ -95,6 +95,15 @@ def check_value_free(result, func, cargs):
     free(result)
     return retval
 
+def free_returned_char_p(result, func, cargs):
+
+    size = ctypes.c_int()
+    retvalue = ctypes.string_at(result, size.value)[:]
+    free(result)
+    return retvalue
+    
+    
+
 try:
     from numpy import array, ndarray
     HAS_NUMPY = True
@@ -137,13 +146,18 @@ def get_version():
     return las.LAS_GetVersion()
 
 
-las.LAS_GetVersion.restype = ctypes.c_char_p
+las.LAS_GetVersion.restype = ctypes.POINTER(ctypes.c_char)
+las.LAS_GetVersion.errcheck = free_returned_char_p
+
 version = get_version()
+las.LAS_GetVersion.restype = ctypes.c_char_p
 las.LASError_GetLastErrorNum.restype = ctypes.c_int
 
-las.LASError_GetLastErrorMsg.restype = ctypes.c_char_p
+las.LASError_GetLastErrorMsg.restype = ctypes.POINTER(ctypes.c_char)
+las.LASError_GetLastErrorMsg.errcheck = free_returned_char_p
 
-las.LASError_GetLastErrorMethod.restype = ctypes.c_char_p
+las.LASError_GetLastErrorMethod.restype = ctypes.POINTER(ctypes.c_char)
+las.LASError_GetLastErrorMethod.errcheck = free_returned_char_p
 
 las.LASError_GetErrorCount.restype=ctypes.c_int
 
