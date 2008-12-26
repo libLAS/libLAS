@@ -56,7 +56,8 @@ void usage()
     fprintf(stderr,"   u - user data (does not currently work)\n");
     fprintf(stderr,"   p - point source ID\n");
     fprintf(stderr,"   e - edge of flight line\n");
-    fprintf(stderr,"   d - direction of scan flag\n\n");
+    fprintf(stderr,"   d - direction of scan flag\n");
+    fprintf(stderr,"   M - vertex index number\n\n");
 
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr," The '--sep space' flag specifies what separator to use. The\n");
@@ -106,7 +107,9 @@ int main(int argc, char *argv[])
     LASPointH p = NULL;
     FILE* file_out = NULL;
     int len;
-  
+    
+    uint32_t index = 0;
+    
     for (i = 1; i < argc; i++)
     {
         if (    strcmp(argv[i],"-h") == 0 ||
@@ -464,11 +467,13 @@ int main(int argc, char *argv[])
     p = LASReader_GetNextPoint(reader);
     while (p)
     {
+        
         if (skip_invalid && !LASPoint_IsValid(p)) {
             if (verbose) {
                 LASError_Print("Skipping writing invalid point...");
             }
             p = LASReader_GetNextPoint(reader);
+            index -=1;
             continue;
         }
         
@@ -517,6 +522,10 @@ int main(int argc, char *argv[])
             case 'n': 
                 fprintf(file_out, "%d", LASPoint_GetNumberOfReturns(p));
                 break;
+            
+            case 'M':
+                fprintf(file_out, "%d", index);
+                break;
 /*
       case 'p': // the point source ID
         fprintf(file_out, "%d", lasreader->point.point_source_ID);
@@ -545,6 +554,7 @@ int main(int argc, char *argv[])
         }
 
         p = LASReader_GetNextPoint(reader);
+        index +=1;
     }
 
 
