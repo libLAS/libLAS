@@ -123,7 +123,7 @@ namespace tut
         ensure_distance(it->GetY(), double(4834500), 0.0001);
         ensure_distance(it->GetZ(), double(51.53), 0.0001);
         ensure_equals(it->GetIntensity(), 670);
-        ensure_equals(it->GetClassification(), uint8_t(1));
+        ensure_equals(it->GetClassification(), liblas::uint8_t(1));
         ensure_equals(it->GetScanAngleRank(), 0);
         ensure_equals(it->GetUserData(), 3);
         ensure_equals(it->GetScanFlags(), 9);
@@ -179,11 +179,11 @@ namespace tut
     template<>
     void to::test<13>()
     {
-        uint32_t const cnt = reader_.GetHeader().GetPointRecordsCount();
+        liblas::uint32_t const cnt = reader_.GetHeader().GetPointRecordsCount();
         lasreader_iterator it(reader_); // move to 1st point
         lasreader_iterator end;
 
-        uint32_t s = 0;
+        liblas::uint32_t s = 0;
         while (end != it)
         {
             s++;
@@ -198,7 +198,7 @@ namespace tut
     template<>
     void to::test<14>()
     {
-        uint32_t const cnt = reader_.GetHeader().GetPointRecordsCount();
+        liblas::uint32_t const cnt = reader_.GetHeader().GetPointRecordsCount();
         lasreader_iterator it(reader_); // move to 1st point
         lasreader_iterator end;
 
@@ -225,7 +225,7 @@ namespace tut
     template<>
     void to::test<16>()
     {
-        uint32_t const size = reader_.GetHeader().GetPointRecordsCount();
+        liblas::uint32_t const size = reader_.GetHeader().GetPointRecordsCount();
         lasreader_iterator it(reader_);
         lasreader_iterator end;
 
