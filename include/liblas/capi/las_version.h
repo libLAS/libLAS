@@ -44,7 +44,7 @@
 
 #ifndef LIBLAS_VERSION_MAJOR
 #define LIBLAS_VERSION_MAJOR    1
-#define LIBLAS_VERSION_MINOR    0
+#define LIBLAS_VERSION_MINOR    1
 #define LIBLAS_VERSION_REV      0
 #define LIBLAS_VERSION_BUILD    0
 #endif
@@ -58,7 +58,7 @@
 #endif
 
 #ifndef LIBLAS_RELEASE_NAME
-#define LIBLAS_RELEASE_NAME     "1.0.0"
+#define LIBLAS_RELEASE_NAME     "1.1.0"
 #endif
 
 #endif /* LAS_VERSION_H_INCLUDED */
