@@ -1,0 +1,750 @@
+// !$*UTF8*$!
+{
+	0867D690FE84028FC02AAC07 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = C800390F0F0C60D10080C499 /* las2las */;
+		activeTarget = C800390D0F0C60D10080C499 /* las2las */;
+		addToTargets = (
+			C80039290F0C613F0080C499 /* txt2las */,
+		);
+		codeSenseManager = C80037E70F0C3ADE0080C499 /* Code sense */;
+		executables = (
+			C80038C40F0C5E230080C499 /* lasinfo */,
+			C80038DD0F0C5FF10080C499 /* lasmerge */,
+			C800390F0F0C60D10080C499 /* las2las */,
+			C800391C0F0C60FE0080C499 /* las2txt */,
+			C800392B0F0C613F0080C499 /* txt2las */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXExecutablesDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXExecutablesDataSource_NameID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					22,
+					300,
+					889,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXExecutablesDataSource_ActiveFlagID,
+					PBXExecutablesDataSource_NameID,
+					PBXExecutablesDataSource_CommentsID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					1001,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					961,
+					60,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 252459712;
+			PBXWorkspaceStateSaveDate = 252459712;
+		};
+		perUserProjectItems = {
+			C80038A90F0C3CF90080C499 /* PBXTextBookmark */ = C80038A90F0C3CF90080C499 /* PBXTextBookmark */;
+			C80038F00F0C60870080C499 /* PBXTextBookmark */ = C80038F00F0C60870080C499 /* PBXTextBookmark */;
+			C80038F10F0C60870080C499 /* XDModelBookmark */ = C80038F10F0C60870080C499 /* XDModelBookmark */;
+			C80038F30F0C60870080C499 /* PBXTextBookmark */ = C80038F30F0C60870080C499 /* PBXTextBookmark */;
+			C80038F40F0C60870080C499 /* PBXBookmark */ = C80038F40F0C60870080C499 /* PBXBookmark */;
+			C80038F50F0C60870080C499 /* PBXTextBookmark */ = C80038F50F0C60870080C499 /* PBXTextBookmark */;
+			C80038F60F0C60870080C499 /* XDModelBookmark */ = C80038F60F0C60870080C499 /* XDModelBookmark */;
+			C80038F80F0C60870080C499 /* PBXTextBookmark */ = C80038F80F0C60870080C499 /* PBXTextBookmark */;
+			C80038F90F0C60870080C499 /* PBXTextBookmark */ = C80038F90F0C60870080C499 /* PBXTextBookmark */;
+			C80038FF0F0C60870080C499 /* PBXTextBookmark */ = C80038FF0F0C60870080C499 /* PBXTextBookmark */;
+			C800393F0F0C617C0080C499 /* PBXTextBookmark */ = C800393F0F0C617C0080C499 /* PBXTextBookmark */;
+			C80039400F0C617C0080C499 /* PBXTextBookmark */ = C80039400F0C617C0080C499 /* PBXTextBookmark */;
+			C800394C0F0C61D20080C499 /* PBXTextBookmark */ = C800394C0F0C61D20080C499 /* PBXTextBookmark */;
+			C800394D0F0C61D20080C499 /* PBXTextBookmark */ = C800394D0F0C61D20080C499 /* PBXTextBookmark */;
+			C80039550F0C68260080C499 /* PBXTextBookmark */ = C80039550F0C68260080C499 /* PBXTextBookmark */;
+			C80039560F0C68260080C499 /* PBXTextBookmark */ = C80039560F0C68260080C499 /* PBXTextBookmark */;
+			C80039590F0C685D0080C499 /* PBXTextBookmark */ = C80039590F0C685D0080C499 /* PBXTextBookmark */;
+			C800395A0F0C685D0080C499 /* PBXTextBookmark */ = C800395A0F0C685D0080C499 /* PBXTextBookmark */;
+			C800395C0F0C685F0080C499 /* PBXTextBookmark */ = C800395C0F0C685F0080C499 /* PBXTextBookmark */;
+			C800395D0F0C685F0080C499 /* PBXTextBookmark */ = C800395D0F0C685F0080C499 /* PBXTextBookmark */;
+		};
+		sourceControlManager = C80037E60F0C3ADE0080C499 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	C80037E60F0C3ADE0080C499 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+	};
+	C80037E70F0C3ADE0080C499 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	C80038020F0C3B210080C499 /* file.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1187, 2839}}";
+			sepNavSelRange = "{2208, 34}";
+			sepNavVisRange = "{0, 2344}";
+		};
+	};
+	C800381B0F0C3B210080C499 /* lasfile.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1179, 1598}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 1541}";
+		};
+	};
+	C80038440F0C3B210080C499 /* liblas.hpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1179, 1632}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 1609}";
+		};
+	};
+	C80038A90F0C3CF90080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "error: liblas/detail/file.hpp: No such file or directory";
+		fRef = C80038020F0C3B210080C499 /* file.cpp */;
+		rLen = 1;
+		rLoc = 42;
+		rType = 1;
+	};
+	C80038C20F0C5E230080C499 /* lasinfo */ = {
+		activeExec = 0;
+		executables = (
+			C80038C40F0C5E230080C499 /* lasinfo */,
+		);
+	};
+	C80038C40F0C5E230080C499 /* lasinfo */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = lasinfo;
+		sourceDirectories = (
+		);
+	};
+	C80038D10F0C5F2E0080C499 /* lascommon.c */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1179, 9724}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 745}";
+		};
+	};
+	C80038DB0F0C5FF10080C499 /* lasmerge */ = {
+		activeExec = 0;
+		executables = (
+			C80038DD0F0C5FF10080C499 /* lasmerge */,
+		);
+	};
+	C80038DD0F0C5FF10080C499 /* lasmerge */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = lasmerge;
+		sourceDirectories = (
+		);
+	};
+	C80038F00F0C60870080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038440F0C3B210080C499 /* liblas.hpp */;
+		name = "liblas.hpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1609;
+		vrLoc = 0;
+	};
+	C80038F10F0C60870080C499 /* XDModelBookmark */ = {
+		isa = XDModelBookmark;
+		fRef = C80038F20F0C60870080C499 /* xcode_6.xcclassmodel */;
+		fallbackIsa = PBXBookmark;
+		uiCtxt = {
+			UIContextForClassArea = {
+				_indexOfSelectedView = 0;
+				chosenTableColumnns = (
+					"CT Class",
+					"CT Kind",
+					"CT Superclass",
+					"CT Documentation",
+				);
+				chosenTableColumnns_sortDirections = (
+				);
+				chosenTableColumnns_sortKeys = (
+				);
+				chosenTableColumnns_sortSelectors = (
+				);
+				chosenTableWidths = (
+					76.000000,
+					45.000000,
+					94.454102,
+					22.000000,
+				);
+			};
+			UIContextForDetailArea = {
+				_indexOfSelectedView = 1;
+			};
+			UIContextForLayoutManager = {
+				detailSplitGeometry = {
+					_collapsingFrameDimension = 0;
+					_indexOfCollapsedView = 0;
+					_percentageOfCollapsedView = 0;
+					isCollapsed = yes;
+					sizes = (
+						"{{0, 0}, {808, 177}}",
+						"{{813, 0}, {425, 177}}",
+					);
+				};
+				diagramSplitGeometry = {
+					_collapsingFrameDimension = 0;
+					_indexOfCollapsedView = 0;
+					_percentageOfCollapsedView = 0;
+					isCollapsed = yes;
+					sizes = (
+						"{{0, 0}, {1238, 179}}",
+						"{{0, 184}, {1238, 376}}",
+					);
+				};
+				tableSplitGeometry = {
+					_collapsingFrameDimension = 0;
+					_indexOfCollapsedView = 0;
+					_percentageOfCollapsedView = 0;
+					isCollapsed = yes;
+					sizes = (
+						"{{0, 0}, {265, 177}}",
+						"{{270, 0}, {538, 177}}",
+					);
+				};
+			};
+			UIContextForPropertyArea = {
+				_indexOfSelectedView = 0;
+				chosenTableColumnnsAT = (
+					"PR Type Icon",
+					"PR Member",
+					"PR Kind",
+					"PR Type",
+					"PR Visibility",
+					"PR Documentation",
+				);
+				chosenTableColumnnsAT_sortDirections = (
+				);
+				chosenTableColumnnsAT_sortKeys = (
+				);
+				chosenTableColumnnsAT_sortSelectors = (
+				);
+				chosenTableColumnnsPT = (
+					"AL Type Icon",
+					"AL Member",
+					"AL Kind",
+					"AL Type",
+					"AL Visibility",
+					"AL Documentation",
+				);
+				chosenTableColumnnsPT_sortDirections = (
+				);
+				chosenTableColumnnsPT_sortKeys = (
+				);
+				chosenTableColumnnsPT_sortSelectors = (
+				);
+				chosenTableColumnnsRT = (
+					"OP Type Icon",
+					"OP Member",
+					"OP Kind",
+					"OP Type",
+					"OP Visibility",
+					"OP Documentation",
+				);
+				chosenTableColumnnsRT_sortDirections = (
+				);
+				chosenTableColumnnsRT_sortKeys = (
+				);
+				chosenTableColumnnsRT_sortSelectors = (
+				);
+				chosenTableWidthsAT = (
+					22.000000,
+					122.000000,
+					66.000000,
+					82.000000,
+					44.000000,
+					22.000000,
+				);
+				chosenTableWidthsPT = (
+					22.000000,
+					122.000000,
+					61.000000,
+					87.000000,
+					189.000000,
+					22.000000,
+				);
+				chosenTableWidthsRT = (
+					22.000000,
+					122.000000,
+					62.000000,
+					86.000000,
+					44.000000,
+					22.000000,
+				);
+			};
+			"xdesign model browser state key - shown/hidden" = 1;
+			"xdesign model diagram view visible rect key" = "{{-288, 0}, {1223, 361}}";
+			"xdesign model selected entities key" = (
+			);
+			"xdesign model selected properties key" = (
+			);
+		};
+	};
+	C80038F20F0C60870080C499 /* xcode_6.xcclassmodel */ = {
+		isa = PBXFileReference;
+		path = xcode_6.xcclassmodel;
+		sourceTree = "<group>";
+	};
+	C80038F30F0C60870080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C800381B0F0C3B210080C499 /* lasfile.cpp */;
+		name = "lasfile.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1541;
+		vrLoc = 0;
+	};
+	C80038F40F0C60870080C499 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = C80038D10F0C5F2E0080C499 /* lascommon.c */;
+	};
+	C80038F50F0C60870080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038440F0C3B210080C499 /* liblas.hpp */;
+		name = "liblas.hpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1609;
+		vrLoc = 0;
+	};
+	C80038F60F0C60870080C499 /* XDModelBookmark */ = {
+		isa = XDModelBookmark;
+		fRef = C80038F70F0C60870080C499 /* xcode_6.xcclassmodel */;
+		fallbackIsa = PBXBookmark;
+		uiCtxt = {
+			UIContextForClassArea = {
+				_indexOfSelectedView = 0;
+				chosenTableColumnns = (
+					"CT Class",
+					"CT Kind",
+					"CT Superclass",
+					"CT Documentation",
+				);
+				chosenTableColumnns_sortDirections = (
+				);
+				chosenTableColumnns_sortKeys = (
+				);
+				chosenTableColumnns_sortSelectors = (
+				);
+				chosenTableWidths = (
+					76.000000,
+					45.000000,
+					94.454102,
+					22.000000,
+				);
+			};
+			UIContextForDetailArea = {
+				_indexOfSelectedView = 1;
+			};
+			UIContextForLayoutManager = {
+				detailSplitGeometry = {
+					_collapsingFrameDimension = 0;
+					_indexOfCollapsedView = 0;
+					_percentageOfCollapsedView = 0;
+					isCollapsed = yes;
+					sizes = (
+						"{{0, 0}, {808, 177}}",
+						"{{813, 0}, {425, 177}}",
+					);
+				};
+				diagramSplitGeometry = {
+					_collapsingFrameDimension = 0;
+					_indexOfCollapsedView = 0;
+					_percentageOfCollapsedView = 0;
+					isCollapsed = yes;
+					sizes = (
+						"{{0, 0}, {1238, 179}}",
+						"{{0, 184}, {1238, 376}}",
+					);
+				};
+				tableSplitGeometry = {
+					_collapsingFrameDimension = 0;
+					_indexOfCollapsedView = 0;
+					_percentageOfCollapsedView = 0;
+					isCollapsed = yes;
+					sizes = (
+						"{{0, 0}, {265, 177}}",
+						"{{270, 0}, {538, 177}}",
+					);
+				};
+			};
+			UIContextForPropertyArea = {
+				_indexOfSelectedView = 0;
+				chosenTableColumnnsAT = (
+					"PR Type Icon",
+					"PR Member",
+					"PR Kind",
+					"PR Type",
+					"PR Visibility",
+					"PR Documentation",
+				);
+				chosenTableColumnnsAT_sortDirections = (
+				);
+				chosenTableColumnnsAT_sortKeys = (
+				);
+				chosenTableColumnnsAT_sortSelectors = (
+				);
+				chosenTableColumnnsPT = (
+					"AL Type Icon",
+					"AL Member",
+					"AL Kind",
+					"AL Type",
+					"AL Visibility",
+					"AL Documentation",
+				);
+				chosenTableColumnnsPT_sortDirections = (
+				);
+				chosenTableColumnnsPT_sortKeys = (
+				);
+				chosenTableColumnnsPT_sortSelectors = (
+				);
+				chosenTableColumnnsRT = (
+					"OP Type Icon",
+					"OP Member",
+					"OP Kind",
+					"OP Type",
+					"OP Visibility",
+					"OP Documentation",
+				);
+				chosenTableColumnnsRT_sortDirections = (
+				);
+				chosenTableColumnnsRT_sortKeys = (
+				);
+				chosenTableColumnnsRT_sortSelectors = (
+				);
+				chosenTableWidthsAT = (
+					22.000000,
+					122.000000,
+					66.000000,
+					82.000000,
+					44.000000,
+					22.000000,
+				);
+				chosenTableWidthsPT = (
+					22.000000,
+					122.000000,
+					61.000000,
+					87.000000,
+					189.000000,
+					22.000000,
+				);
+				chosenTableWidthsRT = (
+					22.000000,
+					122.000000,
+					62.000000,
+					86.000000,
+					44.000000,
+					22.000000,
+				);
+			};
+			"xdesign model browser state key - shown/hidden" = 1;
+			"xdesign model diagram view visible rect key" = "{{-288, 0}, {1223, 361}}";
+			"xdesign model selected entities key" = (
+			);
+			"xdesign model selected properties key" = (
+			);
+		};
+	};
+	C80038F70F0C60870080C499 /* xcode_6.xcclassmodel */ = {
+		isa = PBXFileReference;
+		path = xcode_6.xcclassmodel;
+		sourceTree = "<group>";
+	};
+	C80038F80F0C60870080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C800381B0F0C3B210080C499 /* lasfile.cpp */;
+		name = "lasfile.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1541;
+		vrLoc = 0;
+	};
+	C80038F90F0C60870080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038D10F0C5F2E0080C499 /* lascommon.c */;
+		name = "lascommon.c: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 745;
+		vrLoc = 0;
+	};
+	C80038FF0F0C60870080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038020F0C3B210080C499 /* file.cpp */;
+		name = "file.cpp: 43";
+		rLen = 34;
+		rLoc = 2208;
+		rType = 0;
+		vrLen = 2344;
+		vrLoc = 0;
+	};
+	C800390D0F0C60D10080C499 /* las2las */ = {
+		activeExec = 0;
+		executables = (
+			C800390F0F0C60D10080C499 /* las2las */,
+		);
+	};
+	C800390F0F0C60D10080C499 /* las2las */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = las2las;
+		sourceDirectories = (
+		);
+	};
+	C800391A0F0C60FE0080C499 /* las2txt */ = {
+		activeExec = 0;
+		executables = (
+			C800391C0F0C60FE0080C499 /* las2txt */,
+		);
+	};
+	C800391C0F0C60FE0080C499 /* las2txt */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = las2txt;
+		sourceDirectories = (
+		);
+	};
+	C80039290F0C613F0080C499 /* txt2las */ = {
+		activeExec = 0;
+		executables = (
+			C800392B0F0C613F0080C499 /* txt2las */,
+		);
+	};
+	C800392B0F0C613F0080C499 /* txt2las */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = txt2las;
+		sourceDirectories = (
+		);
+	};
+	C800393F0F0C617C0080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038D10F0C5F2E0080C499 /* lascommon.c */;
+		name = "lascommon.c: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 745;
+		vrLoc = 0;
+	};
+	C80039400F0C617C0080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038020F0C3B210080C499 /* file.cpp */;
+		name = "file.cpp: 43";
+		rLen = 34;
+		rLoc = 2208;
+		rType = 0;
+		vrLen = 2344;
+		vrLoc = 0;
+	};
+	C800394C0F0C61D20080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038D10F0C5F2E0080C499 /* lascommon.c */;
+		name = "lascommon.c: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 745;
+		vrLoc = 0;
+	};
+	C800394D0F0C61D20080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038020F0C3B210080C499 /* file.cpp */;
+		name = "file.cpp: 43";
+		rLen = 34;
+		rLoc = 2208;
+		rType = 0;
+		vrLen = 2344;
+		vrLoc = 0;
+	};
+	C80039550F0C68260080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038D10F0C5F2E0080C499 /* lascommon.c */;
+		name = "lascommon.c: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 745;
+		vrLoc = 0;
+	};
+	C80039560F0C68260080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038020F0C3B210080C499 /* file.cpp */;
+		name = "file.cpp: 43";
+		rLen = 34;
+		rLoc = 2208;
+		rType = 0;
+		vrLen = 2344;
+		vrLoc = 0;
+	};
+	C80039590F0C685D0080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "error: liblas/detail/file.hpp: No such file or directory";
+		fRef = C80038020F0C3B210080C499 /* file.cpp */;
+		rLen = 1;
+		rLoc = 42;
+		rType = 1;
+	};
+	C800395A0F0C685D0080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038020F0C3B210080C499 /* file.cpp */;
+		name = "file.cpp: 43";
+		rLen = 34;
+		rLoc = 2208;
+		rType = 0;
+		vrLen = 236;
+		vrLoc = 2207;
+	};
+	C800395C0F0C685F0080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038D10F0C5F2E0080C499 /* lascommon.c */;
+		name = "lascommon.c: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 745;
+		vrLoc = 0;
+	};
+	C800395D0F0C685F0080C499 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = C80038020F0C3B210080C499 /* file.cpp */;
+		name = "file.cpp: 43";
+		rLen = 34;
+		rLoc = 2208;
+		rType = 0;
+		vrLen = 2344;
+		vrLoc = 0;
+	};
+	D2AAC09C05546B4700DB518D /* libLAS.dylib */ = {
+		activeExec = 0;
+	};
+}

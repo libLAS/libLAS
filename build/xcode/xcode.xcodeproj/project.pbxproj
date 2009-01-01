@@ -1,0 +1,878 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C800385E0F0C3B210080C499 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C80038020F0C3B210080C499 /* file.cpp */; };
+		C80038610F0C3B210080C499 /* reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C80038070F0C3B210080C499 /* reader.cpp */; };
+		C80038630F0C3B210080C499 /* reader10.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C800380A0F0C3B210080C499 /* reader10.cpp */; };
+		C80038650F0C3B210080C499 /* reader11.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C800380D0F0C3B210080C499 /* reader11.cpp */; };
+		C80038670F0C3B210080C499 /* writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C80038100F0C3B210080C499 /* writer.cpp */; };
+		C80038690F0C3B210080C499 /* writer10.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C80038130F0C3B210080C499 /* writer10.cpp */; };
+		C800386B0F0C3B210080C499 /* writer11.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C80038160F0C3B210080C499 /* writer11.cpp */; };
+		C800386D0F0C3B210080C499 /* las_c_api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C80038190F0C3B210080C499 /* las_c_api.cpp */; };
+		C800386E0F0C3B210080C499 /* laserror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C800381A0F0C3B210080C499 /* laserror.cpp */; };
+		C800386F0F0C3B210080C499 /* lasfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C800381B0F0C3B210080C499 /* lasfile.cpp */; };
+		C80038700F0C3B210080C499 /* lasheader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C800381C0F0C3B210080C499 /* lasheader.cpp */; };
+		C80038710F0C3B210080C499 /* laspoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C800381D0F0C3B210080C499 /* laspoint.cpp */; };
+		C80038720F0C3B210080C499 /* lasreader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C800381E0F0C3B210080C499 /* lasreader.cpp */; };
+		C80038730F0C3B210080C499 /* lasrecordheader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C800381F0F0C3B210080C499 /* lasrecordheader.cpp */; };
+		C80038740F0C3B210080C499 /* laswriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C80038200F0C3B210080C499 /* laswriter.cpp */; };
+		C80038750F0C3B210080C499 /* las_config.h in Headers */ = {isa = PBXBuildFile; fileRef = C80038280F0C3B210080C499 /* las_config.h */; };
+		C80038760F0C3B210080C499 /* las_version.h in Headers */ = {isa = PBXBuildFile; fileRef = C80038290F0C3B210080C499 /* las_version.h */; };
+		C80038770F0C3B210080C499 /* liblas.h in Headers */ = {isa = PBXBuildFile; fileRef = C800382A0F0C3B210080C499 /* liblas.h */; };
+		C80038780F0C3B210080C499 /* cstdint.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C800382B0F0C3B210080C499 /* cstdint.hpp */; };
+		C80038790F0C3B210080C499 /* endian.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C800382D0F0C3B210080C499 /* endian.hpp */; };
+		C800387A0F0C3B210080C499 /* file.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C800382E0F0C3B210080C499 /* file.hpp */; };
+		C800387B0F0C3B210080C499 /* fwd.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C800382F0F0C3B210080C499 /* fwd.hpp */; };
+		C800387C0F0C3B210080C499 /* reader.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038300F0C3B210080C499 /* reader.hpp */; };
+		C800387D0F0C3B210080C499 /* reader10.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038310F0C3B210080C499 /* reader10.hpp */; };
+		C800387E0F0C3B210080C499 /* reader11.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038320F0C3B210080C499 /* reader11.hpp */; };
+		C800387F0F0C3B210080C499 /* sha1.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038330F0C3B210080C499 /* sha1.hpp */; };
+		C80038800F0C3B210080C499 /* sharedptr.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038340F0C3B210080C499 /* sharedptr.hpp */; };
+		C80038810F0C3B210080C499 /* timer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038350F0C3B210080C499 /* timer.hpp */; };
+		C80038820F0C3B210080C499 /* utility.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038360F0C3B210080C499 /* utility.hpp */; };
+		C80038830F0C3B210080C499 /* writer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038370F0C3B210080C499 /* writer.hpp */; };
+		C80038840F0C3B210080C499 /* writer10.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038380F0C3B210080C499 /* writer10.hpp */; };
+		C80038850F0C3B210080C499 /* writer11.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038390F0C3B210080C499 /* writer11.hpp */; };
+		C80038860F0C3B210080C499 /* exception.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C800383A0F0C3B210080C499 /* exception.hpp */; };
+		C80038870F0C3B210080C499 /* guid.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C800383B0F0C3B210080C499 /* guid.hpp */; };
+		C80038880F0C3B210080C499 /* iterator.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C800383C0F0C3B210080C499 /* iterator.hpp */; };
+		C80038890F0C3B210080C499 /* laserror.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C800383D0F0C3B210080C499 /* laserror.hpp */; };
+		C800388A0F0C3B210080C499 /* lasfile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C800383E0F0C3B210080C499 /* lasfile.hpp */; };
+		C800388B0F0C3B210080C499 /* lasheader.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C800383F0F0C3B210080C499 /* lasheader.hpp */; };
+		C800388C0F0C3B210080C499 /* laspoint.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038400F0C3B210080C499 /* laspoint.hpp */; };
+		C800388D0F0C3B210080C499 /* lasreader.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038410F0C3B210080C499 /* lasreader.hpp */; };
+		C800388E0F0C3B210080C499 /* lasrecordheader.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038420F0C3B210080C499 /* lasrecordheader.hpp */; };
+		C800388F0F0C3B210080C499 /* laswriter.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038430F0C3B210080C499 /* laswriter.hpp */; };
+		C80038900F0C3B210080C499 /* liblas.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C80038440F0C3B210080C499 /* liblas.hpp */; };
+		C80038C90F0C5E5E0080C499 /* lasinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = C80038C80F0C5E5E0080C499 /* lasinfo.c */; };
+		C80038CE0F0C5F0B0080C499 /* libLAS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C80038A00F0C3C2C0080C499 /* libLAS.dylib */; };
+		C80038D20F0C5F2E0080C499 /* lascommon.c in Sources */ = {isa = PBXBuildFile; fileRef = C80038D10F0C5F2E0080C499 /* lascommon.c */; };
+		C80038E20F0C60300080C499 /* lasmerge.c in Sources */ = {isa = PBXBuildFile; fileRef = C80038E10F0C60300080C499 /* lasmerge.c */; };
+		C80038E30F0C60370080C499 /* lascommon.c in Sources */ = {isa = PBXBuildFile; fileRef = C80038D10F0C5F2E0080C499 /* lascommon.c */; };
+		C80038E50F0C60470080C499 /* libLAS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C80038A00F0C3C2C0080C499 /* libLAS.dylib */; };
+		C80039120F0C60DF0080C499 /* libLAS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C80038A00F0C3C2C0080C499 /* libLAS.dylib */; };
+		C80039140F0C60F10080C499 /* las2las.c in Sources */ = {isa = PBXBuildFile; fileRef = C80039130F0C60F10080C499 /* las2las.c */; };
+		C800391F0F0C610B0080C499 /* libLAS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C80038A00F0C3C2C0080C499 /* libLAS.dylib */; };
+		C80039200F0C61180080C499 /* lascommon.c in Sources */ = {isa = PBXBuildFile; fileRef = C80038D10F0C5F2E0080C499 /* lascommon.c */; };
+		C80039210F0C611C0080C499 /* lascommon.c in Sources */ = {isa = PBXBuildFile; fileRef = C80038D10F0C5F2E0080C499 /* lascommon.c */; };
+		C80039230F0C612F0080C499 /* las2txt.c in Sources */ = {isa = PBXBuildFile; fileRef = C80039220F0C612F0080C499 /* las2txt.c */; };
+		C800392E0F0C614C0080C499 /* lascommon.c in Sources */ = {isa = PBXBuildFile; fileRef = C80038D10F0C5F2E0080C499 /* lascommon.c */; };
+		C800392F0F0C614D0080C499 /* libLAS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C80038A00F0C3C2C0080C499 /* libLAS.dylib */; };
+		C80039310F0C61620080C499 /* txt2las.c in Sources */ = {isa = PBXBuildFile; fileRef = C80039300F0C61620080C499 /* txt2las.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C80039410F0C619C0080C499 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			remoteInfo = libLAS.dylib;
+		};
+		C80039430F0C61AA0080C499 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			remoteInfo = libLAS.dylib;
+		};
+		C80039450F0C61B30080C499 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			remoteInfo = libLAS.dylib;
+		};
+		C80039470F0C61BA0080C499 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			remoteInfo = libLAS.dylib;
+		};
+		C80039490F0C61C30080C499 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			remoteInfo = libLAS.dylib;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		C80038020F0C3B210080C499 /* file.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = file.cpp; sourceTree = "<group>"; };
+		C80038070F0C3B210080C499 /* reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reader.cpp; sourceTree = "<group>"; };
+		C800380A0F0C3B210080C499 /* reader10.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reader10.cpp; sourceTree = "<group>"; };
+		C800380D0F0C3B210080C499 /* reader11.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reader11.cpp; sourceTree = "<group>"; };
+		C80038100F0C3B210080C499 /* writer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = writer.cpp; sourceTree = "<group>"; };
+		C80038130F0C3B210080C499 /* writer10.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = writer10.cpp; sourceTree = "<group>"; };
+		C80038160F0C3B210080C499 /* writer11.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = writer11.cpp; sourceTree = "<group>"; };
+		C80038190F0C3B210080C499 /* las_c_api.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = las_c_api.cpp; sourceTree = "<group>"; };
+		C800381A0F0C3B210080C499 /* laserror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = laserror.cpp; sourceTree = "<group>"; };
+		C800381B0F0C3B210080C499 /* lasfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lasfile.cpp; sourceTree = "<group>"; };
+		C800381C0F0C3B210080C499 /* lasheader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lasheader.cpp; sourceTree = "<group>"; };
+		C800381D0F0C3B210080C499 /* laspoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = laspoint.cpp; sourceTree = "<group>"; };
+		C800381E0F0C3B210080C499 /* lasreader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lasreader.cpp; sourceTree = "<group>"; };
+		C800381F0F0C3B210080C499 /* lasrecordheader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lasrecordheader.cpp; sourceTree = "<group>"; };
+		C80038200F0C3B210080C499 /* laswriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = laswriter.cpp; sourceTree = "<group>"; };
+		C80038280F0C3B210080C499 /* las_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = las_config.h; sourceTree = "<group>"; };
+		C80038290F0C3B210080C499 /* las_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = las_version.h; sourceTree = "<group>"; };
+		C800382A0F0C3B210080C499 /* liblas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = liblas.h; sourceTree = "<group>"; };
+		C800382B0F0C3B210080C499 /* cstdint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cstdint.hpp; sourceTree = "<group>"; };
+		C800382D0F0C3B210080C499 /* endian.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = endian.hpp; sourceTree = "<group>"; };
+		C800382E0F0C3B210080C499 /* file.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = file.hpp; sourceTree = "<group>"; };
+		C800382F0F0C3B210080C499 /* fwd.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = fwd.hpp; sourceTree = "<group>"; };
+		C80038300F0C3B210080C499 /* reader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reader.hpp; sourceTree = "<group>"; };
+		C80038310F0C3B210080C499 /* reader10.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reader10.hpp; sourceTree = "<group>"; };
+		C80038320F0C3B210080C499 /* reader11.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reader11.hpp; sourceTree = "<group>"; };
+		C80038330F0C3B210080C499 /* sha1.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sha1.hpp; sourceTree = "<group>"; };
+		C80038340F0C3B210080C499 /* sharedptr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sharedptr.hpp; sourceTree = "<group>"; };
+		C80038350F0C3B210080C499 /* timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = timer.hpp; sourceTree = "<group>"; };
+		C80038360F0C3B210080C499 /* utility.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = utility.hpp; sourceTree = "<group>"; };
+		C80038370F0C3B210080C499 /* writer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = writer.hpp; sourceTree = "<group>"; };
+		C80038380F0C3B210080C499 /* writer10.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = writer10.hpp; sourceTree = "<group>"; };
+		C80038390F0C3B210080C499 /* writer11.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = writer11.hpp; sourceTree = "<group>"; };
+		C800383A0F0C3B210080C499 /* exception.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = exception.hpp; sourceTree = "<group>"; };
+		C800383B0F0C3B210080C499 /* guid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = guid.hpp; sourceTree = "<group>"; };
+		C800383C0F0C3B210080C499 /* iterator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = iterator.hpp; sourceTree = "<group>"; };
+		C800383D0F0C3B210080C499 /* laserror.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = laserror.hpp; sourceTree = "<group>"; };
+		C800383E0F0C3B210080C499 /* lasfile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lasfile.hpp; sourceTree = "<group>"; };
+		C800383F0F0C3B210080C499 /* lasheader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lasheader.hpp; sourceTree = "<group>"; };
+		C80038400F0C3B210080C499 /* laspoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = laspoint.hpp; sourceTree = "<group>"; };
+		C80038410F0C3B210080C499 /* lasreader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lasreader.hpp; sourceTree = "<group>"; };
+		C80038420F0C3B210080C499 /* lasrecordheader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lasrecordheader.hpp; sourceTree = "<group>"; };
+		C80038430F0C3B210080C499 /* laswriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = laswriter.hpp; sourceTree = "<group>"; };
+		C80038440F0C3B210080C499 /* liblas.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = liblas.hpp; sourceTree = "<group>"; };
+		C80038A00F0C3C2C0080C499 /* libLAS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libLAS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C80038C30F0C5E230080C499 /* lasinfo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lasinfo; sourceTree = BUILT_PRODUCTS_DIR; };
+		C80038C80F0C5E5E0080C499 /* lasinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lasinfo.c; path = ../../apps/lasinfo.c; sourceTree = SOURCE_ROOT; };
+		C80038D10F0C5F2E0080C499 /* lascommon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lascommon.c; path = ../../apps/lascommon.c; sourceTree = SOURCE_ROOT; };
+		C80038DC0F0C5FF10080C499 /* lasmerge */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lasmerge; sourceTree = BUILT_PRODUCTS_DIR; };
+		C80038E10F0C60300080C499 /* lasmerge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lasmerge.c; path = ../../apps/lasmerge.c; sourceTree = SOURCE_ROOT; };
+		C800390E0F0C60D10080C499 /* las2las */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = las2las; path = build/Debug/las2las; sourceTree = "<group>"; };
+		C80039130F0C60F10080C499 /* las2las.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = las2las.c; path = ../../apps/las2las.c; sourceTree = SOURCE_ROOT; };
+		C800391B0F0C60FE0080C499 /* las2txt */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = las2txt; path = build/Debug/las2txt; sourceTree = "<group>"; };
+		C80039220F0C612F0080C499 /* las2txt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = las2txt.c; path = ../../apps/las2txt.c; sourceTree = SOURCE_ROOT; };
+		C800392A0F0C613F0080C499 /* txt2las */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = txt2las; path = build/Debug/txt2las; sourceTree = "<group>"; };
+		C80039300F0C61620080C499 /* txt2las.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = txt2las.c; path = ../../apps/txt2las.c; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C80038C10F0C5E230080C499 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C80038CE0F0C5F0B0080C499 /* libLAS.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C80038DA0F0C5FF10080C499 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C80038E50F0C60470080C499 /* libLAS.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C800390C0F0C60D10080C499 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C80039120F0C60DF0080C499 /* libLAS.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C80039190F0C60FE0080C499 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C800391F0F0C610B0080C499 /* libLAS.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C80039280F0C613F0080C499 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C800392F0F0C614D0080C499 /* libLAS.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2AAC09B05546B4700DB518D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0867D691FE84028FC02AAC07 /* xcode */ = {
+			isa = PBXGroup;
+			children = (
+				C80039300F0C61620080C499 /* txt2las.c */,
+				C80039220F0C612F0080C499 /* las2txt.c */,
+				C80039130F0C60F10080C499 /* las2las.c */,
+				C80038E10F0C60300080C499 /* lasmerge.c */,
+				C80038D10F0C5F2E0080C499 /* lascommon.c */,
+				C80037E80F0C3B200080C499 /* src */,
+				C80038250F0C3B210080C499 /* include */,
+				C80038A00F0C3C2C0080C499 /* libLAS.dylib */,
+				C80038C30F0C5E230080C499 /* lasinfo */,
+				C80038C80F0C5E5E0080C499 /* lasinfo.c */,
+				C80038DC0F0C5FF10080C499 /* lasmerge */,
+				C800390E0F0C60D10080C499 /* las2las */,
+				C800391B0F0C60FE0080C499 /* las2txt */,
+				C800392A0F0C613F0080C499 /* txt2las */,
+			);
+			name = xcode;
+			sourceTree = "<group>";
+		};
+		C80037E80F0C3B200080C499 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				C80037EA0F0C3B210080C499 /* detail */,
+				C80038190F0C3B210080C499 /* las_c_api.cpp */,
+				C800381A0F0C3B210080C499 /* laserror.cpp */,
+				C800381B0F0C3B210080C499 /* lasfile.cpp */,
+				C800381C0F0C3B210080C499 /* lasheader.cpp */,
+				C800381D0F0C3B210080C499 /* laspoint.cpp */,
+				C800381E0F0C3B210080C499 /* lasreader.cpp */,
+				C800381F0F0C3B210080C499 /* lasrecordheader.cpp */,
+				C80038200F0C3B210080C499 /* laswriter.cpp */,
+			);
+			name = src;
+			path = ../../src;
+			sourceTree = SOURCE_ROOT;
+		};
+		C80037EA0F0C3B210080C499 /* detail */ = {
+			isa = PBXGroup;
+			children = (
+				C80038020F0C3B210080C499 /* file.cpp */,
+				C80038070F0C3B210080C499 /* reader.cpp */,
+				C800380A0F0C3B210080C499 /* reader10.cpp */,
+				C800380D0F0C3B210080C499 /* reader11.cpp */,
+				C80038100F0C3B210080C499 /* writer.cpp */,
+				C80038130F0C3B210080C499 /* writer10.cpp */,
+				C80038160F0C3B210080C499 /* writer11.cpp */,
+			);
+			path = detail;
+			sourceTree = "<group>";
+		};
+		C80038250F0C3B210080C499 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				C80038260F0C3B210080C499 /* liblas */,
+			);
+			name = include;
+			path = ../../include;
+			sourceTree = SOURCE_ROOT;
+		};
+		C80038260F0C3B210080C499 /* liblas */ = {
+			isa = PBXGroup;
+			children = (
+				C80038270F0C3B210080C499 /* capi */,
+				C800382B0F0C3B210080C499 /* cstdint.hpp */,
+				C800382C0F0C3B210080C499 /* detail */,
+				C800383A0F0C3B210080C499 /* exception.hpp */,
+				C800383B0F0C3B210080C499 /* guid.hpp */,
+				C800383C0F0C3B210080C499 /* iterator.hpp */,
+				C800383D0F0C3B210080C499 /* laserror.hpp */,
+				C800383E0F0C3B210080C499 /* lasfile.hpp */,
+				C800383F0F0C3B210080C499 /* lasheader.hpp */,
+				C80038400F0C3B210080C499 /* laspoint.hpp */,
+				C80038410F0C3B210080C499 /* lasreader.hpp */,
+				C80038420F0C3B210080C499 /* lasrecordheader.hpp */,
+				C80038430F0C3B210080C499 /* laswriter.hpp */,
+				C80038440F0C3B210080C499 /* liblas.hpp */,
+			);
+			path = liblas;
+			sourceTree = "<group>";
+		};
+		C80038270F0C3B210080C499 /* capi */ = {
+			isa = PBXGroup;
+			children = (
+				C80038280F0C3B210080C499 /* las_config.h */,
+				C80038290F0C3B210080C499 /* las_version.h */,
+				C800382A0F0C3B210080C499 /* liblas.h */,
+			);
+			path = capi;
+			sourceTree = "<group>";
+		};
+		C800382C0F0C3B210080C499 /* detail */ = {
+			isa = PBXGroup;
+			children = (
+				C800382D0F0C3B210080C499 /* endian.hpp */,
+				C800382E0F0C3B210080C499 /* file.hpp */,
+				C800382F0F0C3B210080C499 /* fwd.hpp */,
+				C80038300F0C3B210080C499 /* reader.hpp */,
+				C80038310F0C3B210080C499 /* reader10.hpp */,
+				C80038320F0C3B210080C499 /* reader11.hpp */,
+				C80038330F0C3B210080C499 /* sha1.hpp */,
+				C80038340F0C3B210080C499 /* sharedptr.hpp */,
+				C80038350F0C3B210080C499 /* timer.hpp */,
+				C80038360F0C3B210080C499 /* utility.hpp */,
+				C80038370F0C3B210080C499 /* writer.hpp */,
+				C80038380F0C3B210080C499 /* writer10.hpp */,
+				C80038390F0C3B210080C499 /* writer11.hpp */,
+			);
+			path = detail;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC09905546B4700DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C80038750F0C3B210080C499 /* las_config.h in Headers */,
+				C80038760F0C3B210080C499 /* las_version.h in Headers */,
+				C80038770F0C3B210080C499 /* liblas.h in Headers */,
+				C80038780F0C3B210080C499 /* cstdint.hpp in Headers */,
+				C80038790F0C3B210080C499 /* endian.hpp in Headers */,
+				C800387A0F0C3B210080C499 /* file.hpp in Headers */,
+				C800387B0F0C3B210080C499 /* fwd.hpp in Headers */,
+				C800387C0F0C3B210080C499 /* reader.hpp in Headers */,
+				C800387D0F0C3B210080C499 /* reader10.hpp in Headers */,
+				C800387E0F0C3B210080C499 /* reader11.hpp in Headers */,
+				C800387F0F0C3B210080C499 /* sha1.hpp in Headers */,
+				C80038800F0C3B210080C499 /* sharedptr.hpp in Headers */,
+				C80038810F0C3B210080C499 /* timer.hpp in Headers */,
+				C80038820F0C3B210080C499 /* utility.hpp in Headers */,
+				C80038830F0C3B210080C499 /* writer.hpp in Headers */,
+				C80038840F0C3B210080C499 /* writer10.hpp in Headers */,
+				C80038850F0C3B210080C499 /* writer11.hpp in Headers */,
+				C80038860F0C3B210080C499 /* exception.hpp in Headers */,
+				C80038870F0C3B210080C499 /* guid.hpp in Headers */,
+				C80038880F0C3B210080C499 /* iterator.hpp in Headers */,
+				C80038890F0C3B210080C499 /* laserror.hpp in Headers */,
+				C800388A0F0C3B210080C499 /* lasfile.hpp in Headers */,
+				C800388B0F0C3B210080C499 /* lasheader.hpp in Headers */,
+				C800388C0F0C3B210080C499 /* laspoint.hpp in Headers */,
+				C800388D0F0C3B210080C499 /* lasreader.hpp in Headers */,
+				C800388E0F0C3B210080C499 /* lasrecordheader.hpp in Headers */,
+				C800388F0F0C3B210080C499 /* laswriter.hpp in Headers */,
+				C80038900F0C3B210080C499 /* liblas.hpp in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		C80038C20F0C5E230080C499 /* lasinfo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C80038C70F0C5E420080C499 /* Build configuration list for PBXNativeTarget "lasinfo" */;
+			buildPhases = (
+				C80038C00F0C5E230080C499 /* Sources */,
+				C80038C10F0C5E230080C499 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C800394A0F0C61C30080C499 /* PBXTargetDependency */,
+			);
+			name = lasinfo;
+			productName = lasinfo;
+			productReference = C80038C30F0C5E230080C499 /* lasinfo */;
+			productType = "com.apple.product-type.tool";
+		};
+		C80038DB0F0C5FF10080C499 /* lasmerge */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C80038E00F0C601F0080C499 /* Build configuration list for PBXNativeTarget "lasmerge" */;
+			buildPhases = (
+				C80038D90F0C5FF10080C499 /* Sources */,
+				C80038DA0F0C5FF10080C499 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C80039480F0C61BA0080C499 /* PBXTargetDependency */,
+			);
+			name = lasmerge;
+			productName = lasmerge;
+			productReference = C80038DC0F0C5FF10080C499 /* lasmerge */;
+			productType = "com.apple.product-type.tool";
+		};
+		C800390D0F0C60D10080C499 /* las2las */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C80039150F0C60F20080C499 /* Build configuration list for PBXNativeTarget "las2las" */;
+			buildPhases = (
+				C800390B0F0C60D10080C499 /* Sources */,
+				C800390C0F0C60D10080C499 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C80039460F0C61B30080C499 /* PBXTargetDependency */,
+			);
+			name = las2las;
+			productName = las2las;
+			productReference = C800390E0F0C60D10080C499 /* las2las */;
+			productType = "com.apple.product-type.tool";
+		};
+		C800391A0F0C60FE0080C499 /* las2txt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C80039240F0C612F0080C499 /* Build configuration list for PBXNativeTarget "las2txt" */;
+			buildPhases = (
+				C80039180F0C60FE0080C499 /* Sources */,
+				C80039190F0C60FE0080C499 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C80039440F0C61AA0080C499 /* PBXTargetDependency */,
+			);
+			name = las2txt;
+			productName = las2txt;
+			productReference = C800391B0F0C60FE0080C499 /* las2txt */;
+			productType = "com.apple.product-type.tool";
+		};
+		C80039290F0C613F0080C499 /* txt2las */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C80039320F0C61620080C499 /* Build configuration list for PBXNativeTarget "txt2las" */;
+			buildPhases = (
+				C80039270F0C613F0080C499 /* Sources */,
+				C80039280F0C613F0080C499 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C80039420F0C619C0080C499 /* PBXTargetDependency */,
+			);
+			name = txt2las;
+			productName = txt2las;
+			productReference = C800392A0F0C613F0080C499 /* txt2las */;
+			productType = "com.apple.product-type.tool";
+		};
+		D2AAC09C05546B4700DB518D /* libLAS.dylib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "libLAS.dylib" */;
+			buildPhases = (
+				D2AAC09905546B4700DB518D /* Headers */,
+				D2AAC09B05546B4700DB518D /* Frameworks */,
+				D2AAC09A05546B4700DB518D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libLAS.dylib;
+			productName = libxcode;
+			productReference = C80038A00F0C3C2C0080C499 /* libLAS.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB916408733D950010E9CD /* Build configuration list for PBXProject "xcode" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* xcode */;
+			productRefGroup = 0867D691FE84028FC02AAC07 /* xcode */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC09C05546B4700DB518D /* libLAS.dylib */,
+				C80038C20F0C5E230080C499 /* lasinfo */,
+				C80038DB0F0C5FF10080C499 /* lasmerge */,
+				C800390D0F0C60D10080C499 /* las2las */,
+				C800391A0F0C60FE0080C499 /* las2txt */,
+				C80039290F0C613F0080C499 /* txt2las */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C80038C00F0C5E230080C499 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C80038C90F0C5E5E0080C499 /* lasinfo.c in Sources */,
+				C80038D20F0C5F2E0080C499 /* lascommon.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C80038D90F0C5FF10080C499 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C80038E20F0C60300080C499 /* lasmerge.c in Sources */,
+				C80038E30F0C60370080C499 /* lascommon.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C800390B0F0C60D10080C499 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C80039200F0C61180080C499 /* lascommon.c in Sources */,
+				C80039140F0C60F10080C499 /* las2las.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C80039180F0C60FE0080C499 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C80039210F0C611C0080C499 /* lascommon.c in Sources */,
+				C80039230F0C612F0080C499 /* las2txt.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C80039270F0C613F0080C499 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C800392E0F0C614C0080C499 /* lascommon.c in Sources */,
+				C80039310F0C61620080C499 /* txt2las.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2AAC09A05546B4700DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C800385E0F0C3B210080C499 /* file.cpp in Sources */,
+				C80038610F0C3B210080C499 /* reader.cpp in Sources */,
+				C80038630F0C3B210080C499 /* reader10.cpp in Sources */,
+				C80038650F0C3B210080C499 /* reader11.cpp in Sources */,
+				C80038670F0C3B210080C499 /* writer.cpp in Sources */,
+				C80038690F0C3B210080C499 /* writer10.cpp in Sources */,
+				C800386B0F0C3B210080C499 /* writer11.cpp in Sources */,
+				C800386D0F0C3B210080C499 /* las_c_api.cpp in Sources */,
+				C800386E0F0C3B210080C499 /* laserror.cpp in Sources */,
+				C800386F0F0C3B210080C499 /* lasfile.cpp in Sources */,
+				C80038700F0C3B210080C499 /* lasheader.cpp in Sources */,
+				C80038710F0C3B210080C499 /* laspoint.cpp in Sources */,
+				C80038720F0C3B210080C499 /* lasreader.cpp in Sources */,
+				C80038730F0C3B210080C499 /* lasrecordheader.cpp in Sources */,
+				C80038740F0C3B210080C499 /* laswriter.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C80039420F0C619C0080C499 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			targetProxy = C80039410F0C619C0080C499 /* PBXContainerItemProxy */;
+		};
+		C80039440F0C61AA0080C499 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			targetProxy = C80039430F0C61AA0080C499 /* PBXContainerItemProxy */;
+		};
+		C80039460F0C61B30080C499 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			targetProxy = C80039450F0C61B30080C499 /* PBXContainerItemProxy */;
+		};
+		C80039480F0C61BA0080C499 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			targetProxy = C80039470F0C61BA0080C499 /* PBXContainerItemProxy */;
+		};
+		C800394A0F0C61C30080C499 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			targetProxy = C80039490F0C61C30080C499 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB916108733D950010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"_GLIBCXX_DEBUG=1",
+					"_GLIBCXX_DEBUG_PEDANTIC=1",
+				);
+				PRODUCT_NAME = libLAS;
+			};
+			name = Debug;
+		};
+		1DEB916208733D950010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = xcode_Prefix.pch;
+				PRODUCT_NAME = libLAS;
+				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_STYLE = "non-global";
+			};
+			name = Release;
+		};
+		1DEB916508733D950010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../include\"/**";
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+				SDKROOT = macosx10.5;
+			};
+			name = Debug;
+		};
+		1DEB916608733D950010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../include\"/**";
+				PREBINDING = NO;
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+				SDKROOT = macosx10.5;
+			};
+			name = Release;
+		};
+		C80038C50F0C5E230080C499 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = lasinfo;
+			};
+			name = Debug;
+		};
+		C80038C60F0C5E230080C499 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = "\"$(SRCROOT)/../../bin\"";
+				PREBINDING = NO;
+				PRODUCT_NAME = lasinfo;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C80038DE0F0C5FF10080C499 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = lasmerge;
+			};
+			name = Debug;
+		};
+		C80038DF0F0C5FF10080C499 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = "\"$(SRCROOT)/../../bin\"";
+				PREBINDING = NO;
+				PRODUCT_NAME = lasmerge;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C80039100F0C60D20080C499 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = las2las;
+			};
+			name = Debug;
+		};
+		C80039110F0C60D20080C499 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = las2las;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C800391D0F0C60FF0080C499 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = las2txt;
+			};
+			name = Debug;
+		};
+		C800391E0F0C60FF0080C499 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = las2txt;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C800392C0F0C613F0080C499 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = txt2las;
+			};
+			name = Debug;
+		};
+		C800392D0F0C613F0080C499 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = txt2las;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "libLAS.dylib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB916108733D950010E9CD /* Debug */,
+				1DEB916208733D950010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB916408733D950010E9CD /* Build configuration list for PBXProject "xcode" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB916508733D950010E9CD /* Debug */,
+				1DEB916608733D950010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C80038C70F0C5E420080C499 /* Build configuration list for PBXNativeTarget "lasinfo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C80038C50F0C5E230080C499 /* Debug */,
+				C80038C60F0C5E230080C499 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C80038E00F0C601F0080C499 /* Build configuration list for PBXNativeTarget "lasmerge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C80038DE0F0C5FF10080C499 /* Debug */,
+				C80038DF0F0C5FF10080C499 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C80039150F0C60F20080C499 /* Build configuration list for PBXNativeTarget "las2las" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C80039100F0C60D20080C499 /* Debug */,
+				C80039110F0C60D20080C499 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C80039240F0C612F0080C499 /* Build configuration list for PBXNativeTarget "las2txt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C800391D0F0C60FF0080C499 /* Debug */,
+				C800391E0F0C60FF0080C499 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C80039320F0C61620080C499 /* Build configuration list for PBXNativeTarget "txt2las" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C800392C0F0C613F0080C499 /* Debug */,
+				C800392D0F0C613F0080C499 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}
