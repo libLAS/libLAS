@@ -89,10 +89,10 @@ bool LASWriter::WritePoint(LASPoint const& point)
     m_record.flags = point.GetScanFlags();
     m_record.classification = point.GetClassification();
     m_record.scan_angle_rank = point.GetScanAngleRank();
+    // For LAS 1.0 - File Marker; for LAS 1.1 - User Data.
     m_record.user_data = point.GetUserData();
-    // TODO: How to handle this in portable way, for LAS 1.0 and 1.1
-    m_record.point_source_id = 0;
-
+    // For LAS 1.0 - User Bit Field; for LAS 1.1 - Point Source ID.
+    m_record.point_source_id = point.GetPointSourceID();
 
     if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
         m_pimpl->WritePointRecord(m_record);

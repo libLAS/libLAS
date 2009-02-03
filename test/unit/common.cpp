@@ -103,8 +103,10 @@ void test_default_point(liblas::LASPoint const& p)
         p.GetClassification(), 0);
     ensure_equals("wrong defualt scan angle rank",
         p.GetScanAngleRank(), 0);
-    ensure_equals("wrong defualt user data value",
+    ensure_equals("wrong defualt file marker/user data value",
         p.GetUserData(), 0);
+    ensure_equals("wrong defualt user bit field/point source id value",
+        p.GetPointSourceID(), 0);
     ensure_equals("wrong defualt time",
         p.GetTime(), double(0));
 
@@ -156,6 +158,7 @@ void test_file10_point1(liblas::LASPoint const& p)
     ensure_equals(p.GetClassification(), liblas::uint8_t(1));
     ensure_equals(p.GetScanAngleRank(), 0);
     ensure_equals(p.GetUserData(), 3);
+    ensure_equals(p.GetPointSourceID(), 0);
     ensure_equals(p.GetScanFlags(), 9);
     ensure_distance(p.GetTime(), double(413665.23360000004), 0.0001);
 }
@@ -169,6 +172,7 @@ void test_file10_point2(liblas::LASPoint const& p)
     ensure_equals(p.GetClassification(), 1);
     ensure_equals(p.GetScanAngleRank(), 0);
     ensure_equals(p.GetUserData(), 3);
+    ensure_equals(p.GetPointSourceID(), 0);
     ensure_equals(p.GetScanFlags(), 9);
     ensure_distance(p.GetTime(), double(413665.52880000003), 0.0001);
 }
@@ -182,6 +186,7 @@ void test_file10_point4(liblas::LASPoint const& p)
     ensure_equals(p.GetClassification(), 1);
     ensure_equals(p.GetScanAngleRank(), 0);
     ensure_equals(p.GetUserData(), 4);
+    ensure_equals(p.GetPointSourceID(), 0);
     ensure_equals(p.GetScanFlags(), 18);
     ensure_distance(p.GetTime(), double(414093.84360000002), 0.0001);
 }

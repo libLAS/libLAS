@@ -54,8 +54,6 @@ namespace liblas {
 
 /// Definition of point data record.
 ///
-/// \todo TODO: Think about last 1-byte field in record Point Source ID (LAS 1.1)
-///
 class LASPoint
 {
 public:
@@ -134,8 +132,17 @@ public:
     int8_t GetScanAngleRank() const;
     void SetScanAngleRank(int8_t const& rank);
 
+    /// Fetch value of File Marker (LAS 1.0) or User Data (LAS 1.1).
     uint8_t GetUserData() const;
+
+    /// Set value of File Marker (LAS 1.0) or User Data (LAS 1.1).
     void SetUserData(uint8_t const& data);
+
+    /// Fetch value of User Bit Field (LAS 1.0) or Point Source ID (LAS 1.1).
+    uint16_t GetPointSourceID() const;
+
+    /// Set value of User Bit Field (LAS 1.0) or Point Source ID (LAS 1.1).
+    void SetPointSourceID(uint16_t const& id);
     
     double GetTime() const;
     void SetTime(double const& time);
@@ -158,6 +165,7 @@ private:
     uint8_t m_class;
     int8_t m_angleRank;
     uint8_t m_userData;
+    uint16_t m_pointSourceId;
     double m_gpsTime;
 
     void throw_out_of_range() const
@@ -277,6 +285,16 @@ inline int8_t LASPoint::GetScanAngleRank() const
 inline uint8_t LASPoint::GetUserData() const
 {
     return m_userData;
+}
+
+inline uint16_t LASPoint::GetPointSourceID() const
+{
+    return m_pointSourceId;
+}
+
+inline void LASPoint::SetPointSourceID(uint16_t const& id)
+{
+    m_pointSourceId = id;
 }
 
 inline double LASPoint::GetTime() const

@@ -50,17 +50,25 @@
 namespace liblas {
 
 LASPoint::LASPoint() :
-    m_intensity(0), m_flags(0), m_class(0),
-        m_angleRank(0), m_userData(0), m_gpsTime(0)
+    m_intensity(0),
+    m_flags(0),
+    m_class(0),
+    m_angleRank(0),
+    m_userData(0),
+    m_pointSourceId(0),
+    m_gpsTime(0)
 {
     std::memset(m_coords, 0, sizeof(m_coords));
 }
 
 LASPoint::LASPoint(LASPoint const& other) :
     m_intensity(other.m_intensity),
-        m_flags(other.m_flags), m_class(other.m_class),
-            m_angleRank(other.m_angleRank), m_userData(other.m_userData),
-                m_gpsTime(other.m_gpsTime)
+    m_flags(other.m_flags),
+    m_class(other.m_class),
+    m_angleRank(other.m_angleRank),
+    m_userData(other.m_userData),
+    m_pointSourceId(other.m_pointSourceId),
+    m_gpsTime(other.m_gpsTime)
 {
     std::memcpy(m_coords, other.m_coords, sizeof(m_coords));
 }
@@ -77,6 +85,7 @@ LASPoint& LASPoint::operator=(LASPoint const& rhs)
         m_class = rhs.m_class;
         m_angleRank = rhs.m_angleRank;
         m_userData = rhs.m_userData;
+        m_pointSourceId = rhs.m_pointSourceId;
         m_gpsTime = rhs.m_gpsTime;
     }
     return *this;

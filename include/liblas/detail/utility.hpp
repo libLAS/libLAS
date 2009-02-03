@@ -189,8 +189,8 @@ struct PointRecord
     uint8_t flags; // TODO: Replace with portable std::bitset<8>
     uint8_t classification;
     int8_t scan_angle_rank;
-    uint8_t user_data;
-    uint16_t point_source_id;
+    uint8_t user_data; // 1.0: File Marker / 1.1: User Data
+    uint16_t point_source_id; // 1.0: User Bit field / 1.1: Point Source ID
 };
 
 template <typename T> 

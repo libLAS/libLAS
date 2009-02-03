@@ -173,9 +173,7 @@ void LASReader::MakePoint(double const& time)
     m_point.SetClassification(m_record.classification);
     m_point.SetScanAngleRank(m_record.scan_angle_rank);
     m_point.SetUserData(m_record.user_data);
-    
-    // TODO: Should we handle m_record.point_source_id ?
-
+    m_point.SetPointSourceID(m_record.point_source_id);
     m_point.SetTime(time);
 }
 
