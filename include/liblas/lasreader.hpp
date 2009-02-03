@@ -93,7 +93,7 @@ private:
     /// \todo TODO: Should we handle m_record.point_source_id ?
     void MakePoint(double const& time);
 
-    const std::auto_ptr<detail::Reader> m_pimpl;
+    std::auto_ptr<detail::Reader> m_pimpl;
     LASHeader m_header;
     LASPoint m_point;
     detail::PointRecord m_record;

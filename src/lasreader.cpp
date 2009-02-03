@@ -142,10 +142,9 @@ LASPoint const& LASReader::operator[](std::size_t n)
 
 void LASReader::MakePIMPL(std::istream& ifs) 
 {
-    detail::Reader* ptr = detail::ReaderFactory::Create(ifs);
-    std::auto_ptr<detail::Reader>m_pimpl (ptr);
-
+    m_pimpl = std::auto_ptr<detail::Reader>( detail::ReaderFactory::Create(ifs) );
 }
+
 void LASReader::Init()
 {    
     bool ret = m_pimpl->ReadHeader(m_header);
