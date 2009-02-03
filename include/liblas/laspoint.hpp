@@ -50,8 +50,7 @@
 
 namespace liblas {
 
-/// Definition of point data record.
-///
+/// Point data record composed with X, Y, Z coordinates and attributes.
 class LASPoint
 {
 public:
@@ -109,7 +108,16 @@ public:
     uint16_t GetIntensity() const;
     void SetIntensity(uint16_t const& intensity);
 
+    /// Gets all scanning flags encoded as single byte.
+    /// The flags are (mandatory):
+    /// - Return Number (bits 0, 1, 2);
+    /// - Number of Returns - given pulse (bits 3, 4, 5);
+    /// - Scan Direction Flag (bit 6);
+    /// - Edge of Flight Line (bit 7).
     uint8_t GetScanFlags() const;
+
+    /// Sets all scanning flags passed as a single byte.
+    /// \sa Documentation of GetScanFlags method for flags details.
     void SetScanFlags(uint8_t const& flags);
     
     uint16_t GetReturnNumber() const;
@@ -145,7 +153,14 @@ public:
     double GetTime() const;
     void SetTime(double const& time);
 
+    /// Index operator providing access to XYZ coordinates of point record.
+    /// Valid index values are 0, 1 or 2.
+    /// \exception std::out_of_range if requested index is out of range (> 2).
     double& operator[](std::size_t const& n);
+
+    /// Const version of index operator providing access to XYZ coordinates of point record.
+    /// Valid index values are 0, 1 or 2.
+    /// \exception std::out_of_range if requested index is out of range (> 2).
     double const& operator[](std::size_t const& n) const;
 
     /// \todo TODO: Should we compare other data members, but not only coordinates?
@@ -172,13 +187,13 @@ private:
     }
 };
 
-/// \todo To be documented.
+/// Equal-to operator implemented in terms of LASPoint::equal method.
 inline bool operator==(LASPoint const& lhs, LASPoint const& rhs)
 {
     return lhs.equal(rhs);
 }
 
-/// \todo To be documented.
+/// Not-equal-to operator implemented in terms of LASPoint::equal method.
 inline bool operator!=(LASPoint const& lhs, LASPoint const& rhs)
 {
     return (!(lhs == rhs));

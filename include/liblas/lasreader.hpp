@@ -90,9 +90,9 @@ private:
     void Init(); // throws on error
     void MakePIMPL(std::istream& ifs);
 
-    /// \todo TODO: Should we handle m_record.point_source_id ?
     void MakePoint(double const& time);
 
+    // TODO: Consider restoring const keyword and improving idea of re-assignment (see MakePIMPL).
     std::auto_ptr<detail::Reader> m_pimpl;
     LASHeader m_header;
     LASPoint m_point;
