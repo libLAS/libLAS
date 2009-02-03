@@ -55,6 +55,7 @@
 #endif //  HAVE_LIBGEOTIFF
 // std
 #include <fstream>
+#include <iostream>
 #include <stdexcept>
 #include <cstdlib> // std::size_t
 #include <cassert>

@@ -48,8 +48,6 @@
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
 
-#include <iostream>
-
 namespace liblas {
 
 /// Definition of point data record.
