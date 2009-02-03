@@ -52,9 +52,9 @@
 namespace liblas
 {
 
-LASReader::LASReader(std::istream& ifs) :
-    m_pimpl(detail::ReaderFactory::Create(ifs))
+LASReader::LASReader(std::istream& ifs) 
 {
+    MakePIMPL(ifs);
     Init();
 }
 
@@ -140,9 +140,14 @@ LASPoint const& LASReader::operator[](std::size_t n)
     return m_point;
 }
 
-
-void LASReader::Init()
+void LASReader::MakePIMPL(std::istream& ifs) 
 {
+    detail::Reader* ptr = detail::ReaderFactory::Create(ifs);
+    std::auto_ptr<detail::Reader>m_pimpl (ptr);
+
+}
+void LASReader::Init()
+{    
     bool ret = m_pimpl->ReadHeader(m_header);
 
     if (!ret)
@@ -177,6 +182,20 @@ void LASReader::MakePoint(double const& time)
 std::istream& LASReader::GetStream() const
 {
     return m_pimpl->GetStream();
+}
+
+bool LASReader::Reset() 
+{
+    std::istream& ifs = GetStream();
+    ifs.clear();
+    ifs.seekg(0);
+    MakePIMPL(ifs);
+    return true;
+}
+
+bool LASReader::IsEOF() const
+{
+    return GetStream().eof();
 }
 
 } // namespace liblas

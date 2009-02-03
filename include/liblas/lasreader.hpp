@@ -78,6 +78,9 @@ public:
     // Allow fetching of the stream
     std::istream& GetStream() const;
     
+    bool Reset();
+    bool IsEOF() const;
+    
 private:
 
     // Blocked copying operations, declared but not defined.
@@ -85,6 +88,7 @@ private:
     LASReader& operator=(LASReader const& rhs);
 
     void Init(); // throws on error
+    void MakePIMPL(std::istream& ifs);
 
     /// \todo TODO: Should we handle m_record.point_source_id ?
     void MakePoint(double const& time);
