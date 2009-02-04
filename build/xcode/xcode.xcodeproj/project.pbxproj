@@ -72,35 +72,35 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D;
 			remoteInfo = libLAS.dylib;
 		};
 		C80039430F0C61AA0080C499 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D;
 			remoteInfo = libLAS.dylib;
 		};
 		C80039450F0C61B30080C499 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D;
 			remoteInfo = libLAS.dylib;
 		};
 		C80039470F0C61BA0080C499 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D;
 			remoteInfo = libLAS.dylib;
 		};
 		C80039490F0C61C30080C499 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* libLAS.dylib */;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D;
 			remoteInfo = libLAS.dylib;
 		};
 /* End PBXContainerItemProxy section */
@@ -155,11 +155,11 @@
 		C80038D10F0C5F2E0080C499 /* lascommon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lascommon.c; path = ../../apps/lascommon.c; sourceTree = SOURCE_ROOT; };
 		C80038DC0F0C5FF10080C499 /* lasmerge */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lasmerge; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80038E10F0C60300080C499 /* lasmerge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lasmerge.c; path = ../../apps/lasmerge.c; sourceTree = SOURCE_ROOT; };
-		C800390E0F0C60D10080C499 /* las2las */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = las2las; path = build/Debug/las2las; sourceTree = "<group>"; };
+		C800390E0F0C60D10080C499 /* las2las */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = las2las; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80039130F0C60F10080C499 /* las2las.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = las2las.c; path = ../../apps/las2las.c; sourceTree = SOURCE_ROOT; };
-		C800391B0F0C60FE0080C499 /* las2txt */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = las2txt; path = build/Debug/las2txt; sourceTree = "<group>"; };
+		C800391B0F0C60FE0080C499 /* las2txt */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = las2txt; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80039220F0C612F0080C499 /* las2txt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = las2txt.c; path = ../../apps/las2txt.c; sourceTree = SOURCE_ROOT; };
-		C800392A0F0C613F0080C499 /* txt2las */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = txt2las; path = build/Debug/txt2las; sourceTree = "<group>"; };
+		C800392A0F0C613F0080C499 /* txt2las */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = txt2las; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80039300F0C61620080C499 /* txt2las.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = txt2las.c; path = ../../apps/txt2las.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
