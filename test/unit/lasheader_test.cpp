@@ -183,7 +183,7 @@ namespace tut
 
         try
         {
-            h.SetVersionMinor(2);
+            h.SetVersionMinor(3);
             ensure("std::out_of_range not thrown", false);
         }
         catch (std::out_of_range const& e)

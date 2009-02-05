@@ -71,7 +71,7 @@ public:
         eVersionMajorMin = 1, ///< Minimum of major component
         eVersionMajorMax = 1, ///< Maximum of major component
         eVersionMinorMin = 0, ///< Minimum of minor component
-        eVersionMinorMax = 1 ///< Maximum of minor component
+        eVersionMinorMax = 2 ///< Maximum of minor component
     };
 
     /// Versions of point record format.
