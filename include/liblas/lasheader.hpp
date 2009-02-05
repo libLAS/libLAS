@@ -78,14 +78,20 @@ public:
     enum PointFormat
     {
         ePointFormat0 = 0, ///< Point Data Format \e 0
-        ePointFormat1 = 1  ///< Point Data Format \e 1
+        ePointFormat1 = 1, ///< Point Data Format \e 1
+        ePointFormat2 = 2, ///< Point Data Format \e 2
+        ePointFormat3 = 3 ///< Point Data Format \e 3
+
     };
 
     /// Number of bytes of point record storage in particular format.
     enum PointSize
     {
         ePointSize0 = 20, ///< Size of point record in data format \e 0
-        ePointSize1 = 28  ///< Size of point record in data format \e 1
+        ePointSize1 = 28, ///< Size of point record in data format \e 1
+        ePointSize2 = 26, ///< Size of point record in data format \e 2
+        ePointSize3 = 32  ///< Size of point record in data format \e 3
+
     };
 
     /// Official signature of ASPRS LAS file format, always \b "LASF".
