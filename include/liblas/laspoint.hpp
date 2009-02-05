@@ -149,7 +149,25 @@ public:
 
     /// Set value of User Bit Field (LAS 1.0) or Point Source ID (LAS 1.1).
     void SetPointSourceID(uint16_t const& id);
-    
+
+    /// Fetch value of the red image channel value associated with this point (LAS 1.2)
+    uint16_t GetRed() const;
+
+    /// Set value of the red image channel value associated with this point (LAS 1.2)
+    void SetRed(uint16_t const& value);
+
+    /// Fetch value of the blue image channel value associated with this point (LAS 1.2)
+    uint16_t GetBlue() const;
+
+    /// Set value of the blue image channel value associated with this point (LAS 1.2)
+    void SetBlue(uint16_t const& value);
+
+    /// Fetch value of the green image channel value associated with this point (LAS 1.2)
+    uint16_t GetGreen() const;
+
+    /// Set value of the red image channel value associated with this point (LAS 1.2)
+    void SetGreen(uint16_t const& value);
+                
     double GetTime() const;
     void SetTime(double const& time);
 
@@ -180,6 +198,9 @@ private:
     uint8_t m_userData;
     uint16_t m_pointSourceId;
     double m_gpsTime;
+    uint16_t m_red;
+    uint16_t m_green;
+    uint16_t m_blue;
 
     void throw_out_of_range() const
     {
@@ -318,6 +339,36 @@ inline double LASPoint::GetTime() const
 inline void LASPoint::SetTime(double const& time)
 {
     m_gpsTime = time;
+}
+
+inline uint16_t LASPoint::GetRed() const
+{
+    return m_red;
+}
+
+inline void LASPoint::SetRed(uint16_t const& value)
+{
+    m_red = value;
+}
+
+inline uint16_t LASPoint::GetBlue() const
+{
+    return m_blue;
+}
+
+inline void LASPoint::SetBlue(uint16_t const& value)
+{
+    m_blue = value;
+}
+
+inline uint16_t LASPoint::GetGreen() const
+{
+    return m_green;
+}
+
+inline void LASPoint::SetGreen(uint16_t const& value)
+{
+    m_green = value;
 }
 
 inline double& LASPoint::operator[](std::size_t const& n)
