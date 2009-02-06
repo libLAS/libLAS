@@ -98,7 +98,7 @@ def check_value_free(result, func, cargs):
 def free_returned_char_p(result, func, cargs):
 
     size = ctypes.c_int()
-    retvalue = ctypes.string_at(result, size.value)[:]
+    retvalue = ctypes.string_at(result)
     free(result)
     return retvalue
     
@@ -144,12 +144,12 @@ else:
 
 def get_version():
     return las.LAS_GetVersion()
-
+    
+version = get_version()
 
 las.LAS_GetVersion.restype = ctypes.POINTER(ctypes.c_char)
 las.LAS_GetVersion.errcheck = free_returned_char_p
 
-version = get_version()
 las.LASError_GetLastErrorNum.restype = ctypes.c_int
 
 las.LASError_GetLastErrorMsg.restype = ctypes.POINTER(ctypes.c_char)
