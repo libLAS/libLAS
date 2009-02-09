@@ -21,9 +21,11 @@ liblas_la_SOURCES = \
     detail/reader.cpp \
     detail/reader10.cpp \
     detail/reader11.cpp \
+    detail/reader12.cpp \
     detail/writer.cpp \
     detail/writer10.cpp \
     detail/writer11.cpp \
+	detail/writer12.cpp \
     detail/file.cpp
 
 #liblas_la_LIBADD = 	detail/liblasdetail.la

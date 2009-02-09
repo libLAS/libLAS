@@ -48,6 +48,7 @@
 #include <string>
 #include <cstring> // std::memset
 #include <cassert>
+#include <iostream>
 
 namespace liblas
 {
@@ -83,6 +84,8 @@ bool LASReader::ReadNextPoint()
 {
     bool ret = false;
     double time = 0;
+    
+//    std::cout << "Format id: " << m_header.GetDataFormatId() << std::endl;
     
     if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
         ret = m_pimpl->ReadNextPoint(m_record);

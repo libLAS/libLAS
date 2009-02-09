@@ -66,6 +66,7 @@ enum LASFileVersion
 {
     eLASVersion10 = 1 * 100000 + 0, ///< LAS Format 1.0
     eLASVersion11 = 1 * 100000 + 1, ///< LAS Format 1.1
+    eLASVersion12 = 1 * 100000 + 2, ///< LAS Format 1.2
     eLASVersion20 = 2 * 100000 + 0  ///< LAS Format 2.0
 };
 

@@ -377,18 +377,28 @@ LASHeader::PointFormat LASHeader::GetDataFormatId() const
 {
     if (ePointFormat0 == m_dataFormatId)
         return ePointFormat0;
-    else
+    else if (ePointFormat1 == m_dataFormatId)
         return ePointFormat1;
+    else if (ePointFormat2 == m_dataFormatId)
+        return ePointFormat2;
+    else
+        return ePointFormat3;
 }
 
 void LASHeader::SetDataFormatId(LASHeader::PointFormat v)
 {
-    m_dataFormatId = (ePointFormat0 == v ? 0 : 1);
+    m_dataFormatId = v;
 
     if (ePointFormat0 == m_dataFormatId)
         m_dataRecordLen = ePointSize0;
-    else
+    else if (ePointFormat1 == m_dataFormatId) 
         m_dataRecordLen = ePointSize1;
+    else if (ePointFormat2 == m_dataFormatId)
+        m_dataRecordLen = ePointSize2;
+    else if (ePointFormat3 == m_dataFormatId)
+        m_dataRecordLen = ePointSize3;
+    else
+        m_dataRecordLen = ePointSize3;
 }
 
 uint16_t LASHeader::GetDataRecordLength() const
@@ -401,10 +411,20 @@ uint16_t LASHeader::GetDataRecordLength() const
         assert(ePointSize0 == m_dataRecordLen);
         return ePointSize0;
     }
-    else
+    if (ePointFormat1 == m_dataFormatId)
     {
         assert(ePointSize1 == m_dataRecordLen);
         return ePointSize1;
+    }
+    if (ePointFormat2 == m_dataFormatId)
+    {
+        assert(ePointSize2 == m_dataRecordLen);
+        return ePointSize2;
+    }
+    else
+    {
+        assert(ePointSize3 == m_dataRecordLen);
+        return ePointSize3;
     }
 }
 

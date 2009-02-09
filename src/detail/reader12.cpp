@@ -39,7 +39,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/detail/reader11.hpp>
+#include <liblas/detail/reader12.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
@@ -60,7 +60,7 @@
 #include <cstdlib> // std::size_t
 #include <cassert>
 
-namespace liblas { namespace detail { namespace v11 {
+namespace liblas { namespace detail { namespace v12 {
 
 ReaderImpl::ReaderImpl(std::istream& ifs) : Base(), m_ifs(ifs)
 {
@@ -68,7 +68,7 @@ ReaderImpl::ReaderImpl(std::istream& ifs) : Base(), m_ifs(ifs)
 
 std::size_t ReaderImpl::GetVersion() const
 {
-    return eLASVersion11;
+    return eLASVersion12;
 }
 
 bool ReaderImpl::ReadHeader(LASHeader& header)
@@ -139,7 +139,7 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     header.SetCreationYear(n2);
 
     // 14. Header Size
-    // NOTE: Size of the stanard header block must always be 227 bytes
+    // NOTE: Size of the standard header block must always be 227 bytes
     read_n(n2, m_ifs, sizeof(n2));
 
     // 15. Offset to data
@@ -157,12 +157,21 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     // 17. Point Data Format ID
     read_n(n1, m_ifs, sizeof(n1));
-    if (n1 == LASHeader::ePointFormat0)
+    if (n1 == LASHeader::ePointFormat0) {
         header.SetDataFormatId(LASHeader::ePointFormat0);
-    else if (n1 == LASHeader::ePointFormat1)
+    } 
+    else if (n1 == LASHeader::ePointFormat1) {
         header.SetDataFormatId(LASHeader::ePointFormat1);
-    else
+    }
+    else if (n1 == LASHeader::ePointFormat2) {
+        header.SetDataFormatId(LASHeader::ePointFormat2);
+    }
+    else if (n1 == LASHeader::ePointFormat3) {
+        header.SetDataFormatId(LASHeader::ePointFormat3);
+    }
+    else {
         throw std::domain_error("invalid point data format");
+    }
 
     // 18. Point Data Record Length
     // NOTE: No need to set record length because it's

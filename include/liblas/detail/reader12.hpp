@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Reader implementation for C++ libLAS 
+ * Purpose:  LAS 1.1 reader implementation for C++ libLAS 
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
@@ -38,70 +38,38 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  ****************************************************************************/
- 
+
+#ifndef LIBLAS_DETAIL_READER12_HPP_INCLUDED
+#define LIBLAS_DETAIL_READER12_HPP_INCLUDED
+
 #include <liblas/detail/reader.hpp>
-#include <liblas/detail/reader10.hpp>
-#include <liblas/detail/reader11.hpp>
-#include <liblas/detail/reader12.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
-
+#include <liblas/detail/fwd.hpp>
 // std
-#include <fstream>
-#include <cassert>
-#include <cstdlib> // std::size_t
-#include <stdexcept>
+#include <iosfwd>
 
-namespace liblas { namespace detail {
+namespace liblas { namespace detail { namespace v12 {
 
-Reader::Reader() : m_offset(0), m_current(0)
+class ReaderImpl : public Reader
 {
-}
+public:
 
-Reader::~Reader()
-{
-}
+    typedef Reader Base;
+    
+    ReaderImpl(std::istream& ifs);
+    std::size_t GetVersion() const;
+    bool ReadHeader(LASHeader& header);
+    bool ReadNextPoint(detail::PointRecord& record);
+    bool ReadNextPoint(detail::PointRecord& record, double& time);
+    bool ReadPointAt(std::size_t n, PointRecord& record);
+    bool ReadPointAt(std::size_t n, PointRecord& record, double& time);
+    bool ReadGeoreference(LASHeader& header); 
+    bool ReadVLR(LASHeader& header);
+    std::istream& GetStream() const;
+private:
 
-Reader* ReaderFactory::Create(std::istream& ifs)
-{
-    if (!ifs)
-    {
-        throw std::runtime_error("input stream state is invalid");
-    }
+    std::istream& m_ifs;
+};
 
-    // Determine version of given LAS file and
-    // instantiate appropriate reader.
-    uint8_t verMajor = 0;
-    uint8_t verMinor = 0;
-    ifs.seekg(24, std::ios::beg);
-    detail::read_n(verMajor, ifs, 1);
-    detail::read_n(verMinor, ifs, 1);
+}}} // namespace liblas::detail::v12
 
-    if (1 == verMajor && 0 == verMinor)
-    {
-        return new v10::ReaderImpl(ifs);
-    }
-    else if (1 == verMajor && 1 == verMinor)
-    {
-        return new v11::ReaderImpl(ifs);
-    }
-    else if (1 == verMajor && 2 == verMinor)
-    {
-        return new v12::ReaderImpl(ifs);
-    }
-    else if (2 == verMajor && 0 == verMinor )
-    {
-        // TODO: LAS 2.0 read/write support
-        throw std::runtime_error("LAS 2.0+ file detected but unsupported");
-    }
-
-    throw std::runtime_error("LAS file of unknown version");
-}
-
-void ReaderFactory::Destroy(Reader* p) 
-{
-    delete p;
-    p = 0;
-}
-
-}} // namespace liblas::detail
+#endif // LIBLAS_DETAIL_READER12_HPP_INCLUDED

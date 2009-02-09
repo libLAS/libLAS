@@ -90,7 +90,7 @@ public:
         ePointSize0 = 20, ///< Size of point record in data format \e 0
         ePointSize1 = 28, ///< Size of point record in data format \e 1
         ePointSize2 = 26, ///< Size of point record in data format \e 2
-        ePointSize3 = 32  ///< Size of point record in data format \e 3
+        ePointSize3 = 34  ///< Size of point record in data format \e 3
 
     };
 
