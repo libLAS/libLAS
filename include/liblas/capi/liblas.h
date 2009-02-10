@@ -59,7 +59,7 @@ typedef struct LASPointHS *LASPointH;
 typedef struct LASHeaderHS *LASHeaderH;
 typedef struct LASGuidHS *LASGuidH;
 typedef struct LASVLRHS *LASVLRH;
-
+typedef struct LASColorHS *LASColorH;
 
 LAS_C_START
 
@@ -988,6 +988,70 @@ LAS_DLL LASError LASVLR_GetData(const LASVLRH hVLR, uint8_t* data);
  *  @return LASErrorEnum
 */
 LAS_DLL LASError LASVLR_SetData(const LASVLRH hVLR, uint8_t* data, uint16_t length);
+
+
+/****************************************************************************/
+/* Color Operations                                                           */
+/****************************************************************************/
+
+/** Creates a new Color
+ *  @return a new Color
+*/
+LAS_DLL LASColorH LASColor_Create(void);
+
+/** Destroys a Color and removes it from the heap
+*/
+LAS_DLL void LASColor_Destroy(LASColorH hColor);
+
+/** Returns the red value for the color.
+ *  @return the red value for the color.
+*/
+LAS_DLL uint16_t LASColor_GetRed(const LASColorH hColor);
+
+/** Sets the red value for the color
+ *  @param hColor the opaque pointer to the LASColorH instance
+ *  @param value the value to set the red value to
+ *  @return an error number if an error occured.
+*/
+LAS_DLL LASError LASColor_SetRed(LASColorH hColor, uint16_t value);
+
+/** Returns the green value for the color.
+ *  @return the green value for the color.
+*/
+LAS_DLL uint16_t LASColor_GetGreen(const LASColorH hColor);
+
+/** Sets the green value for the color
+ *  @param hColor the opaque pointer to the LASColorH instance
+ *  @param value the value to set the green value to
+ *  @return an error number if an error occured.
+*/
+LAS_DLL LASError LASColor_SetGreen(LASColorH hColor, uint16_t value);
+
+/** Returns the blue value for the color.
+ *  @return the blue value for the color.
+*/
+LAS_DLL uint16_t LASColor_GetBlue(const LASColorH hColor);
+
+/** Sets the blue value for the color
+ *  @param hColor the opaque pointer to the LASColorH instance
+ *  @param value the value to set the blue value to
+ *  @return an error number if an error occured.
+*/
+LAS_DLL LASError LASColor_SetBlue(LASColorH hColor, uint16_t value);
+
+
+/** Returns the color for the LASPointH
+ *  @return the color for the LASPointH.
+*/
+LAS_DLL LASColorH LASPoint_GetColor(const LASPointH hPoint);
+
+/** Sets the color for the point
+ *  @param hPoint the opaque pointer to the LASPointH instance
+ *  @param hColor the opaque pointer to the LASColorH instance
+ *  @return an error number if an error occured.
+*/
+LAS_DLL LASError LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor);
+
 
 LAS_C_END
 #endif

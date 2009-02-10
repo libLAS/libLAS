@@ -58,6 +58,7 @@ typedef struct LASPointHS *LASPointH;
 typedef struct LASHeaderHS *LASHeaderH;
 typedef struct LASGuidHS *LASGuidH;
 typedef struct LASVLRHS *LASVLRH;
+typedef struct LASColorHS *LASColorH;
 
 
 
@@ -1563,6 +1564,113 @@ LAS_DLL char* LASGuid_AsString(LASGuidH hId) {
     VALIDATE_POINTER1(hId, "LASGuid_AsString", 0);
     liblas::guid* id= (liblas::guid*)hId;
     return strdup(id->to_string().c_str());
+}
+
+
+
+LAS_DLL LASColorH LASColor_Create(void) {
+    return (LASColorH) new LASColor();
+}
+
+LAS_DLL void LASColor_Destroy(LASColorH hColor){
+    VALIDATE_POINTER0(hColor, "LASColor_Destroy");
+    delete (LASColor*)hColor;
+    hColor = NULL;
+}
+
+LAS_DLL LASErrorEnum LASColor_SetRed(LASColorH hColor, liblas::uint16_t value) {
+    
+    VALIDATE_POINTER1(hColor, "LASColor_SetRed", LE_Failure);
+
+    try {
+        LASColor* color = ((LASColor*) hColor);
+        color->SetRed(value);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASColor_SetRed");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL liblas::uint16_t LASColor_GetRed(LASColorH hColor) {
+    
+    VALIDATE_POINTER1(hColor, "LASColor_GetRed", 0);
+    
+    liblas::uint16_t value = ((LASColor*) hColor)->GetRed();
+    return value;
+}
+
+LAS_DLL LASErrorEnum LASColor_SetBlue(LASColorH hColor, liblas::uint16_t value) {
+    
+    VALIDATE_POINTER1(hColor, "LASColor_SetBlue", LE_Failure);
+
+    try {
+        LASColor* color = ((LASColor*) hColor);
+        color->SetBlue(value);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASColor_SetBlue");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL liblas::uint16_t LASColor_GetBlue(LASColorH hColor) {
+    
+    VALIDATE_POINTER1(hColor, "LASColor_GetBlue", 0);
+    
+    liblas::uint16_t value = ((LASColor*) hColor)->GetBlue();
+    return value;
+}
+
+LAS_DLL LASErrorEnum LASColor_SetGreen(LASColorH hColor, liblas::uint16_t value) {
+    
+    VALIDATE_POINTER1(hColor, "LASColor_SetGreen", LE_Failure);
+
+    try {
+        LASColor* color = ((LASColor*) hColor);
+        color->SetGreen(value);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASColor_SetGreen");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL liblas::uint16_t LASColor_GetGreen(LASColorH hColor) {
+    
+    VALIDATE_POINTER1(hColor, "LASColor_GetGreen", 0);
+    
+    liblas::uint16_t value = ((LASColor*) hColor)->GetGreen();
+    return value;
+}
+
+LAS_DLL LASColorH LASPoint_GetColor(const LASPointH hPoint) {
+    VALIDATE_POINTER1(hPoint, "LASPoint_GetColor", 0);
+    
+    LASColor color = ((LASPoint*) hPoint)->GetColor();
+    return (LASColorH) new LASColor(color);
+}
+
+LAS_DLL LASErrorEnum LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor) {
+    
+    VALIDATE_POINTER1(hPoint, "LASPoint_SetColor", LE_Failure);
+    VALIDATE_POINTER1(hColor, "LASPoint_SetColor", LE_Failure);
+
+    try {
+        ((LASPoint*) hPoint)->SetColor(*((LASColor*)hColor));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetColor");
+        return LE_Failure;
+    }
+
+    return LE_None;
 }
 
 LAS_C_END

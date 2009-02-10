@@ -529,3 +529,38 @@ las.LASVLR_SetData.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ubyte)]
 las.LASVLR_SetData.errcheck = check_value
 las.LASVLR_SetData.restype = ctypes.c_int
 
+
+las.LASColor_Create.errcheck = check_void
+las.LASColor_Create.restype = ctypes.c_void_p
+
+las.LASColor_Destroy.argtypes = [ctypes.c_void_p]
+las.LASColor_Destroy.errcheck = check_void_done
+
+
+las.LASColor_GetRed.restype = ctypes.c_short
+las.LASColor_GetRed.argtypes = [ctypes.c_void_p]
+las.LASColor_GetRed.errcheck = check_value
+las.LASColor_SetRed.restype = ctypes.c_int
+las.LASColor_SetRed.argtypes = [ctypes.c_void_p, ctypes.c_short]
+las.LASColor_SetRed.errcheck = check_return
+
+las.LASColor_GetGreen.restype = ctypes.c_short
+las.LASColor_GetGreen.argtypes = [ctypes.c_void_p]
+las.LASColor_GetGreen.errcheck = check_value
+las.LASColor_SetGreen.restype = ctypes.c_int
+las.LASColor_SetGreen.argtypes = [ctypes.c_void_p, ctypes.c_short]
+las.LASColor_SetGreen.errcheck = check_return
+
+las.LASColor_GetBlue.restype = ctypes.c_short
+las.LASColor_GetBlue.argtypes = [ctypes.c_void_p]
+las.LASColor_GetBlue.errcheck = check_value
+las.LASColor_SetBlue.restype = ctypes.c_int
+las.LASColor_SetBlue.argtypes = [ctypes.c_void_p, ctypes.c_short]
+las.LASColor_SetBlue.errcheck = check_return
+
+las.LASPoint_GetColor.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetColor.errcheck = check_void
+las.LASPoint_GetColor.restype = ctypes.c_void_p
+
+las.LASPoint_SetColor.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASPoint_SetColor.errcheck = check_return

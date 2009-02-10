@@ -44,6 +44,7 @@ import core
 import datetime
 import time
 import math
+import color
 
 class Point(object):
     def __init__(self, owned=True, handle=None, copy=False):
@@ -213,3 +214,9 @@ class Point(object):
         core.las.LASPoint_SetTime(self.handle,t)
     time = property(get_time, set_time)
 
+    def get_color(self):
+        return color.Color(handle=core.las.LASPoint_GetColor(self.handle))
+    
+    def set_color(self, value):
+        return core.las.LASPoint_SetColor(self.handle, value.handle)
+    color = property(get_color, set_color)

@@ -73,4 +73,14 @@
   >>> p.intensity = 120
   >>> p.intensity
   120
-   
+  
+  >>> c = p.color
+  >>> c.red
+  0
+  >>> c.red = 124
+  >>> c.red
+  124
+  
+  >>> p.color = c
+  >>> p.color.red
+  124
