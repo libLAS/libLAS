@@ -44,6 +44,7 @@
 
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
+#include <liblas/detail/utility.hpp>
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
@@ -187,6 +188,9 @@ public:
     bool Validate() const;
     bool IsValid() const;
     
+    /// Scale the coordinates by the Offset and Scale in the given header
+    void ScaleCoordinates(const LASHeader& header);
+    
 private:
 
     static std::size_t const coords_size = 3;
@@ -198,10 +202,10 @@ private:
     uint8_t m_userData;
     uint16_t m_pointSourceId;
     double m_gpsTime;
-    uint16_t m_red;
-    uint16_t m_green;
-    uint16_t m_blue;
-
+    
+    detail::Color m_color;
+    detail::PointRecord m_rec;
+    
     void throw_out_of_range() const
     {
         throw std::out_of_range("coordinate subscript out of range");
@@ -343,32 +347,32 @@ inline void LASPoint::SetTime(double const& time)
 
 inline uint16_t LASPoint::GetRed() const
 {
-    return m_red;
+    return m_color.red;
 }
 
 inline void LASPoint::SetRed(uint16_t const& value)
 {
-    m_red = value;
+    m_color.red = value;
 }
 
 inline uint16_t LASPoint::GetBlue() const
 {
-    return m_blue;
+    return m_color.blue;
 }
 
 inline void LASPoint::SetBlue(uint16_t const& value)
 {
-    m_blue = value;
+    m_color.blue = value;
 }
 
 inline uint16_t LASPoint::GetGreen() const
 {
-    return m_green;
+    return m_color.green;
 }
 
 inline void LASPoint::SetGreen(uint16_t const& value)
 {
-    m_green = value;
+    m_color.green = value;
 }
 
 inline double& LASPoint::operator[](std::size_t const& n)

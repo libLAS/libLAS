@@ -96,7 +96,7 @@ private:
     std::auto_ptr<detail::Reader> m_pimpl;
     LASHeader m_header;
     LASPoint m_point;
-    detail::PointRecord m_record;
+//    detail::PointRecord m_record;
     std::vector<LASVLR> m_vlrs;
 
 };

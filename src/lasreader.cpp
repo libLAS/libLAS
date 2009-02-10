@@ -83,19 +83,8 @@ LASPoint const& LASReader::GetPoint() const
 bool LASReader::ReadNextPoint()
 {
     bool ret = false;
-    double time = 0;
     
-//    std::cout << "Format id: " << m_header.GetDataFormatId() << std::endl;
-    
-    if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
-        ret = m_pimpl->ReadNextPoint(m_record);
-    else
-        ret = m_pimpl->ReadNextPoint(m_record, time);
-
-    if (ret)
-    {
-        MakePoint(time);
-    }
+    ret = m_pimpl->ReadNextPoint(m_point, m_header);
 
     return ret;
 }
@@ -103,17 +92,8 @@ bool LASReader::ReadNextPoint()
 bool LASReader::ReadPointAt(std::size_t n)
 {
     bool ret = false;
-    double time = 0;
 
-    if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
-        ret = m_pimpl->ReadPointAt(n, m_record);
-    else
-        ret = m_pimpl->ReadPointAt(n, m_record, time);
-
-    if (ret)
-    {
-        MakePoint(time);
-    }
+    ret = m_pimpl->ReadPointAt(n, m_point, m_header);
 
     return ret;
 }
@@ -126,19 +106,14 @@ LASPoint const& LASReader::operator[](std::size_t n)
     }
 
     bool ret = false;
-    double time = 0;
 
-    if (m_header.GetDataFormatId() == LASHeader::ePointFormat0)
-        ret = m_pimpl->ReadPointAt(n, m_record);
-    else
-        ret = m_pimpl->ReadPointAt(n, m_record, time);
+    ret = m_pimpl->ReadPointAt(n, m_point, m_header);
 
     if (!ret)
     {
         throw std::out_of_range("no point record at given position");
     }
 
-    MakePoint(time);
 
     return m_point;
 }
@@ -165,18 +140,18 @@ void LASReader::Init()
 
 void LASReader::MakePoint(double const& time)
 {
-    double const x = m_record.x * m_header.GetScaleX() + m_header.GetOffsetX();
-    double const y = m_record.y * m_header.GetScaleY() + m_header.GetOffsetY();
-    double const z = m_record.z * m_header.GetScaleZ() + m_header.GetOffsetZ();
-
-    m_point.SetCoordinates(x, y, z);
-    m_point.SetIntensity(m_record.intensity);
-    m_point.SetScanFlags(m_record.flags);
-    m_point.SetClassification(m_record.classification);
-    m_point.SetScanAngleRank(m_record.scan_angle_rank);
-    m_point.SetUserData(m_record.user_data);
-    m_point.SetPointSourceID(m_record.point_source_id);
-    m_point.SetTime(time);
+    // double const x = m_record.x * m_header.GetScaleX() + m_header.GetOffsetX();
+    // double const y = m_record.y * m_header.GetScaleY() + m_header.GetOffsetY();
+    // double const z = m_record.z * m_header.GetScaleZ() + m_header.GetOffsetZ();
+    // 
+    // m_point.SetCoordinates(x, y, z);
+    // m_point.SetIntensity(m_record.intensity);
+    // m_point.SetScanFlags(m_record.flags);
+    // m_point.SetClassification(m_record.classification);
+    // m_point.SetScanAngleRank(m_record.scan_angle_rank);
+    // m_point.SetUserData(m_record.user_data);
+    // m_point.SetPointSourceID(m_record.point_source_id);
+    // m_point.SetTime(time);
 }
 
 std::istream& LASReader::GetStream() const

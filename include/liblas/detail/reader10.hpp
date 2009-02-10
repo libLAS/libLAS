@@ -58,10 +58,8 @@ public:
     ReaderImpl(std::istream& ifs);
     std::size_t GetVersion() const;
     bool ReadHeader(LASHeader& header);
-    bool ReadNextPoint(PointRecord& record);
-    bool ReadNextPoint(PointRecord& record, double& time);
-    bool ReadPointAt(std::size_t n, PointRecord& record);
-    bool ReadPointAt(std::size_t n, PointRecord& record, double& time);
+    bool ReadNextPoint(LASPoint& point, const LASHeader& header);
+    bool ReadPointAt(std::size_t n, LASPoint& record, const LASHeader& header);
     bool ReadVLR(LASHeader& header);
     bool ReadGeoreference(LASHeader& header); 
     std::istream& GetStream() const;

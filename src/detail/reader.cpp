@@ -62,6 +62,20 @@ Reader::~Reader()
 {
 }
 
+void Reader::FillPoint(PointRecord& record, LASPoint& point) 
+{
+    
+    point.SetX(record.x);
+    point.SetY(record.y);
+    point.SetZ(record.z);
+    point.SetIntensity(record.intensity);
+    point.SetScanFlags(record.flags);
+    point.SetClassification(record.classification);
+    point.SetScanAngleRank(record.scan_angle_rank);
+    point.SetUserData(record.user_data);
+    point.SetPointSourceID(record.point_source_id);
+}
+
 Reader* ReaderFactory::Create(std::istream& ifs)
 {
     if (!ifs)

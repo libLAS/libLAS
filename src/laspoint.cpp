@@ -56,12 +56,12 @@ LASPoint::LASPoint() :
     m_angleRank(0),
     m_userData(0),
     m_pointSourceId(0),
-    m_gpsTime(0),
-    m_red(0),
-    m_green(0),
-    m_blue(0)
+    m_gpsTime(0)
 {
     std::memset(m_coords, 0, sizeof(m_coords));
+    m_color.red = 0;
+    m_color.blue = 0;
+    m_color.green = 0;    
 }
 
 LASPoint::LASPoint(LASPoint const& other) :
@@ -71,12 +71,12 @@ LASPoint::LASPoint(LASPoint const& other) :
     m_angleRank(other.m_angleRank),
     m_userData(other.m_userData),
     m_pointSourceId(other.m_pointSourceId),
-    m_gpsTime(other.m_gpsTime),
-    m_red(other.m_red),
-    m_green(other.m_green),
-    m_blue(other.m_blue)
+    m_gpsTime(other.m_gpsTime)
 {
     std::memcpy(m_coords, other.m_coords, sizeof(m_coords));
+    m_color.red = other.m_color.red;
+    m_color.blue = other.m_color.blue;
+    m_color.green = other.m_color.green;
 }
 
 LASPoint& LASPoint::operator=(LASPoint const& rhs)
@@ -93,9 +93,9 @@ LASPoint& LASPoint::operator=(LASPoint const& rhs)
         m_userData = rhs.m_userData;
         m_pointSourceId = rhs.m_pointSourceId;
         m_gpsTime = rhs.m_gpsTime;
-        m_red = rhs.m_red;
-        m_green = rhs.m_green;
-        m_blue = rhs.m_blue;
+        m_color.red = rhs.m_color.red;
+        m_color.blue = rhs.m_color.blue;
+        m_color.green = rhs.m_color.green;
     }
     return *this;
 }
@@ -236,4 +236,16 @@ bool LASPoint::IsValid() const
 
     return true;
 }
+
+void LASPoint::ScaleCoordinates(const LASHeader& header) 
+{
+
+    double const x = GetX() * header.GetScaleX() + header.GetOffsetX();
+    double const y = GetY() * header.GetScaleY() + header.GetOffsetY();
+    double const z = GetZ() * header.GetScaleZ() + header.GetOffsetZ();
+     
+    SetCoordinates(x, y, z);
+        
+}
+
 } // namespace liblas

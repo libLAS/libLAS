@@ -59,13 +59,12 @@ public:
     virtual ~Reader();
     virtual std::size_t GetVersion() const = 0;
     virtual bool ReadHeader(LASHeader& header) = 0;
-    virtual bool ReadNextPoint(PointRecord& record) = 0;
-    virtual bool ReadNextPoint(PointRecord& record, double& time) = 0;
-    virtual bool ReadPointAt(std::size_t n, PointRecord& record) = 0;
-    virtual bool ReadPointAt(std::size_t n, PointRecord& record, double& time) = 0;
+    virtual bool ReadNextPoint(LASPoint& point, const LASHeader& header) = 0;
+    virtual bool ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& header) = 0;
     virtual bool ReadVLR(LASHeader& header) = 0;
     virtual bool ReadGeoreference(LASHeader& header) = 0; 
     virtual std::istream& GetStream() const = 0;
+    void FillPoint(PointRecord& record, LASPoint& point);
     
 protected:
     

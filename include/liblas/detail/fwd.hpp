@@ -55,6 +55,7 @@ namespace detail {
 class Reader;
 class Writer;
 struct PointRecord;
+struct Color;
 
 }} // namespace liblas::detail
 

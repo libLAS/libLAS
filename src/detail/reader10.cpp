@@ -153,13 +153,22 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     // 16. Point Data Format ID
     read_n(n1, m_ifs, sizeof(n1));
-    if (n1 == LASHeader::ePointFormat0)
+    if (n1 == LASHeader::ePointFormat0) {
         header.SetDataFormatId(LASHeader::ePointFormat0);
-    else if (n1 == LASHeader::ePointFormat1)
+    } 
+    else if (n1 == LASHeader::ePointFormat1) {
         header.SetDataFormatId(LASHeader::ePointFormat1);
-    else
+    }
+    else if (n1 == LASHeader::ePointFormat2) {
+        header.SetDataFormatId(LASHeader::ePointFormat2);
+    }
+    else if (n1 == LASHeader::ePointFormat3) {
+        header.SetDataFormatId(LASHeader::ePointFormat3);
+    }
+    else {
         throw std::domain_error("invalid point data format");
-
+    }
+    
     // 17. Point Data Record Length
     // NOTE: No need to set record length because it's
     // determined on basis of point data format.
@@ -243,7 +252,7 @@ bool ReaderImpl::ReadVLR(LASHeader& header)
 
         header.AddVLR(vlr);
     }
-    
+
     return true;
 }
 
@@ -293,7 +302,7 @@ bool ReaderImpl::ReadGeoreference(LASHeader& header)
 
             header.SetProj4(tmp);
         }
-
+        
         return true;
     }
 
@@ -302,11 +311,15 @@ bool ReaderImpl::ReadGeoreference(LASHeader& header)
     return false;
 }
 
-bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
+bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
 {
     // Read point data record format 0
 
     // TODO: Replace with compile-time assert
+    
+    detail::PointRecord record;
+    double t=0;
+    
     assert(LASHeader::ePointSize0 == sizeof(record));
 
     if (0 == m_current)
@@ -328,33 +341,43 @@ bool ReaderImpl::ReadNextPoint(detail::PointRecord& record)
             return false;
         }
 
+        Reader::FillPoint(record, point);
+        point.ScaleCoordinates(header);
+        
+        if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
+            detail::read_n(t, m_ifs, sizeof(double));
+            point.SetTime(t);
+        }
         return true;
     }
 
     return false;
 }
 
-bool ReaderImpl::ReadNextPoint(detail::PointRecord& record, double& time)
-{
-    // Read point data record format 1
+// bool ReaderImpl::ReadNextPoint(LASPoint& point, double& time)
+// {
+//     // Read point data record format 1
+// 
+//     
+//     
+//     assert(LASHeader::ePointSize1 == sizeof(record) + sizeof(time));
+// 
+//     bool hasData = ReadNextPoint(record);
+//     if (hasData)
+//     {
+//         detail::read_n(time, m_ifs, sizeof(double));
+//     }
+// 
+//     return hasData;
+// }
 
-    // TODO: Replace with compile-time assert
-    assert(LASHeader::ePointSize1 == sizeof(record) + sizeof(time));
-
-    bool hasData = ReadNextPoint(record);
-    if (hasData)
-    {
-        detail::read_n(time, m_ifs, sizeof(double));
-    }
-
-    return hasData;
-}
-
-bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record)
+bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& header)
 {
     // Read point data record format 0
 
     // TODO: Replace with compile-time assert
+    double t=0;
+    detail::PointRecord record;
     assert(LASHeader::ePointSize0 == sizeof(record));
 
     if (m_size <= n)
@@ -366,24 +389,32 @@ bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record)
     m_ifs.seekg(pos, std::ios::beg);
     detail::read_n(record, m_ifs, sizeof(record));
 
+    Reader::FillPoint(record, point);
+    point.ScaleCoordinates(header);
+    
+    if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
+        detail::read_n(t, m_ifs, sizeof(double));
+        point.SetTime(t);
+    }
+
     return true;
 }
 
-bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record, double& time)
-{
-    // Read point data record format 1
-
-    // TODO: Replace with compile-time assert
-    assert(LASHeader::ePointSize1 == sizeof(record) + sizeof(time));
-
-    bool hasData = ReadPointAt(n, record);
-    if (hasData)
-    {
-        detail::read_n(time, m_ifs, sizeof(double));
-    }
-
-    return hasData;
-}
+// bool ReaderImpl::ReadPointAt(std::size_t n, PointRecord& record, double& time)
+// {
+//     // Read point data record format 1
+// 
+//     // TODO: Replace with compile-time assert
+//     assert(LASHeader::ePointSize1 == sizeof(record) + sizeof(time));
+// 
+//     bool hasData = ReadPointAt(n, record);
+//     if (hasData)
+//     {
+//         detail::read_n(time, m_ifs, sizeof(double));
+//     }
+// 
+//     return hasData;
+// }
 
 std::istream& ReaderImpl::GetStream() const
 {
