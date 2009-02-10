@@ -64,7 +64,6 @@ public:
     virtual bool ReadVLR(LASHeader& header) = 0;
     virtual bool ReadGeoreference(LASHeader& header) = 0; 
     virtual std::istream& GetStream() const = 0;
-    void FillPoint(PointRecord& record, LASPoint& point);
     
 protected:
     
@@ -72,6 +71,7 @@ protected:
     uint32_t m_size;
     uint32_t m_current;
     uint32_t m_recordlength;
+    void FillPoint(PointRecord& record, LASPoint& point);
 
 private:
 
