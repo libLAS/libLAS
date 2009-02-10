@@ -138,22 +138,6 @@ void LASReader::Init()
     
 }
 
-void LASReader::MakePoint(double const& time)
-{
-    // double const x = m_record.x * m_header.GetScaleX() + m_header.GetOffsetX();
-    // double const y = m_record.y * m_header.GetScaleY() + m_header.GetOffsetY();
-    // double const z = m_record.z * m_header.GetScaleZ() + m_header.GetOffsetZ();
-    // 
-    // m_point.SetCoordinates(x, y, z);
-    // m_point.SetIntensity(m_record.intensity);
-    // m_point.SetScanFlags(m_record.flags);
-    // m_point.SetClassification(m_record.classification);
-    // m_point.SetScanAngleRank(m_record.scan_angle_rank);
-    // m_point.SetUserData(m_record.user_data);
-    // m_point.SetPointSourceID(m_record.point_source_id);
-    // m_point.SetTime(time);
-}
-
 std::istream& LASReader::GetStream() const
 {
     return m_pimpl->GetStream();
