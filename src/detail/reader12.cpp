@@ -45,6 +45,7 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasrecordheader.hpp>
+#include <liblas/lascolor.hpp>
 // GeoTIFF
 #ifdef HAVE_LIBGEOTIFF
 #include <geotiff.h>
@@ -232,6 +233,11 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
     // TODO: Replace with compile-time assert
 
     double t = 0;
+    uint16_t red = 0;
+    uint16_t blue = 0;
+    uint16_t green = 0;
+    LASColor color;
+
     detail::PointRecord record;
     assert(LASHeader::ePointSize0 == sizeof(record));
 
@@ -255,14 +261,32 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
         }
         
         Reader::FillPoint(record, point);
-        point.ScaleCoordinates(header);
-    
-        // TODO: not working yet for the various point formats
-        // if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
-        //     detail::read_n(t, m_ifs, sizeof(double));
-        //     point.SetTime(t);
-        // }
-        
+        point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
+
+        if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
+            detail::read_n(t, m_ifs, sizeof(double));
+            point.SetTime(t);
+        } else if (header.GetDataFormatId() == LASHeader::ePointFormat2) {
+            detail::read_n(red, m_ifs, sizeof(uint16_t));
+            detail::read_n(blue, m_ifs, sizeof(uint16_t));
+            detail::read_n(green, m_ifs, sizeof(uint16_t));
+            color.SetRed(red);
+            color.SetBlue(blue);
+            color.SetGreen(green);
+            point.SetColor(color);
+        } else if (header.GetDataFormatId() == LASHeader::ePointFormat3) {
+            detail::read_n(t, m_ifs, sizeof(double));
+            point.SetTime(t);
+            detail::read_n(red, m_ifs, sizeof(uint16_t));
+            detail::read_n(blue, m_ifs, sizeof(uint16_t));
+            detail::read_n(green, m_ifs, sizeof(uint16_t));
+            color.SetRed(red);
+            color.SetBlue(blue);
+            color.SetGreen(green);
+            point.SetColor(color);
+        }
+             
+                
         return true;
     }
 
@@ -276,6 +300,11 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     // TODO: Replace with compile-time assert
     
     double t = 0;
+    uint16_t red = 0;
+    uint16_t blue = 0;
+    uint16_t green = 0;
+    LASColor color;
+
     detail::PointRecord record;
     assert(LASHeader::ePointSize0 == sizeof(record));
 
@@ -289,12 +318,31 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     detail::read_n(record, m_ifs, sizeof(record));
 
     Reader::FillPoint(record, point);
-    point.ScaleCoordinates(header);
+    point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
 
     if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
         detail::read_n(t, m_ifs, sizeof(double));
         point.SetTime(t);
+    } else if (header.GetDataFormatId() == LASHeader::ePointFormat2) {
+        detail::read_n(red, m_ifs, sizeof(uint16_t));
+        detail::read_n(blue, m_ifs, sizeof(uint16_t));
+        detail::read_n(green, m_ifs, sizeof(uint16_t));
+        color.SetRed(red);
+        color.SetBlue(blue);
+        color.SetGreen(green);
+        point.SetColor(color);
+    } else if (header.GetDataFormatId() == LASHeader::ePointFormat3) {
+        detail::read_n(t, m_ifs, sizeof(double));
+        point.SetTime(t);
+        detail::read_n(red, m_ifs, sizeof(uint16_t));
+        detail::read_n(blue, m_ifs, sizeof(uint16_t));
+        detail::read_n(green, m_ifs, sizeof(uint16_t));
+        color.SetRed(red);
+        color.SetBlue(blue);
+        color.SetGreen(green);
+        point.SetColor(color);
     }
+             
         
     return true;
 }

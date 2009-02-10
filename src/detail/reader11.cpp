@@ -255,7 +255,7 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
         }
 
         Reader::FillPoint(record, point);
-        point.ScaleCoordinates(header);
+        point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
     
         if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
             detail::read_n(t, m_ifs, sizeof(double));
@@ -288,7 +288,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     detail::read_n(record, m_ifs, sizeof(record));
 
     Reader::FillPoint(record, point);
-    point.ScaleCoordinates(header);
+    point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
     
     if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
         detail::read_n(t, m_ifs, sizeof(double));

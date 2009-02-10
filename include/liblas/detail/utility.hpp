@@ -193,17 +193,6 @@ struct PointRecord
     uint16_t point_source_id; // 1.0: User Bit field / 1.1: Point Source ID
 };
 
-struct Color
-{
-    Color() :
-        red(0), blue(0), green(0) 
-    {}
-    
-    uint16_t red;
-    uint16_t blue;
-    uint16_t green;
-};
-
 template <typename T> 
 bool compare_distance(const T& actual, const T& expected);
 

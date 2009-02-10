@@ -2,12 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS reader class 
+ * Purpose:  LAS color class 
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
  * Copyright (c) 2008, Mateusz Loskot
- * Copyright (c) 2008, Phil Vachon
  *
  * All rights reserved.
  * 
@@ -40,64 +39,39 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_LASREADER_HPP_INCLUDED
-#define LIBLAS_LASREADER_HPP_INCLUDED
+#include <liblas/lascolor.hpp>
+#include <liblas/cstdint.hpp>
 
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lasrecordheader.hpp>
-#include <liblas/detail/fwd.hpp>
 // std
-#include <iosfwd>
-#include <string>
-#include <memory>
-#include <cstdlib> // std::size_t
+#include <cstring>
 
 namespace liblas {
 
-/// \todo To be documented.
-class LASReader
+LASColor::LASColor() :
+    m_red(0),
+    m_green(0),
+    m_blue(0)
 {
-public:
+}
 
-    LASReader(std::istream& ifs);
-    ~LASReader();
-    
-    std::size_t GetVersion() const;
-    LASHeader const& GetHeader() const;
-    LASPoint const& GetPoint() const;
-    std::vector<LASVLR> const& GetVLRs() const;
-    
-    bool ReadNextPoint();
-    bool ReadPointAt(std::size_t n);
-    bool ReadVLR();
+LASColor::LASColor(LASColor const& other) :
+    m_red(other.m_red),
+    m_green(other.m_green),
+    m_blue(other.m_blue)
+{
+}
 
-    // The operator is not const because it updates file stream position.
-    LASPoint const& operator[](std::size_t n);
+LASColor& LASColor::operator=(LASColor const& rhs)
+{
+    if (&rhs != this)
+    {
+        m_red = rhs.m_red;
+        m_green = rhs.m_green;
+        m_blue = rhs.m_blue;
+    }
+    return *this;
+}
 
-    // Allow fetching of the stream
-    std::istream& GetStream() const;
-    
-    bool Reset();
-    bool IsEOF() const;
-    
-private:
 
-    // Blocked copying operations, declared but not defined.
-    LASReader(LASReader const& other);
-    LASReader& operator=(LASReader const& rhs);
-
-    void Init(); // throws on error
-    void MakePIMPL(std::istream& ifs);
-
-    // TODO: Consider restoring const keyword and improving idea of re-assignment (see MakePIMPL).
-    std::auto_ptr<detail::Reader> m_pimpl;
-    LASHeader m_header;
-    LASPoint m_point;
-    std::vector<LASVLR> m_vlrs;
-
-};
 
 } // namespace liblas
-
-#endif // ndef LIBLAS_LASREADER_HPP_INCLUDED

@@ -45,6 +45,7 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
+#include <liblas/lascolor.hpp>
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
@@ -151,23 +152,12 @@ public:
     /// Set value of User Bit Field (LAS 1.0) or Point Source ID (LAS 1.1).
     void SetPointSourceID(uint16_t const& id);
 
-    /// Fetch value of the red image channel value associated with this point (LAS 1.2)
-    uint16_t GetRed() const;
+    /// Fetch color value associated with this point (LAS 1.2)
+    LASColor const& GetColor() const;
 
-    /// Set value of the red image channel value associated with this point (LAS 1.2)
-    void SetRed(uint16_t const& value);
+    /// Set color value associated with this point (LAS 1.2)
+    void SetColor(LASColor const& value);
 
-    /// Fetch value of the blue image channel value associated with this point (LAS 1.2)
-    uint16_t GetBlue() const;
-
-    /// Set value of the blue image channel value associated with this point (LAS 1.2)
-    void SetBlue(uint16_t const& value);
-
-    /// Fetch value of the green image channel value associated with this point (LAS 1.2)
-    uint16_t GetGreen() const;
-
-    /// Set value of the red image channel value associated with this point (LAS 1.2)
-    void SetGreen(uint16_t const& value);
                 
     double GetTime() const;
     void SetTime(double const& time);
@@ -188,9 +178,7 @@ public:
     bool Validate() const;
     bool IsValid() const;
     
-    /// Scale the coordinates by the Offset and Scale in the given header
-    void ScaleCoordinates(const LASHeader& header);
-    
+
 private:
 
     static std::size_t const coords_size = 3;
@@ -203,7 +191,7 @@ private:
     uint16_t m_pointSourceId;
     double m_gpsTime;
     
-    detail::Color m_color;
+    LASColor m_color;
     detail::PointRecord m_rec;
     
     void throw_out_of_range() const
@@ -345,35 +333,16 @@ inline void LASPoint::SetTime(double const& time)
     m_gpsTime = time;
 }
 
-inline uint16_t LASPoint::GetRed() const
+inline LASColor const& LASPoint::GetColor() const
 {
-    return m_color.red;
+    return m_color;
 }
 
-inline void LASPoint::SetRed(uint16_t const& value)
+inline void LASPoint::SetColor(LASColor const& value)
 {
-    m_color.red = value;
+    m_color = value;
 }
 
-inline uint16_t LASPoint::GetBlue() const
-{
-    return m_color.blue;
-}
-
-inline void LASPoint::SetBlue(uint16_t const& value)
-{
-    m_color.blue = value;
-}
-
-inline uint16_t LASPoint::GetGreen() const
-{
-    return m_color.green;
-}
-
-inline void LASPoint::SetGreen(uint16_t const& value)
-{
-    m_color.green = value;
-}
 
 inline double& LASPoint::operator[](std::size_t const& n)
 {

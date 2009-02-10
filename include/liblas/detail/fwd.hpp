@@ -49,6 +49,7 @@ class LASHeader;
 class LASPoint;
 class LASReader;
 class LASWriter;
+class LASColor;
 
 namespace detail {
 
