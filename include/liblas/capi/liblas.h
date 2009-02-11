@@ -95,6 +95,9 @@ typedef struct  {
     uint16_t numret;
     uint16_t scandir;
     uint16_t fedge;
+    uint16_t red;
+    uint16_t green;
+    uint16_t blue;
     long rgpsum;    
     int number_of_point_records;
     int number_of_points_by_return[8];
