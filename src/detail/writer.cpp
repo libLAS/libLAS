@@ -42,6 +42,7 @@
 #include <liblas/detail/writer.hpp>
 #include <liblas/detail/writer10.hpp>
 #include <liblas/detail/writer11.hpp>
+#include <liblas/detail/writer12.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 // std
@@ -90,6 +91,10 @@ Writer* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
     if (1 == major && 1 == minor)
     {
         return new v11::WriterImpl(ofs);
+    }
+    if (1 == major && 2 == minor)
+    {
+        return new v12::WriterImpl(ofs);
     }
     else if (2 == major && 0 == minor)
     {

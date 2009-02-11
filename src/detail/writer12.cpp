@@ -127,7 +127,7 @@ void WriterImpl::WriteHeader(LASHeader& header)
     
     // 9. Version minor
     n1 = header.GetVersionMinor();
-    assert(1 == n1);
+    assert(2 == n1);
     detail::write_n(m_ofs, n1, sizeof(n1));
 
     // 10. System ID
