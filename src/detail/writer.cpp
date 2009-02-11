@@ -60,6 +60,18 @@ Writer::~Writer()
 {
 }
 
+void Writer::FillPointRecord(PointRecord& record, const LASPoint& point) 
+{
+    record.x = point.GetX();
+    record.y = point.GetY();
+    record.z = point.GetZ();
+    record.intensity = point.GetIntensity();
+    record.flags = point.GetScanFlags();
+    record.classification = point.GetClassification();
+    record.scan_angle_rank = point.GetScanAngleRank();
+    record.user_data = point.GetUserData();
+    record.point_source_id = point.GetPointSourceID();
+}
 Writer* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
 {
     if (!ofs)

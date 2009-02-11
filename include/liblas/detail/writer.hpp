@@ -43,6 +43,8 @@
 #define LIBLAS_DETAIL_WRITER_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
+#include <liblas/detail/utility.hpp>
+
 // std
 #include <iosfwd>
 
@@ -57,10 +59,13 @@ public:
     virtual std::size_t GetVersion() const = 0;
     virtual void WriteHeader(LASHeader& header) = 0;
     virtual void UpdateHeader(LASHeader const& header) = 0;
-    virtual void WritePointRecord(PointRecord const& record) = 0;
-    virtual void WritePointRecord(PointRecord const& record, double const& time) = 0;    
+    virtual void WritePointRecord(LASPoint const& point, const LASHeader& header) = 0;
     virtual void WriteVLR(LASHeader const& header) = 0;
     virtual std::ostream& GetStream() const = 0;
+
+protected:
+    PointRecord m_record;
+    void FillPointRecord(PointRecord& record, const LASPoint& point);
 
 private:
 

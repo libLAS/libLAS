@@ -60,8 +60,8 @@ public:
     std::size_t GetVersion() const;
     void WriteHeader(LASHeader& header);
     void UpdateHeader(LASHeader const& header);
-    void WritePointRecord(PointRecord const& record);
-    void WritePointRecord(PointRecord const& record, double const& time);
+    void WritePointRecord(LASPoint const& record, const LASHeader& header);
+//    void WritePointRecord(PointRecord const& record, double const& time);
     void WriteVLR(LASHeader const& header);
     std::ostream& GetStream() const;
 

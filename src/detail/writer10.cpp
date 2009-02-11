@@ -227,25 +227,32 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
     }
 }
 
-void WriterImpl::WritePointRecord(detail::PointRecord const& record)
+void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header)
 {
     // TODO: Static assert would be better
-    assert(20 == sizeof(record));
-    detail::write_n(m_ofs, record, sizeof(record));
+    
+    double t = 0;
+    assert(LASHeader::ePointSize0 == sizeof(m_record));
+    Writer::FillPointRecord(m_record, point);
+    detail::write_n(m_ofs, m_record, sizeof(m_record));
 
+    if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
+        t = point.GetTime();
+        detail::write_n(m_ofs, t, sizeof(double));
+    }
     ++m_pointCount;
 }
 
-void WriterImpl::WritePointRecord(detail::PointRecord const& record, double const& time)
-{
-    // TODO: Static assert would be better
-    assert(28 == sizeof(record) + sizeof(time));
-
-    // Write point data record format 1
-    WritePointRecord(record);
-
-    detail::write_n(m_ofs, time, sizeof(double));
-}
+// void WriterImpl::WritePointRecord(detail::PointRecord const& record, double const& time)
+// {
+//     // TODO: Static assert would be better
+//     assert(28 == sizeof(record) + sizeof(time));
+// 
+//     // Write point data record format 1
+//     WritePointRecord(record);
+// 
+//     detail::write_n(m_ofs, time, sizeof(double));
+// }
 
 void WriterImpl::WriteVLR(LASHeader const& header) 
 {
