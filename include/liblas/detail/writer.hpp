@@ -65,7 +65,7 @@ public:
 
 protected:
     PointRecord m_record;
-    void FillPointRecord(PointRecord& record, const LASPoint& point);
+    void FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header);
 
 private:
 

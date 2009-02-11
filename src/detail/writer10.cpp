@@ -233,7 +233,7 @@ void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header
     
     double t = 0;
     assert(LASHeader::ePointSize0 == sizeof(m_record));
-    Writer::FillPointRecord(m_record, point);
+    Writer::FillPointRecord(m_record, point, header);
     detail::write_n(m_ofs, m_record, sizeof(m_record));
 
     if (header.GetDataFormatId() == LASHeader::ePointFormat1) {

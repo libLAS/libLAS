@@ -60,11 +60,11 @@ Writer::~Writer()
 {
 }
 
-void Writer::FillPointRecord(PointRecord& record, const LASPoint& point) 
+void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header) 
 {
-    record.x = point.GetX();
-    record.y = point.GetY();
-    record.z = point.GetZ();
+    record.x = static_cast<uint32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
+    record.y = static_cast<uint32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
+    record.z = static_cast<uint32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
     record.intensity = point.GetIntensity();
     record.flags = point.GetScanFlags();
     record.classification = point.GetClassification();
