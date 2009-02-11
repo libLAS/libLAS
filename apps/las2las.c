@@ -27,6 +27,7 @@ void repair_header(FILE *file, LASHeaderH header, LASPointSummary* summary) ;
 
 #define LAS_FORMAT_10 0
 #define LAS_FORMAT_11 1
+#define LAS_FORMAT_12 2
 
 void usage()
 {
@@ -202,8 +203,11 @@ int main(int argc, char *argv[])
             else if (strcmp(argv[i], "1.1") == 0) {
                 format = LAS_FORMAT_11;
             } 
+            else if (strcmp(argv[i], "1.2") == 0) {
+                format = LAS_FORMAT_12;
+            }
             else {
-                LASError_Print("Format must be specified as 1.0 or 1.1");
+                LASError_Print("Format must be specified as 1.0, 1.1, or 1.2");
             }
 
         }
@@ -624,9 +628,12 @@ int main(int argc, char *argv[])
     
     if (format == LAS_FORMAT_10) {
         LASHeader_SetVersionMinor(surviving_header, 0);
-    } else {
+    } else if (format == LAS_FORMAT_11){
         LASHeader_SetVersionMinor(surviving_header, 1);
+    } else if (format == LAS_FORMAT_12) {
+        LASHeader_SetVersionMinor(surviving_header, 2);
     }
+    
 
 /*  if (remove_extra_header) surviving_header.offset_to_point_data = surviving_header.header_size;
 */
