@@ -55,7 +55,7 @@ class Reader
 {
 public:
 
-    Reader();
+    Reader(std::istream& ifs);
     virtual ~Reader();
     virtual std::size_t GetVersion() const = 0;
     virtual bool ReadHeader(LASHeader& header) = 0;
@@ -63,14 +63,16 @@ public:
     virtual bool ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& header) = 0;
     virtual bool ReadVLR(LASHeader& header) = 0;
     virtual bool ReadGeoreference(LASHeader& header) = 0; 
-    virtual std::istream& GetStream() const = 0;
+    std::istream& GetStream() const;
     
 protected:
     
+    std::istream& m_ifs;
     std::streamoff m_offset;
     uint32_t m_size;
     uint32_t m_current;
     uint32_t m_recordlength;
+
     void FillPoint(PointRecord& record, LASPoint& point);
 
 private:

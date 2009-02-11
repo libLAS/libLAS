@@ -62,7 +62,6 @@ public:
     virtual void WritePointRecord(LASPoint const& point, const LASHeader& header) = 0;
     virtual void WriteVLR(LASHeader const& header) = 0;
     std::ostream& GetStream() const;
-    void SetStream(std::ostream& stream);
 
 protected:
     PointRecord m_record;

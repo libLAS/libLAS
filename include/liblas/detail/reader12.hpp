@@ -62,10 +62,7 @@ public:
     bool ReadPointAt(std::size_t n, LASPoint& record, const LASHeader& header);
     bool ReadGeoreference(LASHeader& header); 
     bool ReadVLR(LASHeader& header);
-    std::istream& GetStream() const;
-private:
 
-    std::istream& m_ifs;
 };
 
 }}} // namespace liblas::detail::v12

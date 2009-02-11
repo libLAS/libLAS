@@ -54,7 +54,7 @@
 
 namespace liblas { namespace detail {
 
-Reader::Reader() : m_offset(0), m_current(0)
+Reader::Reader(std::istream& ifs) : m_ifs(ifs), m_offset(0), m_current(0)
 {
 }
 
@@ -62,6 +62,10 @@ Reader::~Reader()
 {
 }
 
+std::istream& Reader::GetStream() const
+{
+    return m_ifs;
+}
 void Reader::FillPoint(PointRecord& record, LASPoint& point) 
 {
     

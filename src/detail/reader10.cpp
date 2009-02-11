@@ -62,7 +62,7 @@
 
 namespace liblas { namespace detail { namespace v10 {
 
-ReaderImpl::ReaderImpl(std::istream& ifs) : Base(), m_ifs(ifs)
+ReaderImpl::ReaderImpl(std::istream& ifs) : Base(ifs)
 {
 }
 
@@ -382,11 +382,6 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     }
 
     return true;
-}
-
-std::istream& ReaderImpl::GetStream() const
-{
-    return m_ifs;
 }
 
 }}} // namespace liblas::detail::v10
