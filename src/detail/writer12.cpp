@@ -54,7 +54,7 @@
 namespace liblas { namespace detail { namespace v12 {
 
 WriterImpl::WriterImpl(std::ostream& ofs) :
-    Base(), m_ofs(ofs), m_pointCount(0)
+    Base(ofs), m_pointCount(0)
 {
 }
 
@@ -269,18 +269,6 @@ void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header
     ++m_pointCount;
 }
 
-// 
-// void WriterImpl::WritePointRecord(detail::PointRecord const& record, double const& time)
-// {
-//     // TODO: Static assert would be better
-//     assert(28 == sizeof(record) + sizeof(time));
-// 
-//     // Write point data record format 1
-//     WritePointRecord(record);
-// 
-//     detail::write_n(m_ofs, time, sizeof(double));
-// }
-
 void WriterImpl::WriteVLR(LASHeader const& header) 
 {
     m_ofs.seekp(header.GetHeaderSize(), std::ios::beg);
@@ -300,10 +288,6 @@ void WriterImpl::WriteVLR(LASHeader const& header)
     }
 }
 
-std::ostream& WriterImpl::GetStream() const
-{
-    return m_ofs;
-}
 
 }}} // namespace liblas::detail::v12
 

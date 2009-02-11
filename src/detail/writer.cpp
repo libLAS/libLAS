@@ -53,7 +53,7 @@
 
 namespace liblas { namespace detail {
 
-Writer::Writer()
+Writer::Writer(std::ostream& ofs) : m_ofs(ofs)
 {
 }
 
@@ -61,11 +61,16 @@ Writer::~Writer()
 {
 }
 
+std::ostream& Writer::GetStream() const
+{
+    return m_ofs;
+}
+
 void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header) 
 {
-    record.x = static_cast<uint32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
-    record.y = static_cast<uint32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
-    record.z = static_cast<uint32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
+    record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
+    record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
+    record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
     record.intensity = point.GetIntensity();
     record.flags = point.GetScanFlags();
     record.classification = point.GetClassification();
@@ -73,6 +78,26 @@ void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const L
     record.user_data = point.GetUserData();
     record.point_source_id = point.GetPointSourceID();
 }
+
+void Writer::WriteVLR(LASHeader const& header) 
+{
+    m_ofs.seekp(header.GetHeaderSize(), std::ios::beg);
+
+    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
+    {
+        LASVLR vlr = header.GetVLR(i);
+
+        detail::write_n(m_ofs, vlr.GetReserved(), sizeof(uint16_t));
+        detail::write_n(m_ofs, vlr.GetUserId(true).c_str(), 16);
+        detail::write_n(m_ofs, vlr.GetRecordId(), sizeof(uint16_t));
+        detail::write_n(m_ofs, vlr.GetRecordLength(), sizeof(uint16_t));
+        detail::write_n(m_ofs, vlr.GetDescription(true).c_str(), 32);
+        std::vector<uint8_t> const& data = vlr.GetData();
+        std::streamsize const size = static_cast<std::streamsize>(data.size());
+        detail::write_n(m_ofs, data.front(), size);
+    }
+}
+
 Writer* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
 {
     if (!ofs)

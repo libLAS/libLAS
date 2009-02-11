@@ -54,24 +54,30 @@ class Writer
 {
 public:
 
-    Writer();
+    Writer(std::ostream& ofs);
     virtual ~Writer();
     virtual std::size_t GetVersion() const = 0;
     virtual void WriteHeader(LASHeader& header) = 0;
     virtual void UpdateHeader(LASHeader const& header) = 0;
     virtual void WritePointRecord(LASPoint const& point, const LASHeader& header) = 0;
     virtual void WriteVLR(LASHeader const& header) = 0;
-    virtual std::ostream& GetStream() const = 0;
+    std::ostream& GetStream() const;
+    void SetStream(std::ostream& stream);
 
 protected:
     PointRecord m_record;
+    std::ostream& m_ofs;
+
     void FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header);
+
 
 private:
 
     // Blocked copying operations, declared but not defined.
     Writer(Writer const& other);
     Writer& operator=(Writer const& rhs);
+
+    
 };
 
 class WriterFactory

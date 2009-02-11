@@ -61,13 +61,10 @@ public:
     void WriteHeader(LASHeader& header);
     void UpdateHeader(LASHeader const& header);
     void WritePointRecord(LASPoint const& record, const LASHeader& header);
-//    void WritePointRecord(PointRecord const& record, double const& time);
     void WriteVLR(LASHeader const& header);
-    std::ostream& GetStream() const;
 
 private:
 
-    std::ostream& m_ofs;
     liblas::uint32_t m_pointCount;
 };
 
