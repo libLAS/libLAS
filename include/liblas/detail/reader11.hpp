@@ -60,8 +60,6 @@ public:
     bool ReadHeader(LASHeader& header);
     bool ReadNextPoint(LASPoint& point, const LASHeader& header);
     bool ReadPointAt(std::size_t n, LASPoint& record, const LASHeader& header);
-    bool ReadGeoreference(LASHeader& header); 
-    bool ReadVLR(LASHeader& header);
 
 };
 

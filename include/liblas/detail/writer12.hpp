@@ -61,7 +61,6 @@ public:
     void WriteHeader(LASHeader& header);
     void UpdateHeader(LASHeader const& header);
     void WritePointRecord(LASPoint const& record, const LASHeader& header);
-    void WriteVLR(LASHeader const& header);
     
 private:
 

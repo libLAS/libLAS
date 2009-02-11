@@ -66,6 +66,7 @@ std::ostream& Writer::GetStream() const
     return m_ofs;
 }
 
+
 void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header) 
 {
     record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());

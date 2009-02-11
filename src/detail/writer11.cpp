@@ -244,25 +244,5 @@ void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header
     ++m_pointCount;
 }
 
-
-void WriterImpl::WriteVLR(LASHeader const& header) 
-{
-    m_ofs.seekp(header.GetHeaderSize(), std::ios::beg);
- 
-    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
-    {
-        LASVLR vlr = header.GetVLR(i);
-        
-        detail::write_n(m_ofs, vlr.GetReserved(), sizeof(uint16_t));
-        detail::write_n(m_ofs, vlr.GetUserId(true).c_str(), 16);
-        detail::write_n(m_ofs, vlr.GetRecordId(), sizeof(uint16_t));
-        detail::write_n(m_ofs, vlr.GetRecordLength(), sizeof(uint16_t));
-        detail::write_n(m_ofs, vlr.GetDescription(true).c_str(), 32);
-        std::vector<uint8_t> const& data = vlr.GetData();
-        std::streamsize const size = static_cast<std::streamsize>(data.size());
-        detail::write_n(m_ofs, data.front(), size);
-    }
-}
-
 }}} // namespace liblas::detail::v11
 

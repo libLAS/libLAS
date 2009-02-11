@@ -61,9 +61,10 @@ public:
     virtual bool ReadHeader(LASHeader& header) = 0;
     virtual bool ReadNextPoint(LASPoint& point, const LASHeader& header) = 0;
     virtual bool ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& header) = 0;
-    virtual bool ReadVLR(LASHeader& header) = 0;
-    virtual bool ReadGeoreference(LASHeader& header) = 0; 
+
     std::istream& GetStream() const;
+    bool ReadVLR(LASHeader& header);
+    bool ReadGeoreference(LASHeader& header);
     
 protected:
     
