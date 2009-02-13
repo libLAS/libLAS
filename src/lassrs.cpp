@@ -2,8 +2,8 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Forward declarations for C++ libLAS 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  LAS SRS class 
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
  * Copyright (c) 2008, Mateusz Loskot
@@ -39,26 +39,45 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_DETAIL_FWD_HPP_INCLUDED
-#define LIBLAS_DETAIL_FWD_HPP_INCLUDED
+#include <liblas/lassrs.hpp>
 
-// Forward declarations
 namespace liblas {
 
-class LASHeader;
-class LASPoint;
-class LASReader;
-class LASWriter;
-class LASColor;
-class LASSRS;
+LASSRS::LASSRS() 
+{
+    
+}
+// 
+// LASPoint::LASPoint(LASPoint const& other) :
+//     m_intensity(other.m_intensity),
+//     m_flags(other.m_flags),
+//     m_class(other.m_class),
+//     m_angleRank(other.m_angleRank),
+//     m_userData(other.m_userData),
+//     m_pointSourceId(other.m_pointSourceId),
+//     m_gpsTime(other.m_gpsTime)
+// {
+//     std::memcpy(m_coords, other.m_coords, sizeof(m_coords));
+// }
+// 
+// LASPoint& LASPoint::operator=(LASPoint const& rhs)
+// {
+//     if (&rhs != this)
+//     {
+//         m_coords[0] = rhs.m_coords[0];
+//         m_coords[1] = rhs.m_coords[1];
+//         m_coords[2] = rhs.m_coords[2];
+//         m_intensity = rhs.m_intensity;
+//         m_flags = rhs.m_flags;
+//         m_class = rhs.m_class;
+//         m_angleRank = rhs.m_angleRank;
+//         m_userData = rhs.m_userData;
+//         m_pointSourceId = rhs.m_pointSourceId;
+//         m_gpsTime = rhs.m_gpsTime;
+//     }
+//     return *this;
+// }
 
-namespace detail {
 
-class Reader;
-class Writer;
-struct PointRecord;
-struct Color;
 
-}} // namespace liblas::detail
-
-#endif // LIBLAS_DETAIL_FWD_HPP_INCLUDED
+} // namespace liblas

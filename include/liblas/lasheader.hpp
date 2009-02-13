@@ -47,6 +47,8 @@
 #include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasrecordheader.hpp>
+#include <liblas/lassrs.hpp>
+
 //std
 #include <string>
 #include <vector>
@@ -327,6 +329,9 @@ public:
     
 	/// Rewrite variable-length record with georeference infomation, if available.
     void SetGeoreference();
+    
+    /// Fetch the georeference
+    // LASSRS& GetSRS();
     
 private:
     

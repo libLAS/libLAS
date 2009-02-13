@@ -23,6 +23,7 @@ liblas_la_SOURCES = \
 	lasfile.cpp \
 	las_c_api.cpp \
 	lascolor.cpp \
+	lassrs.cpp \
     detail/reader.cpp \
     detail/reader10.cpp \
     detail/reader11.cpp \

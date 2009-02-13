@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Forward declarations for C++ libLAS 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  LAS SRS class 
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2009, Howard Butler
  *
  * All rights reserved.
  * 
@@ -39,26 +39,62 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_DETAIL_FWD_HPP_INCLUDED
-#define LIBLAS_DETAIL_FWD_HPP_INCLUDED
+#ifndef LIBLAS_LASSRS_HPP_INCLUDED
+#define LIBLAS_LASSRS_HPP_INCLUDED
 
-// Forward declarations
+#include <liblas/cstdint.hpp>
+#include <liblas/detail/fwd.hpp>
+#include <liblas/detail/utility.hpp>
+#include <liblas/lasheader.hpp>
+
+#include <liblas/lasheader.hpp>
+#include <liblas/cstdint.hpp>
+#include <liblas/exception.hpp>
+#include <liblas/detail/utility.hpp>
+
+// GeoTIFF
+#ifdef HAVE_LIBGEOTIFF
+#include <geotiff.h>
+#include <geo_simpletags.h>
+#include "geo_normalize.h"
+#include "geo_simpletags.h"
+#include "geovalues.h"
+#endif // HAVE_LIBGEOTIFF
+
+// std
+#include <string>
+
+
+// GDAL OSR
+#ifdef HAVE_GDAL
+#include <ogr_srs_api.h>
+#endif
+
+// std
+#include <stdexcept> // std::out_of_range
+#include <cstdlib> // std::size_t
+
 namespace liblas {
 
-class LASHeader;
-class LASPoint;
-class LASReader;
-class LASWriter;
-class LASColor;
-class LASSRS;
+/// Spatial Reference System container for libLAS
+class LASSRS
+{
+public:
 
-namespace detail {
 
-class Reader;
-class Writer;
-struct PointRecord;
-struct Color;
 
-}} // namespace liblas::detail
+    LASSRS();
+    LASSRS(LASSRS const& other);
+    LASSRS& operator=(LASSRS const& rhs);
 
-#endif // LIBLAS_DETAIL_FWD_HPP_INCLUDED
+
+private:
+
+
+};
+
+
+
+} // namespace liblas
+
+#endif // LIBLAS_LASSRS_HPP_INCLUDED
