@@ -4,12 +4,14 @@ las_HEADERS =		liblas/cstdint.hpp \
                     liblas/exception.hpp \
 					    liblas/guid.hpp \
 					    liblas/iterator.hpp \
+					    liblas/lascolor.hpp \
 					    liblas/laserror.hpp \
 					    liblas/lasfile.hpp \
 					    liblas/lasheader.hpp \
 					    liblas/laspoint.hpp \
 					    liblas/lasreader.hpp \
 					    liblas/lasrecordheader.hpp \
+					    liblas/lassrs.hpp \
 					    liblas/laswriter.hpp \
 					    liblas/liblas.hpp \
 					    liblas/capi/liblas.h \

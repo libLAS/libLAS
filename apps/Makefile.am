@@ -2,7 +2,11 @@ if GDAL_IS_CONFIG
 GDAL_CPPFLAGS = @GDAL_INC@ -DHAVE_GDAL=1
 endif
 
-AM_CPPFLAGS = $(GDAL_CPPFLAGS) -I../include/liblas/capi -I../include
+if GEOTIFF_IS_CONFIG
+GEOTIFF_CPPFLAGS = @GEOTIFF_INC@ -DHAVE_LIBGEOTIFF=1
+endif
+
+AM_CPPFLAGS = $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) -I../include/liblas/capi -I../include
 
 lasinfo_SOURCES = lasinfo.c lascommon.c
 las2las_SOURCES = las2las.c lascommon.c

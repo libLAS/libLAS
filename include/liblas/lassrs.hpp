@@ -68,11 +68,33 @@
 // GDAL OSR
 #ifdef HAVE_GDAL
 #include <ogr_srs_api.h>
+#include "cpl_port.h"
+#include "cpl_serv.h"
+#include "geo_tiffp.h"
+#define CPL_ERROR_H_INCLUDED
+
+#include "geo_normalize.h"
+#include "geovalues.h"
+#include "ogr_spatialref.h"
+#include "gdal.h"
+#include "xtiffio.h"
+#include "cpl_multiproc.h"
+
 #endif
+
+// GeoTIFF
+#ifdef HAVE_LIBGEOTIFF
+#include <geotiff.h>
+#include <geo_simpletags.h>
+#include "geo_normalize.h"
+#include "geo_simpletags.h"
+#include "geovalues.h"
+#endif // HAVE_LIBGEOTIFF
 
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
+#include <string>
 
 namespace liblas {
 
@@ -87,14 +109,30 @@ public:
     LASSRS(LASSRS const& other);
     LASSRS& operator=(LASSRS const& rhs);
 
+    std::string GetWKT() const;
+    void SetWKT(std::string const& v);
+    
 
 private:
 
+    std::string m_wkt;
+    std::string m_proj4;
+    GTIF* m_gtiff;
+    ST_TIFF* m_tiff;
 
+protected:
+    
 };
 
 
 
 } // namespace liblas
+
+char CPL_DLL *  GTIFGetOGISDefn( GTIF *, GTIFDefn * );
+int  CPL_DLL   GTIFSetFromOGISDefn( GTIF *, const char * );
+
+void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName);
+void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, char* angUnitName, int nDatum, short nSpheroid);
+
 
 #endif // LIBLAS_LASSRS_HPP_INCLUDED
