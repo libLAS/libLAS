@@ -44,6 +44,8 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
+#include <liblas/lassrs.hpp>
+
 // GeoTIFF
 #ifdef HAVE_LIBGEOTIFF
 #include <geotiff.h>
@@ -53,6 +55,7 @@
 #include "geovalues.h"
 #include "geotiffio.h"
 #endif // HAVE_LIBGEOTIFF
+
 //std
 #include <algorithm>
 #include <fstream>
@@ -880,6 +883,11 @@ void LASHeader::SetGeoreference()
         AddVLR(record);
     }
 #endif // HAVE_LIBGEOTIFF
+}
+
+void LASHeader::SetSRS(LASSRS& srs)
+{
+    m_srs = srs;
 }
 
 } // namespace liblas

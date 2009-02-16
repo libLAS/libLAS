@@ -83,6 +83,18 @@ public:
         assert(0 != del_);
     }
 
+    // FIXME: ooh, this is really, really bad. - hobu
+    raii_wrapper& operator=(raii_wrapper const& rhs)
+    {
+        if (&rhs != this)
+        {
+            p_ = rhs.p_;
+            del_ = NULL;
+        }
+        return *this;        
+    }
+    
+    
     ~raii_wrapper()
     {
         do_delete(p_);
@@ -104,10 +116,11 @@ public:
         std::swap(p_, other.p_);
     }
 
+    
 private:
 
     raii_wrapper(raii_wrapper const& other);
-    raii_wrapper& operator=(raii_wrapper const& rhs);
+    // raii_wrapper& operator=(raii_wrapper const& rhs);
 
     void do_delete(T* p)
     {

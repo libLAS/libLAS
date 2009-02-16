@@ -60,6 +60,7 @@
 #include <cassert>
 #include <cstdlib> // std::size_t
 #include <stdexcept>
+#include <iostream>
 
 namespace liblas { namespace detail {
 
@@ -127,57 +128,35 @@ bool Reader::ReadVLR(LASHeader& header)
 
 bool Reader::ReadGeoreference(LASHeader& header)
 {
-#ifndef HAVE_LIBGEOTIFF
-    UNREFERENCED_PARAMETER(header);
-#else
+// #ifndef HAVE_LIBGEOTIFF
+//     UNREFERENCED_PARAMETER(header);
+// #else
 
-    std::string const uid("LASF_Projection");
 
-    detail::raii_wrapper<ST_TIFF> st(ST_Create(), ST_Destroy);
 
+    std::vector<LASVLR> vlrs;
     for (uint16_t i = 0; i < header.GetRecordsCount(); ++i)
     {
         LASVLR record = header.GetVLR(i);
-        std::vector<uint8_t> data = record.GetData();
-        if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
-        {
-            int count = data.size()/sizeof(int16_t);
-            ST_SetKey(st.get(), record.GetRecordId(), count, STT_SHORT, &(data[0]));
-        }
-
-        if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
-        {
-            int count = data.size() / sizeof(double);
-            ST_SetKey(st.get(), record.GetRecordId(), count, STT_DOUBLE, &(data[0]));
-        }        
-
-        if (uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId())
-        {
-            int count = data.size()/sizeof(uint8_t);
-            ST_SetKey(st.get(), record.GetRecordId(), count, STT_ASCII, &(data[0]));
-        }
+        vlrs.push_back(record);
     }
+    LASSRS* ref =  new LASSRS(vlrs);
 
-    if (st.get()->key_count)
-    {
-        raii_wrapper<GTIF> gtif(GTIFNewSimpleTags(st.get()), GTIFFree);
-
-        GTIFDefn defn;
-        if (GTIFGetDefn(gtif.get(), &defn)) 
-        {
-            char* proj4def = GTIFGetProj4Defn(&defn);
-            std::string tmp(proj4def);
-            std::free(proj4def);
-
-            header.SetProj4(tmp);
-        }
+    LASSRS srs(vlrs);
+    
+    header.SetSRS(srs);
+    
+    header.SetProj4(ref->GetProj4());
+    
+    std::cout << ref->GetWKT() << std::endl;
+    
+    delete ref;
         
         return true;
-    }
 
-#endif /* def HAVE_LIBGEOTIFF */
+//#endif /* def HAVE_LIBGEOTIFF */
 
-    return false;
+//    return false;
 }
 
 Reader* ReaderFactory::Create(std::istream& ifs)

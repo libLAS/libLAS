@@ -42,32 +42,16 @@
 #ifndef LIBLAS_LASSRS_HPP_INCLUDED
 #define LIBLAS_LASSRS_HPP_INCLUDED
 
+#include <liblas/lasrecordheader.hpp>
+
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
-#include <liblas/lasheader.hpp>
-
-#include <liblas/lasheader.hpp>
-#include <liblas/cstdint.hpp>
 #include <liblas/exception.hpp>
-#include <liblas/detail/utility.hpp>
-
-// GeoTIFF
-#ifdef HAVE_LIBGEOTIFF
-#include <geotiff.h>
-#include <geo_simpletags.h>
-#include "geo_normalize.h"
-#include "geo_simpletags.h"
-#include "geovalues.h"
-#endif // HAVE_LIBGEOTIFF
-
-// std
-#include <string>
-
 
 // GDAL OSR
 #ifdef HAVE_GDAL
-#include <ogr_srs_api.h>
+#include "ogr_srs_api.h"
 #include "cpl_port.h"
 #include "cpl_serv.h"
 #include "geo_tiffp.h"
@@ -84,8 +68,8 @@
 
 // GeoTIFF
 #ifdef HAVE_LIBGEOTIFF
-#include <geotiff.h>
-#include <geo_simpletags.h>
+#include "geotiff.h"
+#include "geo_simpletags.h"
 #include "geo_normalize.h"
 #include "geo_simpletags.h"
 #include "geovalues.h"
@@ -106,19 +90,27 @@ public:
 
 
     LASSRS();
-    LASSRS(LASSRS const& other);
+    LASSRS(const std::vector<LASVLR>& vlrs);
+    ///LASSRS(LASSRS const& other);
     LASSRS& operator=(LASSRS const& rhs);
-
+    // 
     std::string GetWKT() const;
     void SetWKT(std::string const& v);
     
+    std::string GetProj4() const;
+    
+    bool HasKeys();
 
 private:
 
+    LASSRS(LASSRS const& other);
+  
+    
     std::string m_wkt;
     std::string m_proj4;
-    GTIF* m_gtiff;
-    ST_TIFF* m_tiff;
+    detail::raii_wrapper<ST_TIFF> m_tiff;
+    // detail::raii_wrapper<GTIF> m_gtiff;
+
 
 protected:
     

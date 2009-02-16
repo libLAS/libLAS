@@ -41,52 +41,82 @@
 
 #include <liblas/lassrs.hpp>
 #include <liblas/detail/utility.hpp>
+#include <iostream>
 namespace liblas {
 
-LASSRS::LASSRS() 
+LASSRS::LASSRS() : 
+    m_tiff(ST_Create(), ST_Destroy)
 {
-    detail::raii_wrapper<ST_TIFF> m_tiff(ST_Create(), ST_Destroy);
-    detail::raii_wrapper<GTIF> m_gtiff(GTIFNewSimpleTags(m_tiff.get()), GTIFFree);    
+
+}
+
+LASSRS::LASSRS(const std::vector<LASVLR>& vlrs) : 
+    m_tiff(ST_Create(), ST_Destroy)
+{
+
+
+    std::string const uid("LASF_Projection");
+
+    for (uint16_t i = 0; i < vlrs.size(); ++i)
+    {
+        LASVLR record = vlrs[i];
+        std::vector<uint8_t> data = record.GetData();
+        if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
+        {
+            int count = data.size()/sizeof(int16_t);
+            ST_SetKey(m_tiff.get(), record.GetRecordId(), count, STT_SHORT, &(data[0]));
+        }
+
+        if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
+        {
+            int count = data.size() / sizeof(double);
+            ST_SetKey(m_tiff.get(), record.GetRecordId(), count, STT_DOUBLE, &(data[0]));
+        }        
+
+        if (uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId())
+        {
+            int count = data.size()/sizeof(uint8_t);
+            ST_SetKey(m_tiff.get(), record.GetRecordId(), count, STT_ASCII, &(data[0]));
+        }
+    }
+
+    
+}
+
+bool LASSRS::HasKeys() 
+{
+    return (m_tiff.get()->key_count > 0);
+}
+
+// LASSRS::LASSRS()
+// {
+//     // m_tiff = NULL;
+//     // m_gtiff = NULL;
+// }
+// LASSRS::LASSRS(LASSRS const& other) :
+//     m_tiff(other.m_tiff),
+//     m_gtiff(other.m_gtiff)
+// {
+// 
+// }
+// 
+LASSRS& LASSRS::operator=(LASSRS const& rhs)
+{
+    if (&rhs != this)
+    {
+        m_tiff = rhs.m_tiff;
+    }
+    return *this;
 }
 // 
-// LASPoint::LASPoint(LASPoint const& other) :
-//     m_intensity(other.m_intensity),
-//     m_flags(other.m_flags),
-//     m_class(other.m_class),
-//     m_angleRank(other.m_angleRank),
-//     m_userData(other.m_userData),
-//     m_pointSourceId(other.m_pointSourceId),
-//     m_gpsTime(other.m_gpsTime)
-// {
-//     std::memcpy(m_coords, other.m_coords, sizeof(m_coords));
-// }
-// 
-// LASPoint& LASPoint::operator=(LASPoint const& rhs)
-// {
-//     if (&rhs != this)
-//     {
-//         m_coords[0] = rhs.m_coords[0];
-//         m_coords[1] = rhs.m_coords[1];
-//         m_coords[2] = rhs.m_coords[2];
-//         m_intensity = rhs.m_intensity;
-//         m_flags = rhs.m_flags;
-//         m_class = rhs.m_class;
-//         m_angleRank = rhs.m_angleRank;
-//         m_userData = rhs.m_userData;
-//         m_pointSourceId = rhs.m_pointSourceId;
-//         m_gpsTime = rhs.m_gpsTime;
-//     }
-//     return *this;
-// }
-
 /// Fetch the SRS as WKT
 std::string LASSRS::GetWKT() const 
 {
-    GTIFDefn	sGTIFDefn;
+    GTIFDefn sGTIFDefn;
     char* pszWKT = NULL;
-    
-    if( GTIFGetDefn( m_gtiff, &sGTIFDefn ) ) {
-        pszWKT = GTIFGetOGISDefn( m_gtiff, &sGTIFDefn );
+    detail::raii_wrapper<GTIF> m_gtiff(GTIFNewSimpleTags(m_tiff.get()), GTIFFree);
+    if( GTIFGetDefn( m_gtiff.get(), &sGTIFDefn ) ) {
+        pszWKT = GTIFGetOGISDefn( m_gtiff.get(), &sGTIFDefn );
         if (pszWKT) {
             std::string tmp(pszWKT);
             std::free(pszWKT);
@@ -102,6 +132,22 @@ void LASSRS::SetWKT(std::string const& v)
     m_wkt = v;
 }
 
+std::string LASSRS::GetProj4() const 
+{
+
+    GTIFDefn defn;
+    detail::raii_wrapper<GTIF> m_gtiff(GTIFNewSimpleTags(m_tiff.get()), GTIFFree);
+    if (GTIFGetDefn(m_gtiff.get(), &defn)) 
+    {
+        char* proj4def = GTIFGetProj4Defn(&defn);
+        std::string tmp(proj4def);
+        std::free(proj4def);
+
+        return tmp;
+    }
+
+    return std::string("");
+}
 
 
 } // namespace liblas

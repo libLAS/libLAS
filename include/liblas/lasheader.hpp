@@ -43,11 +43,12 @@
 #ifndef LIBLAS_LASHEADER_HPP_INCLUDED
 #define LIBLAS_LASHEADER_HPP_INCLUDED
 
+#include <liblas/lasrecordheader.hpp>
+#include <liblas/lassrs.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
-#include <liblas/lasrecordheader.hpp>
-#include <liblas/lassrs.hpp>
+#include <liblas/detail/fwd.hpp>
 
 //std
 #include <string>
@@ -331,7 +332,10 @@ public:
     void SetGeoreference();
     
     /// Fetch the georeference
-    // LASSRS& GetSRS();
+    LASSRS& GetSRS();
+    
+    /// Set the georeference
+    void SetSRS(LASSRS& srs);
     
 private:
     
@@ -388,6 +392,7 @@ private:
     PointExtents m_extents;
     std::vector<LASVLR> m_vlrs;
     std::string m_proj4;
+    LASSRS m_srs;
 };
 
 } // namespace liblas
