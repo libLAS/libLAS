@@ -47,7 +47,20 @@ namespace liblas {
 LASSRS::LASSRS() 
 
 {
+    m_tiff = NULL;
+    m_gtiff = NULL;
+}
 
+LASSRS& LASSRS::operator=(LASSRS const& rhs)
+{
+    if (&rhs != this)
+    {
+        m_tiff = NULL;
+        m_gtiff = NULL;        
+        SetVLRs(rhs.GetVLRs());
+        GetGTIF();
+    }
+    return *this;
 }
 
 LASSRS::~LASSRS() 
@@ -71,7 +84,10 @@ LASSRS::~LASSRS()
 
 LASSRS::LASSRS(LASSRS const& other) 
 {
+    m_tiff = NULL;
+    m_gtiff = NULL;
     SetVLRs(other.GetVLRs());
+    GetGTIF();
 }
 LASSRS::LASSRS(const std::vector<LASVLR>& vlrs) 
 {
@@ -108,8 +124,10 @@ std::vector<LASVLR> LASSRS::GetVLRs() const
     return m_vlrs;
 }
 
-void LASSRS::ResetVLRs() 
+void LASSRS::ResetVLRs()
 {
+
+
     int ret = 0;
     short* kdata = NULL;
     short kvalue = 0;
@@ -120,18 +138,11 @@ void LASSRS::ResetVLRs()
     int ktype = 0;
     int kcount = 0;
     
-        
-
-
-    ret = GTIFWriteKeys(m_gtiff);
-    if (!ret)
-	{
-        throw std::runtime_error("The geotiff keys could not be written");
-    }
-    
-    
     m_vlrs.clear();
     
+    if (!m_tiff) throw std::invalid_argument("m_tiff was null");
+    if (!m_gtiff) throw std::invalid_argument("m_gtiff was null");
+
     //GTIFF_GEOKEYDIRECTORY == 34735
     ret = ST_GetKey(m_tiff, 34735, &kcount, &ktype, (void**)&kdata);
     if (ret)
@@ -236,9 +247,11 @@ void LASSRS::ResetVLRs()
     }    
 }
 
-GTIF* LASSRS::GetGTIF(){
+const GTIF* LASSRS::GetGTIF(){
 
-    
+    // if we're already set, don't overwrite
+    if (m_gtiff) return m_gtiff;
+
     m_tiff = ST_Create();
     std::string const uid("LASF_Projection");
 
@@ -265,8 +278,6 @@ GTIF* LASSRS::GetGTIF(){
         }
     }
 
-
-
     if (m_tiff->key_count)
     {
         m_gtiff = GTIFNewSimpleTags(m_tiff);
@@ -279,32 +290,7 @@ GTIF* LASSRS::GetGTIF(){
     }
 }
 
-void LASSRS::SetGTIF(GTIF* gtiff)
-{
-    if (gtiff){
-        if (m_gtiff) {
-            GTIFFree(m_gtiff);
-            m_gtiff = NULL;
-            m_gtiff = gtiff;
-        }
-        if (m_tiff) {
-            ST_Destroy(m_tiff);
-            m_tiff = NULL;
-            m_tiff = (ST_TIFF*)gtiff->gt_tif;
-        }
-    }
-}
 
-
-// LASSRS& LASSRS::operator=(LASSRS const& rhs)
-// {
-//     if (&rhs != this)
-//     {
-//         m_tiff = rhs.m_tiff;
-//     }
-//     return *this;
-// }
-// 
 /// Fetch the SRS as WKT
 std::string LASSRS::GetWKT() const 
 {
@@ -327,7 +313,17 @@ std::string LASSRS::GetWKT() const
        
 void LASSRS::SetWKT(std::string const& v)
 {
-    // m_wkt = v;
+
+#ifdef HAVE_GDAL
+    
+    int ret = 0;
+    ret = GTIFSetFromOGISDefn( m_gtiff, v.c_str() );
+    if (!ret) throw std::invalid_argument("could not set m_gtiff from WKT");
+#else
+    ;
+
+#endif
+
 }
 
 std::string LASSRS::GetProj4() const 
@@ -368,6 +364,34 @@ std::string LASSRS::GetProj4() const
 
 // If we have neither GDAL nor proj.4, we can't do squat
     return std::string("");
+}
+
+void LASSRS::SetProj4(std::string const& v)
+{
+
+#ifdef HAVE_GDAL
+
+    // std::string wkt = GetWKT();
+    char* poWKT = NULL;
+    const char* poProj4 = v.c_str();
+    OGRSpatialReference* poSRS = new OGRSpatialReference();
+    if( poSRS->importFromProj4((char *) poProj4) != OGRERR_NONE )
+    {
+        delete poSRS;
+    }
+    
+    poSRS->exportToWkt(&poWKT);
+    std::string tmp(poWKT);
+    std::free(poWKT);
+        
+    int ret = 0;
+    ret = GTIFSetFromOGISDefn( m_gtiff, tmp.c_str() );
+    if (!ret) throw std::invalid_argument("could not set m_gtiff from Proj4");
+#else
+    ;
+
+#endif
+
 }
 
 

@@ -98,7 +98,8 @@ LASHeader::LASHeader(LASHeader const& other) :
     m_scales(other.m_scales),
     m_offsets(other.m_offsets),
     m_extents(other.m_extents),
-    m_proj4(other.m_proj4)
+    m_proj4(other.m_proj4),
+    m_srs(other.m_srs)
 {
     void* p = 0;
 
@@ -155,6 +156,7 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         m_offsets = rhs.m_offsets;
         m_extents = rhs.m_extents;
         m_proj4 = rhs.m_proj4;
+        m_srs = rhs.m_srs;
     }
     return *this;
 }
@@ -747,8 +749,6 @@ void LASHeader::SetGeoreference()
 // #else
 //     
     m_srs.SetVLRs(m_vlrs);
-    GTIF* gt = m_srs.GetGTIF();
-    m_srs.SetGTIF(gt);
     m_srs.ResetVLRs();
     
     std::vector<LASVLR> vlrs;

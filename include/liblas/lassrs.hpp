@@ -95,25 +95,23 @@ public:
     ~LASSRS();
     LASSRS(const std::vector<LASVLR>& vlrs);
     LASSRS(LASSRS const& other);
-    // LASSRS& operator=(LASSRS const& rhs);
+    LASSRS& operator=(LASSRS const& rhs);
     
-    GTIF* GetGTIF();
-    void SetGTIF(GTIF* gtiff);
+    const GTIF* GetGTIF();
+    void SetGTIF(const GTIF* gtiff);
     void ResetVLRs();
     
     std::string GetWKT() const;
     void SetWKT(std::string const& v);
     
     std::string GetProj4() const;
-    void SetProj4();
+    void SetProj4(std::string const& v);
     
     void SetVLRs(const std::vector<LASVLR>& vlrs);
     std::vector<LASVLR> GetVLRs() const;
     
 
 private:
-
-// >     LASSRS(LASSRS const& other);
   
     GTIF* m_gtiff;
     ST_TIFF* m_tiff;
