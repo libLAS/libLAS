@@ -90,10 +90,12 @@ public:
 
 
     LASSRS();
+    ~LASSRS();
     LASSRS(const std::vector<LASVLR>& vlrs);
     ///LASSRS(LASSRS const& other);
     LASSRS& operator=(LASSRS const& rhs);
-    // 
+    
+    GTIF* GetGTIF();
     std::string GetWKT() const;
     void SetWKT(std::string const& v);
     
@@ -105,10 +107,14 @@ private:
 
     LASSRS(LASSRS const& other);
   
-    
-    std::string m_wkt;
-    std::string m_proj4;
-    detail::raii_wrapper<ST_TIFF> m_tiff;
+    GTIF* m_gtiff;
+    ST_TIFF* m_tiff;
+  
+    std::vector<LASVLR> m_vlrs;
+    // 
+    // std::string m_wkt;
+    // std::string m_proj4;
+    //detail::raii_wrapper<ST_TIFF> m_tiff;
     // detail::raii_wrapper<GTIF> m_gtiff;
 
 

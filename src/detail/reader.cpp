@@ -60,7 +60,6 @@
 #include <cassert>
 #include <cstdlib> // std::size_t
 #include <stdexcept>
-#include <iostream>
 
 namespace liblas { namespace detail {
 
@@ -140,17 +139,15 @@ bool Reader::ReadGeoreference(LASHeader& header)
         LASVLR record = header.GetVLR(i);
         vlrs.push_back(record);
     }
-    LASSRS* ref =  new LASSRS(vlrs);
 
     LASSRS srs(vlrs);
     
     header.SetSRS(srs);
     
-    header.SetProj4(ref->GetProj4());
+    header.SetProj4(srs.GetProj4());
     
-    std::cout << ref->GetWKT() << std::endl;
+    // std::cout << srs.GetWKT() << std::endl;
     
-    delete ref;
         
         return true;
 

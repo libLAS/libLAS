@@ -44,62 +44,86 @@
 #include <iostream>
 namespace liblas {
 
-LASSRS::LASSRS() : 
-    m_tiff(ST_Create(), ST_Destroy)
+LASSRS::LASSRS() 
+
 {
 
 }
 
-LASSRS::LASSRS(const std::vector<LASVLR>& vlrs) : 
-    m_tiff(ST_Create(), ST_Destroy)
+LASSRS::~LASSRS() 
+
 {
+    // FIXME: this needs to be cleaned up
+    
+    // if (m_gtiff)
+    // {
+    //     GTIFFree(m_gtiff);
+    //     m_gtiff = NULL;
+    // }
+    // if (m_tiff)
+    // {
+    //     ST_Destroy(m_tiff);
+    //     m_tiff = NULL;
+    // }
 
 
+}
+LASSRS::LASSRS(const std::vector<LASVLR>& vlrs) :m_vlrs(vlrs)
+{
+    m_tiff = NULL;
+    m_gtiff = NULL;
+    GetGTIF();
+}
+
+GTIF* LASSRS::GetGTIF(){
+
+    
+    m_tiff = ST_Create();
     std::string const uid("LASF_Projection");
 
-    for (uint16_t i = 0; i < vlrs.size(); ++i)
+    for (uint16_t i = 0; i < m_vlrs.size(); ++i)
     {
-        LASVLR record = vlrs[i];
+        LASVLR record = m_vlrs[i];
         std::vector<uint8_t> data = record.GetData();
         if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
         {
             int count = data.size()/sizeof(int16_t);
-            ST_SetKey(m_tiff.get(), record.GetRecordId(), count, STT_SHORT, &(data[0]));
+            ST_SetKey(m_tiff, record.GetRecordId(), count, STT_SHORT, &(data[0]));
         }
 
         if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
         {
             int count = data.size() / sizeof(double);
-            ST_SetKey(m_tiff.get(), record.GetRecordId(), count, STT_DOUBLE, &(data[0]));
+            ST_SetKey(m_tiff, record.GetRecordId(), count, STT_DOUBLE, &(data[0]));
         }        
 
         if (uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId())
         {
             int count = data.size()/sizeof(uint8_t);
-            ST_SetKey(m_tiff.get(), record.GetRecordId(), count, STT_ASCII, &(data[0]));
+            ST_SetKey(m_tiff, record.GetRecordId(), count, STT_ASCII, &(data[0]));
         }
     }
 
-    
+
+
+    if (m_tiff->key_count)
+    {
+        m_gtiff = GTIFNewSimpleTags(m_tiff);
+        return m_gtiff;
+    } 
+    else {
+        ST_Destroy(m_tiff);
+        m_tiff = NULL;
+        return NULL;
+    }
 }
 
 bool LASSRS::HasKeys() 
 {
-    return (m_tiff.get()->key_count > 0);
+    return (m_tiff->key_count > 0);
 }
 
-// LASSRS::LASSRS()
-// {
-//     // m_tiff = NULL;
-//     // m_gtiff = NULL;
-// }
-// LASSRS::LASSRS(LASSRS const& other) :
-//     m_tiff(other.m_tiff),
-//     m_gtiff(other.m_gtiff)
-// {
-// 
-// }
-// 
+
 LASSRS& LASSRS::operator=(LASSRS const& rhs)
 {
     if (&rhs != this)
@@ -114,9 +138,8 @@ std::string LASSRS::GetWKT() const
 {
     GTIFDefn sGTIFDefn;
     char* pszWKT = NULL;
-    detail::raii_wrapper<GTIF> m_gtiff(GTIFNewSimpleTags(m_tiff.get()), GTIFFree);
-    if( GTIFGetDefn( m_gtiff.get(), &sGTIFDefn ) ) {
-        pszWKT = GTIFGetOGISDefn( m_gtiff.get(), &sGTIFDefn );
+    if( GTIFGetDefn( m_gtiff, &sGTIFDefn ) ) {
+        pszWKT = GTIFGetOGISDefn( m_gtiff, &sGTIFDefn );
         if (pszWKT) {
             std::string tmp(pszWKT);
             std::free(pszWKT);
@@ -129,15 +152,15 @@ std::string LASSRS::GetWKT() const
        
 void LASSRS::SetWKT(std::string const& v)
 {
-    m_wkt = v;
+    // m_wkt = v;
 }
 
 std::string LASSRS::GetProj4() const 
 {
 
     GTIFDefn defn;
-    detail::raii_wrapper<GTIF> m_gtiff(GTIFNewSimpleTags(m_tiff.get()), GTIFFree);
-    if (GTIFGetDefn(m_gtiff.get(), &defn)) 
+
+    if (m_gtiff && GTIFGetDefn(m_gtiff, &defn)) 
     {
         char* proj4def = GTIFGetProj4Defn(&defn);
         std::string tmp(proj4def);

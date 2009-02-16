@@ -89,7 +89,7 @@ public:
         if (&rhs != this)
         {
             p_ = rhs.p_;
-            del_ = NULL;
+            del_ = rhs.del_;
         }
         return *this;        
     }
