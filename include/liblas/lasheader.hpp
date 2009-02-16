@@ -332,7 +332,7 @@ public:
     void SetGeoreference();
     
     /// Fetch the georeference
-    LASSRS& GetSRS();
+    LASSRS GetSRS() const;
     
     /// Set the georeference
     void SetSRS(LASSRS& srs);

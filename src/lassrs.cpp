@@ -68,11 +68,172 @@ LASSRS::~LASSRS()
 
 
 }
-LASSRS::LASSRS(const std::vector<LASVLR>& vlrs) :m_vlrs(vlrs)
+
+LASSRS::LASSRS(LASSRS const& other) 
+{
+    SetVLRs(other.GetVLRs());
+}
+LASSRS::LASSRS(const std::vector<LASVLR>& vlrs) 
 {
     m_tiff = NULL;
     m_gtiff = NULL;
+    SetVLRs(vlrs);
     GetGTIF();
+}
+
+/// Keep a copy of the VLRs that are related to GeoTIFF SRS information.
+void LASSRS::SetVLRs(const std::vector<LASVLR>& vlrs)
+{
+    std::vector<LASVLR>::const_iterator i;
+    
+    std::string const uid("LASF_Projection");
+    
+    m_vlrs.clear();
+    for (i = vlrs.begin(); i != vlrs.end(); ++i)
+    {
+        if (uid == (*i).GetUserId(true).c_str() && 34735 == (*i).GetRecordId()) {
+            m_vlrs.push_back(*i);
+        }
+        if (uid == (*i).GetUserId(true).c_str() && 34736 == (*i).GetRecordId()) {
+            m_vlrs.push_back(*i);
+        }
+        if (uid == (*i).GetUserId(true).c_str() && 34737 == (*i).GetRecordId()) {
+            m_vlrs.push_back(*i);
+        }
+    }
+}
+
+std::vector<LASVLR> LASSRS::GetVLRs() const
+{
+    return m_vlrs;
+}
+
+void LASSRS::ResetVLRs() 
+{
+    int ret = 0;
+    short* kdata = NULL;
+    short kvalue = 0;
+    double* ddata = NULL;
+    double dvalue = 0;
+    int dtype = 0;
+    int dcount = 0;
+    int ktype = 0;
+    int kcount = 0;
+    
+        
+
+
+    ret = GTIFWriteKeys(m_gtiff);
+    if (!ret)
+	{
+        throw std::runtime_error("The geotiff keys could not be written");
+    }
+    
+    
+    m_vlrs.clear();
+    
+    //GTIFF_GEOKEYDIRECTORY == 34735
+    ret = ST_GetKey(m_tiff, 34735, &kcount, &ktype, (void**)&kdata);
+    if (ret)
+    {    
+        LASVLR record;
+        int i = 0;
+        record.SetRecordId(34735);
+        record.SetUserId("LASF_Projection");
+        std::vector<uint8_t> data;
+
+        // Shorts are 2 bytes in length
+        uint16_t length = 2*kcount;
+
+        record.SetRecordLength(length);
+        
+        // Copy the data into the data vector
+        for (i = 0; i < kcount; i++)
+        {
+            kvalue = kdata[i];
+            
+            uint8_t* v = reinterpret_cast<uint8_t*>(&kvalue); 
+            
+            data.push_back(v[0]);
+            data.push_back(v[1]);
+        }
+
+        record.SetData(data);
+        m_vlrs.push_back(record);
+    }
+
+    // FIXME We don't handle ASCII keys yet
+    // GTIFF_ASCIIPARAMS == 34737
+    // ret = ST_GetKey(st.get(), 34737, &acount, &atype, (void**)&adata);
+    // if (ret) {
+    //     
+    //     LASVLR record;
+    //     int i = 0;
+    //     record.SetRecordId(34737);
+    //     record.SetUserId("LASF_Projection");
+    //     std::vector<uint8_t> data;
+    // 
+    //     uint32_t length = acount;
+    //     record.SetRecordLength(length);
+    //     
+    //     // Copy the data into the data vector
+    // 
+    //     for (i=0; i<acount;i++) {
+    //         avalue = adata[i];
+    //         
+    //         uint8_t* v =  reinterpret_cast<uint8_t*>(&avalue);
+    //         
+    //         data.push_back(v[0]);
+    //         data.push_back(v[1]);
+    //         data.push_back(v[2]);
+    //         data.push_back(v[3]);
+    //         data.push_back(v[4]);
+    //         data.push_back(v[5]);
+    //         data.push_back(v[6]);
+    //         data.push_back(v[7]);
+    //         
+    //     }
+    //     record.SetData(data);
+    //     AddVLR(record);
+    // }
+
+
+    // GTIFF_DOUBLEPARAMS == 34736
+    ret = ST_GetKey(m_tiff, 34736, &dcount, &dtype, (void**)&ddata);
+
+    if (ret)
+    {       
+        LASVLR record;
+        int i = 0;
+        record.SetRecordId(34736);
+        record.SetUserId("LASF_Projection");
+        std::vector<uint8_t> data;
+
+        // Doubles are 8 bytes in length
+        uint16_t length = 8*dcount;
+        record.SetRecordLength(length);
+        
+        // Copy the data into the data vector
+        for (i=0; i<dcount;i++)
+        {
+            dvalue = ddata[i];
+            
+            uint8_t* v =  reinterpret_cast<uint8_t*>(&dvalue);
+            
+            data.push_back(v[0]);
+            data.push_back(v[1]);
+            data.push_back(v[2]);
+            data.push_back(v[3]);
+            data.push_back(v[4]);
+            data.push_back(v[5]);
+            data.push_back(v[6]);
+            data.push_back(v[7]);   
+        }
+        
+        record.SetData(data);
+        m_vlrs.push_back(record);
+
+    }    
 }
 
 GTIF* LASSRS::GetGTIF(){
@@ -118,24 +279,37 @@ GTIF* LASSRS::GetGTIF(){
     }
 }
 
-bool LASSRS::HasKeys() 
+void LASSRS::SetGTIF(GTIF* gtiff)
 {
-    return (m_tiff->key_count > 0);
-}
-
-
-LASSRS& LASSRS::operator=(LASSRS const& rhs)
-{
-    if (&rhs != this)
-    {
-        m_tiff = rhs.m_tiff;
+    if (gtiff){
+        if (m_gtiff) {
+            GTIFFree(m_gtiff);
+            m_gtiff = NULL;
+            m_gtiff = gtiff;
+        }
+        if (m_tiff) {
+            ST_Destroy(m_tiff);
+            m_tiff = NULL;
+            m_tiff = (ST_TIFF*)gtiff->gt_tif;
+        }
     }
-    return *this;
 }
+
+
+// LASSRS& LASSRS::operator=(LASSRS const& rhs)
+// {
+//     if (&rhs != this)
+//     {
+//         m_tiff = rhs.m_tiff;
+//     }
+//     return *this;
+// }
 // 
 /// Fetch the SRS as WKT
 std::string LASSRS::GetWKT() const 
 {
+
+#ifdef HAVE_GDAL
     GTIFDefn sGTIFDefn;
     char* pszWKT = NULL;
     if( GTIFGetDefn( m_gtiff, &sGTIFDefn ) ) {
@@ -146,6 +320,7 @@ std::string LASSRS::GetWKT() const
             return tmp;
         }
     }
+#endif
     return std::string("");
 }
 
@@ -158,6 +333,27 @@ void LASSRS::SetWKT(std::string const& v)
 std::string LASSRS::GetProj4() const 
 {
 
+#ifdef HAVE_GDAL
+    
+    std::string wkt = GetWKT();
+    const char* poWKT = wkt.c_str();
+    OGRSpatialReference* poSRS = new OGRSpatialReference();
+    if( poSRS->importFromWkt((char **) &poWKT) != OGRERR_NONE )
+    {
+        delete poSRS;
+        return FALSE;
+    }
+    
+    char* proj4;
+    poSRS->exportToProj4(&proj4);
+    std::string tmp(proj4);
+    std::free(proj4);
+
+    return tmp;    
+
+#endif
+
+#ifdef HAVE_LIBGEOTIFF
     GTIFDefn defn;
 
     if (m_gtiff && GTIFGetDefn(m_gtiff, &defn)) 
@@ -168,7 +364,9 @@ std::string LASSRS::GetProj4() const
 
         return tmp;
     }
+#endif
 
+// If we have neither GDAL nor proj.4, we can't do squat
     return std::string("");
 }
 
@@ -273,11 +471,11 @@ OGRBoolean SetCitationToSRS(GTIF* hGTIF, char* szCTString, int nCTStringLen,
                             geokey_t geoKey, OGRSpatialReference* poSRS, OGRBoolean* linearUnitIsSet);
 void GetGeogCSFromCitation(char* szGCSName, int nGCSName,
                            geokey_t geoKey, 
-                          char	**ppszGeogName,
-                          char	**ppszDatumName,
-                          char	**ppszPMName,
-                          char	**ppszSpheroidName,
-                          char	**ppszAngularUnits);
+                          char  **ppszGeogName,
+                          char  **ppszDatumName,
+                          char  **ppszPMName,
+                          char  **ppszSpheroidName,
+                          char  **ppszAngularUnits);
 
 /************************************************************************/
 /*                          WKTMassageDatum()                           */
@@ -289,8 +487,8 @@ void GetGeogCSFromCitation(char* szGCSName, int nGCSName,
 static void WKTMassageDatum( char ** ppszDatum )
 
 {
-    int		i, j;
-    char	*pszDatum;
+    int     i, j;
+    char    *pszDatum;
 
 /* -------------------------------------------------------------------- */
 /*      First copy string and allocate with our CPLStrdup() to so we    */
@@ -404,7 +602,7 @@ static void GTIFCleanupImagineNames( char *pszCitation )
 char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
 
 {
-    OGRSpatialReference	oSRS;
+    OGRSpatialReference oSRS;
 
 /* -------------------------------------------------------------------- */
 /*      Handle non-standard coordinate systems as LOCAL_CS.             */
@@ -412,7 +610,7 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
     if( psDefn->Model != ModelTypeProjected 
         && psDefn->Model != ModelTypeGeographic )
     {
-        char	*pszWKT;
+        char    *pszWKT;
         char    szPeStr[2400];
 
         /** check if there is a pe string citation key **/
@@ -424,7 +622,7 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
         }
         else
         {
-          char	*pszUnitsName = NULL;
+          char  *pszUnitsName = NULL;
           char    szPCSName[300];
           int     nKeyCount = 0;
           int     anVersion[3];
@@ -507,12 +705,12 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
 /* ==================================================================== */
 /*      Setup the GeogCS                                                */
 /* ==================================================================== */
-    char	*pszGeogName = NULL;
-    char	*pszDatumName = NULL;
-    char	*pszPMName = NULL;
-    char	*pszSpheroidName = NULL;
-    char	*pszAngularUnits = NULL;
-    double	dfInvFlattening=0.0, dfSemiMajor=0.0;
+    char    *pszGeogName = NULL;
+    char    *pszDatumName = NULL;
+    char    *pszPMName = NULL;
+    char    *pszSpheroidName = NULL;
+    char    *pszAngularUnits = NULL;
+    double  dfInvFlattening=0.0, dfSemiMajor=0.0;
     char  szGCSName[512];
     OGRBoolean aUnitGot = FALSE;
     
@@ -607,8 +805,8 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
 /*      angular units of the GEOGCS and the linear units of the         */
 /*      projection.                                                     */
 /* -------------------------------------------------------------------- */
-        double		adfParm[10];
-        int		i;
+        double      adfParm[10];
+        int     i;
 
         for( i = 0; i < MIN(10,psDefn->nParms); i++ )
             adfParm[i] = psDefn->ProjParm[i];
@@ -775,7 +973,7 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
 /* -------------------------------------------------------------------- */
        if(!linearUnitIsSet)
        {
-          char	*pszUnitsName = NULL;
+          char  *pszUnitsName = NULL;
           
           GTIFGetUOMLengthInfo( psDefn->UOMLength, &pszUnitsName, NULL );
 
@@ -794,7 +992,7 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
 /* -------------------------------------------------------------------- */
 /*      Return the WKT serialization of the object.                     */
 /* -------------------------------------------------------------------- */
-    char	*pszWKT;
+    char    *pszWKT;
 
     oSRS.FixupOrdering();
 
@@ -811,9 +1009,9 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
 static int OGCDatumName2EPSGDatumCode( const char * pszOGCName )
 
 {
-    FILE	*fp;
-    char	**papszTokens;
-    int		nReturn = KvUserDefined;
+    FILE    *fp;
+    char    **papszTokens;
+    int     nReturn = KvUserDefined;
 
 /* -------------------------------------------------------------------- */
 /*      Do we know it as a built in?                                    */
@@ -841,7 +1039,7 @@ static int OGCDatumName2EPSGDatumCode( const char * pszOGCName )
         return nReturn;
 
 /* -------------------------------------------------------------------- */
-/*	Discard the first line with field names.			*/
+/*  Discard the first line with field names.            */
 /* -------------------------------------------------------------------- */
     CSLDestroy( CSVReadParseLine( fp ) );
 
@@ -876,7 +1074,7 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 
 {
     OGRSpatialReference *poSRS;
-    int		nPCS = KvUserDefined;
+    int     nPCS = KvUserDefined;
     OGRErr      eErr;
     OGRBoolean peStrStored = FALSE;    
 
@@ -925,7 +1123,7 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 /* -------------------------------------------------------------------- */
 /*      Get the Datum so we can special case a few PCS codes.           */
 /* -------------------------------------------------------------------- */
-    int		nDatum = KvUserDefined;
+    int     nDatum = KvUserDefined;
 
     if( poSRS->GetAuthorityName("PROJCS|GEOGCS|DATUM") != NULL 
         && EQUAL(poSRS->GetAuthorityName("PROJCS|GEOGCS|DATUM"),"EPSG") )
@@ -955,7 +1153,7 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 /*      Get the linear units.                                           */
 /* -------------------------------------------------------------------- */
     char        *pszLinearUOMName = NULL;
-    double	dfLinearUOM = poSRS->GetLinearUnits( &pszLinearUOMName );
+    double  dfLinearUOM = poSRS->GetLinearUnits( &pszLinearUOMName );
     int         nUOMLengthCode = 9001; /* meters */
 
     if( (pszLinearUOMName != NULL
@@ -1000,15 +1198,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     }
     else if( EQUAL(pszProjection,SRS_PT_ALBERS_CONIC_EQUAL_AREA) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_AlbersEqualArea );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_AlbersEqualArea );
 
         GTIFKeySet(psGTIF, ProjStdParallelGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_STANDARD_PARALLEL_1, 0.0 ) );
@@ -1031,9 +1229,9 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 
     else if( poSRS->GetUTMZone() != 0 )
     {
-        int		bNorth, nZone, nProjection;
+        int     bNorth, nZone, nProjection;
 
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
 
         nZone = poSRS->GetUTMZone( &bNorth );
@@ -1078,15 +1276,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 
     else if( EQUAL(pszProjection,SRS_PT_TRANSVERSE_MERCATOR) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_TransverseMercator );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_TransverseMercator );
 
         GTIFKeySet(psGTIF, ProjNatOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1106,15 +1304,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_TRANSVERSE_MERCATOR_SOUTH_ORIENTED) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_TransvMercator_SouthOriented );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_TransvMercator_SouthOriented );
 
         GTIFKeySet(psGTIF, ProjNatOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1136,15 +1334,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
              || EQUAL(pszProjection,SRS_PT_MERCATOR_1SP) )
 
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_Mercator );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_Mercator );
 
         GTIFKeySet(psGTIF, ProjNatOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1164,15 +1362,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_OBLIQUE_STEREOGRAPHIC) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_ObliqueStereographic );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_ObliqueStereographic );
 
         GTIFKeySet(psGTIF, ProjNatOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1192,15 +1390,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_STEREOGRAPHIC) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_Stereographic );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_Stereographic );
 
         GTIFKeySet(psGTIF, ProjCenterLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1220,15 +1418,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_POLAR_STEREOGRAPHIC) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_PolarStereographic );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_PolarStereographic );
 
         GTIFKeySet(psGTIF, ProjNatOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1248,15 +1446,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_HOTINE_OBLIQUE_MERCATOR) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_ObliqueMercator );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_ObliqueMercator );
 
         GTIFKeySet(psGTIF, ProjCenterLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_CENTER, 0.0 ) );
@@ -1282,15 +1480,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_CASSINI_SOLDNER) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_CassiniSoldner );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_CassiniSoldner );
 
         GTIFKeySet(psGTIF, ProjNatOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1307,15 +1505,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_EQUIDISTANT_CONIC) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_EquidistantConic );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_EquidistantConic );
 
         GTIFKeySet(psGTIF, ProjStdParallel1GeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_STANDARD_PARALLEL_1, 0.0 ) );
@@ -1338,15 +1536,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_POLYCONIC) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_Polyconic );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_Polyconic );
 
         GTIFKeySet(psGTIF, ProjNatOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1366,15 +1564,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_AZIMUTHAL_EQUIDISTANT) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_AzimuthalEquidistant );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_AzimuthalEquidistant );
 
         GTIFKeySet(psGTIF, ProjCenterLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_CENTER, 0.0 ) );
@@ -1391,15 +1589,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_MILLER_CYLINDRICAL) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_MillerCylindrical );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_MillerCylindrical );
 
         GTIFKeySet(psGTIF, ProjCenterLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_CENTER, 0.0 ) );
@@ -1416,15 +1614,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_EQUIRECTANGULAR) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_Equirectangular );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_Equirectangular );
 
         GTIFKeySet(psGTIF, ProjCenterLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1444,15 +1642,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_GNOMONIC) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_Gnomonic );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_Gnomonic );
 
         GTIFKeySet(psGTIF, ProjCenterLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1469,15 +1667,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_LAMBERT_AZIMUTHAL_EQUAL_AREA) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_LambertAzimEqualArea );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_LambertAzimEqualArea );
 
         GTIFKeySet(psGTIF, ProjCenterLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_CENTER, 0.0 ) );
@@ -1494,15 +1692,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_ORTHOGRAPHIC) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_Orthographic );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_Orthographic );
 
         GTIFKeySet(psGTIF, ProjCenterLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1519,15 +1717,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_NEW_ZEALAND_MAP_GRID) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_NewZealandMapGrid );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_NewZealandMapGrid );
 
         GTIFKeySet(psGTIF, ProjNatOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1544,15 +1742,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_ROBINSON) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_Robinson );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_Robinson );
 
         GTIFKeySet(psGTIF, ProjCenterLongGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LONGITUDE_OF_CENTER, 0.0 ) );
@@ -1566,15 +1764,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_SINUSOIDAL) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_Sinusoidal );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_Sinusoidal );
 
         GTIFKeySet(psGTIF, ProjCenterLongGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LONGITUDE_OF_CENTER, 0.0 ) );
@@ -1588,15 +1786,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_VANDERGRINTEN) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_VanDerGrinten );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_VanDerGrinten );
 
         GTIFKeySet(psGTIF, ProjCenterLongGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_CENTRAL_MERIDIAN, 0.0 ) );
@@ -1610,15 +1808,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_ALBERS_CONIC_EQUAL_AREA) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_AlbersEqualArea );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_AlbersEqualArea );
 
         GTIFKeySet(psGTIF, ProjNatOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_CENTER, 0.0 ) );
@@ -1641,15 +1839,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_LAMBERT_CONFORMAL_CONIC_2SP) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_LambertConfConic_2SP );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_LambertConfConic_2SP );
 
         GTIFKeySet(psGTIF, ProjFalseOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1672,15 +1870,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
     
     else if( EQUAL(pszProjection,SRS_PT_LAMBERT_CONFORMAL_CONIC_1SP) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_LambertConfConic_1SP );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_LambertConfConic_1SP );
 
         GTIFKeySet(psGTIF, ProjNatOriginLatGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_LATITUDE_OF_ORIGIN, 0.0 ) );
@@ -1700,15 +1898,15 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 
     else if( EQUAL(pszProjection,SRS_PT_CYLINDRICAL_EQUAL_AREA) )
     {
-	GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
                    ModelTypeProjected);
-	GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
-	GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
+    GTIFKeySet(psGTIF, ProjectionGeoKey, TYPE_SHORT, 1,
                    KvUserDefined );
 
-	GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
-		   CT_CylindricalEqualArea );
+    GTIFKeySet(psGTIF, ProjCoordTransGeoKey, TYPE_SHORT, 1, 
+           CT_CylindricalEqualArea );
 
         GTIFKeySet(psGTIF, ProjNatOriginLongGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetNormProjParm( SRS_PP_CENTRAL_MERIDIAN, 0.0 ) );
@@ -1897,8 +2095,8 @@ CPLErr GTIFWktFromMemBuf( int nSize, unsigned char *pabyBuffer,
 
 {
     TIFF        *hTIFF;
-    GTIF 	*hGTIF;
-    GTIFDefn	sGTIFDefn;
+    GTIF    *hGTIF;
+    GTIFDefn    sGTIFDefn;
     char        szFilename[100];
 
     sprintf( szFilename, "/vsimem/wkt_from_mem_buf_%ld.tif", 
@@ -1940,8 +2138,8 @@ CPLErr GTIFWktFromMemBuf( int nSize, unsigned char *pabyBuffer,
 /* -------------------------------------------------------------------- */
 /*      Get geotransform or tiepoints.                                  */
 /* -------------------------------------------------------------------- */
-    double	*padfTiePoints, *padfScale, *padfMatrix;
-    int16	nCount;
+    double  *padfTiePoints, *padfScale, *padfMatrix;
+    int16   nCount;
 
     padfGeoTransform[0] = 0.0;
     padfGeoTransform[1] = 1.0;
@@ -1977,8 +2175,8 @@ CPLErr GTIFWktFromMemBuf( int nSize, unsigned char *pabyBuffer,
         
         for( int iGCP = 0; iGCP < *pnGCPCount; iGCP++ )
         {
-            char	szID[32];
-            GDAL_GCP	*psGCP = *ppasGCPList + iGCP;
+            char    szID[32];
+            GDAL_GCP    *psGCP = *ppasGCPList + iGCP;
 
             sprintf( szID, "%d", iGCP+1 );
             psGCP->pszId = CPLStrdup( szID );
@@ -2025,7 +2223,7 @@ CPLErr GTIFMemBufFromWkt( const char *pszWKT, const double *padfGeoTransform,
 
 {
     TIFF        *hTIFF;
-    GTIF 	*hGTIF;
+    GTIF    *hGTIF;
     char        szFilename[100];
 
     sprintf( szFilename, "/vsimem/wkt_from_mem_buf_%ld.tif", 
@@ -2076,7 +2274,7 @@ CPLErr GTIFMemBufFromWkt( const char *pszWKT, const double *padfGeoTransform,
 
         if( padfGeoTransform[2] == 0.0 && padfGeoTransform[4] == 0.0 )
         {
-            double	adfPixelScale[3], adfTiePoints[6];
+            double  adfPixelScale[3], adfTiePoints[6];
 
             adfPixelScale[0] = padfGeoTransform[1];
             adfPixelScale[1] = fabs(padfGeoTransform[5]);
@@ -2095,7 +2293,7 @@ CPLErr GTIFMemBufFromWkt( const char *pszWKT, const double *padfGeoTransform,
         }
         else
         {
-            double	adfMatrix[16];
+            double  adfMatrix[16];
 
             memset(adfMatrix,0,sizeof(double) * 16);
 
@@ -2116,7 +2314,7 @@ CPLErr GTIFMemBufFromWkt( const char *pszWKT, const double *padfGeoTransform,
 /* -------------------------------------------------------------------- */
     else if( nGCPCount > 0 )
     {
-        double	*padfTiePoints;
+        double  *padfTiePoints;
 
         padfTiePoints = (double *) CPLMalloc(6*sizeof(double)*nGCPCount);
 

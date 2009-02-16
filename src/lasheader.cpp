@@ -740,155 +740,41 @@ void LASHeader::ClearGeoKeyVLRs()
 }
 void LASHeader::SetGeoreference() 
 {
-#ifndef HAVE_LIBGEOTIFF
-
-    ;
-
-#else
-
-    int ret = 0;
+// #ifndef HAVE_LIBGEOTIFF
+// 
+//     ;
+// 
+// #else
+//     
+    m_srs.SetVLRs(m_vlrs);
+    GTIF* gt = m_srs.GetGTIF();
+    m_srs.SetGTIF(gt);
+    m_srs.ResetVLRs();
     
-    detail::raii_wrapper<ST_TIFF> st(ST_Create(), ST_Destroy);
-    detail::raii_wrapper<GTIF> gt(GTIFNewSimpleTags(st.get()), GTIFFree);    
-	
-    // Wipe out any existing VLRs that represent geotiff keys on the 
-    // header.  We're going to rewrite them to be totally derived from the 
-    // proj4 string.
+    std::vector<LASVLR> vlrs;
+    vlrs = m_srs.GetVLRs();
+
     ClearGeoKeyVLRs();
-    
-    if (GetProj4().empty())
-		return;
 
-    ret = GTIFSetFromProj4(gt.get(), GetProj4().c_str());
-    if (!ret)
-	{
-        throw std::invalid_argument("PROJ.4 string is invalid or unsupported");
+    std::vector<LASVLR>::const_iterator i;
+
+    for (i = vlrs.begin(); i != vlrs.end(); ++i) 
+    {
+        AddVLR(*i);
     }
 
-    ret = GTIFWriteKeys(gt.get());
-    if (!ret)
-	{
-        throw std::runtime_error("The geotiff keys could not be written");
-    }
-    
-    short* kdata = NULL;
-    short kvalue = 0;
-    double* ddata = NULL;
-    double dvalue = 0;
-    int dtype = 0;
-    int dcount = 0;
-    int ktype = 0;
-    int kcount = 0;
-
-    //GTIFF_GEOKEYDIRECTORY == 34735
-    ret = ST_GetKey(st.get(), 34735, &kcount, &ktype, (void**)&kdata);
-    if (ret)
-	{    
-        LASVLR record;
-        int i = 0;
-        record.SetRecordId(34735);
-        record.SetUserId("LASF_Projection");
-        std::vector<uint8_t> data;
-
-        // Shorts are 2 bytes in length
-        uint16_t length = 2*kcount;
-
-        record.SetRecordLength(length);
-        
-        // Copy the data into the data vector
-        for (i = 0; i < kcount; i++)
-		{
-            kvalue = kdata[i];
-            
-            uint8_t* v = reinterpret_cast<uint8_t*>(&kvalue); 
-            
-            data.push_back(v[0]);
-            data.push_back(v[1]);
-        }
-
-        record.SetData(data);
-
-        AddVLR(record);
-    }
-
-    // FIXME We don't handle ASCII keys yet
-    // GTIFF_ASCIIPARAMS == 34737
-    // ret = ST_GetKey(st.get(), 34737, &acount, &atype, (void**)&adata);
-    // if (ret) {
-    //     
-    //     LASVLR record;
-    //     int i = 0;
-    //     record.SetRecordId(34737);
-    //     record.SetUserId("LASF_Projection");
-    //     std::vector<uint8_t> data;
-    // 
-    //     uint32_t length = acount;
-    //     record.SetRecordLength(length);
-    //     
-    //     // Copy the data into the data vector
-    // 
-    //     for (i=0; i<acount;i++) {
-    //         avalue = adata[i];
-    //         
-    //         uint8_t* v =  reinterpret_cast<uint8_t*>(&avalue);
-    //         
-    //         data.push_back(v[0]);
-    //         data.push_back(v[1]);
-    //         data.push_back(v[2]);
-    //         data.push_back(v[3]);
-    //         data.push_back(v[4]);
-    //         data.push_back(v[5]);
-    //         data.push_back(v[6]);
-    //         data.push_back(v[7]);
-    //         
-    //     }
-    //     record.SetData(data);
-    //     AddVLR(record);
-    // }
-
-
-    // GTIFF_DOUBLEPARAMS == 34736
-    ret = ST_GetKey(st.get(), 34736, &dcount, &dtype, (void**)&ddata);
-
-    if (ret)
-	{       
-        LASVLR record;
-        int i = 0;
-        record.SetRecordId(34736);
-        record.SetUserId("LASF_Projection");
-        std::vector<uint8_t> data;
-
-        // Doubles are 8 bytes in length
-        uint16_t length = 8*dcount;
-        record.SetRecordLength(length);
-        
-        // Copy the data into the data vector
-        for (i=0; i<dcount;i++)
-		{
-            dvalue = ddata[i];
-            
-            uint8_t* v =  reinterpret_cast<uint8_t*>(&dvalue);
-            
-            data.push_back(v[0]);
-            data.push_back(v[1]);
-            data.push_back(v[2]);
-            data.push_back(v[3]);
-            data.push_back(v[4]);
-            data.push_back(v[5]);
-            data.push_back(v[6]);
-            data.push_back(v[7]);   
-        }
-        
-		record.SetData(data);
-        AddVLR(record);
-    }
-#endif // HAVE_LIBGEOTIFF
+// #endif // HAVE_LIBGEOTIFF
 }
 
+LASSRS LASHeader::GetSRS() const
+{
+    return m_srs;
+}
 void LASHeader::SetSRS(LASSRS& srs)
 {
     m_srs = srs;
 }
+
 
 } // namespace liblas
 

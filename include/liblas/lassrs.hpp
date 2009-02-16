@@ -59,6 +59,7 @@
 
 #include "geo_normalize.h"
 #include "geovalues.h"
+#include "geo_keyp.h"
 #include "ogr_spatialref.h"
 #include "gdal.h"
 #include "xtiffio.h"
@@ -73,6 +74,7 @@
 #include "geo_normalize.h"
 #include "geo_simpletags.h"
 #include "geovalues.h"
+#include "geo_keyp.h"
 #endif // HAVE_LIBGEOTIFF
 
 // std
@@ -92,31 +94,31 @@ public:
     LASSRS();
     ~LASSRS();
     LASSRS(const std::vector<LASVLR>& vlrs);
-    ///LASSRS(LASSRS const& other);
-    LASSRS& operator=(LASSRS const& rhs);
+    LASSRS(LASSRS const& other);
+    // LASSRS& operator=(LASSRS const& rhs);
     
     GTIF* GetGTIF();
+    void SetGTIF(GTIF* gtiff);
+    void ResetVLRs();
+    
     std::string GetWKT() const;
     void SetWKT(std::string const& v);
     
     std::string GetProj4() const;
+    void SetProj4();
     
-    bool HasKeys();
+    void SetVLRs(const std::vector<LASVLR>& vlrs);
+    std::vector<LASVLR> GetVLRs() const;
+    
 
 private:
 
-    LASSRS(LASSRS const& other);
+// >     LASSRS(LASSRS const& other);
   
     GTIF* m_gtiff;
     ST_TIFF* m_tiff;
   
     std::vector<LASVLR> m_vlrs;
-    // 
-    // std::string m_wkt;
-    // std::string m_proj4;
-    //detail::raii_wrapper<ST_TIFF> m_tiff;
-    // detail::raii_wrapper<GTIF> m_gtiff;
-
 
 protected:
     
