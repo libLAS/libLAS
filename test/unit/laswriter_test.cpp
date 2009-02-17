@@ -53,11 +53,11 @@ namespace tut
             std::ofstream ofs;
             ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
 
-            // LAS 1.1, Point Format 0
+            // LAS 1.2, Point Format 0
             liblas::LASHeader header;
             liblas::LASWriter writer(ofs, header);
 
-            ensure_equals<std::size_t>(writer.GetVersion(), liblas::eLASVersion11);
+            ensure_equals<std::size_t>(writer.GetVersion(), liblas::eLASVersion12);
 
             liblas::LASHeader const& hdr_default = writer.GetHeader();
             test_default_header(hdr_default);
@@ -69,7 +69,7 @@ namespace tut
             ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
             liblas::LASReader reader(ifs);
 
-            ensure_equals<std::size_t>(reader.GetVersion(), liblas::eLASVersion11);
+            ensure_equals<std::size_t>(reader.GetVersion(), liblas::eLASVersion12);
             
             liblas::LASHeader const& hdr_default = reader.GetHeader();
             test_default_header(hdr_default);

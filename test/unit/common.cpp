@@ -33,7 +33,7 @@ void test_default_header(liblas::LASHeader const& h)
     ensure_equals("wrong default major version",
         h.GetVersionMajor(), 1);
     ensure_equals("wrong default minor version",
-        h.GetVersionMinor(), 1);
+        h.GetVersionMinor(), 2);
 
     ensure_equals("wrong default system id",
         h.GetSystemId(), LASHeader::SystemIdentifier);
@@ -49,7 +49,7 @@ void test_default_header(liblas::LASHeader const& h)
         h.GetHeaderSize(), liblas::uint16_t(227));
     
     liblas::uint32_t offset = 229;
-    if (h.GetVersionMinor() == 1)
+    if (h.GetVersionMinor() == 1 || h.GetVersionMinor() == 2)
     {
         offset = 227;
     }
