@@ -42,6 +42,7 @@
 #include <liblas/lassrs.hpp>
 #include <liblas/detail/utility.hpp>
 #include <iostream>
+
 namespace liblas {
 
 LASSRS::LASSRS() 
@@ -89,6 +90,7 @@ LASSRS::LASSRS(LASSRS const& other)
     SetVLRs(other.GetVLRs());
     GetGTIF();
 }
+
 LASSRS::LASSRS(const std::vector<LASVLR>& vlrs) 
 {
     m_tiff = NULL;
@@ -127,7 +129,6 @@ std::vector<LASVLR> LASSRS::GetVLRs() const
 void LASSRS::ResetVLRs()
 {
 
-
     int ret = 0;
     short* kdata = NULL;
     short kvalue = 0;
@@ -137,11 +138,9 @@ void LASSRS::ResetVLRs()
     int dcount = 0;
     int ktype = 0;
     int kcount = 0;
+
+    m_vlrs.clear();
     
-    // if (m_vlrs.size())
-    //     m_vlrs.clear();
-    // else
-    //     return;
     if (!m_tiff) throw std::invalid_argument("m_tiff was null");
     if (!m_gtiff) throw std::invalid_argument("m_gtiff was null");
 
