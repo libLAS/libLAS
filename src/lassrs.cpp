@@ -48,6 +48,7 @@ namespace liblas {
 LASSRS::LASSRS() 
 
 {
+
     m_tiff = NULL;
     m_gtiff = NULL;
 }
@@ -129,6 +130,12 @@ std::vector<LASVLR> LASSRS::GetVLRs() const
 void LASSRS::ResetVLRs()
 {
 
+    m_vlrs.clear();
+
+#ifndef HAVE_LIBGEOTIFF
+    return;
+#else
+
     int ret = 0;
     short* kdata = NULL;
     short kvalue = 0;
@@ -138,8 +145,6 @@ void LASSRS::ResetVLRs()
     int dcount = 0;
     int ktype = 0;
     int kcount = 0;
-
-    m_vlrs.clear();
     
     if (!m_tiff) throw std::invalid_argument("m_tiff was null");
     if (!m_gtiff) throw std::invalid_argument("m_gtiff was null");
@@ -245,12 +250,16 @@ void LASSRS::ResetVLRs()
         record.SetData(data);
         m_vlrs.push_back(record);
 
-    }    
+    }
+#endif // ndef HAVE_LIBGEOTIFF
+
 }
 
 const GTIF* LASSRS::GetGTIF(){
 
+#ifdef HAVE_LIBGEOTIFF
     // if we're already set, don't overwrite
+    // FIXME this is a bug.
     if (m_gtiff) return m_gtiff;
 
     m_tiff = ST_Create();
@@ -289,6 +298,9 @@ const GTIF* LASSRS::GetGTIF(){
         m_tiff = NULL;
         return NULL;
     }
+#endif
+
+    return NULL;
 }
 
 
@@ -351,7 +363,10 @@ std::string LASSRS::GetProj4() const
 
 #endif
 
+// if we have libgeotiff but not GDAL, we'll use the 
+// simple method in libgeotiff
 #ifdef HAVE_LIBGEOTIFF
+#ifndef HAVE_GDAL
     GTIFDefn defn;
 
     if (m_gtiff && GTIFGetDefn(m_gtiff, &defn)) 
@@ -362,6 +377,7 @@ std::string LASSRS::GetProj4() const
 
         return tmp;
     }
+#endif
 #endif
 
 // If we have neither GDAL nor proj.4, we can't do squat

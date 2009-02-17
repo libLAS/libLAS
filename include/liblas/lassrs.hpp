@@ -80,6 +80,12 @@
 #include <cstdlib> // std::size_t
 #include <string>
 
+// Fake out the compiler if we don't have libgeotiff
+#ifndef HAVE_LIBGEOTIFF
+    typedef struct GTIFS * GTIF;
+    typedef struct ST_TIFFS * ST_TIFF;
+#endif
+
 namespace liblas {
 
 /// Spatial Reference System container for libLAS
@@ -96,11 +102,9 @@ public:
     LASSRS& operator=(LASSRS const& rhs);
     
 
-#ifdef HAVE_LIBGEOTIFF
     /// Returns a pointer to the internal GTIF*.  Only available if 
     /// you have libgeotiff linked in.
     const GTIF* GetGTIF();
-#endif
 
     /// Reset the VLRs of the LASSRS using the existing GTIF* and ST_TIF*
     /// Until this method is called, 
@@ -146,10 +150,10 @@ public:
     
 
 private:
-  
+
     GTIF* m_gtiff;
     ST_TIFF* m_tiff;
-  
+
     std::vector<LASVLR> m_vlrs;
 
 protected:
