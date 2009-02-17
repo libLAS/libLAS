@@ -21,7 +21,7 @@
   1
 
   >>> h.minor_version
-  1
+  2
 
   >>> import datetime
   >>> td = datetime.timedelta(hours=5) # my timezone is GMT-5
