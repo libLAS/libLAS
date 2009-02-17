@@ -405,9 +405,24 @@ void LASSRS::SetProj4(std::string const& v)
     int ret = 0;
     ret = GTIFSetFromOGISDefn( m_gtiff, tmp.c_str() );
     if (!ret) throw std::invalid_argument("could not set m_gtiff from Proj4");
-#else
-    ;
+#endif
 
+// if we have libgeotiff but not GDAL, we'll use the 
+// simple method in libgeotiff
+#ifdef HAVE_LIBGEOTIFF
+#ifndef HAVE_GDAL
+    int ret = 0;
+    ret = GTIFSetFromProj4( m_gtiff, v.c_str());
+    if (!ret) 
+    {
+        throw std::invalid_argument("PROJ.4 string is invalid or unsupported");
+    }
+    ret = GTIFWriteKeys(m_gtiff);
+    if (!ret) 
+    {
+        throw std::runtime_error("The geotiff keys could not be written");
+    }    
+#endif
 #endif
 
 }
