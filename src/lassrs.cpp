@@ -138,8 +138,10 @@ void LASSRS::ResetVLRs()
     int ktype = 0;
     int kcount = 0;
     
-    m_vlrs.clear();
-    
+    // if (m_vlrs.size())
+    //     m_vlrs.clear();
+    // else
+    //     return;
     if (!m_tiff) throw std::invalid_argument("m_tiff was null");
     if (!m_gtiff) throw std::invalid_argument("m_gtiff was null");
 
@@ -298,6 +300,7 @@ std::string LASSRS::GetWKT() const
 #ifdef HAVE_GDAL
     GTIFDefn sGTIFDefn;
     char* pszWKT = NULL;
+    if (!m_gtiff) return std::string("");
     if( GTIFGetDefn( m_gtiff, &sGTIFDefn ) ) {
         pszWKT = GTIFGetOGISDefn( m_gtiff, &sGTIFDefn );
         if (pszWKT) {

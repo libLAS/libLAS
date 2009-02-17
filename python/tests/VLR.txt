@@ -60,7 +60,7 @@
   >>> h.records_count
   3L
   >>> h.proj4
-  '+proj=utm +zone=17 +ellps=WGS84 +units=m '
+  '+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
   >>> v = h.GetVLR(0)
   >>> v.recordid
   34735
