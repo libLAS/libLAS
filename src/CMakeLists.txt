@@ -18,6 +18,7 @@ SET( LIBLAS_HPP
     ../include/liblas/lasrecordheader.hpp
     ../include/liblas/laswriter.hpp
     ../include/liblas/liblas.hpp
+	../include/liblas/lassrs.hpp
 )
 
 SET( LIBLAS_DETAIL_HPP
@@ -27,6 +28,7 @@ SET( LIBLAS_DETAIL_HPP
     ../include/liblas/detail/reader.hpp
     ../include/liblas/detail/reader10.hpp
     ../include/liblas/detail/reader11.hpp
+	../include/liblas/detail/reader12.hpp
     ../include/liblas/detail/sha1.hpp
     ../include/liblas/detail/sharedptr.hpp
     ../include/liblas/detail/timer.hpp
@@ -34,6 +36,7 @@ SET( LIBLAS_DETAIL_HPP
     ../include/liblas/detail/writer.hpp
     ../include/liblas/detail/writer10.hpp
     ../include/liblas/detail/writer11.hpp
+	../include/liblas/detail/writer12.hpp
 )
 
 SET( LIBLAS_CPP
@@ -44,15 +47,18 @@ SET( LIBLAS_CPP
     lasreader.cpp
     laswriter.cpp
     lasfile.cpp
+	lassrs.cpp
 )
 
 SET( LIBLAS_DETAIL_CPP
     detail/reader.cpp
     detail/reader10.cpp
     detail/reader11.cpp
+	detail/reader12.cpp
     detail/writer.cpp
     detail/writer10.cpp
     detail/writer11.cpp
+	detail/writer12.cpp
     detail/file.cpp
 )
 

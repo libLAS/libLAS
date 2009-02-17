@@ -72,6 +72,15 @@ IF (GEOTIFF_FOUND)
 	ADD_DEFINITIONS( -D HAVE_LIBGEOTIFF )
 ENDIF (GEOTIFF_FOUND)
 
+# optinal GeoTIFF support
+FIND_PACKAGE(GDAL)
+
+IF (GDAL_FOUND)
+	#TODO: Use to generate config.h
+	#SET (HAVE_GDAL TRUE)
+	ADD_DEFINITIONS( -D HAVE_GDAL )
+ENDIF (GDAL_FOUND)
+
 #############################################################
 # List of directories to process
 
