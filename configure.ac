@@ -144,36 +144,41 @@ dnl Determine GeoTIFF Support
 dnl #########################################################################
 
 AC_ARG_WITH([geotiff],
-    AC_HELP_STRING([--with-geotiff=ARG], [libgeotiff library to use (yes or path)]),,)
-AC_MSG_CHECKING([for libgeotiff])
+    AC_HELP_STRING([--with-geotiff=ARG], [libgeotiff library to use (no or path)]),,)
 
 HAVE_GEOTIFF="no"
 GEOTIFF_CONFIG="no"
 
-if test "$with_geotiff" = "no" -o "$with_geotiff" = "" ; then
-    AC_MSG_RESULT([no])
-else
-
-    GEOTIFF_CONFIG=external
-
+if test "$with_geotiff" != "no" -a "$with_geotiff" != "" ; then
     dnl We now require libgeotiff 1.2.5 (for ST_Create the simpletags stuff). 
     dnl first check if $with_geotiff/lib has the library:
     AC_CHECK_LIB([geotiff], [ST_Create],
                  [GEOTIFF_CONFIG=external], [GEOTIFF_CONFIG=no],
                  [-L$with_geotiff/lib])
 fi
-
 if test "${GEOTIFF_CONFIG}" != "no" ; then
-
-    if test "${GEOTIFF_CONFIG}" = "external" ; then
-        LIBS="-L$with_geotiff/lib -lgeotiff $LIBS"
-        if test -d ${with_geotiff}/include ; then
-            dnl Second path is for Debian using $prefix/include/geotiff/geotiff.h
-            GEOTIFF_INC="-I$with_geotiff/include -I$with_geotiff/include/geotiff"
-            AC_MSG_RESULT([using libgeotiff from $with_geotiff/include]) 
-        fi
+    dnl libgeotiff 1.2.5, is first version with geo_simpletags.h
+    AC_MSG_CHECKING([for geo_simpletags.h of libgeotiff >= 1.2.5])
+    if test -f ${with_geotiff}/include/geo_simpletags.h ; then
+        GEOTIFF_INC="-I$with_geotiff/include"
+	AC_MSG_RESULT([yes])
+    elif test -f ${with_geotiff}/include/geotiff/geo_simpletags.h ; then
+        GEOTIFF_INC="-I$with_geotiff/include/geotiff"
+	AC_MSG_RESULT([yes])
+    else
+        GEOTIFF_CONFIG="no"
+	AC_MSG_RESULT([no])
     fi
+fi
+	
+AC_MSG_CHECKING([for libgeotiff])
+if test "${GEOTIFF_CONFIG}" = "no" ; then
+    HAVE_GEOTIFF="no"
+    AC_MSG_RESULT([no])
+else
+    LIBS="-L$with_geotiff/lib -lgeotiff $LIBS"
     HAVE_GEOTIFF="yes"
+    AC_MSG_RESULT([yes])
 fi
 
 AC_SUBST([GEOTIFF_INC])
