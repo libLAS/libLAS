@@ -156,9 +156,9 @@ else
 
     GEOTIFF_CONFIG=external
 
-    dnl We now require libgeotiff 1.2.1 (for XTIFFClientOpen). 
+    dnl We now require libgeotiff 1.2.5 (for ST_Create the simpletags stuff). 
     dnl first check if $with_geotiff/lib has the library:
-    AC_CHECK_LIB([geotiff], [XTIFFClientOpen],
+    AC_CHECK_LIB([geotiff], [ST_Create],
                  [GEOTIFF_CONFIG=external], [GEOTIFF_CONFIG=no],
                  [-L$with_geotiff/lib])
 fi
