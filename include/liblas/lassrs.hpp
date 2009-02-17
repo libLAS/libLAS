@@ -95,17 +95,53 @@ public:
     LASSRS(LASSRS const& other);
     LASSRS& operator=(LASSRS const& rhs);
     
+
+#ifdef HAVE_LIBGEOTIFF
+    /// Returns a pointer to the internal GTIF*.  Only available if 
+    /// you have libgeotiff linked in.
     const GTIF* GetGTIF();
-    void SetGTIF(const GTIF* gtiff);
+#endif
+
+    /// Reset the VLRs of the LASSRS using the existing GTIF* and ST_TIF*
+    /// Until this method is called, 
+    /// the LASSRS will only contain a SRS description using the VLRs 
+    /// that it was first instantiated with.  SetWKT and SetProj4 can 
+    /// be used to change the GTIF* 
     void ResetVLRs();
     
+
+    /// Returns the OGC WKT describing Spatial Reference System.
+    /// If GDAL is linked, it uses GDAL's operations and methods to determine 
+    /// the WKT.  If GDAL is not linked, no WKT is returned.
     std::string GetWKT() const;
+    
+    /// Sets the SRS using GDAL's OGC WKT. If GDAL is not linked, this 
+    /// operation has no effect.
+    /// \param v - a string containing the WKT string.  
     void SetWKT(std::string const& v);
     
+    /// Returns the Proj.4 string describing the Spatial Reference System.
+    /// If GDAL is linked, it uses GDAL's operations and methods to determine 
+    /// the Proj.4 string -- otherwise, if libgeotiff is linked, it uses 
+    /// that.  Note that GDAL's operations are much more mature and 
+    /// support more coordinate systems and descriptions.
     std::string GetProj4() const;
+
+    /// Sets the Proj.4 string describing the Spatial Reference System.
+    /// If GDAL is linked, it uses GDAL's operations and methods to determine 
+    /// the Proj.4 string -- otherwise, if libgeotiff is linked, it uses 
+    /// that.  Note that GDAL's operations are much more mature and 
+    /// support more coordinate systems and descriptions.
+    /// \param v - a string containing the Proj.4 string.
     void SetProj4(std::string const& v);
     
+    /// Set the LASVLRs for the LASSRS.  SetVLRs will only copy 
+    /// VLR records that pertain to the GeoTIFF keys, and extraneous 
+    /// VLR records will not be copied.
+    /// \param vlrs - A list of VLRs that contains VLRs describing GeoTIFF keys
     void SetVLRs(const std::vector<LASVLR>& vlrs);
+    
+    /// Return a copy of the LASVLRs that LASSRS maintains
     std::vector<LASVLR> GetVLRs() const;
     
 
