@@ -97,7 +97,7 @@ class Header(object):
     major_version = property(get_majorversion, set_majorversion)
 
     def get_minorversion(self):
-        """Returns the minor version of the file.  Expect this value to always be 0 or 1"""
+        """Returns the minor version of the file.  Expect this value to always be 0, 1, or 2"""
         return core.las.LASHeader_GetVersionMinor(self.handle)
     def set_minorversion(self, value):
         """Sets the minor version of the file.  The value should be 0 for 1.0 LAS files and 1 for 1.1 LAS files"""
@@ -195,19 +195,19 @@ class Header(object):
     records_count = property(get_recordscount)
     
     def get_dataformatid(self):
-        """Returns the data format id.  
+        """Gets the point format value
         
         A value of 1 means the format is 1.1 compatible and includes a time 
         value on the points.  A value of 0 means the format is 1.0 compatible.
         """
         return core.las.LASHeader_GetDataFormatId(self.handle)
     def set_dataformatid(self, value):
-        """Sets the data format id for the file.  
+        """Sets the point format value
         
-        It can only be 1 (for 1.1 compatible) or 0 (for 1.0 compatible).
+        It can only be  1 (for 1.1 compatible) or 0 (for 1.0 compatible).
         """
-        if value not in [1,0]:
-            raise core.LASException("Format ID must be 1 or 0")
+        if value not in [3, 2,1,0]:
+            raise core.LASException("Format ID must be 3, 2, 1, or 0")
         return core.las.LASHeader_SetDataFormatId(self.handle, value)
     dataformat_id = property(get_dataformatid, set_dataformatid)
     

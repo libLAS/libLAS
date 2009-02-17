@@ -44,7 +44,7 @@ import core
 import ctypes
 
 class Color(object):
-    def __init__(self, owned=True, handle=None):
+    def __init__(self, red=0, green=0, blue=0, owned=True, handle=None):
         if handle:
             self.handle = handle
         else:

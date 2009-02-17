@@ -263,8 +263,19 @@ void LASHeader::SetVersionMinor(uint8_t v)
 {
     if (v > eVersionMinorMax)
         throw std::out_of_range("version minor out of range");
-
+    
     m_versionMinor = v;
+    
+    uint32_t size = 0;
+    uint32_t const dataSignatureSize = 2;
+    
+    // Add the signature if we're a 1.0 file    
+    if (eVersionMinorMin == m_versionMinor) {
+        size = dataSignatureSize; 
+    } 
+
+    SetDataOffset(GetHeaderSize()+size);
+    
 }
 
 std::string LASHeader::GetSystemId(bool pad /*= false*/) const
@@ -359,8 +370,9 @@ void LASHeader::SetDataOffset(uint32_t v)
     uint32_t const dataSignatureSize = 2;
     uint16_t const hsize = GetHeaderSize();
 
-    if ((eVersionMinorMin == m_versionMinor && v < hsize + dataSignatureSize)
-        || (eVersionMinorMax == m_versionMinor && v < hsize))
+    if ( (m_versionMinor == 0 && v < hsize + dataSignatureSize) ||
+         (m_versionMinor == 1 && v < hsize) ||
+         (m_versionMinor == 2 && v < hsize) )
     {
         throw std::out_of_range("data offset out of range");
     }
@@ -608,10 +620,10 @@ void LASHeader::SetProj4(std::string const& v)
 void LASHeader::Init()
 {
     // Initialize public header block with default
-    // values according to LAS 1.1
+    // values according to LAS 1.2
 
     m_versionMajor = 1;
-    m_versionMinor = 1;
+    m_versionMinor = 2;
     m_dataFormatId = ePointFormat0;
     m_dataRecordLen = ePointSize0;
 
