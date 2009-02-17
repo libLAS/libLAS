@@ -1,6 +1,6 @@
-lasdir = $(includedir)/liblas
+lasdir = $(includedir)
 
-las_HEADERS =		liblas/cstdint.hpp \
+nobase_las_HEADERS =		liblas/cstdint.hpp \
                     liblas/exception.hpp \
 					    liblas/guid.hpp \
 					    liblas/iterator.hpp \
