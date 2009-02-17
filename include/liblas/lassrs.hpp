@@ -59,7 +59,6 @@
 
 #include "geo_normalize.h"
 #include "geovalues.h"
-#include "geo_keyp.h"
 #include "ogr_spatialref.h"
 #include "gdal.h"
 #include "xtiffio.h"
@@ -74,7 +73,6 @@
 #include "geo_normalize.h"
 #include "geo_simpletags.h"
 #include "geovalues.h"
-#include "geo_keyp.h"
 #endif // HAVE_LIBGEOTIFF
 
 // std
@@ -126,11 +124,12 @@ protected:
 
 } // namespace liblas
 
+#ifdef HAVE_GDAL
 char CPL_DLL *  GTIFGetOGISDefn( GTIF *, GTIFDefn * );
 int  CPL_DLL   GTIFSetFromOGISDefn( GTIF *, const char * );
 
 void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName);
 void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, char* angUnitName, int nDatum, short nSpheroid);
-
+#endif
 
 #endif // LIBLAS_LASSRS_HPP_INCLUDED
