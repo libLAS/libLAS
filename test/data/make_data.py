@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from liblas import file
 from liblas import header
 from liblas import point
@@ -17,9 +19,12 @@ p.scan_angle = -13
 p.x = 42.0000
 p.y = -93.00
 p.z = 16.0
-p.color.red=255
-p.color.green=12
-p.color.blue=234
+c = color.Color()
+
+c.red=255
+c.green=12
+c.blue=234
+p.color = c
 p.time = datetime.datetime.now()
 
 print p.time
@@ -30,7 +35,7 @@ def write_file(version, format):
     h.dataformat_id = format
     h.major_version = 1
     h.minor_version = version
-    f = file.File('test_1.%d_pointformat%d.las'%(version,format), mode='w', header=h)
+    f = file.File('1.%d_%d.las'%(version,format), mode='w', header=h)
     f.write(p)
     f.close()
 
