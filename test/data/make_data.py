@@ -6,11 +6,6 @@ from liblas import point
 from liblas import color
 import datetime
 
-h = header.Header()
-h.date = datetime.datetime.now()
-h.dataformat_id = 1
-h.proj4 = '+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
-
 p = point.Point()
 p.flightline_edge = 0
 p.return_number = 1
@@ -35,6 +30,8 @@ def write_file(version, format):
     h.dataformat_id = format
     h.major_version = 1
     h.minor_version = version
+    h.proj4 = '+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
+    
     f = file.File('1.%d_%d.las'%(version,format), mode='w', header=h)
     f.write(p)
     f.close()

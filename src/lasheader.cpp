@@ -72,7 +72,7 @@ namespace liblas
 
 char const* const LASHeader::FileSignature = "LASF";
 char const* const LASHeader::SystemIdentifier = "libLAS";
-char const* const LASHeader::SoftwareIdentifier = "libLAS 1.0";
+char const* const LASHeader::SoftwareIdentifier = "libLAS 1.2";
 
 LASHeader::LASHeader()
 {
@@ -761,12 +761,23 @@ void LASHeader::SetGeoreference()
 // #else
 //     
     m_srs.SetVLRs(m_vlrs);
-    if (!m_srs.GetVLRs().size())
-        return;
+    if (!m_srs.GetVLRs().size()) 
+    {
+        if (!m_proj4.empty() ) 
+        {
+            m_srs.SetProj4(m_proj4);
+        }
+        else
+        {
+            return ;
+        }
+        
+    }
+
     m_srs.ResetVLRs();
     
-    std::vector<LASVLR> vlrs;
-    vlrs = m_srs.GetVLRs();
+    std::vector<LASVLR> vlrs = m_srs.GetVLRs();
+    printf("vlrs size: %d", vlrs.size());
 
     ClearGeoKeyVLRs();
 

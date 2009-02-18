@@ -145,7 +145,8 @@ bool Reader::ReadGeoreference(LASHeader& header)
     header.SetSRS(srs);
     
     if (vlrs.size()) {
-        header.SetProj4(srs.GetProj4());
+        if (srs.GetProj4().size())
+            header.SetProj4(srs.GetProj4());
     }
     
     // std::cout << srs.GetWKT() << std::endl;
