@@ -152,9 +152,9 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
         min_color = LASPoint_GetColor(summary->pmin);
         max_color = LASPoint_GetColor(summary->pmax);
         
-        red = MIN(LASColor_GetRed(LASPoint_GetColor(summary->pmin)), LASColor_GetRed(color));
-        green = MIN(LASColor_GetGreen(LASPoint_GetColor(summary->pmin)), LASColor_GetGreen(color));
-        blue = MIN(LASColor_GetBlue(LASPoint_GetColor(summary->pmin)), LASColor_GetBlue(color));
+        red = MIN(LASColor_GetRed(min_color), LASColor_GetRed(color));
+        green = MIN(LASColor_GetGreen(min_color), LASColor_GetGreen(color));
+        blue = MIN(LASColor_GetBlue(min_color), LASColor_GetBlue(color));
 
         LASColor_SetRed(min_color, red);
         LASColor_SetGreen(min_color, green);
@@ -163,9 +163,9 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
         LASPoint_SetColor(summary->pmin, min_color);
         LASColor_Destroy(min_color);
 
-        red = MAX(LASColor_GetRed(LASPoint_GetColor(summary->pmax)), LASColor_GetRed(color));
-        green = MAX(LASColor_GetGreen(LASPoint_GetColor(summary->pmax)), LASColor_GetGreen(color));
-        blue = MAX(LASColor_GetBlue(LASPoint_GetColor(summary->pmax)), LASColor_GetBlue(color));
+        red = MAX(LASColor_GetRed(max_color), LASColor_GetRed(color));
+        green = MAX(LASColor_GetGreen(max_color), LASColor_GetGreen(color));
+        blue = MAX(LASColor_GetBlue(max_color), LASColor_GetBlue(color));
 
         LASColor_SetRed(max_color, red);
         LASColor_SetGreen(max_color, green);
