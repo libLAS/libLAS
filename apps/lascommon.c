@@ -172,6 +172,8 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
         LASColor_SetBlue(max_color, blue);
         
         LASPoint_SetColor(summary->pmax, max_color);
+        LASColor_Destroy(max_color);
+        
         LASColor_Destroy(color);
         
         
