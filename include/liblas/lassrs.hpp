@@ -48,6 +48,7 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/exception.hpp>
+#include <liblas/capi/las_config.h>
 
 // GDAL OSR
 #ifdef HAVE_GDAL
@@ -165,11 +166,13 @@ protected:
 } // namespace liblas
 
 #ifdef HAVE_GDAL
-char CPL_DLL *  GTIFGetOGISDefn( GTIF *, GTIFDefn * );
-int  CPL_DLL   GTIFSetFromOGISDefn( GTIF *, const char * );
+LAS_C_START
+char LAS_DLL *  GTIFGetOGISDefn( GTIF *, GTIFDefn * );
+int  LAS_DLL   GTIFSetFromOGISDefn( GTIF *, const char * );
 
 void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName);
 void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, char* angUnitName, int nDatum, short nSpheroid);
+LAS_C_END
 #endif
 
 #endif // LIBLAS_LASSRS_HPP_INCLUDED
