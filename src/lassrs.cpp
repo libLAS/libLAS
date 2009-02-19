@@ -70,16 +70,16 @@ LASSRS::~LASSRS()
 {
     // FIXME: this needs to be cleaned up
     
-    // if (m_gtiff)
-    // {
-    //     GTIFFree(m_gtiff);
-    //     m_gtiff = NULL;
-    // }
-    // if (m_tiff)
-    // {
-    //     ST_Destroy(m_tiff);
-    //     m_tiff = NULL;
-    // }
+    if (m_gtiff)
+    {
+        GTIFFree(m_gtiff);
+        m_gtiff = NULL;
+    }
+    if (m_tiff)
+    {
+        ST_Destroy(m_tiff);
+        m_tiff = NULL;
+    }
 
 
 }
@@ -107,15 +107,24 @@ void LASSRS::SetVLRs(const std::vector<LASVLR>& vlrs)
     
     std::string const uid("LASF_Projection");
     
+    // Wipe out any existing VLRs that might exist on the LASSRS
     m_vlrs.clear();
+    
+    // We only copy VLR records from the list which are related to GeoTIFF keys.
+    // They must have an id of "LASF_Projection" and a record id that's related.
     for (i = vlrs.begin(); i != vlrs.end(); ++i)
     {
+        //GTIFF_GEOKEYDIRECTORY == 34735
         if (uid == (*i).GetUserId(true).c_str() && 34735 == (*i).GetRecordId()) {
             m_vlrs.push_back(*i);
         }
+        
+        // GTIFF_DOUBLEPARAMS == 34736
         if (uid == (*i).GetUserId(true).c_str() && 34736 == (*i).GetRecordId()) {
             m_vlrs.push_back(*i);
         }
+        
+        // GTIFF_ASCIIPARAMS == 34737
         if (uid == (*i).GetUserId(true).c_str() && 34737 == (*i).GetRecordId()) {
             m_vlrs.push_back(*i);
         }
@@ -150,8 +159,8 @@ void LASSRS::ResetVLRs()
     int acount = 0;
     int atype =0;
     
-    if (!m_tiff) throw std::invalid_argument("m_tiff was null");
-    if (!m_gtiff) throw std::invalid_argument("m_gtiff was null");
+    if (!m_tiff) throw std::invalid_argument("m_tiff was null, cannot reset VLRs without m_tiff");
+    if (!m_gtiff) throw std::invalid_argument("m_gtiff was null, cannot reset VLRs without m_gtiff");
 
     //GTIFF_GEOKEYDIRECTORY == 34735
     ret = ST_GetKey(m_tiff, 34735, &kcount, &ktype, (void**)&kdata);
@@ -182,40 +191,6 @@ void LASSRS::ResetVLRs()
         record.SetData(data);
         m_vlrs.push_back(record);
     }
-
-    // GTIFF_ASCIIPARAMS == 34737
-    ret = ST_GetKey(m_tiff, 34737, &acount, &atype, (void**)&adata);
-    if (ret) 
-    {                    
-         LASVLR record;
-         int i = 0;
-         record.SetRecordId(34737);
-         record.SetUserId("LASF_Projection");
-         std::vector<uint8_t> data;
-             
-         uint32_t length = acount;
-         record.SetRecordLength(length);
-         
-         // Copy the data into the data vector
-         for (i=0; i<acount;i++) {
-             avalue = adata[i];
-             
-             uint8_t* v =  reinterpret_cast<uint8_t*>(&avalue);
-             
-             data.push_back(v[0]);
-             data.push_back(v[1]);
-             data.push_back(v[2]);
-             data.push_back(v[3]);
-             data.push_back(v[4]);
-             data.push_back(v[5]);
-             data.push_back(v[6]);
-             data.push_back(v[7]);
-             
-         }
-         record.SetData(data);
-         m_vlrs.push_back(record);
-    }
-
 
     // GTIFF_DOUBLEPARAMS == 34736
     ret = ST_GetKey(m_tiff, 34736, &dcount, &dtype, (void**)&ddata);
@@ -251,6 +226,50 @@ void LASSRS::ResetVLRs()
         m_vlrs.push_back(record);
     }
     
+    // GTIFF_ASCIIPARAMS == 34737
+    ret = ST_GetKey(m_tiff, 34737, &acount, &atype, (void**)&adata);
+    if (ret) 
+    {                    
+         LASVLR record;
+         int i = 0;
+         record.SetRecordId(34737);
+         record.SetUserId("LASF_Projection");
+         std::vector<uint8_t> data;
+
+         // whoa.  If the returned count was 0, it is because there 
+         // was a bug in libgeotiff that existed before r1531 where it 
+         // didn't calculate the string length for an ASCII geotiff tag.
+         // We need to throw an exception in this case because we're
+         // screwed, and if we don't we'll end up writing bad GeoTIFF keys.
+         if (!acount) {
+             throw std::runtime_error("GeoTIFF ASCII key with no returned size. " 
+                                      "Upgrade your libgeotiff to a version greater "
+                                      "than r1531 (libgeotiff 1.2.6)");
+                     }
+         uint32_t length = acount;
+         record.SetRecordLength(length);
+         
+         // Copy the data into the data vector
+         for (i=0; i<acount;i++) {
+             avalue = adata[i];
+             
+             uint8_t* v =  reinterpret_cast<uint8_t*>(&avalue);
+             
+             data.push_back(v[0]);
+             data.push_back(v[1]);
+             data.push_back(v[2]);
+             data.push_back(v[3]);
+             data.push_back(v[4]);
+             data.push_back(v[5]);
+             data.push_back(v[6]);
+             data.push_back(v[7]);
+             
+         }
+         record.SetData(data);
+         m_vlrs.push_back(record);
+    }
+
+    
 #endif // ndef HAVE_LIBGEOTIFF
 
 }
@@ -258,13 +277,17 @@ void LASSRS::ResetVLRs()
 const GTIF* LASSRS::GetGTIF(){
 
 #ifdef HAVE_LIBGEOTIFF
-    // if we're already set, don't overwrite
-    // FIXME this is a bug.
-    // if (m_gtiff) return m_gtiff;
+    // If we already have m_gtiff and m_tiff, that is because we have 
+    // already called GetGTIF once before.  VLRs ultimately drive how the 
+    // LASSRS is defined, not the GeoTIFF keys.  
+    if (m_tiff) {ST_Destroy(m_tiff); m_tiff = NULL;}
+    if (m_gtiff) {GTIFFree(m_gtiff); m_gtiff = NULL; }
     
     m_tiff = ST_Create();
     std::string const uid("LASF_Projection");
     
+    // Nothing is going to happen here if we don't have any VLRs describing
+    // SRS information on the LASSRS.  
     for (uint16_t i = 0; i < m_vlrs.size(); ++i)
     {
         LASVLR record = m_vlrs[i];
@@ -297,7 +320,6 @@ const GTIF* LASSRS::GetGTIF(){
 
     return NULL;
 }
-
 
 /// Fetch the SRS as WKT
 std::string LASSRS::GetWKT() const 
@@ -335,7 +357,8 @@ void LASSRS::SetWKT(std::string const& v)
         throw std::runtime_error("The geotiff keys could not be written");
     }
 #else
-    ;
+    
+    throw std::runtime_error("GDAL is not available, LASSRS could not be set from WKT");
 
 #endif
 
@@ -361,7 +384,9 @@ std::string LASSRS::GetProj4() const
     poSRS->exportToProj4(&proj4);
     std::string tmp(proj4);
     std::free(proj4);
-
+    
+    delete poSRS;
+    
     return tmp;    
 
 #endif
@@ -402,6 +427,8 @@ void LASSRS::SetProj4(std::string const& v)
     }
     
     poSRS->exportToWkt(&poWKT);
+    delete poSRS;
+    
     std::string tmp(poWKT);
     std::free(poWKT);
         
