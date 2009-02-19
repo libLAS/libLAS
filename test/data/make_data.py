@@ -11,8 +11,8 @@ p.flightline_edge = 0
 p.return_number = 1
 p.classification = 0
 p.scan_angle = -13
-p.x = 42.0000
-p.y = -93.00
+p.x = 470692.447538
+p.y = 4602888.904642
 p.z = 16.0
 c = color.Color()
 
@@ -34,7 +34,7 @@ def write_file(version, format):
     h.min = [p.x, p.y, p.z]
     h.max = [p.x, p.y, p.z]
     h.point_return_count = [0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L]
-    h.proj4 = '+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
+    h.proj4 = '+proj=utm +zone=15 +ellps=NAD83 +datum=NAD83 +units=m +no_defs '
     h.date = p.time
     
     f = file.File('1.%d_%d.las'%(version,format), mode='w', header=h)
