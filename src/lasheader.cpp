@@ -777,7 +777,6 @@ void LASHeader::SetGeoreference()
     m_srs.ResetVLRs();
     
     std::vector<LASVLR> vlrs = m_srs.GetVLRs();
-    printf("vlrs size: %d", vlrs.size());
 
     ClearGeoKeyVLRs();
 
