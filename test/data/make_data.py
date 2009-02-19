@@ -20,9 +20,10 @@ c.red=255
 c.green=12
 c.blue=234
 p.color = c
-p.time = datetime.datetime.now()
+p.time = datetime.datetime(2008,3,19)
+p.classification = 2
+p.return_number = 2
 
-print p.time
 
 def write_file(version, format):
     h = header.Header()
@@ -30,7 +31,11 @@ def write_file(version, format):
     h.dataformat_id = format
     h.major_version = 1
     h.minor_version = version
+    h.min = [p.x, p.y, p.z]
+    h.max = [p.x, p.y, p.z]
+    h.point_return_count = [0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L]
     h.proj4 = '+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
+    h.date = p.time
     
     f = file.File('1.%d_%d.las'%(version,format), mode='w', header=h)
     f.write(p)
