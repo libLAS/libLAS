@@ -98,6 +98,24 @@ inline bool Create(std::ofstream& ofs, std::string const& filename) // throw()
     return ofs.is_open();
 }
 
+inline bool IsGDALEnabled()
+{
+#ifdef HAVE_GDAL
+    return true;
+#else
+    return false;
+#endif
+}
+
+inline bool IsLibGeoTIFFEnabled()
+{
+#ifdef HAVE_LIBGEOTIFF
+    return true;
+#else
+    return false;
+#endif
+}
+
 } // namespace liblas
 
 #endif // LIBLAS_HPP_INCLUDED

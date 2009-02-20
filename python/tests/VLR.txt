@@ -53,14 +53,20 @@
   >>> [v.data[i] for i in range(10)]
   [2, 32, 4, 5, 6, 7, 8, 9, 10, 11]
   
-    
+  >>> import liblas
+
+#  >>> liblas.HAVE_GDAL
+#  >>> liblas.HAVE_LIBGEOTIFF
+
   >>> from liblas import file
   >>> f = file.File('../test/data/srs.las')
   >>> h = f.header
   >>> h.records_count
   3L
-  >>> h.proj4
-  '+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
+  >>> if not liblas.HAVE_GDAL:
+  ...     h.proj4
+  '+proj=utm +zone=17 +ellps=WGS84 +units=m '
+
   >>> v = h.GetVLR(0)
   >>> v.recordid
   34735

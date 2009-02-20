@@ -41,7 +41,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-
+#include <liblas/liblas.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/laserror.hpp>
 #include <liblas/laswriter.hpp>
@@ -125,6 +125,14 @@ static std::stack<LASError > errors;
         LASError_PushError( ret, message.c_str(), (func)); \
         return (rc); \
    }} while(0)
+
+LAS_DLL int LAS_IsGDALEnabled(void) {
+    return IsGDALEnabled();
+}
+
+LAS_DLL int LAS_IsLibGeoTIFFEnabled(void) {
+    return IsLibGeoTIFFEnabled();
+}
 
 LAS_DLL void LASError_Reset(void) {
     if (errors.empty()) return;
