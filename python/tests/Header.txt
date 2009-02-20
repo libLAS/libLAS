@@ -38,7 +38,7 @@
   datetime.datetime(2008, 3, 19, 0, 0)
 
   >>> h.software_id
-  'libLAS 1.0'
+  'libLAS 1.2'
   >>> h.software_id = 'hobu'
   >>> h.software_id
   'hobu'
@@ -93,3 +93,7 @@
   >>> h.proj4 = '+proj=utm +zone=17 +ellps=WGS84 +units=m'
   >>> h.proj4
   '+proj=utm +zone=17 +ellps=WGS84 +units=m'
+
+  >>> s = h.srs
+  >>> s.proj4
+  '+to_meter=1.0000000000'

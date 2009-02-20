@@ -1,0 +1,4 @@
+  >>> from liblas import srs
+  >>> s = srs.SRS()
+  >>> s.proj4
+  ''

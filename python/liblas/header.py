@@ -44,6 +44,7 @@ import core
 import datetime
 import guid
 import vlr
+import srs
 
 def leap_year(year):
     if (year % 400) == 0:
@@ -371,3 +372,8 @@ class Header(object):
     def DeleteVLR(self, value):
         core.las.LASHeader_DeleteVLR(self.handle, value)
 
+    def get_srs(self):
+        return srs.SRS(handle=core.las.LASHeader_GetSRS(self.handle))
+    def set_srs(self, value):
+        return core.las.LASHeader_SetSRS(self.handle, self.value)
+    srs = property(get_srs, set_srs)

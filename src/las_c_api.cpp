@@ -1780,6 +1780,31 @@ LAS_DLL LASErrorEnum LASSRS_ResetVLRs(LASSRSH hSRS) {
     return LE_None;
 }
 
+LAS_DLL LASErrorEnum LASHeader_SetSRS(LASHeaderH hHeader, const LASSRSH hSRS) {
+    
+    VALIDATE_POINTER1(hHeader, "LASHeader_SetSRS", LE_Failure);
+    VALIDATE_POINTER1(hSRS, "LASHeader_SetSRS", LE_Failure);
+
+    try {
+        ((LASHeader*) hHeader)->SetSRS(*((LASSRS*)hSRS));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetSRS");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
+
+LAS_DLL LASSRSH LASHeader_GetSRS(const LASHeaderH hHeader) {
+    VALIDATE_POINTER1(hHeader, "LASHeader_GetSRS", 0);
+    
+    LASSRS srs = ((LASHeader*) hHeader)->GetSRS();
+    return (LASSRSH) new LASSRS(srs);
+}
+
+
 LAS_C_END
 
 #ifdef _MSC_VER

@@ -564,3 +564,34 @@ las.LASPoint_GetColor.restype = ctypes.c_void_p
 
 las.LASPoint_SetColor.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASPoint_SetColor.errcheck = check_return
+
+
+
+las.LASSRS_Create.errcheck = check_void
+las.LASSRS_Create.restype = ctypes.c_void_p
+
+las.LASSRS_Destroy.argtypes = [ctypes.c_void_p]
+las.LASSRS_Destroy.errcheck = check_void_done
+
+las.LASSRS_GetProj4.argtypes = [ctypes.c_void_p]
+las.LASSRS_GetProj4.errcheck = check_value_free
+las.LASSRS_SetProj4.restype = ctypes.c_int
+las.LASSRS_SetProj4.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+las.LASSRS_SetProj4.errcheck = check_return
+
+las.LASSRS_GetWKT.argtypes = [ctypes.c_void_p]
+las.LASSRS_GetWKT.errcheck = check_value_free
+las.LASSRS_SetWKT.restype = ctypes.c_int
+las.LASSRS_SetWKT.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+las.LASSRS_SetWKT.errcheck = check_return
+
+las.LASSRS_AddVLR.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASSRS_AddVLR.errcheck = check_value
+las.LASSRS_AddVLR.restype = ctypes.c_int
+
+las.LASHeader_GetSRS.argtypes = [ctypes.c_void_p]
+las.LASHeader_GetSRS.errcheck = check_void
+las.LASHeader_GetSRS.restype = ctypes.c_void_p
+
+las.LASHeader_SetSRS.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASHeader_SetSRS.errcheck = check_return
