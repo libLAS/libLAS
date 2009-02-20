@@ -49,6 +49,7 @@
 #include <liblas/exception.hpp>
 #include <liblas/lasrecordheader.hpp>
 #include <liblas/guid.hpp>
+#include <liblas/lassrs.hpp>
 #include <liblas/capi/las_config.h>
 #include <liblas/capi/las_version.h>
 
@@ -59,7 +60,7 @@ typedef struct LASHeaderHS *LASHeaderH;
 typedef struct LASGuidHS *LASGuidH;
 typedef struct LASVLRHS *LASVLRH;
 typedef struct LASColorHS *LASColorH;
-
+typedef struct LASSRSHS *LASSRSH;
 
 
 #include <exception>
@@ -72,6 +73,7 @@ typedef struct LASColorHS *LASColorH;
 #include <typeinfo>
 #include <vector>
 #include <cstdio>
+
 using namespace liblas;
 
 LAS_C_START
@@ -1669,6 +1671,111 @@ LAS_DLL LASErrorEnum LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor)
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetColor");
         return LE_Failure;
     }
+
+    return LE_None;
+}
+
+LAS_DLL LASSRSH LASSRS_Create(void) {
+    return (LASSRSH) new LASSRS();
+}
+
+LAS_DLL void LASSRS_Destroy(LASSRSH hSRS){
+    VALIDATE_POINTER0(hSRS, "LASSRS_Destroy");
+    delete (LASSRS*)hSRS;
+    hSRS = NULL;
+}
+
+LAS_DLL const GTIF* LASSRS_GetGTIF(LASSRSH hSRS) {
+    VALIDATE_POINTER1(hSRS, "LASSRS_GetGTIF", 0);
+    
+    try {
+        return ((LASSRS*) hSRS)->GetGTIF();
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASSRS_GetGTIF");
+        return 0;
+    }
+}
+
+LAS_DLL char* LASSRS_GetProj4(LASSRSH hSRS) 
+{
+    VALIDATE_POINTER1(hSRS, "LASSRS_GetProj4", NULL);
+    LASSRS* srs = (LASSRS*)hSRS;
+
+    return strdup((srs)->GetProj4().c_str());
+    
+}
+
+LAS_DLL LASErrorEnum LASSRS_SetProj4(LASSRSH hSRS, const char* value)
+{
+    VALIDATE_POINTER1(hSRS, "LASSRS_SetProj4", LE_Failure);
+    VALIDATE_POINTER1(value, "LASSRS_SetProj4", LE_Failure);
+
+    try {
+         ((LASSRS*) hSRS)->SetProj4(value);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASSRS_SetProj4");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL char* LASSRS_GetWKT(LASSRSH hSRS) 
+{
+    VALIDATE_POINTER1(hSRS, "LASSRS_GetWKT", NULL);
+    LASSRS* srs = (LASSRS*)hSRS;
+
+    return strdup((srs)->GetWKT().c_str());
+    
+}
+
+LAS_DLL LASErrorEnum LASSRS_SetWKT(LASSRSH hSRS, const char* value)
+{
+    VALIDATE_POINTER1(hSRS, "LASSRS_SetWKT", LE_Failure);
+    VALIDATE_POINTER1(value, "LASSRS_SetWKT", LE_Failure);
+
+    try {
+         ((LASSRS*) hSRS)->SetWKT(value);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASSRS_SetWKT");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
+    
+    VALIDATE_POINTER1(hSRS, "LASSRS_AddVLR", LE_Failure);
+    VALIDATE_POINTER1(hVLR, "LASSRS_AddVLR", LE_Failure);
+
+    try {
+        ((LASSRS*) hSRS)->AddVLR(*((LASVLR*)hVLR));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASSRS_AddVLR");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASSRS_ResetVLRs(LASSRSH hSRS) {
+    
+    VALIDATE_POINTER1(hSRS, "LASSRS_ResetVLRs", LE_Failure);
+
+    try {
+        ((LASSRS*) hSRS)->ResetVLRs();
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASSRS_ResetVLRs");
+        return LE_Failure;
+    }
+
 
     return LE_None;
 }

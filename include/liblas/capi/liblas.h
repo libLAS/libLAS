@@ -60,6 +60,16 @@ typedef struct LASHeaderHS *LASHeaderH;
 typedef struct LASGuidHS *LASGuidH;
 typedef struct LASVLRHS *LASVLRH;
 typedef struct LASColorHS *LASColorH;
+typedef struct LASSRSHS *LASSRSH;
+
+
+/* Fake out the compiler if we don't have libgeotiff */
+#ifndef HAVE_LIBGEOTIFF
+    typedef struct GTIFS * GTIF;
+#else
+#include <geotiff.h>
+#endif
+
 
 LAS_C_START
 
@@ -1054,6 +1064,23 @@ LAS_DLL LASColorH LASPoint_GetColor(const LASPointH hPoint);
  *  @return an error number if an error occured.
 */
 LAS_DLL LASError LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor);
+
+
+/****************************************************************************/
+/* SRS Operations                                                           */
+/****************************************************************************/
+
+/** Creates a new SRS
+ *  @return a new SRS
+*/
+LAS_DLL LASSRSH LASSRS_Create(void);
+
+
+LAS_DLL const GTIF* LASSRS_GetGTIF(LASSRSH hSRS);
+LAS_DLL char* LASSRS_GetWKT(LASSRSH hSRS);
+LAS_DLL LASError LASSRS_SetWKT(LASSRSH hSRS, const char* value);
+LAS_DLL char* LASSRS_GetProj4(LASSRSH hSRS);
+LAS_DLL LASError LASSRS_SetProj4(LASSRSH hSRS, const char* value);
 
 
 LAS_C_END

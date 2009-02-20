@@ -113,21 +113,49 @@ void LASSRS::SetVLRs(const std::vector<LASVLR>& vlrs)
     // They must have an id of "LASF_Projection" and a record id that's related.
     for (i = vlrs.begin(); i != vlrs.end(); ++i)
     {
-        //GTIFF_GEOKEYDIRECTORY == 34735
-        if (uid == (*i).GetUserId(true).c_str() && 34735 == (*i).GetRecordId()) {
+        if (IsGeoVLR(*i)) {
             m_vlrs.push_back(*i);
         }
-        
-        // GTIFF_DOUBLEPARAMS == 34736
-        if (uid == (*i).GetUserId(true).c_str() && 34736 == (*i).GetRecordId()) {
-            m_vlrs.push_back(*i);
-        }
-        
-        // GTIFF_ASCIIPARAMS == 34737
-        if (uid == (*i).GetUserId(true).c_str() && 34737 == (*i).GetRecordId()) {
-            m_vlrs.push_back(*i);
-        }
+        // //GTIFF_GEOKEYDIRECTORY == 34735
+        // if (uid == (*i).GetUserId(true).c_str() && 34735 == (*i).GetRecordId()) {
+        //     m_vlrs.push_back(*i);
+        // }
+        // 
+        // // GTIFF_DOUBLEPARAMS == 34736
+        // if (uid == (*i).GetUserId(true).c_str() && 34736 == (*i).GetRecordId()) {
+        //     m_vlrs.push_back(*i);
+        // }
+        // 
+        // // GTIFF_ASCIIPARAMS == 34737
+        // if (uid == (*i).GetUserId(true).c_str() && 34737 == (*i).GetRecordId()) {
+        //     m_vlrs.push_back(*i);
+        // }
     }
+}
+
+void LASSRS::AddVLR(const LASVLR& vlr) 
+{
+    if (IsGeoVLR(vlr)) {
+        m_vlrs.push_back(vlr);
+    }
+}
+bool LASSRS::IsGeoVLR(const LASVLR& vlr) const
+{
+    std::string const uid("LASF_Projection");
+    if (uid == vlr.GetUserId(true).c_str() && 34735 == vlr.GetRecordId()) {
+        return true;
+    }
+    
+    // GTIFF_DOUBLEPARAMS == 34736
+    if (uid == vlr.GetUserId(true).c_str() && 34736 == vlr.GetRecordId()) {
+        return true;
+    }
+    
+    // GTIFF_ASCIIPARAMS == 34737
+    if (uid == vlr.GetUserId(true).c_str() && 34737 == vlr.GetRecordId()) {
+        return true;
+    }
+    return false;
 }
 
 std::vector<LASVLR> LASSRS::GetVLRs() const
@@ -375,8 +403,7 @@ std::string LASSRS::GetProj4() const
     if( poSRS->importFromWkt((char **) &poWKT) != OGRERR_NONE )
     {
         delete poSRS;
-        throw std::invalid_argument("could not import proj4 into OSRSpatialReference GetProj4");
-        return FALSE;
+        return std::string("");
     }
     
     char* proj4;

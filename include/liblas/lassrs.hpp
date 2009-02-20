@@ -146,6 +146,9 @@ public:
     /// \param vlrs - A list of VLRs that contains VLRs describing GeoTIFF keys
     void SetVLRs(const std::vector<LASVLR>& vlrs);
     
+    /// Add a VLR representing GeoTIFF keys to the SRS
+    void AddVLR(const LASVLR& vlr);
+    
     /// Return a copy of the LASVLRs that LASSRS maintains
     std::vector<LASVLR> GetVLRs() const;
     
@@ -156,6 +159,8 @@ private:
     ST_TIFF* m_tiff;
 
     std::vector<LASVLR> m_vlrs;
+    bool IsGeoVLR(const LASVLR& vlr) const;
+    
 
 protected:
     
