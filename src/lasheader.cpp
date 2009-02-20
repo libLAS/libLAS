@@ -605,17 +605,6 @@ void LASHeader::DeleteVLR(uint32_t index)
     
 }
 
-/// Fetch the Georeference as a proj.4 string
-std::string LASHeader::GetProj4() const 
-{
-    return m_proj4;
-}
-
-       
-void LASHeader::SetProj4(std::string const& v)
-{
-    m_proj4 = v;
-}
 
 void LASHeader::Init()
 {

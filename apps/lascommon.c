@@ -398,7 +398,7 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     uint16_t nVLRRecordId = 0;
     
     LASVLRH pVLR = NULL;
-
+    LASSRSH pSRS = NULL;
     uint32_t nVLR = 0;
     int i = 0;
     
@@ -406,7 +406,9 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     pszProjectId = LASHeader_GetProjectId(header);
     pszSystemId = LASHeader_GetSystemId(header);
     pszSoftwareId = LASHeader_GetSoftwareId(header);
-    pszProj4 = LASHeader_GetProj4(header);
+    
+    pSRS = LASHeader_GetSRS(header);
+    pszProj4 = LASSRS_GetProj4(pSRS);
     
     nVLR = LASHeader_GetRecordsCount(header);
     

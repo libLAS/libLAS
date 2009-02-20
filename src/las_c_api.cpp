@@ -1183,30 +1183,6 @@ LAS_DLL LASErrorEnum LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR) {
     return LE_None;
 }
 
-LAS_DLL char* LASHeader_GetProj4(LASHeaderH hHeader) 
-{
-    VALIDATE_POINTER1(hHeader, "LASHeader_GetProj4", NULL);
-    LASHeader* header = (LASHeader*)hHeader;
-
-    return strdup((header)->GetProj4().c_str());
-    
-}
-LAS_DLL LASErrorEnum LASHeader_SetProj4(LASHeaderH hHeader, const char* value)
-{
-    VALIDATE_POINTER1(hHeader, "LASHeader_SetProj4", LE_Failure);
-    VALIDATE_POINTER1(value, "LASHeader_SetProj4", LE_Failure);
-
-    try {
-         ((LASHeader*) hHeader)->SetProj4(value);
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetProj4");
-        return LE_Failure;
-    }
-
-    return LE_None;
-}
-
 
 LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader, int mode) {
     VALIDATE_POINTER1(hHeader, "LASWriter_Create", NULL); 

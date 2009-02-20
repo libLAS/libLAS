@@ -154,11 +154,6 @@ bool Reader::ReadGeoreference(LASHeader& header)
     // on the way out.
     m_in_srs = srs;
     
-    if (vlrs.size()) {
-        if (srs.GetProj4().size())
-            header.SetProj4(srs.GetProj4());
-    }
-    
     return true;
 
 }

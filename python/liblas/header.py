@@ -360,12 +360,7 @@ class Header(object):
         return core.las.LASHeader_SetMax(self.handle, value[0], value[1], value[2])
     max = property(get_max, set_max)
 
-    def get_proj4(self):
-        return core.las.LASHeader_GetProj4(self.handle)
-    def set_proj4(self, value):
-        return core.las.LASHeader_SetProj4(self.handle, value)
-    proj4 = property(get_proj4, set_proj4)
-    
+
     def GetVLR(self, value):
         return vlr.VLR(handle=core.las.LASHeader_GetVLR(self.handle, value))
 
