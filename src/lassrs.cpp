@@ -371,7 +371,7 @@ std::string LASSRS::GetWKT() const
        
 void LASSRS::SetWKT(std::string const& v)
 {
-    if (! m_gtiff ) GetGTIF();
+    // if (! m_gtiff ) GetGTIF(); ResetVLRs();
 
 #ifdef HAVE_GDAL
     
@@ -442,8 +442,8 @@ std::string LASSRS::GetProj4() const
 void LASSRS::SetProj4(std::string const& v)
 {
 
-    if (! m_gtiff ) GetGTIF();
-    
+    // if (! m_gtiff ) GetGTIF(); ResetVLRs();
+   
 #ifdef HAVE_GDAL
 
     char* poWKT = NULL;
