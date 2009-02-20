@@ -42,8 +42,13 @@
 #ifndef LIBLAS_DETAIL_WRITER_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_HPP_INCLUDED
 
+#include <liblas/lassrs.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
+
+#ifndef HAVE_GDAL
+    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
+#endif
 
 // std
 #include <iosfwd>
@@ -63,19 +68,25 @@ public:
     std::ostream& GetStream() const;
     void WriteVLR(LASHeader const& header);
 
+    void SetSRS(const LASSRS& srs);
+    
 protected:
     PointRecord m_record;
     std::ostream& m_ofs;
 
     void FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header);
 
-
+    void Project(PointRecord& point);      
+    LASSRS m_out_srs;
+    LASSRS m_in_srs;
+    
+    OGRCoordinateTransformationH m_transform;
+    
 private:
 
     // Blocked copying operations, declared but not defined.
     Writer(Writer const& other);
     Writer& operator=(Writer const& rhs);
-
     
 };
 

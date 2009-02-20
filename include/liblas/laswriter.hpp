@@ -74,6 +74,11 @@ public:
     
     // Allow in-place writing of header
     void WriteHeader(LASHeader& header);
+
+    // Reproject data as they are written if the LASWriter's reference is
+    // different than the LASHeader's
+    bool SetSRS(const LASSRS& ref);
+    
     
 private:
     
@@ -85,6 +90,7 @@ private:
 
     LASHeader m_header;
     detail::PointRecord m_record;
+
 };
 
 } // namespace liblas

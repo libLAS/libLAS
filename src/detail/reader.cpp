@@ -45,15 +45,19 @@
 #include <liblas/detail/reader12.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+// 
+// // GeoTIFF
+// #ifdef HAVE_LIBGEOTIFF
+// #include <geotiff.h>
+// #include <geo_simpletags.h>
+// #include "geo_normalize.h"
+// #include "geo_simpletags.h"
+// #include "geovalues.h"
+// #endif // HAVE_LIBGEOTIFF
 
-// GeoTIFF
-#ifdef HAVE_LIBGEOTIFF
-#include <geotiff.h>
-#include <geo_simpletags.h>
-#include "geo_normalize.h"
-#include "geo_simpletags.h"
-#include "geovalues.h"
-#endif // HAVE_LIBGEOTIFF
+#ifdef HAVE_GDAL
+#include <ogr_srs_api.h>
+#endif
 
 // std
 #include <fstream>
@@ -63,12 +67,17 @@
 
 namespace liblas { namespace detail {
 
-Reader::Reader(std::istream& ifs) : m_ifs(ifs), m_offset(0), m_current(0)
+Reader::Reader(std::istream& ifs) : m_ifs(ifs), m_offset(0), m_current(0), m_transform(0)
 {
 }
 
 Reader::~Reader()
 {
+#ifdef HAVE_GDAL
+    if (m_transform) {
+        OCTDestroyCoordinateTransformation(m_transform);
+    }
+#endif
 }
 
 std::istream& Reader::GetStream() const
@@ -81,6 +90,8 @@ void Reader::FillPoint(PointRecord& record, LASPoint& point)
     point.SetX(record.x);
     point.SetY(record.y);
     point.SetZ(record.z);
+    
+    if (m_transform) Project(point);
     point.SetIntensity(record.intensity);
     point.SetScanFlags(record.flags);
     point.SetClassification(record.classification);
@@ -127,11 +138,6 @@ bool Reader::ReadVLR(LASHeader& header)
 
 bool Reader::ReadGeoreference(LASHeader& header)
 {
-// #ifndef HAVE_LIBGEOTIFF
-//     UNREFERENCED_PARAMETER(header);
-// #else
-
-
 
     std::vector<LASVLR> vlrs;
     for (uint16_t i = 0; i < header.GetRecordsCount(); ++i)
@@ -143,21 +149,66 @@ bool Reader::ReadGeoreference(LASHeader& header)
     LASSRS srs(vlrs);
     
     header.SetSRS(srs);
+
+    // keep a copy on the reader in case we're going to reproject data 
+    // on the way out.
+    m_in_srs = srs;
     
     if (vlrs.size()) {
         if (srs.GetProj4().size())
             header.SetProj4(srs.GetProj4());
     }
     
-    // std::cout << srs.GetWKT() << std::endl;
-    
-        
-        return true;
+    return true;
 
-//#endif /* def HAVE_LIBGEOTIFF */
-
-//    return false;
 }
+
+void Reader::SetSRS(const LASSRS& srs)
+{
+    m_out_srs = srs;
+#ifdef HAVE_GDAL
+    OGRSpatialReferenceH in_ref = OSRNewSpatialReference(NULL);
+    OGRSpatialReferenceH out_ref = OSRNewSpatialReference(NULL);
+
+    const char* in_wkt = m_in_srs.GetWKT().c_str();
+    if (OSRImportFromWkt(in_ref, (char**) &in_wkt) != OGRERR_NONE) 
+    {
+        throw std::runtime_error("Could not import input spatial reference for Reader::");
+    }
+    
+    const char* out_wkt = m_out_srs.GetWKT().c_str();
+    if (OSRImportFromWkt(out_ref, (char**) &out_wkt) != OGRERR_NONE) 
+    {
+        throw std::runtime_error("Could not import output spatial reference for Reader::");
+    }
+
+    m_transform = OCTNewCoordinateTransformation( in_ref, out_ref);
+    
+#endif
+}
+
+void Reader::Project(LASPoint& point)
+{
+#ifdef HAVE_GDAL
+    
+    int ret = 0;
+    double x = point.GetX();
+    double y = point.GetY();
+    double z = point.GetZ();
+    
+    ret = OCTTransform(m_transform, 1, &x, &y, &z);
+    
+    if (ret != OGRERR_NONE) {
+        throw std::runtime_error("could not project point!");
+    }
+    
+    point.SetX(x);
+    point.SetY(y);
+    point.SetZ(z);
+    
+#endif
+}
+
 
 Reader* ReaderFactory::Create(std::istream& ifs)
 {

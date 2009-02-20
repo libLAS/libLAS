@@ -157,5 +157,12 @@ bool LASReader::IsEOF() const
     return GetStream().eof();
 }
 
+bool LASReader::SetSRS(const LASSRS& srs)
+{
+    m_pimpl->SetSRS(srs);
+    return true;
+}
+
+
 } // namespace liblas
 

@@ -97,5 +97,12 @@ void LASWriter::WriteHeader(LASHeader& header)
     m_header = header;
 }
 
+bool LASWriter::SetSRS(const LASSRS& srs)
+{
+    m_pimpl->SetSRS(srs);
+    return true;
+}
+
+
 } // namespace liblas
 

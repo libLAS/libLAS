@@ -45,6 +45,13 @@
 #include <liblas/detail/writer12.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/lassrs.hpp>
+
+#ifdef HAVE_GDAL
+#include <ogr_srs_api.h>
+#endif
+
+
 // std
 #include <fstream>
 #include <cassert>
@@ -53,12 +60,17 @@
 
 namespace liblas { namespace detail {
 
-Writer::Writer(std::ostream& ofs) : m_ofs(ofs)
+Writer::Writer(std::ostream& ofs) : m_ofs(ofs), m_transform(0)
 {
 }
 
 Writer::~Writer()
 {
+#ifdef HAVE_GDAL
+    if (m_transform) {
+        OCTDestroyCoordinateTransformation(m_transform);
+    }    
+#endif
 }
 
 std::ostream& Writer::GetStream() const
@@ -72,6 +84,9 @@ void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const L
     record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
     record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
     record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
+
+    if (m_transform) Project(record);
+
     record.intensity = point.GetIntensity();
     record.flags = point.GetScanFlags();
     record.classification = point.GetClassification();
@@ -99,6 +114,51 @@ void Writer::WriteVLR(LASHeader const& header)
     }
 }
 
+void Writer::SetSRS(const LASSRS& srs)
+{
+    m_out_srs = srs;
+#ifdef HAVE_GDAL
+    OGRSpatialReferenceH in_ref = OSRNewSpatialReference(NULL);
+    OGRSpatialReferenceH out_ref = OSRNewSpatialReference(NULL);
+
+    const char* in_wkt = m_in_srs.GetWKT().c_str();
+    if (OSRImportFromWkt(in_ref, (char**) &in_wkt) != OGRERR_NONE) 
+    {
+        throw std::runtime_error("Could not import input spatial reference for Reader::");
+    }
+    
+    const char* out_wkt = m_out_srs.GetWKT().c_str();
+    if (OSRImportFromWkt(out_ref, (char**) &out_wkt) != OGRERR_NONE) 
+    {
+        throw std::runtime_error("Could not import output spatial reference for Reader::");
+    }
+
+    m_transform = OCTNewCoordinateTransformation( in_ref, out_ref);
+    
+#endif
+}
+
+void Writer::Project(PointRecord& point)
+{
+#ifdef HAVE_GDAL
+    
+    int ret = 0;
+    double x = point.x;
+    double y = point.y;
+    double z = point.z;
+    
+    ret = OCTTransform(m_transform, 1, &x, &y, &z);
+    
+    if (ret != OGRERR_NONE) {
+        throw std::runtime_error("could not project point!");
+    }
+    
+    point.x = x;
+    point.y = y;
+    point.z = z;
+    
+#endif
+}
 Writer* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
 {
     if (!ofs)

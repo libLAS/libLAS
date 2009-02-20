@@ -43,7 +43,13 @@
 #define LIBLAS_DETAIL_READER_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
+#include <liblas/lassrs.hpp>
 #include <liblas/detail/fwd.hpp>
+
+#ifndef HAVE_GDAL
+    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
+#endif
+
 // std
 #include <iosfwd>
 
@@ -65,6 +71,7 @@ public:
     std::istream& GetStream() const;
     bool ReadVLR(LASHeader& header);
     bool ReadGeoreference(LASHeader& header);
+    void SetSRS(const LASSRS& srs);
     
 protected:
     
@@ -75,6 +82,12 @@ protected:
     uint32_t m_recordlength;
 
     void FillPoint(PointRecord& record, LASPoint& point);
+    void Project(LASPoint& point);
+    
+    LASSRS m_out_srs;
+    LASSRS m_in_srs;
+    
+    OGRCoordinateTransformationH m_transform;
 
 private:
 
