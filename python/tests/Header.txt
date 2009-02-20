@@ -28,7 +28,9 @@
   >>> now = datetime.datetime.now() - td
   >>> today = datetime.datetime(now.year, now.month,now.day) 
   
-  >>> x = h.date - td
+#  >>> x = h.date - td
+
+  >>> x = h.date
   >>> d = datetime.datetime(x.year, x.month, x.day)
   >>> d == today
   True
@@ -96,4 +98,4 @@
 
   >>> s = h.srs
   >>> s.proj4
-  '+to_meter=1.0000000000'
+  ''

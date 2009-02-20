@@ -63,10 +63,18 @@
   >>> h = f.header
   >>> h.records_count
   3L
-  >>> if not liblas.HAVE_GDAL:
-  ...     h.proj4
-  '+proj=utm +zone=17 +ellps=WGS84 +units=m '
 
+  >>> def test_srs():
+  ...     if not liblas.HAVE_GDAL: 
+  ...         return h.proj4 == '+proj=utm +zone=17 +ellps=WGS84 +units=m '
+  ...     if liblas.HAVE_GDAL:
+  ...         return h.proj4 == '+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
+  ...     return False
+  
+  >>> test_srs()
+  True
+  
+  
   >>> v = h.GetVLR(0)
   >>> v.recordid
   34735
