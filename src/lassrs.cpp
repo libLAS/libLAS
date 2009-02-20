@@ -371,6 +371,7 @@ std::string LASSRS::GetWKT() const
        
 void LASSRS::SetWKT(std::string const& v)
 {
+    if (! m_gtiff ) GetGTIF();
 
 #ifdef HAVE_GDAL
     
@@ -441,6 +442,8 @@ std::string LASSRS::GetProj4() const
 void LASSRS::SetProj4(std::string const& v)
 {
 
+    if (! m_gtiff ) GetGTIF();
+    
 #ifdef HAVE_GDAL
 
     char* poWKT = NULL;
@@ -467,7 +470,6 @@ void LASSRS::SetProj4(std::string const& v)
     {
         throw std::runtime_error("The geotiff keys could not be written");
     }
-
 
     GTIFDefn defn;
 
