@@ -4,6 +4,8 @@ from liblas import file
 from liblas import header
 from liblas import point
 from liblas import color
+from liblas import srs
+
 import datetime
 
 p = point.Point()
@@ -24,7 +26,8 @@ p.time = datetime.datetime(2008,3,19)
 p.classification = 2
 p.return_number = 2
 
-
+s = srs.SRS()
+s.proj4 = '+proj=utm +zone=15 +ellps=NAD83 +datum=NAD83 +units=m +no_defs '
 def write_file(version, format):
     h = header.Header()
     h.date = datetime.datetime.now()
@@ -34,7 +37,7 @@ def write_file(version, format):
     h.min = [p.x, p.y, p.z]
     h.max = [p.x, p.y, p.z]
     h.point_return_count = [0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L]
-    h.proj4 = '+proj=utm +zone=15 +ellps=NAD83 +datum=NAD83 +units=m +no_defs '
+    h.srs = s
     h.date = p.time
     
     f = file.File('1.%d_%d.las'%(version,format), mode='w', header=h)
