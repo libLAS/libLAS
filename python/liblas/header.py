@@ -370,5 +370,5 @@ class Header(object):
     def get_srs(self):
         return srs.SRS(handle=core.las.LASHeader_GetSRS(self.handle))
     def set_srs(self, value):
-        return core.las.LASHeader_SetSRS(self.handle, self.value)
+        return core.las.LASHeader_SetSRS(self.handle, value.handle)
     srs = property(get_srs, set_srs)

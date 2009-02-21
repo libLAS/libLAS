@@ -65,10 +65,11 @@
   3L
 
   >>> def test_srs():
+  ...     s = h.srs
   ...     if not liblas.HAVE_GDAL: 
-  ...         return h.proj4 == '+proj=utm +zone=17 +ellps=WGS84 +units=m '
+  ...         return s.proj4 == '+proj=utm +zone=17 +ellps=WGS84 +units=m '
   ...     if liblas.HAVE_GDAL:
-  ...         return h.proj4 == '+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
+  ...         return s.proj4 == '+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
   ...     return False
   
   >>> test_srs()

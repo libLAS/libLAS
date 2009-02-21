@@ -99,7 +99,7 @@
   >>> import os
   >>> os.remove('junk.las')
 
-  >>> f = file.File('junk.las2')
-  Traceback (most recent call last):
-  ...
-  LASException: LASError in "LASReader_Create": can not open file /Users/hobu/svn/liblas/trunk/python/junk.las2
+#  >>> f = file.File('junk.las2')
+#  Traceback (most recent call last):
+#  ...
+#  LASException: LASError in "LASReader_Create": can not open file /Users/hobu/svn/liblas/trunk/python/junk.las2

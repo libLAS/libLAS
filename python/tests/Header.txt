@@ -25,13 +25,16 @@
 
   >>> import datetime
   >>> td = datetime.timedelta(hours=5) # my timezone is GMT-5
-  >>> now = datetime.datetime.now() - td
+  >>> now = datetime.datetime.now()
   >>> today = datetime.datetime(now.year, now.month,now.day) 
   
-#  >>> x = h.date - td
+  >>> x = h.date - td
 
-  >>> x = h.date
   >>> d = datetime.datetime(x.year, x.month, x.day)
+
+#  >>> import pdb
+#  >>> pdb.set_trace()
+
   >>> d == today
   True
   >>> t = datetime.datetime(2008,3,19)
