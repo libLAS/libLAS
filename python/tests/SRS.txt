@@ -1,4 +1,16 @@
   >>> from liblas import srs
+  >>> import liblas
   >>> s = srs.SRS()
   >>> s.proj4
   ''
+  >>> s.proj4 = '+proj=utm +zone=15 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
+
+  >>> def test_srs():
+  ...     if not liblas.HAVE_GDAL: 
+  ...         return s.proj4 == '+proj=tmerc +lat_0=0.000000000 +lon_0=-93.000000000 +k=0.999600 +x_0=500000.000 +y_0=0.000 +ellps=WGS84 +units=m '
+  ...     if liblas.HAVE_GDAL:
+  ...         return s.proj4 == '+proj=utm +zone=15 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
+  ...     return False
+  
+  >>> test_srs()
+  True

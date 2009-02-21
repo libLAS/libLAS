@@ -742,31 +742,10 @@ void LASHeader::ClearGeoKeyVLRs()
 
 }
 void LASHeader::SetGeoreference() 
-{
-// #ifndef HAVE_LIBGEOTIFF
-// 
-//     ;
-// 
-// #else
-//     
-    m_srs.SetVLRs(m_vlrs);
-    if (!m_srs.GetVLRs().size()) 
-    {
-        if (!m_proj4.empty() ) 
-        {
-            m_srs.SetProj4(m_proj4);
-        }
-        else
-        {
-            return ;
-        }
-        
-    }
-
-    m_srs.ResetVLRs();
-    
+{    
     std::vector<LASVLR> vlrs = m_srs.GetVLRs();
 
+    // Wipe the GeoTIFF-related VLR records off of the LASHeader
     ClearGeoKeyVLRs();
 
     std::vector<LASVLR>::const_iterator i;
@@ -776,7 +755,6 @@ void LASHeader::SetGeoreference()
         AddVLR(*i);
     }
 
-// #endif // HAVE_LIBGEOTIFF
 }
 
 LASSRS LASHeader::GetSRS() const

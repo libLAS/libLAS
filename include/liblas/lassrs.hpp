@@ -107,14 +107,6 @@ public:
     /// you have libgeotiff linked in.
     const GTIF* GetGTIF();
 
-    /// Reset the VLRs of the LASSRS using the existing GTIF* and ST_TIF*
-    /// Until this method is called, 
-    /// the LASSRS will only contain a SRS description using the VLRs 
-    /// that it was first instantiated with.  SetWKT and SetProj4 can 
-    /// be used to change the GTIF* 
-    void ResetVLRs();
-    
-
     /// Returns the OGC WKT describing Spatial Reference System.
     /// If GDAL is linked, it uses GDAL's operations and methods to determine 
     /// the WKT.  If GDAL is not linked, no WKT is returned.
@@ -160,6 +152,13 @@ private:
 
     std::vector<LASVLR> m_vlrs;
     bool IsGeoVLR(const LASVLR& vlr) const;
+
+    /// Reset the VLRs of the LASSRS using the existing GTIF* and ST_TIF*
+    /// Until this method is called, 
+    /// the LASSRS will only contain a SRS description using the VLRs 
+    /// that it was first instantiated with.  SetWKT and SetProj4 can 
+    /// be used to change the GTIF* 
+    void ResetVLRs();
     
 
 protected:

@@ -1748,21 +1748,6 @@ LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
     return LE_None;
 }
 
-LAS_DLL LASErrorEnum LASSRS_ResetVLRs(LASSRSH hSRS) {
-    
-    VALIDATE_POINTER1(hSRS, "LASSRS_ResetVLRs", LE_Failure);
-
-    try {
-        ((LASSRS*) hSRS)->ResetVLRs();
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASSRS_ResetVLRs");
-        return LE_Failure;
-    }
-
-
-    return LE_None;
-}
 
 LAS_DLL LASErrorEnum LASHeader_SetSRS(LASHeaderH hHeader, const LASSRSH hSRS) {
     

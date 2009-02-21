@@ -1,7 +1,9 @@
   
   >>> from liblas import header
-  >>> h = header.Header()
+  >>> import liblas
 
+  >>> h = header.Header()
+  
   >>> h.dataformat_id
   0
 
@@ -92,7 +94,15 @@
   
   >>> h.header_size
   227
+
+  >>> def test_srs():
+  ...     s = h.srs
+  ...     if not liblas.HAVE_GDAL: 
+  ...         return s.proj4 == '+to_meter=1.0000000000'
+  ...     if liblas.HAVE_GDAL:
+  ...         return s.proj4 == ''
+  ...     return False
   
-  >>> s = h.srs
-  >>> s.proj4
-  ''
+  >>> test_srs()
+  True
+

@@ -371,7 +371,7 @@ std::string LASSRS::GetWKT() const
        
 void LASSRS::SetWKT(std::string const& v)
 {
-    // if (! m_gtiff ) GetGTIF(); ResetVLRs();
+    if (! m_gtiff ) GetGTIF(); 
 
 #ifdef HAVE_GDAL
     
@@ -384,6 +384,7 @@ void LASSRS::SetWKT(std::string const& v)
     {
         throw std::runtime_error("The geotiff keys could not be written");
     }
+    ResetVLRs();
 #else
     
     throw std::runtime_error("GDAL is not available, LASSRS could not be set from WKT");
@@ -442,7 +443,7 @@ std::string LASSRS::GetProj4() const
 void LASSRS::SetProj4(std::string const& v)
 {
 
-    // if (! m_gtiff ) GetGTIF(); ResetVLRs();
+    if (! m_gtiff ) GetGTIF(); ResetVLRs();
    
 #ifdef HAVE_GDAL
 
@@ -500,6 +501,7 @@ void LASSRS::SetProj4(std::string const& v)
     }    
 #endif
 #endif
+    ResetVLRs();
 
     ;
 }
