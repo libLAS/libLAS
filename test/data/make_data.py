@@ -5,6 +5,7 @@ from liblas import header
 from liblas import point
 from liblas import color
 from liblas import srs
+from liblas import guid
 
 import datetime
 
@@ -28,8 +29,12 @@ p.return_number = 2
 
 s = srs.SRS()
 s.proj4 = '+proj=utm +zone=15 +ellps=NAD83 +datum=NAD83 +units=m +no_defs '
+
+g = guid.GUID(key='8388f1b8-aa1b-4108-bca3-6bc68e7b062e')
+
 def write_file(version, format):
     h = header.Header()
+    h.guid = g
     h.date = datetime.datetime.now()
     h.dataformat_id = format
     h.major_version = 1
