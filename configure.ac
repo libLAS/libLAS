@@ -63,13 +63,13 @@ AC_ARG_ENABLE([debug],
 AC_MSG_CHECKING([for debug enabled])
 
 if test "x$enable_debug" = "xyes"; then
-	CFLAGS="$CFLAGS -g -DDEBUG"
-	CXXFLAGS="$CXXFLAGS -g -DDEBUG"
-	AC_MSG_RESULT(yes)
+    CFLAGS="$CFLAGS -g -DDEBUG"
+    CXXFLAGS="$CXXFLAGS -g -DDEBUG"
+    AC_MSG_RESULT(yes)
 else
-	CFLAGS="$CFLAGS -O3 -DNDEBUG"
-	CXXFLAGS="$CXXFLAGS -O3 -DNDEBUG"
-	AC_MSG_RESULT(no)
+    CFLAGS="$CFLAGS -O3 -DNDEBUG"
+    CXXFLAGS="$CXXFLAGS -O3 -DNDEBUG"
+    AC_MSG_RESULT(no)
 fi
 
 dnl #########################################################################
@@ -119,17 +119,17 @@ else
     if test "`basename xx/$with_gdal`" = "gdal-config" ; then
         AC_MSG_RESULT([GDAL enabled with provided gdal-config])
         GDAL_CONFIG="$with_gdal"
-	elif test -f ${with_gdal}/frmts/gtiff/libgeotiff/geotiff.h; then
+    elif test -f ${with_gdal}/frmts/gtiff/libgeotiff/geotiff.h; then
         GEOTIFF_INC="-I$with_geotiff/include/geotiff"
-		GDAL_INC="-I$with_gdal/port -I$with_gdal/ogr -I$with_gdal/alg -I$with_gdal/frmts"
-		GDAL_PREFIX="$with_gdal"
-		HAVE_GDAL="yes"
-		HAVE_GEOTIFF="yes"
-		GEOTIFF_CONFIG="yes"
-		GDAL_CONFIG="yes"
-		USE_GDAL_SOURCE_TREE="yes"
-     	LIBS="${with_gdal}/.libs -lgdal ${with_gdal}/ -lgdal $LIBS"
-		AC_MSG_RESULT([GDAL and GeoTIFF enabled with provided GDAL source tree])
+        GDAL_INC="-I$with_gdal/port -I$with_gdal/ogr -I$with_gdal/alg -I$with_gdal/frmts"
+        GDAL_PREFIX="$with_gdal"
+        HAVE_GDAL="yes"
+        HAVE_GEOTIFF="yes"
+        GEOTIFF_CONFIG="yes"
+        GDAL_CONFIG="yes"
+        USE_GDAL_SOURCE_TREE="yes"
+        LIBS="-L${with_gdal}/.libs -lgdal -L${with_gdal}/ -lgdal $LIBS"
+        AC_MSG_RESULT([GDAL and GeoTIFF enabled with provided GDAL source tree])
     else
         dnl --with-gdal=yes given, so try to find gdal-config in PATH
         GDAL_CONFIG_TMP=`which gdal-config`
@@ -184,31 +184,31 @@ if test "${GEOTIFF_CONFIG}" != "no" ; then
     AC_MSG_CHECKING([for geo_simpletags.h of libgeotiff >= 1.2.5])
     if test -f ${with_geotiff}/include/geo_simpletags.h ; then
         GEOTIFF_INC="-I$with_geotiff/include"
-	AC_MSG_RESULT([yes])
+    AC_MSG_RESULT([yes])
     elif test -f ${with_geotiff}/include/geotiff/geo_simpletags.h ; then
         GEOTIFF_INC="-I$with_geotiff/include/geotiff"
-	AC_MSG_RESULT([yes])
+    AC_MSG_RESULT([yes])
     elif test -f ${with_gdal}/frmts/gtiff/libgeotiff/geo_simpletags.h ; then
         GEOTIFF_INC="-I$with_gdal/frmts/gtiff/libgeotiff/"
-	AC_MSG_RESULT([yes, from GDAL])	
+    AC_MSG_RESULT([yes, from GDAL]) 
     else
         GEOTIFF_CONFIG="no"
-	AC_MSG_RESULT([no])
+    AC_MSG_RESULT([no])
     fi
 fi
-	
+    
 AC_MSG_CHECKING([for libgeotiff])
 if test "${GEOTIFF_CONFIG}" = "no" ; then
     HAVE_GEOTIFF="no"
     AC_MSG_RESULT([no])
 else
     if test "${USE_GDAL_SOURCE_TREE}" != "yes" ; then
-	    LIBS="-L$with_geotiff/lib -lgeotiff $LIBS"
-	    HAVE_GEOTIFF="yes"
-	    AC_MSG_RESULT([yes])
-	else
-		AC_MSG_RESULT([use GDAL source])
-	fi
+        LIBS="-L$with_geotiff/lib -lgeotiff $LIBS"
+        HAVE_GEOTIFF="yes"
+        AC_MSG_RESULT([yes])
+    else
+        AC_MSG_RESULT([use GDAL source])
+    fi
 fi
 
 AC_SUBST([GEOTIFF_INC])
