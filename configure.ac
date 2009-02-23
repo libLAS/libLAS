@@ -60,6 +60,8 @@ dnl #########################################################################
 AC_ARG_ENABLE([debug],
     AC_HELP_STRING([--enable-debug=ARG], [Enable debug compilation mode [yes or no, default=${debug_default}]]),,)
 
+AC_MSG_CHECKING([for debug enabled])
+
 if test "x$enable_debug" = "xyes"; then
 	CFLAGS="$CFLAGS -g -DDEBUG"
 	CXXFLAGS="$CXXFLAGS -g -DDEBUG"
@@ -92,6 +94,15 @@ AC_DEFUN([AC_HAVE_LONG_LONG],
     rm -f conftest*
 ])
 
+
+
+HAVE_GDAL="no"
+GDAL_CONFIG="no"
+HAVE_GEOTIFF="no"
+GEOTIFF_CONFIG="no"
+
+USE_GDAL_SOURCE_TREE="no"
+
 dnl #########################################################################
 dnl Determine GDAL Support
 dnl #########################################################################
@@ -100,8 +111,6 @@ AC_ARG_WITH([gdal],
     AC_HELP_STRING([--with-gdal=ARG], [Path to gdal-config]),,)
 AC_MSG_CHECKING([for GDAL])
 
-HAVE_GDAL="no"
-GDAL_CONFIG="no"
 if test "$with_gdal" = "no" -o "$with_gdal" = "" ; then
     AC_MSG_RESULT([no])
 else
@@ -110,6 +119,17 @@ else
     if test "`basename xx/$with_gdal`" = "gdal-config" ; then
         AC_MSG_RESULT([GDAL enabled with provided gdal-config])
         GDAL_CONFIG="$with_gdal"
+	elif test -f ${with_gdal}/frmts/gtiff/libgeotiff/geotiff.h; then
+        GEOTIFF_INC="-I$with_geotiff/include/geotiff"
+		GDAL_INC="-I$with_gdal/port -I$with_gdal/ogr -I$with_gdal/alg -I$with_gdal/frmts"
+		GDAL_PREFIX="$with_gdal"
+		HAVE_GDAL="yes"
+		HAVE_GEOTIFF="yes"
+		GEOTIFF_CONFIG="yes"
+		GDAL_CONFIG="yes"
+		USE_GDAL_SOURCE_TREE="yes"
+     	LIBS="${with_gdal}/.libs -lgdal ${with_gdal}/ -lgdal $LIBS"
+		AC_MSG_RESULT([GDAL and GeoTIFF enabled with provided GDAL source tree])
     else
         dnl --with-gdal=yes given, so try to find gdal-config in PATH
         GDAL_CONFIG_TMP=`which gdal-config`
@@ -117,12 +137,16 @@ else
             AC_MSG_RESULT([GDAL enabled with gdal-config found in PATH])
             GDAL_CONFIG=${GDAL_CONFIG_TMP}
         else
-            AC_MSG_ERROR([--with-gdal should have yes or a path to gdal-config])
+            AC_MSG_ERROR([--with-gdal should be yes, a path to gdal-config, or a path to GDAL's source tree])
         fi
     fi
 fi
 
 if test "$GDAL_CONFIG" != "no" ; then
+
+dnl if we are already yes, we don't need to run gdal-config
+  if test "$GDAL_CONFIG" != "yes" ; then
+
     GDAL_VERSION=`$GDAL_CONFIG --version`
     AC_MSG_RESULT([$GDAL_CONFIG reports version $GDAL_VERSION])
     LIBS="`$GDAL_CONFIG --libs` $LIBS"
@@ -133,6 +157,7 @@ if test "$GDAL_CONFIG" != "no" ; then
         AC_MSG_ERROR([$GDAL_CONFIG says OGR is not enabled])
     fi
     HAVE_GDAL="yes"
+  fi
 fi
 
 AC_SUBST([GDAL_INC])
@@ -146,16 +171,14 @@ dnl #########################################################################
 AC_ARG_WITH([geotiff],
     AC_HELP_STRING([--with-geotiff=ARG], [libgeotiff library to use (no or path)]),,)
 
-HAVE_GEOTIFF="no"
-GEOTIFF_CONFIG="no"
-
-if test "$with_geotiff" != "no" -a "$with_geotiff" != "" ; then
+if test "$with_geotiff" != "no" -a "$with_geotiff" != "" -a "${GEOTIFF_CONFIG}" != "yes" ; then
     dnl We now require libgeotiff 1.2.5 (for ST_Create the simpletags stuff). 
     dnl first check if $with_geotiff/lib has the library:
     AC_CHECK_LIB([geotiff], [ST_Create],
                  [GEOTIFF_CONFIG=external], [GEOTIFF_CONFIG=no],
                  [-L$with_geotiff/lib])
 fi
+
 if test "${GEOTIFF_CONFIG}" != "no" ; then
     dnl libgeotiff 1.2.5, is first version with geo_simpletags.h
     AC_MSG_CHECKING([for geo_simpletags.h of libgeotiff >= 1.2.5])
@@ -165,6 +188,9 @@ if test "${GEOTIFF_CONFIG}" != "no" ; then
     elif test -f ${with_geotiff}/include/geotiff/geo_simpletags.h ; then
         GEOTIFF_INC="-I$with_geotiff/include/geotiff"
 	AC_MSG_RESULT([yes])
+    elif test -f ${with_gdal}/frmts/gtiff/libgeotiff/geo_simpletags.h ; then
+        GEOTIFF_INC="-I$with_gdal/frmts/gtiff/libgeotiff/"
+	AC_MSG_RESULT([yes, from GDAL])	
     else
         GEOTIFF_CONFIG="no"
 	AC_MSG_RESULT([no])
@@ -176,9 +202,13 @@ if test "${GEOTIFF_CONFIG}" = "no" ; then
     HAVE_GEOTIFF="no"
     AC_MSG_RESULT([no])
 else
-    LIBS="-L$with_geotiff/lib -lgeotiff $LIBS"
-    HAVE_GEOTIFF="yes"
-    AC_MSG_RESULT([yes])
+    if test "${USE_GDAL_SOURCE_TREE}" != "yes" ; then
+	    LIBS="-L$with_geotiff/lib -lgeotiff $LIBS"
+	    HAVE_GEOTIFF="yes"
+	    AC_MSG_RESULT([yes])
+	else
+		AC_MSG_RESULT([use GDAL source])
+	fi
 fi
 
 AC_SUBST([GEOTIFF_INC])
