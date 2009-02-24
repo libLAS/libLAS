@@ -5,6 +5,7 @@ LAS_ROOT	=	..
 !INCLUDE $(LAS_ROOT)\nmake.opt
 
 LAS_OBJS = \
+    lascolor.obj \
     laswriter.obj \
     lasreader.obj \
     laserror.obj \
@@ -12,13 +13,16 @@ LAS_OBJS = \
     laspoint.obj \
     lasheader.obj \
     lasfile.obj \
+    lassrs.obj \
     lasrecordheader.obj \
     detail\reader.obj \
     detail\reader10.obj \
     detail\reader11.obj \
+    detail\reader12.obj \
     detail\writer.obj \
     detail\writer10.obj \
     detail\writer11.obj \
+    detail\writer12.obj \
     detail\file.obj
 
 RES = Version.res
@@ -29,7 +33,7 @@ all: default
 
 $(LAS_LIB):	$(LAS_OBJS)
     if exist $(LAS_LIB) del $(LAS_LIB)
-    $(LINK) /lib /nologo /out:$(LAS_LIB) $(LAS_OBJS) $(GEOTIFF_LIB)
+    $(LINK) /lib /nologo /out:$(LAS_LIB) $(LAS_OBJS) $(GEOTIFF_LIB) $(GDAL_LIB)
 	
 $(LAS_DLL):	$(LAS_LIB) $(RES)
     $(LINK) /dll \

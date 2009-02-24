@@ -77,4 +77,6 @@ package: install
     cd $(LAS_HOME)/
     xcopy /y /r /d /f /s c:\osgeo4w\bin\geotiff.dll $(BINDIR)
     xcopy /y /r /d /f /s c:\osgeo4w\bin\libtiff.dll $(BINDIR)
+    xcopy /y /r /d /f /s c:\osgeo4w\bin\jpeg_osgeo.dll $(BINDIR)
+    xcopy /y /r /d /f /s c:\osgeo4w\bin\zlib_osgeo.dll $(BINDIR)
     c:\cygwin\bin\zip.exe -r packages/liblas-$(PACKAGE_VERSION)-win32.zip bin
