@@ -96,10 +96,20 @@ public:
 
 
 
+    /// Default constructor.
     LASSRS();
+
+    /// Destructor.
+    /// If libgeotiff is enabled, deallocates libtiff and libgeotiff objects used internally.
     ~LASSRS();
+
+    /// Constructor creating LASSRS instance from given Variable-Length Record.
     LASSRS(const std::vector<LASVLR>& vlrs);
+
+    /// Copy constryctor.
     LASSRS(LASSRS const& other);
+
+    /// Assignment operator.
     LASSRS& operator=(LASSRS const& rhs);
     
 
@@ -159,23 +169,17 @@ private:
     /// that it was first instantiated with.  SetWKT and SetProj4 can 
     /// be used to change the GTIF* 
     void ResetVLRs();
-    
-
-protected:
-    
 };
-
-
 
 } // namespace liblas
 
 #ifdef HAVE_GDAL
 LAS_C_START
-char LAS_DLL *  GTIFGetOGISDefn( GTIF *, GTIFDefn * );
-int  LAS_DLL   GTIFSetFromOGISDefn( GTIF *, const char * );
+char LAS_DLL * GTIFGetOGISDefn(GTIF*, GTIFDefn*);
+int  LAS_DLL   GTIFSetFromOGISDefn(GTIF*, const char*);
 
 void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName);
-void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, char* angUnitName, int nDatum, short nSpheroid);
+void SetGeogCSCitation(GTIF* psGTIF, OGRSpatialReference* poSRS, char* angUnitName, int nDatum, short nSpheroid);
 LAS_C_END
 #endif
 
