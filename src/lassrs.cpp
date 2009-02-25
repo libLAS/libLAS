@@ -69,6 +69,7 @@ LASSRS::~LASSRS()
 
 {
     
+#ifdef HAVE_LIBGEOTIFF
     if (m_gtiff)
     {
         GTIFFree(m_gtiff);
@@ -79,7 +80,7 @@ LASSRS::~LASSRS()
         ST_Destroy(m_tiff);
         m_tiff = NULL;
     }
-
+#endif
 
 }
 
