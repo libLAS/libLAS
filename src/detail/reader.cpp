@@ -200,7 +200,8 @@ void Reader::Project(LASPoint& point)
     point.SetX(x);
     point.SetY(y);
     point.SetZ(z);
-    
+#else
+    UNREFERENCED_PARAMETER(point);
 #endif
 }
 

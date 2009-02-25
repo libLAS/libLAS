@@ -387,7 +387,7 @@ void LASSRS::SetWKT(std::string const& v)
     }
     ResetVLRs();
 #else
-    
+    UNREFERENCED_PARAMETER(v);
     throw std::runtime_error("GDAL is not available, LASSRS could not be set from WKT");
 
 #endif
@@ -443,7 +443,6 @@ std::string LASSRS::GetProj4() const
 
 void LASSRS::SetProj4(std::string const& v)
 {
-
     if (! m_gtiff ) GetGTIF(); ResetVLRs();
    
 #ifdef HAVE_GDAL
@@ -481,7 +480,8 @@ void LASSRS::SetProj4(std::string const& v)
         std::string tmp(proj4def);
         std::free(proj4def);
     }
-    
+#else
+    UNREFERENCED_PARAMETER(v);
 #endif
 
 // if we have libgeotiff but not GDAL, we'll use the 

@@ -157,7 +157,8 @@ void Writer::Project(PointRecord& point)
     point.x = x;
     point.y = y;
     point.z = z;
-    
+#else
+    UNREFERENCED_PARAMETER(point);
 #endif
 }
 Writer* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)

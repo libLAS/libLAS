@@ -404,7 +404,7 @@ LASHeader::PointFormat LASHeader::GetDataFormatId() const
 
 void LASHeader::SetDataFormatId(LASHeader::PointFormat v)
 {
-    m_dataFormatId = v;
+    m_dataFormatId = static_cast<uint8_t>(v);
 
     if (ePointFormat0 == m_dataFormatId)
         m_dataRecordLen = ePointSize0;

@@ -169,6 +169,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\liblas\lascolor.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\liblas\laserror.hpp"
 					>
 				</File>
@@ -190,6 +194,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\include\liblas\lasrecordheader.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\liblas\lassrs.hpp"
 					>
 				</File>
 				<File
@@ -228,6 +236,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\..\include\liblas\detail\reader12.hpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\..\include\liblas\detail\sha1.hpp"
 						>
 					</File>
@@ -255,12 +267,24 @@
 						RelativePath="..\..\..\include\liblas\detail\writer11.hpp"
 						>
 					</File>
+					<File
+						RelativePath="..\..\..\include\liblas\detail\writer12.hpp"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="src"
 			>
+			<File
+				RelativePath="..\..\..\src\las_c_api.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lascolor.cpp"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\laserror.cpp"
 				>
@@ -283,6 +307,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\lasrecordheader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lassrs.cpp"
 				>
 			</File>
 			<File
@@ -309,6 +337,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\src\detail\reader12.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\src\detail\writer.cpp"
 					>
 				</File>
@@ -318,6 +350,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\detail\writer11.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\detail\writer12.cpp"
 					>
 				</File>
 			</Filter>
