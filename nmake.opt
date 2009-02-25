@@ -19,7 +19,9 @@ INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
 
 # GeoTIFF Support
 # Uncomment the folling line to build GeoTIFF support for reading and
-# writing LAS files with Coordinate Systems information.
+# writing LAS files with Coordinate Systems information.  
+# comment out GEOTIFF_HOME if you are building against a GDAL source tree
+
 GEOTIFF_HOME=C:\osgeo4w
 
 !IFDEF GEOTIFF_HOME
@@ -33,9 +35,17 @@ INCLUDES = $(INCLUDES) $(GEOTIFF_INCLUDE)
 # the las2ogr command
 GDAL_HOME=C:\osgeo4w
 
+#USE_GDAL_SOURCE_TREE=YES
+#GDAL_HOME=C:\cvs\buildkit\gdal
+
 !IFDEF GDAL_HOME
 GDAL_LIB = $(GDAL_HOME)\lib\gdal_i.lib
 GDAL_INCLUDE = -I$(GDAL_HOME)\include
+!IF "$(USE_GDAL_SOURCE_TREE)" == "YES"
+GDAL_LIB = $(GDAL_HOME)\gdal_i.lib
+GDAL_INCLUDE = -I$(GDAL_HOME)\port -I$(GDAL_HOME)\frmts\gtiff\libgeotiff -I$(GDAL_HOME)\frmts\gtiff\libtiff -I$(GDAL_HOME)\ogr  -I$(GDAL_HOME)\gcore
+GEOTIFF_INCLUDE = -I$(GEOTIFF_HOME)\frmts\gtiff\libgeotiff
+!ENDIF
 INCLUDES = $(INCLUDES) $(GDAL_INCLUDE)
 !ENDIF
 
@@ -70,6 +80,9 @@ CFLAGS = $(CFLAGS) /DHAVE_LIBGEOTIFF=1
 
 !IFDEF GDAL_HOME
 CFLAGS = $(CFLAGS) /DHAVE_GDAL=1
+!IF "$(USE_GDAL_SOURCE_TREE)" == "YES"
+CFLAGS = $(CFLAGS) /DHAVE_LIBGEOTIFF=1
+!ENDIF
 !ENDIF
 
 # End of compilation flags settings
