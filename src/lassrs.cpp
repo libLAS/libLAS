@@ -47,8 +47,8 @@ namespace liblas
 {
 
 LASSRS::LASSRS() :
-    m_gtiff(NULL),
-    m_tiff(NULL)
+    m_gtiff(0),
+    m_tiff(0)
 {
 }
 
@@ -56,8 +56,8 @@ LASSRS& LASSRS::operator=(LASSRS const& rhs)
 {
     if (&rhs != this)
     {
-        m_tiff = NULL;
-        m_gtiff = NULL;        
+        m_tiff = 0;
+        m_gtiff = 0;        
         SetVLRs(rhs.GetVLRs());
         GetGTIF();
     }
@@ -70,28 +70,28 @@ LASSRS::~LASSRS()
     if (m_gtiff)
     {
         GTIFFree(m_gtiff);
-        m_gtiff = NULL;
+        m_gtiff = 0;
     }
     if (m_tiff)
     {
         ST_Destroy(m_tiff);
-        m_tiff = NULL;
+        m_tiff = 0;
     }
 #endif
 }
 
 LASSRS::LASSRS(LASSRS const& other) 
 {
-    m_tiff = NULL;
-    m_gtiff = NULL;
+    m_tiff = 0;
+    m_gtiff = 0;
     SetVLRs(other.GetVLRs());
     GetGTIF();
 }
 
 LASSRS::LASSRS(std::vector<LASVLR> const& vlrs) 
 {
-    m_tiff = NULL;
-    m_gtiff = NULL;
+    m_tiff = 0;
+    m_gtiff = 0;
     SetVLRs(vlrs);
     GetGTIF();
 }
@@ -178,12 +178,12 @@ void LASSRS::ResetVLRs()
 #ifdef HAVE_LIBGEOTIFF
 
     int ret = 0;
-    short* kdata = NULL;
+    short* kdata = 0;
     short kvalue = 0;
-    double* ddata = NULL;
+    double* ddata = 0;
     double dvalue = 0;
-    uint8_t* adata = NULL;
-    uint8_t avalue = NULL;
+    uint8_t* adata = 0;
+    uint8_t avalue = 0;
     int dtype = 0;
     int dcount = 0;
     int ktype = 0;
@@ -321,13 +321,13 @@ const GTIF* LASSRS::GetGTIF()
     if (m_tiff)
     {
         ST_Destroy(m_tiff);
-        m_tiff = NULL;
+        m_tiff = 0;
     }
 
     if (m_gtiff)
     {
         GTIFFree(m_gtiff);
-        m_gtiff = NULL;
+        m_gtiff = 0;
     }
     
     m_tiff = ST_Create();
@@ -373,7 +373,7 @@ std::string LASSRS::GetWKT() const
     return std::string();
 #else
     GTIFDefn sGTIFDefn;
-    char* pszWKT = NULL;
+    char* pszWKT = 0;
     if (!m_gtiff)
     {
         return std::string();

@@ -162,8 +162,8 @@ void Reader::SetSRS(const LASSRS& srs)
 {
     m_out_srs = srs;
 #ifdef HAVE_GDAL
-    OGRSpatialReferenceH in_ref = OSRNewSpatialReference(NULL);
-    OGRSpatialReferenceH out_ref = OSRNewSpatialReference(NULL);
+    OGRSpatialReferenceH in_ref = OSRNewSpatialReference(0);
+    OGRSpatialReferenceH out_ref = OSRNewSpatialReference(0);
 
     const char* in_wkt = m_in_srs.GetWKT().c_str();
     if (OSRImportFromWkt(in_ref, (char**) &in_wkt) != OGRERR_NONE) 
