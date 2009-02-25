@@ -273,7 +273,7 @@ void LASSRS::ResetVLRs()
                                       "Upgrade your libgeotiff to a version greater "
                                       "than r1531 (libgeotiff 1.2.6)");
                      }
-         uint32_t length = acount;
+         uint16_t length = acount;
          record.SetRecordLength(length);
          
          // Copy the data into the data vector

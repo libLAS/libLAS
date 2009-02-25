@@ -153,6 +153,7 @@ void Writer::Project(PointRecord& point)
         throw std::runtime_error("could not project point!");
     }
     
+    // FIXME: PointRecords need to be descaled
     point.x = x;
     point.y = y;
     point.z = z;
