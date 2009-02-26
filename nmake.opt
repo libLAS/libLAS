@@ -13,7 +13,7 @@ LAS_DLL = liblas1.dll
 LAS_LIB_DLL = liblas_i.lib
 
 # only used for filenames of packages
-PACKAGE_VERSION = 1.2.0
+PACKAGE_VERSION = 1.2.0b1
 
 INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
 
@@ -33,7 +33,7 @@ INCLUDES = $(INCLUDES) $(GEOTIFF_INCLUDE)
 # GDAL/OGR Support
 # Uncomment the folling line to build OGR support for 
 # the las2ogr command
-GDAL_HOME=C:\osgeo4w
+#GDAL_HOME=C:\osgeo4w
 
 #USE_GDAL_SOURCE_TREE=YES
 #GDAL_HOME=C:\cvs\buildkit\gdal
