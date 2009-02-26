@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS 1.1 reader implementation for C++ libLAS 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  LAS 1.2 reader implementation for C++ libLAS 
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2008, Howard Butler
  *
  * All rights reserved.
  * 
