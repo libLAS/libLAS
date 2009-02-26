@@ -60,7 +60,7 @@ public:
     std::size_t GetVersion() const;
     void WriteHeader(LASHeader& header);
     void UpdateHeader(LASHeader const& header);
-    void WritePointRecord(LASPoint const& record, const LASHeader& header);
+    void WritePointRecord(LASPoint const& record, LASHeader const& header);
     
 private:
 

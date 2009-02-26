@@ -57,7 +57,7 @@ class LASColor
 public:
 
     /// Default constructor.
-    /// Initializes with RGB of black color.
+    /// Initializes with black color using RGB {0, 0, 0}.
     LASColor();
 
     /// Copy constructor.

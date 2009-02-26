@@ -88,8 +88,10 @@ void WriterImpl::WriteHeader(LASHeader& header)
     // std::ios::in *and* std::ios::out, otherwise it should return false 
     // and we won't adjust the point count.
     
-    if (beginning != end) {
-        m_pointCount = ((uint32_t) end - header.GetDataOffset())/header.GetDataRecordLength();
+    if (beginning != end)
+    {
+        m_pointCount = static_cast<uint32_t>(end) - header.GetDataOffset();
+        m_pointCount /= header.GetDataRecordLength();
 
         // Position to the beginning of the file to start writing the header
         m_ofs.seekp(0, std::ios::beg);
@@ -213,7 +215,9 @@ void WriterImpl::WriteHeader(LASHeader& header)
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
     if (m_pointCount != 0)
+    {
         m_ofs.seekp(0, std::ios::end);
+    }
 }
 
 void WriterImpl::UpdateHeader(LASHeader const& header)
@@ -228,7 +232,7 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
     }
 }
 
-void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header)
+void WriterImpl::WritePointRecord(LASPoint const& point, LASHeader const& header)
 {
     // TODO: Static assert would be better
     
@@ -242,10 +246,13 @@ void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header
     Writer::FillPointRecord(m_record, point, header);
     detail::write_n(m_ofs, m_record, sizeof(m_record));
 
-    if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
+    if (header.GetDataFormatId() == LASHeader::ePointFormat1)
+    {
         t = point.GetTime();
         detail::write_n(m_ofs, t, sizeof(double));
-    } else if (header.GetDataFormatId() == LASHeader::ePointFormat2) {
+    }
+    else if (header.GetDataFormatId() == LASHeader::ePointFormat2)
+    {
         color = point.GetColor();
         red = color.GetRed();
         green = color.GetGreen();
@@ -253,7 +260,9 @@ void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header
         detail::write_n(m_ofs, red, sizeof(uint16_t));
         detail::write_n(m_ofs, green, sizeof(uint16_t));
         detail::write_n(m_ofs, blue, sizeof(uint16_t));
-    } else if (header.GetDataFormatId() == LASHeader::ePointFormat3) {
+    }
+    else if (header.GetDataFormatId() == LASHeader::ePointFormat3)
+    {
         t = point.GetTime();
         detail::write_n(m_ofs, t, sizeof(double));
         color = point.GetColor();
