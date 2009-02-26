@@ -3,10 +3,10 @@
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
  * Purpose:  LAS color class 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2008, Howard Butler
  *
  * All rights reserved.
  * 
@@ -56,8 +56,14 @@ class LASColor
 {
 public:
 
+    /// Default constructor.
+    /// Initializes with RGB of black color.
     LASColor();
+
+    /// Copy constructor.
     LASColor(LASColor const& other);
+
+    /// Assignment opreator.
     LASColor& operator=(LASColor const& rhs);
     
     /// Fetch value of the red image channel 
@@ -100,7 +106,6 @@ private:
         throw std::out_of_range("subscript out of range");
     }
 };
-
 
 
 inline uint16_t LASColor::GetRed() const

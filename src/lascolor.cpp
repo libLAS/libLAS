@@ -3,10 +3,10 @@
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
  * Purpose:  LAS color class 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2008, Howard Butler
  *
  * All rights reserved.
  * 
@@ -72,6 +72,5 @@ LASColor& LASColor::operator=(LASColor const& rhs)
     return *this;
 }
 
-
-
 } // namespace liblas
+
