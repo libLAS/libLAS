@@ -294,13 +294,6 @@ void LASSRS::ResetVLRs()
              uint8_t* v =  reinterpret_cast<uint8_t*>(&avalue);
              
              data.push_back(v[0]);
-             data.push_back(v[1]);
-             data.push_back(v[2]);
-             data.push_back(v[3]);
-             data.push_back(v[4]);
-             data.push_back(v[5]);
-             data.push_back(v[6]);
-             data.push_back(v[7]);
              
          }
          record.SetData(data);
@@ -486,6 +479,7 @@ void LASSRS::SetProj4(std::string const& v)
     }
     
     poSRS->exportToWkt(&poWKT);
+    printf("wkt: %s\n", poWKT);
     delete poSRS;
     
     std::string tmp(poWKT);
@@ -497,7 +491,7 @@ void LASSRS::SetProj4(std::string const& v)
     {
         throw std::invalid_argument("could not set m_gtiff from Proj4");
     }
-
+    GTIFPrint(m_gtiff, 0, 0);
     ret = GTIFWriteKeys(m_gtiff);
     if (!ret) 
     {
