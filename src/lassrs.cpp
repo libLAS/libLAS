@@ -389,6 +389,7 @@ std::string LASSRS::GetWKT() const
             return tmp;
         }
     }
+    return std::string();
 #endif
 }
        
