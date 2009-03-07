@@ -3,7 +3,9 @@
 #include <string.h>
 #include <liblas.h>
 
-
+#ifdef HAVE_GEOTIFF
+#include <geotiff.h>
+#endif
 
 
 static const char * LASPointClassification [] = {
@@ -401,7 +403,13 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     LASSRSH pSRS = NULL;
     uint32_t nVLR = 0;
     int i = 0;
-    
+
+#ifdef HAVE_GEOTIFF
+    GTIF* pGTIF = NULL;
+#else
+    void* pGTIF = NULL;
+#endif    
+
     pszSignature = LASHeader_GetFileSignature(header);
     pszProjectId = LASHeader_GetProjectId(header);
     pszSystemId = LASHeader_GetSystemId(header);
@@ -409,9 +417,13 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     
     pSRS = LASHeader_GetSRS(header);
     pszProj4 = LASSRS_GetProj4(pSRS);
+    pGTIF = LASSRS_GetGTIF(pSRS);
     
     nVLR = LASHeader_GetRecordsCount(header);
-    
+ 
+ 
+
+       
     fprintf(file, "\n---------------------------------------------------------\n");
     fprintf(file, "  Header Summary\n");
     fprintf(file, "---------------------------------------------------------\n");
@@ -493,6 +505,8 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     
     fprintf(file, " Spatial Reference           %s\n",
                     pszProj4);
+
+    if (pGTIF) GTIFPrint(pGTIF, 0, 0);
 
     if (nVLR && !bSkipVLR) {
         
