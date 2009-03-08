@@ -506,7 +506,7 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     fprintf(file, " Spatial Reference           %s\n",
                     pszProj4);
 
-    if (pGTIF) GTIFPrint(pGTIF, 0, 0);
+    if (pGTIF) GTIFPrint((GTIF*)pGTIF, 0, 0);
 
     if (nVLR && !bSkipVLR) {
         
