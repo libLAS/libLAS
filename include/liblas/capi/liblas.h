@@ -1072,6 +1072,7 @@ LAS_DLL char* LASSRS_GetProj4(LASSRSH hSRS);
 LAS_DLL LASError LASSRS_SetProj4(LASSRSH hSRS, const char* value);
 LAS_DLL LASSRSH LASHeader_GetSRS(const LASHeaderH hHeader);
 LAS_DLL LASError LASHeader_SetSRS(LASHeaderH hHeader, const LASSRSH hSRS);
+LAS_DLL void LASSRS_Destroy(LASSRSH hSRS);
 
 LAS_C_END
 #endif
