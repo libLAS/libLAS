@@ -405,9 +405,9 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     int i = 0;
 
 #ifdef HAVE_GEOTIFF
-    GTIF* pGTIF = NULL;
+    const GTIF* pGTIF = NULL;
 #else
-    void* pGTIF = NULL;
+    const void* pGTIF = NULL;
 #endif    
 
     pszSignature = LASHeader_GetFileSignature(header);
