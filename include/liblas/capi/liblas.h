@@ -1074,6 +1074,13 @@ LAS_DLL LASSRSH LASHeader_GetSRS(const LASHeaderH hHeader);
 LAS_DLL LASError LASHeader_SetSRS(LASHeaderH hHeader, const LASSRSH hSRS);
 LAS_DLL void LASSRS_Destroy(LASSRSH hSRS);
 
+
+/** Method to ensure that you are freeing char*'s from the 
+ *  correct heap.
+ *  @param string the string to free
+*/
+LAS_DLL void LASString_Free(char* string);
+
 LAS_C_END
 #endif
 

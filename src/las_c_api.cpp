@@ -1774,6 +1774,11 @@ LAS_DLL LASSRSH LASHeader_GetSRS(const LASHeaderH hHeader) {
 }
 
 
+LAS_DLL void LASString_Free(char* string) {
+    
+    free(string);
+}
+
 LAS_C_END
 
 #ifdef _MSC_VER
