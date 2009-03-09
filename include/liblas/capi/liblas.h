@@ -66,6 +66,7 @@ typedef struct LASSRSHS *LASSRSH;
 /* Fake out the compiler if we don't have libgeotiff */
 #ifndef HAVE_LIBGEOTIFF
     typedef struct GTIFS * GTIF;
+    typedef struct TIFFS * TIFF;
 #else
 #include <geotiff.h>
 #endif

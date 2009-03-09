@@ -116,6 +116,8 @@ public:
     /// Returns a pointer to the internal GTIF*.  Only available if 
     /// you have libgeotiff linked in.
     const GTIF* GetGTIF();
+    
+    void SetGTIF(const GTIF* gtiff, const TIFF* tiff);
 
     /// Returns the OGC WKT describing Spatial Reference System.
     /// If GDAL is linked, it uses GDAL's operations and methods to determine 

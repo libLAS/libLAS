@@ -302,6 +302,14 @@ void LASSRS::ResetVLRs()
 #endif // ndef HAVE_LIBGEOTIFF
 }
 
+void LASSRS::SetGTIF(const GTIF* gtiff, const TIFF* tiff) 
+{
+    m_gtiff = (GTIF*)gtiff;
+    m_tiff = (ST_TIFF*)tiff;
+    ResetVLRs();
+    m_gtiff = NULL;
+    m_tiff = NULL;
+}
 const GTIF* LASSRS::GetGTIF()
 {
 #ifndef HAVE_LIBGEOTIFF
