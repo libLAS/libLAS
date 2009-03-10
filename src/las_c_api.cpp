@@ -1681,7 +1681,7 @@ LAS_DLL const GTIF* LASSRS_GetGTIF(LASSRSH hSRS) {
     }
 }
 
-LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const GTIF* gtiff, const TIFF* tiff)
+LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const GTIF* gtiff, const ST_TIFF* tiff)
 {
     VALIDATE_POINTER1(hSRS, "LASSRS_SetGTIF", LE_Failure);
     VALIDATE_POINTER1(gtiff, "LASSRS_SetGTIF", LE_Failure);
