@@ -16,6 +16,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define LAS_FORMAT_10 0
+#define LAS_FORMAT_11 1
+#define LAS_FORMAT_12 2
 
 void usage()
 {
@@ -369,6 +372,7 @@ int main(int argc, char *argv[])
     LASHeaderH header = NULL;
     LASWriterH writer = NULL;
     LASError err;
+    int format = LAS_FORMAT_12;
 
     int xyz_min_quant[3] = {0, 0, 0};
     int xyz_max_quant[3] = {0, 0, 0};
@@ -459,6 +463,26 @@ int main(int argc, char *argv[])
             file_name_out = argv[i];
         }
 
+        else if (   strcmp(argv[i],"--format") == 0   ||
+                    strcmp(argv[i],"-f") == 0    ||
+                    strcmp(argv[i],"-format") == 0 
+                )
+        {
+            i++;
+            if (strcmp(argv[i], "1.0") == 0) {
+                format = LAS_FORMAT_10;
+            }
+            else if (strcmp(argv[i], "1.1") == 0) {
+                format = LAS_FORMAT_11;
+            } 
+            else if (strcmp(argv[i], "1.2") == 0) {
+                format = LAS_FORMAT_12;
+            }
+            else {
+                LASError_Print("Format must be specified as 1.0, 1.1, or 1.2");
+            }
+
+        }
         else if (   strcmp(argv[i],"--system_identifier") == 0   ||
                     strcmp(argv[i],"-system_identifier") == 0   ||
                     strcmp(argv[i],"-s") == 0   ||
@@ -721,13 +745,34 @@ int main(int argc, char *argv[])
     if (generating_software) LASHeader_SetSoftwareId(header, generating_software);
     LASHeader_SetCreationDOY(header, file_creation_day);
     LASHeader_SetCreationYear(header, file_creation_year);
-      
 
-    if (strstr(parse_string,"t"))
+    
+    if (format == LAS_FORMAT_10) {
+        LASHeader_SetVersionMinor(header, 0);
+    } else if (format == LAS_FORMAT_11){
+        LASHeader_SetVersionMinor(header, 1);
+    } else if (format == LAS_FORMAT_12) {
+        LASHeader_SetVersionMinor(header, 2);
+    }      
+
+    if (strstr(parse_string,"t") && (strstr(parse_string, "R") || strstr(parse_string, "G") ||strstr(parse_string, "B") ) )
     {
-        fprintf(stderr, "Setting to LAS version 1.1!!!\n");
+        fprintf(stderr, "Setting point format to 3, overriding version to 1.2 -- RGB + time\n");
+        LASHeader_SetDataFormatId(header, 3);
+        LASHeader_SetVersionMinor(header, 2);
+    }
+    else if ((strstr(parse_string, "R") || strstr(parse_string, "G") ||strstr(parse_string, "B") ) )
+    {
+        fprintf(stderr, "Setting point format to 2, overriding version to 1.2 -- RGB\n");
+        LASHeader_SetDataFormatId(header, 2);
+        LASHeader_SetVersionMinor(header, 2);
+    }
+    else if (strstr(parse_string,"t")) 
+    {
+        fprintf(stderr, "Setting point format to 1\n");
         LASHeader_SetDataFormatId(header, 1);
     }
+    
     else
     {
         LASHeader_SetDataFormatId(header, 0);
@@ -742,6 +787,7 @@ int main(int argc, char *argv[])
     LASHeader_SetPointRecordsByReturnCount(header, 2, number_of_points_by_return[3]);
     LASHeader_SetPointRecordsByReturnCount(header, 3, number_of_points_by_return[4]);
     LASHeader_SetPointRecordsByReturnCount(header, 4, number_of_points_by_return[5]);
+
 
 
 
