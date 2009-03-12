@@ -53,8 +53,11 @@ void usage()
     fprintf(stderr,"   u - user data (does not currently work)\n");
     fprintf(stderr,"   p - point source ID\n");
     fprintf(stderr,"   e - edge of flight line\n");
-    fprintf(stderr,"   d - direction of scan flag\n\n");
-
+    fprintf(stderr,"   d - direction of scan flag\n");
+    fprintf(stderr,"   R - red channel of RGB color\n");
+    fprintf(stderr,"   G - green channel of RGB color\n");
+    fprintf(stderr,"   B - blue channel of RGB color\n\n");
+    
     fprintf(stderr,"\n----------------------------------------------------------\n");
     fprintf(stderr," The '-scale 0.02' flag specifies the quantization. The\n");
     fprintf(stderr," default value of 0.01 means that the smallest increment\n");
@@ -95,7 +98,8 @@ static int parse(const char* parse_string, const char* line, double* xyz, LASPoi
     const char* p = parse_string;
     const char* l = line;
 
-
+    LASColorH color = LASColor_Create();
+    
     while (p[0])
     {
         /* // we expect the x coordinate */
@@ -291,12 +295,48 @@ static int parse(const char* parse_string, const char* line, double* xyz, LASPoi
             /* // then advance to next white space */
             while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t') l++; 
         }
+        /* // we expect the red channel of the RGB field */
+        else if (p[0] == 'R') 
+        {
+            /* // first skip white spaces */
+            while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t')) l++; 
+            if (l[0] == 0) return FALSE;
+            if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
+            LASColor_SetRed(color, temp_i);
+            /* // then advance to next white space */
+            while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t') l++; 
+        }
+        /* // we expect the green channel of the RGB field */
+        else if (p[0] == 'G') 
+        {
+            /* // first skip white spaces */
+            while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t')) l++; 
+            if (l[0] == 0) return FALSE;
+            if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
+            LASColor_SetGreen(color, temp_i);
+            /* // then advance to next white space */
+            while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t') l++; 
+        }
+        /* // we expect the blue channel of the RGB field */
+        else if (p[0] == 'B') 
+        {
+            /* // first skip white spaces */
+            while (l[0] && (l[0] == ' ' || l[0] == ',' || l[0] == '\t')) l++; 
+            if (l[0] == 0) return FALSE;
+            if (sscanf(l, "%d", &temp_i) != 1) return FALSE;
+            LASColor_SetBlue(color, temp_i);
+            /* // then advance to next white space */
+            while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t') l++; 
+        }
+
         else
         {
         fprintf(stderr, "ERROR: next symbol '%s' unknown in parse control string\n", p);
         }
         p++;
     }
+    LASPoint_SetColor(point, color);
+    LASColor_Destroy(color);
     return TRUE;
 }
 
