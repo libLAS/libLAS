@@ -120,7 +120,7 @@ else
         AC_MSG_RESULT([GDAL enabled with provided gdal-config])
         GDAL_CONFIG="$with_gdal"
     elif test -f ${with_gdal}/frmts/gtiff/libgeotiff/geotiff.h; then
-        GEOTIFF_INC="-I$with_geotiff/include/geotiff"
+        GEOTIFF_INC="-I$with_geotiff/include/geotiff -I$with_geotiff/frmts/gtiff/libtiff/"
         GDAL_INC="-I$with_gdal/port -I$with_gdal/ogr -I$with_gdal/alg -I$with_gdal/frmts"
         GDAL_PREFIX="$with_gdal"
         HAVE_GDAL="yes"
