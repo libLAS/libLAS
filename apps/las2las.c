@@ -53,7 +53,7 @@ void usage()
     fprintf(stderr,"\n");
 
     fprintf(stderr,"Eliminate intensities below 1000:\n");
-    fprintf(stderr,"  las2las -i in.las -eliminate_intensity_below 1000--stdout > out.las\n");
+    fprintf(stderr,"  las2las -i in.las -eliminate_intensity_below 1000 --stdout > out.las\n");
     fprintf(stderr,"\n");
 
     fprintf(stderr,"Eliminate intensities below 1000 and classifications that equal 2 (ground):\n");
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     int first_only = FALSE;
     int last_only = FALSE;
     int skip_invalid = FALSE;
-    int format = LAS_FORMAT_11;
+    int format = LAS_FORMAT_12;
     
     LASReaderH reader = NULL;
     LASHeaderH header = NULL;
