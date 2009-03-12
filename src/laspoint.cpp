@@ -68,7 +68,8 @@ LASPoint::LASPoint(LASPoint const& other) :
     m_angleRank(other.m_angleRank),
     m_userData(other.m_userData),
     m_pointSourceId(other.m_pointSourceId),
-    m_gpsTime(other.m_gpsTime)
+    m_gpsTime(other.m_gpsTime),
+    m_color(other.m_color)
 {
     std::memcpy(m_coords, other.m_coords, sizeof(m_coords));
 }
@@ -87,6 +88,7 @@ LASPoint& LASPoint::operator=(LASPoint const& rhs)
         m_userData = rhs.m_userData;
         m_pointSourceId = rhs.m_pointSourceId;
         m_gpsTime = rhs.m_gpsTime;
+        m_color = rhs.m_color;
     }
     return *this;
 }
