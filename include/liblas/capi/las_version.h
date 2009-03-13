@@ -54,11 +54,11 @@
 #endif
 
 #ifndef LIBLAS_RELEASE_DATE
-#define LIBLAS_RELEASE_DATE     20090226
+#define LIBLAS_RELEASE_DATE     20090313
 #endif
 
 #ifndef LIBLAS_RELEASE_NAME
-#define LIBLAS_RELEASE_NAME     "1.2.0b1"
+#define LIBLAS_RELEASE_NAME     "1.2.0b2"
 #endif
 
 #endif /* LAS_VERSION_H_INCLUDED */

@@ -17,7 +17,7 @@ if version_info[:2] < (2,5):
 
 import os
 
-version = '1.2.0b1'
+version = '1.2.0b2'
 
 if os.name == 'nt':
     # Windows NT library

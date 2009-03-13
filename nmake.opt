@@ -13,7 +13,7 @@ LAS_DLL = liblas1.dll
 LAS_LIB_DLL = liblas_i.lib
 
 # only used for filenames of packages
-PACKAGE_VERSION = 1.2.0b1
+PACKAGE_VERSION = 1.2.0b2
 
 INCLUDES = -I$(LAS_ROOT)/include -I$(LAS_ROOT)/include/liblas/capi
 
