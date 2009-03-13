@@ -7,11 +7,11 @@ LAS_ROOT	=	..
 all: default
 
 las2las.exe:
-	$(CC) $(CFLAGS) las2las.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+	$(CC) $(CFLAGS) las2las.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL) $(GEOTIFF_LIB)
 	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
 
 lasinfo.exe:
-	$(CC) $(CFLAGS) lasinfo.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+	$(CC) $(CFLAGS) lasinfo.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL) $(GEOTIFF_LIB)
 	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
 
 #lasdiff.exe:
@@ -19,15 +19,15 @@ lasinfo.exe:
 #	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
 
 las2txt.exe:
-	$(CC) $(CFLAGS) las2txt.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+	$(CC) $(CFLAGS) las2txt.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL) $(GEOTIFF_LIB)
 	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
 
 lasmerge.exe:
-	$(CC) $(CFLAGS) lasmerge.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+	$(CC) $(CFLAGS) lasmerge.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL) $(GEOTIFF_LIB)
 	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
 
 txt2las.exe:
-	$(CC) $(CFLAGS) txt2las.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL)
+	$(CC) $(CFLAGS) txt2las.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL) $(GEOTIFF_LIB)
 	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
 
 !IF DEFINED(GDAL_HOME)
