@@ -188,7 +188,7 @@ if test "${GEOTIFF_CONFIG}" != "no" ; then
         GEOTIFF_INC="-I$with_geotiff/include/geotiff"
     AC_MSG_RESULT([yes])
     elif test -f ${with_gdal}/frmts/gtiff/libgeotiff/geo_simpletags.h ; then
-        GEOTIFF_INC="-I$with_gdal/include/geotiff -I$with_gdal/frmts/gtiff/libtiff"
+        GEOTIFF_INC="-I$with_gdal/frmts/gtiff/libgeotiff/ -I$with_gdal/frmts/gtiff/libtiff""
     AC_MSG_RESULT([yes, from GDAL]) 
     else
         GEOTIFF_CONFIG="no"
