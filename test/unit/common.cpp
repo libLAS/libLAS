@@ -110,6 +110,13 @@ void test_default_point(liblas::LASPoint const& p)
     ensure_equals("wrong defualt time",
         p.GetTime(), double(0));
 
+    ensure_equals("invalid default red color",
+        p.GetColor().GetRed(), 0);
+    ensure_equals("invalid default green color",
+        p.GetColor().GetGreen(), 0);
+    ensure_equals("invalid default blue color",
+        p.GetColor().GetBlue(), 0);
+            
     ensure("invalid defualt point record", p.IsValid());
 }
 

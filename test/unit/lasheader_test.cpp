@@ -6,6 +6,7 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/lasheader.hpp>
+#include <liblas/lassrs.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <tut/tut.hpp>
@@ -281,5 +282,17 @@ namespace tut
         }
     }
 
+    // Test GetSRS
+    template<>
+    template<>
+    void to::test<12>()
+    {
+        liblas::LASHeader h;
+        liblas::LASSRS srs = h.GetSRS();
+
+        ensure_equals(srs.GetProj4(), "");
+        ensure_equals(srs.GetWKT(), "");
+
+    }
 }
 

@@ -25,9 +25,11 @@ liblas_test_SOURCES = \
 	laserror_test.cpp \
 	lasfile_test.cpp \
 	lasheader_test.cpp \
+    lassrs_test.cpp \
 	laspoint_test.cpp \
 	lasreader_iterator_test.cpp \
 	lasreader_test.cpp \
 	lasrecordheader_test.cpp \
 	laswriter_test.cpp \
 	liblas_test_suite.cpp
+    
