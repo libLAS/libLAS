@@ -115,22 +115,6 @@ void LASSRS::SetVLRs(std::vector<LASVLR> const& vlrs)
         {
             m_vlrs.push_back(vlr);
         }
-
-        // TODO:
-        // //GTIFF_GEOKEYDIRECTORY == 34735
-        // if (uid == (*i).GetUserId(true).c_str() && 34735 == (*i).GetRecordId()) {
-        //     m_vlrs.push_back(*i);
-        // }
-        // 
-        // // GTIFF_DOUBLEPARAMS == 34736
-        // if (uid == (*i).GetUserId(true).c_str() && 34736 == (*i).GetRecordId()) {
-        //     m_vlrs.push_back(*i);
-        // }
-        // 
-        // // GTIFF_ASCIIPARAMS == 34737
-        // if (uid == (*i).GetUserId(true).c_str() && 34737 == (*i).GetRecordId()) {
-        //     m_vlrs.push_back(*i);
-        // }
     }
 }
 
@@ -145,6 +129,8 @@ void LASSRS::AddVLR(LASVLR const& vlr)
 bool LASSRS::IsGeoVLR(LASVLR const& vlr) const
 {
     std::string const uid("LASF_Projection");
+    
+    // GTIFF_GEOKEYDIRECTORY == 34735
     if (uid == vlr.GetUserId(true).c_str() && 34735 == vlr.GetRecordId())
     {
         return true;
