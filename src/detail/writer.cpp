@@ -151,58 +151,6 @@ void Writer::SetSRS(const LASSRS& srs)
 #endif
 }
 
-void Writer::Project(LASPoint& point)
-{
-#ifdef HAVE_GDAL
-    
-    // FIXME: This needs to ensure it is projecting scaled points
-    int ret = 0;
-    double x = point.GetX();
-    double y = point.GetY();
-    double z = point.GetZ();
-    
-    ret = OCTTransform(m_transform, 1, &x, &y, &z);
-    
-    if (!ret) {
-        std::ostringstream msg; 
-        msg << "Could not project point for Writer::" << CPLGetLastErrorMsg() << ret;
-        std::string message(msg.str());
-        throw std::runtime_error(message);
-    }
-    
-
-    point.SetX(x);
-    point.SetY(y);
-    point.SetZ(z);
-#else
-    UNREFERENCED_PARAMETER(point);
-#endif
-}
-
-void Writer::SetSRS(const LASSRS& srs)
-{
-    m_out_srs = srs;
-#ifdef HAVE_GDAL
-    OGRSpatialReferenceH in_ref = OSRNewSpatialReference(0);
-    OGRSpatialReferenceH out_ref = OSRNewSpatialReference(0);
-
-    const char* in_wkt = m_in_srs.GetWKT().c_str();
-    if (OSRImportFromWkt(in_ref, (char**) &in_wkt) != OGRERR_NONE) 
-    {
-        throw std::runtime_error("Could not import input spatial reference for Reader::");
-    }
-    
-    const char* out_wkt = m_out_srs.GetWKT().c_str();
-    if (OSRImportFromWkt(out_ref, (char**) &out_wkt) != OGRERR_NONE) 
-    {
-        throw std::runtime_error("Could not import output spatial reference for Reader::");
-    }
-
-    m_transform = OCTNewCoordinateTransformation( in_ref, out_ref);
-    
-#endif
-}
-
 void Writer::Project(PointRecord& point)
 {
 #ifdef HAVE_GDAL
@@ -214,8 +162,11 @@ void Writer::Project(PointRecord& point)
     
     ret = OCTTransform(m_transform, 1, &x, &y, &z);
     
-    if (ret != OGRERR_NONE) {
-        throw std::runtime_error("could not project point!");
+    if (!ret) {
+        std::ostringstream msg; 
+        msg << "Could not project point for Writer::" << CPLGetLastErrorMsg() << ret;
+        std::string message(msg.str());
+        throw std::runtime_error(message);
     }
     
     // FIXME: PointRecords need to be descaled
