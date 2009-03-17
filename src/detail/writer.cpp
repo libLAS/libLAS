@@ -60,7 +60,7 @@
 
 namespace liblas { namespace detail {
 
-Writer::Writer(std::ostream& ofs) : m_ofs(ofs), m_transform(0)
+Writer::Writer(std::ostream& ofs) : m_ofs(ofs), m_transform(0), m_in_ref(0), m_out_ref(0)
 {
 }
 
@@ -69,7 +69,13 @@ Writer::~Writer()
 #ifdef HAVE_GDAL
     if (m_transform) {
         OCTDestroyCoordinateTransformation(m_transform);
-    }    
+    }
+    if (m_in_ref) {
+        OSRDestroySpatialReference(m_in_ref);
+    }
+    if (m_out_ref) {
+        OSRDestroySpatialReference(m_out_ref);
+    }
 #endif
 }
 
@@ -112,6 +118,65 @@ void Writer::WriteVLR(LASHeader const& header)
         std::streamsize const size = static_cast<std::streamsize>(data.size());
         detail::write_n(m_ofs, data.front(), size);
     }
+}
+
+
+void Writer::SetSRS(const LASSRS& srs)
+{
+    m_out_srs = srs;
+#ifdef HAVE_GDAL
+    m_in_ref = OSRNewSpatialReference(0);
+    m_out_ref = OSRNewSpatialReference(0);
+
+    int result = OSRSetFromUserInput(m_in_ref, m_in_srs.GetWKT().c_str());
+    if (result != OGRERR_NONE) 
+    {
+        std::ostringstream msg; 
+        msg << "Could not import input spatial reference for Reader::" << CPLGetLastErrorMsg() << result;
+        std::string message(msg.str());
+        throw std::runtime_error(message);
+    }
+    
+    result = OSRSetFromUserInput(m_out_ref, m_out_srs.GetWKT().c_str());
+    if (result != OGRERR_NONE) 
+    {
+        std::ostringstream msg; 
+        msg << "Could not import output spatial reference for Reader::" << CPLGetLastErrorMsg() << result;
+        std::string message(msg.str());
+        throw std::runtime_error(message);
+    }
+
+    m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
+    
+#endif
+}
+
+void Writer::Project(LASPoint& point)
+{
+#ifdef HAVE_GDAL
+    
+    // FIXME: This needs to ensure it is projecting scaled points
+    int ret = 0;
+    double x = point.GetX();
+    double y = point.GetY();
+    double z = point.GetZ();
+    
+    ret = OCTTransform(m_transform, 1, &x, &y, &z);
+    
+    if (!ret) {
+        std::ostringstream msg; 
+        msg << "Could not project point for Writer::" << CPLGetLastErrorMsg() << ret;
+        std::string message(msg.str());
+        throw std::runtime_error(message);
+    }
+    
+
+    point.SetX(x);
+    point.SetY(y);
+    point.SetZ(z);
+#else
+    UNREFERENCED_PARAMETER(point);
+#endif
 }
 
 void Writer::SetSRS(const LASSRS& srs)

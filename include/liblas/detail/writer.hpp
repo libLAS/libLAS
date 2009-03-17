@@ -81,6 +81,8 @@ protected:
     LASSRS m_in_srs;
     
     OGRCoordinateTransformationH m_transform;
+    OGRSpatialReferenceH m_in_ref;
+    OGRSpatialReferenceH m_out_ref;
     
 private:
 

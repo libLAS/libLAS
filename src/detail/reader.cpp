@@ -77,6 +77,13 @@ Reader::~Reader()
     if (m_transform) {
         OCTDestroyCoordinateTransformation(m_transform);
     }
+    if (m_in_ref) {
+        OSRDestroySpatialReference(m_in_ref);
+    }
+    if (m_out_ref) {
+        OSRDestroySpatialReference(m_out_ref);
+    }
+
 #endif
 }
 
@@ -92,6 +99,7 @@ void Reader::FillPoint(PointRecord& record, LASPoint& point)
     point.SetZ(record.z);
     
     if (m_transform) Project(point);
+
     point.SetIntensity(record.intensity);
     point.SetScanFlags(record.flags);
     point.SetClassification(record.classification);
@@ -165,16 +173,17 @@ void Reader::SetSRS(const LASSRS& srs)
     m_in_ref = OSRNewSpatialReference(0);
     m_out_ref = OSRNewSpatialReference(0);
 
-    const char* in_wkt = m_in_srs.GetWKT().c_str();
-    if (OSRImportFromWkt(m_in_ref, (char**) &in_wkt) != OGRERR_NONE) 
+    int result = OSRSetFromUserInput(m_in_ref, m_in_srs.GetWKT().c_str());
+    if (result != OGRERR_NONE) 
     {
-        throw std::runtime_error("Could not import input spatial reference for Reader::");
+        std::ostringstream msg; 
+        msg << "Could not import input spatial reference for Reader::" << CPLGetLastErrorMsg() << result;
+        std::string message(msg.str());
+        throw std::runtime_error(message);
     }
     
-    const char* out_wkt = m_out_srs.GetWKT().c_str();
-    printf("outwkt: %s", out_wkt);
-    int result = OSRImportFromWkt(m_out_ref, (char**) &out_wkt);
-    if (result!= OGRERR_NONE) 
+    result = OSRSetFromUserInput(m_out_ref, m_out_srs.GetWKT().c_str());
+    if (result != OGRERR_NONE) 
     {
         std::ostringstream msg; 
         msg << "Could not import output spatial reference for Reader::" << CPLGetLastErrorMsg() << result;
@@ -198,10 +207,14 @@ void Reader::Project(LASPoint& point)
     
     ret = OCTTransform(m_transform, 1, &x, &y, &z);
     
-    if (ret != OGRERR_NONE) {
-        throw std::runtime_error("could not project point!");
+    if (!ret) {
+        std::ostringstream msg; 
+        msg << "Could not project point for Reader::" << CPLGetLastErrorMsg() << ret;
+        std::string message(msg.str());
+        throw std::runtime_error(message);
     }
     
+
     point.SetX(x);
     point.SetY(y);
     point.SetZ(z);
