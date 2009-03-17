@@ -83,7 +83,7 @@ class File(object):
             self.mode = 2
             files.append(self.filename)
     def __del__(self):
-        if not self.handle: return
+        if not self.handle or not core: return
         self.close()
 
     def close(self):
