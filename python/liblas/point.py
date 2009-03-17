@@ -220,3 +220,13 @@ class Point(object):
     def set_color(self, value):
         return core.las.LASPoint_SetColor(self.handle, value.handle)
     color = property(get_color, set_color)
+
+    def descale(self, header):
+        self.x = (self.x - header.offset[0]) / header.scale[0]
+        self.y = (self.y - header.offset[1]) / header.scale[1]
+        self.z = (self.y - header.offset[2]) / header.scale[2]
+    
+    def scale(self, header):
+        self.x = self.x + header.scale[0] + header.offset[0]
+        self.y = self.y + header.scale[1] + header.offset[1]
+        self.z = self.z + header.scale[2] + header.offset[2]
