@@ -323,6 +323,22 @@ LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader)
     return (LASHeaderH) new LASHeader( header );
 }
 
+LAS_DLL LASErrorEnum LASReader_SetSRS(LASHeaderH hReader, const LASSRSH hSRS) {
+    
+    VALIDATE_POINTER1(hReader, "LASReader_SetSRS", LE_Failure);
+    VALIDATE_POINTER1(hSRS, "LASReader_SetSRS", LE_Failure);
+
+    try {
+        ((LASReader*) hReader)->SetSRS(*((LASSRS*)hSRS));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_SetSRS");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
 LAS_DLL LASHeaderH LASHeader_Create(void) {
         return (LASHeaderH) new LASHeader();
 }
@@ -1184,6 +1200,8 @@ LAS_DLL LASErrorEnum LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR) {
 }
 
 
+
+
 LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHeader, int mode) {
     VALIDATE_POINTER1(hHeader, "LASWriter_Create", NULL); 
     
@@ -1316,6 +1334,22 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
     }
 
     hWriter=NULL;
+}
+
+LAS_DLL LASErrorEnum LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS) {
+    
+    VALIDATE_POINTER1(hWriter, "LASWriter_SetSRS", LE_Failure);
+    VALIDATE_POINTER1(hSRS, "LASWriter_SetSRS", LE_Failure);
+
+    try {
+        ((LASWriter*) hWriter)->SetSRS(*((LASSRS*)hSRS));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASWriter_SetSRS");
+        return LE_Failure;
+    }
+
+    return LE_None;
 }
 
 LAS_DLL void LASError_Print(const char* message) {

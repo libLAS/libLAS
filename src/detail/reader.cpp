@@ -67,7 +67,7 @@
 
 namespace liblas { namespace detail {
 
-Reader::Reader(std::istream& ifs) : m_ifs(ifs), m_offset(0), m_current(0), m_transform(0)
+Reader::Reader(std::istream& ifs) : m_ifs(ifs), m_offset(0), m_current(0), m_transform(0), m_in_ref(0), m_out_ref(0)
 {
 }
 
@@ -162,22 +162,27 @@ void Reader::SetSRS(const LASSRS& srs)
 {
     m_out_srs = srs;
 #ifdef HAVE_GDAL
-    OGRSpatialReferenceH in_ref = OSRNewSpatialReference(0);
-    OGRSpatialReferenceH out_ref = OSRNewSpatialReference(0);
+    m_in_ref = OSRNewSpatialReference(0);
+    m_out_ref = OSRNewSpatialReference(0);
 
     const char* in_wkt = m_in_srs.GetWKT().c_str();
-    if (OSRImportFromWkt(in_ref, (char**) &in_wkt) != OGRERR_NONE) 
+    if (OSRImportFromWkt(m_in_ref, (char**) &in_wkt) != OGRERR_NONE) 
     {
         throw std::runtime_error("Could not import input spatial reference for Reader::");
     }
     
     const char* out_wkt = m_out_srs.GetWKT().c_str();
-    if (OSRImportFromWkt(out_ref, (char**) &out_wkt) != OGRERR_NONE) 
+    printf("outwkt: %s", out_wkt);
+    int result = OSRImportFromWkt(m_out_ref, (char**) &out_wkt);
+    if (result!= OGRERR_NONE) 
     {
-        throw std::runtime_error("Could not import output spatial reference for Reader::");
+        std::ostringstream msg; 
+        msg << "Could not import output spatial reference for Reader::" << CPLGetLastErrorMsg() << result;
+        std::string message(msg.str());
+        throw std::runtime_error(message);
     }
 
-    m_transform = OCTNewCoordinateTransformation( in_ref, out_ref);
+    m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
     
 #endif
 }

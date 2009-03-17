@@ -48,6 +48,7 @@
 
 #ifndef HAVE_GDAL
     typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
+    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
 #endif
 
 // std
@@ -87,7 +88,11 @@ protected:
     LASSRS m_out_srs;
     LASSRS m_in_srs;
     
+
+    OGRSpatialReferenceH m_in_ref;
+    OGRSpatialReferenceH m_out_ref;
     OGRCoordinateTransformationH m_transform;
+
 
 private:
 

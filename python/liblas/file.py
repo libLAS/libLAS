@@ -94,7 +94,13 @@ class File(object):
         files.remove(self.filename)
         self._header = None
         self.handle = None
-        
+    
+    def set_srs(self, value):
+        if self.mode == 0 :
+            return core.las.LASReader_SetSRS(self.handle, value.handle)
+        else:
+            return core.las.LASWriter_SetSRS(self.handle, value.handle)
+            
     def get_header(self):
         """Returns the liblas.header.Header for the file"""
         return self._header

@@ -175,6 +175,10 @@ las.LASReader_GetPointAt.restype = ctypes.c_void_p
 las.LASReader_GetPointAt.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
 las.LASReader_GetPointAt.errcheck = check_void_done
 
+las.LASReader_SetSRS.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASReader_SetSRS.errcheck = check_return
+
+
 las.LASPoint_GetX.restype = ctypes.c_double
 las.LASPoint_GetX.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetX.errcheck = check_value
@@ -451,6 +455,9 @@ las.LASWriter_WritePoint.errcheck = check_return
 las.LASWriter_WriteHeader.restype = ctypes.c_int
 las.LASWriter_WriteHeader.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASWriter_WriteHeader.errcheck = check_return
+
+las.LASWriter_SetSRS.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASWriter_SetSRS.errcheck = check_return
 
 las.LASWriter_Destroy.argtypes = [ctypes.c_void_p]
 las.LASWriter_Destroy.errcheck = check_void_done

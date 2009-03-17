@@ -221,6 +221,10 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader);
 */
 LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader);
 
+
+LAS_DLL LASError LASReader_SetSRS(LASHeaderH hReader, const LASSRSH hSRS);
+
+
 /****************************************************************************/
 /* Point operations                                                         */
 /****************************************************************************/
@@ -850,6 +854,9 @@ LAS_DLL LASError LASWriter_WriteHeader(const LASWriterH hWriter, const LASHeader
  *  @param hWriter LASWriterH instance to close
 */
 LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);
+
+
+LAS_DLL LASError LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS);
 
 /****************************************************************************/
 /* GUID Operations                                                          */

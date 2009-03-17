@@ -487,7 +487,6 @@ void LASSRS::SetProj4(std::string const& v)
     }
     
     poSRS->exportToWkt(&poWKT);
-    printf("wkt: %s\n", poWKT);
     delete poSRS;
     
     std::string tmp(poWKT);
@@ -499,7 +498,7 @@ void LASSRS::SetProj4(std::string const& v)
     {
         throw std::invalid_argument("could not set m_gtiff from Proj4");
     }
-    GTIFPrint(m_gtiff, 0, 0);
+
     ret = GTIFWriteKeys(m_gtiff);
     if (!ret) 
     {
