@@ -593,6 +593,13 @@ las.LASSRS_AddVLR.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASSRS_AddVLR.errcheck = check_value
 las.LASSRS_AddVLR.restype = ctypes.c_int
 
+las.LASSRS_GetVLR.argtypes = [ctypes.c_void_p, ctypes.c_int]
+las.LASSRS_GetVLR.errcheck = check_void
+las.LASSRS_GetVLR.restype = ctypes.c_void_p
+
+las.LASSRS_GetVLRCount.argtypes = [ctypes.c_void_p]
+las.LASSRS_GetVLRCount.restype = ctypes.c_int
+
 las.LASHeader_GetSRS.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetSRS.errcheck = check_void
 las.LASHeader_GetSRS.restype = ctypes.c_void_p

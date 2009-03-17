@@ -43,6 +43,8 @@
   ...         f.set_srs(s2)
   ...         p = f.read(0)
   ...         p.descale(f.header)
+  ...         if not s2.vlr_count() == 3: return False
+  ...         if not s2.GetVLR(0).recordlength == 64: return False
   ...         return int(round(p.x)) == -93  and int(round(p.y)) == 90
   ...     return False  
 

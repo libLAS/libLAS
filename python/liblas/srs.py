@@ -68,24 +68,11 @@ class SRS(object):
         return core.las.LASSRS_SetProj4(self.handle, value)
     proj4 = property(get_proj4, set_proj4)
     
-    def add_vlr(self, vlr):
+    def AddVLR(self, vlr):
         return core.las.LASSRS_AddVLR(self.handle, vlr.handle)
+    
+    def GetVLR(self, value):
+        return vlr.VLR(handle=core.las.LASSRS_GetVLR(self.handle, value))
         
-    # def get_red(self):
-    #     return core.las.LASColor_GetRed(self.handle)
-    # def set_red(self, value):
-    #     return core.las.LASColor_SetRed(self.handle, value)
-    # red = property(get_red, set_red)
-    # 
-    # def get_green(self):
-    #     return core.las.LASColor_GetGreen(self.handle)
-    # def set_green(self, value):
-    #     return core.las.LASColor_SetGreen(self.handle, value)
-    # green = property(get_green, set_green)
-    # 
-    # def get_blue(self):
-    #     return core.las.LASColor_GetBlue(self.handle)
-    # def set_blue(self, value):
-    #     return core.las.LASColor_SetBlue(self.handle, value)
-    # blue = property(get_blue, set_blue)
-
+    def vlr_count(self):
+        return core.las.LASSRS_GetVLRCount(self.handle)
