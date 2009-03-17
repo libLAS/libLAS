@@ -57,6 +57,9 @@ void usage()
     fprintf(stderr,"   p - point source ID\n");
     fprintf(stderr,"   e - edge of flight line\n");
     fprintf(stderr,"   d - direction of scan flag\n");
+    fprintf(stderr,"   R - red channel of RGB color\n");
+    fprintf(stderr,"   G - green channel of RGB color\n");
+    fprintf(stderr,"   B - blue channel of RGB color\n");
     fprintf(stderr,"   M - vertex index number\n\n");
 
     fprintf(stderr,"----------------------------------------------------------\n");
@@ -480,6 +483,8 @@ int main(int argc, char *argv[])
         i = 0;
         for (;;)
         {
+            LASColorH color = LASPoint_GetColor(p);
+            
             switch (parse_string[i])
             {
             /* // the x coordinate */      
@@ -522,7 +527,18 @@ int main(int argc, char *argv[])
             case 'n': 
                 fprintf(file_out, "%d", LASPoint_GetNumberOfReturns(p));
                 break;
-            
+            /* the red channel color */
+            case 'R': 
+                fprintf(file_out, "%d", LASColor_GetRed(color));
+                break;            
+            /* the green channel color */
+            case 'G': 
+                fprintf(file_out, "%d", LASColor_GetGreen(color));
+                break;            
+            /* the blue channel color */
+            case 'B': 
+                fprintf(file_out, "%d", LASColor_GetBlue(color));
+                break;            
             case 'M':
                 fprintf(file_out, "%d", index);
                 break;
@@ -551,8 +567,11 @@ int main(int argc, char *argv[])
                 fprintf(file_out, "\012");
                 break;
             }
-        }
+            
+            LASColor_Destroy(color);
 
+        }
+        
         p = LASReader_GetNextPoint(reader);
         index +=1;
     }
