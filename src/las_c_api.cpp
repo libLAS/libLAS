@@ -1797,6 +1797,19 @@ LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
     return LE_None;
 }
 
+LAS_DLL LASVLRH LASSRS_GetVLR(const LASSRSH hSRS, liblas::uint32_t i) {
+    VALIDATE_POINTER1(hSRS, "LASSRS_GetVLR", 0);
+    
+    LASVLR vlr = ((LASSRS*) hSRS)->GetVLRs()[i];
+    return (LASVLRH) new LASVLR(vlr);
+}
+
+LAS_DLL liblas::uint32_t LASSRS_GetVLRCount(const LASSRSH hSRS) {
+    VALIDATE_POINTER1(hSRS, "LASSRS_GetVLR", 0);
+    
+    liblas::uint32_t size = ((LASSRS*) hSRS)->GetVLRs().size();
+    return size;
+}
 
 LAS_DLL LASErrorEnum LASHeader_SetSRS(LASHeaderH hHeader, const LASSRSH hSRS) {
     

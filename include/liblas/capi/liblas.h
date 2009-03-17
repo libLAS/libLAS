@@ -1081,7 +1081,8 @@ LAS_DLL LASError LASSRS_SetProj4(LASSRSH hSRS, const char* value);
 LAS_DLL LASSRSH LASHeader_GetSRS(const LASHeaderH hHeader);
 LAS_DLL LASError LASHeader_SetSRS(LASHeaderH hHeader, const LASSRSH hSRS);
 LAS_DLL void LASSRS_Destroy(LASSRSH hSRS);
-
+LAS_DLL LASVLRH LASSRS_GetVLR(const LASSRSH hSRS, uint32_t i);
+LAS_DLL uint32_t LASSRS_GetVLRCount(const LASSRSH hSRS);
 
 /** Method to ensure that you are freeing char*'s from the 
  *  correct heap.
