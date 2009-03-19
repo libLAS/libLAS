@@ -82,6 +82,12 @@ LAS_C_START
 #include <stdint.h>
 #endif
 
+#ifdef WIN32
+#define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
+#else
+#define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
+#endif
+
 // Error stuff
 
 
@@ -183,7 +189,7 @@ LAS_DLL LASReaderH LASReader_Create(const char* filename)
     try {
         std::ios::openmode const mode = std::ios::in | std::ios::binary;
         std::istream* istrm;
-        if (strncasecmp(filename,"STDIN",5) == 0)
+        if (compare_no_case(filename,"STDIN",5) == 0)
         {
             istrm = &std::cin;
         }
@@ -1190,7 +1196,7 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
             m = std::ios::out | std::ios::binary | std::ios::ate;
         }
                 
-        if (strncasecmp(filename,"STOUT",5) == 0)
+        if (compare_no_case(filename,"STOUT",5) == 0)
         {
             ostrm = &std::cout;
         }
