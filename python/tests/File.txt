@@ -106,6 +106,18 @@
   >>> import os
   >>> os.remove('junk.las')
 
+  >>> f = file.File('junk.las', mode="w", header=header)
+  >>> import liblas.core
+  >>> liblas.core.las.LASWriter_Destroy(f.handle)
+  0
+  >>> print 'destroyed once'
+  destroyed once
+  >>> f.handle = None
+  >>> liblas.core.las.LASWriter_Destroy(f.handle)
+  Traceback (most recent call last):
+  ...
+  LASException: LASError in "LASWriter_Destroy": Pointer 'hWriter' is NULL in 'LASWriter_Destroy'.
+
 #  >>> f = file.File('junk.las2')
 #  Traceback (most recent call last):
 #  ...

@@ -69,11 +69,12 @@ def check_void(result, func, cargs):
 
 def check_void_done(result, func, cargs):
     "Error checking for void* returns that might be empty with no error"
-    if not bool(result):
-        if las.LASError_GetErrorCount():
-            msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
-            las.LASError_Reset()
-            raise LASException(msg)
+    if las.LASError_GetErrorCount():
+        msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
+        las.LASError_Reset()
+        raise LASException(msg)
+
+        
     return result
 def check_value(result, func, cargs):
     "Error checking proper value returns"
