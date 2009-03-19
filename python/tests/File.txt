@@ -16,6 +16,13 @@
   >>> p.x, p.y, p.z
   (630320.95999999996, 4834500.0, 55.009999999999998)
   
+  >>> f2 = file.File('../test/data/TO_core_last_clip.las')
+  >>> p2 = f2.read(6)
+  >>> p.x, p.y, p.z
+  (630320.95999999996, 4834500.0, 55.009999999999998)
+  >>> f2.close()
+  >>> del f2
+  
   >>> points = []
   >>> for i in f:
   ...   points.append(i)
@@ -74,7 +81,7 @@
   >>> pts = file.File('junk.las')
   Traceback (most recent call last):
   ...
-  LASException: ('File %s is already open.  Close the file or delete the reference to it', 'junk.las')
+  LASException: File junk.las is already open for write.  Close the file or delete the reference to it
   
   >>> f.close()
   >>> f.header

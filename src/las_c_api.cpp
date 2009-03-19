@@ -95,11 +95,6 @@ typedef enum
 } LASErrorEnum;
 
 
-
-typedef std::map<std::string, LASFile> StrLASFileMap;
-typedef std::map<std::string, LASFile>::const_iterator StrLASFileMapIt;
-
-static StrLASFileMap files;
 static std::stack<LASError > errors;
 
 #ifdef _MSC_VER
@@ -186,30 +181,24 @@ LAS_DLL LASReaderH LASReader_Create(const char* filename)
     VALIDATE_POINTER1(filename, "LASReader_Create", NULL);
 
     try {
-        StrLASFileMap::const_iterator p;
-        
-        p = files.find(filename);
-        
-        if (p==files.end()) {
-
-            /* FIXME : not freed by LASReader_Destroy */
-            LASFile lasfile(filename);
-            files[filename] = lasfile;
-
-            LASReader* reader = NULL;
-            try {
-                reader = &(lasfile.GetReader());
-            }
-            catch (...) {
-                files.erase(filename);
-                throw std::runtime_error("LASReader_Create rethrowing");
-            }
-            
-            return (LASReaderH) reader;
-
+        std::ios::openmode const mode = std::ios::in | std::ios::binary;
+        std::istream* istrm;
+        if (strncasecmp(filename,"STDIN",5) == 0)
+        {
+            istrm = &std::cin;
         }
-        LASError_PushError(LE_Failure, "not able to create map entry", "LASReader_Create");
-        return NULL;
+        else 
+        {
+            istrm = new std::ifstream(filename, mode);
+        }
+        
+        if (!istrm->good())
+        {
+            delete istrm;
+            throw std::runtime_error("Reading stream was not able to be created");
+        }
+        return (LASReaderH) new LASReader(*istrm);
+
     
     } catch (std::exception const& e)
      {
@@ -224,49 +213,24 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader)
 {
     VALIDATE_POINTER0(hReader, "LASReader_Destroy");
 
-    StrLASFileMap::iterator p;    
-    LASReader* reader = (LASReader*)hReader;
+    try { 
+        LASReader* reader = (LASReader*)hReader;
+        std::istream* istrm = &(reader->GetStream());
 
-    for (p=files.begin(); p!=files.end(); ++p) {
-        LASFile f = p->second;
-        
-
-        try {
-            
-            LASReader& freader = f.GetReader();
-
-            try {
-                std::ifstream& a = static_cast<std::ifstream&>(freader.GetStream());
-                std::ifstream& r = static_cast<std::ifstream&>(reader->GetStream());
-                if (&a == &r) {
-                    files.erase(p);
-                    hReader = NULL;
-                    return;
-                }
-
-        
-            } catch (std::bad_cast const& /* e */)
-            {
-                std::istream& a = static_cast<std::istream&>(freader.GetStream());
-                std::istream& r = reader->GetStream();
-                if (&a == &r) {
-                    files.erase(p);
-                    hReader = NULL;
-                    return;
-                }     
-
-            } catch (std::exception const& e)
-            {
-                hReader=NULL;
-                LASError_PushError(LE_Failure, e.what(), "LASReader_Destroy");
-                return;
-            }
+        delete reader;
+        hReader = NULL;
     
-        }  catch (std::runtime_error const& /* e */) 
+        if (static_cast<std::ifstream&>(*istrm))
+            static_cast<std::ifstream&>(*istrm).close();
+        delete istrm;
+        istrm = NULL;
+  
+        }  catch (std::runtime_error const& e/* e */) 
         {
-            continue;
+            LASError_PushError(LE_Failure, e.what(), "LASReader_Destroy");
+            return;
         }
-    }
+
 
     hReader = NULL;
 }
@@ -1206,36 +1170,45 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
     VALIDATE_POINTER1(hHeader, "LASWriter_Create", NULL); 
     
     if (filename == NULL) {
-        LASError_PushError(LE_Failure, "Inputted filename was null", "LASWriter_Create");
+        LASError_PushError(LE_Failure, "Input filename was null", "LASWriter_Create");
         return NULL;
     }
     try {
-
-        StrLASFileMap::const_iterator p;
-        
-        p = files.find(filename);
-        LASHeader* header = ((LASHeader*) hHeader);
-        
-        if (p==files.end()) {
-
-            LASFile lasfile;
-
-            lasfile = LASFile(filename, *header, (liblas::LASFile::Mode)mode);
-            LASWriter* writer = NULL;
-            try {
-                writer = &(lasfile.GetWriter());
-            }
-            catch (...) {
-                throw std::runtime_error("LASWriter_Create rethrowing");
-            }
-
-            files[filename] = lasfile;
-
-            return (LASWriterH) writer;
+        std::ios::openmode m;
+        if ( (mode > 2) || (mode < 1)) {
+            throw std::runtime_error("File mode must be eWrite or eAppend");
         }
         
-        LASError_PushError(LE_Failure, "not able to create map entry", "LASWriter_Create");
-        return NULL;
+        std::ostream* ostrm;
+
+        // append mode 
+        if (mode == 2) {
+            m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
+        }
+        // write mode
+        else {
+            m = std::ios::out | std::ios::binary | std::ios::ate;
+        }
+                
+        if (strncasecmp(filename,"STOUT",5) == 0)
+        {
+            ostrm = &std::cout;
+        }
+        else 
+        {
+            ostrm = new std::ofstream(filename, m);
+        }
+
+        
+        if (!ostrm->good())
+        {
+            delete ostrm;
+            throw std::runtime_error("Writing stream was not able to be created");
+        }
+        
+        LASHeader* header = ((LASHeader*) hHeader);
+        LASWriter* writer = new LASWriter(*ostrm, *header);
+        return (LASWriterH) writer;
 
     } catch (std::exception const& e)
      {
@@ -1287,53 +1260,29 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
 {
     VALIDATE_POINTER0(hWriter, "LASWriter_Destroy");
 
-    StrLASFileMap::iterator p;  
-      
-    LASWriter* writer = (LASWriter*)hWriter;
 
-    for (p=files.begin(); p!=files.end(); ++p) {
-
-        LASFile f = p->second;
-
-        try {
-            
-            LASWriter& fwriter = f.GetWriter();
-
-            try {
-                std::ofstream& a = static_cast<std::ofstream&>(fwriter.GetStream());
-                std::ofstream& r = static_cast<std::ofstream&>(writer->GetStream());
-                if (&a == &r) {
-                    files.erase(p);
-                    hWriter = NULL;
-                    return;
-                }
-        
-            } catch (std::bad_cast const& /* e */)
-            {
-                std::ostream& a = static_cast<std::ostream&>(fwriter.GetStream());
-                std::ostream& r = writer->GetStream();
-                if (&a == &r) {
-                    files.erase(p);
-                    hWriter = NULL;
-                    return;
-                }
-
-            } catch (std::exception const& e)
-            {
-                hWriter=NULL;
-                LASError_PushError(LE_Failure, e.what(), "LASWriter_Destroy");
-                return ;
-            }
     
-        }  catch (std::runtime_error const& /* e */) 
+
+  
+    
+    try { 
+        LASWriter* writer = (LASWriter*)hWriter;
+        std::ostream* ostrm = &(writer->GetStream());
+
+        delete writer;
+        hWriter = NULL;
+    
+        if (static_cast<std::ofstream&>(*ostrm))
+            static_cast<std::ofstream&>(*ostrm).close();
+        delete ostrm;
+        ostrm = NULL;
+  
+        }  catch (std::runtime_error const& e/* e */) 
         {
-            continue;
+            LASError_PushError(LE_Failure, e.what(), "LASWriter_Destroy");
+            return;
         }
 
-
-    }
-
-    hWriter=NULL;
 }
 
 LAS_DLL LASErrorEnum LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS) {

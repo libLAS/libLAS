@@ -98,7 +98,6 @@ LASHeader::LASHeader(LASHeader const& other) :
     m_scales(other.m_scales),
     m_offsets(other.m_offsets),
     m_extents(other.m_extents),
-    m_proj4(other.m_proj4),
     m_srs(other.m_srs)
 {
     void* p = 0;
@@ -155,7 +154,6 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         m_scales = rhs.m_scales;
         m_offsets = rhs.m_offsets;
         m_extents = rhs.m_extents;
-        m_proj4 = rhs.m_proj4;
         m_srs = rhs.m_srs;
     }
     return *this;
@@ -188,7 +186,6 @@ bool LASHeader::operator==(LASHeader const& other) const
     if (m_scales != other.m_scales) return false;
     if (m_offsets != other.m_offsets) return false;
     if (m_extents != other.m_extents) return false;
-    if (m_proj4 != other.m_proj4) return false;
     
     return true;
 }

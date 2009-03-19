@@ -385,7 +385,6 @@ private:
     PointOffsets m_offsets;
     PointExtents m_extents;
     std::vector<LASVLR> m_vlrs;
-    std::string m_proj4;
     LASSRS m_srs;
 };
 

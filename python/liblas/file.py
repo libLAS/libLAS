@@ -47,7 +47,8 @@ import point
 import os
 import types
 
-files = []
+files = {'append':[], 'write':[],'read':[]}
+import sys
 
 class File(object):
     def __init__(self, filename, header=None, mode='r'):
@@ -56,10 +57,18 @@ class File(object):
         self.handle = None
         self._mode = mode
         
+        # print self.filename
+        # print sys.stderr.write('%s %s %s'%(files, self.filename, mode))
+        # sys.stderr.flush()
         #check in the registry if we already have the file open
-        for f in files:
-            if f == self.filename:
-                raise core.LASException("File %s is already open.  Close the file or delete the reference to it", filename)
+        if mode=='r':
+            for f in files['write'] + files['append']:
+                if f == self.filename:
+                    raise core.LASException("File %s is already open for write.  Close the file or delete the reference to it" % filename)
+        else:
+            for f in files['read']:
+                if f == self.filename:
+                    raise core.LASException("File %s is already open for read. Close the file or delete the reference to it" % filename)
         self.open()
         
     def open(self):
@@ -67,13 +76,13 @@ class File(object):
             self.handle = core.las.LASReader_Create(self.filename)
             self.mode = 0
             self._header = lasheader.Header(handle = core.las.LASReader_GetHeader(self.handle))
-            files.append(self.filename)
+            files['read'].append(self.filename)
         if self._mode == 'w' and '+' not in self._mode:
             if not self._header:
                 self._header = lasheader.Header(handle = core.las.LASHeader_Create())
             self.handle = core.las.LASWriter_Create(self.filename, self._header.handle, 1)
             self.mode = 1
-            files.append(self.filename)
+            files['write'].append(self.filename)
         if '+' in self._mode and 'r' not in self._mode:
             if not self._header:
                 reader = core.las.LASReader_Create(self.filename)
@@ -81,7 +90,7 @@ class File(object):
                 core.las.LASReader_Destroy(reader)
             self.handle = core.las.LASWriter_Create(self.filename, self._header.handle, 2)
             self.mode = 2
-            files.append(self.filename)
+            files['append'].append(self.filename)
     def __del__(self):
         if not self.handle or not core: return
         self.close()
@@ -89,9 +98,14 @@ class File(object):
     def close(self):
         if self.mode == 0 :
             core.las.LASReader_Destroy(self.handle)
+            files['read'].remove(self.filename)
         else:
+            try:
+                files['append'].remove(self.filename)
+            except:
+                files['write'].remove(self.filename)
             core.las.LASWriter_Destroy(self.handle)
-        files.remove(self.filename)
+        
         self._header = None
         self.handle = None
     
