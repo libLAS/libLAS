@@ -179,6 +179,8 @@ las.LASReader_GetPointAt.errcheck = check_void_done
 las.LASReader_SetSRS.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASReader_SetSRS.errcheck = check_return
 
+las.LASReader_Destroy.argtypes = [ctypes.c_void_p]
+las.LASReader_Destroy.errcheck = check_void_done
 
 las.LASPoint_GetX.restype = ctypes.c_double
 las.LASPoint_GetX.argtypes = [ctypes.c_void_p]
