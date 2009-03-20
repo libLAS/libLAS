@@ -1,8 +1,8 @@
 /******************************************************************************
- * $Id$
+ * $Id: lasspatialreference.cpp 1104 2009-03-17 04:15:19Z hobu $
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS SRS class 
+ * Purpose:  LAS Spatial Reference class 
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
@@ -39,20 +39,22 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lassrs.hpp>
+#include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/utility.hpp>
 #include <iostream>
 
 namespace liblas
 {
 
-LASSRS::LASSRS() :
+LASSpatialReference::LASSpatialReference() :
     m_gtiff(0),
     m_tiff(0)
 {
+    assert(0 == m_gtiff);
+    assert(0 == m_tiff);
 }
 
-LASSRS& LASSRS::operator=(LASSRS const& rhs)
+LASSpatialReference& LASSpatialReference::operator=(LASSpatialReference const& rhs)
 {
     if (&rhs != this)
     {
@@ -64,7 +66,7 @@ LASSRS& LASSRS::operator=(LASSRS const& rhs)
     return *this;
 }
 
-LASSRS::~LASSRS() 
+LASSpatialReference::~LASSpatialReference() 
 {
 #ifdef HAVE_LIBGEOTIFF
     if (m_gtiff)
@@ -80,7 +82,7 @@ LASSRS::~LASSRS()
 #endif
 }
 
-LASSRS::LASSRS(LASSRS const& other) 
+LASSpatialReference::LASSpatialReference(LASSpatialReference const& other) 
 {
     m_tiff = 0;
     m_gtiff = 0;
@@ -88,7 +90,7 @@ LASSRS::LASSRS(LASSRS const& other)
     GetGTIF();
 }
 
-LASSRS::LASSRS(std::vector<LASVLR> const& vlrs) 
+LASSpatialReference::LASSpatialReference(std::vector<LASVLR> const& vlrs) 
 {
     m_tiff = 0;
     m_gtiff = 0;
@@ -97,12 +99,12 @@ LASSRS::LASSRS(std::vector<LASVLR> const& vlrs)
 }
 
 /// Keep a copy of the VLRs that are related to GeoTIFF SRS information.
-void LASSRS::SetVLRs(std::vector<LASVLR> const& vlrs)
+void LASSpatialReference::SetVLRs(std::vector<LASVLR> const& vlrs)
 {
     
     std::string const uid("LASF_Projection");
     
-    // Wipe out any existing VLRs that might exist on the LASSRS
+    // Wipe out any existing VLRs that might exist on the LASSpatialReference
     m_vlrs.clear();
     
     // We only copy VLR records from the list which are related to GeoTIFF keys.
@@ -118,7 +120,7 @@ void LASSRS::SetVLRs(std::vector<LASVLR> const& vlrs)
     }
 }
 
-void LASSRS::AddVLR(LASVLR const& vlr) 
+void LASSpatialReference::AddVLR(LASVLR const& vlr) 
 {
     if (IsGeoVLR(vlr))
     {
@@ -126,7 +128,7 @@ void LASSRS::AddVLR(LASVLR const& vlr)
     }
 }
 
-bool LASSRS::IsGeoVLR(LASVLR const& vlr) const
+bool LASSpatialReference::IsGeoVLR(LASVLR const& vlr) const
 {
     std::string const uid("LASF_Projection");
     
@@ -151,12 +153,12 @@ bool LASSRS::IsGeoVLR(LASVLR const& vlr) const
     return false;
 }
 
-std::vector<LASVLR> LASSRS::GetVLRs() const
+std::vector<LASVLR> LASSpatialReference::GetVLRs() const
 {
     return m_vlrs;
 }
 
-void LASSRS::ResetVLRs()
+void LASSpatialReference::ResetVLRs()
 {
 
     m_vlrs.clear();
@@ -288,7 +290,7 @@ void LASSRS::ResetVLRs()
 #endif // ndef HAVE_LIBGEOTIFF
 }
 
-void LASSRS::SetGTIF(const GTIF* gtiff, const ST_TIFF* tiff) 
+void LASSpatialReference::SetGTIF(const GTIF* gtiff, const ST_TIFF* tiff) 
 {
     m_gtiff = (GTIF*)gtiff;
     m_tiff = (ST_TIFF*)tiff;
@@ -296,7 +298,7 @@ void LASSRS::SetGTIF(const GTIF* gtiff, const ST_TIFF* tiff)
     m_gtiff = NULL;
     m_tiff = NULL;
 }
-const GTIF* LASSRS::GetGTIF()
+const GTIF* LASSpatialReference::GetGTIF()
 {
 #ifndef HAVE_LIBGEOTIFF
     return 0;
@@ -304,7 +306,7 @@ const GTIF* LASSRS::GetGTIF()
 
     // If we already have m_gtiff and m_tiff, that is because we have 
     // already called GetGTIF once before.  VLRs ultimately drive how the 
-    // LASSRS is defined, not the GeoTIFF keys.  
+    // LASSpatialReference is defined, not the GeoTIFF keys.  
     if (m_tiff)
     {
         ST_Destroy(m_tiff);
@@ -321,7 +323,7 @@ const GTIF* LASSRS::GetGTIF()
     std::string const uid("LASF_Projection");
     
     // Nothing is going to happen here if we don't have any VLRs describing
-    // SRS information on the LASSRS.  
+    // SRS information on the LASSpatialReference.  
     for (uint16_t i = 0; i < m_vlrs.size(); ++i)
     {
         LASVLR record = m_vlrs[i];
@@ -354,7 +356,7 @@ const GTIF* LASSRS::GetGTIF()
 }
 
 /// Fetch the SRS as WKT
-std::string LASSRS::GetWKT() const 
+std::string LASSpatialReference::GetWKT() const 
 {
 #ifndef HAVE_GDAL
     return std::string();
@@ -380,7 +382,7 @@ std::string LASSRS::GetWKT() const
 #endif
 }
        
-void LASSRS::SetWKT(std::string const& v)
+void LASSpatialReference::SetWKT(std::string const& v)
 {
     if (!m_gtiff)
     {
@@ -405,11 +407,11 @@ void LASSRS::SetWKT(std::string const& v)
     ResetVLRs();
 #else
     UNREFERENCED_PARAMETER(v);
-    throw std::runtime_error("GDAL is not available, LASSRS could not be set from WKT");
+    throw std::runtime_error("GDAL is not available, LASSpatialReference could not be set from WKT");
 #endif
 }
 
-std::string LASSRS::GetProj4() const 
+std::string LASSpatialReference::GetProj4() const 
 {
 #ifdef HAVE_GDAL
     
@@ -454,7 +456,7 @@ std::string LASSRS::GetProj4() const
     return std::string();
 }
 
-void LASSRS::SetProj4(std::string const& v)
+void LASSpatialReference::SetProj4(std::string const& v)
 {
     if (!m_gtiff)
     {

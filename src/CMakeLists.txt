@@ -18,7 +18,7 @@ SET( LIBLAS_HPP
     ../include/liblas/lasrecordheader.hpp
     ../include/liblas/laswriter.hpp
     ../include/liblas/liblas.hpp
-	../include/liblas/lassrs.hpp
+	../include/liblas/lasspatialreference.hpp
 )
 
 SET( LIBLAS_DETAIL_HPP
@@ -47,7 +47,7 @@ SET( LIBLAS_CPP
     lasreader.cpp
     laswriter.cpp
     lasfile.cpp
-	lassrs.cpp
+	lasspatialreference.cpp
 )
 
 SET( LIBLAS_DETAIL_CPP

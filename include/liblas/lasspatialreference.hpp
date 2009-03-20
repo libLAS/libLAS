@@ -1,8 +1,8 @@
 /******************************************************************************
- * $Id$
+ * $Id: lasspatialreference.hpp 1091 2009-03-10 20:17:35Z hobu $
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS SRS class 
+ * Purpose:  LAS Spatial Reference class 
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
@@ -39,8 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_LASSRS_HPP_INCLUDED
-#define LIBLAS_LASSRS_HPP_INCLUDED
+#ifndef LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED
+#define LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED
 
 #include <liblas/lasrecordheader.hpp>
 
@@ -83,36 +83,33 @@
 
 // Fake out the compiler if we don't have libgeotiff
 #ifndef HAVE_LIBGEOTIFF
-    typedef struct GTIFS * GTIF;
-    typedef struct ST_TIFFS * ST_TIFF;
+typedef struct GTIFS * GTIF;
+typedef struct ST_TIFFS * ST_TIFF;
 #endif
 
 namespace liblas {
 
 /// Spatial Reference System container for libLAS
-class LASSRS
+class LASSpatialReference
 {
 public:
 
-
-
     /// Default constructor.
-    LASSRS();
+    LASSpatialReference();
 
     /// Destructor.
     /// If libgeotiff is enabled, deallocates libtiff and libgeotiff objects used internally.
-    ~LASSRS();
+    ~LASSpatialReference();
 
-    /// Constructor creating LASSRS instance from given Variable-Length Record.
-    LASSRS(const std::vector<LASVLR>& vlrs);
+    /// Constructor creating LASSpatialReference instance from given Variable-Length Record.
+    LASSpatialReference(const std::vector<LASVLR>& vlrs);
 
     /// Copy constryctor.
-    LASSRS(LASSRS const& other);
+    LASSpatialReference(LASSpatialReference const& other);
 
     /// Assignment operator.
-    LASSRS& operator=(LASSRS const& rhs);
+    LASSpatialReference& operator=(LASSpatialReference const& rhs);
     
-
     /// Returns a pointer to the internal GTIF*.  Only available if 
     /// you have libgeotiff linked in.
     const GTIF* GetGTIF();
@@ -144,7 +141,7 @@ public:
     /// \param v - a string containing the Proj.4 string.
     void SetProj4(std::string const& v);
     
-    /// Set the LASVLRs for the LASSRS.  SetVLRs will only copy 
+    /// Set the LASVLRs for the LASSpatialReference.  SetVLRs will only copy 
     /// VLR records that pertain to the GeoTIFF keys, and extraneous 
     /// VLR records will not be copied.
     /// \param vlrs - A list of VLRs that contains VLRs describing GeoTIFF keys
@@ -153,9 +150,8 @@ public:
     /// Add a VLR representing GeoTIFF keys to the SRS
     void AddVLR(const LASVLR& vlr);
     
-    /// Return a copy of the LASVLRs that LASSRS maintains
+    /// Return a copy of the LASVLRs that LASSpatialReference maintains
     std::vector<LASVLR> GetVLRs() const;
-    
 
 private:
 
@@ -165,9 +161,9 @@ private:
     std::vector<LASVLR> m_vlrs;
     bool IsGeoVLR(const LASVLR& vlr) const;
 
-    /// Reset the VLRs of the LASSRS using the existing GTIF* and ST_TIF*
+    /// Reset the VLRs of the LASSpatialReference using the existing GTIF* and ST_TIF*
     /// Until this method is called, 
-    /// the LASSRS will only contain a SRS description using the VLRs 
+    /// the LASSpatialReference will only contain a SRS description using the VLRs 
     /// that it was first instantiated with.  SetWKT and SetProj4 can 
     /// be used to change the GTIF* 
     void ResetVLRs();
@@ -185,4 +181,4 @@ void SetGeogCSCitation(GTIF* psGTIF, OGRSpatialReference* poSRS, char* angUnitNa
 LAS_C_END
 #endif
 
-#endif // LIBLAS_LASSRS_HPP_INCLUDED
+#endif // LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED

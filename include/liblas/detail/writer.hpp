@@ -42,7 +42,7 @@
 #ifndef LIBLAS_DETAIL_WRITER_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_HPP_INCLUDED
 
-#include <liblas/lassrs.hpp>
+#include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
 
@@ -69,7 +69,7 @@ public:
     std::ostream& GetStream() const;
     void WriteVLR(LASHeader const& header);
 
-    void SetSRS(const LASSRS& srs);
+    void SetSRS(const LASSpatialReference& srs);
     
 protected:
     PointRecord m_record;
@@ -78,8 +78,8 @@ protected:
     void FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header);
 
     void Project(PointRecord& point);      
-    LASSRS m_out_srs;
-    LASSRS m_in_srs;
+    LASSpatialReference m_out_srs;
+    LASSpatialReference m_in_srs;
     
     OGRCoordinateTransformationH m_transform;
     OGRSpatialReferenceH m_in_ref;

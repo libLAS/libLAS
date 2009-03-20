@@ -50,7 +50,7 @@ class LASPoint;
 class LASReader;
 class LASWriter;
 class LASColor;
-class LASSRS;
+class LASSpatialReference;
 
 namespace detail {
 

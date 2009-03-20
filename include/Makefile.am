@@ -11,7 +11,7 @@ nobase_las_HEADERS =		liblas/cstdint.hpp \
 					    liblas/laspoint.hpp \
 					    liblas/lasreader.hpp \
 					    liblas/lasrecordheader.hpp \
-					    liblas/lassrs.hpp \
+					    liblas/lasspatialreference.hpp \
 					    liblas/laswriter.hpp \
 					    liblas/liblas.hpp \
 					    liblas/capi/liblas.h \

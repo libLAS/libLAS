@@ -197,7 +197,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\include\liblas\lassrs.hpp"
+					RelativePath="..\..\..\include\liblas\lasspatialreference.hpp"
 					>
 				</File>
 				<File
@@ -310,7 +310,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lassrs.cpp"
+				RelativePath="..\..\..\src\lasspatialreference.cpp"
 				>
 			</File>
 			<File

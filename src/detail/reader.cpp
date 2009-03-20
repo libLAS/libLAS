@@ -161,7 +161,7 @@ bool Reader::ReadGeoreference(LASHeader& header)
         vlrs.push_back(record);
     }
 
-    LASSRS srs(vlrs);    
+    LASSpatialReference srs(vlrs);    
     header.SetSRS(srs);
 
     // keep a copy on the reader in case we're going to reproject data 
@@ -183,7 +183,7 @@ void Reader::Reset(LASHeader const& header)
     m_recordlength = header.GetDataRecordLength();
 }
 
-void Reader::SetSRS(const LASSRS& srs)
+void Reader::SetSRS(const LASSpatialReference& srs)
 {
     m_out_srs = srs;
 #ifdef HAVE_GDAL

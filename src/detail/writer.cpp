@@ -45,7 +45,7 @@
 #include <liblas/detail/writer12.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/lassrs.hpp>
+#include <liblas/lasspatialreference.hpp>
 
 #ifdef HAVE_GDAL
 #include <ogr_srs_api.h>
@@ -121,7 +121,7 @@ void Writer::WriteVLR(LASHeader const& header)
 }
 
 
-void Writer::SetSRS(const LASSRS& srs)
+void Writer::SetSRS(const LASSpatialReference& srs)
 {
     m_out_srs = srs;
 #ifdef HAVE_GDAL

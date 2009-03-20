@@ -77,7 +77,7 @@ public:
 
     // Reproject data as they are written if the LASWriter's reference is
     // different than the LASHeader's
-    bool SetSRS(const LASSRS& ref);
+    bool SetSRS(const LASSpatialReference& ref);
     
     
 private:

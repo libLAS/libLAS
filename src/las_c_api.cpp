@@ -49,7 +49,7 @@
 #include <liblas/exception.hpp>
 #include <liblas/lasrecordheader.hpp>
 #include <liblas/guid.hpp>
-#include <liblas/lassrs.hpp>
+#include <liblas/lasspatialreference.hpp>
 #include <liblas/capi/las_config.h>
 #include <liblas/capi/las_version.h>
 
@@ -299,7 +299,7 @@ LAS_DLL LASErrorEnum LASReader_SetSRS(LASHeaderH hReader, const LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetSRS", LE_Failure);
 
     try {
-        ((LASReader*) hReader)->SetSRS(*((LASSRS*)hSRS));
+        ((LASReader*) hReader)->SetSRS(*((LASSpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASReader_SetSRS");
@@ -1297,7 +1297,7 @@ LAS_DLL LASErrorEnum LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetSRS", LE_Failure);
 
     try {
-        ((LASWriter*) hWriter)->SetSRS(*((LASSRS*)hSRS));
+        ((LASWriter*) hWriter)->SetSRS(*((LASSpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_SetSRS");
@@ -1649,12 +1649,12 @@ LAS_DLL LASErrorEnum LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor)
 }
 
 LAS_DLL LASSRSH LASSRS_Create(void) {
-    return (LASSRSH) new LASSRS();
+    return (LASSRSH) new LASSpatialReference();
 }
 
 LAS_DLL void LASSRS_Destroy(LASSRSH hSRS){
     VALIDATE_LAS_POINTER0(hSRS, "LASSRS_Destroy");
-    delete (LASSRS*)hSRS;
+    delete (LASSpatialReference*)hSRS;
     hSRS = NULL;
 }
 
@@ -1662,7 +1662,7 @@ LAS_DLL const GTIF* LASSRS_GetGTIF(LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetGTIF", 0);
     
     try {
-        return ((LASSRS*) hSRS)->GetGTIF();
+        return ((LASSpatialReference*) hSRS)->GetGTIF();
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_GetGTIF");
@@ -1676,7 +1676,7 @@ LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const GTIF* gtiff, const ST_TI
     VALIDATE_LAS_POINTER1(gtiff, "LASSRS_SetGTIF", LE_Failure);
     VALIDATE_LAS_POINTER1(tiff, "LASSRS_SetGTIF", LE_Failure);
     try {
-        ((LASSRS*) hSRS)->SetGTIF(gtiff, tiff);
+        ((LASSpatialReference*) hSRS)->SetGTIF(gtiff, tiff);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetGTIF");
@@ -1688,7 +1688,7 @@ LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const GTIF* gtiff, const ST_TI
 LAS_DLL char* LASSRS_GetProj4(LASSRSH hSRS) 
 {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetProj4", NULL);
-    LASSRS* srs = (LASSRS*)hSRS;
+    LASSpatialReference* srs = (LASSpatialReference*)hSRS;
 
     return strdup((srs)->GetProj4().c_str());
     
@@ -1700,7 +1700,7 @@ LAS_DLL LASErrorEnum LASSRS_SetProj4(LASSRSH hSRS, const char* value)
     VALIDATE_LAS_POINTER1(value, "LASSRS_SetProj4", LE_Failure);
 
     try {
-         ((LASSRS*) hSRS)->SetProj4(value);
+         ((LASSpatialReference*) hSRS)->SetProj4(value);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetProj4");
@@ -1713,7 +1713,7 @@ LAS_DLL LASErrorEnum LASSRS_SetProj4(LASSRSH hSRS, const char* value)
 LAS_DLL char* LASSRS_GetWKT(LASSRSH hSRS) 
 {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetWKT", NULL);
-    LASSRS* srs = (LASSRS*)hSRS;
+    LASSpatialReference* srs = (LASSpatialReference*)hSRS;
 
     return strdup((srs)->GetWKT().c_str());
     
@@ -1725,7 +1725,7 @@ LAS_DLL LASErrorEnum LASSRS_SetWKT(LASSRSH hSRS, const char* value)
     VALIDATE_LAS_POINTER1(value, "LASSRS_SetWKT", LE_Failure);
 
     try {
-         ((LASSRS*) hSRS)->SetWKT(value);
+         ((LASSpatialReference*) hSRS)->SetWKT(value);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetWKT");
@@ -1741,7 +1741,7 @@ LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASSRS_AddVLR", LE_Failure);
 
     try {
-        ((LASSRS*) hSRS)->AddVLR(*((LASVLR*)hVLR));
+        ((LASSpatialReference*) hSRS)->AddVLR(*((LASVLR*)hVLR));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_AddVLR");
@@ -1755,14 +1755,14 @@ LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
 LAS_DLL LASVLRH LASSRS_GetVLR(const LASSRSH hSRS, liblas::uint32_t i) {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetVLR", 0);
     
-    LASVLR vlr = ((LASSRS*) hSRS)->GetVLRs()[i];
+    LASVLR vlr = ((LASSpatialReference*) hSRS)->GetVLRs()[i];
     return (LASVLRH) new LASVLR(vlr);
 }
 
 LAS_DLL liblas::uint32_t LASSRS_GetVLRCount(const LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetVLR", 0);
     
-    liblas::uint32_t size = ((LASSRS*) hSRS)->GetVLRs().size();
+    liblas::uint32_t size = ((LASSpatialReference*) hSRS)->GetVLRs().size();
     return size;
 }
 
@@ -1772,7 +1772,7 @@ LAS_DLL LASErrorEnum LASHeader_SetSRS(LASHeaderH hHeader, const LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASHeader_SetSRS", LE_Failure);
 
     try {
-        ((LASHeader*) hHeader)->SetSRS(*((LASSRS*)hSRS));
+        ((LASHeader*) hHeader)->SetSRS(*((LASSpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetSRS");
@@ -1786,8 +1786,8 @@ LAS_DLL LASErrorEnum LASHeader_SetSRS(LASHeaderH hHeader, const LASSRSH hSRS) {
 LAS_DLL LASSRSH LASHeader_GetSRS(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetSRS", 0);
     
-    LASSRS srs = ((LASHeader*) hHeader)->GetSRS();
-    return (LASSRSH) new LASSRS(srs);
+    LASSpatialReference srs = ((LASHeader*) hHeader)->GetSRS();
+    return (LASSRSH) new LASSpatialReference(srs);
 }
 
 

@@ -46,7 +46,7 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasrecordheader.hpp>
-#include <liblas/lassrs.hpp>
+#include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 // std
 #include <iosfwd>
@@ -79,7 +79,7 @@ public:
 
     /// Reproject data as they are written if the LASWriter's reference is
     /// different than the LASHeader's    
-    bool SetSRS(const LASSRS& ref);
+    bool SetSRS(const LASSpatialReference& ref);
 
     /// The operator is not const because it updates file stream position.
     LASPoint const& operator[](std::size_t n);

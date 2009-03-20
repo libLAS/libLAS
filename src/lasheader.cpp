@@ -44,7 +44,7 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
-#include <liblas/lassrs.hpp>
+#include <liblas/lasspatialreference.hpp>
 
 // GeoTIFF
 #ifdef HAVE_LIBGEOTIFF
@@ -754,11 +754,11 @@ void LASHeader::SetGeoreference()
 
 }
 
-LASSRS LASHeader::GetSRS() const
+LASSpatialReference LASHeader::GetSRS() const
 {
     return m_srs;
 }
-void LASHeader::SetSRS(LASSRS& srs)
+void LASHeader::SetSRS(LASSpatialReference& srs)
 {
     m_srs = srs;
 }

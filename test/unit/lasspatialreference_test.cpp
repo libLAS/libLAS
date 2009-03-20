@@ -1,11 +1,11 @@
-// $Id$
+// $Id: lasspatialreference_test.cpp 1102 2009-03-16 14:57:12Z hobu $
 //
 // (C) Copyright Mateusz Loskot 2008, mateusz@loskot.net
 // Distributed under the BSD License
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
-#include <liblas/lassrs.hpp>
+#include <liblas/lasspatialreference.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <tut/tut.hpp>
@@ -15,15 +15,15 @@
 
 namespace tut
 { 
-    struct lassrs_data
+    struct lasspatialreference_data
     {
-        liblas::LASSRS m_default;
+        liblas::LASSpatialReference m_default;
     };
 
-    typedef test_group<lassrs_data> tg;
+    typedef test_group<lasspatialreference_data> tg;
     typedef tg::object to;
 
-    tg test_group_lassrs("liblas::LASSRS");
+    tg test_group_lasspatialreference("liblas::LASSpatialReference");
 
     // Test default constructor
     template<>
@@ -39,9 +39,9 @@ namespace tut
 //     template<>
 //     void to::test<2>()
 //     {
-//         using liblas::LASSRS;
+//         using liblas::LASSpatialReference;
 //         
-//         LASSRS copy_of_default(m_default);
+//         LASSpatialReference copy_of_default(m_default);
 //         test_default_header(copy_of_default);
 // 
 //         std::string sig("LASF and garbage");

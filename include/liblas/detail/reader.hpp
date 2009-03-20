@@ -43,7 +43,7 @@
 #define LIBLAS_DETAIL_READER_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
-#include <liblas/lassrs.hpp>
+#include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 
 #ifndef HAVE_GDAL
@@ -73,7 +73,7 @@ public:
     bool ReadVLR(LASHeader& header);
     bool ReadGeoreference(LASHeader& header);
     void Reset(LASHeader const& header);
-    void SetSRS(const LASSRS& srs);
+    void SetSRS(const LASSpatialReference& srs);
     
 protected:
     
@@ -82,8 +82,8 @@ protected:
     uint32_t m_size;
     uint32_t m_current;
     uint32_t m_recordlength;    
-    LASSRS m_out_srs;
-    LASSRS m_in_srs;    
+    LASSpatialReference m_out_srs;
+    LASSpatialReference m_in_srs;    
     OGRCoordinateTransformationH m_transform;
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;

@@ -13,7 +13,7 @@ LAS_OBJS = \
     laspoint.obj \
     lasheader.obj \
     lasfile.obj \
-    lassrs.obj \
+    lasspatialreference.obj \
     lasrecordheader.obj \
     detail\reader.obj \
     detail\reader10.obj \

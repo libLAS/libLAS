@@ -235,6 +235,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\test\unit\lasspatialreference_test.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\test\unit\laswriter_test.cpp"
 			>
 		</File>
