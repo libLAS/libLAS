@@ -17,7 +17,7 @@ liblas_la_SOURCES = \
 	laserror.cpp \
 	laspoint.cpp \
 	lasheader.cpp \
-	lasrecordheader.cpp \
+	lasvariablerecord.cpp \
 	lasreader.cpp \
 	laswriter.cpp \
 	lasfile.cpp \
