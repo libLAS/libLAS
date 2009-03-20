@@ -17,7 +17,7 @@ if version_info[:2] < (2,5):
 
 import os
 
-version = '1.2.0b2'
+version = '1.2.0b3'
 
 if os.name == 'nt':
     # Windows NT library
@@ -28,7 +28,7 @@ else:
 
 setup(name          = 'libLAS',
       version       = version,
-      description   = 'LAS 1.0/1.1 LiDAR data format translation',
+      description   = 'LAS 1.0/1.1/1.2 LiDAR data format translation',
       license       = 'BSD',
       keywords      = 'DEM elevation LIDAR',
       author        = 'Howard Butler',
