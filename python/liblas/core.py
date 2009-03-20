@@ -73,9 +73,9 @@ def check_void_done(result, func, cargs):
         msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
         las.LASError_Reset()
         raise LASException(msg)
-
         
     return result
+
 def check_value(result, func, cargs):
     "Error checking proper value returns"
     count = las.LASError_GetErrorCount()
@@ -181,6 +181,7 @@ las.LASReader_SetSRS.errcheck = check_return
 
 las.LASReader_Destroy.argtypes = [ctypes.c_void_p]
 las.LASReader_Destroy.errcheck = check_void_done
+las.LASReader_Destroy.restype = None
 
 las.LASPoint_GetX.restype = ctypes.c_double
 las.LASPoint_GetX.argtypes = [ctypes.c_void_p]
@@ -285,6 +286,8 @@ las.LASReader_GetHeader.argtypes = [ctypes.c_void_p]
 las.LASReader_GetHeader.errcheck = check_void
 
 las.LASHeader_Destroy.argtypes = [ctypes.c_void_p]
+las.LASHeader_Destroy.errcheck = check_void_done
+las.LASHeader_Destroy.restype = None
 
 las.LASHeader_Copy.restype = ctypes.c_void_p
 las.LASHeader_Copy.argtypes = [ctypes.c_void_p]
@@ -464,9 +467,11 @@ las.LASWriter_SetSRS.errcheck = check_return
 
 las.LASWriter_Destroy.argtypes = [ctypes.c_void_p]
 las.LASWriter_Destroy.errcheck = check_void_done
+las.LASWriter_Destroy.restype = None
 
 las.LASGuid_Destroy.argtypes = [ctypes.c_void_p]
 las.LASGuid_Destroy.errcheck = check_void_done
+las.LASGuid_Destroy.restype = None
 
 las.LASGuid_AsString.argtypes = [ctypes.c_void_p]
 las.LASGuid_AsString.errcheck = check_value_free
@@ -494,6 +499,7 @@ las.LASVLR_Create.restype = ctypes.c_void_p
 
 las.LASVLR_Destroy.argtypes = [ctypes.c_void_p]
 las.LASVLR_Destroy.errcheck = check_void_done
+las.LASVLR_Destroy.restype = None
 
 las.LASVLR_GetUserId.argtypes = [ctypes.c_void_p]
 las.LASVLR_GetUserId.errcheck = check_value_free
@@ -542,7 +548,7 @@ las.LASColor_Create.restype = ctypes.c_void_p
 
 las.LASColor_Destroy.argtypes = [ctypes.c_void_p]
 las.LASColor_Destroy.errcheck = check_void_done
-
+las.LASColor_Destroy.restype = None
 
 las.LASColor_GetRed.restype = ctypes.c_short
 las.LASColor_GetRed.argtypes = [ctypes.c_void_p]
@@ -572,13 +578,12 @@ las.LASPoint_GetColor.restype = ctypes.c_void_p
 las.LASPoint_SetColor.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASPoint_SetColor.errcheck = check_return
 
-
-
 las.LASSRS_Create.errcheck = check_void
 las.LASSRS_Create.restype = ctypes.c_void_p
 
 las.LASSRS_Destroy.argtypes = [ctypes.c_void_p]
 las.LASSRS_Destroy.errcheck = check_void_done
+las.LASSRS_Destroy.restype = None
 
 las.LASSRS_GetProj4.argtypes = [ctypes.c_void_p]
 las.LASSRS_GetProj4.errcheck = check_value_free
