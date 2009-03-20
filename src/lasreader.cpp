@@ -149,6 +149,7 @@ bool LASReader::Reset()
     ifs.clear();
     ifs.seekg(0);
     MakePIMPL(ifs);
+	Init();
     return true;
 }
 
