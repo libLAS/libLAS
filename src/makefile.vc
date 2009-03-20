@@ -14,7 +14,7 @@ LAS_OBJS = \
     lasheader.obj \
     lasfile.obj \
     lasspatialreference.obj \
-    lasrecordheader.obj \
+    lasvariablerecord.obj \
     detail\reader.obj \
     detail\reader10.obj \
     detail\reader11.obj \
