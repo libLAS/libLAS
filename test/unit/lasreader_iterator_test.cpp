@@ -27,10 +27,10 @@ namespace tut
         std::ifstream ifs_;
         LASReader reader_;
 
-        lasreader_iterator_data()
-            : file10_(g_test_data_path + "//TO_core_last_clip.las"),
-                ifs_(file10_.c_str(), std::ios::in | std::ios::binary),
-                    reader_(ifs_)
+        lasreader_iterator_data() :
+            file10_(g_test_data_path + "//TO_core_last_clip.las"),
+            ifs_(file10_.c_str(), std::ios::in | std::ios::binary),
+            reader_(ifs_)
         {}
     };
 
@@ -206,10 +206,26 @@ namespace tut
         ensure_equals(d, cnt);
     }
 
-    // Test std::advance operation
+    // Test std::distance operation
     template<>
     template<>
     void to::test<15>()
+    {
+        std::size_t a = std::distance(lasreader_iterator(reader_), lasreader_iterator());
+
+        // Reader state is set to "past-the-end-of-file"
+        // So, reset is needed
+        reader_.Reset();
+
+        std::size_t b = std::distance(lasreader_iterator(reader_), lasreader_iterator());
+
+        ensure_equals(a, b);
+    }
+
+    // Test std::advance operation
+    template<>
+    template<>
+    void to::test<16>()
     {
         lasreader_iterator it(reader_); // move to 1st point
 
@@ -223,7 +239,7 @@ namespace tut
     // Test std::copy algorithm
     template<>
     template<>
-    void to::test<16>()
+    void to::test<17>()
     {
         liblas::uint32_t const size = reader_.GetHeader().GetPointRecordsCount();
         lasreader_iterator it(reader_);
@@ -248,7 +264,7 @@ namespace tut
     // Test std::count algorithm
     template<>
     template<>
-    void to::test<17>()
+    void to::test<18>()
     {
         // Construct copy of 2nd point record from tested file
         LASPoint pt;
@@ -274,22 +290,16 @@ namespace tut
     // Test std::equal algorithm
     template<>
     template<>
-    void to::test<18>()
+    void to::test<19>()
     {
-        // TODO - mloskot: Can not re-use the LASReader (object reader_) because libLAS does
-        // not support reset operation yet. In order to reuse reader with mre than one iterator
-        // we have to provide operation to reset reader (set internal pointer to beginning of LAS file, etc.).
-        // So, here we reuse only file stream.
-        //LASReader reader(ifs);
-
         std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
+        LASReader reader(ifs);
 
         // Copy LAS records to std::list based cache
         typedef std::list<LASPoint> list_t;
         typedef std::back_insert_iterator<list_t> inserter_t;
         list_t cache;
         {
-            LASReader reader(ifs);
             lasreader_iterator it(reader);
             lasreader_iterator end;
             ensure(it != end);
@@ -298,9 +308,11 @@ namespace tut
             ensure_equals(cache.size(), reader.GetHeader().GetPointRecordsCount());
         }
 
+        // Reset reader to the beginning of LAS file
+        reader.Reset();
+
         // Compare LAS file with cache
         {
-            LASReader reader(ifs);
             lasreader_iterator it(reader);
             lasreader_iterator end;
             ensure(it != end);
@@ -313,7 +325,7 @@ namespace tut
     // Test std::find algorithm
     template<>
     template<>
-    void to::test<19>()
+    void to::test<20>()
     {
         // Construct copy of 2nd point record from tested file
         LASPoint pt;
@@ -340,7 +352,7 @@ namespace tut
     // Test std::find_if algorithm
     template<>
     template<>
-    void to::test<20>()
+    void to::test<21>()
     {
         lasreader_iterator it(reader_);
         lasreader_iterator end;
@@ -355,7 +367,7 @@ namespace tut
     // Test std::for_each algorithm
     template<>
     template<>
-    void to::test<21>()
+    void to::test<22>()
     {
         lasreader_iterator it(reader_);
         lasreader_iterator end;
@@ -374,4 +386,3 @@ namespace tut
         ensure(lasbbox == bbox);
     }
 }
-
