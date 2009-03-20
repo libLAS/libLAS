@@ -6,6 +6,8 @@
   >>> s.proj4 = '+proj=utm +zone=15 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
   >>> def test_srs():
+  ...     if not liblas.HAVE_LIBGEOTIFF:
+  ...         return True
   ...     if not liblas.HAVE_GDAL: 
   ...         return s.proj4 == '+proj=tmerc +lat_0=0.000000000 +lon_0=-93.000000000 +k=0.999600 +x_0=500000.000 +y_0=0.000 +ellps=WGS84 +units=m '
   ...     if liblas.HAVE_GDAL:
@@ -19,6 +21,8 @@
   >>> f = file.File('../test/data/1.2_3.las',mode='r')
   >>> s = f.header.srs
   >>> def test_srs():
+  ...     if not liblas.HAVE_LIBGEOTIFF:
+  ...         return True
   ...     if not liblas.HAVE_GDAL: 
   ...         return s.wkt == ''
   ...     if liblas.HAVE_GDAL:
@@ -32,6 +36,8 @@
 #  ...         s2.wkt = """PROJCS["NAD83 / UTM zone 16N",GEOGCS["NAD83",DATUM["North_American_Datum_1983",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6269"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4269"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-87],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],AUTHORITY["EPSG","26916"],AXIS["Easting",EAST],AXIS["Northing",NORTH]]"""
 
   >>> def test_srs():
+  ...     if not liblas.HAVE_LIBGEOTIFF:
+  ...         return True
   ...     if not liblas.HAVE_GDAL: 
   ...         return True
   ...     if liblas.HAVE_GDAL:

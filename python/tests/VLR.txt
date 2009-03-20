@@ -66,6 +66,8 @@
 
   >>> def test_srs():
   ...     s = h.srs
+  ...     if not liblas.HAVE_LIBGEOTIFF:
+  ...         return True
   ...     if not liblas.HAVE_GDAL: 
   ...         return s.proj4 == '+proj=utm +zone=17 +ellps=WGS84 +units=m '
   ...     if liblas.HAVE_GDAL:
