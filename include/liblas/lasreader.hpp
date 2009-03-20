@@ -45,7 +45,7 @@
 
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/lasrecordheader.hpp>
+#include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 // std
@@ -67,7 +67,7 @@ public:
     std::size_t GetVersion() const;
     LASHeader const& GetHeader() const;
     LASPoint const& GetPoint() const;
-    std::vector<LASVLR> const& GetVLRs() const;
+    std::vector<LASVariableRecord> const& GetVLRs() const;
     /// Allow fetching of the stream
     std::istream& GetStream() const;
     bool IsEOF() const;
@@ -95,7 +95,7 @@ private:
     const std::auto_ptr<detail::Reader> m_pimpl;
     LASHeader m_header;
     LASPoint m_point;
-    std::vector<LASVLR> m_vlrs;
+    std::vector<LASVariableRecord> m_vlrs;
 };
 
 } // namespace liblas

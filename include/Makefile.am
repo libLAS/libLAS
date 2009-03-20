@@ -10,7 +10,7 @@ nobase_las_HEADERS =		liblas/cstdint.hpp \
 					    liblas/lasheader.hpp \
 					    liblas/laspoint.hpp \
 					    liblas/lasreader.hpp \
-					    liblas/lasrecordheader.hpp \
+					    liblas/lasvariablerecord.hpp \
 					    liblas/lasspatialreference.hpp \
 					    liblas/laswriter.hpp \
 					    liblas/liblas.hpp \

@@ -41,7 +41,7 @@
 
 #include <liblas/detail/reader10.hpp>
 #include <liblas/detail/utility.hpp>
-#include <liblas/lasrecordheader.hpp>
+#include <liblas/lasvariablerecord.hpp>
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>

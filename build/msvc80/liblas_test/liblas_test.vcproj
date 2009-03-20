@@ -231,11 +231,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\test\unit\lasrecordheader_test.cpp"
+			RelativePath="..\..\..\test\unit\lasspatialreference_test.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\test\unit\lasspatialreference_test.cpp"
+			RelativePath="..\..\..\test\unit\lasvariablerecord_test.cpp"
 			>
 		</File>
 		<File

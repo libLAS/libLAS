@@ -13,9 +13,9 @@ SET( LIBLAS_HPP
     ../include/liblas/lasfile.hpp
     ../include/liblas/lasheader.hpp
     ../include/liblas/laspoint.hpp
-    ../include/liblas/lasrecordheader.hpp
+    ../include/liblas/lasvariablerecord.hpp
     ../include/liblas/lasreader.hpp
-    ../include/liblas/lasrecordheader.hpp
+    ../include/liblas/lasvariablerecord.hpp
     ../include/liblas/laswriter.hpp
     ../include/liblas/liblas.hpp
 	../include/liblas/lasspatialreference.hpp

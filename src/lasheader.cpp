@@ -113,7 +113,7 @@ LASHeader::LASHeader(LASHeader const& other) :
     std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
     assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
     
-    std::vector<LASVLR>(other.m_vlrs).swap(m_vlrs);
+    std::vector<LASVariableRecord>(other.m_vlrs).swap(m_vlrs);
 
 }
 
@@ -150,7 +150,7 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         std::vector<uint32_t>(rhs.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
         assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
 
-        std::vector<LASVLR>(rhs.m_vlrs).swap(m_vlrs);
+        std::vector<LASVariableRecord>(rhs.m_vlrs).swap(m_vlrs);
         m_scales = rhs.m_scales;
         m_offsets = rhs.m_offsets;
         m_extents = rhs.m_extents;
@@ -549,12 +549,12 @@ void LASHeader::SetMin(double x, double y, double z)
     m_extents.min = detail::Point<double>(x, y, z);
 }
 
-void LASHeader::AddVLR(LASVLR const& v) 
+void LASHeader::AddVLR(LASVariableRecord const& v) 
 {
     m_vlrs.push_back(v);
 
     uint32_t end_size = 0;
-    std::vector<LASVLR>::const_iterator i;
+    std::vector<LASVariableRecord>::const_iterator i;
         
     // Calculate a new data offset size
     for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i) 
@@ -580,7 +580,7 @@ void LASHeader::AddVLR(LASVLR const& v)
     m_recordsCount += 1;
 }
 
-LASVLR const& LASHeader::GetVLR(uint32_t index) const 
+LASVariableRecord const& LASHeader::GetVLR(uint32_t index) const 
 {
     return m_vlrs[index];
 }
@@ -590,7 +590,7 @@ void LASHeader::DeleteVLR(uint32_t index)
     if (index >= m_vlrs.size())
         throw std::out_of_range("index is out of range");
 
-    std::vector<LASVLR>::iterator i = m_vlrs.begin() + index;
+    std::vector<LASVariableRecord>::iterator i = m_vlrs.begin() + index;
 
     // Deal with the dataoffset when deleting
     uint32_t size = (*i).GetTotalSize();
@@ -658,13 +658,13 @@ void LASHeader::ClearGeoKeyVLRs()
     uint32_t beg_size = 0;
     uint32_t end_size = 0;
 
-    std::vector<LASVLR> vlrs = m_vlrs;
-    std::vector<LASVLR>::const_iterator i;
-    std::vector<LASVLR>::iterator j;
+    std::vector<LASVariableRecord> vlrs = m_vlrs;
+    std::vector<LASVariableRecord>::const_iterator i;
+    std::vector<LASVariableRecord>::iterator j;
 
     for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i)
     {
-        LASVLR record = *i;
+        LASVariableRecord record = *i;
         beg_size += (*i).GetTotalSize();
 
         std::string user = record.GetUserId(true);
@@ -740,12 +740,12 @@ void LASHeader::ClearGeoKeyVLRs()
 }
 void LASHeader::SetGeoreference() 
 {    
-    std::vector<LASVLR> vlrs = m_srs.GetVLRs();
+    std::vector<LASVariableRecord> vlrs = m_srs.GetVLRs();
 
     // Wipe the GeoTIFF-related VLR records off of the LASHeader
     ClearGeoKeyVLRs();
 
-    std::vector<LASVLR>::const_iterator i;
+    std::vector<LASVariableRecord>::const_iterator i;
 
     for (i = vlrs.begin(); i != vlrs.end(); ++i) 
     {

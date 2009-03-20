@@ -193,7 +193,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\include\liblas\lasrecordheader.hpp"
+					RelativePath="..\..\..\include\liblas\lasvariablerecord.hpp"
 					>
 				</File>
 				<File

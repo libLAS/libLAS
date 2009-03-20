@@ -29,7 +29,7 @@ liblas_test_SOURCES = \
     laspoint_test.cpp \
     lasreader_iterator_test.cpp \
     lasreader_test.cpp \
-    lasrecordheader_test.cpp \
+    lasvariablerecord_test.cpp \
     laswriter_test.cpp \
     liblas_test_suite.cpp
 

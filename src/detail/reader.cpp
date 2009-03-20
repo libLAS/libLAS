@@ -139,7 +139,7 @@ bool Reader::ReadVLR(LASHeader& header)
 
         read_n(data.front(), m_ifs, length);
          
-        LASVLR vlr;
+        LASVariableRecord vlr;
         vlr.SetReserved(vlrh.reserved);
         vlr.SetUserId(std::string(vlrh.userId));
         vlr.SetDescription(std::string(vlrh.description));
@@ -154,10 +154,10 @@ bool Reader::ReadVLR(LASHeader& header)
 
 bool Reader::ReadGeoreference(LASHeader& header)
 {
-    std::vector<LASVLR> vlrs;
+    std::vector<LASVariableRecord> vlrs;
     for (uint16_t i = 0; i < header.GetRecordsCount(); ++i)
     {
-        LASVLR record = header.GetVLR(i);
+        LASVariableRecord record = header.GetVLR(i);
         vlrs.push_back(record);
     }
 

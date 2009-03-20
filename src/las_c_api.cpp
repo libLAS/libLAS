@@ -47,7 +47,7 @@
 #include <liblas/laswriter.hpp>
 #include <liblas/lasfile.hpp>
 #include <liblas/exception.hpp>
-#include <liblas/lasrecordheader.hpp>
+#include <liblas/lasvariablerecord.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/capi/las_config.h>
@@ -1132,8 +1132,8 @@ LAS_DLL LASErrorEnum LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId) {
 LAS_DLL LASVLRH LASHeader_GetVLR(const LASHeaderH hHeader, liblas::uint32_t i) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetVLR", 0);
     
-    LASVLR vlr = ((LASHeader*) hHeader)->GetVLR(i);
-    return (LASVLRH) new LASVLR(vlr);
+    LASVariableRecord vlr = ((LASHeader*) hHeader)->GetVLR(i);
+    return (LASVLRH) new LASVariableRecord(vlr);
 }
 
 LAS_DLL LASErrorEnum LASHeader_DeleteVLR(LASHeaderH hHeader, liblas::uint32_t index) {
@@ -1158,7 +1158,7 @@ LAS_DLL LASErrorEnum LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASHeader_AddVLR", LE_Failure);
 
     try {
-        ((LASHeader*) hHeader)->AddVLR(*((LASVLR*)hVLR));
+        ((LASHeader*) hHeader)->AddVLR(*((LASVariableRecord*)hVLR));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_AddVLR");
@@ -1354,19 +1354,19 @@ LAS_DLL char * LAS_GetVersion() {
 
 
 LAS_DLL LASVLRH LASVLR_Create(void) {
-    return (LASVLRH) new LASVLR();
+    return (LASVLRH) new LASVariableRecord();
 }
 
 LAS_DLL void LASVLR_Destroy(LASVLRH hVLR){
     VALIDATE_LAS_POINTER0(hVLR, "LASVLR_Destroy");
-    delete (LASVLR*)hVLR;
+    delete (LASVariableRecord*)hVLR;
     hVLR = NULL;
     
 }
 
 LAS_DLL char* LASVLR_GetUserId(const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetUserId", 0);
-    LASVLR* vlr = (LASVLR*)hVLR;
+    LASVariableRecord* vlr = (LASVariableRecord*)hVLR;
     return strdup(vlr->GetUserId(true).c_str());
 }
 
@@ -1374,7 +1374,7 @@ LAS_DLL LASErrorEnum LASVLR_SetUserId(LASVLRH hVLR, const char* value) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetUserId", LE_Failure); 
 
     try {
-            ((LASVLR*) hVLR)->SetUserId(value);
+            ((LASVariableRecord*) hVLR)->SetUserId(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASVLR_SetUserId");
@@ -1386,7 +1386,7 @@ LAS_DLL LASErrorEnum LASVLR_SetUserId(LASVLRH hVLR, const char* value) {
 
 LAS_DLL char* LASVLR_GetDescription(const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetDescription", 0);
-    LASVLR* vlr = (LASVLR*)hVLR;
+    LASVariableRecord* vlr = (LASVariableRecord*)hVLR;
     return strdup(vlr->GetDescription(true).c_str());
 }
 
@@ -1394,7 +1394,7 @@ LAS_DLL LASErrorEnum LASVLR_SetDescription(LASVLRH hVLR, const char* value) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetDescription", LE_Failure); 
 
     try {
-            ((LASVLR*) hVLR)->SetDescription(value);
+            ((LASVariableRecord*) hVLR)->SetDescription(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASVLR_SetDescription");
@@ -1408,12 +1408,12 @@ LAS_DLL liblas::uint16_t LASVLR_GetRecordLength(const LASVLRH hVLR) {
     
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetRecordLength", 0);
     
-    liblas::uint16_t value = ((LASVLR*) hVLR)->GetRecordLength();
+    liblas::uint16_t value = ((LASVariableRecord*) hVLR)->GetRecordLength();
     return value;
 }
 LAS_DLL LASErrorEnum LASVLR_SetRecordLength(LASVLRH hVLR, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetRecordLength", LE_Failure);
-    ((LASVLR*) hVLR)->SetRecordLength(value);    
+    ((LASVariableRecord*) hVLR)->SetRecordLength(value);    
     return LE_None;
 }
 
@@ -1421,19 +1421,19 @@ LAS_DLL liblas::uint16_t LASVLR_GetRecordId(const LASVLRH hVLR) {
     
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetRecordId", 0);
     
-    liblas::uint16_t value = ((LASVLR*) hVLR)->GetRecordId();
+    liblas::uint16_t value = ((LASVariableRecord*) hVLR)->GetRecordId();
     return value;
 }
 LAS_DLL LASErrorEnum LASVLR_SetRecordId(LASVLRH hVLR, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetRecordId", LE_Failure);
-    ((LASVLR*) hVLR)->SetRecordId(value);    
+    ((LASVariableRecord*) hVLR)->SetRecordId(value);    
     return LE_None;
 }
 
 
 LAS_DLL LASErrorEnum LASVLR_SetReserved(LASVLRH hVLR, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetReserved", LE_Failure);
-    ((LASVLR*) hVLR)->SetReserved(value);    
+    ((LASVariableRecord*) hVLR)->SetReserved(value);    
     return LE_None;
 }
 
@@ -1441,7 +1441,7 @@ LAS_DLL liblas::uint16_t LASVLR_GetReserved(const LASVLRH hVLR) {
     
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetReserved", 0);
     
-    liblas::uint16_t value = ((LASVLR*) hVLR)->GetReserved();
+    liblas::uint16_t value = ((LASVariableRecord*) hVLR)->GetReserved();
     return value;
 }
 
@@ -1450,7 +1450,7 @@ LAS_DLL LASErrorEnum LASVLR_GetData(const LASVLRH hVLR, liblas::uint8_t* data) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetData", LE_Failure);
 
     try {
-        LASVLR* vlr = ((LASVLR*) hVLR);
+        LASVariableRecord* vlr = ((LASVariableRecord*) hVLR);
         std::vector<liblas::uint8_t> d = vlr->GetData();
         liblas::uint16_t length = vlr->GetRecordLength();
         for (liblas::uint16_t i=0; i < length; i++) {
@@ -1471,7 +1471,7 @@ LAS_DLL LASErrorEnum LASVLR_SetData(const LASVLRH hVLR, liblas::uint8_t* data, l
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetData", LE_Failure);
 
     try {
-        LASVLR* vlr = ((LASVLR*) hVLR);
+        LASVariableRecord* vlr = ((LASVariableRecord*) hVLR);
         std::vector<liblas::uint8_t> d;
         d.resize(length);
         for (liblas::uint16_t i=0; i < length; i++) {
@@ -1741,7 +1741,7 @@ LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASSRS_AddVLR", LE_Failure);
 
     try {
-        ((LASSpatialReference*) hSRS)->AddVLR(*((LASVLR*)hVLR));
+        ((LASSpatialReference*) hSRS)->AddVLR(*((LASVariableRecord*)hVLR));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_AddVLR");
@@ -1755,8 +1755,8 @@ LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
 LAS_DLL LASVLRH LASSRS_GetVLR(const LASSRSH hSRS, liblas::uint32_t i) {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetVLR", 0);
     
-    LASVLR vlr = ((LASSpatialReference*) hSRS)->GetVLRs()[i];
-    return (LASVLRH) new LASVLR(vlr);
+    LASVariableRecord vlr = ((LASSpatialReference*) hSRS)->GetVLRs()[i];
+    return (LASVLRH) new LASVariableRecord(vlr);
 }
 
 LAS_DLL liblas::uint32_t LASSRS_GetVLRCount(const LASSRSH hSRS) {

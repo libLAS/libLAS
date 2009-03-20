@@ -42,8 +42,7 @@
 #ifndef LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED
 #define LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED
 
-#include <liblas/lasrecordheader.hpp>
-
+#include <liblas/lasvariablerecord.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
@@ -102,7 +101,7 @@ public:
     ~LASSpatialReference();
 
     /// Constructor creating LASSpatialReference instance from given Variable-Length Record.
-    LASSpatialReference(const std::vector<LASVLR>& vlrs);
+    LASSpatialReference(const std::vector<LASVariableRecord>& vlrs);
 
     /// Copy constryctor.
     LASSpatialReference(LASSpatialReference const& other);
@@ -145,21 +144,21 @@ public:
     /// VLR records that pertain to the GeoTIFF keys, and extraneous 
     /// VLR records will not be copied.
     /// \param vlrs - A list of VLRs that contains VLRs describing GeoTIFF keys
-    void SetVLRs(const std::vector<LASVLR>& vlrs);
+    void SetVLRs(const std::vector<LASVariableRecord>& vlrs);
     
     /// Add a VLR representing GeoTIFF keys to the SRS
-    void AddVLR(const LASVLR& vlr);
+    void AddVLR(const LASVariableRecord& vlr);
     
     /// Return a copy of the LASVLRs that LASSpatialReference maintains
-    std::vector<LASVLR> GetVLRs() const;
+    std::vector<LASVariableRecord> GetVLRs() const;
 
 private:
 
     GTIF* m_gtiff;
     ST_TIFF* m_tiff;
 
-    std::vector<LASVLR> m_vlrs;
-    bool IsGeoVLR(const LASVLR& vlr) const;
+    std::vector<LASVariableRecord> m_vlrs;
+    bool IsGeoVLR(const LASVariableRecord& vlr) const;
 
     /// Reset the VLRs of the LASSpatialReference using the existing GTIF* and ST_TIF*
     /// Until this method is called, 

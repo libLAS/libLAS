@@ -107,7 +107,7 @@ void Writer::WriteVLR(LASHeader const& header)
 
     for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
     {
-        LASVLR vlr = header.GetVLR(i);
+        LASVariableRecord vlr = header.GetVLR(i);
 
         detail::write_n(m_ofs, vlr.GetReserved(), sizeof(uint16_t));
         detail::write_n(m_ofs, vlr.GetUserId(true).c_str(), 16);

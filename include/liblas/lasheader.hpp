@@ -43,7 +43,7 @@
 #ifndef LIBLAS_LASHEADER_HPP_INCLUDED
 #define LIBLAS_LASHEADER_HPP_INCLUDED
 
-#include <liblas/lasrecordheader.hpp>
+#include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
@@ -314,10 +314,10 @@ public:
     void SetMin(double x, double y, double z);
 
     /// Adds a variable length record to the header
-    void AddVLR(LASVLR const& v);
+    void AddVLR(LASVariableRecord const& v);
     
     /// Returns a VLR 
-    LASVLR const& GetVLR(uint32_t index) const;
+    LASVariableRecord const& GetVLR(uint32_t index) const;
 
     /// Removes a VLR from the the header.
     void DeleteVLR(uint32_t index);
@@ -384,7 +384,7 @@ private:
     PointScales m_scales;
     PointOffsets m_offsets;
     PointExtents m_extents;
-    std::vector<LASVLR> m_vlrs;
+    std::vector<LASVariableRecord> m_vlrs;
     LASSpatialReference m_srs;
 };
 

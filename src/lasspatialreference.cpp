@@ -90,7 +90,7 @@ LASSpatialReference::LASSpatialReference(LASSpatialReference const& other)
     GetGTIF();
 }
 
-LASSpatialReference::LASSpatialReference(std::vector<LASVLR> const& vlrs) 
+LASSpatialReference::LASSpatialReference(std::vector<LASVariableRecord> const& vlrs) 
 {
     m_tiff = 0;
     m_gtiff = 0;
@@ -99,7 +99,7 @@ LASSpatialReference::LASSpatialReference(std::vector<LASVLR> const& vlrs)
 }
 
 /// Keep a copy of the VLRs that are related to GeoTIFF SRS information.
-void LASSpatialReference::SetVLRs(std::vector<LASVLR> const& vlrs)
+void LASSpatialReference::SetVLRs(std::vector<LASVariableRecord> const& vlrs)
 {
     
     std::string const uid("LASF_Projection");
@@ -109,10 +109,10 @@ void LASSpatialReference::SetVLRs(std::vector<LASVLR> const& vlrs)
     
     // We only copy VLR records from the list which are related to GeoTIFF keys.
     // They must have an id of "LASF_Projection" and a record id that's related.
-    std::vector<LASVLR>::const_iterator it;
+    std::vector<LASVariableRecord>::const_iterator it;
     for (it = vlrs.begin(); it != vlrs.end(); ++it)
     {
-        LASVLR const& vlr = *it;
+        LASVariableRecord const& vlr = *it;
         if (IsGeoVLR(vlr))
         {
             m_vlrs.push_back(vlr);
@@ -120,7 +120,7 @@ void LASSpatialReference::SetVLRs(std::vector<LASVLR> const& vlrs)
     }
 }
 
-void LASSpatialReference::AddVLR(LASVLR const& vlr) 
+void LASSpatialReference::AddVLR(LASVariableRecord const& vlr) 
 {
     if (IsGeoVLR(vlr))
     {
@@ -128,7 +128,7 @@ void LASSpatialReference::AddVLR(LASVLR const& vlr)
     }
 }
 
-bool LASSpatialReference::IsGeoVLR(LASVLR const& vlr) const
+bool LASSpatialReference::IsGeoVLR(LASVariableRecord const& vlr) const
 {
     std::string const uid("LASF_Projection");
     
@@ -153,7 +153,7 @@ bool LASSpatialReference::IsGeoVLR(LASVLR const& vlr) const
     return false;
 }
 
-std::vector<LASVLR> LASSpatialReference::GetVLRs() const
+std::vector<LASVariableRecord> LASSpatialReference::GetVLRs() const
 {
     return m_vlrs;
 }
@@ -189,7 +189,7 @@ void LASSpatialReference::ResetVLRs()
     ret = ST_GetKey(m_tiff, 34735, &kcount, &ktype, (void**)&kdata);
     if (ret)
     {    
-        LASVLR record;
+        LASVariableRecord record;
         int i = 0;
         record.SetRecordId(34735);
         record.SetUserId("LASF_Projection");
@@ -219,7 +219,7 @@ void LASSpatialReference::ResetVLRs()
     ret = ST_GetKey(m_tiff, 34736, &dcount, &dtype, (void**)&ddata);
     if (ret)
     {    
-        LASVLR record;
+        LASVariableRecord record;
         int i = 0;
         record.SetRecordId(34736);
         record.SetUserId("LASF_Projection");
@@ -253,7 +253,7 @@ void LASSpatialReference::ResetVLRs()
     ret = ST_GetKey(m_tiff, 34737, &acount, &atype, (void**)&adata);
     if (ret) 
     {                    
-         LASVLR record;
+         LASVariableRecord record;
          int i = 0;
          record.SetRecordId(34737);
          record.SetUserId("LASF_Projection");
@@ -326,7 +326,7 @@ const GTIF* LASSpatialReference::GetGTIF()
     // SRS information on the LASSpatialReference.  
     for (uint16_t i = 0; i < m_vlrs.size(); ++i)
     {
-        LASVLR record = m_vlrs[i];
+        LASVariableRecord record = m_vlrs[i];
         std::vector<uint8_t> data = record.GetData();
         if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
         {
