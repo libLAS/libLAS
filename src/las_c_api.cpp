@@ -82,7 +82,7 @@ LAS_C_START
 #include <stdint.h>
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
 #else
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
