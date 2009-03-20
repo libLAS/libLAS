@@ -67,20 +67,26 @@
 
 namespace liblas { namespace detail {
 
-Reader::Reader(std::istream& ifs) : m_ifs(ifs), m_offset(0), m_current(0), m_transform(0), m_in_ref(0), m_out_ref(0)
+Reader::Reader(std::istream& ifs) :
+    m_ifs(ifs), m_offset(0), m_size(0), m_current(0),
+    m_recordlength(0), m_transform(0),
+    m_in_ref(0), m_out_ref(0)
 {
 }
 
 Reader::~Reader()
 {
 #ifdef HAVE_GDAL
-    if (m_transform) {
+    if (m_transform)
+    {
         OCTDestroyCoordinateTransformation(m_transform);
     }
-    if (m_in_ref) {
+    if (m_in_ref)
+    {
         OSRDestroySpatialReference(m_in_ref);
     }
-    if (m_out_ref) {
+    if (m_out_ref)
+    {
         OSRDestroySpatialReference(m_out_ref);
     }
 
@@ -91,6 +97,7 @@ std::istream& Reader::GetStream() const
 {
     return m_ifs;
 }
+
 void Reader::FillPoint(PointRecord& record, LASPoint& point) 
 {
     
@@ -98,7 +105,10 @@ void Reader::FillPoint(PointRecord& record, LASPoint& point)
     point.SetY(record.y);
     point.SetZ(record.z);
     
-    if (m_transform) Project(point);
+    if (m_transform)
+    {
+        Project(point);
+    }
 
     point.SetIntensity(record.intensity);
     point.SetScanFlags(record.flags);
@@ -107,7 +117,6 @@ void Reader::FillPoint(PointRecord& record, LASPoint& point)
     point.SetUserData(record.user_data);
     point.SetPointSourceID(record.point_source_id);
 }
-
 
 bool Reader::ReadVLR(LASHeader& header)
 {
@@ -121,10 +130,10 @@ bool Reader::ReadVLR(LASHeader& header)
         read_n(vlrh, m_ifs, sizeof(VLRHeader));
 
         uint16_t length = vlrh.recordLengthAfterHeader;
-        if (length < 1) {
+        if (length < 1)
+        {
             throw std::domain_error("VLR record length must be at least 1 byte long");
-        }
-         
+        } 
         std::vector<uint8_t> data;
         data.resize(length);
 
@@ -140,13 +149,11 @@ bool Reader::ReadVLR(LASHeader& header)
 
         header.AddVLR(vlr);
     }
-
     return true;
 }
 
 bool Reader::ReadGeoreference(LASHeader& header)
 {
-
     std::vector<LASVLR> vlrs;
     for (uint16_t i = 0; i < header.GetRecordsCount(); ++i)
     {
@@ -154,16 +161,26 @@ bool Reader::ReadGeoreference(LASHeader& header)
         vlrs.push_back(record);
     }
 
-    LASSRS srs(vlrs);
-    
+    LASSRS srs(vlrs);    
     header.SetSRS(srs);
 
     // keep a copy on the reader in case we're going to reproject data 
     // on the way out.
     m_in_srs = srs;
-    
-    return true;
 
+    return true;
+}
+
+void Reader::Reset(LASHeader const& header)
+{
+    m_ifs.clear();
+    m_ifs.seekg(0);
+
+    // Reset sizes and set internal cursor to the beginning of file.
+    m_current = 0;
+    m_offset = header.GetDataOffset();
+    m_size = header.GetPointRecordsCount();
+    m_recordlength = header.GetDataRecordLength();
 }
 
 void Reader::SetSRS(const LASSRS& srs)
@@ -205,15 +222,14 @@ void Reader::Project(LASPoint& point)
     double y = point.GetY();
     double z = point.GetZ();
     
-    ret = OCTTransform(m_transform, 1, &x, &y, &z);
-    
-    if (!ret) {
+    ret = OCTTransform(m_transform, 1, &x, &y, &z);    
+    if (!ret)
+    {
         std::ostringstream msg; 
         msg << "Could not project point for Reader::" << CPLGetLastErrorMsg() << ret;
         std::string message(msg.str());
         throw std::runtime_error(message);
     }
-    
 
     point.SetX(x);
     point.SetY(y);
@@ -222,7 +238,6 @@ void Reader::Project(LASPoint& point)
     UNREFERENCED_PARAMETER(point);
 #endif
 }
-
 
 Reader* ReaderFactory::Create(std::istream& ifs)
 {

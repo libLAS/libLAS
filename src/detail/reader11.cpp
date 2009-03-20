@@ -211,9 +211,7 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     header.SetMax(x1, y1, z1);
     header.SetMin(x2, y2, z2);
 
-    m_offset = header.GetDataOffset();
-    m_size = header.GetPointRecordsCount();
-    m_recordlength = header.GetDataRecordLength();
+    Reset(header);
     
     return true;
 }

@@ -53,9 +53,10 @@
 namespace liblas
 {
 
-LASReader::LASReader(std::istream& ifs) 
+LASReader::LASReader(std::istream& ifs) :
+    m_pimpl(detail::ReaderFactory::Create(ifs))
 {
-    MakePIMPL(ifs);
+    //MakePIMPL(ifs);
     Init();
 }
 
@@ -82,19 +83,13 @@ LASPoint const& LASReader::GetPoint() const
 
 bool LASReader::ReadNextPoint()
 {
-    bool ret = false;
-    
-    ret = m_pimpl->ReadNextPoint(m_point, m_header);
-
+    bool ret = m_pimpl->ReadNextPoint(m_point, m_header);
     return ret;
 }
 
 bool LASReader::ReadPointAt(std::size_t n)
 {
-    bool ret = false;
-
-    ret = m_pimpl->ReadPointAt(n, m_point, m_header);
-
+    bool ret = m_pimpl->ReadPointAt(n, m_point, m_header);
     return ret;
 }
 
@@ -105,37 +100,27 @@ LASPoint const& LASReader::operator[](std::size_t n)
         throw std::out_of_range("point subscript out of range");
     }
 
-    bool ret = false;
-
-    ret = m_pimpl->ReadPointAt(n, m_point, m_header);
-
+    bool ret = m_pimpl->ReadPointAt(n, m_point, m_header);
     if (!ret)
     {
         throw std::out_of_range("no point record at given position");
     }
 
-
     return m_point;
-}
-
-void LASReader::MakePIMPL(std::istream& ifs) 
-{
-    m_pimpl = std::auto_ptr<detail::Reader>( detail::ReaderFactory::Create(ifs) );
 }
 
 void LASReader::Init()
 {    
     bool ret = m_pimpl->ReadHeader(m_header);
-
     if (!ret)
         throw std::runtime_error("public header block reading failure");
-        
+
     ret = m_pimpl->ReadVLR(m_header);
     if (!ret)
         throw std::runtime_error("public vlr header block reading failure");
-    
+
     m_pimpl->ReadGeoreference(m_header);
-    
+    m_pimpl->Reset(m_header);
 }
 
 std::istream& LASReader::GetStream() const
@@ -143,14 +128,9 @@ std::istream& LASReader::GetStream() const
     return m_pimpl->GetStream();
 }
 
-bool LASReader::Reset() 
+void LASReader::Reset() 
 {
-    std::istream& ifs = GetStream();
-    ifs.clear();
-    ifs.seekg(0);
-    MakePIMPL(ifs);
-	Init();
-    return true;
+    Init();
 }
 
 bool LASReader::IsEOF() const

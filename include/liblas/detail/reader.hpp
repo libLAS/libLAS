@@ -72,6 +72,7 @@ public:
     std::istream& GetStream() const;
     bool ReadVLR(LASHeader& header);
     bool ReadGeoreference(LASHeader& header);
+    void Reset(LASHeader const& header);
     void SetSRS(const LASSRS& srs);
     
 protected:
@@ -80,19 +81,15 @@ protected:
     std::streamoff m_offset;
     uint32_t m_size;
     uint32_t m_current;
-    uint32_t m_recordlength;
-
-    void FillPoint(PointRecord& record, LASPoint& point);
-    void Project(LASPoint& point);
-    
+    uint32_t m_recordlength;    
     LASSRS m_out_srs;
-    LASSRS m_in_srs;
-    
-
+    LASSRS m_in_srs;    
     OGRCoordinateTransformationH m_transform;
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
 
+    void FillPoint(PointRecord& record, LASPoint& point);
+    void Project(LASPoint& point);
 
 private:
 
