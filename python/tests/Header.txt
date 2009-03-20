@@ -30,7 +30,10 @@
   >>> now = datetime.datetime.now()
   >>> today = datetime.datetime(now.year, now.month,now.day) 
   
-  >>> x = h.date - td
+  >>> if now.hour > 19:
+  ...     x = h.date - td
+  ... else:
+  ...     x = h.date
 
   >>> d = datetime.datetime(x.year, x.month, x.day)
 
