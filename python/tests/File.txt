@@ -109,7 +109,6 @@
   >>> f = file.File('junk.las', mode="w", header=header)
   >>> import liblas.core
   >>> liblas.core.las.LASWriter_Destroy(f.handle)
-  0
   >>> print 'destroyed once'
   destroyed once
   >>> f.handle = None
