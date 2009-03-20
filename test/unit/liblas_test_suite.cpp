@@ -20,7 +20,6 @@ namespace tut
 
 int main(int argc, char* argv[])
 {
-
     if (1 == argc)
     {
         tut::g_test_data_path = "../data"; // default path
@@ -34,7 +33,6 @@ int main(int argc, char* argv[])
         std::cout << "Usage: liblas_test <test data path>\n";
         return 1;
     }
-
 
     std::cout << "libLAS Test Suite:\n==================";
 
@@ -53,4 +51,3 @@ int main(int argc, char* argv[])
 
     return 0;
 }
-
