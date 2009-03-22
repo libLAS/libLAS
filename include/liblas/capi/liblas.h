@@ -404,6 +404,19 @@ LAS_DLL int8_t LASPoint_GetScanAngleRank(const LASPointH hPoint);
 */
 LAS_DLL LASError LASPoint_SetScanAngleRank(LASPointH hPoint, int8_t value);
 
+/** Sets the point source id for the point.  No validation is done. 
+ *  @param hPoint LASPointH instance
+ *  @param value the value to set for the point source id
+ *  @return LASError value determine success or failure.
+*/
+LAS_DLL LASError LASPoint_SetPointSourceId(LASPointH hPoint, uint16_t value);
+
+/** Returns the point source id for the point
+ *  @param hPoint LASPointH instance
+ *  @return the scan angle for the point
+*/
+LAS_DLL uint16_t LASPoint_GetPointSourceId(LASPointH hPoint);
+
 /** Returns the arbitrary user data for the point
  *  @param hPoint LASPointH instance
  *  @return the arbitrary user data for the point

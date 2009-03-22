@@ -615,6 +615,31 @@ LAS_DLL LASErrorEnum LASPoint_SetScanAngleRank(LASPointH hPoint, liblas::int8_t 
 
 }
 
+LAS_DLL liblas::uint16_t LASPoint_GetPointSourceId(const LASPointH hPoint) {
+    
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetPointSourceId", 0);
+    
+    liblas::uint16_t value = ((LASPoint*) hPoint)->GetPointSourceID();
+    return value;
+}
+
+LAS_DLL LASErrorEnum LASPoint_SetPointSourceId(LASPointH hPoint, liblas::uint16_t value) {
+
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetPointSourceId", LE_Failure);
+
+    try {
+            ((LASPoint*) hPoint)->SetPointSourceID(value);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetPointSourceId");
+        return LE_Failure;
+    }
+
+    return LE_None;
+
+}
+
+
 LAS_DLL liblas::uint8_t LASPoint_GetUserData(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetUserData", 0);
