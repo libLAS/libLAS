@@ -72,5 +72,16 @@ LASColor& LASColor::operator=(LASColor const& rhs)
     return *this;
 }
 
+bool LASColor::operator==(LASColor const& other) const
+{
+    if (&other == this) return true;
+    
+    if (m_red != other.m_red) return false;
+    if (m_green != other.m_green) return false;
+    if (m_blue != other.m_blue) return false;
+
+    return true;
+}
+
 } // namespace liblas
 

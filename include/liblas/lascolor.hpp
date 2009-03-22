@@ -65,6 +65,9 @@ public:
 
     /// Assignment opreator.
     LASColor& operator=(LASColor const& rhs);
+
+    /// Comparison operator.
+    bool operator==(const LASColor& other) const;
     
     /// Fetch value of the red image channel 
     uint16_t GetRed() const;
