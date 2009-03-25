@@ -30,7 +30,7 @@ txt2las.exe:
 	$(CC) $(CFLAGS) txt2las.c lascommon.c $(LAS_ROOT)/src/$(LAS_LIB_DLL) $(GEOTIFF_LIB)
 	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
 
-!IF DEFINED(GDAL_HOME)
+!IF "$(GDAL_HOME)" != "" && EXIST("$(GDAL_HOME)")
 las2ogr.exe:
 	$(CC) $(CFLAGS) las2ogr.cpp $(LAS_ROOT)/src/$(LAS_LIB_DLL) $(GDAL_LIB) ..\src\$(LAS_LIB)
 	if exist $@.manifest mt -manifest $@.manifest -outputresource:$@;1
