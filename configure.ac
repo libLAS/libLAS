@@ -9,7 +9,7 @@ m4_define([liblas_version],
           [liblas_version_major.liblas_version_minor.liblas_version_micro])
 
 AC_PREREQ([2.59])
-AC_INIT([las], [liblas_version], [hobu.inc@gmail.com])
+AC_INIT([las], [liblas_version], [hobu.inc@gmail.com],[liblas-src])
 AC_CANONICAL_BUILD
 
 RELEASE_VERSION=liblas_version
@@ -27,7 +27,7 @@ dnl #########################################################################
 dnl Checks for programs.
 dnl #########################################################################
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([dist-bzip2])
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_INSTALL
