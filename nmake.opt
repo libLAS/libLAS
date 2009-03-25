@@ -67,7 +67,8 @@ GEOTIFF_HOME=""
 
 ###############################################################################
 # GDAL/OGR Support
-# Uncomment the folling line to build OGR support for the las2ogr command
+# Uncomment the following line to build OGR support for the las2ogr command
+# and WKT SRS support
 #USE_GDAL_SOURCE_TREE=YES
 #GDAL_HOME=C:\cvs\buildkit\gdal
 
