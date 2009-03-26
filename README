@@ -1,17 +1,15 @@
    
-libLAS - LAS 1.0/1.1 ASPRS LiDAR data translation toolset
+libLAS - LAS 1.0/1.1/1.2 ASPRS LiDAR data translation toolset
 ==============================================================================
 
-libLAS is a C/C++ library for reading and writing ASPRS LAS version 1.0 and 1.1 
-data.  LAS-formatted data is heavily used in `LiDAR`_ processing operations, and 
-the LAS format is a sequential binary format used to store data from sensors 
-and as intermediate processing storage by some applications.  
+libLAS is a C/C++ library for reading and writing ASPRS LAS versions 1.0, 1.1 and 1.2 
+data.  The LAS format is a sequential binary format used to store data from sensors 
+and as intermediate processing storage by some `LiDAR`_-related applications.  
 
 libLAS is available under the terms of the `BSD License`_. It builds on work 
 by `Martin Isenburg and Jonathan Shewchuk`_ of the  University of North 
-Carolina in their `LAStools`_ project.  libLAS' base C++ library that reads 
-and writes LAS 1.0/1.1 data was replaced with new development, and Martin's 
-tools were ported to use this new code.
+Carolina in their `LAStools`_ project by replacing the base C++ library 
+with new development and porting Martin's tools this new code.
 
 libLAS' initial development was supported by the `IGSB`_ of the Iowa DNR 
 for use in its state-wide `LIDAR`_ project.
@@ -20,7 +18,7 @@ for use in its state-wide `LIDAR`_ project.
 Download
 ------------------------------------------------------------------------------
 
-The 1.0.0 version of libLAS can be downloaded from http://liblas.org/wiki/1.0.0
+The 1.2.0 version of libLAS can be downloaded from http://liblas.org/wiki/1.2.0
 
 Older releases may be obtained from http://liblas.org/wiki/Releases
 
@@ -54,6 +52,7 @@ Software Development with libLAS
 ..............................................................................
 
 * `FOSS4G 2008`_ presentation that provides a basic overview of the design and philosophy of libLAS
+* `ASPRS Workshop Demo`_ by Jason Woolard of NOAA describing how to use libLAS with Python
 * `Tutorials`_ - tutorials on using libLAS from C++, Python and .NET/Mono languages
 * `LAS C API`_- doxygen docs that describe the libLAS C API
 * `dotnetLibLAS API`_ - docs for the .NET API
@@ -91,7 +90,7 @@ Open Source
 
 libLAS is open source software.  You can embed it in your own applications 
 (and even resell it) as long as you follow the crediting restriction of the BSD 
-license.  
+license.  See `License`_ for more detail. 
 
 Multiple APIs
 ..............................................................................
@@ -101,8 +100,10 @@ libLAS has C, C++, .NET, and Python APIs.
 Spatial Reference System Support
 ..............................................................................
 
-Linked against the latest version of `libgeotiff`_, you can set and get the spatial reference 
+Linked against a 1.2.5+ version of `libgeotiff`_, you can set and get the spatial reference 
 systems of LAS files using simple `proj.4`_ coordinate system definitions.  
+Alternatively, with libLAS 1.2, you can link against `GDAL`_ to be able to 
+manipulate spatial references using WKT.
 
 Simple Variable Length Record Abstraction
 ..............................................................................
@@ -216,3 +217,4 @@ Mailing Lists
 .. _`OSGeo4W`: http://wiki.osgeo.org/wiki/OSGeo_Win32_Installer
 .. _`dotnetLibLAS API`: http://liblas.org/wiki/dotnetapi
 .. _`FOSS4G 2008`: http://liblas.org/raw-attachment/wiki/WikiStart/liblas_foss4g_2008.pdf
+.. _`ASPRS Workshop Demo`: http://liblas.org/raw-attachment/wiki/WikiStart/ASPRS-Workshop-NOAA-Demo.pdf
