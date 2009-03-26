@@ -9,3 +9,9 @@ GEOTIFF_CPPFLAGS = @GEOTIFF_INC@ -DHAVE_LIBGEOTIFF=1
 endif
 
 AM_CPPFLAGS = $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) -I../include -I../include/detail
+
+
+EXTRA_DIST = \
+            nmake.opt \
+            makefile.vc \
+            src/makefile.vc 
