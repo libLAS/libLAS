@@ -1,13 +1,12 @@
+.. _txt2las
 ****************************************************************
-  las2txt: converts from standard ASCII to LAS
+  txt2las
 ****************************************************************
 
 :Author: Martin Isenburg
 :Contact: isenburg@cs.unc.edu
 :Revision: $Revision$
 :Date: $Date$
-
-.. sectnum::
 
 .. contents::
     :depth: 3

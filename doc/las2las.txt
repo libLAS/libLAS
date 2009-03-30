@@ -1,5 +1,7 @@
+.. _las2las:
+
 ****************************************************************
-  las2las: converts from binary LAS to binary LAS
+  las2las
 ****************************************************************
 
 :Author: Martin Isenburg
@@ -9,8 +11,6 @@
 :Revision: $Revision$
 :Date: $Date$
 
-.. sectnum::
-
 .. contents::
     :depth: 3
     :backlinks: top
@@ -18,11 +18,11 @@
 Description
 -----------
 
-`las2las` reads and writes LiDAR data in the ASPRS LAS 1.0 and 1.1 formats while 
+:ref:`las2las` reads and writes LiDAR data in the ASPRS LAS 1.0 and 1.1 formats while 
 modifying its contents. While `lasinfo` can do a few simple operations like 
 updating header information, more drastic changes, like removing points or 
-altering values, will require `las2las`.  `las2las` is expected to be used for 
-modifying single files at a time, and all `las2las` operations require multiple 
+altering values, will require :ref:`las2las`.  :ref:`las2las` is expected to be used for 
+modifying single files at a time, and all :ref:`las2las` operations require multiple 
 read passes through the points.   Some examples of operations `las2las` can be 
 used for include:
 
@@ -37,7 +37,7 @@ used for include:
 * changing the format from LAS 1.0 to 1.1 or vice versa
 * eliminating points of a given classification (--eliminate class 2)
 
-`las2las` is a port of Martin Isenburg's `las2las` utility from `LASTools`_ 
+:ref:`las2las` is a port of Martin Isenburg's :ref:`las2las` utility from `LASTools`_ 
 to the libLAS library.  For the most part, it is unchanged from Martin's 
 utility except for a few differences:
 

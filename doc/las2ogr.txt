@@ -1,13 +1,13 @@
+.. _las2ogr:
+
 ****************************************************************
-  las2ogr: converts from binary LAS to one of OGR formats
+  las2ogr
 ****************************************************************
 
 :Author: Mateusz Loskot
 :Contact: mateusz@loskot.net
 :Revision: $Revision$
 :Date: $Date$
-
-.. sectnum::
 
 .. contents::
     :depth: 3

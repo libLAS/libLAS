@@ -1,5 +1,5 @@
 ****************************************************************
-  lasinfo: a utility for inspecting LAS files
+  lasinfo
 ****************************************************************
 
 :Author: Martin Isenburg
@@ -8,8 +8,6 @@
 :Contact: hobu.inc@gmail.com
 :Revision: $Revision$
 :Date: $Date$
-
-.. sectnum::
 
 .. contents::
     :depth: 3

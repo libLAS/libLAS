@@ -1,13 +1,11 @@
 ****************************************************************
-  lasdiff: comparison of LAS files
+  lasdiff
 ****************************************************************
 
 :Author: Martin Isenburg
 :Contact: isenburg@cs.unc.edu
 :Revision: $Revision$
 :Date: $Date$
-
-.. sectnum::
 
 .. contents::
     :depth: 3
