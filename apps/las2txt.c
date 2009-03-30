@@ -544,12 +544,9 @@ int main(int argc, char *argv[])
             case 'M':
                 fprintf(file_out, "%d", index);
                 break;
-/*
-      case 'p': // the point source ID
-        fprintf(file_out, "%d", lasreader->point.point_source_ID);
-        break;
-*/
-   
+            case 'p':
+                fprintf(file_out, "%d", LASPoint_GetPointSourceId(p));
+                break;
             /* the edge of flight line flag */
             case 'e': 
                 fprintf(file_out, "%d", LASPoint_GetFlightLineEdge(p));
