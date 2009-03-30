@@ -147,7 +147,8 @@ int main(int argc, char *argv[])
         {
             i++;
 
-            if (strcmp(argv[i],"komma") == 0)
+            if (strcmp(argv[i],"komma") == 0 || 
+                strcmp(argv[i],"comma") == 0 )
             {
                 separator_sign = ',';
             }
@@ -196,7 +197,8 @@ int main(int argc, char *argv[])
                 )
         {
             i++;
-            if (strcmp(argv[i],"komma") == 0)
+            if (strcmp(argv[i],"komma") == 0 || 
+                strcmp(argv[i],"comma") == 0 )
             {
                 header_comment_sign = ',';
             }
