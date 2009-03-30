@@ -1,0 +1,22 @@
+.. libLAS documentation master file, created by
+   sphinx-quickstart on Mon Mar 30 11:04:44 2009.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to libLAS's documentation!
+==================================
+
+Contents:
+
+.. toctree::
+   :maxdepth: 2
+   
+   lasinfo
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
