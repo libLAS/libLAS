@@ -739,7 +739,11 @@ int main(int argc, char *argv[])
             p = LASReader_GetNextPoint(reader);
             continue;
         }
-        if (elim_class && ( elim_class == LASPoint_GetClassification(p)))
+
+        clsidx = LASPoint_GetClassification(p);
+        clsidx = (clsidx & 31); // 31 is max index in classification lookup table
+        assert(clsidx <= 31);
+        if (elim_class && (elim_class == clsidx))
         {
             p = LASReader_GetNextPoint(reader);
             continue;
