@@ -4,14 +4,18 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{711FD426-D0B5-4176-BE24-34560B4E701E}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\AUTHORS = ..\..\AUTHORS
+		..\..\autogen.sh = ..\..\autogen.sh
 		..\..\ChangeLog = ..\..\ChangeLog
 		..\..\CMakeLists.txt = ..\..\CMakeLists.txt
+		..\..\configure.ac = ..\..\configure.ac
 		..\..\COPYING = ..\..\COPYING
 		..\..\HOWTORELEASE.txt = ..\..\HOWTORELEASE.txt
 		..\..\INSTALL = ..\..\INSTALL
 		..\..\LICENSE.txt = ..\..\LICENSE.txt
+		..\..\Makefile.am = ..\..\Makefile.am
 		..\..\makefile.vc = ..\..\makefile.vc
 		..\..\NEWS = ..\..\NEWS
+		..\..\nmake.opt = ..\..\nmake.opt
 		..\..\README = ..\..\README
 	EndProjectSection
 EndProject
