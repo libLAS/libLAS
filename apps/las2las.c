@@ -11,7 +11,7 @@
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
 
-
+#include <assert.h>
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,6 +97,7 @@ int main(int argc, char *argv[])
     int elim_scan_angle_above = 0;
     int elim_intensity_below = 0;
     int elim_class = 0;
+    int clsidx = 0;
     int first_only = FALSE;
     int last_only = FALSE;
     int skip_invalid = FALSE;
@@ -370,12 +371,17 @@ int main(int argc, char *argv[])
             p = LASReader_GetNextPoint(reader);
             continue;
         }
-        if (elim_class && ( elim_class == LASPoint_GetClassification(p)))
+
+        clsidx = LASPoint_GetClassification(p);
+        clsidx = (clsidx & 31); // 31 is max index in classification lookup table
+        assert(clsidx <= 31);
+        if (elim_class && (elim_class == clsidx))
         {
             eliminated_class++;
             p = LASReader_GetNextPoint(reader);
             continue;
-        }        
+        }
+
         if (elim_intensity_below && LASPoint_GetIntensity(p) < elim_intensity_below)
         {
             eliminated_intensity++;

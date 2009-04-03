@@ -57,6 +57,7 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
     uint16_t blue = 0;
     
     int i = 0;
+    unsigned long idx = 0;
 
     summary = (LASPointSummary*) malloc(sizeof(LASPointSummary));
 
