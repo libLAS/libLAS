@@ -172,6 +172,15 @@ bool LASPoint::equal(LASPoint const& other) const
         return true;
     }
 
+    // If we do other members
+    // bool compare_classification(uint8_t cls, uint8_t expected)
+    // {
+    //    // 31 is max index in classification lookup table
+    //    clsidx = (cls & 31);
+    //    assert(clsidx <= 31); 
+    //    return (clsidx == expected);
+    // }
+
     return false;
 }
 
