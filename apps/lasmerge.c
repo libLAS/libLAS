@@ -351,21 +351,15 @@ int main(int argc, char *argv[])
                         LASHeader_GetMaxZ(merged_header));
     }
 
-    if (xyz_scale)
-    {
-        LASHeader_SetScale( merged_header, 
-                            xyz_scale[0], 
-                            xyz_scale[1], 
-                            xyz_scale[2]);
-    }
+    LASHeader_SetScale( merged_header, 
+                        xyz_scale[0], 
+                        xyz_scale[1], 
+                        xyz_scale[2]);
 
-    if (xyz_offset)
-    {
-        LASHeader_SetOffset(merged_header, 
-                            xyz_offset[0], 
-                            xyz_offset[1], 
-                            xyz_offset[2] );
-    }
+    LASHeader_SetOffset(merged_header, 
+                        xyz_offset[0], 
+                        xyz_offset[1], 
+                        xyz_offset[2] );
 
     x_scale_factor = LASHeader_GetScaleX(merged_header);
     if (((LASHeader_GetMaxX(merged_header) - LASHeader_GetOffsetX(merged_header)) / LASHeader_GetScaleX(merged_header)) > largest_int ||
