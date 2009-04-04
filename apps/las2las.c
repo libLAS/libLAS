@@ -11,13 +11,14 @@
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
 
+#include "liblas.h"
+/* std */
 #include <assert.h>
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "liblas.h"
 
 LASPointSummary* SummarizePoints(LASReaderH reader);
 void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header);
@@ -373,7 +374,7 @@ int main(int argc, char *argv[])
         }
 
         clsidx = LASPoint_GetClassification(p);
-        clsidx = (clsidx & 31); // 31 is max index in classification lookup table
+        clsidx = (clsidx & 31); /* 31 is max index in classification lookup table */
         assert(clsidx <= 31);
         if (elim_class && (elim_class == clsidx))
         {
@@ -741,7 +742,7 @@ int main(int argc, char *argv[])
         }
 
         clsidx = LASPoint_GetClassification(p);
-        clsidx = (clsidx & 31); // 31 is max index in classification lookup table
+        clsidx = (clsidx & 31); /* 31 is max index in classification lookup table */
         assert(clsidx <= 31);
         if (elim_class && (elim_class == clsidx))
         {

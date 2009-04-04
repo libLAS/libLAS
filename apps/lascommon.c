@@ -1,9 +1,9 @@
-// liblas
+/* liblas */
 #include <liblas.h>
 #ifdef HAVE_GEOTIFF
 #include <geotiff.h>
 #endif
-// std
+/* std */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

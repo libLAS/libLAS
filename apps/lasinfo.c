@@ -16,9 +16,9 @@
 #include <vld.h>
 #endif
 
-// liblas
+/* liblas */
 #include <liblas.h>
-// std
+/* std */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
