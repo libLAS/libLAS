@@ -26,8 +26,8 @@ if test "$OSTYPE" = "IRIX" -o "$OSTYPE" = "IRIX64"; then
    AMFLAGS=$AMFLAGS" --include-deps";
 fi
 
-echo "Running aclocal"
-aclocal || giveup
+echo "Running aclocal -I m4"
+aclocal -I m4 || giveup
 #echo "Running autoheader"
 #autoheader || giveup
 echo "Running libtoolize"
