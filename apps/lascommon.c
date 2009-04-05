@@ -198,6 +198,8 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
 
 void print_point(FILE *file, LASPointH point) {
 
+    LASColorH color = NULL;
+    
     fprintf(file, "---------------------------------------------------------\n");
     
     fprintf(file, "  X: \t\t%.6f\n", 
@@ -234,11 +236,18 @@ void print_point(FILE *file, LASPointH point) {
     fprintf(file, "  Classification:\t%d\n",
                   LASPoint_GetClassification(point)
                   );
-    fprintf(file, "  Color:\t%d %d %d\n",
-                  LASColor_GetRed(LASPoint_GetColor(point)),
-                  LASColor_GetGreen(LASPoint_GetColor(point)),
-                  LASColor_GetBlue(LASPoint_GetColor(point))
+    fprintf(file, "  Point Source ID:\t%d\n",
+                  LASPoint_GetPointSourceId(point)
                   );
+                  
+    color = LASPoint_GetColor(point);
+    fprintf(file, "  Color:\t%d %d %d\n",
+                  LASColor_GetRed(color),
+                  LASColor_GetGreen(color),
+                  LASColor_GetBlue(color)
+                  );
+    LASColor_Destroy(color);
+
 }
 void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header) {
 
@@ -376,13 +385,14 @@ void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header
     }
 }
 
-void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSkipVLR) {
+void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSkipVLR, int bWKT) {
 
     char *pszSignature = NULL;
     char *pszProjectId = NULL;
     char *pszSystemId = NULL;
     char *pszSoftwareId = NULL;
     char *pszProj4 = NULL;
+    char *pszWKT = NULL;
     
     char *pszVLRUser = NULL;
     char *pszVLRDescription = NULL;
@@ -407,6 +417,7 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     
     pSRS = LASHeader_GetSRS(header);
     pszProj4 = LASSRS_GetProj4(pSRS);
+    pszWKT = LASSRS_GetWKT(pSRS);
     pGTIF = LASSRS_GetGTIF(pSRS);
     
     nVLR = LASHeader_GetRecordsCount(header);
@@ -494,6 +505,7 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
 #ifdef HAVE_LIBGEOTIFF
     if (pGTIF) GTIFPrint((GTIF*)pGTIF, 0, 0);
 #endif
+    if (bWKT) { fprintf(file, pszWKT);fprintf(file, "\n");}
     if (nVLR && !bSkipVLR) {
         
     fprintf(file, "\n---------------------------------------------------------\n");
@@ -520,16 +532,17 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
             LASVLR_Destroy(pVLR);
             pVLR = NULL;
             
-            free(pszVLRUser);
-            free(pszVLRDescription);
+            LASString_Free(pszVLRUser);
+            LASString_Free(pszVLRDescription);
         }
         
     }
-    free(pszSignature);
-    free(pszProjectId);
-    free(pszSystemId);
-    free(pszSoftwareId);
-    free(pszProj4);
+    LASString_Free(pszSignature);
+    LASString_Free(pszProjectId);
+    LASString_Free(pszSystemId);
+    LASString_Free(pszSoftwareId);
+    LASString_Free(pszProj4);
+    LASString_Free(pszWKT);
 }
 
 void repair_header(FILE *file, LASHeaderH header, LASPointSummary* summary) {
