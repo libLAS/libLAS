@@ -491,19 +491,19 @@ int main(int argc, char *argv[])
             {
             /* // the x coordinate */      
             case 'x': 
-                lidardouble2string(printstring, LASPoint_GetX(p)); fprintf(file_out, printstring);
+                lidardouble2string(printstring, LASPoint_GetX(p)); fprintf(file_out, "%s", printstring);
                 break;
             /* // the y coordinate */
             case 'y': 
-                lidardouble2string(printstring, LASPoint_GetY(p)); fprintf(file_out, printstring);
+                lidardouble2string(printstring, LASPoint_GetY(p)); fprintf(file_out, "%s", printstring);
                 break;
             /* // the z coordinate */ 
             case 'z': 
-                lidardouble2string(printstring, LASPoint_GetZ(p)); fprintf(file_out, printstring);
+                lidardouble2string(printstring, LASPoint_GetZ(p)); fprintf(file_out, "%s", printstring);
                 break;
             /* // the gps-time */
             case 't': 
-                lidardouble2string(printstring,LASPoint_GetTime(p)); fprintf(file_out, printstring);
+                lidardouble2string(printstring,LASPoint_GetTime(p)); fprintf(file_out, "%s", printstring);
                 break;
             /* // the intensity */
             case 'i': 
