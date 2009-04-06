@@ -100,8 +100,9 @@
 
   >>> def test_srs():
   ...     s = h.srs
-  ...     if not liblas.HAVE_GDAL: 
-  ...         return s.proj4 == '+to_meter=1.0000000000'
+  ...     if not liblas.HAVE_GDAL and liblas.HAVE_LIBGEOTIFF:
+  ...         print s.proj4 
+  ...         return s.proj4 == ''
   ...     if liblas.HAVE_GDAL:
   ...         return s.proj4 == ''
   ...     return False
