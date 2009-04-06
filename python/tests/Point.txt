@@ -68,7 +68,7 @@
   >>> td = datetime.timedelta(hours=get_td()) 
   >>> p.time = datetime.datetime(2008,3,19,23,45,45,13434) 
   >>> delta = p.time - datetime.datetime(2008,3,19,23,45,45,13434) 
-  >>> int(math.floor(delta.seconds/3600.0)) == get_td()
+  >>> int(math.floor(delta.seconds/3600.0)) == get_td() or int(math.floor(delta.seconds/3600.0)) == get_td() + 1
   True
   >>> p.time.microsecond
   13434
