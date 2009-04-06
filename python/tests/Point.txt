@@ -60,7 +60,12 @@
   45
   
   >>> import datetime
-  >>> td = datetime.timedelta(hours=5) # my timezone is GMT-5
+  >>> import math
+  >>> def get_td():
+  ...     now = datetime.datetime.now()
+  ...     td = now.utcnow() - now
+  ...     return int(math.floor(td.seconds/3600.0))
+  >>> td = datetime.timedelta(hours=get_td()) # my timezone is GMT-5
   >>> t = datetime.datetime(2008,3,19,23,45,45,13434) - td
   >>> p.time = t
   >>> p.time
