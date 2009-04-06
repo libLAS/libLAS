@@ -10,6 +10,8 @@ try:
 except:
     readme = ''
 
+install_requires = ['setuptools']
+
 import os
 
 version = '1.3.0'
