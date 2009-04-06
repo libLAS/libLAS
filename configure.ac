@@ -214,6 +214,15 @@ AC_SUBST([GEOTIFF_INC])
 AC_SUBST([GEOTIFF_PREFIX])
 AM_CONDITIONAL([GEOTIFF_IS_CONFIG], [test ! x$GEOTIFF_CONFIG = xno])
 
+
+dnl Oracle Checks
+
+ORACLE_OCI_REQ_VERSION="10.0.1"
+HAVE_ORACLE_OCI="no"
+AX_LIB_ORACLE_OCI($ORACLE_OCI_REQ_VERSION)
+AM_CONDITIONAL([OCI_IS_CONFIG], [test ! x$HAVE_ORACLE_OCI = xno])
+
+
 dnl #########################################################################
 dnl Determine other features of compiler
 dnl #########################################################################
