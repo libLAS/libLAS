@@ -710,13 +710,10 @@ int main(int argc, char *argv[])
         xyz_max_dequant[i] = xyz_offset[i] + (xyz_max_quant[i] * xyz_scale[i]);
     }
 
-
-#define log_xor !=0==!
-
     /* make sure there is not sign flip */
     for (i = 0; i < 3; i++)
     {
-        if ((xyz_min[i] > 0) log_xor (xyz_min_dequant[i] > 0))
+        if ((xyz_min[i] > 0) != (xyz_min_dequant[i] > 0))
         {
             fprintf(stderr, 
                     "WARNING: quantization sign flip for %s min coord %g -> %g. use offset or scale up\n", 
@@ -725,7 +722,7 @@ int main(int argc, char *argv[])
                     xyz_min_dequant[i]
                    );
         }
-        if ((xyz_max[i] > 0) log_xor (xyz_max_dequant[i] > 0))
+        if ((xyz_max[i] > 0) != (xyz_max_dequant[i] > 0))
         {
             fprintf(stderr, 
                     "WARNING: quantization sign flip for %s max coord %g -> %g. use offset or scale up\n", 
@@ -735,8 +732,6 @@ int main(int argc, char *argv[])
                    );
         }
     }
-
-#undef log_xor
 
     /* populate the header */
       
