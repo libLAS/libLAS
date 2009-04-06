@@ -10,11 +10,6 @@ try:
 except:
     readme = ''
 
-# Require ctypes egg only for Python < 2.5
-install_requires = ['setuptools']
-if version_info[:2] < (2,5):
-    install_requires.append('ctypes')
-
 import os
 
 version = '1.3.0'
