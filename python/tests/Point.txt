@@ -63,13 +63,13 @@
   >>> import math
   >>> def get_td():
   ...     now = datetime.datetime.now()
-  ...     td = now.utcnow() - now
+  ...     td = now.utcnow() - now # my timezone is GMT-5, would be GMT-7 for California (buildbot)
   ...     return int(math.floor(td.seconds/3600.0))
-  >>> td = datetime.timedelta(hours=get_td()) # my timezone is GMT-5
-  >>> t = datetime.datetime(2008,3,19,23,45,45,13434) - td
-  >>> p.time = t
-  >>> p.time
-  datetime.datetime(2008, 3, 19, 23, 45, 45, 13434)
+  >>> td = datetime.timedelta(hours=get_td()) 
+  >>> p.time = datetime.datetime(2008,3,19,23,45,45,13434) 
+  >>> delta = p.time - datetime.datetime(2008,3,19,23,45,45,13434) 
+  >>> int(math.floor(delta.seconds/3600.0)) == get_td()
+  True
   >>> p.time.microsecond
   13434
   
