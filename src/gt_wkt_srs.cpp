@@ -1,5 +1,5 @@
 /******************************************************************************
- * Id: gt_wkt_srs.cpp 16109 2009-01-18 11:34:57Z rouault 
+ * $Id: gt_wkt_srs.cpp 16723 2009-04-06 16:15:17Z hobu $
  *
  * Project:  GeoTIFF Driver
  * Purpose:  Implements translation between GeoTIFF normalized projection
@@ -177,11 +177,11 @@ static void WKTMassageDatum( char ** ppszDatum )
 /************************************************************************/
 
 /* For example:
-   GTCitationGeoKey (Ascii,215): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 16109 $ $Date: 2009-01-18 05:34:57 -0600 (Sun, 18 Jan 2009) $\nProjection Name = UTM\nUnits = meters\nGeoTIFF Units = meters"
+   GTCitationGeoKey (Ascii,215): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 16723 $ $Date: 2009-04-06 11:15:17 -0500 (Mon, 06 Apr 2009) $\nProjection Name = UTM\nUnits = meters\nGeoTIFF Units = meters"
 
-   GeogCitationGeoKey (Ascii,267): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 16109 $ $Date: 2009-01-18 05:34:57 -0600 (Sun, 18 Jan 2009) $\nUnable to match Ellipsoid (Datum) to a GeographicTypeGeoKey value\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
+   GeogCitationGeoKey (Ascii,267): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 16723 $ $Date: 2009-04-06 11:15:17 -0500 (Mon, 06 Apr 2009) $\nUnable to match Ellipsoid (Datum) to a GeographicTypeGeoKey value\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
 
-   PCSCitationGeoKey (Ascii,214): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 16109 $ $Date: 2009-01-18 05:34:57 -0600 (Sun, 18 Jan 2009) $\nUTM Zone 10N\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
+   PCSCitationGeoKey (Ascii,214): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 16723 $ $Date: 2009-04-06 11:15:17 -0500 (Mon, 06 Apr 2009) $\nUTM Zone 10N\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
  
 */
 
@@ -309,8 +309,9 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
         else if(hGTIF && GTIFKeyGet( hGTIF, PCSCitationGeoKey, szCTString, 0, 
                        sizeof(szCTString)) )  
         {
-            SetCitationToSRS(hGTIF, szCTString, sizeof(szCTString),
-                             PCSCitationGeoKey, &oSRS, &linearUnitIsSet);
+            if (!SetCitationToSRS(hGTIF, szCTString, sizeof(szCTString),
+                             PCSCitationGeoKey, &oSRS, &linearUnitIsSet))
+              oSRS.SetNode("PROJCS",szCTString);
         }
         else
         {
