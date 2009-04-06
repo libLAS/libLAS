@@ -27,7 +27,7 @@ if test "$OSTYPE" = "IRIX" -o "$OSTYPE" = "IRIX64"; then
 fi
 
 echo "Running aclocal -I macros"
-aclocal -I m4 || giveup
+aclocal -I macros || giveup
 #echo "Running autoheader"
 #autoheader || giveup
 echo "Running libtoolize"
