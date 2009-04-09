@@ -231,7 +231,14 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     {
         // Ignore the out_of_range here for the case of a 
         // file with just a header and no pad
+        // This is what is thrown when we compile *with* debug
     }
+    catch (std::runtime_error const& e)
+    {
+        // Ignore the runtime_error here for the case of a 
+        // file with just a header and no pad
+        // This is what is thrown when we compile *without* debug
+    }    
     catch (std::domain_error const& e)
     {
     }
