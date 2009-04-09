@@ -297,8 +297,6 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
         return false;
     std::streamsize pos = (static_cast<std::streamsize>(n) * m_recordlength) + m_offset;
 
-    if (m_has_pad_bytes) pos += 2;
-
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
     detail::read_n(record, m_ifs, sizeof(record));
