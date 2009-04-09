@@ -13,6 +13,7 @@ SET( LIBLAS_TEST_SRC
     laspoint_test.cpp
     lasreader_iterator_test.cpp
     lasreader_test.cpp
+    lasspatialreference_test.cpp
     lasvariablerecord_test.cpp
     laswriter_test.cpp
     liblas_test_suite.cpp
@@ -25,7 +26,10 @@ INCLUDE_DIRECTORIES(
 
 ADD_EXECUTABLE( ${LIBLAS_TEST} ${LIBLAS_TEST_SRC} )
 
-TARGET_LINK_LIBRARIES( ${LIBLAS_TEST} ${LIBLAS_LIB_NAME} )
+TARGET_LINK_LIBRARIES( ${LIBLAS_TEST} 
+    ${LIBLAS_LIB_NAME}
+    ${GEOTIFF_LIBRARY}
+)
 
 # TODO: Needs to tweak the executable path
 ADD_TEST(liblas_test ${EXECUTABLE_OUTPUT_PATH}/liblas_test)

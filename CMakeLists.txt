@@ -8,8 +8,8 @@
 #
 PROJECT( libLAS )
 
-SET( LIBLAS_LIB_NAME liblas )
-SET( LIBLAS_C_LIB_NAME liblas_c )
+SET( LIBLAS_LIB_NAME las )
+SET( LIBLAS_C_LIB_NAME las_c )
 
 #############################################################
 # CMake settings
@@ -35,7 +35,6 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 # Platform and compiler specific settings
 
 IF (WIN32)
-
     ADD_DEFINITIONS( /W4 )
 
     IF (MSVC)
@@ -44,17 +43,14 @@ IF (WIN32)
             ADD_DEFINITIONS( /D_CRT_NONSTDC_NO_WARNING )
         ENDIF (MSVC80)
     ENDIF (MSVC)
-
 ELSE (WIN32)
 
     IF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-
         ADD_DEFINITIONS( -Wall -Wno-long-long -pedantic -ansi )
 
         IF (CMAKE_COMPILER_IS_GNUCXX)
             SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98" )
         ENDIF (CMAKE_COMPILER_IS_GNUCXX)
-
     ENDIF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 ENDIF (WIN32)
 
