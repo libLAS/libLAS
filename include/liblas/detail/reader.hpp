@@ -74,6 +74,7 @@ public:
     bool ReadGeoreference(LASHeader& header);
     void Reset(LASHeader const& header);
     void SetSRS(const LASSpatialReference& srs);
+    void SkipPointDataSignature();
     
 protected:
     
@@ -87,6 +88,7 @@ protected:
     OGRCoordinateTransformationH m_transform;
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
+    bool m_has_pad_bytes;
 
     void FillPoint(PointRecord& record, LASPoint& point);
     void Project(LASPoint& point);

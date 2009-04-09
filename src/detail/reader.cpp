@@ -275,6 +275,27 @@ Reader* ReaderFactory::Create(std::istream& ifs)
     throw std::runtime_error("LAS file of unknown version");
 }
 
+void Reader::SkipPointDataSignature() 
+{
+    uint8_t const sgn1 = 0xCC;
+    uint8_t const sgn2 = 0xDD;
+    uint8_t pad1 = 0x0; 
+    uint8_t pad2 = 0x0;
+    detail::read_n(pad1, m_ifs, sizeof(uint8_t));
+    detail::read_n(pad2, m_ifs, sizeof(uint8_t));
+    
+    // FIXME: we have to worry about swapping issues
+    // for now, just check oppositely
+    if (! (sgn1 == pad2 && sgn2 == pad1))
+    {
+        // If the two bytes we read weren't signature bytes
+        // we'll throw an exception.  Depending on the version
+        // we may want ot throw an error to the user or 
+        // silently continue on.
+        throw std::domain_error("point data signature (1.0's 0xCC and 0xDD padding) not found");
+    }
+}
+
 void ReaderFactory::Destroy(Reader* p) 
 {
     delete p;

@@ -207,7 +207,23 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     header.SetMax(x1, y1, z1);
     header.SetMin(x2, y2, z2);
 
+    // The 1.0 version *requires* the pad bytes, but in 
+    // many instances, there are files without them.  What 
+    // a fucking mess -- hobu.
+    try {
+        SkipPointDataSignature();
+        m_has_pad_bytes = true;
+    }
+    catch (std::domain_error const& e)
+    {
+        // TODO: We'll want to put this error on the validation errors stack
+        // but for now, we'll just move back to the offset
+    }
+
+
     Reset(header);
+
+
 
     return true;
 }
@@ -227,6 +243,19 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
     {
         m_ifs.clear();
         m_ifs.seekg(m_offset, std::ios::beg);
+        
+        // The 1.0 version *requires* the pad bytes, but in 
+        // many instances, there are files without them.  What 
+        // a fucking mess -- hobu.
+        try {
+            SkipPointDataSignature();
+        }
+        catch (std::domain_error const& e)
+        {
+            // TODO: We'll want to put this error on the validation errors stack
+            // but for now, we'll just move back to the offset
+            m_ifs.seekg(m_offset, std::ios::beg);
+        }
     }
 
     if (m_current < m_size)
@@ -268,6 +297,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
         return false;
     std::streamsize pos = (static_cast<std::streamsize>(n) * m_recordlength) + m_offset;
 
+    if (m_has_pad_bytes) pos += 2;
 
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
