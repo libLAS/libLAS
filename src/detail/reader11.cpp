@@ -211,6 +211,8 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     header.SetMax(x1, y1, z1);
     header.SetMin(x2, y2, z2);
 
+    m_has_pad_bytes = false;
+
     m_ifs.seekg(header.GetDataOffset(), std::ios::beg);
     try {
         // If this call succeeds, we'll want to put this on the 
@@ -219,6 +221,12 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
         SkipPointDataSignature();
         m_has_pad_bytes = true;
     }
+    catch (std::out_of_range const& e)
+    {
+        // Ignore the out_of_range here for the case of a 
+        // file with just a header and no pad
+    }
+
     catch (std::domain_error const& e)
     {
     }

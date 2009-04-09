@@ -210,9 +210,16 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     // The 1.0 version *requires* the pad bytes, but in 
     // many instances, there are files without them.  What 
     // a fucking mess -- hobu.
+    m_has_pad_bytes = false;
+
     try {
         SkipPointDataSignature();
         m_has_pad_bytes = true;
+    }
+    catch (std::out_of_range const& e)
+    {
+        // Ignore the out_of_range here for the case of a 
+        // file with just a header and no pad
     }
     catch (std::domain_error const& e)
     {
