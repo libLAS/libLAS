@@ -18,7 +18,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.4.0 )
 
 SET( CMAKE_COLOR_MAKEFILE ON )
 
-# set path to additional CMake modules
+# Path to additional CMake modules
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/build/cmake ${CMAKE_MODULE_PATH})
 
 
@@ -30,9 +30,6 @@ IF(NOT CMAKE_BUILD_TYPE)
       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
       FORCE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
-
-# Enable CTest to run libLas Unit Test Suite
-#ENABLE_TESTING()
 
 #############################################################
 # Platform and compiler specific settings
@@ -47,6 +44,7 @@ IF (WIN32)
             ADD_DEFINITIONS( /D_CRT_NONSTDC_NO_WARNING )
         ENDIF (MSVC80)
     ENDIF (MSVC)
+
 ELSE (WIN32)
 
     IF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
@@ -63,16 +61,15 @@ ENDIF (WIN32)
 #############################################################
 # Search for dependencies
 
-# optinal GeoTIFF support
+# GeoTIFF support (optional)
 FIND_PACKAGE(GeoTIFF)
-
 IF (GEOTIFF_FOUND)
 	#TODO: Use to generate config.h
 	#SET (HAVE_LIBGEOTIFF TRUE)
 	ADD_DEFINITIONS( -D HAVE_LIBGEOTIFF )
 ENDIF (GEOTIFF_FOUND)
 
-# optinal GeoTIFF support
+# GDAL support (optional)
 FIND_PACKAGE(GDAL)
 
 IF (GDAL_FOUND)
@@ -93,9 +90,7 @@ SUBDIRS(
 
 
 
-
-
-
+IF (XXX_FOUND)
 
 ########## THE HUGE BLOCK BELOW IS TO LEARN CMAKE AND WILL BE REMOVED ###############
 # ------------------------- Begin Generic CMake Variable Logging ------------------
@@ -247,3 +242,4 @@ MESSAGE( STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB} )
 
 MESSAGE( STATUS "=============== END TEST VARIABLES LOGGING OUTPUT ===============" )
 # ------------------------- End of Generic CMake Variable Logging ------------------
+ENDIF (XXX_FOUND)

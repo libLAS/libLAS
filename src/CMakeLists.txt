@@ -7,18 +7,19 @@ SET( LIBLAS_INCLUDE_DIR ../include/liblas )
 
 SET( LIBLAS_HPP
     ../include/liblas/cstdint.hpp
+    ../include/liblas/exception.hpp
     ../include/liblas/guid.hpp
     ../include/liblas/iterator.hpp
+    ../include/liblas/lascolor.hpp
     ../include/liblas/laserror.hpp
     ../include/liblas/lasfile.hpp
     ../include/liblas/lasheader.hpp
     ../include/liblas/laspoint.hpp
-    ../include/liblas/lasvariablerecord.hpp
     ../include/liblas/lasreader.hpp
+	../include/liblas/lasspatialreference.hpp
     ../include/liblas/lasvariablerecord.hpp
     ../include/liblas/laswriter.hpp
     ../include/liblas/liblas.hpp
-	../include/liblas/lasspatialreference.hpp
 )
 
 SET( LIBLAS_DETAIL_HPP
@@ -40,17 +41,20 @@ SET( LIBLAS_DETAIL_HPP
 )
 
 SET( LIBLAS_CPP
+    lascolor.cpp
     laserror.cpp
-    laspoint.cpp
-    lasheader.cpp
-    lasrecordheader.cpp
-    lasreader.cpp
-    laswriter.cpp
     lasfile.cpp
-	lasspatialreference.cpp
+    lasheader.cpp
+    laspoint.cpp
+    lasreader.cpp
+    lasspatialreference.cpp
+    lasvariablerecord.cpp
+    laswriter.cpp
 )
+# TODO: add IF GDAL_FOUND += gt_wkt_srs.cp
 
 SET( LIBLAS_DETAIL_CPP
+    detail/file.cpp
     detail/reader.cpp
     detail/reader10.cpp
     detail/reader11.cpp
@@ -59,7 +63,6 @@ SET( LIBLAS_DETAIL_CPP
     detail/writer10.cpp
     detail/writer11.cpp
 	detail/writer12.cpp
-    detail/file.cpp
 )
 
 SET( LIBLAS_SOURCES
