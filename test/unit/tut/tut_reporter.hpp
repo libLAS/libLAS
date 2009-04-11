@@ -11,7 +11,7 @@
  */
 namespace
 {
-    
+
 std::ostream& operator<<(std::ostream& os, const tut::test_result& tr)
 {
     switch(tr.result)
@@ -33,6 +33,9 @@ std::ostream& operator<<(std::ostream& os, const tut::test_result& tr)
         break;
     case tut::test_result::term:
         os << '[' << tr.test << "=T]";
+        break;
+    case tut::test_result::rethrown:
+        os << '[' << tr.test << "=P]";
         break;
     }
 
@@ -62,13 +65,13 @@ public:
     int terminations_count;
     int warnings_count;
 
-    reporter() 
+    reporter()
         : os(std::cout)
     {
         init();
     }
 
-    reporter(std::ostream& out) 
+    reporter(std::ostream& out)
         : os(out)
     {
         init();
@@ -101,6 +104,10 @@ public:
             exceptions_count++;
         }
         else if (tr.result == tut::test_result::fail)
+        {
+            failures_count++;
+        }
+        else if (tr.result == tut::test_result::rethrown)
         {
             failures_count++;
         }
@@ -137,9 +144,18 @@ public:
                 << (!tr.name.empty() ? (std::string(" : ") + tr.name) : std::string())
                 << std::endl;
 
+#if defined(TUT_USE_POSIX)
+                if(tr.pid != getpid())
+                {
+                    os << "     child pid: " << tr.pid << std::endl;
+                }
+#endif
                 os << "     problem: ";
                 switch(tr.result)
                 {
+                case test_result::rethrown:
+                    os << "assertion failed in child" << std::endl;
+                    break;
                 case test_result::fail:
                     os << "assertion failed" << std::endl;
                     break;
@@ -167,12 +183,12 @@ public:
                 {
                     if (tr.result == test_result::fail)
                     {
-                        os << "     failed assertion: \"" << tr.message << "\"" 
+                        os << "     failed assertion: \"" << tr.message << "\""
                             << std::endl;
                     }
                     else
                     {
-                        os << "     message: \"" << tr.message << "\"" 
+                        os << "     message: \"" << tr.message << "\""
                             << std::endl;
                     }
                 }
