@@ -59,6 +59,8 @@ install: src_dir apps_dir
     xcopy /y /r /d /f src\liblas_i.lib $(OSGEO4W_DIR)\devel\lib
     xcopy /y /r /d /f src\liblas.lib $(BINDIR)\lib
     xcopy /y /r /d /f src\liblas.lib $(OSGEO4W_DIR)\devel\lib
+    xcopy /y /r /d /f src\Version.rc $(BINDIR)\include\liblas
+    xcopy /y /r /d /f src\Version.rc $(OSGEO4W_DIR)\devel\include\liblas
     xcopy /y /r /d /f /s include\liblas $(BINDIR)\include\liblas
     xcopy /y /r /d /f /s include\liblas $(OSGEO4W_DIR)\devel\include\liblas
     xcopy /y /r /d /f /s python\liblas\*.py $(OSGEO4W_DIR)\apps\python25\lib\site-packages\liblas

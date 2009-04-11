@@ -14,4 +14,5 @@ AM_CPPFLAGS = $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) -I../include -I../include/det
 EXTRA_DIST = \
             nmake.opt \
             makefile.vc \
-            src/makefile.vc 
+            src/makefile.vc \
+            src/Version.rc
