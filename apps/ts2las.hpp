@@ -146,12 +146,8 @@ inline void read_n <ScanPnt>(ScanPnt& dest, std::istream& src, std::streamsize c
     if (!src)
         throw std::runtime_error("detail::liblas::read_n<ScanPnt> input stream is not readable");
 
-    std::cout << "ScanPnt stream position is: " << src.tellg() << std::endl;
     src.read(detail::as_buffer(dest), num);
-    std::cout << "ScanPnt stream position is: " << src.tellg() << std::endl;
-
     detail::check_stream_state(src);
-
 
     // Fix little-endian
     LIBLAS_SWAP_BYTES(dest.Pnt.x);
@@ -164,8 +160,6 @@ inline void read_n <ScanPnt>(ScanPnt& dest, std::istream& src, std::streamsize c
     LIBLAS_SWAP_BYTES(dest.Line);
     LIBLAS_SWAP_BYTES(dest.Intensity);
 
-    std::cout << "x: " << dest.Pnt.x << " y: " << dest.Pnt.y << " z: " << dest.Pnt.z <<std::endl; 
-
 }
 
 template <>
@@ -175,11 +169,7 @@ inline void read_n <ScanHdr>(ScanHdr& dest, std::istream& src, std::streamsize c
     if (!src)
         throw std::runtime_error("detail::liblas::read_n<ScanHdr> input stream is not readable");
 
-    std::cout << "ScanHdr stream position is: " << src.tellg() << std::endl;
-
     src.read(detail::as_buffer(dest), num);
-
-    std::cout << "ScanHdr stream position is: " << src.tellg() << std::endl;
     detail::check_stream_state(src);
 
     // Fix little-endian

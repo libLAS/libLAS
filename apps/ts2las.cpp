@@ -72,11 +72,13 @@ LASHeader CreateHeader(ScanHdr* hdr)
     } 
     header.SetVersionMinor(2);
     header.SetDataFormatId(format);
-    header.SetPointRecordsCount(hdr->PntCnt);
+    // header.SetPointRecordsCount(hdr->PntCnt);
     header.SetOffset(hdr->OrgX, hdr->OrgY, hdr->OrgZ);
     std::cout << "offset x: " << header.GetOffsetX() << " offset y: " << header.GetOffsetY()  << " offset z: " <<header.GetOffsetZ() << std::endl;
     std::cout << "units: " << hdr->Units << std::endl;
     std::cout << "format: " << format << std::endl;
+    double scale = 1.0/hdr->Units;
+    header.SetScale(scale, scale, scale);
     return header;
 }
 bool ReadHeader(ScanHdr* hdr, std::istream* istrm) {
@@ -107,48 +109,101 @@ bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr)
 {
     while (true) {
         
-        if (hdr->HdrVersion == 20020715) {
+
 ///std::cout << "We have header version" << std::endl;
             ScanPnt* point = new ScanPnt;
+            ScanRow* row = new ScanRow;
             try
             {
-                std::cout << "stream position is: " << strm->tellg() << std::endl;
-
-                detail::read_n(*point, *strm, sizeof(ScanPnt));
+                // std::cout << "stream position is: " << strm->tellg() << std::endl;
+                if (hdr->HdrVersion == 20020715) {
+                    detail::read_n(*point, *strm, sizeof(ScanPnt));
+                } else{
+                    detail::read_n(*row, *strm, sizeof(ScanRow));
+                    point->Pnt.x = row->x;
+                    point->Pnt.y = row->y;
+                    point->Pnt.z = row->z;
+                    point->Code = row->Code;
+                    point->Line = row->Line;
+                    point->Intensity = row->EchoInt & 0x3FFF;
+                    point->Echo = (row->EchoInt >> 14);
+                }
                 LASPoint p;
                 p.SetCoordinates(writer->GetHeader(),point->Pnt.x,point->Pnt.y,point->Pnt.z);
-                std::cout << "x: " << point->Pnt.x << " y: "<< point->Pnt.y << " z: " <<point->Pnt.z<< std::endl;
-                std::cout << "x: " << p.GetX() << " y: "<< p.GetY() << " z: " <<p.GetZ()<< std::endl;
-
-                std::cout << "Code: " << point->Code << " Intensity: "<< point->Intensity << std::endl;
+                // std::cout << "x: " << point->Pnt.x << " y: "<< point->Pnt.y << " z: " <<point->Pnt.z<< std::endl;
+                // std::cout << "x: " << p.GetX() << " y: "<< p.GetY() << " z: " <<p.GetZ()<< std::endl;
+                // std::cout << "Code: " << point->Code << " Intensity: "<< point->Intensity << std::endl;
                 p.SetClassification(point->Code);
                 p.SetIntensity(point->Intensity);
-                writer->WritePoint(p);
-                std::cout << "stream position is: " << strm->tellg() << std::endl;
+                if (hdr->Time) {
+                    liblas::uint32_t t = 0xFFFFFFFF;
+                    detail::read_n(t, *strm, sizeof(t));
 
-                exit(-1);
-               // std::cout << "Wrote point"<< std::endl;
+                    // Time stamps are assumed to be GPS week seconds. The 
+                    // storage format is a 32 bit unsigned integer where 
+                    // each integer step is 0.0002 seconds.
+
+                    p.SetTime(t*0.0002);
+                }
+                if (hdr->Color) {
+                    liblas::uint8_t r, g, b, a = 0;
+                    LASColor color;
+                    detail::read_n(r, *strm, sizeof(r));
+                    detail::read_n(b, *strm, sizeof(b));
+                    detail::read_n(g, *strm, sizeof(g));
+                    
+                    // TS .bin says to read 4 bytes here for some reason.  Maybe 
+                    // this is an alpha value or something
+                    detail::read_n(a, *strm, sizeof(a));
+                    
+                    color.SetGreen(g);
+                    color.SetBlue(b);
+                    color.SetRed(r);
+                    p.SetColor(color);
+                }
+                
+                // Set return number
+                /* 
+                    TerraScan uses two bits for storing echo information. The possible values are: 
+                    0 Only echo 
+                    1 First of many echo 
+                    2 Intermediate echo 
+                    3 Last of many echo
+                */
+                if (point->Echo == 0) { 
+                    p.SetNumberOfReturns(1);
+                    p.SetReturnNumber(1);
+                } else if (point->Echo == 1) {
+                    p.SetReturnNumber(1);
+                } else if (point->Echo == 3) {
+                    p.SetReturnNumber(5);
+                    p.SetNumberOfReturns(5);
+                } else {
+                    // I don't know what the hell to do here without cumulating
+                    // through all of the points.  Why wouldn't you store the return 
+                    // number?!
+                    p.SetReturnNumber(3);
+                }
+                try {
+                    writer->WritePoint(p);
+                } catch (std::exception const& e) 
+                {
+                    std::cout << "Point writing failed!" << std::endl; 
+                }
                 
             }
             catch (std::out_of_range const& e) // we reached the end of the file
             {
                 std::cout << "catching out of range error!" ;
-                break;
+                return true;
+                // break;
             }
             catch (std::exception const& e) // we reached the end of the file
             {
                 std::cout << e.what() << std::endl;
                 break;
             }   
-        }
-        
-        // Reader::FillPoint(record, point);
-        // point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
-        //     
-        // if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
-        //     detail::read_n(t, m_ifs, sizeof(double));
-        //     point.SetTime(t);
-        // }
+
     }
     return true;    
 
@@ -225,9 +280,12 @@ int main(int argc, char* argv[])
     LASHeader header = CreateHeader(hdr);
     LASWriter* writer = new LASWriter(*ostrm, header);
     
-     success = WritePoints(writer, istrm, hdr);
+    success = WritePoints(writer, istrm, hdr);
+    delete writer;
+    delete ostrm;
+    delete istrm;
     
-    std::cout << "Point Count: " << hdr->PntCnt <<std::endl;
+    std::cout << "Point Count: " << header.GetPointRecordsCount() <<std::endl;
     std::cout << "success: " << success << std::endl;
     return rc;
 }
