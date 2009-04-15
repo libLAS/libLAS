@@ -77,7 +77,8 @@ LASHeader CreateHeader(ScanHdr* hdr)
     std::cout << "offset x: " << header.GetOffsetX() << " offset y: " << header.GetOffsetY()  << " offset z: " <<header.GetOffsetZ() << std::endl;
     std::cout << "units: " << hdr->Units << std::endl;
     std::cout << "format: " << format << std::endl;
-    double scale = 1.0/hdr->Units;
+    double scale = 1.0/(double)hdr->Units;
+    std::cout << "scale: " << scale << std::endl;
     header.SetScale(scale, scale, scale);
     return header;
 }
@@ -129,7 +130,11 @@ bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr)
                     point->Echo = (row->EchoInt >> 14);
                 }
                 LASPoint p;
-                p.SetCoordinates(writer->GetHeader(),point->Pnt.x,point->Pnt.y,point->Pnt.z);
+                p.SetCoordinates(
+                                    (point->Pnt.x-hdr->OrgX)/(double)hdr->Units,
+                                    (point->Pnt.y-hdr->OrgY)/(double)hdr->Units,
+                                    (point->Pnt.z-hdr->OrgZ)/(double)hdr->Units);
+                // 
                 // std::cout << "x: " << point->Pnt.x << " y: "<< point->Pnt.y << " z: " <<point->Pnt.z<< std::endl;
                 // std::cout << "x: " << p.GetX() << " y: "<< p.GetY() << " z: " <<p.GetZ()<< std::endl;
                 // std::cout << "Code: " << point->Code << " Intensity: "<< point->Intensity << std::endl;
