@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 
+// from http://cdn.terrasolid.fi/tscan.pdf
+
 using namespace liblas;
 
 
@@ -73,13 +75,14 @@ LASHeader CreateHeader(ScanHdr* hdr)
     header.SetVersionMinor(2);
     header.SetDataFormatId(format);
     // header.SetPointRecordsCount(hdr->PntCnt);
-    header.SetOffset(hdr->OrgX, hdr->OrgY, hdr->OrgZ);
-    std::cout << "offset x: " << header.GetOffsetX() << " offset y: " << header.GetOffsetY()  << " offset z: " <<header.GetOffsetZ() << std::endl;
     std::cout << "units: " << hdr->Units << std::endl;
     std::cout << "format: " << format << std::endl;
     double scale = 1.0/(double)hdr->Units;
     std::cout << "scale: " << scale << std::endl;
     header.SetScale(scale, scale, scale);
+    header.SetOffset(hdr->OrgX*scale, hdr->OrgY*scale, hdr->OrgZ*scale);
+    std::cout << "offset x: " << header.GetOffsetX() << " offset y: " << header.GetOffsetY()  << " offset z: " <<header.GetOffsetZ() << std::endl;
+
     return header;
 }
 bool ReadHeader(ScanHdr* hdr, std::istream* istrm) {
@@ -130,13 +133,14 @@ bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr)
                     point->Echo = (row->EchoInt >> 14);
                 }
                 LASPoint p;
-                p.SetCoordinates(
-                                    (point->Pnt.x-hdr->OrgX)/(double)hdr->Units,
-                                    (point->Pnt.y-hdr->OrgY)/(double)hdr->Units,
-                                    (point->Pnt.z-hdr->OrgZ)/(double)hdr->Units);
-                // 
-                // std::cout << "x: " << point->Pnt.x << " y: "<< point->Pnt.y << " z: " <<point->Pnt.z<< std::endl;
-                // std::cout << "x: " << p.GetX() << " y: "<< p.GetY() << " z: " <<p.GetZ()<< std::endl;
+
+                p.SetCoordinates(writer->GetHeader(),
+                                    point->Pnt.x,
+                                    point->Pnt.y,
+                                    point->Pnt.z);
+
+                // std::cout << "read x: " << point->Pnt.x << " y: "<< point->Pnt.y << " z: " <<point->Pnt.z<< std::endl;
+                // std::cout << "wrote x: " << p.GetX() << " y: "<< p.GetY() << " z: " <<p.GetZ()<< std::endl;
                 // std::cout << "Code: " << point->Code << " Intensity: "<< point->Intensity << std::endl;
                 p.SetClassification(point->Code);
                 p.SetIntensity(point->Intensity);
@@ -189,13 +193,14 @@ bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr)
                     // number?!
                     p.SetReturnNumber(3);
                 }
+
                 try {
                     writer->WritePoint(p);
                 } catch (std::exception const& e) 
                 {
                     std::cout << "Point writing failed!" << std::endl; 
                 }
-                
+             
             }
             catch (std::out_of_range const& e) // we reached the end of the file
             {
@@ -281,7 +286,7 @@ int main(int argc, char* argv[])
         std::cout<<"header was not read! exiting" << std::cout; exit(1);
     }
     
-    std::cout << "stream position is: " << istrm->tellg() << std::endl;
+    // std::cout << "stream position is: " << istrm->tellg() << std::endl;
     LASHeader header = CreateHeader(hdr);
     LASWriter* writer = new LASWriter(*ostrm, header);
     
