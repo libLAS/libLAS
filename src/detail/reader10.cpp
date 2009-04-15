@@ -146,19 +146,24 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     // 16. Point Data Format ID
     read_n(n1, m_ifs, sizeof(n1));
-    if (n1 == LASHeader::ePointFormat0) {
+    if (n1 == LASHeader::ePointFormat0)
+    {
         header.SetDataFormatId(LASHeader::ePointFormat0);
     } 
-    else if (n1 == LASHeader::ePointFormat1) {
+    else if (n1 == LASHeader::ePointFormat1)
+    {
         header.SetDataFormatId(LASHeader::ePointFormat1);
     }
-    else if (n1 == LASHeader::ePointFormat2) {
+    else if (n1 == LASHeader::ePointFormat2)
+    {
         header.SetDataFormatId(LASHeader::ePointFormat2);
     }
-    else if (n1 == LASHeader::ePointFormat3) {
+    else if (n1 == LASHeader::ePointFormat3)
+    {
         header.SetDataFormatId(LASHeader::ePointFormat3);
     }
-    else {
+    else
+    {
         throw std::domain_error("invalid point data format");
     }
     
@@ -212,58 +217,48 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     // a fucking mess -- hobu.
     m_has_pad_bytes = false;
 
-    try {
+    try
+    {
         SkipPointDataSignature();
         m_has_pad_bytes = true;
     }
-    catch (std::out_of_range const& e)
+    catch (std::out_of_range const&)
     {
         // Ignore the out_of_range here for the case of a 
         // file with just a header and no pad
     }
-    catch (std::runtime_error const& e)
+    catch (std::runtime_error const&)
     {
         // Ignore the runtime_error here for the case of a 
         // file with just a header and no pad
         // This is what is thrown when we compile *without* debug
     }    
-    catch (std::domain_error const& e)
+    catch (std::domain_error const&)
     {
         // TODO: We'll want to put this error on the validation errors stack
         // but for now, we'll just move back to the offset
     }
 
-
     Reset(header);
-
-
 
     return true;
 }
 
 bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
 {
-    // Read point data record format 0
-
-    // TODO: Replace with compile-time assert
-    
-    detail::PointRecord record;
-    double t=0;
-    
-    assert(LASHeader::ePointSize0 == sizeof(record));
-
     if (0 == m_current)
     {
         m_ifs.clear();
         m_ifs.seekg(m_offset, std::ios::beg);
-        
+
         // The 1.0 version *requires* the pad bytes, but in 
         // many instances, there are files without them.  What 
         // a fucking mess -- hobu.
-        try {
+        try
+        {
             SkipPointDataSignature();
         }
-        catch (std::domain_error const& e)
+        catch (std::domain_error const&)
         {
             // TODO: We'll want to put this error on the validation errors stack
             // but for now, we'll just move back to the offset
@@ -273,6 +268,10 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
 
     if (m_current < m_size)
     {
+        detail::PointRecord record;
+        // TODO: Replace with compile-time assert
+        assert(LASHeader::ePointSize0 == sizeof(record));
+
         try
         {
             detail::read_n(record, m_ifs, sizeof(PointRecord));
@@ -286,10 +285,13 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
 
         Reader::FillPoint(record, point);
         point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
-        
-        if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
-            detail::read_n(t, m_ifs, sizeof(double));
-            point.SetTime(t);
+
+        if (header.GetDataFormatId() == LASHeader::ePointFormat1)
+        {
+            double gpst(0);
+
+            detail::read_n(gpst, m_ifs, sizeof(double));
+            point.SetTime(gpst);
         }
         return true;
     }
@@ -299,28 +301,29 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
 
 bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& header)
 {
-    // Read point data record format 0
-
-    // TODO: Replace with compile-time assert
-    double t=0;
-    detail::PointRecord record;
-    assert(LASHeader::ePointSize0 == sizeof(record));
-
     if (m_size <= n)
+    {
         return false;
-    std::streamsize pos = (static_cast<std::streamsize>(n) * m_recordlength) + m_offset;
+    }
 
+    std::streamsize pos = (static_cast<std::streamsize>(n) * m_recordlength) + m_offset;
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
+
+    detail::PointRecord record;
+    // TODO: Replace with compile-time assert
+    assert(LASHeader::ePointSize0 == sizeof(record));
+
     detail::read_n(record, m_ifs, sizeof(record));
 
     Reader::FillPoint(record, point);
     point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
 
-    
-    if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
-        detail::read_n(t, m_ifs, sizeof(double));
-        point.SetTime(t);
+    if (header.GetDataFormatId() == LASHeader::ePointFormat1)
+    {
+        double gpst(0);
+        detail::read_n(gpst, m_ifs, sizeof(double));
+        point.SetTime(gpst);
     }
 
     return true;

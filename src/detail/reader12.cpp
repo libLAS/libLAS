@@ -220,62 +220,51 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     m_has_pad_bytes = false;
 
     m_ifs.seekg(header.GetDataOffset(), std::ios::beg);
-    try {
+    try
+    {
         // If this call succeeds, we'll want to put this on the 
-        // validation errors stack.  1.2 files shouldn't have 
-        // pad bytes.
+        // validation errors stack.  1.2 files shouldn't have pad bytes.
         SkipPointDataSignature();
         m_has_pad_bytes = true;
     }
-    catch (std::out_of_range const& e)
+    catch (std::out_of_range const&)
     {
         // Ignore the out_of_range here for the case of a 
         // file with just a header and no pad
         // This is what is thrown when we compile *with* debug
     }
-    catch (std::runtime_error const& e)
+    catch (std::runtime_error const&)
     {
         // Ignore the runtime_error here for the case of a 
         // file with just a header and no pad
         // This is what is thrown when we compile *without* debug
     }    
-    catch (std::domain_error const& e)
+    catch (std::domain_error const&)
     {
+        // TODO: We'll want to put this error on the validation errors stack
+        // but for now, we'll just move back to the offset
     }
-    
 
     Reset(header);
-    
+
     return true;
 }
 
 bool ReaderImpl::ReadNextPoint(LASPoint& point, LASHeader const& header)
 {
-    // Read point data record format 0
-
-    // TODO: Replace with compile-time assert
-
-    double t = 0;
-    uint16_t red = 0;
-    uint16_t blue = 0;
-    uint16_t green = 0;
-    LASColor color;
-
-    detail::PointRecord record;
-    assert(LASHeader::ePointSize0 == sizeof(record));
-
     if (0 == m_current)
     {
         m_ifs.clear();
         m_ifs.seekg(m_offset, std::ios::beg);
 
-        try {
+        try
+        {
             // If this call succeeds, we'll want to put this on the 
             // validation errors stack.  1.2 files shouldn't have 
             // pad bytes.
             SkipPointDataSignature();
         }
-        catch (std::domain_error const& e)
+        catch (std::domain_error const&)
         {
             m_ifs.seekg(m_offset, std::ios::beg);
         }
@@ -283,6 +272,10 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, LASHeader const& header)
 
     if (m_current < m_size)
     {
+        detail::PointRecord record;
+        // TODO: Replace with compile-time assert
+        assert(LASHeader::ePointSize0 == sizeof(record));
+
         try
         {
             detail::read_n(record, m_ifs, sizeof(PointRecord));
@@ -297,31 +290,35 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, LASHeader const& header)
         Reader::FillPoint(record, point);
         point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
 
+        double gpst = 0;
+        uint16_t red = 0;
+        uint16_t blue = 0;
+        uint16_t green = 0;
+
         if (header.GetDataFormatId() == LASHeader::ePointFormat1)
         {
-            detail::read_n(t, m_ifs, sizeof(double));
-            point.SetTime(t);
+            detail::read_n(gpst, m_ifs, sizeof(double));
+            point.SetTime(gpst);
         }
         else if (header.GetDataFormatId() == LASHeader::ePointFormat2)
         {
             detail::read_n(red, m_ifs, sizeof(uint16_t));
             detail::read_n(green, m_ifs, sizeof(uint16_t));
             detail::read_n(blue, m_ifs, sizeof(uint16_t));
-            color.SetRed(red);
-            color.SetBlue(blue);
-            color.SetGreen(green);
+
+            LASColor color(red, green, blue);
             point.SetColor(color);
         }
         else if (header.GetDataFormatId() == LASHeader::ePointFormat3)
         {
-            detail::read_n(t, m_ifs, sizeof(double));
-            point.SetTime(t);
+            detail::read_n(gpst, m_ifs, sizeof(double));
+            point.SetTime(gpst);
+
             detail::read_n(red, m_ifs, sizeof(uint16_t));
             detail::read_n(green, m_ifs, sizeof(uint16_t));
             detail::read_n(blue, m_ifs, sizeof(uint16_t));
-            color.SetRed(red);
-            color.SetBlue(blue);
-            color.SetGreen(green);
+            
+            LASColor color(red, green, blue);
             point.SetColor(color);
         }
 
