@@ -60,6 +60,12 @@ public:
     /// Initializes with black color using RGB {0, 0, 0}.
     LASColor();
 
+    // User-defined constructor.
+    // Initializes object with given RGB values.
+    LASColor(uint16_t red, uint16_t green, uint16_t blue)
+        : m_red(red), m_green(green), m_blue(blue)
+    {}
+
     /// Copy constructor.
     LASColor(LASColor const& other);
 
@@ -148,7 +154,6 @@ inline uint16_t& LASColor::operator[](std::size_t const& n)
     if (n == 2) { return m_blue; }
 
     throw_out_of_range();
-
 }
 
 inline uint16_t const& LASColor::operator[](std::size_t const& n) const
