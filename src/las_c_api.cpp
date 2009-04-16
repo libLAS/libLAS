@@ -548,7 +548,7 @@ LAS_DLL liblas::uint8_t LASPoint_GetClassification(const LASPointH hPoint) {
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetClassification", 0);
 
     LASClassification::bitset_type clsflags(((LASPoint*) hPoint)->GetClassification());
-    liblas::uint8_t value = static_cast<uint8_t>(clsflags.to_ulong());
+    liblas::uint8_t value = static_cast<liblas::uint8_t>(clsflags.to_ulong());
     return value;
 }
 
