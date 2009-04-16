@@ -9,10 +9,15 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
-
 #if defined(_MSC_VER) && defined(USE_VLD)
 #include <vld.h>
 #endif
+
+#ifdef HAVE_GDAL
+// ogr
+#include <ogr_api.h> // Go first, to bring GeoTIFF definitions if any
+#endif
+
 // liblas
 #include <liblas/liblas.hpp>
 #include <liblas/laspoint.hpp>
@@ -27,8 +32,6 @@
 #include <string>
 
 #ifdef HAVE_GDAL
-// ogr
-#include <ogr_api.h>
 
 // Anonymous namespace for local definitions
 namespace { 
@@ -162,7 +165,7 @@ void create_layer_def(OGRLayerH lyr)
     
     OGR_Fld_Destroy(fld);
 
-    fld = create_field("asprsclass", OFTInteger, 10, 0);
+    fld = create_field("asprsclass", OFTString, 60, 0);
     err = OGR_L_CreateField(lyr, fld, 0);
     if (OGRERR_NONE != err)
     {
@@ -343,7 +346,11 @@ int main(int argc, char* argv[])
             OGR_F_SetFieldInteger(feat, 0, p.GetReturnNumber());
             OGR_F_SetFieldInteger(feat, 1, p.GetScanAngleRank());
             OGR_F_SetFieldInteger(feat, 2, p.GetIntensity());
-            OGR_F_SetFieldInteger(feat, 3, p.GetClassification());
+
+            std::ostringstream os;
+            os << p.GetClassification();
+            OGR_F_SetFieldString(feat, 3, os.str().c_str());
+
             OGR_F_SetFieldInteger(feat, 4, p.GetNumberOfReturns());
             OGR_F_SetFieldDouble(feat, 5, p.GetTime());
 
