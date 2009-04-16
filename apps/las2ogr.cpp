@@ -9,7 +9,7 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
-#ifdef HAVE_GDAL
+
 #if defined(_MSC_VER) && defined(USE_VLD)
 #include <vld.h>
 #endif
@@ -18,15 +18,17 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/cstdint.hpp>
-// ogr
-#include <ogr_api.h>
 //std
+#include <cassert>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <cassert>
+
+#ifdef HAVE_GDAL
+// ogr
+#include <ogr_api.h>
 
 // Anonymous namespace for local definitions
 namespace { 
@@ -218,10 +220,13 @@ void usage()
 
 } // anonymous namespace
 
+#endif // #ifdef HAVE_GDAL
+
 int main(int argc, char* argv[])
 {
     int rc = 0;
 
+#ifdef HAVE_GDAL
     try
     {
         OGRRegisterAll();
@@ -370,8 +375,10 @@ int main(int argc, char* argv[])
         std::cerr << "Unknown error\n";
         rc = -1;
     }
+#else
+    std::cout << "Missing GDAL/OGR support built-in las2ogr. Aborted." << std::endl;
+#endif // #ifdef HAVE_GDAL
 
     return rc;
 }
-#endif // #ifdef HAVE_GDAL
 
