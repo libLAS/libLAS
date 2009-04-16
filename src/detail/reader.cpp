@@ -45,6 +45,7 @@
 #include <liblas/detail/reader12.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/lasclassification.hpp>
 // 
 // // GeoTIFF
 // #ifdef HAVE_LIBGEOTIFF
@@ -112,7 +113,7 @@ void Reader::FillPoint(PointRecord& record, LASPoint& point)
 
     point.SetIntensity(record.intensity);
     point.SetScanFlags(record.flags);
-    point.SetClassification(record.classification);
+    point.SetClassification((record.classification));
     point.SetScanAngleRank(record.scan_angle_rank);
     point.SetUserData(record.user_data);
     point.SetPointSourceID(record.point_source_id);

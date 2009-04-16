@@ -45,6 +45,7 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
+#include <liblas/lasclassification.hpp>
 #include <liblas/lascolor.hpp>
 // std
 #include <stdexcept> // std::out_of_range
@@ -134,8 +135,11 @@ public:
     uint16_t GetFlightLineEdge() const;
     void SetFlightLineEdge(uint16_t const& edge);
 
-    uint8_t GetClassification() const;
-    void SetClassification(uint8_t const& classify);
+    //LASClassification& GetClassification();
+    LASClassification const& GetClassification() const;
+    void SetClassification(LASClassification const& cls);
+    void SetClassification(LASClassification::bitset_type const& flags);
+    void SetClassification(liblas::uint8_t const& flags);
 
     int8_t GetScanAngleRank() const;
     void SetScanAngleRank(int8_t const& rank);
@@ -182,18 +186,18 @@ public:
 private:
 
     static std::size_t const coords_size = 3;
-    double m_coords[coords_size];
-    uint16_t m_intensity;
-    uint8_t m_flags;
-    uint8_t m_class;
-    int8_t m_angleRank;
-    uint8_t m_userData;
-    uint16_t m_pointSourceId;
-    double m_gpsTime;
-    
-    LASColor m_color;
+
     detail::PointRecord m_rec;
-    
+    double m_coords[coords_size];
+    double m_gpsTime;
+    LASColor m_color;
+    LASClassification m_cls;
+    uint16_t m_intensity;
+    uint16_t m_pointSourceId;
+    uint8_t m_flags;
+    uint8_t m_userData;
+    int8_t m_angleRank;
+
     void throw_out_of_range() const
     {
         throw std::out_of_range("coordinate subscript out of range");
@@ -291,16 +295,6 @@ inline uint8_t LASPoint::GetScanFlags() const
 inline void LASPoint::SetScanFlags(uint8_t const& flags)
 {
     m_flags = flags;
-}
-
-inline uint8_t LASPoint::GetClassification() const
-{
-    return m_class;
-}
-
-inline void LASPoint::SetClassification(uint8_t const& classify)
-{
-    m_class = classify;
 }
 
 inline int8_t LASPoint::GetScanAngleRank() const

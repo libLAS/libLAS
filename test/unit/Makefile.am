@@ -22,6 +22,7 @@ liblas_test_LDADD = \
 liblas_test_SOURCES = \
     common.cpp \
     guid_test.cpp \
+    lasclassification_test.cpp \
     laserror_test.cpp \
     lasfile_test.cpp \
     lasheader_test.cpp \

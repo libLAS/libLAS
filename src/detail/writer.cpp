@@ -91,11 +91,16 @@ void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const L
     record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
     record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
 
-    if (m_transform) Project(record);
+    if (0 != m_transform)
+    {
+        Project(record);
+    }
+
+    LASClassification::bitset_type clsflags(point.GetClassification());
+    record.classification = static_cast<uint8_t>(clsflags.to_ulong());
 
     record.intensity = point.GetIntensity();
     record.flags = point.GetScanFlags();
-    record.classification = point.GetClassification();
     record.scan_angle_rank = point.GetScanAngleRank();
     record.user_data = point.GetUserData();
     record.point_source_id = point.GetPointSourceID();

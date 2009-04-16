@@ -9,12 +9,14 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/lasclassification.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/liblas.hpp>
 #include <tut/tut.hpp>
+#include <cstdio>
+#include <bitset>
 #include <fstream>
 #include <string>
-#include <cstdio>
 #include "liblas_test.hpp"
 #include "common.hpp"
 
@@ -135,10 +137,12 @@ namespace tut
             ensure_equals(point.GetNumberOfReturns(), 1);
             ensure_equals(point.GetScanDirection(), 1);
             ensure_equals(point.GetFlightLineEdge(), 1);
-            ensure_equals(point.GetClassification(), 7);
             ensure_equals(point.GetScanAngleRank(), 90);
             ensure_equals(point.GetUserData(), 0);
             ensure_equals(point.GetPointSourceID(), 1);
+
+            typedef liblas::LASClassification::bitset_type bitset_type;
+            ensure_equals(bitset_type(point.GetClassification()), bitset_type(7));
 
             // read 2nd point
             reader.ReadNextPoint();
@@ -151,7 +155,6 @@ namespace tut
             ensure_equals(point.GetNumberOfReturns(), 1);
             ensure_equals(point.GetScanDirection(), 1);
             ensure_equals(point.GetFlightLineEdge(), 1);
-            ensure_equals(point.GetClassification(), 7);
             ensure_equals(point.GetScanAngleRank(), 90);
             ensure_equals(point.GetUserData(), 0);
             ensure_equals(point.GetPointSourceID(), 2);
@@ -167,10 +170,12 @@ namespace tut
             ensure_equals(point.GetNumberOfReturns(), 1);
             ensure_equals(point.GetScanDirection(), 1);
             ensure_equals(point.GetFlightLineEdge(), 1);
-            ensure_equals(point.GetClassification(), 7);
             ensure_equals(point.GetScanAngleRank(), 90);
             ensure_equals(point.GetUserData(), 0);
             ensure_equals(point.GetPointSourceID(), 3);
+
+            typedef liblas::LASClassification::bitset_type bitset_type;
+            ensure_equals(bitset_type(point.GetClassification()), bitset_type(7));
         }
     }
 

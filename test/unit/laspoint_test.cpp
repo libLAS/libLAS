@@ -247,17 +247,22 @@ namespace tut
     void to::test<11>()
     {
         ensure_equals("invalid default classification",
-            m_default.GetClassification(), 0);
+            m_default.GetClassification(), liblas::LASClassification::bitset_type(0));
 
+        liblas::LASClassification c;
+        
         liblas::uint8_t const begclass = 0;
-        m_default.SetClassification(begclass);
-        ensure_equals("invalid classification",
-            m_default.GetClassification(), begclass);
+        c.SetClass(begclass);
+        m_default.SetClassification(c);
+        
+        ensure_equals("invalid class index",
+            m_default.GetClassification().GetClass(), begclass);
 
         liblas::uint8_t const endclass = 31;
-        m_default.SetClassification(endclass);
-        ensure_equals("invalid classification",
-            m_default.GetClassification(), endclass);
+        c.SetClass(endclass);
+        m_default.SetClassification(c);
+        ensure_equals("invalid class index",
+            m_default.GetClassification().GetClass(), endclass);
     }
 
     // Test Get/SetScanAngleRank

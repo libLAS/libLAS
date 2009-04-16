@@ -50,7 +50,6 @@
 				DisableLanguageExtensions="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -194,6 +193,10 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\..\..\test\unit\CMakeLists.txt"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\test\unit\common.cpp"
 			>
 		</File>
@@ -203,6 +206,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\test\unit\guid_test.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\test\unit\lasclassification_test.cpp"
 			>
 		</File>
 		<File
@@ -230,6 +237,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\test\unit\lasspatialreference_test.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\test\unit\lasvariablerecord_test.cpp"
 			>
 		</File>
@@ -243,6 +254,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\test\unit\liblas_test_suite.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\test\unit\Makefile.am"
 			>
 		</File>
 	</Files>

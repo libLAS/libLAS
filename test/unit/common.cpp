@@ -100,7 +100,7 @@ void test_default_point(liblas::LASPoint const& p)
     ensure_equals("wrong defualt edge of flight line",
         p.GetFlightLineEdge(), 0);
     ensure_equals("wrong defualt classification",
-        p.GetClassification(), 0);
+        p.GetClassification(), liblas::LASClassification::bitset_type(0));
     ensure_equals("wrong defualt scan angle rank",
         p.GetScanAngleRank(), 0);
     ensure_equals("wrong defualt file marker/user data value",
@@ -162,7 +162,7 @@ void test_file10_point1(liblas::LASPoint const& p)
     ensure_distance(p.GetY(), double(4834500), 0.0001);
     ensure_distance(p.GetZ(), double(51.53), 0.0001);
     ensure_equals(p.GetIntensity(), 670);
-    ensure_equals(p.GetClassification(), liblas::uint8_t(1));
+    ensure_equals(p.GetClassification(), liblas::LASClassification::bitset_type(1));
     ensure_equals(p.GetScanAngleRank(), 0);
     ensure_equals(p.GetUserData(), 3);
     ensure_equals(p.GetPointSourceID(), 0);
@@ -176,7 +176,7 @@ void test_file10_point2(liblas::LASPoint const& p)
     ensure_distance(p.GetY(), double(4834500), 0.0001);
     ensure_distance(p.GetZ(), double(51.63), 0.0001);
     ensure_equals(p.GetIntensity(), 350);
-    ensure_equals(p.GetClassification(), 1);
+    ensure_equals(p.GetClassification(), liblas::LASClassification::bitset_type(1));
     ensure_equals(p.GetScanAngleRank(), 0);
     ensure_equals(p.GetUserData(), 3);
     ensure_equals(p.GetPointSourceID(), 0);
@@ -190,7 +190,7 @@ void test_file10_point4(liblas::LASPoint const& p)
     ensure_distance(p.GetY(), double(4834500), 0.0001);
     ensure_distance(p.GetZ(), double(50.90), 0.0001);
     ensure_equals(p.GetIntensity(), 150);
-    ensure_equals(p.GetClassification(), 1);
+    ensure_equals(p.GetClassification(), liblas::LASClassification::bitset_type(1));
     ensure_equals(p.GetScanAngleRank(), 0);
     ensure_equals(p.GetUserData(), 4);
     ensure_equals(p.GetPointSourceID(), 0);
@@ -199,4 +199,3 @@ void test_file10_point4(liblas::LASPoint const& p)
 }
 
 }
-

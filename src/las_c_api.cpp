@@ -62,7 +62,8 @@ typedef struct LASVLRHS *LASVLRH;
 typedef struct LASColorHS *LASColorH;
 typedef struct LASSRSHS *LASSRSH;
 
-
+#include <cstdio>
+#include <bitset>
 #include <exception>
 #include <fstream>
 #include <iostream>
@@ -72,7 +73,6 @@ typedef struct LASSRSHS *LASSRSH;
 #include <stack>
 #include <typeinfo>
 #include <vector>
-#include <cstdio>
 
 using namespace liblas;
 
@@ -546,8 +546,9 @@ LAS_DLL LASErrorEnum LASPoint_SetScanFlags(LASPointH hPoint, liblas::uint8_t val
 LAS_DLL liblas::uint8_t LASPoint_GetClassification(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetClassification", 0);
-    
-    liblas::uint8_t value = ((LASPoint*) hPoint)->GetClassification();
+
+    LASClassification::bitset_type clsflags(((LASPoint*) hPoint)->GetClassification());
+    liblas::uint8_t value = static_cast<uint8_t>(clsflags.to_ulong());
     return value;
 }
 
@@ -1773,7 +1774,6 @@ LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
         return LE_Failure;
     }
 
-
     return LE_None;
 }
 
@@ -1787,7 +1787,8 @@ LAS_DLL LASVLRH LASSRS_GetVLR(const LASSRSH hSRS, liblas::uint32_t i) {
 LAS_DLL liblas::uint32_t LASSRS_GetVLRCount(const LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetVLR", 0);
     
-    liblas::uint32_t size = ((LASSpatialReference*) hSRS)->GetVLRs().size();
+    using liblas::uint32_t;
+    uint32_t size = static_cast<uint32_t>(((LASSpatialReference*) hSRS)->GetVLRs().size());
     return size;
 }
 

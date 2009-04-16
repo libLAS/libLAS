@@ -123,11 +123,13 @@ namespace tut
         ensure_distance(it->GetY(), double(4834500), 0.0001);
         ensure_distance(it->GetZ(), double(51.53), 0.0001);
         ensure_equals(it->GetIntensity(), 670);
-        ensure_equals(it->GetClassification(), liblas::uint8_t(1));
         ensure_equals(it->GetScanAngleRank(), 0);
         ensure_equals(it->GetUserData(), 3);
         ensure_equals(it->GetScanFlags(), 9);
         ensure_distance(it->GetTime(), double(413665.23360000004), 0.0001);
+
+        liblas::LASClassification c(1);
+        ensure_equals(it->GetClassification(), c);
     }
 
     // Test pre-increment operator
