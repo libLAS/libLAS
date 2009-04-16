@@ -130,7 +130,7 @@ public:
     uint8_t GetClass() const
     {
         bitset_type bits(m_flags);
-        bitset_type const mask(class_table_size - 1);
+        bitset_type const mask(static_cast<unsigned long>(class_table_size) - 1);
         bits &= mask;
 
         uint8_t const index = static_cast<uint8_t>(bits.to_ulong());

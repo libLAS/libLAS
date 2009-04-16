@@ -377,4 +377,41 @@ namespace tut
         std::string const cn("Created, never classified");
         ensure_equals(m_default.GetClassName(), cn);
     }
+
+    template<>
+    template<>
+    void to::test<21>()
+    {
+        std::string const cn("Low Point (noise)");
+        m_default.SetClass(7);
+        ensure_equals(m_default.GetClassName(), cn);
+    }
+
+    template<>
+    template<>
+    void to::test<22>()
+    {
+        std::string const cn("Reserved for ASPRS Definition");
+        m_default.SetClass(31);
+        ensure_equals(m_default.GetClassName(), cn);
+    }
+
+    template<>
+    template<>
+    void to::test<23>()
+    {
+        try
+        {
+            m_default.SetClass(32);
+            fail("std::out_of_range not thrown but expected");
+        }
+        catch (std::out_of_range const& e)
+        {
+            ensure(e.what(), true);
+        }
+        catch (...)
+        {
+            fail("unhandled exception expected");
+        }
+    }
 }
