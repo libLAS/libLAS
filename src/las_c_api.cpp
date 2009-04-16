@@ -1696,13 +1696,13 @@ LAS_DLL const GTIF* LASSRS_GetGTIF(LASSRSH hSRS) {
     }
 }
 
-LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const GTIF* gtiff, const ST_TIFF* tiff)
+LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const GTIF* pgtiff, const ST_TIFF* ptiff)
 {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_SetGTIF", LE_Failure);
-    VALIDATE_LAS_POINTER1(gtiff, "LASSRS_SetGTIF", LE_Failure);
-    VALIDATE_LAS_POINTER1(tiff, "LASSRS_SetGTIF", LE_Failure);
+    VALIDATE_LAS_POINTER1(pgtiff, "LASSRS_SetGTIF", LE_Failure);
+    VALIDATE_LAS_POINTER1(ptiff, "LASSRS_SetGTIF", LE_Failure);
     try {
-        ((LASSpatialReference*) hSRS)->SetGTIF(gtiff, tiff);
+        ((LASSpatialReference*) hSRS)->SetGTIF(pgtiff, ptiff);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetGTIF");
