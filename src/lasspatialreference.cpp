@@ -290,10 +290,10 @@ void LASSpatialReference::ResetVLRs()
 #endif // ndef HAVE_LIBGEOTIFF
 }
 
-void LASSpatialReference::SetGTIF(const GTIF* gtiff, const ST_TIFF* tiff) 
+void LASSpatialReference::SetGTIF(const GTIF* pgtiff, const ST_TIFF* ptiff) 
 {
-    m_gtiff = (GTIF*)gtiff;
-    m_tiff = (ST_TIFF*)tiff;
+    m_gtiff = (GTIF*)pgtiff;
+    m_tiff = (ST_TIFF*)ptiff;
     ResetVLRs();
     m_gtiff = NULL;
     m_tiff = NULL;

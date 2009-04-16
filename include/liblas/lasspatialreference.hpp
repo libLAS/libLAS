@@ -51,28 +51,26 @@
 
 // GDAL OSR
 #ifdef HAVE_GDAL
-#include "ogr_srs_api.h"
-#include "cpl_port.h"
-#include "cpl_serv.h"
-#include "geo_tiffp.h"
+#include <ogr_srs_api.h>
+#include <cpl_port.h>
+#include <cpl_serv.h>
+#include <geo_tiffp.h>
 #define CPL_ERROR_H_INCLUDED
-
-#include "geo_normalize.h"
-#include "geovalues.h"
-#include "ogr_spatialref.h"
-#include "gdal.h"
-#include "xtiffio.h"
-#include "cpl_multiproc.h"
-
+#include <geo_normalize.h>
+#include <geovalues.h>
+#include <ogr_spatialref.h>
+#include <gdal.h>
+#include <xtiffio.h>
+#include <cpl_multiproc.h>
 #endif
 
 // GeoTIFF
 #ifdef HAVE_LIBGEOTIFF
-#include "geotiff.h"
-#include "geo_simpletags.h"
-#include "geo_normalize.h"
-#include "geo_simpletags.h"
-#include "geovalues.h"
+#include <geotiff.h>
+#include <geo_simpletags.h>
+#include <geo_normalize.h>
+#include <geo_simpletags.h>
+#include <geovalues.h>
 #endif // HAVE_LIBGEOTIFF
 
 // std
@@ -81,9 +79,9 @@
 #include <string>
 
 // Fake out the compiler if we don't have libgeotiff
-#ifndef HAVE_LIBGEOTIFF
-typedef struct GTIFS * GTIF;
-typedef struct ST_TIFFS * ST_TIFF;
+#if !defined(LIBGEOTIFF_VERSION) && !defined(HAVE_LIBGEOTIFF)
+typedef struct GTIFS *GTIF;
+typedef struct ST_TIFFS *ST_TIFF;
 #endif
 
 namespace liblas {
@@ -112,8 +110,8 @@ public:
     /// Returns a pointer to the internal GTIF*.  Only available if 
     /// you have libgeotiff linked in.
     const GTIF* GetGTIF();
-    
-    void SetGTIF(const GTIF* gtiff, const ST_TIFF* tiff);
+
+    void SetGTIF(const GTIF* pgtiff, const ST_TIFF* ptiff);
 
     /// Returns the OGC WKT describing Spatial Reference System.
     /// If GDAL is linked, it uses GDAL's operations and methods to determine 
