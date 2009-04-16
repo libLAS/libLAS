@@ -44,27 +44,34 @@
 
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/endian.hpp>
+// std
+#include <cstddef>
+#include <cstring>
+#include <cassert>
 #include <algorithm>
+#include <iosfwd>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
-#include <iosfwd>
-#include <cstring>
-#include <cassert>
 
 //
 // Private macros definition
 //
-
 #ifndef UNREFERENCED_PARAMETER
 #define UNREFERENCED_PARAMETER(param) ((void)param)
 #endif
 
-//
-// Private utilities for internal use in libLAS
-//
-
+/// Defines utilities for internal use in libLAS.
+/// The liblas::detail elements do not belong to the public
+/// interface of libLAS.
 namespace liblas { namespace detail {
+
+/// Compile-time calculation size of array defined statically.
+template <typename T, std::size_t N>
+inline std::size_t static_array_size(T (&t)[N])
+{
+    return (sizeof(t) / sizeof(t[0]));
+}
 
 /// Simple RAII wrapper.
 /// It's dedicated to use with types associated with custom deleter,
