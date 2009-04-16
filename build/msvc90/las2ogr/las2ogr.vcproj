@@ -63,7 +63,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="gdal_i.lib geotiff_i.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(OSGEO4W_ROOT)\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
@@ -136,7 +138,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="gdal_i.lib geotiff_i.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(OSGEO4W_ROOT)\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
