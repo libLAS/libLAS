@@ -369,4 +369,12 @@ namespace tut
         oss << c;
         ensure_equals(oss.str(), sbits);
     }
+
+    template<>
+    template<>
+    void to::test<20>()
+    {
+        std::string const cn("Created, never classified");
+        ensure_equals(m_default.GetClassName(), cn);
+    }
 }

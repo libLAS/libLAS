@@ -65,7 +65,7 @@ public:
     /// Number of classes in lookup table as defined in ASPRS LAS 1.1+.
     /// For LAS 1.0, this static number may be invalid and
     /// extend up to 255 classes stored in variable-length records.
-    static std::size_t const class_table_size = 32;
+    static std::size_t const class_table_size;
 
     enum
     {
@@ -125,17 +125,18 @@ public:
     /// as defined in classification object.
     ///
     /// \todo TODO: To be implemented
-    std::string GetClassName() const
-    {
-        return std::string("");
-    }
+    std::string GetClassName() const;
 
     uint8_t GetClass() const
     {
         bitset_type bits(m_flags);
-        bitset_type mask(class_table_size - 1);
+        bitset_type const mask(class_table_size - 1);
         bits &= mask;
-        return (static_cast<uint8_t>(bits.to_ulong()));
+
+        uint8_t const index = static_cast<uint8_t>(bits.to_ulong());
+        assert(index < class_table_size);
+
+        return index;
     }
 
     void SetClass(uint8_t index)
@@ -190,7 +191,7 @@ private:
 
     bitset_type m_flags;
 
-    void check_class_index(std::size_t index)
+    void check_class_index(std::size_t index) const
     {
         if (index > (class_table_size - 1))
         {

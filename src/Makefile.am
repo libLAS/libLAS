@@ -14,6 +14,8 @@ AM_CPPFLAGS = $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) -I../include -I../include/det
 lib_LTLIBRARIES = liblas.la
 
 liblas_la_SOURCES = \
+    lasclassification.cpp \
+    lascolor.cpp \
 	laserror.cpp \
 	laspoint.cpp \
 	lasheader.cpp \
@@ -22,7 +24,6 @@ liblas_la_SOURCES = \
 	laswriter.cpp \
 	lasfile.cpp \
 	las_c_api.cpp \
-	lascolor.cpp \
 	lasspatialreference.cpp \
     detail/reader.cpp \
     detail/reader10.cpp \

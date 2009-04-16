@@ -5,6 +5,7 @@ LAS_ROOT	=	..
 !INCLUDE $(LAS_ROOT)\nmake.opt
 
 LAS_OBJS = \
+    lasclassification.obj \
     lascolor.obj \
     laswriter.obj \
     lasreader.obj \
