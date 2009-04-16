@@ -81,12 +81,12 @@ public:
     LASClassification() {}
 
     /// Initializes classification with given set of 8 flags.
-    explicit LASClassification(bitset_type flags)
+    explicit LASClassification(bitset_type const& flags)
         : m_flags(flags)
     {}
 
     /// Initializes classification from flags given as integral type.
-    explicit LASClassification(uint8_t flags)
+    explicit LASClassification(uint8_t const& flags)
         : m_flags(flags)
     {}
 

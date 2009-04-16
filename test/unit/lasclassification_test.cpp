@@ -253,7 +253,7 @@ namespace tut
     template<>
     void to::test<12>()
     {
-        std::string sbits("00000000");
+        std::string const sbits("00000000");
 
         liblas::LASClassification c;
 
@@ -266,7 +266,7 @@ namespace tut
     template<>
     void to::test<13>()
     {
-        std::string sbits("00000011");
+        std::string const sbits("00000011");
 
         liblas::LASClassification c;
         c.SetClass(3);
@@ -280,7 +280,7 @@ namespace tut
     template<>
     void to::test<14>()
     {
-        std::string sbits("10000001");
+        std::string const sbits("10000001");
 
         liblas::LASClassification c;
         
@@ -296,7 +296,7 @@ namespace tut
     template<>
     void to::test<15>()
     {
-        std::string sbits("10110000");
+        std::string const sbits("10110000");
 
         liblas::LASClassification c;
         
@@ -304,6 +304,66 @@ namespace tut
         c.SetSynthetic(true);
         c.SetKeyPoint(false);
         c.SetWithheld(true);
+
+        std::ostringstream oss;
+        oss << c;
+        ensure_equals(oss.str(), sbits);
+    }
+
+    template<>
+    template<>
+    void to::test<16>()
+    {
+        std::string const sbits("00000000");
+        liblas::LASClassification::bitset_type bits(sbits);
+        
+        liblas::LASClassification c(bits);
+        ensure_equals(c, bits);
+
+        std::ostringstream oss;
+        oss << c;
+        ensure_equals(oss.str(), sbits);
+    }
+
+    template<>
+    template<>
+    void to::test<17>()
+    {
+        std::string const sbits("00000011");
+        liblas::LASClassification::bitset_type bits(sbits);
+
+        liblas::LASClassification c(bits);
+        ensure_equals(c, bits);
+
+        std::ostringstream oss;
+        oss << c;
+        ensure_equals(oss.str(), sbits);
+    }
+
+    template<>
+    template<>
+    void to::test<18>()
+    {
+        std::string const sbits("10000001");
+        liblas::LASClassification::bitset_type bits(sbits);
+
+        liblas::LASClassification c(bits);
+        ensure_equals(c, bits);
+
+        std::ostringstream oss;
+        oss << c;
+        ensure_equals(oss.str(), sbits);
+    }
+
+    template<>
+    template<>
+    void to::test<19>()
+    {
+        std::string const sbits("10110000");
+        liblas::LASClassification::bitset_type bits(sbits);
+
+        liblas::LASClassification c(bits);
+        ensure_equals(c, bits);
 
         std::ostringstream oss;
         oss << c;
