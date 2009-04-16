@@ -505,7 +505,11 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
 #ifdef HAVE_LIBGEOTIFF
     if (pGTIF) GTIFPrint((GTIF*)pGTIF, 0, 0);
 #endif
-    if (bWKT) { fprintf(file, pszWKT);fprintf(file, "\n");}
+    if (bWKT)
+    {
+        fprintf(file, "%s", pszWKT);
+        fprintf(file, "%s", "\n");
+    }
     if (nVLR && !bSkipVLR) {
         
     fprintf(file, "\n---------------------------------------------------------\n");
