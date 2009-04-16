@@ -123,6 +123,8 @@ public:
     /// Raturns name of class as defined in LAS 1.1+
     /// Finds class name in lookup table based on class index
     /// as defined in classification object.
+    ///
+    /// \todo TODO: To be implemented
     std::string GetClassName() const
     {
         return std::string("");
@@ -140,11 +142,13 @@ public:
     {
         check_class_index(index);
 
-        uint8_t flags = static_cast<uint8_t>(m_flags.to_ulong());
-        uint8_t const mask = 0x1F << 0; // 0b00011111
-        flags &= ~mask;
-        flags |= mask & (static_cast<uint8_t>(index) << 0);
-        m_flags = bitset_type(flags);
+        bitset_type binval(index);
+        binval <<= 0;
+
+        // Store value in bits 0,1,2,3,4
+        bitset_type const mask(0x1F);
+        m_flags &= ~mask;
+        m_flags |= mask & binval;
     }
 
     void SetSynthetic(bool flag)
