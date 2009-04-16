@@ -185,13 +185,14 @@ bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr)
                 } else if (point->Echo == 1) {
                     p.SetReturnNumber(1);
                 } else if (point->Echo == 3) {
-                    p.SetReturnNumber(5);
-                    p.SetNumberOfReturns(5);
+                    p.SetReturnNumber(2);
+                    p.SetNumberOfReturns(2);
                 } else {
                     // I don't know what the hell to do here without cumulating
                     // through all of the points.  Why wouldn't you store the return 
                     // number?!
-                    p.SetReturnNumber(3);
+                    p.SetReturnNumber(2);
+                    p.SetNumberOfReturns(3);
                 }
 
                 try {
