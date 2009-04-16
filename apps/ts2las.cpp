@@ -1,14 +1,22 @@
-
+// $Id$
+//
+// ts2las translates TerraSolid .bin file to ASPRS LAS file.
+//
+// TerraSolid format: http://cdn.terrasolid.fi/tscan.pdf
+//
+// (C) Copyright Howard Butler 2009, hobu.inc@gmail.com
+//
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
 #include "ts2las.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <string>
 
-// from http://cdn.terrasolid.fi/tscan.pdf
-
 using namespace liblas;
-
 
 std::istream* OpenInput(std::string filename) 
 {
@@ -81,13 +89,17 @@ LASHeader CreateHeader(ScanHdr* hdr)
     std::cout << "scale: " << scale << std::endl;
     header.SetScale(scale, scale, scale);
     header.SetOffset(hdr->OrgX*scale, hdr->OrgY*scale, hdr->OrgZ*scale);
-    std::cout << "offset x: " << header.GetOffsetX() << " offset y: " << header.GetOffsetY()  << " offset z: " <<header.GetOffsetZ() << std::endl;
+    std::cout << "offset x: " << header.GetOffsetX() 
+              << " offset y: " << header.GetOffsetY() 
+              << " offset z: " <<header.GetOffsetZ() << std::endl;
 
     return header;
 }
-bool ReadHeader(ScanHdr* hdr, std::istream* istrm) {
-    
-    try {
+
+bool ReadHeader(ScanHdr* hdr, std::istream* istrm)
+{
+    try
+    {
         liblas::detail::read_n(*hdr, *istrm, sizeof(ScanHdr));
         
         if (hdr->Tunniste != 970401) return false;
@@ -111,8 +123,8 @@ bool ReadHeader(ScanHdr* hdr, std::istream* istrm) {
 
 bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr) 
 {
-    while (true) {
-        
+    while (true)
+    {
 
 ///std::cout << "We have header version" << std::endl;
             ScanPnt* point = new ScanPnt;
@@ -229,7 +241,8 @@ int main(int argc, char* argv[])
     std::string input;
     std::string output;
     
-    for (int i = 1; i < argc; i++) {
+    for (int i = 1; i < argc; i++)
+    {
         if (    strcmp(argv[i],"-h") == 0 ||
                 strcmp(argv[i],"--help") == 0
             )
@@ -300,3 +313,4 @@ int main(int argc, char* argv[])
     std::cout << "success: " << success << std::endl;
     return rc;
 }
+
