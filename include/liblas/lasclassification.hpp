@@ -70,12 +70,13 @@ public:
     /// table is supported.
     static std::size_t const class_table_size;
 
+    /// Values of indexes in the set of bit flags.
     enum BitPosition
     {
-        eClassBit     = 0, /// First bit position of 0:4 range.
-        eSyntheticBit = 5, /// Synthetic flag.
-        eKeyPointBit  = 6, /// Key-point flag.
-        eWithheldBit  = 7  /// Withheld flag.
+        eClassBit     = 0, ///< First bit position of 0:4 range.
+        eSyntheticBit = 5, ///< Synthetic flag.
+        eKeyPointBit  = 6, ///< Key-point flag.
+        eWithheldBit  = 7  ///< Withheld flag.
     };
 
     /// Default initialization constructor.
