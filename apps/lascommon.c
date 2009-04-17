@@ -2,6 +2,7 @@
 #include <liblas.h>
 #ifdef HAVE_GEOTIFF
 #include <geotiff.h>
+#include <geo_normalize.h>
 #endif
 /* std */
 #include <stdio.h>
@@ -406,8 +407,10 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
 
 #ifdef HAVE_GEOTIFF
     const GTIF* pGTIF = NULL;
+    GTIFDefn defn;
 #else
     const void* pGTIF = NULL;
+    const void* defn =NULL;
 #endif    
 
     pszSignature = LASHeader_GetFileSignature(header);
@@ -504,6 +507,9 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
                     pszProj4);
 #ifdef HAVE_LIBGEOTIFF
     if (pGTIF) GTIFPrint((GTIF*)pGTIF, 0, 0);
+
+    // GTIFGetDefn(pGTIF, &defn);
+    // GTIFPrintDefn(&defn, file);
 #endif
     if (bWKT)
     {
