@@ -18,7 +18,7 @@ namespace tut
 { 
     struct lasclassification_data
     {
-        typedef liblas::LASClassification bitset_type;
+        typedef liblas::LASClassification::bitset_type bitset_type;
         liblas::LASClassification m_default;
     };
 
@@ -58,7 +58,7 @@ namespace tut
     {
         liblas::LASClassification c31(0x1F);
 
-        ensure_not(c31 == bitset_type(0));
+        ensure_not(c31 == m_default);
         ensure_equals(c31.GetClass(), 31);
         ensure_not(c31.IsSynthetic());
         ensure_not(c31.IsKeyPoint());
@@ -81,6 +81,53 @@ namespace tut
     template<>
     void to::test<5>()
     {
+        liblas::LASClassification c(31, false, false, false);
+     
+        ensure_equals(c.GetClass(), 31);
+        ensure_not(c.IsSynthetic());
+        ensure_not(c.IsKeyPoint());
+        ensure_not(c.IsWithheld());
+
+        ensure_equals(c, bitset_type(std::string("00011111")));
+    }
+
+    template<>
+    template<>
+    void to::test<6>()
+    {
+        liblas::LASClassification c(7, true, false, true);
+     
+        ensure_equals(c.GetClass(), 7);
+        ensure_not(c.IsKeyPoint());
+        ensure(c.IsWithheld());
+        ensure(c.IsSynthetic());
+        ensure_equals(c, bitset_type(std::string("10100111")));
+    }
+
+    template<>
+    template<>
+    void to::test<7>()
+    {
+        try
+        {
+            liblas::LASClassification c(255, true, true, true);
+
+            fail("std::out_of_range not thrown but expected");
+        }
+        catch (std::out_of_range const& e)
+        {
+            ensure(e.what(), true);
+        }
+        catch (...)
+        {
+            fail("unhandled exception expected");
+        }
+    }
+
+    template<>
+    template<>
+    void to::test<8>()
+    {
         liblas::LASClassification c;
 
         c.SetClass(0);
@@ -94,82 +141,82 @@ namespace tut
 
     template<>
     template<>
-    void to::test<6>()
-    {
-        liblas::LASClassification c;
-
-        c.SetSynthetic(true);
-        ensure(c.IsSynthetic());
-        ensure(c != m_default);
-
-        c.SetSynthetic(false);
-        ensure_not(c.IsSynthetic());
-        ensure_equals(c, m_default);
-
-        c.SetSynthetic(true);
-        ensure(c.IsSynthetic());
-        ensure(c != m_default);
-
-        c.SetSynthetic(false);
-        ensure_not(c.IsSynthetic());
-        ensure_equals(c, m_default);
-
-        ensure_equals(c.GetClass(), 0);
-    }
-
-    template<>
-    template<>
-    void to::test<7>()
-    {
-        liblas::LASClassification c;
-
-        c.SetKeyPoint(true);
-        ensure(c.IsKeyPoint());
-        ensure(c != m_default);
-
-        c.SetKeyPoint(false);
-        ensure_not(c.IsKeyPoint());
-        ensure_equals(c, m_default);
-
-        c.SetKeyPoint(true);
-        ensure(c.IsKeyPoint());
-        ensure(c != m_default);
-
-        c.SetKeyPoint(false);
-        ensure_not(c.IsKeyPoint());
-        ensure_equals(c, m_default);
-
-        ensure_equals(c.GetClass(), 0);
-    }
-
-    template<>
-    template<>
-    void to::test<8>()
-    {
-        liblas::LASClassification c;
-
-        c.SetWithheld(true);
-        ensure(c.IsWithheld());
-        ensure(c != m_default);
-
-        c.SetWithheld(false);
-        ensure_not(c.IsWithheld());
-        ensure_equals(c, m_default);
-
-        c.SetWithheld(true);
-        ensure(c.IsWithheld());
-        ensure(c != m_default);
-
-        c.SetWithheld(false);
-        ensure_not(c.IsWithheld());
-        ensure_equals(c, m_default);
-
-        ensure_equals(c.GetClass(), 0);
-    }
-
-    template<>
-    template<>
     void to::test<9>()
+    {
+        liblas::LASClassification c;
+
+        c.SetSynthetic(true);
+        ensure(c.IsSynthetic());
+        ensure(c != m_default);
+
+        c.SetSynthetic(false);
+        ensure_not(c.IsSynthetic());
+        ensure_equals(c, m_default);
+
+        c.SetSynthetic(true);
+        ensure(c.IsSynthetic());
+        ensure(c != m_default);
+
+        c.SetSynthetic(false);
+        ensure_not(c.IsSynthetic());
+        ensure_equals(c, m_default);
+
+        ensure_equals(c.GetClass(), 0);
+    }
+
+    template<>
+    template<>
+    void to::test<10>()
+    {
+        liblas::LASClassification c;
+
+        c.SetKeyPoint(true);
+        ensure(c.IsKeyPoint());
+        ensure(c != m_default);
+
+        c.SetKeyPoint(false);
+        ensure_not(c.IsKeyPoint());
+        ensure_equals(c, m_default);
+
+        c.SetKeyPoint(true);
+        ensure(c.IsKeyPoint());
+        ensure(c != m_default);
+
+        c.SetKeyPoint(false);
+        ensure_not(c.IsKeyPoint());
+        ensure_equals(c, m_default);
+
+        ensure_equals(c.GetClass(), 0);
+    }
+
+    template<>
+    template<>
+    void to::test<11>()
+    {
+        liblas::LASClassification c;
+
+        c.SetWithheld(true);
+        ensure(c.IsWithheld());
+        ensure(c != m_default);
+
+        c.SetWithheld(false);
+        ensure_not(c.IsWithheld());
+        ensure_equals(c, m_default);
+
+        c.SetWithheld(true);
+        ensure(c.IsWithheld());
+        ensure(c != m_default);
+
+        c.SetWithheld(false);
+        ensure_not(c.IsWithheld());
+        ensure_equals(c, m_default);
+
+        ensure_equals(c.GetClass(), 0);
+    }
+
+    template<>
+    template<>
+    void to::test<12>()
     {
         liblas::LASClassification c;
 
@@ -193,7 +240,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<10>()
+    void to::test<13>()
     {
         liblas::LASClassification c;
 
@@ -221,7 +268,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<11>()
+    void to::test<14>()
     {
         liblas::LASClassification c;
 
@@ -251,7 +298,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<12>()
+    void to::test<15>()
     {
         std::string const sbits("00000000");
 
@@ -264,7 +311,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<13>()
+    void to::test<16>()
     {
         std::string const sbits("00000011");
 
@@ -278,7 +325,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<14>()
+    void to::test<17>()
     {
         std::string const sbits("10000001");
 
@@ -294,7 +341,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<15>()
+    void to::test<18>()
     {
         std::string const sbits("10110000");
 
@@ -312,7 +359,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<16>()
+    void to::test<19>()
     {
         std::string const sbits("00000000");
         liblas::LASClassification::bitset_type bits(sbits);
@@ -327,7 +374,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<17>()
+    void to::test<20>()
     {
         std::string const sbits("00000011");
         liblas::LASClassification::bitset_type bits(sbits);
@@ -342,7 +389,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<18>()
+    void to::test<21>()
     {
         std::string const sbits("10000001");
         liblas::LASClassification::bitset_type bits(sbits);
@@ -357,7 +404,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<19>()
+    void to::test<22>()
     {
         std::string const sbits("10110000");
         liblas::LASClassification::bitset_type bits(sbits);
@@ -372,7 +419,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<20>()
+    void to::test<23>()
     {
         std::string const cn("Created, never classified");
         ensure_equals(m_default.GetClassName(), cn);
@@ -380,7 +427,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<21>()
+    void to::test<24>()
     {
         std::string const cn("Low Point (noise)");
         m_default.SetClass(7);
@@ -389,7 +436,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<22>()
+    void to::test<25>()
     {
         std::string const cn("Reserved for ASPRS Definition");
         m_default.SetClass(31);
@@ -398,7 +445,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<23>()
+    void to::test<26>()
     {
         try
         {

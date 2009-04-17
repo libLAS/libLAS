@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Definition LASClassification type.
+ * Purpose:  Definition of LASClassification type.
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
@@ -59,15 +59,18 @@ class LASClassification
 {
 public:
 
-    ///
+    /// Alias on std::bitset<8> used as collection of flags.
     typedef std::bitset<8> bitset_type;
 
     /// Number of classes in lookup table as defined in ASPRS LAS 1.1+.
     /// For LAS 1.0, this static number may be invalid and
     /// extend up to 255 classes stored in variable-length records.
+    /// @note Currently, libLAS does not support classification based on table
+    /// stored in variable-length record. Only Standard ASPRS classification
+    /// table is supported.
     static std::size_t const class_table_size;
 
-    enum
+    enum BitPosition
     {
         eClassBit     = 0, /// First bit position of 0:4 range.
         eSyntheticBit = 5, /// Synthetic flag.
@@ -76,21 +79,30 @@ public:
     };
 
     /// Default initialization constructor.
-    /// Initializes all flags of classification not set.
+    /// Initializes all flags of classification as set to 0.
     /// Operation semantic is equivalent to bitset_type::reset().
     LASClassification() {}
 
-    /// Initializes classification with given set of 8 flags.
+    /// Initializes classification flags using given set of 8 bits.
+    /// @param flags [in] - contains 8 bits representing classification flags.
     explicit LASClassification(bitset_type const& flags)
         : m_flags(flags)
     {}
 
-    /// Initializes classification from flags given as integral type.
+    /// Initializes classification flags using 8 bits of integral type.
+    /// @param flags [in] - contains 8 bits representing classification flags.
     explicit LASClassification(uint8_t const& flags)
         : m_flags(flags)
     {}
 
     /// Initializes classification with values of given compounds.
+    /// @param cls [in] - index of Standard ASPRS classification as
+    /// defined in the lookup table, from 0 to class_table_size - 1.
+    /// @param s [in] - If set then this point was created by a technique other than
+    /// LIDAR collection such as digitized from a photogrammetric stereo model.
+    /// @param k [in] - If set, this point is considered to be a model keypoint and
+    /// thus generally should not be withheld in a thinning algorithm.
+    /// @param w [in] - If set, this point should not be included in processing.
     LASClassification(uint8_t cls, bool s, bool k, bool w)
     {
         SetClass(cls);
@@ -99,11 +111,13 @@ public:
         SetWithheld(w);
     }
 
+    /// Copy constructor.
     LASClassification(LASClassification const& other)
     {
         m_flags = other.m_flags;
     }
 
+    /// Assignment operator.
     LASClassification& operator=(LASClassification const& rhs)
     {
         if (&rhs != this )
@@ -114,7 +128,8 @@ public:
     }
 
     /// Conversion operator.
-    /// Returns classification object as flags encoded in form of std::bitset<8>.
+    /// Returns classification object as in form of std::bitset<8>.
+    /// bitset< object 
     operator bitset_type() const
     {
         return bitset_type(m_flags);
@@ -123,10 +138,9 @@ public:
     /// Raturns name of class as defined in LAS 1.1+
     /// Finds class name in lookup table based on class index
     /// as defined in classification object.
-    ///
-    /// \todo TODO: To be implemented
     std::string GetClassName() const;
 
+    /// Returns index of ASPRS classification as defined in the lookup table.
     uint8_t GetClass() const
     {
         bitset_type bits(m_flags);
@@ -139,6 +153,15 @@ public:
         return index;
     }
 
+    /// Updates index of ASPRS classification as defined in the lookup table.
+    /// Valid index is in range from 0 to class_table_size - 1.
+    /// For LAS 1.0, this static number may be invalid and
+    /// extend up to 255 classes stored in variable-length records.
+    /// @note Currently, libLAS does not support classification based on table
+    /// stored in variable-length record. Only Standard ASPRS classification
+    /// table is supported.
+    /// @exception Theoretically, may throw std::out_of_range in case index 
+    /// value is not in range between 0 and class_table_size - 1.
     void SetClass(uint8_t index)
     {
         check_class_index(index);
@@ -152,36 +175,47 @@ public:
         m_flags |= mask & binval;
     }
 
+    /// Sets if this point was created by a technique other than LIDAR
+    /// collection such as digitized from a photogrammetric stereo model.
     void SetSynthetic(bool flag)
     {
         m_flags[eSyntheticBit] = flag;
     }
 
+    /// Tests if this point was created by a technique other than LIDAR collection.
     bool IsSynthetic() const
     {
         return m_flags[eSyntheticBit];
     }
 
+    /// Sets if this point is considered to be a model keypoint and
+    /// thus generally should not be withheld in a thinning algorithm.
     void SetKeyPoint(bool flag)
     {
         m_flags[eKeyPointBit] = flag;
     }
 
+    /// Tests if this point is considered to be a model keypoint.
     bool IsKeyPoint() const
     {
         return m_flags[eKeyPointBit];
     }
 
+    /// SetTests if this point should excluded from processing.
     void SetWithheld(bool flag)
     {
         m_flags[eWithheldBit] = flag;
     }
 
+    /// Tests if this point should excluded from processing.
     bool IsWithheld() const
     {
         return m_flags[eWithheldBit];
     }
 
+    /// Compares this classification object with other one.
+    /// Comparison is preformed against set of bit flags stored 
+    /// in both objects.
     bool equal(LASClassification const& other) const
     {
         return (other.m_flags == m_flags);
@@ -203,11 +237,13 @@ private:
     }
 };
 
+/// Equal-to operator implemented in terms of LASClassification::equal.
 inline bool operator==(LASClassification const& lhs, LASClassification const& rhs)
 {
     return lhs.equal(rhs);
 }
 
+/// Not-equal-to operator implemented in terms of LASClassification::equal.
 inline bool operator!=(LASClassification const& lhs, LASClassification const& rhs)
 {
     return (!(lhs == rhs));
@@ -215,7 +251,9 @@ inline bool operator!=(LASClassification const& lhs, LASClassification const& rh
 
 /// The output stream operator is based on std::bitset<N>::operator<<.
 /// It outputs classification flags in form of string.
-/// Effects promised as by Standard for Programming Language C++, 23.3.5.2:
+/// Effects promised as by 
+/// @link http://www.open-std.org/Jtc1/sc22/wg21/ Standard for Programming Language C++ @endlink,
+/// 23.3.5.2:
 /// Each character is determined by the value of its corresponding bit
 /// position in *this. Character position N - 1 corresponds to bit position
 /// zero. Subsequent decreasing character positions correspond to increasing
