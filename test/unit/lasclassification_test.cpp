@@ -87,7 +87,6 @@ namespace tut
         ensure_not(c.IsSynthetic());
         ensure_not(c.IsKeyPoint());
         ensure_not(c.IsWithheld());
-
         ensure_equals(c, bitset_type(std::string("00011111")));
     }
 
@@ -128,6 +127,56 @@ namespace tut
     template<>
     void to::test<8>()
     {
+        liblas::LASClassification cpy(m_default);
+     
+        ensure_equals(cpy, m_default);
+    }
+
+    template<>
+    template<>
+    void to::test<9>()
+    {
+        liblas::LASClassification c(7, true, false, true);
+        liblas::LASClassification cpy(c);
+     
+        ensure_equals(cpy.GetClass(), 7);
+        ensure_not(cpy.IsKeyPoint());
+        ensure(cpy.IsWithheld());
+        ensure(cpy.IsSynthetic());
+        ensure_equals(cpy, bitset_type(std::string("10100111")));
+        ensure_equals(cpy, c);
+    }
+
+    template<>
+    template<>
+    void to::test<10>()
+    {
+        liblas::LASClassification cpy;
+        cpy = m_default;
+     
+        ensure_equals(cpy, m_default);
+    }
+
+    template<>
+    template<>
+    void to::test<11>()
+    {
+        liblas::LASClassification c(7, true, false, true);
+        liblas::LASClassification cpy = c;
+     
+        ensure_equals(cpy.GetClass(), 7);
+        ensure_not(cpy.IsKeyPoint());
+        ensure(cpy.IsWithheld());
+        ensure(cpy.IsSynthetic());
+        ensure_equals(cpy, bitset_type(std::string("10100111")));
+        ensure_equals(cpy, c);
+    }
+
+
+    template<>
+    template<>
+    void to::test<12>()
+    {
         liblas::LASClassification c;
 
         c.SetClass(0);
@@ -141,7 +190,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<9>()
+    void to::test<13>()
     {
         liblas::LASClassification c;
 
@@ -166,7 +215,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<10>()
+    void to::test<14>()
     {
         liblas::LASClassification c;
 
@@ -191,7 +240,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<11>()
+    void to::test<15>()
     {
         liblas::LASClassification c;
 
@@ -216,7 +265,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<12>()
+    void to::test<16>()
     {
         liblas::LASClassification c;
 
@@ -240,7 +289,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<13>()
+    void to::test<17>()
     {
         liblas::LASClassification c;
 
@@ -268,7 +317,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<14>()
+    void to::test<18>()
     {
         liblas::LASClassification c;
 
@@ -298,7 +347,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<15>()
+    void to::test<19>()
     {
         std::string const sbits("00000000");
 
@@ -311,7 +360,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<16>()
+    void to::test<20>()
     {
         std::string const sbits("00000011");
 
@@ -325,7 +374,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<17>()
+    void to::test<21>()
     {
         std::string const sbits("10000001");
 
@@ -341,7 +390,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<18>()
+    void to::test<22>()
     {
         std::string const sbits("10110000");
 
@@ -359,7 +408,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<19>()
+    void to::test<23>()
     {
         std::string const sbits("00000000");
         liblas::LASClassification::bitset_type bits(sbits);
@@ -374,7 +423,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<20>()
+    void to::test<24>()
     {
         std::string const sbits("00000011");
         liblas::LASClassification::bitset_type bits(sbits);
@@ -389,7 +438,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<21>()
+    void to::test<25>()
     {
         std::string const sbits("10000001");
         liblas::LASClassification::bitset_type bits(sbits);
@@ -404,7 +453,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<22>()
+    void to::test<26>()
     {
         std::string const sbits("10110000");
         liblas::LASClassification::bitset_type bits(sbits);
@@ -419,7 +468,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<23>()
+    void to::test<27>()
     {
         std::string const cn("Created, never classified");
         ensure_equals(m_default.GetClassName(), cn);
@@ -427,7 +476,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<24>()
+    void to::test<28>()
     {
         std::string const cn("Low Point (noise)");
         m_default.SetClass(7);
@@ -436,7 +485,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<25>()
+    void to::test<29>()
     {
         std::string const cn("Reserved for ASPRS Definition");
         m_default.SetClass(31);
@@ -445,7 +494,7 @@ namespace tut
 
     template<>
     template<>
-    void to::test<26>()
+    void to::test<30>()
     {
         try
         {
