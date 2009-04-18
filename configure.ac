@@ -215,6 +215,42 @@ AC_SUBST([GEOTIFF_PREFIX])
 AM_CONDITIONAL([GEOTIFF_IS_CONFIG], [test ! x$GEOTIFF_CONFIG = xno])
 
 
+
+dnl #########################################################################
+dnl Determine SpatialIndex Support
+dnl #########################################################################
+
+AC_ARG_WITH([spatialindex],
+    AC_HELP_STRING([--with-spatialindex=ARG], [libspatialindex library to use (no or path)]),,)
+
+if test "${SPATIALINDEX_CONFIG}" != "no" ; then
+    AC_MSG_CHECKING([for spatialindex RTree.h])
+    if test -f ${with_spatialindex}/include/spatialindex/RTree.h ; then
+        SPATIALINDEX_INC="-I$with_spatialindex/include/"
+        SPATIALINDEX_CONFIG="yes"
+    	AC_MSG_RESULT([yes])
+    else
+        SPATIALINDEX_CONFIG="no"
+    	AC_MSG_RESULT([no])
+    fi
+fi
+    
+AC_MSG_CHECKING([for libspatialindex])
+if test "${SPATIALINDEX_CONFIG}" = "no" ; then
+    HAVE_SPATIALINDEX="no"
+    AC_MSG_RESULT([no])
+else
+    LIBS="-L$with_spatialindex/lib -lspatialindex $LIBS"
+    HAVE_SPATIALINDEX="yes"
+    AC_MSG_RESULT([yes])
+fi
+
+AC_SUBST([SPATIALINDEX_INC])
+AC_SUBST([SPATIALINDEX_PREFIX])
+AM_CONDITIONAL([SPATIALINDEX_IS_CONFIG], [test ! x$SPATIALINDEX_CONFIG = xno])
+
+
+
 dnl Oracle Checks
 
 ORACLE_OCI_REQ_VERSION="10.0.1"
@@ -275,6 +311,14 @@ if test "${HAVE_GEOTIFF}" != "no" ; then
     LOC_MSG([   - libgeotiff............: ${GEOTIFF_CONFIG}])
     if test -n "${GEOTIFF_INC}" ; then
         LOC_MSG([   - INCLUDE directories...: ${GEOTIFF_INC}])
+    fi
+fi
+
+LOC_MSG([  Spatial Index support..: ${HAVE_SPATIALINDEX}])
+if test "${HAVE_GEOTIFF}" != "no" ; then
+    LOC_MSG([   - libspatialindex....: ${SPATIALINDEX_CONFIG}])
+    if test -n "${SPATIALINDEX_INC}" ; then
+        LOC_MSG([   - INCLUDE directories...: ${SPATIALINDEX_INC}])
     fi
 fi
 LOC_MSG()

@@ -9,7 +9,11 @@ if GEOTIFF_IS_CONFIG
 GEOTIFF_CPPFLAGS = @GEOTIFF_INC@ -DHAVE_LIBGEOTIFF=1
 endif
 
-AM_CPPFLAGS = $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) -I../include -I../include/detail
+if SPATIALINDEX_IS_CONFIG
+SPATIALINDEX_CPPFLAGS = @SPATIALINDEX_INC@ -DHAVE_SPATIALINDEX=1
+endif
+
+AM_CPPFLAGS = $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) $(SPATIALINDEX_CPPFLAGS) -I../include -I../include/detail
 
 lib_LTLIBRARIES = liblas.la
 
@@ -19,6 +23,7 @@ liblas_la_SOURCES = \
 	laserror.cpp \
 	laspoint.cpp \
 	lasheader.cpp \
+	lasindex.cpp \
 	lasvariablerecord.cpp \
 	lasreader.cpp \
 	laswriter.cpp \

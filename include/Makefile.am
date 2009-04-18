@@ -5,11 +5,12 @@ nobase_las_HEADERS = \
     liblas/exception.hpp \
     liblas/guid.hpp \
     liblas/iterator.hpp \
-    liblas/lasclassification.hpp \					    
+    liblas/lasclassification.hpp \
     liblas/lascolor.hpp \
     liblas/laserror.hpp \
     liblas/lasfile.hpp \
     liblas/lasheader.hpp \
+	liblas/lasindex.hpp \
     liblas/laspoint.hpp \
     liblas/lasreader.hpp \
     liblas/lasvariablerecord.hpp \
