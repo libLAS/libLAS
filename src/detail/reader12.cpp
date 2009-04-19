@@ -48,11 +48,12 @@
 #include <liblas/lascolor.hpp>
 
 // std
+#include <cassert>
+#include <cstdlib> // std::size_t
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include <cstdlib> // std::size_t
-#include <cassert>
+#include <vector>
 
 namespace liblas { namespace detail { namespace v12 {
 
