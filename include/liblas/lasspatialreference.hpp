@@ -79,7 +79,7 @@
 #include <string>
 
 // Fake out the compiler if we don't have libgeotiff
-#if !defined(LIBGEOTIFF_VERSION) && !defined(HAVE_LIBGEOTIFF)
+#ifndef HAVE_LIBGEOTIFF
 typedef struct GTIFS *GTIF;
 typedef struct ST_TIFFS *ST_TIFF;
 #endif
