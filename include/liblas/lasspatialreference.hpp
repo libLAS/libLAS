@@ -65,7 +65,7 @@
 #endif
 
 // GeoTIFF
-#if !defined(LIBGEOTIFF_VERSION) && !defined(HAVE_LIBGEOTIFF) 
+#ifdef HAVE_LIBGEOTIFF
 #include <geotiff.h>
 #include <geo_simpletags.h>
 #include <geo_normalize.h>
@@ -79,7 +79,7 @@
 #include <string>
 
 // Fake out the compiler if we don't have libgeotiff
-#ifndef HAVE_LIBGEOTIFF
+#if !defined(LIBGEOTIFF_VERSION) && !defined(HAVE_LIBGEOTIFF) 
 typedef struct GTIFS *GTIF;
 typedef struct ST_TIFFS *ST_TIFF;
 #endif
