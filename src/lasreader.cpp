@@ -50,6 +50,7 @@
 #include <cassert>
 #include <iostream>
 
+
 namespace liblas
 {
 
@@ -57,6 +58,7 @@ LASReader::LASReader(std::istream& ifs) :
     m_pimpl(detail::ReaderFactory::Create(ifs))
 {
     //MakePIMPL(ifs);
+    m_doindex = false;
     Init();
 }
 
@@ -90,6 +92,7 @@ bool LASReader::ReadNextPoint()
 bool LASReader::ReadPointAt(std::size_t n)
 {
     bool ret = m_pimpl->ReadPointAt(n, m_point, m_header);
+    if (m_doindex) m_index->insert(m_point, n);
     return ret;
 }
 
@@ -121,6 +124,7 @@ void LASReader::Init()
 
     m_pimpl->ReadGeoreference(m_header);
     m_pimpl->Reset(m_header);
+
 }
 
 std::istream& LASReader::GetStream() const
@@ -144,6 +148,23 @@ bool LASReader::SetSRS(const LASSpatialReference& srs)
     return true;
 }
 
+void LASReader::Index()
+{
+    m_doindex = true;
+    m_index = new LASIndex();
+}
+
+void LASReader::Index(std::string& filename)
+{
+    m_doindex = true;
+    m_index = new LASIndex(filename);
+
+}
+
+LASIndex* LASReader::GetIndex()
+{
+    return m_index;
+}
 
 } // namespace liblas
 

@@ -47,6 +47,7 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
+#include <liblas/lasindex.hpp>
 #include <liblas/detail/fwd.hpp>
 // std
 #include <iosfwd>
@@ -83,6 +84,11 @@ public:
 
     /// The operator is not const because it updates file stream position.
     LASPoint const& operator[](std::size_t n);
+    
+    void Index(std::string& filename);
+    void Index();
+
+    LASIndex* GetIndex();
 
 private:
 
@@ -96,6 +102,9 @@ private:
     LASHeader m_header;
     LASPoint m_point;
     std::vector<LASVariableRecord> m_vlrs;
+    
+    LASIndex* m_index;
+    bool m_doindex;
 };
 
 } // namespace liblas
