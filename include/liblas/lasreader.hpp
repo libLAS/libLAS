@@ -103,8 +103,8 @@ private:
     LASPoint m_point;
     std::vector<LASVariableRecord> m_vlrs;
     
-    LASIndex* m_index;
     bool m_doindex;
+    LASIndex* m_index;
 };
 
 } // namespace liblas

@@ -69,7 +69,8 @@ public:
     LASIndex(std::string& filename);
     /// Copy constructor.
     LASIndex(LASIndex const& other);
-
+    ~LASIndex();
+    
     /// Assignment operator.
     LASIndex& operator=(LASIndex const& rhs);
     

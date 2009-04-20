@@ -118,4 +118,6 @@ int main(int argc, char* argv[])
     std::vector<liblas::uint32_t>* ids = idx->intersects(289815.12,4320979.06, 289818.01,4320982.59);
     
     std::cout << "Vec length" << ids->size() << std::endl;
+    delete reader;
+    delete istrm;
 }

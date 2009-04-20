@@ -55,10 +55,10 @@ namespace liblas
 {
 
 LASReader::LASReader(std::istream& ifs) :
-    m_pimpl(detail::ReaderFactory::Create(ifs))
+    m_pimpl(detail::ReaderFactory::Create(ifs)),
+    m_doindex(false)
 {
-    //MakePIMPL(ifs);
-    m_doindex = false;
+    m_index = 0;
     Init();
 }
 
@@ -66,6 +66,7 @@ LASReader::~LASReader()
 {
     // empty, but required so we can implement PIMPL using
     // std::auto_ptr with incomplete type (Reader).
+    if (m_index != 0) delete m_index;
 }
 
 std::size_t LASReader::GetVersion() const

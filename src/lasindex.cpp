@@ -43,15 +43,6 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 
-//std
-// #include <algorithm>
-// #include <fstream>
-// #include <stdexcept>
-// #include <string>
-// #include <vector>
-// #include <cstring> // std::memset, std::memcpy, std::strncpy
-// #include <cassert>
-// #include <ctime>
 
 
 namespace liblas
@@ -62,7 +53,6 @@ LASIndex::LASIndex()
 {
     m_storage = SpatialIndex::StorageManager::createNewLASStorageManager();
     Init();
-    // m_storage = SpatialIndex::StorageManager::createNewMemoryStorageManager();
 }
 
 void LASIndex::Init()
@@ -97,12 +87,22 @@ LASIndex::LASIndex(std::string& filename)
     int ret = stat(indexname.c_str(),&stats);
     if (!ret) {
         std::cout << "loading existing index " << indexname << std::endl;
-        m_storage = SpatialIndex::StorageManager::loadDiskStorageManager(filename);
+        try{
+            m_storage = SpatialIndex::StorageManager::loadDiskStorageManager(filename);
+        } catch (Tools::IllegalStateException& e) {
+            std::string s = e.what();
+            std::cout << "error loading index" << s <<std::endl; exit(1);
+        }
     }
     else
     {
         std::cout << "Creating new index ... " << std::endl;
-        m_storage = SpatialIndex::StorageManager::createNewDiskStorageManager(filename, 24);
+        try{
+            m_storage = SpatialIndex::StorageManager::createNewDiskStorageManager(filename, 3);
+        } catch (Tools::IllegalStateException& e) {
+            std::string s = e.what();
+            std::cout << "error creating index" << s <<std::endl; exit(1);
+        }
 	}
 
     Init();
@@ -112,6 +112,17 @@ LASIndex::LASIndex(LASIndex const& other)
     std::cout << "Index copy called" << std::endl;
 
 }
+
+
+LASIndex::~LASIndex() 
+{
+    std::cout << "~LASIndex called" << std::endl;
+    delete m_rtree;
+    delete m_buffer;
+    delete m_storage;
+
+}
+
 
 LASIndex& LASIndex::operator=(LASIndex const& rhs)
 {
