@@ -35,6 +35,7 @@ std::istream* OpenInput(std::string filename)
     {
         delete istrm;
         throw std::runtime_error("Reading stream was not able to be created");
+        exit(1);
     }
     return istrm;
 }
@@ -59,6 +60,7 @@ std::ostream* OpenOutput(std::string filename)
     {
         delete ostrm;
         throw std::runtime_error("Writing stream was not able to be created");
+        exit(1);
     }
     
     return ostrm;
@@ -123,12 +125,13 @@ bool ReadHeader(ScanHdr* hdr, std::istream* istrm)
 
 bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr) 
 {
+    ScanPnt* point = new ScanPnt;
+    ScanRow* row = new ScanRow;
     while (true)
     {
 
 ///std::cout << "We have header version" << std::endl;
-            ScanPnt* point = new ScanPnt;
-            ScanRow* row = new ScanRow;
+
             try
             {
                 // std::cout << "stream position is: " << strm->tellg() << std::endl;
@@ -228,6 +231,8 @@ bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr)
             }   
 
     }
+    delete point;
+    delete row;
     return true;    
 
 }
