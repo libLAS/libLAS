@@ -435,7 +435,7 @@ private:
         detail::SHA1 sha1;
         sha1.Input(namespace_guid.data_, namespace_guid.static_size);
         sha1.Input(name, name_length);
-        unsigned int digest[5];
+		unsigned int digest[5] = { 0 };
         
         if (sha1.Result(digest) == false)
         {

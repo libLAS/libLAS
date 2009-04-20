@@ -10,6 +10,7 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/laswriter.hpp>
 #include <tut/tut.hpp>
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include "liblas_test.hpp"
@@ -30,7 +31,11 @@ namespace tut
         ~lasfile_data()
         {
             // remove temporary file after each test case
-            std::remove(tmpfile_.c_str());
+            int const ret = std::remove(tmpfile_.c_str());
+			if (0 != ret)
+			{
+				std::cerr << "Failed to remove \'" << tmpfile_ << "\' file\n";
+			}
         }
     };
 
