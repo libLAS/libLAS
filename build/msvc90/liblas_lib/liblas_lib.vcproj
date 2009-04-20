@@ -41,6 +41,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				UseUnicodeResponseFiles="true"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include\liblas;..\..\include\liblas\detail"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
@@ -51,6 +52,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				DebugInformationFormat="4"
+				EnablePREfast="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

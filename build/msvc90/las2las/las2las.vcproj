@@ -23,6 +23,7 @@
 			ConfigurationType="1"
 			InheritedPropertySheets="..\liblas.vsprops"
 			CharacterSet="1"
+			EnableManagedIncrementalBuild="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,6 +42,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				UseUnicodeResponseFiles="true"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(LIBLAS_DIR)\include\liblas\capi"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
@@ -51,6 +53,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
+				EnablePREfast="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
