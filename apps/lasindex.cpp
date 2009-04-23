@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
     LASHeader header = reader->GetHeader();
     std::cout << "number of points: " << header.GetPointRecordsCount() << std::endl;
     
-    for (int i=0; i< 23; i++) {
+    for (int i=0; i< header.GetPointRecordsCount(); i++) {
         bool read = reader->ReadPointAt(i);
         LASPoint p = reader->GetPoint();
         std::cout.precision(2);

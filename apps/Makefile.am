@@ -21,7 +21,11 @@ ts2las_SOURCES = ts2las.cpp
 lasindex_SOURCES = lasindex.cpp
 
 
-bin_PROGRAMS = lasinfo las2las lasmerge las2txt txt2las ts2las lasindex
+bin_PROGRAMS = lasinfo las2las lasmerge las2txt txt2las ts2las 
+
+if SPATIALINDEX_IS_CONFIG
+bin_PROGRAMS += lasindex
+endif
 
 bin_SCRIPTS = liblas-config
 

@@ -23,7 +23,6 @@ liblas_la_SOURCES = \
 	laserror.cpp \
 	laspoint.cpp \
 	lasheader.cpp \
-	lasindex.cpp \
 	lasvariablerecord.cpp \
 	lasreader.cpp \
 	laswriter.cpp \
@@ -43,5 +42,8 @@ liblas_la_SOURCES = \
 if GDAL_IS_CONFIG
 liblas_la_SOURCES += gt_wkt_srs.cpp
 endif
-            
+
+if SPATIALINDEX_IS_CONFIG
+liblas_la_SOURCES += lasindex.cpp 
+endif
 liblas_la_LDFLAGS = -version-info 1:0:0

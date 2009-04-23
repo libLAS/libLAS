@@ -58,7 +58,9 @@ LASReader::LASReader(std::istream& ifs) :
     m_pimpl(detail::ReaderFactory::Create(ifs)),
     m_doindex(false)
 {
+#ifdef USE_SPATIALINDEX
     m_index = 0;
+#endif
     Init();
 }
 
@@ -66,7 +68,9 @@ LASReader::~LASReader()
 {
     // empty, but required so we can implement PIMPL using
     // std::auto_ptr with incomplete type (Reader).
+#ifdef USE_SPATIALINDEX
     if (m_index != 0) delete m_index;
+#endif
 }
 
 std::size_t LASReader::GetVersion() const
@@ -93,7 +97,10 @@ bool LASReader::ReadNextPoint()
 bool LASReader::ReadPointAt(std::size_t n)
 {
     bool ret = m_pimpl->ReadPointAt(n, m_point, m_header);
+
+#ifdef USE_SPATIALINDEX
     if (m_doindex) m_index->insert(m_point, n);
+#endif
     return ret;
 }
 
@@ -152,20 +159,25 @@ bool LASReader::SetSRS(const LASSpatialReference& srs)
 void LASReader::Index()
 {
     m_doindex = true;
+#ifdef USE_SPATIALINDEX
     m_index = new LASIndex();
+#endif
 }
 
 void LASReader::Index(std::string& filename)
 {
     m_doindex = true;
+#ifdef USE_SPATIALINDEX
     m_index = new LASIndex(filename);
-
+#endif
 }
+
+#ifdef USE_SPATIALINDEX
 
 LASIndex* LASReader::GetIndex()
 {
     return m_index;
 }
-
+#endif
 } // namespace liblas
 
