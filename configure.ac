@@ -253,7 +253,7 @@ AM_CONDITIONAL([SPATIALINDEX_IS_CONFIG], [test ! x$SPATIALINDEX_CONFIG = xno])
 
 dnl Oracle Checks
 
-ORACLE_OCI_REQ_VERSION="10.0.1"
+ORACLE_OCI_REQ_VERSION="9.0.2"
 HAVE_ORACLE_OCI="no"
 AX_LIB_ORACLE_OCI($ORACLE_OCI_REQ_VERSION)
 AM_CONDITIONAL([OCI_IS_CONFIG], [test ! x$HAVE_ORACLE_OCI = xno])
@@ -314,13 +314,22 @@ if test "${HAVE_GEOTIFF}" != "no" ; then
     fi
 fi
 
-LOC_MSG([  Spatial Index support..: ${HAVE_SPATIALINDEX}])
+LOC_MSG([  Spatial Index support....: ${HAVE_SPATIALINDEX}])
 if test "${HAVE_GEOTIFF}" != "no" ; then
-    LOC_MSG([   - libspatialindex....: ${SPATIALINDEX_CONFIG}])
+    LOC_MSG([   - libspatialindex.......: ${SPATIALINDEX_CONFIG}])
     if test -n "${SPATIALINDEX_INC}" ; then
         LOC_MSG([   - INCLUDE directories...: ${SPATIALINDEX_INC}])
     fi
 fi
+
+LOC_MSG([  Oracle support...........: ${HAVE_ORACLE_OCI}])
+if test "${HAVE_ORACLE_OCI}" != "no" ; then
+    LOC_MSG([   - oci....: ${SPATIALINDEX_IS_CONFIG}])
+    if test -n "${ORACLE_OCI_CFLAGS}" ; then
+        LOC_MSG([   - INCLUDE directories...: ${ORACLE_OCI_CFLAGS}])
+    fi
+fi
+
 LOC_MSG()
 LOC_MSG([  LIBS.....................: ${LIBS}])
 LOC_MSG()
