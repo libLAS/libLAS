@@ -101,8 +101,15 @@ AC_DEFUN([AX_LIB_ORACLE_OCI],
             dnl Secondary path to OCI headers used by older versions
             oracle_include_dir2="$oracle_home_dir/rdbms/demo"
 
+            dnl Another path to OCI headers used by instant client
+            oracle_include_dir3="$oracle_home_dir/sdk/include"
+
             dnl Library path
             oracle_lib_dir="$oracle_home_dir/lib"
+
+            dnl Library path for instant client
+            oracle_lib_dir="$oracle_home_dir"            
+            
         elif test "$oracle_home_dir" = "yes"; then
             want_oracle_but_no_path="yes"
         fi
@@ -141,6 +148,11 @@ Please, locate Oracle directories using --with-oci or \
             CPPFLAGS="$CPPFLAGS -I$oracle_include_dir2"
         fi
 
+        dnl Additional path for instant client
+        if test -n "$oracle_include_dir3"; then
+            CPPFLAGS="$CPPFLAGS -I$oracle_include_dir3"
+        fi
+
         dnl Depending on later Oracle version detection,
         dnl -lnnz10 flag might be removed for older Oracle < 10.x
         saved_LDFLAGS="$LDFLAGS"
@@ -175,6 +187,11 @@ Please, locate Oracle directories using --with-oci or \
                 ORACLE_OCI_CFLAGS="$ORACLE_OCI_CFLAGS -I$oracle_include_dir2"
             fi
 
+            if test -n "$oracle_include_dir3"; then
+                ORACLE_OCI_CFLAGS="$ORACLE_OCI_CFLAGS -I$oracle_include_dir3"
+                oracle_include_dir=$oracle_include_dir3
+            fi
+
             oci_header_found="yes"
             AC_MSG_RESULT([yes])
             ],
@@ -193,6 +210,7 @@ Please, locate Oracle directories using --with-oci or \
             AC_MSG_CHECKING([for Oracle OCI libraries in $oracle_lib_dir])
 
             AC_LANG_PUSH(C++)
+            echo $oci_header_found
             AC_LINK_IFELSE([
                 AC_LANG_PROGRAM([[@%:@include <oci.h>]],
                     [[
