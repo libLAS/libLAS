@@ -108,7 +108,7 @@ AC_DEFUN([AX_LIB_ORACLE_OCI],
             oracle_lib_dir="$oracle_home_dir/lib"
 
             dnl Library path for instant client
-            oracle_lib_dir="$oracle_home_dir"            
+            oracle_lib_dir2="$oracle_home_dir"            
             
         elif test "$oracle_home_dir" = "yes"; then
             want_oracle_but_no_path="yes"
@@ -156,7 +156,7 @@ Please, locate Oracle directories using --with-oci or \
         dnl Depending on later Oracle version detection,
         dnl -lnnz10 flag might be removed for older Oracle < 10.x
         saved_LDFLAGS="$LDFLAGS"
-        oci_ldflags="-L$oracle_lib_dir -lclntsh"
+        oci_ldflags="-L$oracle_lib_dir -Loracle_lib_dir2 -lclntsh"
         LDFLAGS="$LDFLAGS $oci_ldflags"
 
         dnl
