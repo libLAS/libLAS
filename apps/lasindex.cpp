@@ -6,6 +6,7 @@
 #include <liblas/lascolor.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/lasheader.hpp>
+#include <liblas/lasindex.hpp>
 
 #include <iostream>
 #include <fstream>

@@ -49,7 +49,7 @@
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 
-#ifdef USE_SPATIALINDEX
+#ifdef HAVE_SPATIALINDEX
 #include <liblas/lasindex.hpp>
 #endif
 
@@ -92,7 +92,7 @@ public:
     void Index(std::string& filename);
     void Index();
 
-#ifdef USE_SPATIALINDEX
+#ifdef HAVE_SPATIALINDEX
     LASIndex* GetIndex();
 #endif
 
@@ -111,7 +111,7 @@ private:
     
     bool m_doindex;
 
-#ifdef USE_SPATIALINDEX
+#ifdef HAVE_SPATIALINDEX
     LASIndex* m_index;
 #else
     typedef void* LASIndex;

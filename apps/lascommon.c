@@ -1,6 +1,6 @@
 /* liblas */
 #include <liblas.h>
-#ifdef HAVE_GEOTIFF
+#ifdef HAVE_LIBGEOTIFF
 #include <geotiff.h>
 #include <geo_normalize.h>
 #endif
@@ -405,12 +405,12 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     uint32_t nVLR = 0;
     int i = 0;
 
-#ifdef HAVE_GEOTIFF
+#ifdef HAVE_LIBGEOTIFF
     const GTIF* pGTIF = NULL;
-    GTIFDefn defn;
+//    GTIFDefn defn;
 #else
     const void* pGTIF = NULL;
-    const void* defn =NULL;
+//    const void* defn =NULL;
 #endif    
 
     pszSignature = LASHeader_GetFileSignature(header);
