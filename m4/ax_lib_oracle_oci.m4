@@ -156,7 +156,7 @@ Please, locate Oracle directories using --with-oci or \
         dnl Depending on later Oracle version detection,
         dnl -lnnz10 flag might be removed for older Oracle < 10.x
         saved_LDFLAGS="$LDFLAGS"
-        oci_ldflags="-L$oracle_lib_dir -Loracle_lib_dir2 -lclntsh"
+        oci_ldflags="-L$oracle_lib_dir -L$oracle_lib_dir2 -lclntsh"
         LDFLAGS="$LDFLAGS $oci_ldflags"
 
         dnl
@@ -189,7 +189,6 @@ Please, locate Oracle directories using --with-oci or \
 
             if test -n "$oracle_include_dir3"; then
                 ORACLE_OCI_CFLAGS="$ORACLE_OCI_CFLAGS -I$oracle_include_dir3"
-                oracle_include_dir=$oracle_include_dir3
             fi
 
             oci_header_found="yes"
@@ -210,7 +209,6 @@ Please, locate Oracle directories using --with-oci or \
             AC_MSG_CHECKING([for Oracle OCI libraries in $oracle_lib_dir])
 
             AC_LANG_PUSH(C++)
-            echo $oci_header_found
             AC_LINK_IFELSE([
                 AC_LANG_PROGRAM([[@%:@include <oci.h>]],
                     [[
