@@ -258,6 +258,11 @@ HAVE_ORACLE_OCI="no"
 AX_LIB_ORACLE_OCI($ORACLE_OCI_REQ_VERSION)
 AM_CONDITIONAL([OCI_IS_CONFIG], [test ! x$HAVE_ORACLE_OCI = xno])
 
+if test "${HAVE_ORACLE_OCI}" != "no" ; then
+    LIBS="$ORACLE_OCI_LDFLAGS $LIBS"
+fi
+
+
 
 dnl #########################################################################
 dnl Determine other features of compiler

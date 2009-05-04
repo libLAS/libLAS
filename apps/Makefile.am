@@ -10,7 +10,11 @@ if SPATIALINDEX_IS_CONFIG
 SPATIALINDEX_CPPFLAGS = @SPATIALINDEX_INC@/spatialindex @SPATIALINDEX_INC@ -DHAVE_SPATIALINDEX=1
 endif
 
-AM_CPPFLAGS = $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) $(SPATIALINDEX_CPPFLAGS) -I../include/liblas/capi -I../include
+if OCI_IS_CONFIG
+OCI_CPPFLAGS = @ORACLE_OCI_CFLAGS@ -DHAVE_ORACLE=1
+endif
+
+AM_CPPFLAGS = $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) $(SPATIALINDEX_CPPFLAGS) $(OCI_CPPFLAGS) -I../include/liblas/capi -I../include
 
 lasinfo_SOURCES = lasinfo.c lascommon.c
 las2las_SOURCES = las2las.c lascommon.c
@@ -20,11 +24,18 @@ txt2las_SOURCES = txt2las.c
 ts2las_SOURCES = ts2las.cpp
 lasindex_SOURCES = lasindex.cpp
 
-
 bin_PROGRAMS = lasinfo las2las lasmerge las2txt txt2las ts2las 
 
 if SPATIALINDEX_IS_CONFIG
 bin_PROGRAMS += lasindex
+endif
+
+if OCI_IS_CONFIG 
+if GDAL_IS_CONFIG
+AM_CPPFLAGS += -Igeoraster
+las2oci_SOURCES = las2oci.cpp georaster/oci_wrapper.cpp
+bin_PROGRAMS += las2oci
+endif
 endif
 
 bin_SCRIPTS = liblas-config
