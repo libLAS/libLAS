@@ -324,7 +324,7 @@ fi
 
 LOC_MSG([  Oracle support...........: ${HAVE_ORACLE_OCI}])
 if test "${HAVE_ORACLE_OCI}" != "no" ; then
-    LOC_MSG([   - oci....: ${SPATIALINDEX_IS_CONFIG}])
+    LOC_MSG([   - oci...................: ${HAVE_ORACLE_OCI}])
     if test -n "${ORACLE_OCI_CFLAGS}" ; then
         LOC_MSG([   - INCLUDE directories...: ${ORACLE_OCI_CFLAGS}])
     fi
