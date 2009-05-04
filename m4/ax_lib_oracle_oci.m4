@@ -197,7 +197,7 @@ Please, locate Oracle directories using --with-oci or \
             ],
             [
             oci_header_found="no"
-            AC_MSG_RESULT([not found])
+            AC_MSG_RESULT([ header not found])
             ]
         )
         AC_LANG_POP([C++])
@@ -226,7 +226,7 @@ if (envh) OCIHandleFree(envh, OCI_HTYPE_ENV);
                 ],
                 [
                 oci_lib_found="no"
-                AC_MSG_RESULT([not found])
+                AC_MSG_RESULT([library not found])
                 ]
             )
             AC_LANG_POP([C++])
