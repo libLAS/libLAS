@@ -59,4 +59,55 @@ int main(int argc, char* argv[])
     
     OWConnection* con = new OWConnection("lidar","lidar","ubuntu/crrel.local");
     if (con->Succed()) printf("succeded");
+
+
+ int   iCol = 0;
+    char  szField[OWNAME];
+    int   hType = 0;
+    int   nSize = 0;
+    int   nPrecision = 0;
+    signed short nScale = 0;
+
+    char szColumnList[OWTEXT];
+    szColumnList[0] = '\0';
+    OCIParam* phDesc = NULL;
+
+    const char* pszVATName="base";
+    phDesc = con->GetDescription( (char*) pszVATName );
+    while( con->GetNextField(
+                phDesc, iCol, szField, &hType, &nSize, &nPrecision, &nScale ) )
+    {
+        printf("field ... %s",szField);
+        switch( hType )
+        {
+            case SQLT_FLT:
+                printf("float...\n");
+                break;
+            case SQLT_NUM:
+                printf ("number...\n");
+                break;
+            case SQLT_CHR:
+            case SQLT_AFC:
+            case SQLT_DAT:
+            case SQLT_DATE:
+            case SQLT_TIMESTAMP:
+            case SQLT_TIMESTAMP_TZ:
+            case SQLT_TIMESTAMP_LTZ:
+            case SQLT_TIME:
+            case SQLT_TIME_TZ:
+                printf ("character...\n");
+                break;
+            default:
+                CPLDebug("GEORASTER", "VAT (%s) Column (%s) type (%d) not supported"
+                    "as GDAL RAT", pszVATName, szField, hType );
+                break;
+        }
+        // strcpy( szColumnList, CPLSPrintf( "%s substr(%s,1,%d),",
+        //     szColumnList, szField, MIN(nSize,OWNAME) ) );
+
+        iCol++;
+    }
+
+
+
 }
