@@ -40,9 +40,9 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  """
-import core
+from . import core
 import ctypes
-import vlr
+from . import vlr
 
 class SRS(object):
     def __init__(self, owned=True, handle=None):

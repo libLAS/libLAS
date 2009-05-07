@@ -40,11 +40,11 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  """
-import core
+from . import core
 import datetime
-import guid
-import vlr
-import srs
+from . import guid
+from . import vlr
+from . import srs
 
 def leap_year(year):
     if (year % 400) == 0:

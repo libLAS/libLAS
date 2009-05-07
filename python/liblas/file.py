@@ -40,9 +40,9 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  """
-import core
-import header as lasheader
-import point
+from . import core
+from . import header as lasheader
+from . import point
 
 import os
 import types
