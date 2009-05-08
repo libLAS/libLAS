@@ -180,8 +180,8 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
         if (cls & 128) summary->classification_withheld++;
           
           /*
-          // if (lasreader->point.point_source_ID < point_min.point_source_ID) point_min.point_source_ID = lasreader->point.point_source_ID;
-          // else if (lasreader->point.point_source_ID > point_max.point_source_ID) point_max.point_source_ID = lasreader->point.point_source_ID;
+          if (lasreader->point.point_source_ID < point_min.point_source_ID) point_min.point_source_ID = lasreader->point.point_source_ID;
+          else if (lasreader->point.point_source_ID > point_max.point_source_ID) point_max.point_source_ID = lasreader->point.point_source_ID;
 
           */
         p  = LASReader_GetNextPoint(reader);
@@ -407,10 +407,10 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
 
 #ifdef HAVE_LIBGEOTIFF
     const GTIF* pGTIF = NULL;
-//    GTIFDefn defn;
+    /* GTIFDefn defn; */
 #else
     const void* pGTIF = NULL;
-//    const void* defn =NULL;
+    /* const void* defn =NULL; */
 #endif    
 
     pszSignature = LASHeader_GetFileSignature(header);
@@ -508,8 +508,8 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
 #ifdef HAVE_LIBGEOTIFF
     if (pGTIF) GTIFPrint((GTIF*)pGTIF, 0, 0);
 
-    // GTIFGetDefn(pGTIF, &defn);
-    // GTIFPrintDefn(&defn, file);
+    /* GTIFGetDefn(pGTIF, &defn); */
+    /* GTIFPrintDefn(&defn, file); */
 #endif
     if (bWKT)
     {
