@@ -168,6 +168,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\liblas\lasclassification.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\liblas\lascolor.hpp"
 					>
 				</File>
@@ -181,6 +185,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\include\liblas\lasheader.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\liblas\lasindex.hpp"
 					>
 				</File>
 				<File
@@ -277,7 +285,15 @@
 			Name="src"
 			>
 			<File
+				RelativePath="..\..\..\src\gt_wkt_srs.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\las_c_api.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lasclassification.cpp"
 				>
 			</File>
 			<File
@@ -294,6 +310,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\lasheader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lasindex.cpp"
 				>
 			</File>
 			<File
