@@ -43,7 +43,11 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 
-
+#include <cstddef>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 namespace liblas
 {
@@ -76,8 +80,10 @@ void LASIndex::Init()
 
 }
 
-LASIndex::LASIndex(std::string& filename) 
+LASIndex::LASIndex(std::string const& filename) 
 {
+    // FIXME: This is not C, no need for struct.
+    // FIXME: stat is very weak name! There tons of structs in various C libs (ie. struct stat; in Windows C lib)
     struct stat stats;
     std::ostringstream os;
     os << filename << ".dat";
@@ -107,12 +113,12 @@ LASIndex::LASIndex(std::string& filename)
 
     Init();
 }
+
 LASIndex::LASIndex(LASIndex const& other) 
 {
     std::cout << "Index copy called" << std::endl;
 
 }
-
 
 LASIndex::~LASIndex() 
 {
@@ -204,7 +210,7 @@ LASStorageManager::~LASStorageManager()
 	for (std::vector<Entry*>::iterator it = m_buffer.begin(); it != m_buffer.end(); it++) delete *it;
 }
 
-void LASStorageManager::loadByteArray(const id_type id, size_t& len, uint8_t** data)
+void LASStorageManager::loadByteArray(const id_type id, std::size_t& len, uint8_t** data)
 {
 	Entry* e;
 	try
@@ -223,7 +229,7 @@ void LASStorageManager::loadByteArray(const id_type id, size_t& len, uint8_t** d
 	memcpy(*data, e->m_pData, len);
 }
 
-void LASStorageManager::storeByteArray(id_type& id, const size_t len, const uint8_t* const data)
+void LASStorageManager::storeByteArray(id_type& id, const std::size_t len, const uint8_t* const data)
 {
 	if (id == NewPage)
 	{

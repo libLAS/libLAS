@@ -66,7 +66,7 @@ public:
 
     
     LASIndex();
-    LASIndex(std::string& filename);
+    LASIndex(std::string const& filename);
     /// Copy constructor.
     LASIndex(LASIndex const& other);
     ~LASIndex();
@@ -89,8 +89,6 @@ private:
     std::string m_indexname;
     
     void Init();
-    
-
 };
 
 class LASVisitor : public SpatialIndex::IVisitor
