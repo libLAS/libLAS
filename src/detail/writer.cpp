@@ -87,14 +87,15 @@ std::ostream& Writer::GetStream() const
 
 void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header) 
 {
-    record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
-    record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
-    record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
 
     if (0 != m_transform)
     {
         Project(record);
     }
+
+    record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
+    record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
+    record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
 
     LASClassification::bitset_type clsflags(point.GetClassification());
     record.classification = static_cast<uint8_t>(clsflags.to_ulong());
