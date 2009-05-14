@@ -14,7 +14,7 @@ if OCI_IS_CONFIG
 OCI_CPPFLAGS = @ORACLE_OCI_CFLAGS@ -DHAVE_ORACLE=1
 endif
 
-AM_CPPFLAGS = $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) $(SPATIALINDEX_CPPFLAGS) $(OCI_CPPFLAGS) -I../include/liblas/capi -I../include
+AM_CPPFLAGS = -I../include/liblas/capi -I../include $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) $(SPATIALINDEX_CPPFLAGS) $(OCI_CPPFLAGS) 
 
 lasinfo_SOURCES = lasinfo.c lascommon.c
 las2las_SOURCES = las2las.c lascommon.c
