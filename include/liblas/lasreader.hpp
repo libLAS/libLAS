@@ -49,10 +49,6 @@
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 
-#ifdef HAVE_SPATIALINDEX
-#include <liblas/lasindex.hpp>
-#endif
-
 // std
 #include <iosfwd>
 #include <string>
@@ -92,10 +88,6 @@ public:
     void Index(std::string& filename);
     void Index();
 
-#ifdef HAVE_SPATIALINDEX
-    LASIndex* GetIndex();
-#endif
-
 private:
 
     // Blocked copying operations, declared but not defined.
@@ -109,13 +101,6 @@ private:
     LASPoint m_point;
     std::vector<LASVariableRecord> m_vlrs;
     
-    bool m_doindex;
-
-#ifdef HAVE_SPATIALINDEX
-    LASIndex* m_index;
-#else
-    typedef void* LASIndex;
-#endif
 };
 
 } // namespace liblas
