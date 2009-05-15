@@ -42,12 +42,14 @@
 #include <liblas/lasindex.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
+#include <liblas/lasreader.hpp>
 
 #include <cstddef>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 namespace liblas
 {
@@ -67,9 +69,9 @@ void LASIndex::Init()
 
     // R-Tree parameters
     double fillFactor = 0.7;
-    uint32_t indexCapacity = 10;
-    uint32_t leafCapacity = 10;
-    uint32_t dimension = 2;
+    uint32_t indexCapacity = 100;
+    uint32_t leafCapacity = 100;
+    uint32_t dimension = 3;
     SpatialIndex::RTree::RTreeVariant variant = SpatialIndex::RTree::RV_RSTAR;
 
     // create R-tree
@@ -80,7 +82,7 @@ void LASIndex::Init()
 
 }
 
-LASIndex::LASIndex(std::string const& filename) 
+LASIndex::LASIndex(std::string& filename) 
 {
     // FIXME: This is not C, no need for struct.
     // FIXME: stat is very weak name! There tons of structs in various C libs (ie. struct stat; in Windows C lib)
@@ -97,14 +99,14 @@ LASIndex::LASIndex(std::string const& filename)
             m_storage = SpatialIndex::StorageManager::loadDiskStorageManager(filename);
         } catch (Tools::IllegalStateException& e) {
             std::string s = e.what();
-            std::cout << "error loading index" << s <<std::endl; exit(1);
+            std::cout << "error loading index " << s <<std::endl; exit(1);
         }
     }
     else
     {
         std::cout << "Creating new index ... " << std::endl;
         try{
-            m_storage = SpatialIndex::StorageManager::createNewDiskStorageManager(filename, 3);
+            m_storage = SpatialIndex::StorageManager::createNewDiskStorageManager(filename, 4096);
         } catch (Tools::IllegalStateException& e) {
             std::string s = e.what();
             std::cout << "error creating index" << s <<std::endl; exit(1);
@@ -148,30 +150,35 @@ bool LASIndex::operator==(LASIndex const& other) const
 
 void LASIndex::insert(LASPoint& p, int64_t id) 
 {
-    double min[2];
-    double max[2];
+    double min[3];
+    double max[3];
     
-    min[0] = p.GetX(); min[1] = p.GetY();
-    max[0] = p.GetX(); max[1] = p.GetY();
-    index().insertData(0, 0, SpatialIndex::Region(min, max, 2), id);
+    min[0] = p.GetX(); min[1] = p.GetY(); min[2] = p.GetZ();
+    max[0] = p.GetX(); max[1] = p.GetY(); max[2] = p.GetZ();
+    try{
+        index().insertData(0, 0, SpatialIndex::Region(min, max, 3), id);
+    } catch (Tools::IllegalArgumentException& e) {
+        std::string s = e.what();
+        std::cout << "error inserting index value" << s <<std::endl; exit(1);
+    }
 }
 
-std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double maxx, double maxy)
+std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double maxx, double maxy, double minz, double maxz)
 {
-    double min[2];
-    double max[2];
+    double min[3];
+    double max[3];
     
-    min[0] = minx; min[1] = miny;
-    max[0] = maxx; max[1] = maxy;
+    min[0] = minx; min[1] = miny; min[2] = minz;
+    max[0] = maxx; max[1] = maxy; max[2] = maxz;
     
     std::cout.setf(std::ios_base::fixed);
     
-    std::cout << "minx: " << min[0] << " miny: "<<min[1] << " maxx: " <<max[0] << " maxy: " << max[1] << std::endl;
+    // std::cout << "minx: " << min[0] << " miny: "<<min[1] << " maxx: " <<max[0] << " maxy: " << max[1] << " minz: " << min[2] << " maxz: " << max[2] <<std::endl;
     if (min[0] > max[0] || min[1] > max[1]) {std::cout << "epic fail!" << std::endl;};
     std::vector<uint32_t>* vect = new std::vector<uint32_t>;
     LASVisitor* visitor = new LASVisitor(vect);
     
-    const SpatialIndex::Region *region = new SpatialIndex::Region(min, max, 2);
+    const SpatialIndex::Region *region = new SpatialIndex::Region(min, max, 3);
     std::cout << *region << std::endl;
     index().intersectsWithQuery(*region, *visitor);
     
@@ -183,11 +190,7 @@ std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double max
 } // namespace liblas
 
 
-#include <stdexcept>
 
-
-using namespace SpatialIndex;
-using namespace SpatialIndex::StorageManager;
 
 SpatialIndex::IStorageManager* SpatialIndex::StorageManager::returnLASStorageManager(Tools::PropertySet& ps)
 {
@@ -201,16 +204,16 @@ SpatialIndex::IStorageManager* SpatialIndex::StorageManager::createNewLASStorage
 	return returnLASStorageManager(ps);
 }
 
-LASStorageManager::LASStorageManager(Tools::PropertySet& ps)
+SpatialIndex::StorageManager::LASStorageManager::LASStorageManager(Tools::PropertySet& ps)
 {
 }
 
-LASStorageManager::~LASStorageManager()
+SpatialIndex::StorageManager::LASStorageManager::~LASStorageManager()
 {
 	for (std::vector<Entry*>::iterator it = m_buffer.begin(); it != m_buffer.end(); it++) delete *it;
 }
 
-void LASStorageManager::loadByteArray(const id_type id, std::size_t& len, uint8_t** data)
+void SpatialIndex::StorageManager::LASStorageManager::loadByteArray(const id_type id, size_t& len, uint8_t** data)
 {
 	Entry* e;
 	try
@@ -229,7 +232,7 @@ void LASStorageManager::loadByteArray(const id_type id, std::size_t& len, uint8_
 	memcpy(*data, e->m_pData, len);
 }
 
-void LASStorageManager::storeByteArray(id_type& id, const std::size_t len, const uint8_t* const data)
+void SpatialIndex::StorageManager::LASStorageManager::storeByteArray(id_type& id, const size_t len, const uint8_t* const data)
 {
 	if (id == NewPage)
 	{
@@ -266,7 +269,7 @@ void LASStorageManager::storeByteArray(id_type& id, const std::size_t len, const
 	}
 }
 
-void LASStorageManager::deleteByteArray(const id_type id)
+void SpatialIndex::StorageManager::LASStorageManager::deleteByteArray(const id_type id)
 {
 	Entry* e;
 	try
@@ -284,3 +287,81 @@ void LASStorageManager::deleteByteArray(const id_type id)
 
 	delete e;
 }
+
+
+namespace liblas
+{
+
+
+
+LASDataStream::LASDataStream(LASReader *reader) : m_reader(reader), m_pNext(0), m_id(0)
+{
+    bool read = readPoint();
+    
+    if (read)
+        m_id = 0;
+
+    
+}
+
+bool LASDataStream::readPoint()
+{
+    double min[3], max[3];
+    
+    bool doRead = m_reader->ReadNextPoint();
+    LASPoint* p;
+    if (doRead)
+        p = (LASPoint*) &(m_reader->GetPoint());
+    else
+        return false;
+//        throw Tools::IllegalStateException("Unable to read first point for LASReader!");
+    
+    double x = p->GetX();
+    double y = p->GetY();
+    double z = p->GetZ();
+
+    min[0] = x; min[1] = y; min[2] = z;
+    max[0] = x; max[1] = y; max[2] = z;
+    
+    m_id = 0;
+    SpatialIndex::Region r = SpatialIndex::Region(min, max, 3);
+    m_pNext = new SpatialIndex::RTree::Data(0, 0, r, m_id);
+    return true;
+}
+
+
+SpatialIndex::IData* LASDataStream::getNext()
+{
+    if (m_pNext == 0) return 0;
+
+    SpatialIndex::RTree::Data* ret = m_pNext;
+    m_pNext = 0;
+    readPoint();
+    m_id +=1;
+    return ret;
+}
+
+bool LASDataStream::hasNext() throw (Tools::NotSupportedException)
+{
+    return (m_pNext != 0);
+}
+
+size_t LASDataStream::size() throw (Tools::NotSupportedException)
+{
+    throw Tools::NotSupportedException("Operation not supported.");
+}
+
+void LASDataStream::rewind() throw (Tools::NotSupportedException)
+{
+
+    if (m_pNext != 0)
+    {
+     delete m_pNext;
+     m_pNext = 0;
+    }
+    
+    m_reader->Reset();
+    readPoint();
+}
+
+} // namespace liblas
