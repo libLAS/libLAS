@@ -57,7 +57,7 @@ namespace liblas
 
 LASIndex::LASIndex()
 {
-    m_storage = SpatialIndex::StorageManager::createNewLASStorageManager();
+    m_storage = createNewLASStorageManager();
     Init();
 }
 
@@ -111,7 +111,7 @@ LASIndex::LASIndex(std::string& filename)
             std::string s = e.what();
             std::cout << "error creating index" << s <<std::endl; exit(1);
         }
-	}
+    }
 
     Init();
 }
@@ -187,110 +187,105 @@ std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double max
 }
 
 
-} // namespace liblas
 
 
 
-
-SpatialIndex::IStorageManager* SpatialIndex::StorageManager::returnLASStorageManager(Tools::PropertySet& ps)
+SpatialIndex::IStorageManager* returnLASStorageManager(Tools::PropertySet& ps)
 {
-	IStorageManager* sm = new LASStorageManager(ps);
-	return sm;
+    SpatialIndex::IStorageManager* sm = new LASStorageManager(ps);
+    return sm;
 }
 
-SpatialIndex::IStorageManager* SpatialIndex::StorageManager::createNewLASStorageManager()
+SpatialIndex::IStorageManager* createNewLASStorageManager()
 {
-	Tools::PropertySet ps;
-	return returnLASStorageManager(ps);
+    Tools::PropertySet ps;
+    return returnLASStorageManager(ps);
 }
 
-SpatialIndex::StorageManager::LASStorageManager::LASStorageManager(Tools::PropertySet& ps)
+LASStorageManager::LASStorageManager(Tools::PropertySet& ps)
 {
 }
 
-SpatialIndex::StorageManager::LASStorageManager::~LASStorageManager()
+LASStorageManager::~LASStorageManager()
 {
-	for (std::vector<Entry*>::iterator it = m_buffer.begin(); it != m_buffer.end(); it++) delete *it;
+    for (std::vector<Entry*>::iterator it = m_buffer.begin(); it != m_buffer.end(); it++) delete *it;
 }
 
-void SpatialIndex::StorageManager::LASStorageManager::loadByteArray(const id_type id, size_t& len, uint8_t** data)
+void LASStorageManager::loadByteArray(const SpatialIndex::id_type id, size_t& len, uint8_t** data)
 {
-	Entry* e;
-	try
-	{
-		e = m_buffer.at(id);
-		if (e == 0) throw Tools::InvalidPageException(id);
-	}
-	catch (std::out_of_range)
-	{
-		throw Tools::InvalidPageException(id);
-	}
+    Entry* e;
+    try
+    {
+        e = m_buffer.at(id);
+        if (e == 0) throw Tools::InvalidPageException(id);
+    }
+    catch (std::out_of_range)
+    {
+        throw Tools::InvalidPageException(id);
+    }
 
-	len = e->m_length;
-	*data = new uint8_t[len];
+    len = e->m_length;
+    *data = new uint8_t[len];
 
-	memcpy(*data, e->m_pData, len);
+    memcpy(*data, e->m_pData, len);
 }
 
-void SpatialIndex::StorageManager::LASStorageManager::storeByteArray(id_type& id, const size_t len, const uint8_t* const data)
+void LASStorageManager::storeByteArray(SpatialIndex::id_type& id, const size_t len, const uint8_t* const data)
 {
-	if (id == NewPage)
-	{
-		Entry* e = new Entry(len, data);
+    if (id == SpatialIndex::StorageManager::NewPage)
+    {
+        Entry* e = new Entry(len, data);
 
-		if (m_emptyPages.empty())
-		{
-			m_buffer.push_back(e);
-			id = m_buffer.size() - 1;
-		}
-		else
-		{
-			id = m_emptyPages.top(); m_emptyPages.pop();
-			m_buffer[id] = e;
-		}
-	}
-	else
-	{
-		Entry* e_old;
-		try
-		{
-			e_old = m_buffer.at(id);
-			if (e_old == 0) throw Tools::InvalidPageException(id);
-		}
-		catch (std::out_of_range)
-		{
-			throw Tools::InvalidPageException(id);
-		}
+        if (m_emptyPages.empty())
+        {
+            m_buffer.push_back(e);
+            id = m_buffer.size() - 1;
+        }
+        else
+        {
+            id = m_emptyPages.top(); m_emptyPages.pop();
+            m_buffer[id] = e;
+        }
+    }
+    else
+    {
+        Entry* e_old;
+        try
+        {
+            e_old = m_buffer.at(id);
+            if (e_old == 0) throw Tools::InvalidPageException(id);
+        }
+        catch (std::out_of_range)
+        {
+            throw Tools::InvalidPageException(id);
+        }
 
-		Entry* e = new Entry(len, data);
+        Entry* e = new Entry(len, data);
 
-		delete e_old;
-		m_buffer[id] = e;
-	}
+        delete e_old;
+        m_buffer[id] = e;
+    }
 }
 
-void SpatialIndex::StorageManager::LASStorageManager::deleteByteArray(const id_type id)
+void LASStorageManager::deleteByteArray(const SpatialIndex::id_type id)
 {
-	Entry* e;
-	try
-	{
-		e = m_buffer.at(id);
-		if (e == 0) throw Tools::InvalidPageException(id);
-	}
-	catch (std::out_of_range)
-	{
-		throw Tools::InvalidPageException(id);
-	}
+    Entry* e;
+    try
+    {
+        e = m_buffer.at(id);
+        if (e == 0) throw Tools::InvalidPageException(id);
+    }
+    catch (std::out_of_range)
+    {
+        throw Tools::InvalidPageException(id);
+    }
 
-	m_buffer[id] = 0;
-	m_emptyPages.push(id);
+    m_buffer[id] = 0;
+    m_emptyPages.push(id);
 
-	delete e;
+    delete e;
 }
 
-
-namespace liblas
-{
 
 
 

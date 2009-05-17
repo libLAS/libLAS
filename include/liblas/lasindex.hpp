@@ -45,11 +45,7 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/laspoint.hpp>
 
-
-#ifdef HAVE_SPATIALINDEX
 #include <spatialindex/SpatialIndex.h>
-
-#endif
 
 
 //std
@@ -138,52 +134,6 @@ public:
     }
 };
 
-} // namespace liblas
-
-namespace SpatialIndex
-{
-
-
-    namespace StorageManager
-    {
-        extern IStorageManager* returnLASStorageManager(Tools::PropertySet& in);
-        extern IStorageManager* createNewLASStorageManager();
-        
-        class LASStorageManager : public SpatialIndex::IStorageManager
-        {
-        public:
-            LASStorageManager(Tools::PropertySet&);
-
-            virtual ~LASStorageManager();
-
-            virtual void loadByteArray(const id_type id, size_t& len, uint8_t** data);
-            virtual void storeByteArray(id_type& id, const size_t len, const uint8_t* const data);
-            virtual void deleteByteArray(const id_type id);
-
-        private:
-            class Entry
-            {
-            public:
-                byte* m_pData;
-                size_t m_length;
-
-                Entry(size_t l, const uint8_t* const d) : m_pData(0), m_length(l)
-                {
-                    m_pData = new uint8_t[m_length];
-                    memcpy(m_pData, d, m_length);
-                }
-
-                ~Entry() { delete[] m_pData; }
-            }; // Entry
-
-            std::vector<Entry*> m_buffer;
-            std::stack<id_type> m_emptyPages;
-        }; // MemoryStorageManager
-    }
-}
-
-namespace liblas
-{
 class LASDataStream : public SpatialIndex::IDataStream
 {
 public:
@@ -201,10 +151,51 @@ public:
     void rewind() throw (Tools::NotSupportedException);
 
     bool readPoint();
+
+protected:
     liblas::LASReader* m_reader;
     SpatialIndex::RTree::Data* m_pNext;
     SpatialIndex::id_type m_id;
 };
+
+
+
+
+extern SpatialIndex::IStorageManager* returnLASStorageManager(Tools::PropertySet& in);
+extern SpatialIndex::IStorageManager* createNewLASStorageManager();
+
+class LASStorageManager : public SpatialIndex::IStorageManager
+{
+public:
+    LASStorageManager(Tools::PropertySet&);
+
+    virtual ~LASStorageManager();
+
+    virtual void loadByteArray(const SpatialIndex::id_type id, size_t& len, uint8_t** data);
+    virtual void storeByteArray(SpatialIndex::id_type& id, const size_t len, const uint8_t* const data);
+    virtual void deleteByteArray(const SpatialIndex::id_type id);
+
+private:
+    class Entry
+    {
+    public:
+        byte* m_pData;
+        size_t m_length;
+
+        Entry(size_t l, const uint8_t* const d) : m_pData(0), m_length(l)
+        {
+            m_pData = new uint8_t[m_length];
+            memcpy(m_pData, d, m_length);
+        }
+
+        ~Entry() { delete[] m_pData; }
+    }; // Entry
+
+    std::vector<Entry*> m_buffer;
+    std::stack<SpatialIndex::id_type> m_emptyPages;
+}; // MemoryStorageManager
+
+
 }
 
 #endif // LIBLAS_LASINDEX_HPP_INCLUDED
