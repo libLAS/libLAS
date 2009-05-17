@@ -56,6 +56,7 @@
 
 namespace liblas {
 
+class LASDataStream;
 
 class LASIndex
 {
@@ -63,6 +64,7 @@ public:
 
     
     LASIndex();
+    LASIndex(LASDataStream& strm, std::string& filename);
     LASIndex(std::string& filename);
     /// Copy constructor.
     LASIndex(LASIndex const& other);

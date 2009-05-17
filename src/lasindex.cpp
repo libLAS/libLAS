@@ -57,10 +57,63 @@ namespace liblas
 
 LASIndex::LASIndex()
 {
+    std::cout << "Blank Index Constructor called!" << std::endl;
     m_storage = createNewLASStorageManager();
     Init();
 }
 
+LASIndex::LASIndex(LASDataStream& strm, std::string& filename)
+{
+
+    struct stat stats;
+    std::ostringstream os;
+    os << filename << ".dat";
+    std::cout << "LASDataStream index name: " << os.str() << std::endl;
+
+    std::string indexname = os.str();
+    int ret = stat(indexname.c_str(),&stats);
+    if (!ret) {
+        std::cout << "loading existing index " << indexname << std::endl;
+        try{
+            m_storage = SpatialIndex::StorageManager::loadDiskStorageManager(filename);
+            Init();
+        } catch (Tools::Exception& e) {
+            std::string s = e.what();
+            std::cout << "error loading index " << s <<std::endl; exit(1);
+        }
+    }
+    else
+    {
+        std::cout << "Creating new index from LASReader stream ... " << std::endl;
+        try{
+            m_storage = SpatialIndex::StorageManager::createNewDiskStorageManager(filename, 4096);
+            uint16_t capacity = 10;
+            bool writeThrough = false;
+            // R-Tree parameters
+            double fillFactor = 0.7;
+            uint32_t indexCapacity = 100;
+            uint32_t leafCapacity = 100;
+            uint32_t dimension = 3;
+            SpatialIndex::id_type indexId=1;
+            m_buffer = SpatialIndex::StorageManager::createNewRandomEvictionsBuffer(*m_storage, capacity, writeThrough);
+            m_rtree = SpatialIndex::RTree::createAndBulkLoadNewRTree(   SpatialIndex::RTree::BLM_STR,
+                                                                        strm,
+                                                                        *m_buffer,
+                                                                        fillFactor,
+                                                                        indexCapacity,
+                                                                        leafCapacity,
+                                                                        dimension,
+                                                                        SpatialIndex::RTree::RV_RSTAR,
+                                                                        indexId);
+        bool ret = m_rtree->isIndexValid();
+        if (ret == false) std::cerr << "ERROR: Structure is invalid!" << std::endl;
+            
+        } catch (Tools::Exception& e) {
+            std::string s = e.what();
+            std::cout << "error creating index" << s <<std::endl; exit(1);
+        }
+    }        
+}
 void LASIndex::Init()
 {    
     uint16_t capacity = 10;
@@ -125,6 +178,7 @@ LASIndex::LASIndex(LASIndex const& other)
 LASIndex::~LASIndex() 
 {
     std::cout << "~LASIndex called" << std::endl;
+    
     delete m_rtree;
     delete m_buffer;
     delete m_storage;
@@ -181,7 +235,7 @@ std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double max
     const SpatialIndex::Region *region = new SpatialIndex::Region(min, max, 3);
     std::cout << *region << std::endl;
     index().intersectsWithQuery(*region, *visitor);
-    
+    std::cout << index() <<std::endl;
     return vect;
     
 }
@@ -296,6 +350,7 @@ LASDataStream::LASDataStream(LASReader *reader) : m_reader(reader), m_pNext(0), 
     if (read)
         m_id = 0;
 
+    std::cout<<"Initiating LASDataStream... read=" << read <<std::endl;
     
 }
 
@@ -309,7 +364,6 @@ bool LASDataStream::readPoint()
         p = (LASPoint*) &(m_reader->GetPoint());
     else
         return false;
-//        throw Tools::IllegalStateException("Unable to read first point for LASReader!");
     
     double x = p->GetX();
     double y = p->GetY();
@@ -318,9 +372,11 @@ bool LASDataStream::readPoint()
     min[0] = x; min[1] = y; min[2] = z;
     max[0] = x; max[1] = y; max[2] = z;
     
-    m_id = 0;
+
     SpatialIndex::Region r = SpatialIndex::Region(min, max, 3);
     m_pNext = new SpatialIndex::RTree::Data(0, 0, r, m_id);
+    
+     std::cout << "Read point " << r <<  "Id: " << m_id << std::endl;
     return true;
 }
 
@@ -338,6 +394,7 @@ SpatialIndex::IData* LASDataStream::getNext()
 
 bool LASDataStream::hasNext() throw (Tools::NotSupportedException)
 {
+    // std::cout << "LASDataStream::hasNext called ..." << std::endl;
     return (m_pNext != 0);
 }
 
@@ -348,6 +405,7 @@ size_t LASDataStream::size() throw (Tools::NotSupportedException)
 
 void LASDataStream::rewind() throw (Tools::NotSupportedException)
 {
+    // std::cout << "LASDataStream::rewind called..." << std::endl;
 
     if (m_pNext != 0)
     {
