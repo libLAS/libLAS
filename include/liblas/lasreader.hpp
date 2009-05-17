@@ -84,9 +84,6 @@ public:
 
     /// The operator is not const because it updates file stream position.
     LASPoint const& operator[](std::size_t n);
-    
-    void Index(std::string& filename);
-    void Index();
 
 private:
 
