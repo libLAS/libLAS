@@ -54,107 +54,168 @@
 namespace liblas
 {
 
+void LASIndex::Init()
+{   
+
+    m_Pagesize = 4096;
+    m_idxType = eExternalIndex;
+    m_idxId = 1;
+    
+    m_idxCapacity = 100;
+    m_idxLeafCap = 100;
+    m_idxDimension = 3;
+    
+    m_idxFillFactor = 0.7;
+    
+    m_bufferCapacity = 10;
+    m_bufferWriteThrough = false;
+
+    m_idxExternalExists = false;
+}
 
 LASIndex::LASIndex()
 {
     std::cout << "Blank Index Constructor called!" << std::endl;
-    // m_storage = createNewLASStorageManager();
-    // Init();
+    Init();
 }
+
 
 LASIndex::LASIndex(LASDataStream& strm, std::string& filename)
 {
+    using namespace SpatialIndex;
+    
+    Init();
+    
+    m_storage = CreateStorage(filename);
+    m_buffer = CreateIndexBuffer(*m_storage);
 
-    struct stat stats;
-    std::ostringstream os;
-    os << filename << ".dat";
-    std::cout << "LASDataStream index name: " << os.str() << std::endl;
-
-    std::string indexname = os.str();
-    int ret = stat(indexname.c_str(),&stats);
-    if (!ret) {
-        std::cout << "loading existing index from LASReader " << indexname << std::endl;
+    if (m_idxType == eExternalIndex) {
+            
+    if (m_idxExternalExists == true) {
+        std::cout << "loading existing index from LASDataStream " << std::endl;
         try{
-            m_storage = SpatialIndex::StorageManager::loadDiskStorageManager(filename);
-        } catch (Tools::IllegalStateException& e) {
-            std::string s = e.what();
-            std::cout << "error loading index " << s <<std::endl; exit(1);
+            m_rtree = SpatialIndex::RTree::loadRTree(*m_buffer,m_idxId);
+        } catch (Tools::Exception& e) {
+            std::ostringstream os;
+            os << "Spatial Index Error: " << e.what();
+            throw std::runtime_error(os.str());
         }
-        Init();
     }
     else
     {
-        std::cout << "Creating new index from LASReader stream ... " << std::endl;
+        std::cout << "Creating new index from LASDataStream  ... " << std::endl;
         try{
-            m_storage = SpatialIndex::StorageManager::createNewDiskStorageManager(filename, 4096);
-            uint16_t capacity = 10;
-            bool writeThrough = false;
-            // R-Tree parameters
-            double fillFactor = 0.7;
-            uint32_t indexCapacity = 100;
-            uint32_t leafCapacity = 100;
-            uint32_t dimension = 3;
-            SpatialIndex::id_type indexId=1;
-            m_buffer = SpatialIndex::StorageManager::createNewRandomEvictionsBuffer(*m_storage, capacity, writeThrough);
-            m_rtree = SpatialIndex::RTree::createAndBulkLoadNewRTree(   SpatialIndex::RTree::BLM_STR,
-                                                                        strm,
-                                                                        *m_buffer,
-                                                                        fillFactor,
-                                                                        indexCapacity,
-                                                                        leafCapacity,
-                                                                        dimension,
-                                                                        SpatialIndex::RTree::RV_RSTAR,
-                                                                        indexId);
+            m_rtree = RTree::createAndBulkLoadNewRTree(   SpatialIndex::RTree::BLM_STR,
+                                                          strm,
+                                                          *m_buffer,
+                                                          m_idxFillFactor,
+                                                          m_idxCapacity,
+                                                          m_idxLeafCap,
+                                                          m_idxDimension,
+                                                          SpatialIndex::RTree::RV_RSTAR,
+                                                          m_idxId);
         bool ret = m_rtree->isIndexValid();
-        if (ret == false) std::cerr << "ERROR: Structure is invalid!" << std::endl;
-        std::cout << index() << std::endl;
+        if (ret == false) 
+            throw std::runtime_error(   "Spatial index error: index is not"
+                                        " valid after createAndBulkLoadNewRTree");
         } catch (Tools::Exception& e) {
-            std::string s = e.what();
-            std::cout << "error creating index" << s <<std::endl; exit(1);
+            std::ostringstream os;
+            os << "Spatial Index Error: " << e.what();
+            throw std::runtime_error(os.str());
         }
     }        
-}
-void LASIndex::Init()
-{    
-    uint16_t capacity = 10;
-    bool writeThrough = false;
-    m_buffer = SpatialIndex::StorageManager::createNewRandomEvictionsBuffer(*m_storage, capacity, writeThrough);
-    // 
-    // // R-Tree parameters
-    // double fillFactor = 0.7;
-    // uint32_t indexCapacity = 100;
-    // uint32_t leafCapacity = 100;
-    // uint32_t dimension = 3;
-    // SpatialIndex::RTree::RTreeVariant variant = SpatialIndex::RTree::RV_RSTAR;
-    // 
-    // // create R-tree
-    SpatialIndex::id_type indexId=1;
-    m_rtree = SpatialIndex::RTree::loadRTree(*m_buffer,indexId);
-    std::cout << "index is valid? " << m_rtree->isIndexValid() << std::endl;
-    // m_rtree = SpatialIndex::RTree::createNewRTree(*m_buffer, fillFactor, indexCapacity,
-    //                                leafCapacity, dimension, variant, indexId); 
-
-
+    } // eExternalIndex
 }
 
-LASIndex::LASIndex(std::string& filename) 
+
+SpatialIndex::IStorageManager* LASIndex::CreateStorage(std::string& filename)
 {
-    // FIXME: This is not C, no need for struct.
-    // FIXME: stat is very weak name! There tons of structs in various C libs (ie. struct stat; in Windows C lib)
+    using namespace SpatialIndex::StorageManager;
+    
+    SpatialIndex::IStorageManager* storage = 0;
+    if (m_idxType == eExternalIndex) {
+
+        if (ExternalIndexExists(filename) && !filename.empty()) {
+            std::cout << "loading existing DiskStorage " << filename << std::endl;
+            try{
+                storage = loadDiskStorageManager(filename);
+                m_idxExternalExists = true;
+                return storage;
+            } catch (Tools::Exception& e) {
+                std::ostringstream os;
+                os << "Spatial Index Error: " << e.what();
+                throw std::runtime_error(os.str());
+            } 
+        } else if (!filename.empty()){
+            try{
+                std::cout << "creating new DiskStorage " << filename << std::endl;            
+                storage = createNewDiskStorageManager(filename, m_Pagesize);
+                m_idxExternalExists = false;
+                return storage;
+            } catch (Tools::Exception& e) {
+                std::ostringstream os;
+                os << "Spatial Index Error: " << e.what();
+                throw std::runtime_error(os.str());
+            }         
+        }
+    }
+    return storage;               
+}
+
+SpatialIndex::StorageManager::IBuffer* LASIndex::CreateIndexBuffer(SpatialIndex::IStorageManager& storage)
+{
+    using namespace SpatialIndex::StorageManager;
+    IBuffer* buffer = 0;
+    try{
+        if ( m_storage == 0 ) throw std::runtime_error("Storage was invalid to create index buffer");
+        buffer = createNewRandomEvictionsBuffer(storage,
+                                                m_bufferCapacity,
+                                                m_bufferWriteThrough);
+    } catch (Tools::Exception& e) {
+        std::ostringstream os;
+        os << "Spatial Index Error: " << e.what();
+        throw std::runtime_error(os.str());
+    }
+    return buffer;
+}
+
+
+bool LASIndex::ExternalIndexExists(std::string& filename)
+{
     struct stat stats;
     std::ostringstream os;
     os << filename << ".dat";
-    std::cout << "index name: " << os.str() << std::endl;
+    
+    if (m_idxExternalExists == true) return true;
 
     std::string indexname = os.str();
     int ret = stat(indexname.c_str(),&stats);
-    if (!ret) {
-        std::cout << "loading existing index " << indexname << std::endl;
+    std::cout << "indexname: " << indexname << " ret: " << ret << std::endl;
+    bool output = false;
+    if (ret == 0) output= true; else output =false;
+    return output;
+}
+LASIndex::LASIndex(std::string& filename) 
+{
+
+    Init();
+    
+    m_storage = CreateStorage(filename);
+    
+    m_buffer = CreateIndexBuffer(*m_storage);
+
+    if (ExternalIndexExists(filename)) {
+        std::cout << "loading existing index " << filename << std::endl;
         try{
-            m_storage = SpatialIndex::StorageManager::loadDiskStorageManager(filename);
-        } catch (Tools::IllegalStateException& e) {
-            std::string s = e.what();
-            std::cout << "error loading index " << s <<std::endl; exit(1);
+            // m_storage = SpatialIndex::StorageManager::loadDiskStorageManager(filename);
+            // m_buffer = SpatialIndex::StorageManager::createNewRandomEvictionsBuffer(*m_storage, 
+            //                                                                         m_bufferCapacity, 
+            //                                                                         m_bufferWriteThrough);
+            m_rtree = SpatialIndex::RTree::loadRTree(*m_buffer,m_idxId);
+        } catch (Tools::Exception& e) {
+                std::ostringstream os;
+                os << "Spatial Index Error: " << e.what();
+                throw std::runtime_error(os.str());
         }
     }
     else{std::cout << "index name does not exist, failing" << std::endl;exit(1);}
@@ -168,8 +229,6 @@ LASIndex::LASIndex(std::string& filename)
     //         std::cout << "error creating index" << s <<std::endl; exit(1);
     //     }
     // }
-
-    Init();
 }
 
 LASIndex::LASIndex(LASIndex const& other) 

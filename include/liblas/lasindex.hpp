@@ -62,6 +62,12 @@ class LASIndex
 {
 public:
 
+    enum IndexType
+    {
+        eMemoryIndex = 1, ///< A transient memory index that will go away
+        eVLRIndex = 2, ///< An index that will store its data in VLR records
+        eExternalIndex = 3 ///< An index that will store its data in files alongside the .las file (.las.dat & .las.idx)
+    };
     
     LASIndex();
     LASIndex(LASDataStream& strm, std::string& filename);
@@ -76,18 +82,50 @@ public:
     /// Comparison operator.
     bool operator==(const LASIndex& other) const;
 
-    SpatialIndex::ISpatialIndex& index() {return *m_rtree;}
     
     void insert(LASPoint& p, int64_t id);
     std::vector<uint32_t>* intersects(double minx, double miny, double maxx, double maxy, double minz, double maxz);
+
+    /// Sets the page size for the index when stored externally
+    /// \param v - page value.  Defaults to 4096.
+    void SetPageSize(uint32_t v) { m_Pagesize = v; }
+
+    /// Get index page size for indexes that are stored externally
+    /// \return index page size.
+    uint32_t GetPageSize() { return m_Pagesize; }
+    
+    /// Sets the index type
+    /// \param v - index type. 
+    void SetIndexType(IndexType v) { m_idxType = v; }
+
+    /// Gets the index type
+    /// \return index type.
+    IndexType GetIndexType() { return m_idxType; }
+    
 private:
 
     SpatialIndex::IStorageManager* m_storage;
     SpatialIndex::StorageManager::IBuffer* m_buffer;
     SpatialIndex::ISpatialIndex* m_rtree;
-    std::string m_indexname;
+
+    uint32_t m_Pagesize;
+    IndexType m_idxType;
+    SpatialIndex::id_type m_idxId;
+    uint32_t m_idxCapacity;
+    uint32_t m_idxLeafCap;
+    uint32_t m_idxDimension;   
+    double m_idxFillFactor; 
+    bool m_idxExternalExists;
+
+
+    uint16_t m_bufferCapacity;
+    bool m_bufferWriteThrough;
     
     void Init();
+    SpatialIndex::IStorageManager* CreateStorage(std::string& filename);
+    SpatialIndex::StorageManager::IBuffer* CreateIndexBuffer(SpatialIndex::IStorageManager& storage);
+    
+    bool ExternalIndexExists(std::string& filename);
 };
 
 class LASVisitor : public SpatialIndex::IVisitor
