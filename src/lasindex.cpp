@@ -58,8 +58,8 @@ namespace liblas
 LASIndex::LASIndex()
 {
     std::cout << "Blank Index Constructor called!" << std::endl;
-    m_storage = createNewLASStorageManager();
-    Init();
+    // m_storage = createNewLASStorageManager();
+    // Init();
 }
 
 LASIndex::LASIndex(LASDataStream& strm, std::string& filename)
@@ -73,14 +73,14 @@ LASIndex::LASIndex(LASDataStream& strm, std::string& filename)
     std::string indexname = os.str();
     int ret = stat(indexname.c_str(),&stats);
     if (!ret) {
-        std::cout << "loading existing index " << indexname << std::endl;
+        std::cout << "loading existing index from LASReader " << indexname << std::endl;
         try{
             m_storage = SpatialIndex::StorageManager::loadDiskStorageManager(filename);
-            Init();
-        } catch (Tools::Exception& e) {
+        } catch (Tools::IllegalStateException& e) {
             std::string s = e.what();
             std::cout << "error loading index " << s <<std::endl; exit(1);
         }
+        Init();
     }
     else
     {
@@ -107,7 +107,7 @@ LASIndex::LASIndex(LASDataStream& strm, std::string& filename)
                                                                         indexId);
         bool ret = m_rtree->isIndexValid();
         if (ret == false) std::cerr << "ERROR: Structure is invalid!" << std::endl;
-            
+        std::cout << index() << std::endl;
         } catch (Tools::Exception& e) {
             std::string s = e.what();
             std::cout << "error creating index" << s <<std::endl; exit(1);
@@ -119,18 +119,20 @@ void LASIndex::Init()
     uint16_t capacity = 10;
     bool writeThrough = false;
     m_buffer = SpatialIndex::StorageManager::createNewRandomEvictionsBuffer(*m_storage, capacity, writeThrough);
-
-    // R-Tree parameters
-    double fillFactor = 0.7;
-    uint32_t indexCapacity = 100;
-    uint32_t leafCapacity = 100;
-    uint32_t dimension = 3;
-    SpatialIndex::RTree::RTreeVariant variant = SpatialIndex::RTree::RV_RSTAR;
-
-    // create R-tree
+    // 
+    // // R-Tree parameters
+    // double fillFactor = 0.7;
+    // uint32_t indexCapacity = 100;
+    // uint32_t leafCapacity = 100;
+    // uint32_t dimension = 3;
+    // SpatialIndex::RTree::RTreeVariant variant = SpatialIndex::RTree::RV_RSTAR;
+    // 
+    // // create R-tree
     SpatialIndex::id_type indexId=1;
-    m_rtree = SpatialIndex::RTree::createNewRTree(*m_buffer, fillFactor, indexCapacity,
-                                   leafCapacity, dimension, variant, indexId); 
+    m_rtree = SpatialIndex::RTree::loadRTree(*m_buffer,indexId);
+    std::cout << "index is valid? " << m_rtree->isIndexValid() << std::endl;
+    // m_rtree = SpatialIndex::RTree::createNewRTree(*m_buffer, fillFactor, indexCapacity,
+    //                                leafCapacity, dimension, variant, indexId); 
 
 
 }
@@ -155,16 +157,17 @@ LASIndex::LASIndex(std::string& filename)
             std::cout << "error loading index " << s <<std::endl; exit(1);
         }
     }
-    else
-    {
-        std::cout << "Creating new index ... " << std::endl;
-        try{
-            m_storage = SpatialIndex::StorageManager::createNewDiskStorageManager(filename, 4096);
-        } catch (Tools::IllegalStateException& e) {
-            std::string s = e.what();
-            std::cout << "error creating index" << s <<std::endl; exit(1);
-        }
-    }
+    else{std::cout << "index name does not exist, failing" << std::endl;exit(1);}
+    // else
+    // {
+    //     std::cout << "Creating new index ... " << std::endl;
+    //     try{
+    //         m_storage = SpatialIndex::StorageManager::createNewDiskStorageManager(filename, 4096);
+    //     } catch (Tools::IllegalStateException& e) {
+    //         std::string s = e.what();
+    //         std::cout << "error creating index" << s <<std::endl; exit(1);
+    //     }
+    // }
 
     Init();
 }
@@ -179,9 +182,12 @@ LASIndex::~LASIndex()
 {
     std::cout << "~LASIndex called" << std::endl;
     
-    delete m_rtree;
-    delete m_buffer;
-    delete m_storage;
+    if (m_rtree != 0)
+        delete m_rtree;
+    if (m_buffer != 0)
+        delete m_buffer;
+    if (m_storage != 0)
+        delete m_storage;
 
 }
 
@@ -207,11 +213,17 @@ void LASIndex::insert(LASPoint& p, int64_t id)
     double min[3];
     double max[3];
     
-    min[0] = p.GetX(); min[1] = p.GetY(); min[2] = p.GetZ();
-    max[0] = p.GetX(); max[1] = p.GetY(); max[2] = p.GetZ();
+    min[0] = p.GetX(); 
+    min[1] = p.GetY(); 
+    min[2] = p.GetZ();
+    
+    max[0] = p.GetX(); 
+    max[1] = p.GetY(); 
+    max[2] = p.GetZ();
+    
     try{
-        index().insertData(0, 0, SpatialIndex::Region(min, max, 3), id);
-    } catch (Tools::IllegalArgumentException& e) {
+        m_rtree->insertData(0, 0, SpatialIndex::Region(min, max, 3), id);
+    } catch (Tools::Exception& e) {
         std::string s = e.what();
         std::cout << "error inserting index value" << s <<std::endl; exit(1);
     }
@@ -222,8 +234,13 @@ std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double max
     double min[3];
     double max[3];
     
-    min[0] = minx; min[1] = miny; min[2] = minz;
-    max[0] = maxx; max[1] = maxy; max[2] = maxz;
+    min[0] = minx; 
+    min[1] = miny; 
+    min[2] = minz;
+    
+    max[0] = maxx; 
+    max[1] = maxy; 
+    max[2] = maxz;
     
     std::cout.setf(std::ios_base::fixed);
     
@@ -233,9 +250,9 @@ std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double max
     LASVisitor* visitor = new LASVisitor(vect);
     
     const SpatialIndex::Region *region = new SpatialIndex::Region(min, max, 3);
-    std::cout << *region << std::endl;
-    index().intersectsWithQuery(*region, *visitor);
-    std::cout << index() <<std::endl;
+    // std::cout << *region << std::endl;
+    m_rtree->intersectsWithQuery(*region, *visitor);
+    // std::cout << index() <<std::endl;
     return vect;
     
 }
@@ -376,7 +393,7 @@ bool LASDataStream::readPoint()
     SpatialIndex::Region r = SpatialIndex::Region(min, max, 3);
     m_pNext = new SpatialIndex::RTree::Data(0, 0, r, m_id);
     
-     std::cout << "Read point " << r <<  "Id: " << m_id << std::endl;
+     // std::cout << "Read point " << r <<  "Id: " << m_id << std::endl;
     return true;
 }
 
@@ -415,6 +432,44 @@ void LASDataStream::rewind() throw (Tools::NotSupportedException)
     
     m_reader->Reset();
     readPoint();
+}
+
+LASVisitor::LASVisitor(std::vector<uint32_t>* vect){m_vector = vect;}
+
+void LASVisitor::visitNode(const SpatialIndex::INode& n)
+{
+            std::cout << "visitNode" << std::endl;
+    if (n.isLeaf()) m_leafIO++;
+    else m_indexIO++;
+}
+
+void LASVisitor::visitData(const SpatialIndex::IData& d)
+{
+    SpatialIndex::IShape* pS;
+    d.getShape(&pS);
+    SpatialIndex::Region *r = new SpatialIndex::Region();
+    pS->getMBR(*r);
+    std::cout <<"found shape: " << *r << " dimension: " <<pS->getDimension() << std::endl;
+        // do something.
+    delete pS;
+
+    // data should be an array of characters representing a Region as a string.
+    uint8_t* pData = 0;
+    size_t cLen = 0;
+    d.getData(cLen, &pData);
+    // do something.
+    //string s = reinterpret_cast<char*>(pData);
+    //cout << s << endl;
+    delete[] pData;
+
+     // std::cout << "found: " <<d.getIdentifier() << std::endl;
+    m_vector->push_back(d.getIdentifier());
+        // the ID of this data entry is an answer to the query. I will just print it to stdout.
+}
+
+void LASVisitor::visitData(std::vector<const SpatialIndex::IData*>& v)
+{
+    std::cout << v[0]->getIdentifier() << " " << v[1]->getIdentifier() << std::endl;
 }
 
 } // namespace liblas
