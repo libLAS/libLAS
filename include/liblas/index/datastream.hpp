@@ -70,12 +70,14 @@ public:
     size_t size() throw (Tools::NotSupportedException);
     void rewind() throw (Tools::NotSupportedException);
 
-    bool readPoint();
-
 protected:
     liblas::LASReader* m_reader;
     SpatialIndex::RTree::Data* m_pNext;
     SpatialIndex::id_type m_id;
+
+
+    bool readPoint();
+
 };
 
 

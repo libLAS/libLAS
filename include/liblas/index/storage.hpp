@@ -54,7 +54,6 @@
 namespace liblas {
 
 
-
 extern SpatialIndex::IStorageManager* returnLASStorageManager(Tools::PropertySet& in);
 extern SpatialIndex::IStorageManager* createNewLASStorageManager();
 
