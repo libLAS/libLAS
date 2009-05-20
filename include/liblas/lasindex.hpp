@@ -56,7 +56,7 @@
 
 namespace liblas {
 
-class LASDataStream;
+class LASIndexDataStream;
 
 class LASIndex
 {
@@ -70,11 +70,13 @@ public:
     };
     
     LASIndex();
-    LASIndex(LASDataStream& strm, std::string& filename);
     LASIndex(std::string& filename);
     /// Copy constructor.
     LASIndex(LASIndex const& other);
     ~LASIndex();
+    
+    void Initialize(LASIndexDataStream& strm);
+    void Initialize();
     
     /// Assignment operator.
     LASIndex& operator=(LASIndex const& rhs);
@@ -83,7 +85,20 @@ public:
     bool operator==(const LASIndex& other) const;
 
     
+    /// Inserts a LASPoint into the index with a given id
+    /// \param p the LASPoint to insert
+    /// \param id the id to associate with the point
     void insert(LASPoint& p, int64_t id);
+    
+    /// Intersects the index with the given cube and returns a 
+    /// std::vector of ids.  Caller has ownership of the vector.
+    /// \param minx minimum X value of the cube
+    /// \param maxx maximum X value of the cube
+    /// \param miny minimum Y value of the cube
+    /// \param maxy maximum Y value of the cube
+    /// \param minz minimum Z value of the cube
+    /// \param maxz maximum Z value of the cube
+    /// \return std::vector<uint32_t> that the caller owns containing the ids that intersect the query.
     std::vector<uint32_t>* intersects(double minx, double miny, double maxx, double maxy, double minz, double maxz);
 
     /// Sets the page size for the index when stored externally
@@ -95,7 +110,7 @@ public:
     uint32_t GetPageSize() { return m_Pagesize; }
     
     /// Sets the index type
-    /// \param v - index type. 
+    /// \param v - index type.  Defaults to eExternalIndex.
     void SetIndexType(IndexType v) { m_idxType = v; }
 
     /// Gets the index type
@@ -117,14 +132,18 @@ private:
     double m_idxFillFactor; 
     bool m_idxExists;
 
+    std::string m_idxFilename;
 
     uint16_t m_bufferCapacity;
     bool m_bufferWriteThrough;
     
-    void Init();
+    bool m_Initialized;
+
+    
+    void Setup();
     SpatialIndex::IStorageManager* CreateStorage(std::string& filename);
     SpatialIndex::StorageManager::IBuffer* CreateIndexBuffer(SpatialIndex::IStorageManager& storage);
-    SpatialIndex::ISpatialIndex* CreateIndex(LASDataStream& strm);
+    SpatialIndex::ISpatialIndex* CreateIndex(LASIndexDataStream& strm);
     SpatialIndex::ISpatialIndex* LoadIndex();
     bool ExternalIndexExists(std::string& filename);
 };
@@ -146,15 +165,11 @@ public:
     void visitData(std::vector<const SpatialIndex::IData*>& v);
 };
 
-class LASDataStream : public SpatialIndex::IDataStream
+class LASIndexDataStream : public SpatialIndex::IDataStream
 {
 public:
-    LASDataStream(LASReader* reader);
-
-    ~LASDataStream()
-    {
-        if (m_pNext != 0) delete m_pNext;
-    };
+    LASIndexDataStream(LASReader* reader);
+    ~LASIndexDataStream();
 
     SpatialIndex::IData* getNext();
     bool hasNext() throw (Tools::NotSupportedException);

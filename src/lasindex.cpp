@@ -54,8 +54,12 @@
 namespace liblas
 {
 
-void LASIndex::Init()
+void LASIndex::Setup()
 {   
+    // set default values for member variables
+    // actual initialization of the index must happen externally with
+    // Initialize.  This allows the changing of the member variables 
+    // with the setters/getters.
 
     m_Pagesize = 4096;
     m_idxType = eExternalIndex;
@@ -71,15 +75,83 @@ void LASIndex::Init()
     m_bufferWriteThrough = false;
 
     m_idxExists = false;
+    
+    m_idxFilename = std::string("");
+    m_Initialized = false;
 }
 
 LASIndex::LASIndex()
 {
     std::cout << "Blank Index Constructor called!" << std::endl;
-    Init();
+    Setup();
 }
 
-SpatialIndex::ISpatialIndex* LASIndex::CreateIndex(LASDataStream& strm) 
+
+LASIndex::LASIndex(std::string& filename) 
+{
+    Setup();
+    m_idxFilename = filename;
+}
+
+
+
+
+LASIndex::LASIndex(LASIndex const& other) 
+{
+    std::cout << "Index copy called" << std::endl;
+}
+
+LASIndex::~LASIndex() 
+{
+    std::cout << "~LASIndex called" << std::endl;
+    
+    if (m_rtree != 0)
+        delete m_rtree;
+    if (m_buffer != 0)
+        delete m_buffer;
+    if (m_storage != 0)
+        delete m_storage;
+
+}
+
+void LASIndex::Initialize()
+{
+    m_storage = CreateStorage(m_idxFilename);
+    
+    m_buffer = CreateIndexBuffer(*m_storage);
+
+    if (m_idxExists == true) {
+        std::cout << "loading existing index from file " << std::endl;
+        m_rtree = LoadIndex();
+    }
+    else
+    {
+        throw std::runtime_error("can't create index with only a filename, must have LASDatastream");
+    }
+    
+    m_Initialized = true;
+}
+
+
+
+void LASIndex::Initialize(LASIndexDataStream& strm)
+{
+    m_storage = CreateStorage(m_idxFilename);
+    m_buffer = CreateIndexBuffer(*m_storage);
+
+    if (m_idxExists == true) {
+        std::cout << "loading existing index from LASIndexDataStream " << std::endl;
+        m_rtree = LoadIndex();
+    }
+    else
+    {
+        std::cout << "Creating new index from LASIndexDataStream  ... " << std::endl;
+        m_rtree = CreateIndex(strm);
+    }
+    m_Initialized = true;
+
+}
+SpatialIndex::ISpatialIndex* LASIndex::CreateIndex(LASIndexDataStream& strm) 
 {
     using namespace SpatialIndex;
     
@@ -97,8 +169,8 @@ SpatialIndex::ISpatialIndex* LASIndex::CreateIndex(LASDataStream& strm)
                                                       m_idxId);
         bool ret = index->isIndexValid();
         if (ret == false) 
-            throw std::runtime_error(   "Spatial index error: index is not"
-                                        " valid after createAndBulkLoadNewRTree");
+            throw std::runtime_error(   "Spatial index error: index is not "
+                                        "valid after createAndBulkLoadNewRTree");
 
         return index;
     } catch (Tools::Exception& e) {
@@ -128,26 +200,6 @@ SpatialIndex::ISpatialIndex* LASIndex::LoadIndex()
         throw std::runtime_error(os.str());
     }    
 }
-LASIndex::LASIndex(LASDataStream& strm, std::string& filename)
-{
-    using namespace SpatialIndex;
-    
-    Init();
-    
-    m_storage = CreateStorage(filename);
-    m_buffer = CreateIndexBuffer(*m_storage);
-
-    if (m_idxExists == true) {
-        std::cout << "loading existing index from LASDataStream " << std::endl;
-        m_rtree = LoadIndex();
-    }
-    else
-    {
-        std::cout << "Creating new index from LASDataStream  ... " << std::endl;
-        m_rtree = CreateIndex(strm);
-    }        
-}
-
 
 SpatialIndex::IStorageManager* LASIndex::CreateStorage(std::string& filename)
 {
@@ -233,44 +285,6 @@ bool LASIndex::ExternalIndexExists(std::string& filename)
     return output;
 }
 
-LASIndex::LASIndex(std::string& filename) 
-{
-
-    Init();
-    
-    m_storage = CreateStorage(filename);
-    
-    m_buffer = CreateIndexBuffer(*m_storage);
-
-    if (m_idxExists == true) {
-        std::cout << "loading existing index from file " << std::endl;
-        m_rtree = LoadIndex();
-    }
-    else
-    {
-        throw std::runtime_error("can't create index with only a filename, must have LASDatastream");
-    }   
-    
-}
-
-LASIndex::LASIndex(LASIndex const& other) 
-{
-    std::cout << "Index copy called" << std::endl;
-
-}
-
-LASIndex::~LASIndex() 
-{
-    std::cout << "~LASIndex called" << std::endl;
-    
-    if (m_rtree != 0)
-        delete m_rtree;
-    if (m_buffer != 0)
-        delete m_buffer;
-    if (m_storage != 0)
-        delete m_storage;
-
-}
 
 
 LASIndex& LASIndex::operator=(LASIndex const& rhs)
@@ -302,11 +316,15 @@ void LASIndex::insert(LASPoint& p, int64_t id)
     max[1] = p.GetY(); 
     max[2] = p.GetZ();
     
-    try{
+    if (m_Initialized = false)
+        throw std::runtime_error("Spatial index has not been initialized");
+        
+    try {
         m_rtree->insertData(0, 0, SpatialIndex::Region(min, max, 3), id);
     } catch (Tools::Exception& e) {
-        std::string s = e.what();
-        std::cout << "error inserting index value" << s <<std::endl; exit(1);
+        std::ostringstream os;
+        os << "Spatial Index Error: " << e.what();
+        throw std::runtime_error(os.str());
     }
 }
 
@@ -322,18 +340,26 @@ std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double max
     max[0] = maxx; 
     max[1] = maxy; 
     max[2] = maxz;
+
+    if (m_Initialized = false)
+        throw std::runtime_error("Spatial index has not been initialized");
     
-    std::cout.setf(std::ios_base::fixed);
-    
-    // std::cout << "minx: " << min[0] << " miny: "<<min[1] << " maxx: " <<max[0] << " maxy: " << max[1] << " minz: " << min[2] << " maxz: " << max[2] <<std::endl;
-    if (min[0] > max[0] || min[1] > max[1]) {std::cout << "epic fail!" << std::endl;};
+    // std::cout.setf(std::ios_base::fixed);
+    // std::cout << "Query bounds" << SpatialIndex::Region(min, max, 3) << std::endl;
+
     std::vector<uint32_t>* vect = new std::vector<uint32_t>;
     LASVisitor* visitor = new LASVisitor(vect);
-    
-    const SpatialIndex::Region *region = new SpatialIndex::Region(min, max, 3);
-    // std::cout << *region << std::endl;
-    m_rtree->intersectsWithQuery(*region, *visitor);
-    // std::cout << index() <<std::endl;
+
+    try {
+        m_rtree->intersectsWithQuery(SpatialIndex::Region(min, max, 3), *visitor);
+    } catch (Tools::Exception& e) {
+        std::ostringstream os;
+        os << "Spatial Index Error: " << e.what();
+        delete visitor;
+        throw std::runtime_error(os.str());
+    }
+
+    delete visitor;
     return vect;
     
 }
@@ -441,18 +467,18 @@ void LASStorageManager::deleteByteArray(const SpatialIndex::id_type id)
 
 
 
-LASDataStream::LASDataStream(LASReader *reader) : m_reader(reader), m_pNext(0), m_id(0)
+LASIndexDataStream::LASIndexDataStream(LASReader *reader) : m_reader(reader), m_pNext(0), m_id(0)
 {
-    bool read = readPoint();
-    
-    if (read)
-        m_id = 0;
-
-    std::cout<<"Initiating LASDataStream... read=" << read <<std::endl;
-    
+    m_id = 0;
+    readPoint();
 }
 
-bool LASDataStream::readPoint()
+LASIndexDataStream::~LASIndexDataStream()
+{
+    if (m_pNext != 0) delete m_pNext;
+}
+
+bool LASIndexDataStream::readPoint()
 {
     double min[3], max[3];
     
@@ -479,7 +505,7 @@ bool LASDataStream::readPoint()
 }
 
 
-SpatialIndex::IData* LASDataStream::getNext()
+SpatialIndex::IData* LASIndexDataStream::getNext()
 {
     if (m_pNext == 0) return 0;
 
@@ -490,20 +516,20 @@ SpatialIndex::IData* LASDataStream::getNext()
     return ret;
 }
 
-bool LASDataStream::hasNext() throw (Tools::NotSupportedException)
+bool LASIndexDataStream::hasNext() throw (Tools::NotSupportedException)
 {
-    // std::cout << "LASDataStream::hasNext called ..." << std::endl;
+    // std::cout << "LASIndexDataStream::hasNext called ..." << std::endl;
     return (m_pNext != 0);
 }
 
-size_t LASDataStream::size() throw (Tools::NotSupportedException)
+size_t LASIndexDataStream::size() throw (Tools::NotSupportedException)
 {
     throw Tools::NotSupportedException("Operation not supported.");
 }
 
-void LASDataStream::rewind() throw (Tools::NotSupportedException)
+void LASIndexDataStream::rewind() throw (Tools::NotSupportedException)
 {
-    // std::cout << "LASDataStream::rewind called..." << std::endl;
+    // std::cout << "LASIndexDataStream::rewind called..." << std::endl;
 
     if (m_pNext != 0)
     {
