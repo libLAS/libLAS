@@ -316,7 +316,7 @@ void LASIndex::insert(LASPoint& p, int64_t id)
     max[1] = p.GetY(); 
     max[2] = p.GetZ();
     
-    if (m_Initialized = false)
+    if (m_Initialized == false)
         throw std::runtime_error("Spatial index has not been initialized");
         
     try {
@@ -341,7 +341,7 @@ std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double max
     max[1] = maxy; 
     max[2] = maxz;
 
-    if (m_Initialized = false)
+    if (m_Initialized == false)
         throw std::runtime_error("Spatial index has not been initialized");
     
     // std::cout.setf(std::ios_base::fixed);
@@ -469,7 +469,6 @@ void LASStorageManager::deleteByteArray(const SpatialIndex::id_type id)
 
 LASIndexDataStream::LASIndexDataStream(LASReader *reader) : m_reader(reader), m_pNext(0), m_id(0)
 {
-    m_id = 0;
     readPoint();
 }
 
