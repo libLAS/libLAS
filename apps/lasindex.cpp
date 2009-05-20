@@ -6,7 +6,7 @@
 #include <liblas/lascolor.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/lasheader.hpp>
-#include <liblas/lasindex.hpp>
+#include <liblas/index/index.hpp>
 
 #ifdef HAVE_SPATIALINDEX
 #include <spatialindex/SpatialIndex.h>

@@ -10,7 +10,6 @@ nobase_las_HEADERS = \
     liblas/laserror.hpp \
     liblas/lasfile.hpp \
     liblas/lasheader.hpp \
-	liblas/lasindex.hpp \
     liblas/laspoint.hpp \
     liblas/lasreader.hpp \
     liblas/lasvariablerecord.hpp \
@@ -34,4 +33,8 @@ nobase_las_HEADERS = \
     liblas/detail/writer.hpp \
     liblas/detail/writer10.hpp \
     liblas/detail/writer11.hpp \
-    liblas/detail/writer12.hpp
+    liblas/detail/writer12.hpp \
+    liblas/index/datastream.hpp \
+    liblas/index/index.hpp \
+    liblas/index/storage.hpp \
+    liblas/index/visitor.hpp
