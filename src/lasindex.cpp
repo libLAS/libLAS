@@ -562,6 +562,7 @@ void LASVisitor::visitData(const SpatialIndex::IData& d)
     std::cout <<"found shape: " << *r << " dimension: " <<pS->getDimension() << std::endl;
         // do something.
     delete pS;
+    delete r;
 
     // data should be an array of characters representing a Region as a string.
     uint8_t* pData = 0;
