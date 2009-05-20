@@ -37,13 +37,18 @@ liblas_la_SOURCES = \
     detail/writer10.cpp \
     detail/writer11.cpp \
 	detail/writer12.cpp \
-    detail/file.cpp
+    detail/file.cpp 
 
 if GDAL_IS_CONFIG
 liblas_la_SOURCES += gt_wkt_srs.cpp
 endif
 
 if SPATIALINDEX_IS_CONFIG
-liblas_la_SOURCES += lasindex.cpp 
+liblas_la_SOURCES +=    index/index.cpp \
+                        index/datastream.cpp \
+                        index/visitor.cpp \
+                        index/storage.cpp
+
+
 endif
 liblas_la_LDFLAGS = -version-info 1:0:0
