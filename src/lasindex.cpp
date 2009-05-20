@@ -350,15 +350,19 @@ std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double max
     std::vector<uint32_t>* vect = new std::vector<uint32_t>;
     LASVisitor* visitor = new LASVisitor(vect);
 
+    SpatialIndex::Region* region = new SpatialIndex::Region(min, max, 3);
+
     try {
-        m_rtree->intersectsWithQuery(SpatialIndex::Region(min, max, 3), *visitor);
+        m_rtree->intersectsWithQuery(*region, *visitor);
     } catch (Tools::Exception& e) {
         std::ostringstream os;
         os << "Spatial Index Error: " << e.what();
+        delete region;
         delete visitor;
         throw std::runtime_error(os.str());
     }
 
+    delete region;
     delete visitor;
     return vect;
     
