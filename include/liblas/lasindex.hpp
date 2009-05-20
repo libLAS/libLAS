@@ -115,7 +115,7 @@ private:
     uint32_t m_idxLeafCap;
     uint32_t m_idxDimension;   
     double m_idxFillFactor; 
-    bool m_idxExternalExists;
+    bool m_idxExists;
 
 
     uint16_t m_bufferCapacity;
@@ -124,7 +124,8 @@ private:
     void Init();
     SpatialIndex::IStorageManager* CreateStorage(std::string& filename);
     SpatialIndex::StorageManager::IBuffer* CreateIndexBuffer(SpatialIndex::IStorageManager& storage);
-    
+    SpatialIndex::ISpatialIndex* CreateIndex(LASDataStream& strm);
+    SpatialIndex::ISpatialIndex* LoadIndex();
     bool ExternalIndexExists(std::string& filename);
 };
 

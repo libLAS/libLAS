@@ -143,7 +143,32 @@ int main(int argc, char* argv[])
     
     std::cout << "Vec length" << ids->size() << std::endl;  
     delete idx;
-  
+
+    LASDataStream* idxstrm = new LASDataStream(reader);
+
+    LASIndex* index = new LASIndex(*idxstrm, "MEMORY");
+    
+    //doing it in memory
+
+    std::vector<liblas::uint32_t>* ids = 0;
+
+    try{
+//        ids = idx->intersects(289815.12,4320979.06, 289818.01,4320982.59,46.83,170.65);
+
+// _zoom
+//        ids = idx->intersects(630355.0,4834609.0,630395.0,4834641.0,0.0,200.0);
+
+// _clip
+// 630346.830000,4834500.000000,55.260000
+        ids = index->intersects(630262.300000,4834500.000000,630346.830000,4834500.000000,50.900000,55.260000);
+//       ids = idx->intersects(630297.0,4834497.0,630302.0,4834501.0,0.0,200.0);
+
+    } catch (Tools::Exception& e) {
+        std::string s = e.what();
+        std::cout << "error querying index value" << s <<std::endl; exit(1);
+    }
+    
+
     // LASPoint* p
     // liblas::uint32_t num_points = reader->GetHeader().GetPointRecordsCount();
     // for (int i =0; i < num_points ; i++) {

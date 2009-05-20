@@ -70,7 +70,7 @@ void LASIndex::Init()
     m_bufferCapacity = 10;
     m_bufferWriteThrough = false;
 
-    m_idxExternalExists = false;
+    m_idxExists = false;
 }
 
 LASIndex::LASIndex()
@@ -79,7 +79,55 @@ LASIndex::LASIndex()
     Init();
 }
 
+SpatialIndex::ISpatialIndex* LASIndex::CreateIndex(LASDataStream& strm) 
+{
+    using namespace SpatialIndex;
+    
+    ISpatialIndex* index = 0;
+    
+    try{
+        index = RTree::createAndBulkLoadNewRTree(   SpatialIndex::RTree::BLM_STR,
+                                                      strm,
+                                                      *m_buffer,
+                                                      m_idxFillFactor,
+                                                      m_idxCapacity,
+                                                      m_idxLeafCap,
+                                                      m_idxDimension,
+                                                      SpatialIndex::RTree::RV_RSTAR,
+                                                      m_idxId);
+        bool ret = index->isIndexValid();
+        if (ret == false) 
+            throw std::runtime_error(   "Spatial index error: index is not"
+                                        " valid after createAndBulkLoadNewRTree");
 
+        return index;
+    } catch (Tools::Exception& e) {
+        std::ostringstream os;
+        os << "Spatial Index Error: " << e.what();
+        throw std::runtime_error(os.str());
+    }    
+}
+
+SpatialIndex::ISpatialIndex* LASIndex::LoadIndex() 
+{
+    using namespace SpatialIndex;
+    
+    ISpatialIndex* index = 0;
+    
+    try{
+        index = RTree::loadRTree(*m_buffer,m_idxId);
+        bool ret = index->isIndexValid();
+        if (ret == false) 
+            throw std::runtime_error(   "Spatial index error: index is not"
+                                        " valid after loadRTree");
+
+        return index;
+    } catch (Tools::Exception& e) {
+        std::ostringstream os;
+        os << "Spatial Index Error: " << e.what();
+        throw std::runtime_error(os.str());
+    }    
+}
 LASIndex::LASIndex(LASDataStream& strm, std::string& filename)
 {
     using namespace SpatialIndex;
@@ -89,42 +137,15 @@ LASIndex::LASIndex(LASDataStream& strm, std::string& filename)
     m_storage = CreateStorage(filename);
     m_buffer = CreateIndexBuffer(*m_storage);
 
-    if (m_idxType == eExternalIndex) {
-            
-    if (m_idxExternalExists == true) {
+    if (m_idxExists == true) {
         std::cout << "loading existing index from LASDataStream " << std::endl;
-        try{
-            m_rtree = SpatialIndex::RTree::loadRTree(*m_buffer,m_idxId);
-        } catch (Tools::Exception& e) {
-            std::ostringstream os;
-            os << "Spatial Index Error: " << e.what();
-            throw std::runtime_error(os.str());
-        }
+        m_rtree = LoadIndex();
     }
     else
     {
         std::cout << "Creating new index from LASDataStream  ... " << std::endl;
-        try{
-            m_rtree = RTree::createAndBulkLoadNewRTree(   SpatialIndex::RTree::BLM_STR,
-                                                          strm,
-                                                          *m_buffer,
-                                                          m_idxFillFactor,
-                                                          m_idxCapacity,
-                                                          m_idxLeafCap,
-                                                          m_idxDimension,
-                                                          SpatialIndex::RTree::RV_RSTAR,
-                                                          m_idxId);
-        bool ret = m_rtree->isIndexValid();
-        if (ret == false) 
-            throw std::runtime_error(   "Spatial index error: index is not"
-                                        " valid after createAndBulkLoadNewRTree");
-        } catch (Tools::Exception& e) {
-            std::ostringstream os;
-            os << "Spatial Index Error: " << e.what();
-            throw std::runtime_error(os.str());
-        }
+        m_rtree = CreateIndex(strm);
     }        
-    } // eExternalIndex
 }
 
 
@@ -139,7 +160,7 @@ SpatialIndex::IStorageManager* LASIndex::CreateStorage(std::string& filename)
             std::cout << "loading existing DiskStorage " << filename << std::endl;
             try{
                 storage = loadDiskStorageManager(filename);
-                m_idxExternalExists = true;
+                m_idxExists = true;
                 return storage;
             } catch (Tools::Exception& e) {
                 std::ostringstream os;
@@ -150,7 +171,7 @@ SpatialIndex::IStorageManager* LASIndex::CreateStorage(std::string& filename)
             try{
                 std::cout << "creating new DiskStorage " << filename << std::endl;            
                 storage = createNewDiskStorageManager(filename, m_Pagesize);
-                m_idxExternalExists = false;
+                m_idxExists = false;
                 return storage;
             } catch (Tools::Exception& e) {
                 std::ostringstream os;
@@ -158,6 +179,19 @@ SpatialIndex::IStorageManager* LASIndex::CreateStorage(std::string& filename)
                 throw std::runtime_error(os.str());
             }         
         }
+    } else if (m_idxType == eMemoryIndex) {
+
+        try{
+            std::cout << "creating new DiskStorage " << filename << std::endl;            
+            storage = createNewMemoryStorageManager();
+            m_idxExists = false;
+            return storage;
+        } catch (Tools::Exception& e) {
+            std::ostringstream os;
+            os << "Spatial Index Error: " << e.what();
+            throw std::runtime_error(os.str());
+        } 
+                    
     }
     return storage;               
 }
@@ -186,15 +220,19 @@ bool LASIndex::ExternalIndexExists(std::string& filename)
     std::ostringstream os;
     os << filename << ".dat";
     
-    if (m_idxExternalExists == true) return true;
+    // if we have already checked, we're done.
+    if (m_idxExists == true) return true;
 
     std::string indexname = os.str();
+    
+    // ret is -1 for no file existing and 0 for existing
     int ret = stat(indexname.c_str(),&stats);
-    std::cout << "indexname: " << indexname << " ret: " << ret << std::endl;
+
     bool output = false;
     if (ret == 0) output= true; else output =false;
     return output;
 }
+
 LASIndex::LASIndex(std::string& filename) 
 {
 
@@ -204,31 +242,15 @@ LASIndex::LASIndex(std::string& filename)
     
     m_buffer = CreateIndexBuffer(*m_storage);
 
-    if (ExternalIndexExists(filename)) {
-        std::cout << "loading existing index " << filename << std::endl;
-        try{
-            // m_storage = SpatialIndex::StorageManager::loadDiskStorageManager(filename);
-            // m_buffer = SpatialIndex::StorageManager::createNewRandomEvictionsBuffer(*m_storage, 
-            //                                                                         m_bufferCapacity, 
-            //                                                                         m_bufferWriteThrough);
-            m_rtree = SpatialIndex::RTree::loadRTree(*m_buffer,m_idxId);
-        } catch (Tools::Exception& e) {
-                std::ostringstream os;
-                os << "Spatial Index Error: " << e.what();
-                throw std::runtime_error(os.str());
-        }
+    if (m_idxExists == true) {
+        std::cout << "loading existing index from file " << std::endl;
+        m_rtree = LoadIndex();
     }
-    else{std::cout << "index name does not exist, failing" << std::endl;exit(1);}
-    // else
-    // {
-    //     std::cout << "Creating new index ... " << std::endl;
-    //     try{
-    //         m_storage = SpatialIndex::StorageManager::createNewDiskStorageManager(filename, 4096);
-    //     } catch (Tools::IllegalStateException& e) {
-    //         std::string s = e.what();
-    //         std::cout << "error creating index" << s <<std::endl; exit(1);
-    //     }
-    // }
+    else
+    {
+        throw std::runtime_error("can't create index with only a filename, must have LASDatastream");
+    }   
+    
 }
 
 LASIndex::LASIndex(LASIndex const& other) 
