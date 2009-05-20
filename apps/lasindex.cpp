@@ -52,8 +52,8 @@ int main(int argc, char* argv[])
 {
     int rc = 0;
 
-    std::string input;
-    std::string output;
+    std::string* input = 0;
+    std::string* output = 0;
     
     for (int i = 1; i < argc; i++)
     {
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
                 )
         {
             i++;
-            input = std::string(argv[i]);
+            input = new std::string(argv[i]);
         }
         else if (   strcmp(argv[i],"--output") == 0  ||
                     strcmp(argv[i],"--out") == 0     ||
@@ -80,19 +80,19 @@ int main(int argc, char* argv[])
                 )
         {
             i++;
-            output = std::string(argv[i]);
+            output = new std::string(argv[i]);
         }
-        else if (i == argc - 2 && output.empty() && input.empty())
+        else if (i == argc - 2 && output->empty() && input->empty())
         {
-            input = std::string(argv[i]);
+            input = new std::string(argv[i]);
         }
-        else if (i == argc - 1 && output.empty() && input.empty())
+        else if (i == argc - 1 && output->empty() && input->empty())
         {
-            input = std::string(argv[i]);
+            input = new std::string(argv[i]);
         }
-        else if (i == argc - 1 && output.empty() && input.empty())
+        else if (i == argc - 1 && output->empty() && input->empty())
         {
-            output = std::string(argv[i]);
+            output = new std::string(argv[i]);
         }
         else 
         {
@@ -101,26 +101,26 @@ int main(int argc, char* argv[])
         }
     }
     
-    if (input.empty()) {
+    if (input->empty()) {
         usage();
         exit(-1);
     }
-    std::cout << "input: " << input<<  " output: " <<output<<std::endl;
+    std::cout << "input: " << *input<<  " output: " <<output<<std::endl;
     // 
-    std::istream* istrm = OpenInput(input);
+    std::istream* istrm = OpenInput(*input);
     LASReader* reader = new LASReader(*istrm);
     
     
     LASIndexDataStream* idxstrm = new LASIndexDataStream(reader);
 
-    LASIndex* index = new LASIndex( input);
+    LASIndex* index = new LASIndex( *input);
     index->Initialize(*idxstrm);
     
     delete idxstrm;
     delete index;
     delete reader;
     
-    LASIndex* idx = new LASIndex(input);
+    LASIndex* idx = new LASIndex(*input);
     
     idx->Initialize();
     std::vector<liblas::uint32_t>* ids = 0;
@@ -215,4 +215,7 @@ int main(int argc, char* argv[])
     // std::cout << "Vec length" << ids->size() << std::endl;
     // delete reader;
     // delete istrm;
+    
+    if (input != 0) delete input;
+    if (output != 0) delete output;
 }
