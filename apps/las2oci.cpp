@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
     }
     
     OWConnection* con = new OWConnection("lidar","lidar","ubuntu/crrel.local");
-    if (con->Succed()) printf("succeded");
+    if (con->Succeeded()) printf("succeded");
     
     Cleanup(con, "base");
     CreateTable(con, "inptab");
