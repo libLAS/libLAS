@@ -59,7 +59,8 @@ namespace liblas
 
 LASIndexDataStream::LASIndexDataStream(LASReader *reader) : m_reader(reader), m_pNext(0), m_id(0)
 {
-    readPoint();
+    bool read = readPoint();
+    if (read) m_id = 0;
 }
 
 LASIndexDataStream::~LASIndexDataStream()

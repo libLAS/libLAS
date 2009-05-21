@@ -42,7 +42,6 @@
 #ifndef LIBLAS_INDEX_INDEX_HPP_INCLUDED
 #define LIBLAS_INDEX_INDEX_HPP_INCLUDED
 
-#include <liblas/lasvariablerecord.hpp>
 #include <liblas/laspoint.hpp>
 
 #include <spatialindex/SpatialIndex.h>
@@ -113,11 +112,11 @@ public:
     
     /// Sets the index type
     /// \param v - index type.  Defaults to eExternalIndex.
-    void SetIndexType(IndexType v) { m_idxType = v; }
+    void SetType(IndexType v) { m_idxType = v; }
 
     /// Gets the index type
     /// \return index type.
-    IndexType GetIndexType() { return m_idxType; }
+    IndexType GetType() { return m_idxType; }
     
 private:
 

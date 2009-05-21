@@ -42,6 +42,7 @@
 #ifndef LIBLAS_INDEX_STORAGE_HPP_INCLUDED
 #define LIBLAS_INDEX_STORAGE_HPP_INCLUDED
 
+#include <liblas/lasvariablerecord.hpp>
 #include <spatialindex/SpatialIndex.h>
 
 
@@ -54,37 +55,43 @@
 namespace liblas {
 
 
-extern SpatialIndex::IStorageManager* returnLASStorageManager(Tools::PropertySet& in);
-extern SpatialIndex::IStorageManager* createNewLASStorageManager();
+extern SpatialIndex::IStorageManager* returnVLRStorageManager(Tools::PropertySet& in);
+extern SpatialIndex::IStorageManager* createNewVLRStorageManager();
 
-class LASStorageManager : public SpatialIndex::IStorageManager
+class VLRStorageManager : public SpatialIndex::IStorageManager
 {
 public:
-    LASStorageManager(Tools::PropertySet&);
+    VLRStorageManager(Tools::PropertySet&);
 
-    virtual ~LASStorageManager();
+    virtual ~VLRStorageManager();
 
     virtual void loadByteArray(const SpatialIndex::id_type id, size_t& len, uint8_t** data);
     virtual void storeByteArray(SpatialIndex::id_type& id, const size_t len, const uint8_t* const data);
     virtual void deleteByteArray(const SpatialIndex::id_type id);
 
 private:
-    class Entry
-    {
-    public:
-        byte* m_pData;
-        size_t m_length;
-
-        Entry(size_t l, const uint8_t* const d) : m_pData(0), m_length(l)
-        {
-            m_pData = new uint8_t[m_length];
-            memcpy(m_pData, d, m_length);
-        }
-
-        ~Entry() { delete[] m_pData; }
-    }; // Entry
-
-    std::vector<Entry*> m_buffer;
+    
+    LASVariableRecord m_data;
+    LASVariableRecord m_ids;
+    // 
+    // class Entry
+    // {
+    // public:
+    //     byte* m_pData;
+    //     size_t m_length;
+    // 
+    //     Entry(size_t l, const uint8_t* const d) : m_pData(0), m_length(l)
+    //     {
+    //         m_pData = new uint8_t[m_length];
+    //         memcpy(m_pData, d, m_length);
+    //     }
+    // 
+    //     ~Entry() { delete[] m_pData; }
+    // }; // Entry
+    
+    LASVariableRecord* makeVLR(const size_t len, const uint8_t* data);
+    // std::vector<Entry*> m_buffer;
+    std::vector<LASVariableRecord*> m_vlrbuffer;
     std::stack<SpatialIndex::id_type> m_emptyPages;
 }; // MemoryStorageManager
 

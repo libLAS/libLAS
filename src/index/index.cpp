@@ -206,6 +206,7 @@ SpatialIndex::IStorageManager* LASIndex::CreateStorage(std::string& filename)
 {
     using namespace SpatialIndex::StorageManager;
     
+    std::cout << "index type:" << m_idxType << std::endl;
     SpatialIndex::IStorageManager* storage = 0;
     if (m_idxType == eExternalIndex) {
 
@@ -235,8 +236,8 @@ SpatialIndex::IStorageManager* LASIndex::CreateStorage(std::string& filename)
     } else if (m_idxType == eMemoryIndex) {
 
         try{
-            std::cout << "creating new DiskStorage " << filename << std::endl;            
-            storage = createNewMemoryStorageManager();
+            std::cout << "creating new createNewVLRStorageManager " << filename << std::endl;            
+            storage = createNewVLRStorageManager();
             m_idxExists = false;
             return storage;
         } catch (Tools::Exception& e) {

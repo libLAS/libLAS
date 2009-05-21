@@ -55,104 +55,121 @@ namespace liblas
 {
 
 
-SpatialIndex::IStorageManager* returnLASStorageManager(Tools::PropertySet& ps)
+SpatialIndex::IStorageManager* returnVLRStorageManager(Tools::PropertySet& ps)
 {
-    SpatialIndex::IStorageManager* sm = new LASStorageManager(ps);
+    SpatialIndex::IStorageManager* sm = new VLRStorageManager(ps);
     return sm;
 }
 
-SpatialIndex::IStorageManager* createNewLASStorageManager()
+SpatialIndex::IStorageManager* createNewVLRStorageManager()
 {
     Tools::PropertySet ps;
-    return returnLASStorageManager(ps);
+    return returnVLRStorageManager(ps);
 }
 
-LASStorageManager::LASStorageManager(Tools::PropertySet& ps)
+VLRStorageManager::VLRStorageManager(Tools::PropertySet& ps)
 {
 }
 
-LASStorageManager::~LASStorageManager()
+VLRStorageManager::~VLRStorageManager()
 {
-    for (std::vector<Entry*>::iterator it = m_buffer.begin(); it != m_buffer.end(); it++) delete *it;
+
+    // uint32_t vlrsize=0;
+    for (std::vector<LASVariableRecord*>::iterator vit = m_vlrbuffer.begin(); vit != m_vlrbuffer.end(); vit++) {
+        // vlrsize = vlrsize+(*vit)->GetRecordLength();
+        delete *vit;
+    }
+
 }
 
-void LASStorageManager::loadByteArray(const SpatialIndex::id_type id, size_t& len, uint8_t** data)
+void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, size_t& len, uint8_t** data)
 {
-    Entry* e;
+    LASVariableRecord* v;
     try
     {
-        e = m_buffer.at(id);
-        if (e == 0) throw Tools::InvalidPageException(id);
+        v = m_vlrbuffer.at(id);
+        if (v == 0) throw Tools::InvalidPageException(id);
     }
     catch (std::out_of_range)
     {
         throw Tools::InvalidPageException(id);
     }
 
-    len = e->m_length;
+    len = v->GetRecordLength();
     *data = new uint8_t[len];
 
-    memcpy(*data, e->m_pData, len);
+    memcpy(*data, (uint8_t*)&(v->GetData()[0]), len);
 }
 
-void LASStorageManager::storeByteArray(SpatialIndex::id_type& id, const size_t len, const uint8_t* const data)
+void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const size_t len, const uint8_t* const data)
 {
+    
     if (id == SpatialIndex::StorageManager::NewPage)
     {
-        Entry* e = new Entry(len, data);
+        LASVariableRecord* v = makeVLR(len,data);
 
         if (m_emptyPages.empty())
         {
-            m_buffer.push_back(e);
-            id = m_buffer.size() - 1;
+            m_vlrbuffer.push_back(v);
+            id = m_vlrbuffer.size() - 1;
         }
         else
         {
             id = m_emptyPages.top(); m_emptyPages.pop();
-            m_buffer[id] = e;
+            m_vlrbuffer[id] = v;
         }
     }
     else
     {
-        Entry* e_old;
+        LASVariableRecord* v_old;
         try
         {
-            e_old = m_buffer.at(id);
-            if (e_old == 0) throw Tools::InvalidPageException(id);
+            v_old = m_vlrbuffer.at(id);
+            if (v_old == 0) throw Tools::InvalidPageException(id);
         }
         catch (std::out_of_range)
         {
             throw Tools::InvalidPageException(id);
         }
 
-        Entry* e = new Entry(len, data);
-
-        delete e_old;
-        m_buffer[id] = e;
+        LASVariableRecord* v = makeVLR(len,data);
+        
+        delete v_old;
+        m_vlrbuffer[id] = v;
     }
 }
 
-void LASStorageManager::deleteByteArray(const SpatialIndex::id_type id)
+void VLRStorageManager::deleteByteArray(const SpatialIndex::id_type id)
 {
-    Entry* e;
+    LASVariableRecord* v;
     try
     {
-        e = m_buffer.at(id);
-        if (e == 0) throw Tools::InvalidPageException(id);
+        v = m_vlrbuffer.at(id);
+        if (v == 0) throw Tools::InvalidPageException(id);
     }
     catch (std::out_of_range)
     {
         throw Tools::InvalidPageException(id);
     }
 
-    m_buffer[id] = 0;
+    m_vlrbuffer[id] = 0;
     m_emptyPages.push(id);
 
-    delete e;
+    delete v;
 }
 
 
-
+LASVariableRecord* VLRStorageManager::makeVLR(const size_t len, const uint8_t* data)
+{
+    LASVariableRecord* v = new LASVariableRecord();
+    v->SetRecordLength(len);
+    v->SetUserId("liblas.org");
+    v->SetRecordId(2112);
+    std::vector<uint8_t> d;
+    for (size_t i=0;i<len;i++){d.push_back(data[i]);}
+    v->SetData(d);
+    return v;
+}
 
 
 } // namespace liblas
