@@ -249,9 +249,9 @@ AC_SUBST([SPATIALINDEX_INC])
 AC_SUBST([SPATIALINDEX_PREFIX])
 AM_CONDITIONAL([SPATIALINDEX_IS_CONFIG], [test ! x$SPATIALINDEX_CONFIG = xno])
 
-
-
-dnl Oracle Checks
+dnl #########################################################################
+dnl Determine Oracle Support
+dnl #########################################################################
 
 ORACLE_OCI_REQ_VERSION="9.0.2"
 HAVE_ORACLE_OCI="no"
@@ -261,6 +261,28 @@ AM_CONDITIONAL([OCI_IS_CONFIG], [test ! x$HAVE_ORACLE_OCI = xno])
 if test "${HAVE_ORACLE_OCI}" != "no" ; then
     LIBS="$ORACLE_OCI_LDFLAGS $LIBS"
 fi
+
+
+dnl #########################################################################
+dnl Determine Zlib Support
+dnl #########################################################################
+
+CHECK_ZLIB()
+AM_CONDITIONAL([ZLIB_IS_CONFIG], [test ! x$HAVE_LIBZ = xno])
+
+
+dnl #########################################################################
+dnl Determine Boost support
+dnl #########################################################################
+
+AX_BOOST_BASE()
+AM_CONDITIONAL([BOOST_IS_CONFIG], [test ! x$HAVE_BOOST = xno])
+
+if test "${HAVE_BOOST}" == "" ; then
+    HAVE_BOOST="yes"
+    LIBS="$BOOST_LDFLAGS $LIBS"
+fi
+
 
 
 
@@ -335,6 +357,21 @@ if test "${HAVE_ORACLE_OCI}" != "no" ; then
     fi
 fi
 
+LOC_MSG([  zlib support.............: ${HAVE_LIBZ}])
+if test "${HAVE_LIBZ}" != "no" ; then
+    LOC_MSG([   - lz....................: ${HAVE_LIBZ}])
+    if test -n "${ZLIB_INC}" ; then
+        LOC_MSG([   - INCLUDE directories...: ${ZLIB_INC}])
+    fi
+fi
+
+LOC_MSG([  Boost support............: ${HAVE_BOOST}])
+if test "${HAVE_BOOST}" != "no" ; then
+    LOC_MSG([   - lboost................: ${HAVE_BOOST}])
+    if test -n "${BOOST_CPPFLAGS}" ; then
+        LOC_MSG([   - INCLUDE directories...: ${BOOST_CPPFLAGS}])
+    fi
+fi
 LOC_MSG()
 LOC_MSG([  LIBS.....................: ${LIBS}])
 LOC_MSG()
