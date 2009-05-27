@@ -40,11 +40,11 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  """
-from . import core
+import core
 import datetime
 import time
 import math
-from . import color
+import color
 
 class Point(object):
     def __init__(self, owned=True, handle=None, copy=False):

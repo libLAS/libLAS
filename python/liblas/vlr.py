@@ -40,7 +40,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  """
-from . import core
+import core
 import ctypes
 
 class VLR(object):
