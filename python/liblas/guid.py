@@ -40,7 +40,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  """
-from . import core
+import core
 
 class GUID(object):
     def __init__(self, key=None, handle=None):
