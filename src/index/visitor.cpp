@@ -39,7 +39,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasindex.hpp>
+#include <liblas/index/index.hpp>
 #include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/lasreader.hpp>

@@ -43,8 +43,13 @@
 #define LIBLAS_INDEX_STORAGE_HPP_INCLUDED
 
 #include <liblas/lasvariablerecord.hpp>
-#include <spatialindex/SpatialIndex.h>
 
+
+#ifndef _MSC_VER
+#include <spatialindex/SpatialIndex.h>
+#else
+#include <SpatialIndex.h>
+#endif
 
 //std
 #include <string>

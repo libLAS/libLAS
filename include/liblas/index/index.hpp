@@ -44,7 +44,12 @@
 
 #include <liblas/laspoint.hpp>
 
+
+#ifndef _MSC_VER
 #include <spatialindex/SpatialIndex.h>
+#else
+#include <SpatialIndex.h>
+#endif
 
 #include <liblas/index/datastream.hpp>
 #include <liblas/index/storage.hpp>

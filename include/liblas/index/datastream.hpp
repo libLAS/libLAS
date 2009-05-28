@@ -45,8 +45,12 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/laspoint.hpp>
 
-#include <spatialindex/SpatialIndex.h>
 
+#ifndef _MSC_VER
+#include <spatialindex/SpatialIndex.h>
+#else
+#include <SpatialIndex.h>
+#endif
 
 //std
 #include <string>

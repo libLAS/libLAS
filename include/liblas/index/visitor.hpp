@@ -42,8 +42,12 @@
 #ifndef LIBLAS_INDEX_VISITOR_HPP_INCLUDED
 #define LIBLAS_INDEX_VISITOR_HPP_INCLUDED
 
-#include <spatialindex/SpatialIndex.h>
 
+#ifndef _MSC_VER
+#include <spatialindex/SpatialIndex.h>
+#else
+#include <SpatialIndex.h>
+#endif
 
 //std
 #include <string>
