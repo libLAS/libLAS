@@ -26,6 +26,13 @@ LAS_OBJS = \
     detail\writer12.obj \
     detail\file.obj
 
+!IF "$(SPATIALINDEX_HOME)" != "" && EXIST("$(SPATIALINDEX_HOME)")
+LAS_OBJS = $(LAS_OBJS) index\index.obj \
+            index\datastream.obj \
+            index\visitor.obj \
+            index\storage.obj
+!ENDIF
+
 RES = Version.res
 
 default: $(LAS_DLL) $(RES)
@@ -34,7 +41,7 @@ all: default
 
 $(LAS_LIB):	$(LAS_OBJS)
     if exist $(LAS_LIB) del $(LAS_LIB)
-    $(LINK) /lib /nologo /out:$(LAS_LIB) $(LAS_OBJS) $(GEOTIFF_LIB) $(GDAL_LIB)
+    $(LINK) /lib /nologo /out:$(LAS_LIB) $(LAS_OBJS) $(EX_LIBS)
 	
 $(LAS_DLL):	$(LAS_LIB) $(RES)
     $(LINK) /dll \

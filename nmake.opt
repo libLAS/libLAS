@@ -95,6 +95,27 @@ GDAL_HOME=""
 !ENDIF
 
 ###############################################################################
+# Spatial Indexing Support
+
+SPATIALINDEX_HOME=C:\cvs\buildkit\spatialindex
+
+
+!IF "$(SPATIALINDEX_HOME)" != "" && EXIST("$(SPATIALINDEX_HOME)")
+!MESSAGE *** Spatial indexing support enabled
+!MESSAGE *** Setting SPATIALINDEX_HOME $(SPATIALINDEX_HOME)
+
+SPATIALINDEX_LIB = $(SPATIALINDEX_HOME)\spatialindex.lib
+SPATIALINDEX_INCLUDE = -I$(SPATIALINDEX_HOME)\include
+INCLUDES = $(INCLUDES) $(SPATIALINDEX_INCLUDE)
+
+!ELSE
+SPATIALINDEX_HOME=""
+!MESSAGE *** Support of GDAL/OGR has been disabled (GDAL_HOME not set)
+!ENDIF
+
+EX_LIBS = $(GDAL_LIB) $(GEOTIFF_LIB) $(SPATIALINDEX_LIB)
+
+###############################################################################
 # Distribution directories
 
 LAS_HOME=C:\cvs\liblas\trunk
@@ -179,6 +200,12 @@ CFLAGS = $(CFLAGS) /DHAVE_GDAL=1
 CFLAGS = $(CFLAGS) /DHAVE_LIBGEOTIFF=1
 !ENDIF
 !ENDIF
+
+!IF "$(SPATIALINDEX_HOME)" != "" && EXIST("$(SPATIALINDEX_HOME)")
+CFLAGS = $(CFLAGS) /DHAVE_SPATIALINDEX=1
+!ENDIF
+
+
 
 ###############################################################################
 # Building toolset programs

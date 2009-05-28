@@ -8,10 +8,7 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/index/index.hpp>
 
-#ifdef HAVE_SPATIALINDEX
-#include <spatialindex/SpatialIndex.h>
 
-#endif
 #include <iostream>
 #include <fstream>
 #include <vector>
