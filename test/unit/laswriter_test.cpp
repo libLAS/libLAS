@@ -35,8 +35,11 @@ namespace tut
         ~laswriter_data()
         {
             // remove temporary file after each test case
-            int const rc = std::remove(tmpfile_.c_str());
-            ensure_equals(rc, 0);
+            int const ret = std::remove(tmpfile_.c_str());
+            if (0 != ret)
+            {
+                ; // ignore, file may not exist
+            }
         }
     };
 

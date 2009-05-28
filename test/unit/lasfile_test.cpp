@@ -18,24 +18,25 @@
 
 namespace tut
 { 
+
     struct lasfile_data
     {
         std::string tmpfile_;
         std::string file10_;
 
         lasfile_data()
-            : tmpfile_(g_test_data_path + "//lasfile_tmp.las"),
-                file10_(g_test_data_path + "//TO_core_last_clip.las")
+            : tmpfile_(g_test_data_path + "/lasfile_tmp.las"),
+                file10_(g_test_data_path + "/TO_core_last_clip.las")
         {}
 
         ~lasfile_data()
         {
             // remove temporary file after each test case
             int const ret = std::remove(tmpfile_.c_str());
-			if (0 != ret)
-			{
-				std::cerr << "Failed to remove \'" << tmpfile_ << "\' file\n";
-			}
+            if (0 != ret)
+            {
+                ; // ignore, file may not exist
+            }
         }
     };
 
@@ -268,4 +269,3 @@ namespace tut
         test_default_header(header1);
     }
 }
-
