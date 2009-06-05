@@ -253,7 +253,7 @@ static int parse(const char* parse_string, const char* line, double* xyz, LASPoi
                         "WARNING: point source ID %d is out of range of unsigned short\n", 
                         temp_i);
 /*          point->point_source_ID = temp_i & 65535; */
-            LASPoint_SetPointSourceId(point, temp_i & 65535);
+            LASPoint_SetPointSourceId(point, temp_i);
             /*// then advance to next white space */
             while (l[0] && l[0] != ' ' && l[0] != ',' && l[0] != '\t') l++; 
         }
