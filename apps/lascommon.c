@@ -57,6 +57,8 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
     uint16_t green = 0;
     uint16_t blue = 0;
     
+    uint16_t ptsrc = 0;
+    
     int i = 0;
 
     summary = (LASPointSummary*) malloc(sizeof(LASPointSummary));
@@ -149,7 +151,11 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
         cls = LASPoint_GetClassification(p);
         LASPoint_SetClassification(summary->pmin, MIN(cls, LASPoint_GetClassification(summary->pmin)));
         LASPoint_SetClassification(summary->pmax, MAX(cls, LASPoint_GetClassification(summary->pmax)));
-        
+
+        ptsrc = LASPoint_GetPointSourceId(p);
+        LASPoint_SetPointSourceId(summary->pmin, MIN(ptsrc, LASPoint_GetPointSourceId(summary->pmin)));
+        LASPoint_SetPointSourceId(summary->pmax, MAX(ptsrc, LASPoint_GetPointSourceId(summary->pmax)));
+
         color = LASPoint_GetColor(p);
         min_color = LASPoint_GetColor(summary->pmin);
         max_color = LASPoint_GetColor(summary->pmax);
@@ -316,6 +322,10 @@ void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header
     fprintf(file, "  Classification:\t%d,%d\n",
                   LASPoint_GetClassification(summary->pmin),
                   LASPoint_GetClassification(summary->pmax)
+                  );
+    fprintf(file, "  Point Source Id:\t%d,%d\n",
+                  LASPoint_GetPointSourceId(summary->pmin),
+                  LASPoint_GetPointSourceId(summary->pmax)
                   );
     fprintf(file, "  Minimum Color:\t %d %d %d\n",
                   LASColor_GetRed(LASPoint_GetColor(summary->pmin)),
