@@ -152,6 +152,13 @@ void LASIndex::Initialize(LASIndexDataStream& strm)
     m_Initialized = true;
 
 }
+
+LASVariableRecord* LASIndex::GetVLR()
+{
+    if (m_idxType == eMemoryIndex) { return static_cast<VLRStorageManager*>(m_storage)->getVLR();}
+    else
+        return new LASVariableRecord();
+}
 SpatialIndex::ISpatialIndex* LASIndex::CreateIndex(LASIndexDataStream& strm) 
 {
     using namespace SpatialIndex;

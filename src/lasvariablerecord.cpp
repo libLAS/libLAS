@@ -217,5 +217,48 @@ uint32_t LASVariableRecord::GetTotalSize() const
     return static_cast<uint32_t>(sum);
 }
 
+std::ostream& operator << ( std::ostream& out, LASVariableRecord const& d)
+{
+    // std::vector<uint8_t> data = d.GetData();
+    std::streampos begin = out.tellp();
+    std::cout << "begin: " << begin << std::endl;
+    std::cout << "Dumping " << d.GetRecordLength() <<" bytes out for VLR" << "Size is : " << d.GetData().size() <<std::endl;
+    for (size_t i=0;i<d.GetData().size();i++) {
+        //        out << d.GetData()[i];
+    }
+    out << &(d.GetData()[0]);
+    std::streampos end = out.tellp();
+    std::cout << "end: " << end << std::endl;
+
+    return out;
+}
+
+std::istream& operator >> ( std::istream& in, LASVariableRecord& d)
+{
+    std::streampos input_pos = in.tellg();
+    std::vector<uint8_t> data;
+    in.seekg(0, std::ios::end);
+    std::streampos length = in.tellg();
+    in.seekg(input_pos, std::ios::beg);
+    std::cout << "Stream length: " << length << std::endl;
+    
+    uint8_t* buffer = new uint8_t[length];
+
+    liblas::detail::read_n(buffer, in, length);
+    
+    // FIXME:  This has probably already been properly swapped?  
+    //         but I'm worried about the case where we have a 
+    //         stream that is really some sort of zlib or bzip stream
+    //         and we don't know the orientation of the bytes - hobu
+    LIBLAS_SWAP_BYTES_N(buffer, length);
+    
+    for (size_t i=0; i < length; i++){
+        data.push_back(buffer[i]);
+    }
+    delete buffer;
+    
+    d.SetData(data);
+    return in;
+}
 } // namespace liblas
 

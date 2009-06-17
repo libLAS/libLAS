@@ -280,7 +280,7 @@ AM_CONDITIONAL([BOOST_IS_CONFIG], [test ! x$HAVE_BOOST = xno])
 
 if test "${HAVE_BOOST}" == "" ; then
     HAVE_BOOST="yes"
-    LIBS="$BOOST_LDFLAGS $LIBS"
+    LIBS="$BOOST_LDFLAGS -lboost_iostreams $LIBS"
 fi
 
 

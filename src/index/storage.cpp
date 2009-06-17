@@ -171,5 +171,9 @@ LASVariableRecord* VLRStorageManager::makeVLR(const size_t len, const uint8_t* d
     return v;
 }
 
+LASVariableRecord* VLRStorageManager::getVLR() const
+{
+    return m_vlrbuffer[0];
+}
 
 } // namespace liblas

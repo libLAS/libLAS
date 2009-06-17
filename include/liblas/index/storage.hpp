@@ -73,6 +73,8 @@ public:
     virtual void loadByteArray(const SpatialIndex::id_type id, size_t& len, uint8_t** data);
     virtual void storeByteArray(SpatialIndex::id_type& id, const size_t len, const uint8_t* const data);
     virtual void deleteByteArray(const SpatialIndex::id_type id);
+    
+    LASVariableRecord* getVLR() const;
 
 private:
     

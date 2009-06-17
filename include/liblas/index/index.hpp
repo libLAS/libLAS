@@ -123,6 +123,8 @@ public:
     /// \return index type.
     IndexType GetType() { return m_idxType; }
     
+    LASVariableRecord* GetVLR();
+    
 private:
 
     SpatialIndex::IStorageManager* m_storage;
