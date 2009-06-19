@@ -21,7 +21,7 @@
 #
 #   And sets:
 #
-#     HAVE_BOOST
+#     HAVE_BOOST_API
 #
 # LICENSE
 #
@@ -34,7 +34,7 @@
 AC_DEFUN([AX_BOOST_BASE],
 [
 AC_ARG_WITH([boost],
-	AS_HELP_STRING([--with-boost@<:@=DIR@:>@], [use boost (default is yes) - it is possible to specify the root directory for boost (optional)]),
+	AS_HELP_STRING([--with-boost@<:@=DIR@:>@], [use boost (default is no) - it is possible to specify the root directory for boost (optional)]),
 	[
     if test "$withval" = "no"; then
 		want_boost="no"
@@ -43,10 +43,10 @@ AC_ARG_WITH([boost],
         ac_boost_path=""
     else
 	    want_boost="yes"
-        ac_boost_path="$withval"
+	    ac_boost_path="$withval"
 	fi
     ],
-    [want_boost="yes"])
+    [want_boost="no"])
 
 
 AC_ARG_WITH([boost-libdir],
@@ -209,7 +209,9 @@ if test "x$want_boost" = "xyes"; then
 	else
 		AC_SUBST(BOOST_CPPFLAGS)
 		AC_SUBST(BOOST_LDFLAGS)
-		AC_DEFINE(HAVE_BOOST,,[define if the Boost library is available])
+		HAVE_BOOST="yes"
+		AC_SUBST(HAVE_BOOST)
+		AC_DEFINE(HAVE_BOOST_API,,[define if the Boost library is available])
 	fi
 
         CPPFLAGS="$CPPFLAGS_SAVED"
