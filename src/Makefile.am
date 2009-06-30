@@ -22,7 +22,7 @@ ZLIB_CPPFLAGS = @ZLIB_INC@ -DHAVE_ZLIB=1
 endif
 
 if BOOST_IS_CONFIG
-BOOST_FLAGS = @BOOST_CPPFLAGS@ -DHAVE_BOOST_API=1
+BOOST_FLAGS = @BOOST_CPPFLAGS@ -DHAVE_BOOST=1
 endif
 
 AM_CPPFLAGS = -I../include/liblas/capi -I../include $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) $(SPATIALINDEX_CPPFLAGS) $(OCI_CPPFLAGS) $(ZLIB_CPPFLAGS) $(BOOST_FLAGS)
@@ -59,6 +59,7 @@ if SPATIALINDEX_IS_CONFIG
 liblas_la_SOURCES +=    index/index.cpp \
                         index/datastream.cpp \
                         index/visitor.cpp \
+						index/query.cpp \
                         index/storage.cpp
 
 

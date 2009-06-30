@@ -9,7 +9,7 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/index/index.hpp>
 
-#ifdef HAVE_BOOST_API
+#ifdef HAVE_BOOST
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
@@ -185,7 +185,12 @@ int main(int argc, char* argv[])
         std::string s = e.what();
         std::cout << "error querying index value" << s <<std::endl; exit(1);
     }
-        
+    
+    std::cout << "hits: ";
+    for (int i=0;i<ids->size();i++) {
+        std::cout << ids->at(i) <<",";
+    }
+    std::cout << std::endl;
     // 
     // if (ids != 0) delete ids;
     // if (idx != 0) delete idx;
@@ -206,6 +211,7 @@ int main(int argc, char* argv[])
     LASVariableRecord *vlr = idx->GetVLR();
 
     std::string data("some junkdsfasdfasdfqwerasdfasdfasdfasdfasdfweradsfasdfasdfasdfasdfasdqwerasdfasdfasdfasdfqwerasdfasdfv");
+    // std::string data(vlr->GetData());
     std::cout << "uncompressed size " << data.size() << std::endl;
     
     io::copy(boost::make_iterator_range(data),ofilter);

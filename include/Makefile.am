@@ -37,4 +37,5 @@ nobase_las_HEADERS = \
     liblas/index/datastream.hpp \
     liblas/index/index.hpp \
     liblas/index/storage.hpp \
+	liblas/index/query.hpp \
     liblas/index/visitor.hpp
