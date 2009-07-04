@@ -39,8 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_INDEX_VISITOR_HPP_INCLUDED
-#define LIBLAS_INDEX_VISITOR_HPP_INCLUDED
+#ifndef LIBLAS_INDEX_QUERY_HPP_INCLUDED
+#define LIBLAS_INDEX_QUERY_HPP_INCLUDED
 
 
 #ifndef _MSC_VER
@@ -53,25 +53,55 @@
 #include <string>
 #include <vector>
 #include <stack>
+#include <queue>
 #include <sys/stat.h>
 
 namespace liblas {
 
+class LASQueryResult 
+{
+private:
+    std::list<SpatialIndex::id_type> ids;
+    SpatialIndex::Region* bounds;
+    uint32_t m_id;
+    LASQueryResult();
+public:
+    LASQueryResult(uint32_t id) : bounds(0), m_id(id){};
+    ~LASQueryResult() {if (bounds!=0) delete bounds;};
+
+    /// Copy constructor.
+    LASQueryResult(LASQueryResult const& other);
+
+    /// Assignment operator.
+    LASQueryResult& operator=(LASQueryResult const& rhs);
+        
+    std::list<SpatialIndex::id_type> const& GetIDs() const;
+    void SetIDs(std::list<SpatialIndex::id_type>& v);
+    const SpatialIndex::Region* GetBounds() const;
+    void SetBounds(const SpatialIndex::Region*  b);
+    uint32_t GetID() const {return m_id;}
+    void SetID(uint32_t v) {m_id = v;}
+};
 
 class LASQuery : public SpatialIndex::IQueryStrategy
 {
 private:
-
+    std::queue<SpatialIndex::id_type> m_ids;
+    uint32_t m_count;
+    std::list<LASQueryResult> m_results;
 public:
 
     LASQuery();
-
+    ~LASQuery() {
+        std::cout << "child count was" << m_count << std::endl;
+        std::cout << "results count was" << m_results.size() << std::endl;};
     void getNextEntry(const SpatialIndex::IEntry& entry, SpatialIndex::id_type& nextEntry, bool& hasNext);
-
+    
+    std::list<LASQueryResult>& GetResults() {return m_results;}
 };
 
 
 
 }
 
-#endif // LIBLAS_INDEX_VISITOR_HPP_INCLUDED
+#endif // LIBLAS_INDEX_QUERY_HPP_INCLUDED

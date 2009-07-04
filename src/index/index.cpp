@@ -67,7 +67,7 @@ void LASIndex::Setup()
     m_idxId = 1;
     
     m_idxCapacity = 100;
-    m_idxLeafCap = 100;
+    m_idxLeafCap = 1000;
     m_idxDimension = 3;
     
     m_idxFillFactor = 0.7;
@@ -159,6 +159,7 @@ LASVariableRecord* LASIndex::GetVLR()
     else
         return new LASVariableRecord();
 }
+
 SpatialIndex::ISpatialIndex* LASIndex::CreateIndex(LASIndexDataStream& strm) 
 {
     using namespace SpatialIndex;
@@ -213,10 +214,9 @@ SpatialIndex::IStorageManager* LASIndex::CreateStorage(std::string& filename)
 {
     using namespace SpatialIndex::StorageManager;
     
-    std::cout << "index type:" << m_idxType << std::endl;
     SpatialIndex::IStorageManager* storage = 0;
     if (m_idxType == eExternalIndex) {
-
+        std::cout << "index type was eExternalIndex" << std::endl;
         if (ExternalIndexExists(filename) && !filename.empty()) {
             std::cout << "loading existing DiskStorage " << filename << std::endl;
             try{
@@ -241,6 +241,7 @@ SpatialIndex::IStorageManager* LASIndex::CreateStorage(std::string& filename)
             }         
         }
     } else if (m_idxType == eMemoryIndex) {
+        std::cout << "index type was eMemoryIndex" << std::endl;
 
         try{
             std::cout << "creating new createNewVLRStorageManager " << filename << std::endl;            
@@ -377,8 +378,10 @@ std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double max
     
 }
 
-
-
+void LASIndex::Query(LASQuery& query)
+{
+    m_rtree->queryStrategy(query);
+}
 
 
 } // namespace liblas

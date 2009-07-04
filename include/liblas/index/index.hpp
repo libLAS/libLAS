@@ -54,7 +54,7 @@
 #include <liblas/index/datastream.hpp>
 #include <liblas/index/storage.hpp>
 #include <liblas/index/visitor.hpp>
-
+#include <liblas/index/query.hpp>
 
 //std
 #include <string>
@@ -114,7 +114,31 @@ public:
     /// Get index page size for indexes that are stored externally
     /// \return index page size.
     uint32_t GetPageSize() { return m_Pagesize; }
-    
+
+    /// Sets the index leaf capacity
+    /// \param v - leaf capacity value.  Defaults to 1000.
+    void SetLeafCapacity(uint32_t v) { m_idxLeafCap = v; }
+
+    /// Get index leaf capacity 
+    /// \return index leaf capacity value.
+    uint32_t GetLeafCapacity() { return m_idxLeafCap; }
+
+    /// Sets the index capacity
+    /// \param v - capacity value.  Defaults to 100.
+    void SetIndexCapacity(uint32_t v) { m_idxCapacity = v; }
+
+    /// Get index capacity 
+    /// \return index capacity value.
+    uint32_t GetIndexCapacity() { return m_idxCapacity; }
+
+    /// Sets the fill factor
+    /// \param v - fill factor value.  Defaults to 0.7.
+    void SetFillFactor(double v) { m_idxFillFactor = v; }
+
+    /// Get the index fill factor
+    /// \return index fill factor.
+    double GetFillFactor() { return m_idxFillFactor; }
+                        
     /// Sets the index type
     /// \param v - index type.  Defaults to eExternalIndex.
     void SetType(IndexType v) { m_idxType = v; }
@@ -125,6 +149,7 @@ public:
     
     LASVariableRecord* GetVLR();
     
+    void Query(LASQuery& query);
 private:
 
     SpatialIndex::IStorageManager* m_storage;
