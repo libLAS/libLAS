@@ -34,6 +34,8 @@ using namespace liblas;
 #endif
 
 
+
+
 std::istream* OpenInput(std::string filename) 
 {
     std::ios::openmode const mode = std::ios::in | std::ios::binary;
@@ -331,6 +333,52 @@ liblas::uint32_t num_bytes_written = statement->WriteBlob( locator[0],
     return true;
 
 }
+
+bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* query, int srid)
+{
+    ostringstream oss;
+    OWStatement* statement = 0;
+    // SpatialIndex::Region* b = query->bounds;
+    ostringstream oss_geom;
+    
+    oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    oss.precision(2);
+     
+//     code = """
+// INSERT INTO user_sdo_geom_metadata VALUES (
+//     'foo',
+//     'blk_extent',
+//     MDSYS.SDO_DIM_ARRAY(
+// MDSYS.SDO_DIM_ELEMENT('X', 630250.000000, 630500.000000, 0.05),
+// MDSYS.SDO_DIM_ELEMENT('Y', 4834500, 4834750, 0.05)),
+//     8307)
+// """
+    oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
+            "','blk_extent', MDSYS.SDO_DIM_ARRAY(" 
+            "MDSYS.SDO_DIM_ELEMENT('X', "<< query->bounds.getLow(0) <<","<< query->bounds.getHigh(0)<<",0.05),"
+            "MDSYS.SDO_DIM_ELEMENT('Y', "<< query->bounds.getLow(1) <<","<< query->bounds.getHigh(1)<<",0.05)),"
+            << srid << ")";
+    statement = Run(connection, oss);
+    if (statement != 0) delete statement; else return false;
+    oss.str("");
+    
+    return true;
+        
+}
+
+bool CreateBlockIndex(OWConnection* connection, const char* tableName)
+{
+    ostringstream oss;
+    OWStatement* statement = 0;
+    
+    oss << "CREATE INDEX "<< tableName <<"_cloud_idx on "<<tableName<<"(blk_extent) INDEXTYPE IS MDSYS.SPATIAL_INDEX" ;
+    statement = Run(connection, oss);
+    if (statement != 0) delete statement; else return false;
+    oss.str("");
+    
+    return true;
+        
+}
 void usage() {}
 
 int main(int argc, char* argv[])
@@ -458,6 +506,9 @@ int main(int argc, char* argv[])
         bool inserted = InsertBlock(con, *i, srid, reader2, table_name.c_str());
     }
     
+
+    CreateSDOEntry(con, table_name.c_str(), query, srid );
+    CreateBlockIndex(con, table_name.c_str());
 //    Cleanup(con, "base");
 
  // int   iCol = 0;

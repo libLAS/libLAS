@@ -53,10 +53,21 @@
 namespace liblas
 {
 
-    LASQuery::LASQuery() :m_count(0){}
+    LASQuery::LASQuery() :m_count(0),m_first(true){}
 
 void LASQuery::getNextEntry(const SpatialIndex::IEntry& entry, SpatialIndex::id_type& nextEntry, bool& hasNext) {
     // the first time we are called, entry points to the root.
+    
+    if (m_first) {
+        SpatialIndex::IShape* ps;
+        entry.getShape(&ps);
+        ps->getMBR(bounds);
+        delete ps;
+        
+        // any other time through we're no longer at the root so 
+        // we wouldn't get the entire index's bounding box
+        m_first = false;
+    }
     const SpatialIndex::INode* n = dynamic_cast<const SpatialIndex::INode*>(&entry);
     
     // if (n !=0 ) {

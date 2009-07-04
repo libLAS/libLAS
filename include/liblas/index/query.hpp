@@ -89,6 +89,8 @@ private:
     std::queue<SpatialIndex::id_type> m_ids;
     uint32_t m_count;
     std::list<LASQueryResult> m_results;
+    bool m_first;
+    
 public:
 
     LASQuery();
@@ -98,6 +100,7 @@ public:
     void getNextEntry(const SpatialIndex::IEntry& entry, SpatialIndex::id_type& nextEntry, bool& hasNext);
     
     std::list<LASQueryResult>& GetResults() {return m_results;}
+    SpatialIndex::Region bounds;
 };
 
 
