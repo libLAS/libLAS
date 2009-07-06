@@ -137,20 +137,23 @@ bool CreateTable(OWConnection* connection, const char* tableName)
 
 }
 
-bool DeleteTable(OWConnection* connection, const char* tableName)
+bool DeleteTable(OWConnection* connection, const char* tableName, const char* cloudTableName, const char* cloudColumnName)
 {
     ostringstream oss;
     OWStatement* statement = 0;
 
-    oss << "DELETE from hobu ";
+    oss << "DELETE from " <<cloudTableName;
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");
 
-    // oss << "DROP table hobu ";
-    // statement = Run(connection, oss);
-    // if (statement != 0) delete statement; else return false;
-    // oss.str("");
+oss << "declare\n"
+"begin \n"
+"  mdsys.sdo_pc_pkg.drop_dependencies('"<<cloudTableName<<"', '"<<cloudColumnName<<"');"
+"end;";
+    statement = Run(connection, oss);
+    if (statement != 0) delete statement; else return false;
+    oss.str("");
     
     oss << "DROP TABLE "<< tableName ;
     statement = Run(connection, oss);
@@ -536,9 +539,20 @@ int main(int argc, char* argv[])
             exit(1);
         }
     }
-    
-    OWConnection* con = new OWConnection("lidar","lidar","ubuntu/crrel.local");
-    if (con->Succeeded()) std::cout <<"Oracle Connection succeded" << std::endl;
+
+    string::size_type slash_pos = connection.find("/",0);
+    username = connection.substr(0,slash_pos);
+    string::size_type at_pos = connection.find("@",slash_pos);
+    std::cout <<"slash_pos: " << slash_pos << " at_pos: " << at_pos<<std::endl;
+    password = connection.substr(slash_pos+1, at_pos-slash_pos-1);
+    instance = connection.substr(at_pos+1);
+    std::cout << "Connecting with username: " << username << " password: "<< password<< " instance: " << instance << std::endl;    
+    OWConnection* con = new OWConnection(username.c_str(),password.c_str(),instance.c_str());
+    if (con->Succeeded()) {
+        std::cout <<"Oracle connection succeded" << std::endl;
+    } else {
+        std::cout <<"Oracle connection failed" << std::endl; exit(1);
+    }
 
 
     std::istream* istrm;
@@ -558,7 +572,7 @@ int main(int argc, char* argv[])
     string::size_type dot_pos = input.find_first_of(".");
     string table_name = input.substr(0,dot_pos);
     
-    if (bDropTable) DeleteTable(con, table_name.c_str());
+    if (bDropTable) DeleteTable(con, table_name.c_str(), "HOBU", "CLOUD");
     CreateTable(con, table_name.c_str());
 
     LASReader* reader = new LASReader(*istrm);
