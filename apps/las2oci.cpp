@@ -17,6 +17,8 @@
 #include <iostream>
 #include <fstream>
 #include <exception>
+#include <algorithm>
+#include <cctype>
 
 #ifdef HAVE_SPATIALINDEX
 #include <spatialindex/SpatialIndex.h>
@@ -139,12 +141,32 @@ bool DeleteTable(OWConnection* connection, const char* tableName)
 {
     ostringstream oss;
     OWStatement* statement = 0;
+
+    oss << "DELETE from hobu ";
+    statement = Run(connection, oss);
+    if (statement != 0) delete statement; else return false;
+    oss.str("");
+
+    // oss << "DROP table hobu ";
+    // statement = Run(connection, oss);
+    // if (statement != 0) delete statement; else return false;
+    // oss.str("");
     
     oss << "DROP TABLE "<< tableName ;
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");
-    
+
+    // Oracle upper cases the table name when inserting it in the 
+    // USER_SDO_GEOM_METADATA.  We'll use std::transform to do it. 
+    // See http://forums.devx.com/showthread.php?t=83058 for the 
+    // technique
+    string table(tableName);
+    std::transform(table.begin(), table.end(), table.begin(), static_cast < int(*)(int) > (toupper));
+    oss << "DELETE FROM USER_SDO_GEOM_METADATA WHERE TABLE_NAME='"<<table<<"'" ;
+    statement = Run(connection, oss);
+    if (statement != 0) delete statement; else return false;
+    oss.str("");    
     return true;
 
 }
@@ -379,13 +401,65 @@ bool CreateBlockIndex(OWConnection* connection, const char* tableName)
     return true;
         
 }
+
+bool CreatePCEntry( OWConnection* connection, 
+                    LASQuery* query, 
+                    const char* blkTableName, 
+                    const char* pcTableName, 
+                    const char* cloudName,
+                    int nDimension, 
+                    int srid,
+                    int blk_capacity)
+{
+    ostringstream oss;
+    OWStatement* statement = 0;
+
+    oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    oss.precision(2);
+    
+oss << "declare\n"
+"  pc sdo_pc;\n"
+"begin\n"
+"  -- Initialize the Point Cloud object.\n"
+"  pc := sdo_pc_pkg.init( \n"
+"          '"<< pcTableName<<"', -- Table that has the SDO_POINT_CLOUD column defined\n"
+"          '"<< cloudName<<"',   -- Column name of the SDO_POINT_CLOUD object\n"
+"          '"<<blkTableName<<"', -- Table to store blocks of the point cloud\n"
+"           'blk_capacity="<<blk_capacity<<"', -- max # of points per block\n"
+"           mdsys.sdo_geometry(2003, "<<srid<<", null,\n"
+"              mdsys.sdo_elem_info_array(1,1003,3),\n"
+"              mdsys.sdo_ordinate_array(\n"
+<< query->bounds.getLow(0) << ","
+<< query->bounds.getLow(1) << ","
+<< query->bounds.getHigh(0) << ","
+<< query->bounds.getHigh(1) << ")),  -- Extent\n"
+"     0.5, -- Tolerance for point cloud\n"
+"           "<<nDimension<<", -- Total number of dimensions\n"
+"           null);\n"
+
+"  -- Insert the Point Cloud object  into the \"base\" table.\n"
+"  insert into hobu values (pc);\n"
+"end;\n";
+    
+    statement = Run(connection, oss);
+    if (statement != 0) delete statement; else return false;
+    oss.str("");
+    
+    return true;
+}
 void usage() {}
 
 int main(int argc, char* argv[])
 {
 
     std::string input;
-    std::string output;
+    std::string connection;
+    std::string username;
+    std::string password;
+    std::string instance;
+    std::string block_table_name;
+    std::string point_cloud_name("CLOUD");
+    
     bool bDropTable = false;
     liblas::uint32_t nCapacity = 10000;
     double dFillFactor = 1.0;
@@ -441,11 +515,21 @@ int main(int argc, char* argv[])
             i++;
             srid=atoi(argv[i]);
         }
+        else if (   strcmp(argv[i],"--cloud-column-name") == 0  ||
+                    strcmp(argv[i],"-cn") == 0  
+                )
+        {
+            i++;
+            point_cloud_name = std::string(argv[i]);
+        }
         else if (input.empty())
         {
             input = std::string(argv[i]);
         }
-
+        else if (connection.empty())
+        {
+            connection = std::string(argv[i]);
+        }
         else 
         {
             usage();
@@ -509,6 +593,15 @@ int main(int argc, char* argv[])
 
     CreateSDOEntry(con, table_name.c_str(), query, srid );
     CreateBlockIndex(con, table_name.c_str());
+
+    CreatePCEntry(  con, 
+                    query, 
+                    table_name.c_str(),
+                    "HOBU",
+                    "CLOUD",
+                    3, // we're assuming 3d for now
+                    srid,
+                    nCapacity);
 //    Cleanup(con, "base");
 
  // int   iCol = 0;
