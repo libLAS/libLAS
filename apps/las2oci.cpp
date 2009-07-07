@@ -465,7 +465,7 @@ int main(int argc, char* argv[])
     
     bool bDropTable = false;
     liblas::uint32_t nCapacity = 10000;
-    double dFillFactor = 1.0;
+    double dFillFactor = 0.99;
     int srid = 8307;
     
     for (int i = 1; i < argc; i++)
@@ -582,7 +582,7 @@ int main(int argc, char* argv[])
     LASIndex* idx = new LASIndex(input);
     idx->SetType(LASIndex::eExternalIndex);
     idx->SetLeafCapacity(nCapacity);
-    idx->SetFillFactor(1.0);
+    idx->SetFillFactor(dFillFactor);
     idx->Initialize(*idxstrm);
 
     LASQuery* query = new LASQuery;
