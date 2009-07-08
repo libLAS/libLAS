@@ -173,14 +173,14 @@ oss << "declare\n"
     return true;
 
 }
-std::vector<liblas::uint8_t>* GetPointData(LASPoint const& p, bool bTime)
+bool GetPointData(LASPoint const& p, bool bTime, std::vector<liblas::uint8_t>& point_data)
 {
     // This function returns an array of bytes describing the 
     // x,y,z and optionally time values for the point.  The caller owns 
     // the array.
     std::vector<liblas::uint8_t>* data = new std::vector<liblas::uint8_t>;
-    data->resize(24);
-    if (bTime) data->resize(data->size()+8); // Add the time bytes too
+    point_data.resize(24);
+    if (bTime) point_data.resize(data->size()+8); // Add the time bytes too
 
     double x = p.GetX();
     double y = p.GetY();
@@ -196,19 +196,19 @@ std::vector<liblas::uint8_t>* GetPointData(LASPoint const& p, bool bTime)
     // doubles are 8 bytes long.  For each double, push back the 
     // byte.  We do this for all four values (x,y,z,t)
     for (int i=0; i<8; i++) {
-        data->push_back(x_b[i]);
+        point_data.push_back(x_b[i]);
     }
     for (int i=0; i<8; i++) {
-        data->push_back(y_b[i]);
+        point_data.push_back(y_b[i]);
     }
     for (int i=0; i<8; i++) {
-        data->push_back(z_b[i]);
+        point_data.push_back(z_b[i]);
     }
     
     if (bTime)
     {
         for (int i=0; i<8; i++) {
-            data->push_back(t_b[i]);
+            point_data.push_back(t_b[i]);
         }
     }
     return data;
@@ -243,6 +243,8 @@ std::vector<liblas::uint8_t>* GetResultData(const LASQueryResult& result, LASRea
     
     
     liblas::uint32_t block_id = result.GetID();
+
+    std::vector<liblas::uint8_t> point_data;
     
     for (i=ids.begin(); i!=ids.end(); i++) 
     {
@@ -251,14 +253,13 @@ std::vector<liblas::uint8_t>* GetResultData(const LASQueryResult& result, LASRea
         bool doRead = reader->ReadPointAt(id);
         if (doRead) {
             LASPoint const& p = reader->GetPoint();
-            std::vector<liblas::uint8_t> *point_data = GetPointData(p, bTime);
+            bool gotdata = GetPointData(p, bTime, point_data);
             
             std::vector<liblas::uint8_t>::const_iterator d;
-            for (d = point_data->begin(); d!=point_data->end(); d++) {
+            for (d = point_data.begin(); d!=point_data.end(); d++) {
                 output->push_back(*d);
             }
             // pi = std::copy(point_data->begin(), point_data->end(), pi);
-            delete point_data;
             liblas::uint8_t* id_b = reinterpret_cast<liblas::uint8_t*>(&id);
             liblas::uint8_t* block_b = reinterpret_cast<liblas::uint8_t*>(&block_id);
             
@@ -409,7 +410,7 @@ bool CreatePCEntry( OWConnection* connection,
                     LASQuery* query, 
                     const char* blkTableName, 
                     const char* pcTableName, 
-                    const char* cloudName,
+                    const char* cloudColumnName,
                     int nDimension, 
                     int srid,
                     int blk_capacity)
@@ -426,7 +427,7 @@ oss << "declare\n"
 "  -- Initialize the Point Cloud object.\n"
 "  pc := sdo_pc_pkg.init( \n"
 "          '"<< pcTableName<<"', -- Table that has the SDO_POINT_CLOUD column defined\n"
-"          '"<< cloudName<<"',   -- Column name of the SDO_POINT_CLOUD object\n"
+"          '"<< cloudColumnName<<"',   -- Column name of the SDO_POINT_CLOUD object\n"
 "          '"<<blkTableName<<"', -- Table to store blocks of the point cloud\n"
 "           'blk_capacity="<<blk_capacity<<"', -- max # of points per block\n"
 "           mdsys.sdo_geometry(2003, "<<srid<<", null,\n"
@@ -539,6 +540,7 @@ int main(int argc, char* argv[])
             exit(1);
         }
     }
+
 
     string::size_type slash_pos = connection.find("/",0);
     username = connection.substr(0,slash_pos);
