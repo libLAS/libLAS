@@ -224,9 +224,10 @@ bool GetPointData(LASPoint const& p, bool bTime, std::vector<liblas::uint8_t>& p
 
     return true;
 }
-std::vector<liblas::uint8_t>* GetResultData(const LASQueryResult& result, LASReader* reader, int nDimension)
+bool GetResultData(const LASQueryResult& result, LASReader* reader, std::vector<liblas::uint8_t>& data, int nDimension)
 {
     list<SpatialIndex::id_type> const& ids = result.GetIDs();
+
 
     // d 8-byte IEEE  big-endian doubles, where d is the PC_TOT_DIMENSIONS value
     // 4-byte big-endian integer for the BLK_ID value
@@ -238,7 +239,7 @@ std::vector<liblas::uint8_t>* GetResultData(const LASQueryResult& result, LASRea
         bTime = true;
     }
     
-    vector<liblas::uint8_t>* output = new vector<liblas::uint8_t>;
+    data.clear();
     
     list<SpatialIndex::id_type>::const_iterator i;
     vector<liblas::uint8_t>::iterator pi;
@@ -260,7 +261,7 @@ std::vector<liblas::uint8_t>* GetResultData(const LASQueryResult& result, LASRea
 
             std::vector<liblas::uint8_t>::const_iterator d;
             for (d = point_data.begin(); d!=point_data.end(); d++) {
-                output->push_back(*d);
+                data.push_back(*d);
             }
 
             liblas::uint8_t* id_b = reinterpret_cast<liblas::uint8_t*>(&id);
@@ -268,19 +269,19 @@ std::vector<liblas::uint8_t>* GetResultData(const LASQueryResult& result, LASRea
             
             // 4-byte big-endian integer for the BLK_ID value
             for (int i =  sizeof(liblas::uint32_t) - 1; i >= 0; i--) {
-                output->push_back(block_b[i]);
+                data.push_back(block_b[i]);
             }
             
             // 4-byte big-endian integer for the PT_ID value
             for (int i =  sizeof(liblas::uint32_t) - 1; i >= 0; i--) {
-                output->push_back(id_b[i]);
+                data.push_back(id_b[i]);
             }
             
 
         }
     }
 
-    return output;
+    return true;
 }
 
 bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int srid, LASReader* reader, const char* tableName)
@@ -334,30 +335,21 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
         return false;
     }
     
-
-    std::vector<liblas::uint8_t>* data = GetResultData(result, reader, 3);
-
-    liblas::uint8_t *bytes = (liblas::uint8_t*) new liblas::uint8_t[data->size()];
-
-    std::vector<liblas::uint8_t>::const_iterator f;
-    int j = 0;
-    for (f=data->begin(); f!=data->end(); f++) {
-        bytes[j] = *f;
-        j++;
-    }
-
+    std::vector<liblas::uint8_t> data;
+    bool gotdata = GetResultData(result, reader, data, 3);
+    if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
+    
     liblas::uint32_t wroteblob = statement->WriteBlob(  locator[0],
-                                                        bytes,
-                                                        data->size());
+                                                        (void*)&(data[0]),
+                                                        data.size());
     
     if (! wroteblob) throw std::runtime_error("No blob bytes could be written!");
 //select dbms_lob.getlength(points) from TO_core_last_clip
     OWStatement::Free(locator, 1);
 
     delete statement;
-    
-    delete bytes;
-    delete data;
+
+
     
     return true;
 
