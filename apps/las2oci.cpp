@@ -176,11 +176,9 @@ oss << "declare\n"
 bool GetPointData(LASPoint const& p, bool bTime, std::vector<liblas::uint8_t>& point_data)
 {
     // This function returns an array of bytes describing the 
-    // x,y,z and optionally time values for the point.  The caller owns 
-    // the array.
-    std::vector<liblas::uint8_t>* data = new std::vector<liblas::uint8_t>;
-    point_data.resize(24);
-    if (bTime) point_data.resize(data->size()+8); // Add the time bytes too
+    // x,y,z and optionally time values for the point.  
+
+    point_data.clear();
 
     double x = p.GetX();
     double y = p.GetY();
@@ -195,52 +193,55 @@ bool GetPointData(LASPoint const& p, bool bTime, std::vector<liblas::uint8_t>& p
 
     // doubles are 8 bytes long.  For each double, push back the 
     // byte.  We do this for all four values (x,y,z,t)
-    for (int i=0; i<8; i++) {
+
+    // // little-endian
+    // for (int i=0; i<sizeof(double); i++) {
+    //     point_data.push_back(y_b[i]);
+    // }
+    // 
+
+    // big-endian
+    for (int i = sizeof(double) - 1; i >= 0; i--) {
         point_data.push_back(x_b[i]);
     }
-    for (int i=0; i<8; i++) {
+
+    for (int i = sizeof(double) - 1; i >= 0; i--) {
         point_data.push_back(y_b[i]);
-    }
-    for (int i=0; i<8; i++) {
+    }   
+
+    for (int i = sizeof(double) - 1; i >= 0; i--) {
         point_data.push_back(z_b[i]);
     }
+
     
     if (bTime)
     {
-        for (int i=0; i<8; i++) {
+        for (int i = sizeof(double) - 1; i >= 0; i--) {
             point_data.push_back(t_b[i]);
         }
+
     }
-    return data;
+
+    return true;
 }
 std::vector<liblas::uint8_t>* GetResultData(const LASQueryResult& result, LASReader* reader, int nDimension)
 {
     list<SpatialIndex::id_type> const& ids = result.GetIDs();
-    
-    // calculate the vector size
-    // d 8-byte IEEE doubles, where d is the PC_TOT_DIMENSIONS value
+
+    // d 8-byte IEEE  big-endian doubles, where d is the PC_TOT_DIMENSIONS value
     // 4-byte big-endian integer for the BLK_ID value
     // 4-byte big-endian integer for the PT_ID value
     
     bool bTime = false;
-    liblas::uint32_t record_size;
-    if (nDimension == 3)
-        record_size = ids.size() * (8*3+4+4);
-    else if (nDimension == 4)
+    if (nDimension == 4)
     {
-        record_size = ids.size() * (8*4+4+4);
         bTime = true;
     }
-    else
-        // throw a big error
-        throw std::runtime_error("Dimension must be 3 or 4");
-
+    
     vector<liblas::uint8_t>* output = new vector<liblas::uint8_t>;
-    output->resize(record_size);
     
     list<SpatialIndex::id_type>::const_iterator i;
     vector<liblas::uint8_t>::iterator pi;
-    
     
     liblas::uint32_t block_id = result.GetID();
 
@@ -253,29 +254,32 @@ std::vector<liblas::uint8_t>* GetResultData(const LASQueryResult& result, LASRea
         bool doRead = reader->ReadPointAt(id);
         if (doRead) {
             LASPoint const& p = reader->GetPoint();
+
+            // d 8-byte IEEE  big-endian doubles, where d is the PC_TOT_DIMENSIONS value
             bool gotdata = GetPointData(p, bTime, point_data);
-            
+
             std::vector<liblas::uint8_t>::const_iterator d;
             for (d = point_data.begin(); d!=point_data.end(); d++) {
                 output->push_back(*d);
             }
-            // pi = std::copy(point_data->begin(), point_data->end(), pi);
+
             liblas::uint8_t* id_b = reinterpret_cast<liblas::uint8_t*>(&id);
             liblas::uint8_t* block_b = reinterpret_cast<liblas::uint8_t*>(&block_id);
             
-            // add 4-byte big endian integers
-            output->push_back(id_b[3]);
-            output->push_back(id_b[2]);
-            output->push_back(id_b[1]);
-            output->push_back(id_b[0]);
+            // 4-byte big-endian integer for the BLK_ID value
+            for (int i =  sizeof(liblas::uint32_t) - 1; i >= 0; i--) {
+                output->push_back(block_b[i]);
+            }
             
-            output->push_back(block_b[3]);
-            output->push_back(block_b[2]);
-            output->push_back(block_b[1]);
-            output->push_back(block_b[0]);
+            // 4-byte big-endian integer for the PT_ID value
+            for (int i =  sizeof(liblas::uint32_t) - 1; i >= 0; i--) {
+                output->push_back(id_b[i]);
+            }
+            
 
         }
     }
+
     return output;
 }
 
@@ -311,7 +315,6 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
     
     // we only expect one blob to come back
     OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
-    
 
     statement = connection->CreateStatement(oss.str().c_str());
     statement->Define( locator, 1 ); // fetch one blob
@@ -332,30 +335,30 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
     }
     
 
-    liblas::uint32_t num_bytes = 0;
     std::vector<liblas::uint8_t>* data = GetResultData(result, reader, 3);
-    std::cout << "Data size: " << data->size() << std::endl;
-    // liblas::uint8_t *bytes = (liblas::uint8_t*) new liblas::uint8_t[data->size()];
-    // memcpy( (void*)&(bytes[0]), (void*)data[0], data->size() );
-    // liblas::uint8_t *bytes;
-    int anumber = data->size();
 
-    // liblas::uint8_t *bytes2 = (liblas::uint8_t*) new liblas::uint8_t[data.size()];
-    // memset( bytes2, 0, data.size());
+    liblas::uint8_t *bytes = (liblas::uint8_t*) new liblas::uint8_t[data->size()];
 
-//         int nBytesRead = statement->ReadBlob( locator[0],
-//                                             (void*)data,
-//                                             anumber );
+    std::vector<liblas::uint8_t>::const_iterator f;
+    int j = 0;
+    for (f=data->begin(); f!=data->end(); f++) {
+        bytes[j] = *f;
+        j++;
+    }
 
-
-// this could be writing junk
-liblas::uint32_t num_bytes_written = statement->WriteBlob( locator[0],
-                                         data,
-                                        anumber );
+    liblas::uint32_t wroteblob = statement->WriteBlob(  locator[0],
+                                                        bytes,
+                                                        data->size());
+    
+    if (! wroteblob) throw std::runtime_error("No blob bytes could be written!");
+//select dbms_lob.getlength(points) from TO_core_last_clip
+    OWStatement::Free(locator, 1);
 
     delete statement;
-    // OWStatement::Free(locator, 1);
-    // exit(0);
+    
+    delete bytes;
+    delete data;
+    
     return true;
 
 }
@@ -453,6 +456,7 @@ oss << "declare\n"
 }
 void usage() {}
 
+// select sdo_pc_pkg.to_geometry(a.points, a.num_points, 3, 8307) from NACHES_BAREEARTH_BLOCK1 a where a.obj_id= 8907
 int main(int argc, char* argv[])
 {
 
@@ -549,6 +553,19 @@ int main(int argc, char* argv[])
     password = connection.substr(slash_pos+1, at_pos-slash_pos-1);
     instance = connection.substr(at_pos+1);
     std::cout << "Connecting with username: " << username << " password: "<< password<< " instance: " << instance << std::endl;    
+
+    // OCI_SUCCESS_WITH_INFO error, which according to google relates to 
+    // a warning related to expired or expiring passwords needs to be 
+    // handled in the oracle wrapper.
+    
+    // Create the index before connecting to Oracle.  That way we don't heartbeat
+    // the server while we're cruising through the file(s).
+    
+    // OS X RAMDISK configuration
+    // http://www.macosxhints.com/article.php?story=20090222092827145
+    
+    // Obj_id is serial for each row in the block table
+    // blk_id is the index leaf node id (this is currently being written incorrectly)
     OWConnection* con = new OWConnection(username.c_str(),password.c_str(),instance.c_str());
     if (con->Succeeded()) {
         std::cout <<"Oracle connection succeded" << std::endl;
@@ -570,7 +587,10 @@ int main(int argc, char* argv[])
     
     
     // change filename foo.las -> foo for an appropriate
-    // tablename for oracle
+    // block tablename for oracle... must be less than 30 characters
+    // and no extraneous characters.
+    
+    // We need an option for the user to specify the blk tablename
     string::size_type dot_pos = input.find_first_of(".");
     string table_name = input.substr(0,dot_pos);
     
