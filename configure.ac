@@ -215,6 +215,16 @@ AC_SUBST([GEOTIFF_PREFIX])
 AM_CONDITIONAL([GEOTIFF_IS_CONFIG], [test ! x$GEOTIFF_CONFIG = xno])
 
 dnl #########################################################################
+dnl If GDAL was requested, but geotiff is not configured, complain
+dnl #########################################################################
+
+if test "${HAVE_GDAL}" != "no" ; then
+	if test "${GEOTIFF_CONFIG}" = "no" -a "${USE_GDAL_SOURCE_TREE}" != "yes"; then
+		AC_MSG_ERROR([You must configure a libgeotiff if you are using GDAL binaries.  You can configure using a GDAL source tree without libgeotiff, but not from binaries.])
+	fi
+fi
+
+dnl #########################################################################
 dnl Determine other features of compiler
 dnl #########################################################################
 
