@@ -286,6 +286,11 @@ if test "${HAVE_BOOST}" == "yes" ; then
     LIBS="$BOOST_LDFLAGS -lboost_iostreams-gcc40-mt $LIBS"
 fi
 
+dnl #########################################################################
+dnl If GDAL was requested, but geotiff is not configured, complain
+dnl #########################################################################
+
+
 if test "${HAVE_GDAL}" != "no" ; then
 	if test "${GEOTIFF_CONFIG}" = "no" -a "${USE_GDAL_SOURCE_TREE}" != "yes"; then
 		AC_MSG_ERROR([You must configure a libgeotiff if you are using GDAL binaries.  You can configure using a GDAL source tree without libgeotiff, but not from binaries.])
