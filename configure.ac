@@ -155,6 +155,8 @@ dnl if we are already yes, we don't need to run gdal-config
     if test "$OGR" != "yes" ; then
         AC_MSG_ERROR([$GDAL_CONFIG says OGR is not enabled])
     fi
+	
+
     HAVE_GDAL="yes"
   fi
 fi
@@ -284,8 +286,11 @@ if test "${HAVE_BOOST}" == "yes" ; then
     LIBS="$BOOST_LDFLAGS -lboost_iostreams-gcc40-mt $LIBS"
 fi
 
-
-
+if test "${HAVE_GDAL}" != "no" ; then
+	if test "${GEOTIFF_CONFIG}" = "no" -a "${USE_GDAL_SOURCE_TREE}" != "yes"; then
+		AC_MSG_ERROR([You must configure a libgeotiff if you are using GDAL binaries.  You can configure using a GDAL source tree without libgeotiff, but not from binaries.])
+	fi
+fi
 
 dnl #########################################################################
 dnl Determine other features of compiler
