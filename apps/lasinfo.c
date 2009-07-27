@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
         {
             skip_vlr = TRUE;
         }            
-        else if (i == argc - 1 && file_name == NULL)
+        else if (file_name == NULL)
         {
             file_name = argv[i];
         } 
