@@ -90,11 +90,12 @@
   >>> data[6]
   8
 
-  # Ensure the offset is updated when a VLR is deleted
+  # Deleting a VLR shouldn't change the offset
   >>> h.data_offset
   759L
   >>> h.DeleteVLR(0)
   >>> h.data_offset
-  633L
+  759L
   
+  >>> del f
   
