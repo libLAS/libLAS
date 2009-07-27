@@ -266,15 +266,11 @@ int main(int argc, char *argv[])
             i++;
             file_name_out = argv[i];
         }
-        else if (i == argc - 2 && file_name_in == 0 && file_name_out == 0)
+        else if (file_name_in == 0 && file_name_out == 0)
         {
             file_name_in = argv[i];
         }
-        else if (i == argc - 1 && file_name_in == 0 && file_name_out == 0)
-        {
-            file_name_in = argv[i];
-        }
-        else if (i == argc - 1 && file_name_in && file_name_out == 0)
+        else if (file_name_in && file_name_out == 0)
         {
             file_name_out = argv[i];
         }

@@ -274,15 +274,11 @@ int main(int argc, char *argv[])
         {
             remove_extra_header = TRUE;
         }
-        else if (i == argc - 2 && file_name_in == NULL && file_name_out == NULL)
+        else if (file_name_in == NULL && file_name_out == NULL)
         {
             file_name_in = argv[i];
         }
-        else if (i == argc - 1 && file_name_in == NULL && file_name_out == NULL)
-        {
-            file_name_in = argv[i];
-        }
-        else if (i == argc - 1 && file_name_in != NULL && file_name_out == NULL)
+        else if (file_name_in != NULL && file_name_out == NULL)
         {
             file_name_out = argv[i];
         }

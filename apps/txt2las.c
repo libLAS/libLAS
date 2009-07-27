@@ -512,22 +512,13 @@ int main(int argc, char *argv[])
             i++;
             file_creation_year = (unsigned short)atoi(argv[i]);
         }
-        else if (   i == argc - 2 
-                    && file_name_in == NULL && 
+        else if (   file_name_in == NULL && 
                     file_name_out == NULL
                 )
         {
             file_name_in = argv[i];
         }
-        else if (   i == argc - 1 && 
-                    file_name_in == NULL && 
-                    file_name_out == NULL
-                )
-        {
-            file_name_in = argv[i];
-        }
-        else if (   i == argc - 1 && 
-                    file_name_in && 
+        else if (   file_name_in && 
                     file_name_out == NULL
                 )
         {
