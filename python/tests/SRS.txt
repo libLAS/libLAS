@@ -31,11 +31,12 @@
   
   >>> test_srs()
   True
+  
 
 #  ...         s2.wkt = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]"""
 #  ...         s2.wkt = """PROJCS["NAD83 / UTM zone 16N",GEOGCS["NAD83",DATUM["North_American_Datum_1983",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6269"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4269"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-87],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],AUTHORITY["EPSG","26916"],AXIS["Easting",EAST],AXIS["Northing",NORTH]]"""
 
-  >>> def test_srs():
+  >>> def test_srs_2():
   ...     if not liblas.HAVE_LIBGEOTIFF:
   ...         return True
   ...     if not liblas.HAVE_GDAL: 
@@ -54,5 +55,7 @@
   ...         return int(round(p.x)) == -93  and int(round(p.y)) == 90
   ...     return False  
 
-  >>> test_srs()
+  >>> test_srs_2()
   True
+  
+  >>> del f
