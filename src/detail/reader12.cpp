@@ -217,34 +217,6 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     header.SetMax(x1, y1, z1);
     header.SetMin(x2, y2, z2);
-    
-    m_has_pad_bytes = false;
-
-    m_ifs.seekg(header.GetDataOffset(), std::ios::beg);
-    try
-    {
-        // If this call succeeds, we'll want to put this on the 
-        // validation errors stack.  1.2 files shouldn't have pad bytes.
-        SkipPointDataSignature();
-        m_has_pad_bytes = true;
-    }
-    catch (std::out_of_range const&)
-    {
-        // Ignore the out_of_range here for the case of a 
-        // file with just a header and no pad
-        // This is what is thrown when we compile *with* debug
-    }
-    catch (std::runtime_error const&)
-    {
-        // Ignore the runtime_error here for the case of a 
-        // file with just a header and no pad
-        // This is what is thrown when we compile *without* debug
-    }    
-    catch (std::domain_error const&)
-    {
-        // TODO: We'll want to put this error on the validation errors stack
-        // but for now, we'll just move back to the offset
-    }
 
     Reset(header);
 
@@ -256,19 +228,7 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, LASHeader const& header)
     if (0 == m_current)
     {
         m_ifs.clear();
-        m_ifs.seekg(m_offset, std::ios::beg);
-
-        try
-        {
-            // If this call succeeds, we'll want to put this on the 
-            // validation errors stack.  1.2 files shouldn't have 
-            // pad bytes.
-            SkipPointDataSignature();
-        }
-        catch (std::domain_error const&)
-        {
-            m_ifs.seekg(m_offset, std::ios::beg);
-        }
+        m_ifs.seekg(header.GetDataOffset(), std::ios::beg);
     }
 
     if (m_current < m_size)
@@ -349,9 +309,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, LASHeader const& he
         return false;
     }
 
-    std::streamsize pos = (static_cast<std::streamsize>(n) * m_recordlength) + m_offset;
-
-    if (m_has_pad_bytes) pos += 2;
+    std::streamsize pos = (static_cast<std::streamsize>(n) * header.GetDataRecordLength()) + header.GetDataOffset();
 
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);

@@ -884,7 +884,19 @@ LAS_DLL liblas::uint32_t LASHeader_GetDataOffset(const LASHeaderH hHeader) {
     return value;
 }
 
+LAS_DLL LASErrorEnum LASHeader_SetDataOffset(const LASHeaderH hHeader, liblas::uint32_t value) {
+    VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetDataOffset", LE_Failure);
 
+    try {
+        ((LASHeader*) hHeader)->SetDataOffset(value);    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetDataOffset");
+        return LE_Failure;
+    }
+ 
+    return LE_None;    
+}
 
 
 LAS_DLL liblas::uint32_t LASHeader_GetRecordsCount(const LASHeaderH hHeader) {
@@ -970,6 +982,7 @@ LAS_DLL LASErrorEnum LASHeader_SetPointRecordsCount(const LASHeaderH hHeader, li
  
     return LE_None;    
 }
+
 LAS_DLL double LASHeader_GetScaleX(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetScaleX", 0.0);
 

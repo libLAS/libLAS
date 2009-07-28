@@ -640,6 +640,14 @@ LAS_DLL uint16_t LASHeader_GetHeaderSize(const LASHeaderH hHeader);
 */
 LAS_DLL uint32_t LASHeader_GetDataOffset(const LASHeaderH hHeader);
 
+/** Sets the location in number of bytes to start writing point data.  Any
+ *  space between the end of the LASVLRHs and this value will be written with 0's.
+ *  @param hHeader LASHeaderH instance
+ *  @param value the long integer to set for byte location determining the end of the header
+ *  @return LASError enum
+*/
+ LAS_DLL LASError LASHeader_SetDataOffset(const LASHeaderH hHeader, uint32_t value);
+
 /** Returns the number of variable length records in the header
  *  @param hHeader LASHeaderH instance
  *  @return the number of variable length records in the header

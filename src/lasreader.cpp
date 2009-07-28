@@ -122,7 +122,6 @@ void LASReader::Init()
 
     m_pimpl->ReadGeoreference(m_header);
     m_pimpl->Reset(m_header);
-
 }
 
 std::istream& LASReader::GetStream() const

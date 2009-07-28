@@ -150,7 +150,12 @@ void WriterImpl::WriteHeader(LASHeader& header)
     detail::write_n(m_ofs, n2, sizeof(n2));
 
     // 14. Offset to data
-    n4 = header.GetDataOffset();
+    // Because we are 1.0, we must also add pad bytes to the end of the 
+    // header.  This means resetting the dataoffset +=2, but we 
+    // don't want to change the header's actual offset until after we 
+    // write the VLRs or else we'll be off by 2 when we write the pad
+    // bytes
+    n4 = header.GetDataOffset() + 2;
     detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 15. Number of variable length records
@@ -201,14 +206,28 @@ void WriterImpl::WriteHeader(LASHeader& header)
     detail::write_n(m_ofs, header.GetMaxZ(), sizeof(double));
     detail::write_n(m_ofs, header.GetMinZ(), sizeof(double));
 
-
-    WriteVLR(header);
-
+    // If WriteVLR returns a value, it is because the header's 
+    // offset is not large enough to contain the VLRs.  The value 
+    // it returns is the number of bytes we must increase the header
+    // by in order for it to contain the VLRs.
+    
+    int32_t difference = WriteVLR(header);
+    if (difference < 0) {
+        header.SetDataOffset(header.GetDataOffset() + difference );
+        WriteVLR(header);
+    }
+    
+    // Write the pad bytes.
     uint8_t const sgn1 = 0xCC;
     uint8_t const sgn2 = 0xDD;
     detail::write_n(m_ofs, sgn1, sizeof(uint8_t));
     detail::write_n(m_ofs, sgn2, sizeof(uint8_t));
 
+    // We can now reset the header's offset to +=2.  If we monkeypatched
+    // the offset because we were too small to write the VLRs, this will 
+    // end up being header.GetDataOffset() + difference + 2 (see above).
+    header.SetDataOffset(header.GetDataOffset() + 2);
+    
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
     if (m_pointCount != 0)

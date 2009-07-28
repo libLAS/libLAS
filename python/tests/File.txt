@@ -101,10 +101,103 @@
   
   >>> cnt
   16
+
+  >>> buffered_header = f.header
+  >>> del f 
+
+  >>> buffered_header.data_offset = 1024
+  >>> f3 = file.File('junk2.las',mode='w',header=buffered_header)
+
+  >>> f3.header.data_offset
+  1024L
+
+  >>> for i in points:
+  ...    f3.write(i)
+    
+  >>> f3.close()
+
+  >>> del f3
+ 
+The header's offset will change +=2 because of the 1.0
+requirement to write pad bytes at the end of the header
   
-  >>> f.close()
+  >>> f = file.File('junk2.las')
+  >>> f.header.data_offset
+  1026L
+  
+  >>> points = []
+  >>> for i in f:
+  ...   points.append(i)
+  ...   print i # doctest: +ELLIPSIS
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+
+  >>> for g in points:
+  ...   print int(g.x), int(g.y)
+  630262 4834500
+  630282 4834500
+  630300 4834500
+  630346 4834500
+  630327 4834500
+  630323 4834500
+  630320 4834500
+  630280 4834500
+
+Now try writing a 1.2 version of the junk2.las file above to ensure that
+the data_offset *doesn't* change at all
+
+  >>> buffered_header.data_offset = 1024
+  >>> buffered_header.minor_version = 2
+  >>> f3 = file.File('junk3.las',mode='w',header=buffered_header)
+
+  >>> f3.header.data_offset
+  1024L
+
+  >>> for i in points:
+  ...    f3.write(i)
+    
+  >>> f3.close()
+
+  >>> del f3
+
+  >>> f = file.File('junk3.las')
+  >>> f.header.data_offset
+  1024L
+  
+  >>> points = []
+  >>> for i in f:
+  ...   points.append(i)
+  ...   print i # doctest: +ELLIPSIS
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+
+  >>> for g in points:
+  ...   print int(g.x), int(g.y)
+  630262 4834500
+  630282 4834500
+  630300 4834500
+  630346 4834500
+  630327 4834500
+  630323 4834500
+  630320 4834500
+  630280 4834500
+    
   >>> import os
   >>> os.remove('junk.las')
+  >>> os.remove('junk2.las')
+  >>> os.remove('junk3.las')
 
   >>> f = file.File('junk.las', mode="w", header=header)
   >>> import liblas.core
@@ -117,7 +210,7 @@
   ...
   LASException: LASError in "LASWriter_Destroy": Pointer 'hWriter' is NULL in 'LASWriter_Destroy'.
 
-#  >>> f = file.File('junk.las2')
-#  Traceback (most recent call last):
-#  ...
-#  LASException: LASError in "LASReader_Create": can not open file /Users/hobu/svn/liblas/trunk/python/junk.las2
+  >>> import os
+  >>> os.remove('junk.las')
+  
+

@@ -105,4 +105,11 @@
   
   >>> test_srs()
   True
+  
+  >>> h.data_offset
+  227L
+  
+  >>> h.data_offset = 742
+  >>> h.data_offset
+  742L
 

@@ -208,7 +208,15 @@ void WriterImpl::WriteHeader(LASHeader& header)
     detail::write_n(m_ofs, header.GetMaxZ(), sizeof(double));
     detail::write_n(m_ofs, header.GetMinZ(), sizeof(double));
     
-    WriteVLR(header);
+    // If WriteVLR returns a value, it is because the header's 
+    // offset is not large enough to contain the VLRs.  The value 
+    // it returns is the number of bytes we must increase the header
+    // by in order for it to contain the VLRs.
+    int32_t difference = WriteVLR(header);
+    if (difference != 0) {
+        header.SetDataOffset(header.GetDataOffset() + difference);
+        WriteVLR(header);
+    }
 
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.

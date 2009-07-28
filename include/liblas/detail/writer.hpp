@@ -67,7 +67,7 @@ public:
     virtual void UpdateHeader(LASHeader const& header) = 0;
     virtual void WritePointRecord(LASPoint const& point, const LASHeader& header) = 0;
     std::ostream& GetStream() const;
-    void WriteVLR(LASHeader const& header);
+    uint32_t WriteVLR(LASHeader const& header);
 
     void SetSRS(const LASSpatialReference& srs);
     

@@ -262,17 +262,6 @@ void LASHeader::SetVersionMinor(uint8_t v)
         throw std::out_of_range("version minor out of range");
     
     m_versionMinor = v;
-    
-    uint32_t size = 0;
-    uint32_t const dataSignatureSize = 2;
-    
-    // Add the signature if we're a 1.0 file    
-    if (eVersionMinorMin == m_versionMinor) {
-        size = dataSignatureSize; 
-    } 
-
-    SetDataOffset(GetHeaderSize()+size);
-    
 }
 
 std::string LASHeader::GetSystemId(bool pad /*= false*/) const
@@ -373,8 +362,9 @@ void LASHeader::SetDataOffset(uint32_t v)
     {
         throw std::out_of_range("data offset out of range");
     }
-
+    
     m_dataOffset = v;
+    
 }
 
 uint32_t LASHeader::GetRecordsCount() const
@@ -552,31 +542,6 @@ void LASHeader::SetMin(double x, double y, double z)
 void LASHeader::AddVLR(LASVariableRecord const& v) 
 {
     m_vlrs.push_back(v);
-
-    uint32_t end_size = 0;
-    std::vector<LASVariableRecord>::const_iterator i;
-        
-    // Calculate a new data offset size
-    for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i) 
-    {
-        end_size += (*i).GetTotalSize();
-    }
-
-    uint32_t size = 0;
-    uint32_t const dataSignatureSize = 2;
-    
-    // Add the signature if we're a 1.0 file    
-    if (eVersionMinorMin == m_versionMinor) {
-        size = end_size + dataSignatureSize; 
-    } else {
-        size = end_size;
-    }
-
-    SetDataOffset(GetHeaderSize()+size);
-
-    // We're assuming that the reader or writer has reset 
-    // the VLR count to 0 before adding them back with AddVLR  
-    // FIXME I think this is still broken - hobu
     m_recordsCount += 1;
 }
 
@@ -592,14 +557,9 @@ void LASHeader::DeleteVLR(uint32_t index)
 
     std::vector<LASVariableRecord>::iterator i = m_vlrs.begin() + index;
 
-    // Deal with the dataoffset when deleting
-    uint32_t size = (*i).GetTotalSize();
-
     m_vlrs.erase(i);
     m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
-    
-    SetDataOffset(GetDataOffset() - size);
-    
+
 }
 
 
@@ -655,9 +615,6 @@ void LASHeader::ClearGeoKeyVLRs()
 {
     std::string const uid("LASF_Projection");
 
-    uint32_t beg_size = 0;
-    uint32_t end_size = 0;
-
     std::vector<LASVariableRecord> vlrs = m_vlrs;
     std::vector<LASVariableRecord>::const_iterator i;
     std::vector<LASVariableRecord>::iterator j;
@@ -665,7 +622,7 @@ void LASHeader::ClearGeoKeyVLRs()
     for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i)
     {
         LASVariableRecord record = *i;
-        beg_size += (*i).GetTotalSize();
+        // beg_size += (*i).GetTotalSize();
 
         std::string user = record.GetUserId(true);
         if (uid == user.c_str())
@@ -715,27 +672,6 @@ void LASHeader::ClearGeoKeyVLRs()
     // and update header information
     m_vlrs = vlrs;
     m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
-    
-    // Calculate a new data offset size
-    for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i) 
-    {
-        end_size += (*i).GetTotalSize();
-    }
-
-    uint32_t size = 0;
-    uint32_t const dataSignatureSize = 2;
-    
-    // Add the signature if we're a 1.0 file    
-    if (eVersionMinorMin == m_versionMinor)
-    {
-        size = end_size + dataSignatureSize; 
-    }
-    else
-    {
-        size = end_size;
-    }
-
-    SetDataOffset(GetHeaderSize()+size);
 
 }
 void LASHeader::SetGeoreference() 
@@ -762,7 +698,6 @@ void LASHeader::SetSRS(LASSpatialReference& srs)
 {
     m_srs = srs;
 }
-
 
 } // namespace liblas
 
