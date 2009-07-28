@@ -35,7 +35,7 @@ liblas_la_SOURCES = \
     detail/file.cpp
 
 if GDAL_IS_CONFIG
-liblas_la_SOURCES += gt_wkt_srs.cpp gt_citation.cpp
+liblas_la_SOURCES += gt_wkt_srs.cpp gt_citation.cpp tifvsi.cpp
 endif
             
 liblas_la_LDFLAGS = -version-info 1:0:0
