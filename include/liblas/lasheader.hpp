@@ -249,6 +249,11 @@ public:
 
     /// \todo To be documented
     uint16_t GetDataRecordLength() const;
+
+    /// Set the length of the point format.  Evidently, there are 
+    /// LAS files in the wild that contain point formats of sizes that 
+    /// are different than the prescribed set specified in the specification.
+    void SetDataRecordLength(uint16_t v);
     
     /// Get total number of point records stored in the LAS file.
     uint32_t GetPointRecordsCount() const;

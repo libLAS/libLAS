@@ -172,9 +172,8 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     }
     
     // 18. Point Data Record Length
-    // NOTE: No need to set record length because it's
-    // determined on basis of point data format.
     read_n(n2, m_ifs, sizeof(n2));
+    header.SetDataRecordLength(n2);
 
     // 19. Number of point records
     read_n(n4, m_ifs, sizeof(n4));
@@ -231,6 +230,8 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
 
     if (m_current < m_size)
     {
+        size_t bytesread = 0;
+        
         detail::PointRecord record;
         // TODO: Replace with compile-time assert
         assert(LASHeader::ePointSize0 == sizeof(record));
@@ -238,7 +239,8 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
         try
         {
             detail::read_n(record, m_ifs, sizeof(PointRecord));
-            ++m_current;    
+            ++m_current;
+            bytesread += sizeof(PointRecord);
         }        
         catch (std::out_of_range const& e) // we reached the end of the file
         {
@@ -254,8 +256,12 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
             double gpst = 0;
             detail::read_n(gpst, m_ifs, sizeof(double));
             point.SetTime(gpst);
+            bytesread += sizeof(double);
         }
+        if (bytesread != header.GetDataRecordLength())
+            m_ifs.seekg(header.GetDataRecordLength() - bytesread, std::ios::cur);
         return true;
+        
     }
 
     return false;
@@ -272,11 +278,17 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
 
+    
+    // accounting to keep track of the fact that the DataRecordLength 
+    // might not map to ePointSize0 or ePointSize1 (see http://liblas.org/ticket/142)
+    size_t bytesread = 0;
+    
     detail::PointRecord record;
     // TODO: Replace with compile-time assert
     assert(LASHeader::ePointSize0 == sizeof(record));
 
     detail::read_n(record, m_ifs, sizeof(record));
+    bytesread += sizeof(PointRecord);
 
     Reader::FillPoint(record, point);
     point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
@@ -286,8 +298,11 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
         double gpst = 0;
         detail::read_n(gpst, m_ifs, sizeof(double));
         point.SetTime(gpst);
+        bytesread += sizeof(double);
     }
 
+    if (bytesread != header.GetDataRecordLength())
+        m_ifs.seekg(header.GetDataRecordLength() - bytesread, std::ios::cur);
     return true;
 }
 

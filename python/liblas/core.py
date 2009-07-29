@@ -378,6 +378,10 @@ las.LASHeader_GetDataRecordLength.restype = ctypes.c_ushort
 las.LASHeader_GetDataRecordLength.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetDataRecordLength.errcheck = check_value
 
+las.LASHeader_SetDataRecordLength.restype = ctypes.c_int
+las.LASHeader_SetDataRecordLength.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
+las.LASHeader_SetDataRecordLength.errcheck = check_return
+
 las.LASHeader_GetPointRecordsCount.restype = ctypes.c_ulong
 las.LASHeader_GetPointRecordsCount.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetPointRecordsCount.errcheck = check_value

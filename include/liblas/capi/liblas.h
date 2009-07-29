@@ -660,6 +660,14 @@ LAS_DLL uint32_t LASHeader_GetRecordsCount(const LASHeaderH hHeader);
 */
 LAS_DLL uint16_t LASHeader_GetDataRecordLength(const LASHeaderH hHeader);
 
+/** Explicitly set the record length for the file.  If you set the DataFormatId,
+ *  default values will be set for you.
+ *  @param hHeader LASHeaderH instance
+ *  @param value the value for the data record length (in bytes).
+ *  @return LASError enum
+*/
+LAS_DLL LASError LASHeader_SetDataRecordLength(const LASHeaderH hHeader, uint16_t value);
+
 /** Returns the data format id.  If this value is 1, the point data have time values
  *  associated with them.  If it is 0, the point data do not have time values.  
  *  @param hHeader LASHeaderH instance

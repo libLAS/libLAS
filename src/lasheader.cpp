@@ -394,44 +394,26 @@ void LASHeader::SetDataFormatId(LASHeader::PointFormat v)
     m_dataFormatId = static_cast<uint8_t>(v);
 
     if (ePointFormat0 == m_dataFormatId)
-        m_dataRecordLen = ePointSize0;
+        SetDataRecordLength(ePointSize0);
     else if (ePointFormat1 == m_dataFormatId) 
-        m_dataRecordLen = ePointSize1;
+        SetDataRecordLength(ePointSize1);
     else if (ePointFormat2 == m_dataFormatId)
-        m_dataRecordLen = ePointSize2;
+        SetDataRecordLength(ePointSize2);
     else if (ePointFormat3 == m_dataFormatId)
-        m_dataRecordLen = ePointSize3;
+        SetDataRecordLength(ePointSize3);
     else
-        m_dataRecordLen = ePointSize3;
+        SetDataRecordLength(ePointSize3);
 }
 
 uint16_t LASHeader::GetDataRecordLength() const
 {
-    // NOTE: assertions below are used to check if our assumption is correct,
-    // for debugging purpose only.
-
-    if (ePointFormat0 == m_dataFormatId)
-    {
-        assert(ePointSize0 == m_dataRecordLen);
-        return ePointSize0;
-    }
-    if (ePointFormat1 == m_dataFormatId)
-    {
-        assert(ePointSize1 == m_dataRecordLen);
-        return ePointSize1;
-    }
-    if (ePointFormat2 == m_dataFormatId)
-    {
-        assert(ePointSize2 == m_dataRecordLen);
-        return ePointSize2;
-    }
-    else
-    {
-        assert(ePointSize3 == m_dataRecordLen);
-        return ePointSize3;
-    }
+    return m_dataRecordLen;
 }
 
+void LASHeader::SetDataRecordLength( uint16_t v )
+{
+    m_dataRecordLen = v;
+}
 uint32_t LASHeader::GetPointRecordsCount() const
 {
     return m_pointRecordsCount;

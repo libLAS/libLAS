@@ -934,6 +934,20 @@ LAS_DLL liblas::uint16_t LASHeader_GetDataRecordLength(const LASHeaderH hHeader)
     return value;
 }
 
+LAS_DLL LASErrorEnum LASHeader_SetDataRecordLength(const LASHeaderH hHeader, liblas::uint16_t value){
+    VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetDataRecordLength", LE_Failure);
+
+    try {
+        ((LASHeader*) hHeader)->SetDataRecordLength(value);    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetDataRecordLength");
+        return LE_Failure;
+    }
+ 
+    return LE_None;    
+}
+
 
 LAS_DLL liblas::uint32_t LASHeader_GetPointRecordsByReturnCount(const LASHeaderH hHeader, int index) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetPointRecordsByReturnCount", 0);

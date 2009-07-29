@@ -113,3 +113,12 @@
   >>> h.data_offset
   742L
 
+  >>> h.data_record_length
+  20
+  >>> h.dataformat_id = 3
+  >>> h.data_record_length
+  34
+  
+  >>> h.data_record_length = 24
+  >>> h.data_record_length
+  24
