@@ -218,17 +218,6 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     header.SetMin(x2, y2, z2);
 
     m_ifs.seekg(header.GetDataOffset(), std::ios::beg);
-    try {
-        // If this call succeeds, we'll want to put this on the 
-        // validation errors stack.  1.2 files shouldn't have 
-        // pad bytes.
-        SkipPointDataSignature();
-        m_has_pad_bytes = true;
-    }
-    catch (std::domain_error const& e)
-    {
-    }
-
 
     Reset(header);
     
@@ -253,18 +242,7 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, LASHeader const& header)
     if (0 == m_current)
     {
         m_ifs.clear();
-        m_ifs.seekg(m_offset, std::ios::beg);
-
-        try {
-            // If this call succeeds, we'll want to put this on the 
-            // validation errors stack.  1.2 files shouldn't have 
-            // pad bytes.
-            SkipPointDataSignature();
-        }
-        catch (std::domain_error const& e)
-        {
-            m_ifs.seekg(m_offset, std::ios::beg);
-        }
+        m_ifs.seekg(header.GetDataOffset(), std::ios::beg);
     }
 
     if (m_current < m_size)
@@ -337,9 +315,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, LASHeader const& he
         return false;
     }
 
-    std::streamsize pos = (static_cast<std::streamsize>(n) * m_recordlength) + m_offset;
-
-    if (m_has_pad_bytes) pos += 2;
+    std::streamsize pos = (static_cast<std::streamsize>(n) * header.GetDataRecordLength()) + header.GetDataOffset();
 
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);

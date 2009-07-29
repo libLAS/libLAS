@@ -99,3 +99,19 @@
   
   >>> del f
   
+  >>> f = file.File('../test/data/srs.las')
+  >>> h = f.header
+  >>> f2 = file.File('junk_srs.las',mode='w',header=h)
+  >>> for p in f:
+  ...     f2.write(p)
+  
+  >>> f2.close()
+  >>> del f2
+  
+  >>> f3 = file.File('junk_srs.las')
+  >>> f3.header.records_count
+  3L
+  >>> f3.header.data_offset
+  761L
+  >>> import os
+  >>> os.remove('junk_srs.las')

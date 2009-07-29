@@ -56,7 +56,6 @@ namespace liblas
 LASReader::LASReader(std::istream& ifs) :
     m_pimpl(detail::ReaderFactory::Create(ifs))
 {
-    //MakePIMPL(ifs);
     Init();
 }
 
@@ -121,6 +120,7 @@ void LASReader::Init()
 
     m_pimpl->ReadGeoreference(m_header);
     m_pimpl->Reset(m_header);
+
 }
 
 std::istream& LASReader::GetStream() const

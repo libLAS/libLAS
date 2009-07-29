@@ -101,10 +101,31 @@ void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const L
     record.point_source_id = point.GetPointSourceID();
 }
 
-void Writer::WriteVLR(LASHeader const& header) 
+uint32_t Writer::WriteVLR(LASHeader const& header) 
 {
+    // If this function returns a value, it is the size that the header's 
+    // data offset must be increased by in order for the VLRs to fit in 
+    // the header.  
     m_ofs.seekp(header.GetHeaderSize(), std::ios::beg);
 
+    // if the VLRs won't fit because the data offset is too 
+    // small, we need to throw an error.
+    uint32_t vlr_total_size = 0;
+        
+    // Calculate a new data offset size
+    for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
+    {
+        LASVariableRecord vlr = header.GetVLR(i);
+        vlr_total_size += vlr.GetTotalSize();
+    }
+    
+    int32_t difference = header.GetDataOffset() - (vlr_total_size + header.GetHeaderSize());
+    
+    if (difference < 0) 
+    {
+        return difference;
+    }
+    
     for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
     {
         LASVariableRecord vlr = header.GetVLR(i);
@@ -118,6 +139,14 @@ void Writer::WriteVLR(LASHeader const& header)
         std::streamsize const size = static_cast<std::streamsize>(data.size());
         detail::write_n(m_ofs, data.front(), size);
     }
+    
+    // if we had more room than we need for the VLRs, we need to pad that with 
+    // 0's.  We must also not forget to add the 1.0 pad bytes to the end of this
+    // but the impl should be the one doing that, not us.
+    if (difference > 0) {
+        detail::write_n(m_ofs, "\0", difference);
+    }
+    return 0;
 }
 
 

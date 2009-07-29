@@ -187,7 +187,13 @@ class Header(object):
     def get_dataoffset(self):
         """Returns the location in bytes of where the data block of the LAS file starts"""
         return core.las.LASHeader_GetDataOffset(self.handle)
-    data_offset = property(get_dataoffset)
+    def set_dataoffset(self, value):
+        """Sets the data offset
+        
+        Any space between this value and the end of the VLRs will be written with 0's
+        """
+        return core.las.LASHeader_SetDataOffset(self.handle, value)
+    data_offset = property(get_dataoffset, set_dataoffset)
     
     def get_recordscount(self):
         """Returns the number of user-defined header records in the header.  
@@ -205,7 +211,7 @@ class Header(object):
     def set_dataformatid(self, value):
         """Sets the point format value
         
-        It can only be  1 (for 1.1 compatible) or 0 (for 1.0 compatible).
+        It can be 3, 2, 1, or 0.
         """
         if value not in [3, 2,1,0]:
             raise core.LASException("Format ID must be 3, 2, 1, or 0")

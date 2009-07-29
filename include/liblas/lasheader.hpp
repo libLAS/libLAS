@@ -330,7 +330,7 @@ public:
     
     /// Set the georeference
     void SetSRS(LASSpatialReference& srs);
-    
+
 private:
     
     typedef detail::Point<double> PointScales;
