@@ -224,7 +224,7 @@ class Point(object):
     def descale(self, header):
         self.x = (self.x - header.offset[0]) / header.scale[0]
         self.y = (self.y - header.offset[1]) / header.scale[1]
-        self.z = (self.y - header.offset[2]) / header.scale[2]
+        self.z = (self.z - header.offset[2]) / header.scale[2]
     
     def scale(self, header):
         self.x = self.x + header.scale[0] + header.offset[0]
