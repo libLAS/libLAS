@@ -213,7 +213,7 @@ void WriterImpl::WriteHeader(LASHeader& header)
     
     int32_t difference = WriteVLR(header);
     if (difference < 0) {
-        header.SetDataOffset(header.GetDataOffset() + difference );
+        header.SetDataOffset(header.GetDataOffset() + abs(difference) );
         WriteVLR(header);
     }
     
