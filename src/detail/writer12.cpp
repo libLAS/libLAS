@@ -215,8 +215,8 @@ void WriterImpl::WriteHeader(LASHeader& header)
     // it returns is the number of bytes we must increase the header
     // by in order for it to contain the VLRs.
     int32_t difference = WriteVLR(header);
-    if (difference != 0) {
-        header.SetDataOffset(header.GetDataOffset() + difference);
+    if (difference < 0) {
+        header.SetDataOffset(header.GetDataOffset() + abs(difference) );
         WriteVLR(header);
     }
 
