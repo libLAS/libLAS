@@ -77,7 +77,7 @@ protected:
 
     void FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header);
 
-    void Project(PointRecord& point);      
+    void Project(LASPoint& point);      
     LASSpatialReference m_out_srs;
     LASSpatialReference m_in_srs;
     

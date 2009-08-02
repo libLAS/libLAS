@@ -88,14 +88,18 @@ std::ostream& Writer::GetStream() const
 void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header) 
 {
 
-    if (0 != m_transform)
-    {
-        Project(record);
+    if (m_transform) {
+        // let's just copy the point for now.
+        LASPoint p = LASPoint(point);
+        Project(p);
+        record.x = static_cast<int32_t>((p.GetX() - header.GetOffsetX()) / header.GetScaleX());
+        record.y = static_cast<int32_t>((p.GetY() - header.GetOffsetY()) / header.GetScaleY());
+        record.z = static_cast<int32_t>((p.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
+    } else {
+        record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
+        record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
+        record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
     }
-
-    record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
-    record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
-    record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
 
     LASClassification::bitset_type clsflags(point.GetClassification());
     record.classification = static_cast<uint8_t>(clsflags.to_ulong());
@@ -126,7 +130,7 @@ uint32_t Writer::WriteVLR(LASHeader const& header)
     }
     
     int32_t difference = header.GetDataOffset() - (vlr_total_size + header.GetHeaderSize());
-    
+
     if (difference < 0) 
     {
         return difference;
@@ -156,7 +160,7 @@ uint32_t Writer::WriteVLR(LASHeader const& header)
 }
 
 
-void Writer::SetSRS(const LASSpatialReference& srs)
+void Writer::SetSRS(const LASSpatialReference& srs )
 {
     m_out_srs = srs;
 #ifdef HAVE_GDAL
@@ -167,7 +171,7 @@ void Writer::SetSRS(const LASSpatialReference& srs)
     if (result != OGRERR_NONE) 
     {
         std::ostringstream msg; 
-        msg << "Could not import input spatial reference for Reader::" << CPLGetLastErrorMsg() << result;
+        msg << "Could not import input spatial reference for Writer::" << CPLGetLastErrorMsg() << result;
         std::string message(msg.str());
         throw std::runtime_error(message);
     }
@@ -176,7 +180,7 @@ void Writer::SetSRS(const LASSpatialReference& srs)
     if (result != OGRERR_NONE) 
     {
         std::ostringstream msg; 
-        msg << "Could not import output spatial reference for Reader::" << CPLGetLastErrorMsg() << result;
+        msg << "Could not import output spatial reference for Writer::" << CPLGetLastErrorMsg() << result;
         std::string message(msg.str());
         throw std::runtime_error(message);
     }
@@ -186,14 +190,14 @@ void Writer::SetSRS(const LASSpatialReference& srs)
 #endif
 }
 
-void Writer::Project(PointRecord& point)
+void Writer::Project(LASPoint& p)
 {
 #ifdef HAVE_GDAL
     
     int ret = 0;
-    double x = point.x;
-    double y = point.y;
-    double z = point.z;
+    double x = p.GetX();
+    double y = p.GetY();
+    double z = p.GetZ();
     
     ret = OCTTransform(m_transform, 1, &x, &y, &z);
     
@@ -204,10 +208,9 @@ void Writer::Project(PointRecord& point)
         throw std::runtime_error(message);
     }
     
-    // FIXME: PointRecords need to be descaled
-    point.x = x;
-    point.y = y;
-    point.z = z;
+    p.SetX(x);
+    p.SetY(y);
+    p.SetZ(z);
 #else
     UNREFERENCED_PARAMETER(point);
 #endif
