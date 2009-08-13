@@ -88,11 +88,11 @@ void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, size_t& le
     try
     {
         v = m_vlrbuffer.at(id);
-        if (v == 0) throw Tools::InvalidPageException(id);
+        if (v == 0) throw SpatialIndex::InvalidPageException(id);
     }
     catch (std::out_of_range)
     {
-        throw Tools::InvalidPageException(id);
+        throw SpatialIndex::InvalidPageException(id);
     }
 
     len = v->GetRecordLength();
@@ -125,11 +125,11 @@ void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const size_t l
         try
         {
             v_old = m_vlrbuffer.at(id);
-            if (v_old == 0) throw Tools::InvalidPageException(id);
+            if (v_old == 0) throw SpatialIndex::InvalidPageException(id);
         }
         catch (std::out_of_range)
         {
-            throw Tools::InvalidPageException(id);
+            throw SpatialIndex::InvalidPageException(id);
         }
 
         LASVariableRecord* v = makeVLR(len,data);
@@ -145,11 +145,11 @@ void VLRStorageManager::deleteByteArray(const SpatialIndex::id_type id)
     try
     {
         v = m_vlrbuffer.at(id);
-        if (v == 0) throw Tools::InvalidPageException(id);
+        if (v == 0) throw SpatialIndex::InvalidPageException(id);
     }
     catch (std::out_of_range)
     {
-        throw Tools::InvalidPageException(id);
+        throw SpatialIndex::InvalidPageException(id);
     }
 
     m_vlrbuffer[id] = 0;
