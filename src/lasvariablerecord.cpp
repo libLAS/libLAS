@@ -220,15 +220,16 @@ uint32_t LASVariableRecord::GetTotalSize() const
 std::ostream& operator << ( std::ostream& out, LASVariableRecord const& d)
 {
     // std::vector<uint8_t> data = d.GetData();
-    std::streampos begin = out.tellp();
+    std::streampos const begin = out.tellp();
     std::cout << "begin: " << begin << std::endl;
-    std::cout << "Dumping " << d.GetRecordLength() <<" bytes out for VLR" << "Size is : " << d.GetData().size() <<std::endl;
-    for (std::size_t i=0;i<d.GetData().size();i++)
+    std::cout << "Dumping " << d.GetRecordLength() 
+        <<" bytes out for VLR" << "Size is : " << d.GetData().size() <<std::endl;
+    for (std::size_t i = 0; i < d.GetData().size(); ++i)
     {
         //        out << d.GetData()[i];
     }
     out << &(d.GetData()[0]);
-    std::streampos end = out.tellp();
+    std::streampos const end = out.tellp();
     std::cout << "end: " << end << std::endl;
 
     return out;
@@ -236,13 +237,14 @@ std::ostream& operator << ( std::ostream& out, LASVariableRecord const& d)
 
 std::istream& operator >> ( std::istream& in, LASVariableRecord& d)
 {
-    std::streampos input_pos = in.tellg();
-    std::vector<uint8_t> data;
+    std::streampos const input_pos = in.tellg();
     in.seekg(0, std::ios::end);
-    std::streampos length = in.tellg();
+    std::streampos const length = in.tellg();
     in.seekg(input_pos, std::ios::beg);
     std::cout << "Stream length: " << length << std::endl;
     
+    // FIXME: If read_n throws, buffer will leak.
+    //        Replace with std::vector --mloskot
     uint8_t* buffer = new uint8_t[length];
 
     liblas::detail::read_n(buffer, in, length);
@@ -253,7 +255,9 @@ std::istream& operator >> ( std::istream& in, LASVariableRecord& d)
     //         and we don't know the orientation of the bytes - hobu
     LIBLAS_SWAP_BYTES_N(buffer, length);
     
-    for (std::size_t i=0; i < length; i++){
+    std::vector<uint8_t> data;
+    for (std::size_t i = 0; i < static_cast<std::size_t>(length); ++i)
+    {
         data.push_back(buffer[i]);
     }
     delete buffer;
@@ -261,5 +265,6 @@ std::istream& operator >> ( std::istream& in, LASVariableRecord& d)
     d.SetData(data);
     return in;
 }
+
 } // namespace liblas
 
