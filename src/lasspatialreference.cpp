@@ -41,7 +41,10 @@
 
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/utility.hpp>
-#include <iostream>
+// std
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace liblas
 {
@@ -406,7 +409,7 @@ void LASSpatialReference::SetWKT(std::string const& v)
 
     ResetVLRs();
 #else
-    UNREFERENCED_PARAMETER(v);
+    detail::ignore_unused_variable_warning(v);
     throw std::runtime_error("GDAL is not available, LASSpatialReference could not be set from WKT");
 #endif
 }
@@ -502,7 +505,7 @@ void LASSpatialReference::SetProj4(std::string const& v)
         std::free(proj4def);
     }
 #else
-    UNREFERENCED_PARAMETER(v);
+    detail::ignore_unused_variable_warning(v);
 #endif
 
 // if we have libgeotiff but not GDAL, we'll use the 

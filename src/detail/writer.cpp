@@ -43,6 +43,7 @@
 #include <liblas/detail/writer10.hpp>
 #include <liblas/detail/writer11.hpp>
 #include <liblas/detail/writer12.hpp>
+#include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasspatialreference.hpp>
@@ -51,12 +52,16 @@
 #include <ogr_srs_api.h>
 #endif
 
-
 // std
-#include <fstream>
 #include <cassert>
 #include <cstdlib> // std::size_t
+#include <fstream>
+#include <iosfwd>
+#include <ostream>
+#include <sstream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace liblas { namespace detail {
 
@@ -212,7 +217,7 @@ void Writer::Project(LASPoint& p)
     p.SetY(y);
     p.SetZ(z);
 #else
-    UNREFERENCED_PARAMETER(p);
+    detail::ignore_unused_variable_warning(p);
 #endif
 }
 Writer* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)

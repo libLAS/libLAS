@@ -43,6 +43,7 @@
 #include <liblas/detail/reader10.hpp>
 #include <liblas/detail/reader11.hpp>
 #include <liblas/detail/reader12.hpp>
+#include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasclassification.hpp>
@@ -233,7 +234,7 @@ void Reader::Project(LASPoint& point)
     point.SetY(y);
     point.SetZ(z);
 #else
-    UNREFERENCED_PARAMETER(point);
+    detail::ignore_unused_variable_warning(point);
 #endif
 }
 

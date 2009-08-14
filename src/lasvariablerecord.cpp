@@ -223,7 +223,8 @@ std::ostream& operator << ( std::ostream& out, LASVariableRecord const& d)
     std::streampos begin = out.tellp();
     std::cout << "begin: " << begin << std::endl;
     std::cout << "Dumping " << d.GetRecordLength() <<" bytes out for VLR" << "Size is : " << d.GetData().size() <<std::endl;
-    for (size_t i=0;i<d.GetData().size();i++) {
+    for (std::size_t i=0;i<d.GetData().size();i++)
+    {
         //        out << d.GetData()[i];
     }
     out << &(d.GetData()[0]);
@@ -252,7 +253,7 @@ std::istream& operator >> ( std::istream& in, LASVariableRecord& d)
     //         and we don't know the orientation of the bytes - hobu
     LIBLAS_SWAP_BYTES_N(buffer, length);
     
-    for (size_t i=0; i < length; i++){
+    for (std::size_t i=0; i < length; i++){
         data.push_back(buffer[i]);
     }
     delete buffer;

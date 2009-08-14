@@ -53,18 +53,31 @@
 #include <limits>
 #include <sstream>
 #include <stdexcept>
-
-//
-// Private macros definition
-//
-#ifndef UNREFERENCED_PARAMETER
-#define UNREFERENCED_PARAMETER(param) ((void)param)
+// boost
+#ifdef HAVE_BOOST
+#include <boost/concept_check.hpp>
 #endif
 
 /// Defines utilities for internal use in libLAS.
 /// The liblas::detail elements do not belong to the public
 /// interface of libLAS.
 namespace liblas { namespace detail {
+
+
+// Utilities stolen from Boost and accessible for compilation
+// without Boost support (optional) enabled.
+#ifndef HAVE_BOOST
+
+template <class T>
+inline void ignore_unused_variable_warning(T const&) {}
+
+#else
+
+using boost::ignore_unused_variable_warning;
+
+#endif // HAVE_BOOST
+
+
 
 /// Compile-time calculation size of array defined statically.
 template <typename T, std::size_t N>
@@ -150,6 +163,7 @@ struct VLRHeader
   uint16_t recordLengthAfterHeader;
   char description[32];
 };
+
 
 struct GeoKeysHeader
 {
@@ -345,7 +359,7 @@ inline void check_stream_state(std::basic_ios<C, T>& srtm)
     else if (srtm.bad())
         throw std::runtime_error("fatal I/O error occured");
 #else
-    UNREFERENCED_PARAMETER(srtm);
+    ignore_unused_variable_warning(srtm);
 #endif
 }
 
