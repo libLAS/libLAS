@@ -288,7 +288,7 @@ AC_MSG_RESULT([$HAVE_BOOST])
 
 if test "${HAVE_BOOST}" == "yes" ; then
     HAVE_BOOST="yes"
-    LIBS="$BOOST_LDFLAGS -lboost_iostreams-gcc40-mt $LIBS"
+    LIBS="$BOOST_LDFLAGS -lboost_iostreams-mt $LIBS"
 fi
 
 dnl #########################################################################
