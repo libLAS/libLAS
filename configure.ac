@@ -280,7 +280,12 @@ dnl #########################################################################
 AX_BOOST_BASE()
 AM_CONDITIONAL([BOOST_IS_CONFIG], [test ! x$HAVE_BOOST = xno])
 
-echo ${HAVE_BOOST}
+AC_MSG_CHECKING([if Boost C++ Libraries support requested and configured])
+if test -z ${HAVE_BOOST}; then
+    HAVE_BOOST="no"
+fi
+AC_MSG_RESULT([$HAVE_BOOST])
+
 if test "${HAVE_BOOST}" == "yes" ; then
     HAVE_BOOST="yes"
     LIBS="$BOOST_LDFLAGS -lboost_iostreams-gcc40-mt $LIBS"
