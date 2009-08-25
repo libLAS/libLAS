@@ -58,8 +58,6 @@ LASSpatialReference& LASSpatialReference::operator=(LASSpatialReference const& r
 {
     if (&rhs != this)
     {
-        m_tiff = 0;
-        m_gtiff = 0;        
         SetVLRs(rhs.GetVLRs());
         GetGTIF();
     }
