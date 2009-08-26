@@ -144,14 +144,16 @@ Special thanks to `Martin Isenburg and Jonathan Shewchuk`_ for their
 `LAStools`_ pioneering implementation of the ASPRS LAS standard that made 
 development of the libLAS library possible.
 
-Subversion Tree
+Mercurial Repository Tree
 ..............................................................................
 
-The SVN repository URL is available at http://liblas.org/svn
+The Mercurial repository for libLAS is located at http://hg.liblas.org/main
+
+You can obtain a copy of the active source code by issuing the following:
 
 ::
 
-    svn checkout http://liblas.org/svn/trunk/
+    hg clone http://hg.liblas.org/main
 
 Information about Trac
 ..............................................................................
