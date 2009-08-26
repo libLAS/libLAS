@@ -1,6 +1,5 @@
 SUBDIRS = src apps include test
 
-
 if GDAL_IS_CONFIG
 GDAL_CPPFLAGS = @GDAL_INC@ -DHAVE_GDAL=1
 endif
