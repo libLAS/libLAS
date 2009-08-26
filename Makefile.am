@@ -27,7 +27,7 @@ endif
 AM_CPPFLAGS = -I../include/liblas/capi -I../include $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) $(SPATIALINDEX_CPPFLAGS) $(OCI_CPPFLAGS) $(ZLIB_CPPFLAGS) $(BOOST_FLAGS)
 
 EXTRA_DIST = \
-            nmake.opt \
-            makefile.vc \
-            src/makefile.vc \
-            src/Version.rc
+    nmake.opt \
+    makefile.vc \
+    src/makefile.vc \
+    src/Version.rc
