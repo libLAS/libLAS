@@ -285,10 +285,6 @@
 			Name="src"
 			>
 			<File
-				RelativePath="..\..\..\src\gt_wkt_srs.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\las_c_api.cpp"
 				>
 			</File>
@@ -310,10 +306,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\lasheader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lasindex.cpp"
 				>
 			</File>
 			<File

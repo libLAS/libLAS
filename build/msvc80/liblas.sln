@@ -58,6 +58,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "txt2las", "txt2las\txt2las.
 		{EC92BE01-CFA3-46C6-998E-810484CC5860} = {EC92BE01-CFA3-46C6-998E-810484CC5860}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "greg", "..\..\..\..\test\greg\greg.vcproj", "{8E73C2B4-5E6C-405F-97DA-98D168721BB9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{208417AE-D08E-4938-AC26-A16ABD55AA5B} = {208417AE-D08E-4938-AC26-A16ABD55AA5B}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -100,6 +105,10 @@ Global
 		{C78B8A0D-12CE-49D6-8615-96B9735564D5}.Debug|Win32.Build.0 = Debug|Win32
 		{C78B8A0D-12CE-49D6-8615-96B9735564D5}.Release|Win32.ActiveCfg = Release|Win32
 		{C78B8A0D-12CE-49D6-8615-96B9735564D5}.Release|Win32.Build.0 = Release|Win32
+		{8E73C2B4-5E6C-405F-97DA-98D168721BB9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8E73C2B4-5E6C-405F-97DA-98D168721BB9}.Debug|Win32.Build.0 = Debug|Win32
+		{8E73C2B4-5E6C-405F-97DA-98D168721BB9}.Release|Win32.ActiveCfg = Release|Win32
+		{8E73C2B4-5E6C-405F-97DA-98D168721BB9}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
