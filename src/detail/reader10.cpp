@@ -48,9 +48,11 @@
 
 // std
 #include <fstream>
+#include <istream>
 #include <iostream>
 #include <stdexcept>
-#include <cstdlib> // std::size_t, std::free
+#include <cstddef> // std::size_t
+#include <cstdlib> // std::free
 #include <cassert>
 
 namespace liblas { namespace detail { namespace v10 {
@@ -228,7 +230,7 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
     {
         // accounting to keep track of the fact that the DataRecordLength 
         // might not map to ePointSize0 or ePointSize1 (see http://liblas.org/ticket/142)
-        size_t bytesread = 0;
+        std::size_t bytesread = 0;
         
         detail::PointRecord record;
         // TODO: Replace with compile-time assert
@@ -257,8 +259,12 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
             point.SetTime(gpst);
             bytesread += sizeof(double);
         }
+
         if (bytesread != header.GetDataRecordLength())
-            m_ifs.seekg(header.GetDataRecordLength() - bytesread, std::ios::cur);
+        {
+            off_type const pos(static_cast<off_type>(header.GetDataRecordLength() - bytesread));
+            m_ifs.seekg(pos, std::ios::cur);
+        }
         return true;
     }
 
@@ -281,7 +287,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     
     // accounting to keep track of the fact that the DataRecordLength 
     // might not map to ePointSize0 or ePointSize1 (see http://liblas.org/ticket/142)
-    size_t bytesread = 0;
+    std::size_t bytesread = 0;
 
     detail::read_n(record, m_ifs, sizeof(record));
 
@@ -299,7 +305,10 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     }
 
     if (bytesread != header.GetDataRecordLength())
-        m_ifs.seekg(header.GetDataRecordLength() - bytesread, std::ios::cur);
+    {
+        off_type const pos(static_cast<off_type>(header.GetDataRecordLength() - bytesread));
+        m_ifs.seekg(pos, std::ios::cur);
+    }
 
     return true;
 }

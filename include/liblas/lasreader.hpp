@@ -53,7 +53,8 @@
 #include <iosfwd>
 #include <string>
 #include <memory>
-#include <cstdlib> // std::size_t
+#include <vector>
+#include <cstddef>
 
 namespace liblas {
 
@@ -62,27 +63,62 @@ class LASReader
 {
 public:
 
+    /// User-defined consructor initializes reader with input stream.
+    /// @excepion std::runtime_error - on failure state of the input stream.
     LASReader(std::istream& ifs);
+
+    /// Destructor.
+    /// @excepion nothrow
     ~LASReader();
 
+    /// Returns version of LAS file being accessed by the reader.
+    /// @excepion nothrow
     std::size_t GetVersion() const;
+    
+    /// Provides read-only access to header of LAS file being read.
+    /// @excepion nothrow
     LASHeader const& GetHeader() const;
+
+    /// Provides read-only access to current point record.
+    /// @excepion nothrow
     LASPoint const& GetPoint() const;
+
+    /// Provides read-only access to collection of variable-length records.
+    /// @excepion nothrow
     std::vector<LASVariableRecord> const& GetVLRs() const;
-    /// Allow fetching of the stream
+
+    /// Allow fetching of the stream attached to the reader.
+    /// @excepion nothrow
     std::istream& GetStream() const;
+
+    /// Checks if end-of-file has been reached.
     bool IsEOF() const;
 
+    /// Fetches next point record in file.
+    /// @excepion may throw std::exception
     bool ReadNextPoint();
+
+    /// Fetches n-th point record from file.
+    /// @excepion may throw std::exception
     bool ReadPointAt(std::size_t n);
+
+    /// Reads all variable-length records from file.
+    /// @excepion may throw std::exception
     bool ReadVLR();
+
+    /// Reinitializes state of the reader.
+    /// @excepion may throw std::exception
     void Reset();
 
     /// Reproject data as they are written if the LASWriter's reference is
-    /// different than the LASHeader's    
+    /// different than the LASHeader's.
+    /// @excepion may throw std::exception
     bool SetSRS(const LASSpatialReference& ref);
 
-    /// The operator is not const because it updates file stream position.
+    /// Provides index-based access to point records.
+    /// The operator is implemented in terms of ReadPointAt method
+    /// and is not const-qualified because it updates file stream position.
+    /// @excepion may throw std::exception
     LASPoint const& operator[](std::size_t n);
 
 private:

@@ -76,6 +76,9 @@ public:
     void SetSRS(const LASSpatialReference& srs);
     
 protected:
+
+    typedef std::istream::off_type off_type;
+    typedef std::istream::pos_type pos_type;
     
     std::istream& m_ifs;
     uint32_t m_size;
