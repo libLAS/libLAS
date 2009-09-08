@@ -278,7 +278,7 @@ dnl Determine Boost support
 dnl #########################################################################
 
 AX_BOOST_BASE()
-AM_CONDITIONAL([BOOST_IS_CONFIG], [test ! x$HAVE_BOOST = xno])
+AM_CONDITIONAL([BOOST_IS_CONFIG], [test x$HAVE_BOOST = xyes])
 
 AC_MSG_CHECKING([if Boost C++ Libraries support requested and configured])
 if test -z ${HAVE_BOOST}; then
