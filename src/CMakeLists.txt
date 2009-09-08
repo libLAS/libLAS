@@ -41,6 +41,7 @@ SET( LIBLAS_DETAIL_HPP
 )
 
 SET( LIBLAS_CPP
+    lasclassification.cpp
     lascolor.cpp
     laserror.cpp
     lasfile.cpp

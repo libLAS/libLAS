@@ -46,7 +46,7 @@ IF (WIN32)
 ELSE (WIN32)
 
     IF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-        ADD_DEFINITIONS( -Wall -Wno-long-long -pedantic -ansi )
+        ADD_DEFINITIONS( -Wall -Wno-long-long -pedantic -ansi -fPIC )
 
         IF (CMAKE_COMPILER_IS_GNUCXX)
             SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98" )

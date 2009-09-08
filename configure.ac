@@ -58,7 +58,7 @@ dnl Build mode configuration (debug/optimized)
 dnl #########################################################################
 
 AC_ARG_ENABLE([debug],
-    AC_HELP_STRING([--enable-debug=ARG], [Enable debug compilation mode [yes or no, default=${debug_default}]]),,)
+    AC_HELP_STRING([--enable-debug=ARG], [Enable debug compilation mode @<:@yes|no@:>@, default=${debug_default}]),,)
 
 AC_MSG_CHECKING([for debug enabled])
 
@@ -108,7 +108,7 @@ dnl Determine GDAL Support
 dnl #########################################################################
 
 AC_ARG_WITH([gdal],
-    AC_HELP_STRING([--with-gdal=ARG], [Path to gdal-config]),,)
+    AC_HELP_STRING([--with-gdal=@<:@ARG@:>@], [enable GDAL/OGR library specifying location of gdal-config (ARG=path)]),,)
 AC_MSG_CHECKING([for GDAL])
 
 if test "$with_gdal" = "no" -o "$with_gdal" = "" ; then
@@ -170,7 +170,7 @@ dnl Determine GeoTIFF Support
 dnl #########################################################################
 
 AC_ARG_WITH([geotiff],
-    AC_HELP_STRING([--with-geotiff=ARG], [libgeotiff library to use (no or path)]),,)
+    AC_HELP_STRING([--with-geotiff=@<:@ARG@:>@], [enable (ARG=path) or disable (ARG=no) libgeotiff library]),,)
 
 if test "$with_geotiff" != "no" -a "$with_geotiff" != "" -a "${GEOTIFF_CONFIG}" != "yes" ; then
     dnl We now require libgeotiff 1.2.5 (for ST_Create the simpletags stuff). 
@@ -223,7 +223,7 @@ dnl Determine SpatialIndex Support
 dnl #########################################################################
 
 AC_ARG_WITH([spatialindex],
-    AC_HELP_STRING([--with-spatialindex=ARG], [libspatialindex library to use (no or path)]),,)
+    AC_HELP_STRING([--with-spatialindex=@<:@ARG@:>@], [enable (ARG=path) or disable (ARG=no) libspatialindex library]),,)
 
 if test "${SPATIALINDEX_CONFIG}" != "no" ; then
     AC_MSG_CHECKING([for spatialindex RTree.h])
