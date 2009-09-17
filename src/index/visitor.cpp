@@ -77,7 +77,7 @@ void LASVisitor::visitData(const SpatialIndex::IData& d)
 
     // data should be an array of characters representing a Region as a string.
     uint8_t* pData = 0;
-    size_t cLen = 0;
+    ::uint32_t cLen = 0;
     d.getData(cLen, &pData);
     // do something.
     //string s = reinterpret_cast<char*>(pData);

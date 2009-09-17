@@ -82,7 +82,7 @@ VLRStorageManager::~VLRStorageManager()
 
 }
 
-void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, size_t& len, uint8_t** data)
+void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, ::uint32_t& len, uint8_t** data)
 {
     LASVariableRecord* v;
     try
@@ -101,7 +101,7 @@ void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, size_t& le
     memcpy(*data, (uint8_t*)&(v->GetData()[0]), len);
 }
 
-void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const size_t len, const uint8_t* const data)
+void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const ::uint32_t len, const uint8_t* const data)
 {
     
     if (id == SpatialIndex::StorageManager::NewPage)
