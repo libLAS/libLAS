@@ -17,15 +17,11 @@ if OCI_IS_CONFIG
 OCI_CPPFLAGS = @ORACLE_OCI_CFLAGS@ -DHAVE_ORACLE=1
 endif
 
-if ZLIB_IS_CONFIG
-ZLIB_CPPFLAGS = @ZLIB_INC@ -DHAVE_ZLIB=1
-endif
-
 if BOOST_IS_CONFIG
 BOOST_FLAGS = @BOOST_CPPFLAGS@ -DHAVE_BOOST=1
 endif
 
-AM_CPPFLAGS = -I../include/liblas/capi -I../include $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) $(SPATIALINDEX_CPPFLAGS) $(OCI_CPPFLAGS) $(ZLIB_CPPFLAGS) $(BOOST_FLAGS)
+AM_CPPFLAGS = -I../include/liblas/capi -I../include $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) $(SPATIALINDEX_CPPFLAGS) $(OCI_CPPFLAGS) $(BOOST_FLAGS)
 
 lib_LTLIBRARIES = liblas.la
 
@@ -63,9 +59,6 @@ liblas_la_SOURCES +=    index/index.cpp \
                         index/storage.cpp
 
 
-endif
-
-if ZLIB_IS_CONFIG
 endif
 
 liblas_la_LDFLAGS = -version-info 1:0:0
