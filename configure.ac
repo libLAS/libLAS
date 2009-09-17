@@ -269,8 +269,8 @@ dnl #########################################################################
 dnl Determine Zlib Support
 dnl #########################################################################
 
-CHECK_ZLIB()
-AM_CONDITIONAL([ZLIB_IS_CONFIG], [test ! x$HAVE_LIBZ = xno])
+dnl CHECK_ZLIB()
+dnl AM_CONDITIONAL([ZLIB_IS_CONFIG], [test ! x$HAVE_LIBZ = xno])
 
 
 dnl #########################################################################
