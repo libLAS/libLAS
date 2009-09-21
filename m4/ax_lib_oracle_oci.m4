@@ -138,7 +138,7 @@ Please, locate Oracle directories using --with-oci or \
     dnl
     dnl Check OCI files
     dnl
-    if test -n "$oracle_include_dir" -a -n "$oracle_lib_dir"; then
+    if test -n "$oracle_include_dir" -a -n "$oracle_lib_dir" -o -n "$oracle_lib_dir2"; then
 
         saved_CPPFLAGS="$CPPFLAGS"
         CPPFLAGS="$CPPFLAGS -I$oracle_include_dir"
