@@ -1355,9 +1355,6 @@ bool CheckError( sword nStatus, OCIError* hError )
     case OCI_SUCCESS:
         return false;
         break;
-    case OCI_SUCCESS_WITH_INFO:
-        CPLError( CE_Failure, CPLE_AppDefined, "OCI_SUCCESS_WITH_INFO\n" );
-        break;
     case OCI_NEED_DATA:
         CPLError( CE_Failure, CPLE_AppDefined, "OCI_NEED_DATA\n" );
         break;
@@ -1373,7 +1370,7 @@ bool CheckError( sword nStatus, OCIError* hError )
     case OCI_CONTINUE:
         CPLError( CE_Failure, CPLE_AppDefined, "OCI_CONTINUE\n" );
         break;
-    case OCI_ERROR:
+    case OCI_ERROR || OCI_SUCCESS_WITH_INFO:
 
         if( hError == NULL)
         {
