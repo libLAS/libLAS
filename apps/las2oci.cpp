@@ -66,6 +66,8 @@ OWStatement* Run(OWConnection* connection, ostringstream& command)
     statement = connection->CreateStatement(command.str().c_str());
     
     if (statement->Execute() == false) {
+        
+        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
         delete statement;
         return 0;
     }
@@ -146,10 +148,20 @@ bool DeleteTable(OWConnection* connection, const char* tableName, const char* cl
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");
+    
+    std::string cloudColumnName_l = std::string(cloudColumnName);
+    std::string cloudColumnName_u = std::string(cloudColumnName_l);
+    
+    std::transform(cloudColumnName_l.begin(), cloudColumnName_l.end(), cloudColumnName_u.begin(), static_cast < int(*)(int) > (toupper));
+
+    std::string cloudTableName_l = std::string(cloudTableName);
+    std::string cloudTableName_u = std::string(cloudTableName_l);
+    
+    std::transform(cloudTableName_l.begin(), cloudTableName_l.end(), cloudTableName_u.begin(), static_cast < int(*)(int) > (toupper));
 
 oss << "declare\n"
 "begin \n"
-"  mdsys.sdo_pc_pkg.drop_dependencies('"<<cloudTableName<<"', '"<<cloudColumnName<<"');"
+"  mdsys.sdo_pc_pkg.drop_dependencies('"<<cloudTableName_u<<"', '"<<cloudColumnName_u<<"');"
 "end;";
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
@@ -416,14 +428,28 @@ bool CreatePCEntry( OWConnection* connection,
     oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss.precision(2);
     
+    std::string blkTableName_l = std::string(blkTableName);
+    std::string blkTableName_u = std::string(blkTableName_l);
+    
+    std::string pcTableName_l = std::string(pcTableName);
+    std::string pcTableName_u = std::string(pcTableName_l);
+    
+    std::string cloudColumnName_l = std::string(cloudColumnName);
+    std::string cloudColumnName_u = std::string(cloudColumnName_l);
+    
+    std::transform(blkTableName_l.begin(), blkTableName_l.end(), blkTableName_u.begin(), static_cast < int(*)(int) > (toupper));
+    std::transform(pcTableName_l.begin(), pcTableName_l.end(), pcTableName_u.begin(), static_cast < int(*)(int) > (toupper));
+    std::transform(cloudColumnName_l.begin(), cloudColumnName_l.end(), cloudColumnName_u.begin(), static_cast < int(*)(int) > (toupper));
+    
+    
 oss << "declare\n"
 "  pc sdo_pc;\n"
 "begin\n"
 "  -- Initialize the Point Cloud object.\n"
 "  pc := sdo_pc_pkg.init( \n"
-"          '"<< pcTableName<<"', -- Table that has the SDO_POINT_CLOUD column defined\n"
-"          '"<< cloudColumnName<<"',   -- Column name of the SDO_POINT_CLOUD object\n"
-"          '"<<blkTableName<<"', -- Table to store blocks of the point cloud\n"
+"          '"<< pcTableName_u<<"', -- Table that has the SDO_POINT_CLOUD column defined\n"
+"          '"<< cloudColumnName_u<<"',   -- Column name of the SDO_POINT_CLOUD object\n"
+"          '"<<blkTableName_u<<"', -- Table to store blocks of the point cloud\n"
 "           'blk_capacity="<<blk_capacity<<"', -- max # of points per block\n"
 "           mdsys.sdo_geometry(2003, "<<srid<<", null,\n"
 "              mdsys.sdo_elem_info_array(1,1003,3),\n"
@@ -437,7 +463,7 @@ oss << "declare\n"
 "           null);\n"
 
 "  -- Insert the Point Cloud object  into the \"base\" table.\n"
-"  insert into hobu values (pc);\n"
+"  insert into "<< pcTableName_u<<" ("<<cloudColumnName_u<<") values (pc);\n"
 "end;\n";
     
     statement = Run(connection, oss);
@@ -459,6 +485,7 @@ int main(int argc, char* argv[])
     std::string instance;
     std::string block_table_name;
     std::string point_cloud_name("CLOUD");
+    std::string base_table_name("HOBU");
     
     bool bDropTable = false;
     liblas::uint32_t nCapacity = 10000;
@@ -522,6 +549,13 @@ int main(int argc, char* argv[])
             i++;
             point_cloud_name = std::string(argv[i]);
         }
+        else if (   strcmp(argv[i],"--base-table-name") == 0  ||
+                    strcmp(argv[i],"-bn") == 0  
+                )
+        {
+            i++;
+            base_table_name = std::string(argv[i]);
+        }
         else if (input.empty())
         {
             input = std::string(argv[i]);
@@ -546,6 +580,8 @@ int main(int argc, char* argv[])
     instance = connection.substr(at_pos+1);
     std::cout << "Connecting with username: " << username << " password: "<< password<< " instance: " << instance << std::endl;    
 
+    std::cout << "Base table name " << base_table_name << " cloud column: " << point_cloud_name << std::endl;
+    if (bDropTable) std::cout << "dropping existing tables..." << std::endl;
     // OCI_SUCCESS_WITH_INFO error, which according to google relates to 
     // a warning related to expired or expiring passwords needs to be 
     // handled in the oracle wrapper.
@@ -586,7 +622,7 @@ int main(int argc, char* argv[])
     string::size_type dot_pos = input.find_first_of(".");
     string table_name = input.substr(0,dot_pos);
     
-    if (bDropTable) DeleteTable(con, table_name.c_str(), "HOBU", "CLOUD");
+    if (bDropTable) DeleteTable(con, table_name.c_str(), base_table_name.c_str(), point_cloud_name.c_str());
     CreateTable(con, table_name.c_str());
 
     LASReader* reader = new LASReader(*istrm);
@@ -622,14 +658,15 @@ int main(int argc, char* argv[])
     CreateSDOEntry(con, table_name.c_str(), query, srid );
     CreateBlockIndex(con, table_name.c_str());
 
-    CreatePCEntry(  con, 
+    bool output = CreatePCEntry(  con, 
                     query, 
                     table_name.c_str(),
-                    "HOBU",
-                    "CLOUD",
+                    base_table_name.c_str(),
+                    point_cloud_name.c_str(),
                     3, // we're assuming 3d for now
                     srid,
                     nCapacity);
+
 //    Cleanup(con, "base");
 
  // int   iCol = 0;

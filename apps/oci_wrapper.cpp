@@ -461,8 +461,10 @@ bool OWStatement::Execute( int nRows )
 
     if( CheckError( nStatus, hError ) )
     {
+        printf("check error was true!\n");
         return false;
     }
+
 
     if( nStatus == OCI_SUCCESS_WITH_INFO || nStatus == OCI_NO_DATA )
     {
@@ -1390,10 +1392,25 @@ bool CheckError( sword nStatus, OCIError* hError )
         CPLError( CE_Failure, CPLE_AppDefined, "%.*s",
             sizeof(szMsg), szMsg );
         break;
-
+    
     default:
-        break;
+
+            if( hError == NULL)
+            {
+                CPLError( CE_Failure, CPLE_AppDefined,
+                    "OCI_ERROR with no error handler" );
+            }
+
+            OCIErrorGet( (dvoid *) hError, (ub4) 1,
+                (text *) NULL, &nCode, szMsg,
+                (ub4) sizeof(szMsg), OCI_HTYPE_ERROR);
+
+            CPLError( CE_Failure, CPLE_AppDefined, "%.*s",
+                sizeof(szMsg), szMsg );
+            break;
+
     }
 
+    CPLError(CE_Failure, CPLE_AppDefined, "OCIError: status code %d\n", nStatus);
     return true;
 }
