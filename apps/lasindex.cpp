@@ -9,20 +9,6 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/index/index.hpp>
 
-// #ifdef HAVE_BOOST
-// #include <boost/iostreams/filter/zlib.hpp>
-// #include <boost/iostreams/filtering_streambuf.hpp>
-// #include <boost/iostreams/filtering_stream.hpp>
-// #include <boost/iostreams/device/array.hpp>
-// #include <boost/iostreams/device/back_inserter.hpp>
-// #include <boost/iostreams/copy.hpp> 
-// #include <boost/range/iterator_range.hpp>
-// #include <boost/format.hpp> 
-// #endif
-
-#ifdef HAVE_SPATIALINDEX
-#include <spatialindex/SpatialIndex.h>
-#endif
 
 #include <iostream>
 #include <iterator>
@@ -119,142 +105,26 @@ int main(int argc, char* argv[])
         usage();
         exit(-1);
     }
-    std::cout << "input: " << input<<  " output: " <<output<<std::endl;
-    // 
+
     std::istream* istrm = OpenInput(input);
     LASReader* reader = new LASReader(*istrm);
-    
-    
-//     LASIndexDataStream* idxstrm = new LASIndexDataStream(reader);
-// 
-//     LASIndex* index = new LASIndex( input);
-//     index->Initialize(*idxstrm);
-//     
-//     delete idxstrm;
-//     delete index;
-//     delete reader;
-//     delete istrm;
-//     
-//     LASIndex* idx = new LASIndex(input);
-//     
-//     idx->Initialize();
-//     std::vector<liblas::uint32_t>* ids = 0;
-// 
-//     try{
-// //        ids = idx->intersects(289815.12,4320979.06, 289818.01,4320982.59,46.83,170.65);
-// 
-// // _zoom
-// //        ids = idx->intersects(630355.0,4834609.0,630395.0,4834641.0,0.0,200.0);
-// 
-// // _clip
-// // 630346.830000,4834500.000000,55.260000
-//         ids = idx->intersects(630262.300000,4834500.000000,630346.830000,4834500.000000,50.900000,55.260000);
-// //       ids = idx->intersects(630297.0,4834497.0,630302.0,4834501.0,0.0,200.0);
-// 
-//     } catch (Tools::Exception& e) {
-//         std::string s = e.what();
-//         std::cout << "error querying index value" << s <<std::endl; exit(1);
-//     }
-//         
-//     
-//     if (ids != 0) delete ids;
-//     if (idx != 0) delete idx;
+    std::cout << "Indexing " << input<< " "<<std::endl;
 
 
     LASIndexDataStream* idxstrm = new LASIndexDataStream(reader);
 
     
-    std::string nothing = std::string("");
     LASIndex* idx = new LASIndex(input);
     idx->SetType(LASIndex::eExternalIndex);
     idx->SetLeafCapacity(10000);
-    idx->SetFillFactor(1.0);
+    idx->SetFillFactor(0.99);
     idx->Initialize(*idxstrm);
 
-    if (idx != 0) delete idx;
-    idx = 0;
 
-    idx = new LASIndex(input);
-    idx->SetType(LASIndex::eExternalIndex);
-    idx->Initialize(*idxstrm);
     
-    std::vector<liblas::uint32_t>* ids = 0;
-
-    try{
-//        ids = idx->intersects(289815.12,4320979.06, 289818.01,4320982.59,46.83,170.65);
-
-// _zoom
-//        ids = idx->intersects(630355.0,4834609.0,630395.0,4834641.0,0.0,200.0);
-
-// _clip
-// 630346.830000,4834500.000000,55.260000
-        ids = idx->intersects(630262.300000,4834500.000000,630346.830000,4834500.000000,50.900000,55.260000);
-//       ids = idx->intersects(630297.0,4834497.0,630302.0,4834501.0,0.0,200.0);
-
-    } catch (Tools::Exception& e) {
-        std::string s = e.what();
-        std::cout << "error querying index value" << s <<std::endl; exit(1);
-    }
-    
-    std::cout << "hits: ";
-    for (int i=0;i<ids->size();i++) {
-        std::cout << ids->at(i) <<",";
-    }
-    std::cout << std::endl;
-    
-    LASQuery* query = new LASQuery;
-    idx->Query(*query);
-
-    if (ids != 0) delete ids;
-    if (idx != 0) delete idx;
-    if (query != 0 ) delete query;
-
-    // 
-    // if (ids != 0) delete ids;
-    // if (idx != 0) delete idx;
-    // idx = 0;
-    // 
-    // namespace io = boost::iostreams;
-    // 
-    // // io::filtering_ostream ofilter;
-    // // std::stringstream  junk;
-    // 
-    // // std::vector<liblas::uint8_t> compressed;
-    // 
-    // std::string compressed;
-    // io::filtering_streambuf<io::output> ofilter; 
-    // ofilter.push(io::zlib_compressor());
-    // ofilter.push(back_inserter(compressed));
-    // 
-    // LASVariableRecord *vlr = idx->GetVLR();
-    // 
-    // std::string data("some junkdsfasdfasdfqwerasdfasdfasdfasdfasdfweradsfasdfasdfasdfasdfasdqwerasdfasdfasdfasdfqwerasdfasdfv");
-    // // std::string data(vlr->GetData());
-    // std::cout << "uncompressed size " << data.size() << std::endl;
-    // 
-    // io::copy(boost::make_iterator_range(data),ofilter);
-    //  
-    // // std::vector<liblas::uint8_t>&  d= *(vlr->GetData());
-    // // io::copy(boost::make_iterator_range(d.begin(), d.end()),ofilter);
-    // 
-    // std::cout << "compressed size " << compressed.size() << std::endl;
-    // // 
-    // // ofilter.push(io::zlib_compressor());
-    // // ofilter.push(back_inserter(compressed));
-    // // 
-    // // LASVariableRecord *vlr = idx->GetVLR();
-    // // std::cout << "VLR length: " << vlr->GetRecordLength() << std::endl;
-    // // 
-    // // ofilter << "some junkdsfasdfasdfqwerasdfv";
-    // // 
-    // // // ofilter << *vlr;
-    // // std::cout << "stream size: " << ofilter.size() << std::endl;
-    // // 
-    // // ofilter.flush();
-    // // 
-    // // std::cout << "compressed size: " << compressed.size() << std::endl;
-    // //  
-    // // 
-    // // 
+    delete idx;
+    delete idxstrm;
+    delete reader;
+    delete istrm;
     
 }
