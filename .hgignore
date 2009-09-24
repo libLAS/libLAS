@@ -13,6 +13,9 @@ apps/lasmerge
 apps/liblas-config
 apps/ts2las
 apps/txt2las
+apps/las2oci
+apps/las2ogr
+apps/lasindex
 autom4te.cache
 config.guess
 config.log
@@ -27,3 +30,6 @@ ltmain.sh
 missing
 Makefile
 Makefile.in
+build.hobu
+test/data/*.dat
+test/data/*.idx
