@@ -57,6 +57,11 @@ ENDIF (WIN32)
 #############################################################
 # Search for dependencies
 
+FIND_PACKAGE(GDAL)
+IF (GDAL_FOUND)
+	ADD_DEFINITIONS( -D HAVE_GDAL )
+ENDIF (GDAL_FOUND)
+
 # GeoTIFF support (optional)
 FIND_PACKAGE(GeoTIFF)
 IF (GEOTIFF_FOUND)
@@ -64,15 +69,6 @@ IF (GEOTIFF_FOUND)
 	#SET (HAVE_LIBGEOTIFF TRUE)
 	ADD_DEFINITIONS( -D HAVE_LIBGEOTIFF )
 ENDIF (GEOTIFF_FOUND)
-
-# GDAL support (optional)
-FIND_PACKAGE(GDAL)
-
-IF (GDAL_FOUND)
-	#TODO: Use to generate config.h
-	#SET (HAVE_GDAL TRUE)
-	ADD_DEFINITIONS( -D HAVE_GDAL )
-ENDIF (GDAL_FOUND)
 
 #############################################################
 # List of directories to process

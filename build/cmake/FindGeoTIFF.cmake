@@ -1,3 +1,5 @@
+# $Id$
+#
 # CMake module to search for GeoTIFF library
 #
 # If it's found it sets GEOTIFF_FOUND to TRUE
@@ -12,6 +14,7 @@
 # and then again with no specified paths to search the default
 # locations. When an earlier FIND_* succeeds, subsequent FIND_*s
 # searching for the same item do nothing. 
+#
 FIND_PATH(GEOTIFF_INCLUDE_DIR geotiff.h
   "$ENV{LIB_DIR}/include"
   "$ENV{LIB_DIR}/include/geotiff"
