@@ -52,10 +52,10 @@
 /// Namespace grouping all elements of libLAS public interface.
 /// \note
 /// User's may notice there is namespace \em detail nested
-/// in the \em liblas. The \em detail should be considered as
-/// private namespace dedicated for implementation details,
-/// so libLAS are not supposed to access it directly,
-/// nor included headers from the \em detail subdirectory of \em liblas include folder.
+/// in the \em liblas namespace. The \em detail should be considered as private
+/// namespace dedicated for implementation details, so libLAS users are not
+/// supposed to access it directly, nor included headers from the \em detail
+/// subdirectory of \em liblas include folder.
 namespace liblas
 {
 
@@ -98,6 +98,7 @@ inline bool Create(std::ofstream& ofs, std::string const& filename) // throw()
     return ofs.is_open();
 }
 
+/// Check if GDAL support has been built in to libLAS.
 inline bool IsGDALEnabled()
 {
 #ifdef HAVE_GDAL
@@ -107,6 +108,7 @@ inline bool IsGDALEnabled()
 #endif
 }
 
+/// Check if GeoTIFF support has been built in to libLAS.
 inline bool IsLibGeoTIFFEnabled()
 {
 #ifdef HAVE_LIBGEOTIFF
