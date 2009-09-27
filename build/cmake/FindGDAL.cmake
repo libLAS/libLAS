@@ -15,16 +15,40 @@
 ###############################################################################
 MESSAGE(STATUS "Searching for GDAL ${GDAL_FIND_VERSION}+ library")
 
+SET(GDAL_NAMES gdal)
+
 IF(WIN32)
 
     IF(MINGW)
-        FIND_PATH(GDAL_INCLUDE_DIR gdal.h /usr/local/include /usr/include c:/msys/local/include)
-        FIND_LIBRARY(GDAL_LIBRARY NAMES gdal PATHS /usr/local/lib /usr/lib c:/msys/local/lib)
+        FIND_PATH(GDAL_INCLUDE_DIR
+            gdal.h
+            PATH_PREFIXES gdal gdal-1.6
+            PATHS
+            /usr/local/include
+            /usr/include
+            c:/msys/local/include)
+
+        FIND_LIBRARY(GDAL_LIBRARY
+            NAMES ${GDAL_NAMES}
+            PATH_PREFIXES gdal gdal-1.6
+            PATHS
+            /usr/local/lib
+            /usr/lib
+            c:/msys/local/lib)
     ENDIF(MINGW)
 
     IF(MSVC)
         SET(GDAL_INCLUDE_DIR "$ENV{LIB_DIR}/include/gdal" CACHE STRING INTERNAL)
-        FIND_LIBRARY(GDAL_LIBRARY NAMES gdal gdal_i PATHS "$ENV{LIB_DIR}/lib" /usr/lib c:/msys/local/lib)
+
+
+        SET(GDAL_NAMES ${GDAL_NAMES} gdal_I)
+        FIND_LIBRARY(GDAL_LIBRARY
+            NAMES ${GDAL_NAMES}
+            PATH_PREFIXES gdal gdal-1.6
+            PATHS
+            "$ENV{LIB_DIR}/lib"
+            /usr/lib
+            c:/msys/local/lib)
         
         IF(GDAL_LIBRARY)
             SET(GDAL_LIBRARY;odbc32;odbccp32 CACHE STRING INTERNAL)
@@ -81,8 +105,10 @@ ELSEIF(UNIX)
         # Set INCLUDE_DIR to prefix+include
         EXEC_PROGRAM(${GDAL_CONFIG} ARGS --prefix OUTPUT_VARIABLE GDAL_PREFIX)
 
-        FIND_PATH(GDAL_INCLUDE_DIR 
+        FIND_PATH(GDAL_INCLUDE_DIR
             gdal.h 
+            PATH_PREFIXES gdal gdal-1.6
+            PATHS
             ${GDAL_PREFIX}/include/gdal
             ${GDAL_PREFIX}/include
             /usr/local/include 
@@ -107,21 +133,16 @@ ELSEIF(UNIX)
         # use regular expression to match wildcard equivalent "-l*<endchar>"
         # with <endchar> is a space or a semicolon
         STRING(REGEX MATCHALL "[-][l]([^ ;])+" GDAL_LIB_NAME_WITH_PREFIX "${GDAL_CONFIG_LIBS}")
-        #MESSAGE("DBG GDAL_LIB_NAME_WITH_PREFIX ${GDAL_LIB_NAME_WITH_PREFIX}")
 
         # Remove prefix -l because we need the pure name
         IF(GDAL_LIB_NAME_WITH_PREFIX)
-            #STRING(REGEX REPLACE "(gdal)(.)*" "\\1" GDAL_LIB_NAME_ONLY "${GDAL_LIB_NAME_WITH_PREFIX}")
-            #MESSAGE("DBG GDAL_LIB_NAME_ONLY ${GDAL_LIB_NAME_ONLY}")
-            STRING(REGEX REPLACE "[-][l]" "" GDAL_LIB_NAME "${GDAL_LIB_NAME_ONLY}")
-            #MESSAGE("DBG GDAL_LIB_NAME ${GDAL_LIB_NAME}")
+            STRING(REGEX REPLACE "[-][l]" "" GDAL_LIB_NAME ${GDAL_LIB_NAME_WITH_PREFIX})
         ENDIF()
 
         IF(APPLE)
             SET(GDAL_LIBRARY ${GDAL_LINK_DIRECTORIES}/lib${GDAL_LIB_NAME}.dylib CACHE STRING INTERNAL)
         ELSE()
             SET(GDAL_LIBRARY ${GDAL_LINK_DIRECTORIES}/lib${GDAL_LIB_NAME}.so CACHE STRING INTERNAL)
-            #MESSAGE("DBG GDAL_LIBRARY ${GDAL_LIBRARY}")
         ENDIF()
       
     ELSE()
@@ -132,16 +153,11 @@ ELSE()
     MESSAGE("FindGDAL.cmake: unrecognized or unsupported operating system (use Unix or Windows)")
 ENDIF()
 
-IF(GDAL_INCLUDE_DIR AND GDAL_LIBRARY)
-    SET(GDAL_FOUND TRUE)
-ENDIF()
+# Handle the QUIETLY and REQUIRED arguments and set SPATIALINDEX_FOUND to TRUE
+# if all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(GDAL DEFAULT_MSG GDAL_LIBRARY GDAL_INCLUDE_DIR)
 
-IF(GDAL_FOUND)
-    IF(NOT GDAL_FIND_QUIETLY)
-        MESSAGE(STATUS "Found GDAL: ${GDAL_LIBRARY}")
-    ENDIF()
-ELSE()
-    MESSAGE(GDAL_INCLUDE_DIR=${GDAL_INCLUDE_DIR})
-    MESSAGE(GDAL_LIBRARY=${GDAL_LIBRARY})
-    MESSAGE(FATAL_ERROR "Could not find GDAL")
-ENDIF()
+# TODO: Do we want to mark these as advanced? --mloskot
+# http://www.cmake.org/cmake/help/cmake2.6docs.html#command:mark_as_advanced
+#MARK_AS_ADVANCED(SPATIALINDEX_LIBRARY SPATIALINDEX_INCLUDE_DIR)
