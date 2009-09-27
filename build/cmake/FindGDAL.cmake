@@ -89,6 +89,10 @@ ELSEIF(UNIX)
         /usr/bin/)
             
     IF(GDAL_CONFIG) 
+
+        # TODO: Replace the regex hacks with CMake version comparison feature:
+        # if(version1 VERSION_LESS version2)
+
         # Extract GDAL version
         EXEC_PROGRAM(${GDAL_CONFIG} ARGS --version OUTPUT_VARIABLE GDAL_VERSION)
         SET(GDAL_VERSION_STRING "${GDAL_VERSION}" CACHE STRING "Version of GDAL package found")

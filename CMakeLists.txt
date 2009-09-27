@@ -4,7 +4,8 @@
 # Author: Mateusz Loskot <mateusz@loskot.net>
 #
 # ************************************************************************
-# WARNING (mloskot): A PROTOTYPE - WORK IN PROGRESS - FEEL FREE TO IMPROVE
+# WARNING (mloskot): A PROTOTYPE - WORK IN PROGRESS
+# Here are details about this work: http://liblas.org/ticket/52
 # ************************************************************************
 #
 ###############################################################################
@@ -152,7 +153,7 @@ ELSE()
     SET(DEFAULT_BIN_SUBDIR bin)
     SET(DEFAULT_LIB_SUBDIR lib)
     SET(DEFAULT_DATA_SUBDIR share/liblas)
-    SET(DEFAULT_INCLUDE_SUBDIR include/liblas)
+    SET(DEFAULT_INCLUDE_SUBDIR include)
 ENDIF()
 
 # Locations are changeable by user to customize layout of libLAS installation
