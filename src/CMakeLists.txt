@@ -20,6 +20,9 @@ IF(SPATIALINDEX_FOUND)
         index/storage.cpp)
 ENDIF()
 
+###############################################################################
+# Source files specification
+
 SET(LIBLAS_HEADERS_DIR ../include/liblas)
 
 SET(LIBLAS_HPP
@@ -107,6 +110,9 @@ ENDIF()
 # Standard include directory of libLAS library
 INCLUDE_DIRECTORIES(../include)
 
+###############################################################################
+# Targets settings
+
 # Static libLAS C++ library
 ADD_LIBRARY(${LIBLAS_LIB_NAME} STATIC ${LIBLAS_SOURCES})
 
@@ -119,3 +125,11 @@ TARGET_LINK_LIBRARIES(${LIBLAS_C_LIB_NAME}
     ${GEOTIFF_LIBRARY}
 	${SPATIALINDEX_LIBRARY}
 	${ZLIB_LIBRARIES})
+
+###############################################################################
+# Targets installation
+
+INSTALL(TARGETS ${LIBLAS_LIB_NAME} ${LIBLAS_C_LIB_NAME}
+    RUNTIME DESTINATION ${LIBLAS_BIN_DIR}
+    LIBRARY DESTINATION ${LIBLAS_LIB_DIR}
+    ARCHIVE DESTINATION ${LIBLAS_LIB_DIR})

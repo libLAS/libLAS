@@ -5,17 +5,20 @@
 # Copyright (c) 2009 Mateusz Loskot <mateusz@loskot.net>
 #
 ###############################################################################
+
 INCLUDE_DIRECTORIES(
     .
     ../include
     ../include/liblas/capi)
 
-# Standard utilities
+###############################################################################
+# Collect programs to build
+
 SET(LASINFO lasinfo)
+SET(LASMERGE lasmerge)
 SET(LAS2LAS las2las)
 SET(LAS2TXT las2txt)
 SET(TXT2LAS txt2las)
-SET(LASMERGE lasmerge)
 
 # Utilities depending on 3rd-pary libraries
 IF(GDAL_FOUND)
@@ -29,6 +32,13 @@ ENDIF()
 IF(OCI_FOUND)
     SET(LAS2OCI las2oci)
 ENDIF()
+
+SET(LIBLAS_UTILITIES
+    ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
+    ${LAS2OGR} ${LASINDEX} ${LAS2OCI})
+
+###############################################################################
+# Configure build targets
 
 SET(APPS_CPP_DEPENDENCIES
     ${LIBLAS_LIB_NAME}
@@ -89,3 +99,11 @@ IF(LAS2OCI)
     ADD_EXECUTABLE(${LAS2OCI} las2oci.cpp)
     TARGET_LINK_LIBRARIES(${LAS2CI} ${APPS_CPP_DEPENDENCIES})
 ENDIF(LAS2OCI)
+
+###############################################################################
+# Targets installation
+
+INSTALL(TARGETS ${LIBLAS_UTILITIES}
+    RUNTIME DESTINATION ${LIBLAS_BIN_DIR}
+    LIBRARY DESTINATION ${LIBLAS_LIB_DIR}
+    ARCHIVE DESTINATION ${LIBLAS_LIB_DIR})

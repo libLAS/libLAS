@@ -23,9 +23,12 @@ SET(WITH_TESTS FALSE CACHE BOOL "Choose if libLAS unit tests should be built")
 
 ###############################################################################
 # CMake settings
-CMAKE_MINIMUM_REQUIRED( VERSION 2.4.0 )
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
 
 SET(CMAKE_COLOR_MAKEFILE ON)
+
+# Allow advanced users to generate Makefiles printing detailed commands
+MARK_AS_ADVANCED(CMAKE_VERBOSE_MAKEFILE)
 
 # Path to additional CMake modules
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/build/cmake ${CMAKE_MODULE_PATH})
@@ -72,6 +75,9 @@ ENDIF(WIN32)
 
 ###############################################################################
 # Search for dependencies
+
+# Boost C++ Libraries support - optional, default=OFF
+# TODO
 
 # zlib support - optional, default=OFF
 SET(WITH_ZLIB FALSE CACHE BOOL "Choose if zlib support should be built")
@@ -128,11 +134,55 @@ ENDIF()
 # Oracle support - optional, default=OFF
 # TODO
 
-# Boost C++ Libraries support - optional, default=OFF
-# TODO
+###############################################################################
+# Installation settings
+
+IF(WIN32)
+    SET(DEFAULT_LIB_SUBDIR lib)
+    SET(DEFAULT_DATA_SUBDIR .)
+    SET(DEFAULT_INCLUDE_SUBDIR include)
+
+    IF (MSVC)
+        SET(DEFAULT_BIN_SUBDIR bin)
+    ELSE()
+        SET(DEFAULT_BIN_SUBDIR .)
+    ENDIF()
+ELSE()
+    # Common locatoins for Unix and Mac OS X
+    SET(DEFAULT_BIN_SUBDIR bin)
+    SET(DEFAULT_LIB_SUBDIR lib)
+    SET(DEFAULT_DATA_SUBDIR share/liblas)
+    SET(DEFAULT_INCLUDE_SUBDIR include/liblas)
+ENDIF()
+
+# Locations are changeable by user to customize layout of libLAS installation
+# (default values are platform-specific)
+SET(LIBLAS_BIN_SUBDIR ${DEFAULT_BIN_SUBDIR} CACHE STRING
+    "Subdirectory where executables will be installed")
+SET(LIBLAS_LIB_SUBDIR ${DEFAULT_LIB_SUBDIR} CACHE STRING
+    "Subdirectory where libraries will be installed")
+SET(LIBLAS_INCLUDE_SUBDIR ${DEFAULT_INCLUDE_SUBDIR} CACHE STRING
+    "Subdirectory where header files will be installed")
+SET(LIBLAS_DATA_SUBDIR ${DEFAULT_DATA_SUBDIR} CACHE STRING
+    "Subdirectory where data will be installed")
+
+# Mark *_SUBDIR variables as advanced and dedicated to use by power-users only.
+MARK_AS_ADVANCED(LIBLAS_BIN_SUBDIR LIBLAS_LIB_SUBDIR LIBLAS_INCLUDE_SUBDIR LIBLAS_DATA_SUBDIR)
+
+# Full paths for the installation
+SET(LIBLAS_BIN_DIR ${LIBLAS_BIN_SUBDIR})
+SET(LIBLAS_LIB_DIR ${LIBLAS_LIB_SUBDIR})
+SET(LIBLAS_INCLUDE_DIR ${LIBLAS_INCLUDE_SUBDIR})
+SET(LIBLAS_DATA_DIR ${LIBLAS_DATA_SUBDIR})
 
 ###############################################################################
-# List of directories to process
+# Installation commands
+
+INSTALL(FILES AUTHORS ChangeLog COPYING INSTALL LICENSE.txt README
+    DESTINATION ${LIBLAS_DATA_DIR}/doc)
+
+###############################################################################
+# Processing of project directories
 
 ADD_SUBDIRECTORY(src)
 
