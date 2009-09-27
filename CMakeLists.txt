@@ -85,18 +85,6 @@ IF(WITH_ZLIB)
     ENDIF()
 ENDIF()
 
-# GDAL/OGR support - optional, default=OFF
-SET(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
-
-IF(WITH_GDAL)
-    FIND_PACKAGE(GDAL 1.6.0)
-
-    IF(GDAL_FOUND)
-        INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR})
-	    ADD_DEFINITIONS(-DHAVE_GDAL=1)
-    ENDIF()
-ENDIF()
-
 # GeoTIFF support - optional, default=OFF
 SET(WITH_GEOTIFF FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
 
@@ -106,6 +94,22 @@ IF(WITH_GEOTIFF)
     IF(GEOTIFF_FOUND)
         INCLUDE_DIRECTORIES(${GEOTIFF_INCLUDE_DIR})
         ADD_DEFINITIONS(-DHAVE_LIBGEOTIFF=1)
+    ENDIF()
+ENDIF()
+
+# GDAL/OGR support - optional, default=OFF
+SET(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
+
+IF(WITH_GDAL)
+    IF (NOT GEOTIFF_FOUND)
+        MESSAGE(FATAL_ERROR "GDAL support requires GeoTIFF library which was not selected")
+    ENDIF()
+
+    FIND_PACKAGE(GDAL 1.6.0)
+
+    IF(GDAL_FOUND)
+        INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR})
+	    ADD_DEFINITIONS(-DHAVE_GDAL=1)
     ENDIF()
 ENDIF()
 
