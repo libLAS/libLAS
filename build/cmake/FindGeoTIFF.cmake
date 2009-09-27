@@ -1,13 +1,15 @@
-# $Id$
-#
+###############################################################################
 # CMake module to search for GeoTIFF library
 #
-# If it's found it sets GEOTIFF_FOUND to TRUE
-# and following variables are set:
-#    GEOTIFF_INCLUDE_DIR
-#    GEOTIFF_LIBRARY
+# On success, the macro sets the following variables:
+# GEOTIFF_FOUND       = if the library found
+# GEOTIFF_LIBRARY     = full path to the library
+# GEOTIFF_INCLUDE_DIR = where to find the library headers 
 #
+# On Unix, macro sets also:
+# GEOTIFF_VERSION_STRING = human-readable string containing version of the library
 #
+# Notes:
 # FIND_PATH and FIND_LIBRARY normally search standard locations
 # before the specified paths. To search non-standard paths first,
 # FIND_* is invoked first with specified paths and NO_DEFAULT_PATH
@@ -15,42 +17,49 @@
 # locations. When an earlier FIND_* succeeds, subsequent FIND_*s
 # searching for the same item do nothing. 
 #
-FIND_PATH(GEOTIFF_INCLUDE_DIR geotiff.h
-  "$ENV{LIB_DIR}/include"
-  "$ENV{LIB_DIR}/include/geotiff"
-  # MinGW
-  c:/msys/local/include
-  NO_DEFAULT_PATH
-)
+# Author: Mateusz Loskot <mateusz@loskot.net>
+#
+###############################################################################
+MESSAGE(STATUS "Searching for GeoTIFF ${GeoTIFF_FIND_VERSION}+ library")
 
-FIND_PATH(GEOTIFF_INCLUDE_DIR geotiff.h)
+IF(WIN32)
 
-SET(GEOTIFF_NAMES ${GEOTIFF_NAMES} geotiff geotiff_i)
+    IF(MINGW)
+        FIND_PATH(GEOTIFF_INCLUDE_DIR geotiff.h /usr/local/include /usr/include c:/msys/local/include)
+        FIND_LIBRARY(GEOTIFF_LIBRARY NAMES geotiff PATHS /usr/local/lib /usr/lib c:/msys/local/lib)
+    ENDIF(MINGW)
 
-FIND_LIBRARY(GEOTIFF_LIBRARY NAMES ${GEOTIFF_NAMES} PATHS
-  "$ENV{LIB_DIR}/lib"
-  # MinGW
-  c:/msys/local/lib
-  NO_DEFAULT_PATH
-)
+    IF(MSVC)
+        SET(GEOTIFF_INCLUDE_DIR "$ENV{LIB_DIR}/include" CACHE STRING INTERNAL)
+        FIND_LIBRARY(GEOTIFF_LIBRARY NAMES geotiff geotiff_i PATHS "$ENV{LIB_DIR}/lib" /usr/lib c:/msys/local/lib)
+    ENDIF(MSVC)
+  
+ELSEIF(UNIX)
 
-FIND_LIBRARY(GEOTIFF_LIBRARY NAMES ${GEOTIFF_NAMES})
+    FIND_PATH(GEOTIFF_INCLUDE_DIR
+        geotiff.h
+        "$ENV{LIB_DIR}/include"
+        "$ENV{LIB_DIR}/include/geotiff"
+        /usr/local/include
+        /usr/include)
+    
+    FIND_LIBRARY(GEOTIFF_LIBRARY NAMES geotiff)
 
-IF (GEOTIFF_INCLUDE_DIR AND GEOTIFF_LIBRARY)
+ELSE()
+    MESSAGE("FindGeoTIFF.cmake: unrecognized or unsupported operating system (use Unix or Windows)")
+ENDIF()
+
+IF(GEOTIFF_INCLUDE_DIR AND GEOTIFF_LIBRARY)
     SET(GEOTIFF_FOUND TRUE)
-ENDIF (GEOTIFF_INCLUDE_DIR AND GEOTIFF_LIBRARY)
+ENDIF()
 
-IF (GEOTIFF_FOUND)
-
-    IF (NOT GEOTIFF_FIND_QUIETLY)
+IF(GEOTIFF_FOUND)
+    IF(NOT GEOTIFF_FIND_QUIETLY)
         MESSAGE(STATUS "Found GeoTIFF: ${GEOTIFF_LIBRARY}")
-    ENDIF (NOT GEOTIFF_FIND_QUIETLY)
-
-ELSE (GEOTIFF_FOUND)
-
+    ENDIF()
+ELSE()
     MESSAGE(STATUS "GeoTIFF library not found")
     IF (GEOTIFF_FIND_REQUIRED)
         MESSAGE(FATAL_ERROR "GeoTIFF library is required")
-    ENDIF (GEOTIFF_FIND_REQUIRED)
-
-ENDIF (GEOTIFF_FOUND)
+    ENDIF()
+ENDIF()
