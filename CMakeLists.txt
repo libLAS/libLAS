@@ -80,7 +80,8 @@ IF(WITH_ZLIB)
     FIND_PACKAGE(ZLIB)
 
     IF(ZLIB_FOUND)
-        ADD_DEFINITIONS(-DHAVE_ZLIB)
+        INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
+        ADD_DEFINITIONS(-DHAVE_ZLIB=1)
     ENDIF()
 ENDIF()
 
@@ -90,8 +91,9 @@ SET(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
 IF(WITH_GDAL)
     FIND_PACKAGE(GDAL 1.6.0)
 
-    IF (GDAL_FOUND)
-	    ADD_DEFINITIONS(-DHAVE_GDAL)
+    IF(GDAL_FOUND)
+        INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR})
+	    ADD_DEFINITIONS(-DHAVE_GDAL=1)
     ENDIF()
 ENDIF()
 
@@ -102,12 +104,22 @@ IF(WITH_GEOTIFF)
     FIND_PACKAGE(GeoTIFF 1.2.5)
 
     IF(GEOTIFF_FOUND)
-        ADD_DEFINITIONS(-DHAVE_LIBGEOTIFF)
+        INCLUDE_DIRECTORIES(${GEOTIFF_INCLUDE_DIR})
+        ADD_DEFINITIONS(-DHAVE_LIBGEOTIFF=1)
     ENDIF()
 ENDIF()
 
 # Spatial Index support - optional, default=OFF
-# TODO
+SET(WITH_SPATIALINDEX FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
+
+IF(WITH_SPATIALINDEX)
+    FIND_PACKAGE(SpatialIndex 1.4.0)
+
+    IF(SPATIALINDEX_FOUND)
+        INCLUDE_DIRECTORIES(${SPATIALINDEX_INCLUDE_DIR})
+        ADD_DEFINITIONS(-DHAVE_SPATIALINDEX=1)
+    ENDIF()
+ENDIF()
 
 # Oracle support - optional, default=OFF
 # TODO
@@ -127,8 +139,3 @@ ENDIF()
 IF(WITH_TESTS)
     ADD_SUBDIRECTORY(test)
 ENDIF()
-
-###############################################################################
-# Output configuration summary
-
-
