@@ -131,5 +131,4 @@ void LASIndexDataStream::rewind() throw (Tools::NotSupportedException)
     readPoint();
 }
 
-
 } // namespace liblas

@@ -383,5 +383,4 @@ void LASIndex::Query(LASQuery& query)
     m_rtree->queryStrategy(query);
 }
 
-
 } // namespace liblas
