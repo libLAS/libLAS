@@ -100,6 +100,7 @@ IF(WITH_GEOTIFF)
 
     IF(GEOTIFF_FOUND)
     
+        # Confirm required API is available
         INCLUDE(CheckFunctionExists) 
         SET(CMAKE_REQUIRED_LIBRARIES ${GEOTIFF_LIBRARY})
         CHECK_FUNCTION_EXISTS(ST_Create HAVE_ST_CREATE)
@@ -111,8 +112,8 @@ IF(WITH_GEOTIFF)
             INCLUDE_DIRECTORIES(${GEOTIFF_INCLUDE_DIR})
             ADD_DEFINITIONS(-DHAVE_LIBGEOTIFF=1)
         ENDIF()
-    ENDIF()
-ENDIF()
+    ENDIF(GEOTIFF_FOUND)
+ENDIF(WITH_GEOTIFF)
 
 # GDAL/OGR support - optional, default=OFF
 SET(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
