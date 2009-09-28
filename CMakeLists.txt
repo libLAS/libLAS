@@ -99,8 +99,18 @@ IF(WITH_GEOTIFF)
     FIND_PACKAGE(GeoTIFF 1.2.5)
 
     IF(GEOTIFF_FOUND)
-        INCLUDE_DIRECTORIES(${GEOTIFF_INCLUDE_DIR})
-        ADD_DEFINITIONS(-DHAVE_LIBGEOTIFF=1)
+    
+        INCLUDE(CheckFunctionExists) 
+        SET(CMAKE_REQUIRED_LIBRARIES ${GEOTIFF_LIBRARY})
+        CHECK_FUNCTION_EXISTS(ST_Create HAVE_ST_CREATE)
+    
+        IF(NOT HAVE_ST_CREATE)
+            SET(GEOTIFF_FOUND) # Reset to NOT found for GeoTIFF
+            MESSAGE(FATAL_ERROR "GeoTIFF support requires libgeotiff 1.2.5 or newer.")
+        ELSE()
+            INCLUDE_DIRECTORIES(${GEOTIFF_INCLUDE_DIR})
+            ADD_DEFINITIONS(-DHAVE_LIBGEOTIFF=1)
+        ENDIF()
     ENDIF()
 ENDIF()
 
