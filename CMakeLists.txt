@@ -58,6 +58,14 @@ IF(WIN32)
             ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
             ADD_DEFINITIONS(-D_CRT_NONSTDC_NO_WARNING)
         ENDIF()
+
+        # Generate dot-user file with user-specific settings for Visual Studio project
+        SET(MSVC_ENVIRONMENT_PATH "" CACHE STRING
+            "Custom PATH for Environment property in Visual Studio project configuration")
+        MARK_AS_ADVANCED(MSVC_ENVIRONMENT_PATH)
+        SET(VCPROJ_USER_ENVIRONMENT_PATH_DEBUG "${ENVIRONMENT_PATH}")
+        MARK_AS_ADVANCED(VCPROJ_USER_ENVIRONMENT_PATH_DEBUG)
+
     ENDIF()
 ELSE()
     IF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)

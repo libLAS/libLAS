@@ -37,6 +37,18 @@ SET(LIBLAS_UTILITIES
     ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
     ${LAS2OGR} ${LASINDEX} ${LAS2OCI})
 
+# TODO: Experimental and requires testing --mloskot
+# Generate user-specific settings for Visual Studio project
+SET(VCPROJ_USER_REMOTE_MACHINE_DEBUG ${MACHINE_NAME})
+SET(VCPROJ_USER_ENVIRONMENT_DEBUG "${ENVIRONMENT_PATH}")
+
+FOREACH(utility ${LIBLAS_UTILITIES})
+    SET(USER_FILE ${utility}.vcproj.$ENV{USERDOMAIN}.$ENV{USERNAME}.user)
+    SET(OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${USER_FILE})
+    MESSAGE(STATUS "Generating ${CMAKE_GENERATOR} user-specific settings in ${USER_FILE}")
+    CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/build/cmake/libLAS.vcproj.user.template ${OUTPUT_PATH} @ONLY)
+ENDFOREACH()
+
 ###############################################################################
 # Configure build targets
 
