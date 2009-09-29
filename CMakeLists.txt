@@ -86,7 +86,16 @@ ENDIF(WIN32)
 # Search for dependencies
 
 # Boost C++ Libraries support - optional, default=OFF
-# TODO
+SET(WITH_BOOST FALSE CACHE BOOL "Choose if Boost C++ Libraries support should be built")
+
+# TODO: Decide minimum required version of Boost. Is 1.38 OK? --mloskot
+IF(WITH_BOOST)
+    FIND_PACKAGE(Boost 1.35 REQUIRED iostreams)
+
+    IF(Boost_FOUND AND Boost_iostreams_FOUND)
+      INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+    ENDIF()
+ENDIF()
 
 # zlib support - optional, default=OFF
 SET(WITH_ZLIB FALSE CACHE BOOL "Choose if zlib support should be built")
