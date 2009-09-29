@@ -35,7 +35,7 @@ MARK_AS_ADVANCED(CMAKE_VERBOSE_MAKEFILE)
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/build/cmake ${CMAKE_MODULE_PATH})
 
 ###############################################################################
-# Build type settings
+# General build settings
 
 IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE Debug CACHE STRING
@@ -44,6 +44,18 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 SET(BUILD_PEDANTIC TRUE CACHE BOOL "Choose compilation in pedantic or relaxed mode")
+
+# TODO: Still testing the output paths --mloskot
+SET(LIBLAS_BUILD_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
+
+# Output directory in which to build RUNTIME target files.
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${LIBLAS_BUILD_OUTPUT_DIRECTORY})
+
+# Output directory in which to build LIBRARY target files
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIBLAS_BUILD_OUTPUT_DIRECTORY})
+
+# Output directory in which to build ARCHIVE target files.
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIBLAS_BUILD_OUTPUT_DIRECTORY}) 
 
 ###############################################################################
 # Platform and compiler specific settings
