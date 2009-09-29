@@ -42,12 +42,14 @@ SET(LIBLAS_UTILITIES
 SET(VCPROJ_USER_REMOTE_MACHINE_DEBUG ${MACHINE_NAME})
 SET(VCPROJ_USER_ENVIRONMENT_DEBUG "${ENVIRONMENT_PATH}")
 
-FOREACH(utility ${LIBLAS_UTILITIES})
-    SET(USER_FILE ${utility}.vcproj.$ENV{USERDOMAIN}.$ENV{USERNAME}.user)
-    SET(OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${USER_FILE})
-    MESSAGE(STATUS "Generating ${CMAKE_GENERATOR} user-specific settings in ${USER_FILE}")
-    CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/build/cmake/libLAS.vcproj.user.template ${OUTPUT_PATH} @ONLY)
-ENDFOREACH()
+IF(MSVC)
+    FOREACH(utility ${LIBLAS_UTILITIES})
+        SET(USER_FILE ${utility}.vcproj.$ENV{USERDOMAIN}.$ENV{USERNAME}.user)
+        SET(OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${USER_FILE})
+        MESSAGE(STATUS "Generating ${CMAKE_GENERATOR} user-specific settings in ${USER_FILE}")
+        CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/build/cmake/libLAS.vcproj.user.template ${OUTPUT_PATH} @ONLY)
+    ENDFOREACH()
+ENDIF()
 
 ###############################################################################
 # Configure build targets
