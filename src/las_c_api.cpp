@@ -309,6 +309,38 @@ LAS_DLL LASErrorEnum LASReader_SetSRS(LASHeaderH hReader, const LASSRSH hSRS) {
     return LE_None;
 }
 
+LAS_DLL LASErrorEnum LASReader_SetInputSRS(LASHeaderH hReader, const LASSRSH hSRS) {
+    
+    VALIDATE_LAS_POINTER1(hReader, "LASReader_SetInputSRS", LE_Failure);
+    VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetInputSRS", LE_Failure);
+
+    try {
+        ((LASReader*) hReader)->SetInputSRS(*((LASSpatialReference*)hSRS));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_SetInputSRS");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASReader_SetOutputSRS(LASHeaderH hReader, const LASSRSH hSRS) {
+    
+    VALIDATE_LAS_POINTER1(hReader, "LASReader_SetOutputSRS", LE_Failure);
+    VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetOutputSRS", LE_Failure);
+
+    try {
+        ((LASReader*) hReader)->SetOutputSRS(*((LASSpatialReference*)hSRS));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_SetOutputSRS");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
 LAS_DLL LASHeaderH LASHeader_Create(void) {
         return (LASHeaderH) new LASHeader();
 }
@@ -1360,6 +1392,37 @@ LAS_DLL LASErrorEnum LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS) {
     return LE_None;
 }
 
+LAS_DLL LASErrorEnum LASWriter_SetInputSRS(LASWriterH hWriter, const LASSRSH hSRS) {
+    
+    VALIDATE_LAS_POINTER1(hWriter, "LASWriter_SetInputSRS", LE_Failure);
+    VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetInputSRS", LE_Failure);
+
+    try {
+        ((LASWriter*) hWriter)->SetInputSRS(*((LASSpatialReference*)hSRS));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASWriter_SetInputSRS");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASWriter_SetOutputSRS(LASWriterH hWriter, const LASSRSH hSRS) {
+    
+    VALIDATE_LAS_POINTER1(hWriter, "LASWriter_SetOutputSRS", LE_Failure);
+    VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetOutputSRS", LE_Failure);
+
+    try {
+        ((LASWriter*) hWriter)->SetOutputSRS(*((LASSpatialReference*)hSRS));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASWriter_SetOutputSRS");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
 LAS_DLL void LASError_Print(const char* message) {
 
     char* errmsg= NULL;

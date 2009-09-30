@@ -223,6 +223,8 @@ LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader);
 
 
 LAS_DLL LASError LASReader_SetSRS(LASHeaderH hReader, const LASSRSH hSRS);
+LAS_DLL LASError LASReader_SetInputSRS(LASHeaderH hReader, const LASSRSH hSRS);
+LAS_DLL LASError LASReader_SetOutputSRS(LASHeaderH hReader, const LASSRSH hSRS);
 
 
 /****************************************************************************/
@@ -886,6 +888,8 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);
 
 
 LAS_DLL LASError LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS);
+LAS_DLL LASError LASWriter_SetInputSRS(LASWriterH hWriter, const LASSRSH hSRS);
+LAS_DLL LASError LASWriter_SetOutputSRS(LASWriterH hWriter, const LASSRSH hSRS);
 
 /****************************************************************************/
 /* GUID Operations                                                          */
