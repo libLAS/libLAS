@@ -131,14 +131,14 @@ class File(object):
 
     def read(self, location):
         if self.mode == 0:
-            return point.Point(handle=core.las.LASReader_GetPointAt(self.handle, location), owned= False, copy=True)
+            return point.Point(handle=core.las.LASReader_GetPointAt(self.handle, location), copy=True)
 
     def __iter__(self):
         if self.mode == 0:
             self.at_end = False
             p = core.las.LASReader_GetNextPoint(self.handle)
             while p and not self.at_end:
-                yield point.Point(handle=p, owned= False, copy=True)
+                yield point.Point(handle=p, copy=True)
                 p = core.las.LASReader_GetNextPoint(self.handle)
                 if not p:
                     self.at_end = True
