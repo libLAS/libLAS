@@ -74,6 +74,8 @@ public:
     bool ReadGeoreference(LASHeader& header);
     void Reset(LASHeader const& header);
     void SetSRS(const LASSpatialReference& srs);
+    void SetInputSRS(const LASSpatialReference& srs);
+    void SetOutputSRS(const LASSpatialReference& srs);
     
 protected:
 
@@ -97,6 +99,7 @@ private:
     // Blocked copying operations, declared but not defined.
     Reader(Reader const& other);
     Reader& operator=(Reader const& rhs);
+    void CreateTransform();
 };
 
 class ReaderFactory

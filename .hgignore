@@ -37,3 +37,8 @@ python/build/*
 python/dist/*
 python/libLAS.egg-info/*
 python/liblas/*.pyc
+src/CMakeFiles
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+src/liblas.a

@@ -182,10 +182,40 @@ void Reader::Reset(LASHeader const& header)
     m_size = header.GetPointRecordsCount();
 }
 
-void Reader::SetSRS(const LASSpatialReference& srs)
+void Reader::SetOutputSRS(const LASSpatialReference& srs)
 {
     m_out_srs = srs;
+    CreateTransform();
+}
+
+void Reader::SetSRS(const LASSpatialReference& srs)
+{
+    SetOutputSRS(srs);
+}
+
+void Reader::SetInputSRS(const LASSpatialReference& srs)
+{
+    m_in_srs = srs;
+    CreateTransform();
+}
+
+
+void Reader::CreateTransform(){
 #ifdef HAVE_GDAL
+
+    if (m_transform)
+    {
+        OCTDestroyCoordinateTransformation(m_transform);
+    }
+    if (m_in_ref)
+    {
+        OSRDestroySpatialReference(m_in_ref);
+    }
+    if (m_out_ref)
+    {
+        OSRDestroySpatialReference(m_out_ref);
+    }
+    
     m_in_ref = OSRNewSpatialReference(0);
     m_out_ref = OSRNewSpatialReference(0);
 

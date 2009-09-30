@@ -141,7 +141,19 @@ bool LASReader::IsEOF() const
 
 bool LASReader::SetSRS(const LASSpatialReference& srs)
 {
-    m_pimpl->SetSRS(srs);
+    m_pimpl->SetOutputSRS(srs);
+    return true;
+}
+
+bool LASReader::SetInputSRS(const LASSpatialReference& srs)
+{
+    m_pimpl->SetInputSRS(srs);
+    return true;
+}
+
+bool LASReader::SetOutputSRS(const LASSpatialReference& srs)
+{
+    m_pimpl->SetOutputSRS(srs);
     return true;
 }
 

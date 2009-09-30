@@ -165,9 +165,36 @@ uint32_t Writer::WriteVLR(LASHeader const& header)
 }
 
 
+void Writer::SetOutputSRS(const LASSpatialReference& srs )
+{
+    m_out_srs = srs;
+}
+
 void Writer::SetSRS(const LASSpatialReference& srs )
 {
     m_out_srs = srs;
+}
+
+void Writer::SetInputSRS(const LASSpatialReference& srs )
+{
+    m_in_srs = srs;
+}
+
+void Writer::CreateTransform(){
+
+    if (m_transform)
+    {
+        OCTDestroyCoordinateTransformation(m_transform);
+    }
+    if (m_in_ref)
+    {
+        OSRDestroySpatialReference(m_in_ref);
+    }
+    if (m_out_ref)
+    {
+        OSRDestroySpatialReference(m_out_ref);
+    }
+    
 #ifdef HAVE_GDAL
     m_in_ref = OSRNewSpatialReference(0);
     m_out_ref = OSRNewSpatialReference(0);

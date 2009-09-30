@@ -99,10 +99,20 @@ void LASWriter::WriteHeader(LASHeader& header)
 
 bool LASWriter::SetSRS(const LASSpatialReference& srs)
 {
-    m_pimpl->SetSRS(srs);
+    m_pimpl->SetOutputSRS(srs);
     return true;
 }
 
+bool LASWriter::SetInputSRS(const LASSpatialReference& srs)
+{
+    m_pimpl->SetInputSRS(srs);
+    return true;
+}
 
+bool LASWriter::SetOutputSRS(const LASSpatialReference& srs)
+{
+    m_pimpl->SetOutputSRS(srs);
+    return true;
+}
 } // namespace liblas
 

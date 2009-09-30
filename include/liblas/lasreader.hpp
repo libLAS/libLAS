@@ -110,10 +110,21 @@ public:
     /// @excepion may throw std::exception
     void Reset();
 
-    /// Reproject data as they are written if the LASWriter's reference is
+    /// Reproject data as they are written if the LASReader's reference is
     /// different than the LASHeader's.
     /// @excepion may throw std::exception
     bool SetSRS(const LASSpatialReference& ref);
+    
+    /// Override the spatial reference of the LASReader's LASHeader for 
+    /// writing purposes.
+    /// @excepion may throw std::exception
+    bool SetInputSRS(const LASSpatialReference& ref);
+
+
+    /// Override the spatial reference of the LASReader's LASHeader for 
+    /// writing purposes.
+    /// @excepion may throw std::exception
+    bool SetOutputSRS(const LASSpatialReference& ref);
 
     /// Provides index-based access to point records.
     /// The operator is implemented in terms of ReadPointAt method

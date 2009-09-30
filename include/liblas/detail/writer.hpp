@@ -70,6 +70,8 @@ public:
     uint32_t WriteVLR(LASHeader const& header);
 
     void SetSRS(const LASSpatialReference& srs);
+    void SetInputSRS(const LASSpatialReference& srs);
+    void SetOutputSRS(const LASSpatialReference& srs);
     
 protected:
     PointRecord m_record;
@@ -90,6 +92,7 @@ private:
     // Blocked copying operations, declared but not defined.
     Writer(Writer const& other);
     Writer& operator=(Writer const& rhs);
+    void CreateTransform();
     
 };
 
