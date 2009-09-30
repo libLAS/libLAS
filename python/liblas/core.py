@@ -281,6 +281,10 @@ las.LASPoint_Copy.restype = ctypes.c_void_p
 las.LASPoint_Copy.argtypes = [ctypes.c_void_p]
 las.LASPoint_Copy.errcheck = check_void
 
+las.LASPoint_Destroy.argtypes = [ctypes.c_void_p]
+las.LASPoint_Destroy.errcheck = check_void_done
+las.LASPoint_Destroy.restype = None
+
 las.LASReader_GetHeader.restype = ctypes.c_void_p
 las.LASReader_GetHeader.argtypes = [ctypes.c_void_p]
 las.LASReader_GetHeader.errcheck = check_void
