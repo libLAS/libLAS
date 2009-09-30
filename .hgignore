@@ -33,3 +33,6 @@ Makefile.in
 build.hobu
 test/data/*.dat
 test/data/*.idx
+python/build/*
+python/dist/*
+python/libLAS.egg-info/*
