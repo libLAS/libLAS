@@ -629,6 +629,9 @@ las.LASSRS_GetWKT.restype = ctypes.c_char_p
 las.LASSRS_SetWKT.restype = ctypes.c_int
 las.LASSRS_SetWKT.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 las.LASSRS_SetWKT.errcheck = check_return
+las.LASSRS_SetFromUserInput.restype = ctypes.c_int
+las.LASSRS_SetFromUserInput.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+las.LASSRS_SetFromUserInput.errcheck = check_return
 
 las.LASSRS_AddVLR.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASSRS_AddVLR.errcheck = check_value

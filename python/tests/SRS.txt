@@ -18,6 +18,22 @@
   >>> test_srs()
   True
   
+  >>> s = srs.SRS()
+  >>> s.set_userinput('EPSG:4326')
+  True
+  
+  >>> def test_userinput():
+  ...     if not liblas.HAVE_LIBGEOTIFF:
+  ...         return True
+  ...     if not liblas.HAVE_GDAL: 
+  ...         return s.proj4 == ''
+  ...     if liblas.HAVE_GDAL:
+  ...         return s.proj4 == '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs '
+  ...     return False
+  
+  >>> test_userinput()
+  True
+  
   >>> from liblas import file
   >>> f = file.File('../test/data/1.2_3.las',mode='r')
   >>> s = f.header.srs

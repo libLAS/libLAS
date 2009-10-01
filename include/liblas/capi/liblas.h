@@ -1109,6 +1109,7 @@ LAS_DLL LASSRSH LASSRS_Create(void);
 LAS_DLL const GTIF* LASSRS_GetGTIF(LASSRSH hSRS);
 LAS_DLL char* LASSRS_GetWKT(LASSRSH hSRS);
 LAS_DLL LASError LASSRS_SetWKT(LASSRSH hSRS, const char* value);
+LAS_DLL LASError LASSRS_SetFromUserInput(LASSRSH hSRS, const char* value);
 LAS_DLL char* LASSRS_GetProj4(LASSRSH hSRS);
 LAS_DLL LASError LASSRS_SetProj4(LASSRSH hSRS, const char* value);
 LAS_DLL LASSRSH LASHeader_GetSRS(const LASHeaderH hHeader);

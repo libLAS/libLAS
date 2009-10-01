@@ -62,6 +62,9 @@ class SRS(object):
         return core.las.LASSRS_SetWKT(self.handle, value)
     wkt = property(get_wkt, set_wkt)
     
+    def set_userinput(self, value):
+        return core.las.LASSRS_SetFromUserInput(self.handle, value)
+    
     def get_proj4(self):
         return core.las.LASSRS_GetProj4(self.handle)
     def set_proj4(self, value):

@@ -382,7 +382,33 @@ std::string LASSpatialReference::GetWKT() const
     return std::string();
 #endif
 }
-       
+
+void LASSpatialReference::SetFromUserInput( std::string const& v)
+{
+#ifdef HAVE_GDAL
+
+    char* poWKT = 0;
+    const char* input = v.c_str();
+    OGRSpatialReference* poSRS = new OGRSpatialReference();
+    if (OGRERR_NONE != poSRS->SetFromUserInput((char *) input))
+    {
+        delete poSRS;
+        throw std::invalid_argument("could not import coordinate system into OSRSpatialReference SetFromUserInput");
+    }
+    
+    poSRS->exportToWkt(&poWKT);
+    delete poSRS;
+    
+    std::string tmp(poWKT);
+    std::free(poWKT);
+    
+    SetWKT(tmp);
+#else
+    detail::ignore_unused_variable_warning(v);
+    throw std::runtime_error("GDAL is not available, LASSpatialReference could not be set from WKT");
+#endif
+}
+
 void LASSpatialReference::SetWKT(std::string const& v)
 {
     if (!m_gtiff)

@@ -122,7 +122,12 @@ public:
     /// operation has no effect.
     /// \param v - a string containing the WKT string.  
     void SetWKT(std::string const& v);
-    
+
+    /// Sets the SRS using GDAL's SetFromUserInput function. If GDAL is not linked, this 
+    /// operation has no effect.
+    /// \param v - a string containing the definition (filename, proj4, wkt, etc).  
+    void SetFromUserInput(std::string const& v);
+        
     /// Returns the Proj.4 string describing the Spatial Reference System.
     /// If GDAL is linked, it uses GDAL's operations and methods to determine 
     /// the Proj.4 string -- otherwise, if libgeotiff is linked, it uses 

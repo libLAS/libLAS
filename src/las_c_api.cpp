@@ -1851,6 +1851,22 @@ LAS_DLL LASErrorEnum LASSRS_SetWKT(LASSRSH hSRS, const char* value)
     return LE_None;
 }
 
+LAS_DLL LASErrorEnum LASSRS_SetFromUserInput(LASSRSH hSRS, const char* value)
+{
+    VALIDATE_LAS_POINTER1(hSRS, "LASSRS_SetFromUserInput", LE_Failure);
+    VALIDATE_LAS_POINTER1(value, "LASSRS_SetFromUserInput", LE_Failure);
+
+    try {
+         ((LASSpatialReference*) hSRS)->SetFromUserInput(value);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASSRS_SetFromUserInput");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
 LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
     
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_AddVLR", LE_Failure);
