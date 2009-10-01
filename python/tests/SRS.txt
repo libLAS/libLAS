@@ -101,6 +101,7 @@
   >>> p3 = f3.read(0)
   >>> p3.x,p3.y
   (-92.999999000000003, 89.999999000000003)
+
   >>> import os
   >>> os.remove('junk_srs_project.las')
 

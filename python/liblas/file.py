@@ -51,24 +51,26 @@ files = {'append':[], 'write':[],'read':[]}
 import sys
 
 class File(object):
-    def __init__(self, filename, header=None, mode='r'):
+    def __init__(self, filename, header=None, mode='r', in_srs = None, out_srs = None):
+
         self.filename = os.path.abspath(filename)
         self._header = header
         self.handle = None
         self._mode = mode
-        
-        # print self.filename
-        # print sys.stderr.write('%s %s %s'%(files, self.filename, mode))
-        # sys.stderr.flush()
+        self.in_srs = in_srs
+        self.out_srs = out_srs
+
         #check in the registry if we already have the file open
         if mode=='r':
             for f in files['write'] + files['append']:
                 if f == self.filename:
-                    raise core.LASException("File %s is already open for write.  Close the file or delete the reference to it" % filename)
+                    raise core.LASException("File %s is already open for write.  "
+                                            "Close the file or delete the reference to it" % filename)
         else:
             for f in files['read']:
                 if f == self.filename:
-                    raise core.LASException("File %s is already open for read. Close the file or delete the reference to it" % filename)
+                    raise core.LASException("File %s is already open for read. "
+                                            "Close the file or delete the reference to it" % filename)
         self.open()
         
     def open(self):
@@ -77,12 +79,24 @@ class File(object):
             self.mode = 0
             self._header = lasheader.Header(handle = core.las.LASReader_GetHeader(self.handle))
             files['read'].append(self.filename)
+            
+            if self.in_srs:
+                core.las.las.LASReader_SetInputSRS(self.handle, self.in_srs.handle)
+            if self.out_srs:
+                core.las.LASReader_SetOutputSRS(self.handle, self.out_srs.handle)
+                
         if self._mode == 'w' and '+' not in self._mode:
             if not self._header:
                 self._header = lasheader.Header(handle = core.las.LASHeader_Create())
             self.handle = core.las.LASWriter_Create(self.filename, self._header.handle, 1)
             self.mode = 1
             files['write'].append(self.filename)
+            
+            if self.in_srs:
+                core.las.LASWriter_SetInputSRS(self.handle, self.in_srs.handle)
+            if self.out_srs:
+                core.las.LASWriter_SetOutputSRS(self.handle, self.out_srs.handle)
+                
         if '+' in self._mode and 'r' not in self._mode:
             if not self._header:
                 reader = core.las.LASReader_Create(self.filename)
@@ -91,6 +105,12 @@ class File(object):
             self.handle = core.las.LASWriter_Create(self.filename, self._header.handle, 2)
             self.mode = 2
             files['append'].append(self.filename)
+
+            if self.in_srs:
+                core.las.LASWriter_SetInputSRS(self.handle, self.in_srs.handle)
+            if self.out_srs:
+                core.las.LASWriter_SetOutputSRS(self.handle, self.out_srs.handle)
+
     def __del__(self):
         if not self.handle or not core: return
         self.close()
@@ -110,11 +130,31 @@ class File(object):
         self.handle = None
     
     def set_srs(self, value):
+        
+        return self.set_output_srs(value)
+    
+    def set_output_srs(self, value):
         if self.mode == 0 :
-            return core.las.LASReader_SetSRS(self.handle, value.handle)
+            return core.las.LASReader_SetOutputSRS(self.handle, value.handle)
         else:
-            return core.las.LASWriter_SetSRS(self.handle, value.handle)
-            
+            return core.las.LASWriter_SetOutputSRS(self.handle, value.handle)
+
+    def get_output_srs(self):
+        return self.out_srs
+    
+    output_srs = property(get_output_srs, set_output_srs)
+  
+    def set_input_srs(self, value):
+        if self.mode == 0 :
+            return core.las.LASReader_SetInputSRS(self.handle, value.handle)
+        else:
+            return core.las.LASWriter_SetInputSRS(self.handle, value.handle)
+     
+    def get_input_srs(self):
+        return self.in_srs
+    
+    input_srs = property(get_input_srs, set_input_srs)
+  
     def get_header(self):
         """Returns the liblas.header.Header for the file"""
         return self._header
