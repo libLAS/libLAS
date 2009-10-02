@@ -8,6 +8,8 @@ syntax: glob
 *.exe
 *.exp
 *.lib
+*.res
+*.dll
 aclocal.m4
 apps/las2las
 apps/las2txt
