@@ -209,7 +209,7 @@ void Writer::Project(LASPoint& p)
     p.SetY(y);
     p.SetZ(z);
 #else
-    UNREFERENCED_PARAMETER(point);
+    UNREFERENCED_PARAMETER(p);
 #endif
 }
 Writer* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
