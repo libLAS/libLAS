@@ -237,5 +237,8 @@ ENDIF()
 
 IF(WITH_TESTS)
     MESSAGE(STATUS "Adding libLAS unit test suite to build - done")
+    ENABLE_TESTING()
     ADD_SUBDIRECTORY(test)
 ENDIF()
+
+# EOF

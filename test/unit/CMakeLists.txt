@@ -34,5 +34,4 @@ TARGET_LINK_LIBRARIES(${LIBLAS_UNIT_TEST}
 	${GDAL_LIBRARY}
 	${GEOTIFF_LIBRARY})
 
-# TODO: Needs to tweak the executable path
-ADD_TEST(liblas_test ${EXECUTABLE_OUTPUT_PATH}/liblas_test ${CMAKE_SOURCE_DIR}/test/data)
+ADD_TEST(liblas_test ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/liblas_test ${CMAKE_SOURCE_DIR}/test/data)
