@@ -222,9 +222,9 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader);
 LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader);
 
 
-LAS_DLL LASError LASReader_SetSRS(LASHeaderH hReader, const LASSRSH hSRS);
-LAS_DLL LASError LASReader_SetInputSRS(LASHeaderH hReader, const LASSRSH hSRS);
-LAS_DLL LASError LASReader_SetOutputSRS(LASHeaderH hReader, const LASSRSH hSRS);
+LAS_DLL LASError LASReader_SetSRS(LASReaderH hReader, const LASSRSH hSRS);
+LAS_DLL LASError LASReader_SetInputSRS(LASReaderH hReader, const LASSRSH hSRS);
+LAS_DLL LASError LASReader_SetOutputSRS(LASReaderH hReader, const LASSRSH hSRS);
 
 
 /****************************************************************************/
