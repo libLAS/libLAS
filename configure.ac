@@ -19,7 +19,8 @@ dnl #########################################################################
 dnl Default compilation flags
 dnl #########################################################################
 
-debug_default="no"
+m4_define([debug_default],[no])
+
 CFLAGS="-Wall -Wno-long-long -pedantic $CFLAGS"
 CXXFLAGS="-Wall -Wno-long-long -pedantic -std=c++98 $CXXFLAGS"
 
@@ -58,8 +59,8 @@ dnl Build mode configuration (debug/optimized)
 dnl #########################################################################
 
 AC_ARG_ENABLE([debug],
-    AC_HELP_STRING([--enable-debug=ARG], [Enable debug compilation mode yes or no, default=${debug_default}]),,)
-
+     AC_HELP_STRING([--enable-debug=ARG], [Enable debug compilation mode @<:@yes|no@:>@, default=debug_default]),,)
+     
 AC_MSG_CHECKING([for debug enabled])
 
 if test "x$enable_debug" = "xyes"; then
