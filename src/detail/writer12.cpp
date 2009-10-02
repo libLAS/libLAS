@@ -218,6 +218,14 @@ void WriterImpl::WriteHeader(LASHeader& header)
     if (difference < 0) {
         header.SetDataOffset(header.GetDataOffset() + abs(difference) );
         WriteVLR(header);
+
+        // Make sure to rewrite the dataoffset in the header portion now that
+        // we've changed it.
+        std::streamsize const current_pos = m_ofs.tellp();
+        std::streamsize const offset_pos = 96; 
+        m_ofs.seekp(offset_pos, std::ios::beg);
+        detail::write_n(m_ofs, header.GetDataOffset() , sizeof(header.GetDataOffset()));
+        m_ofs.seekp(current_pos, std::ios::beg);        
     }
 
     // If we already have points, we're going to put it at the end of the file.  
