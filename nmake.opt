@@ -97,7 +97,7 @@ GDAL_HOME=""
 ###############################################################################
 # Distribution directories
 
-LAS_HOME=C:\cvs\liblas\trunk
+LAS_HOME=C:\cvs\liblas
 BINDIR=$(LAS_HOME)\bin
 OSGEO4W_DIR = $(LAS_HOME)\osgeo4w
 PYDLL_DIR = $(LAS_HOME)\python

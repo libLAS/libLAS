@@ -68,17 +68,18 @@ install: src_dir apps_dir
 package: install
     cd $(LAS_HOME)/osgeo4w/lib
     C:\cygwin\bin\tar.exe cvf ../../packages/liblas-$(PACKAGE_VERSION).tar *
-    c:\cygwin\bin\bzip2.exe -f /cygdrive/c/cvs/liblas/trunk/packages/liblas-$(PACKAGE_VERSION).tar
+    c:\cygwin\bin\bzip2.exe -f /cygdrive/c/cvs/liblas/packages/liblas-$(PACKAGE_VERSION).tar
     cd $(LAS_HOME)/osgeo4w/
     C:\cygwin\bin\tar.exe cvf ../packages/liblas-python-$(PACKAGE_VERSION).tar apps
-    c:\cygwin\bin\bzip2.exe -f /cygdrive/c/cvs/liblas/trunk/packages/liblas-python-$(PACKAGE_VERSION).tar
+    c:\cygwin\bin\bzip2.exe -f /cygdrive/c/cvs/liblas/packages/liblas-python-$(PACKAGE_VERSION).tar
     cd $(LAS_HOME)/osgeo4w/devel
     C:\cygwin\bin\tar.exe cvf ../../packages/liblas-devel-$(PACKAGE_VERSION).tar *
-    c:\cygwin\bin\bzip2.exe -f /cygdrive/c/cvs/liblas/trunk/packages/liblas-devel-$(PACKAGE_VERSION).tar
+    c:\cygwin\bin\bzip2.exe -f /cygdrive/c/cvs/liblas/packages/liblas-devel-$(PACKAGE_VERSION).tar
     cd $(LAS_HOME)/osgeo4w/
     cd $(LAS_HOME)/
     xcopy /y /r /d /f /s c:\osgeo4w\bin\geotiff.dll $(BINDIR)
     xcopy /y /r /d /f /s c:\osgeo4w\bin\libtiff.dll $(BINDIR)
     xcopy /y /r /d /f /s c:\osgeo4w\bin\jpeg_osgeo.dll $(BINDIR)
+    xcopy /y /r /d /f /s c:\osgeo4w\bin\jpeg12_osgeo.dll $(BINDIR)
     xcopy /y /r /d /f /s c:\osgeo4w\bin\zlib_osgeo.dll $(BINDIR)
     c:\cygwin\bin\zip.exe -r packages/liblas-$(PACKAGE_VERSION)-win32.zip bin
