@@ -1,15 +1,17 @@
 syntax: glob
+.deps
+.libs
+*.dll
+*.exe
+*.exp
 *.la
+*.lib
 *.lo
 *.o
 *.obj
-.deps
-.libs
-*.exe
-*.exp
-*.lib
+*.pyc
 *.res
-*.dll
+*.swp
 aclocal.m4
 apps/las2las
 apps/las2txt
@@ -41,7 +43,6 @@ test/data/*.idx
 python/build/*
 python/dist/*
 python/libLAS.egg-info/*
-*.pyc
 src/CMakeFiles
 CMakeFiles
 CMakeCache.txt
