@@ -10,6 +10,10 @@ syntax: glob
 *.lib
 *.res
 *.dll
+*.bz2
+*.gz
+*.bz2.md5
+*.gz.md5
 aclocal.m4
 apps/las2las
 apps/las2txt
