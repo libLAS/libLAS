@@ -4,7 +4,7 @@ dnl This is main autoconf bootstrap script of libLAS project.
 dnl
 m4_define([liblas_version_major], [1])
 m4_define([liblas_version_minor], [2])
-m4_define([liblas_version_micro], [0])
+m4_define([liblas_version_micro], [1])
 m4_define([liblas_version],
           [liblas_version_major.liblas_version_minor.liblas_version_micro])
 
@@ -58,7 +58,7 @@ dnl Build mode configuration (debug/optimized)
 dnl #########################################################################
 
 AC_ARG_ENABLE([debug],
-    AC_HELP_STRING([--enable-debug=ARG], [Enable debug compilation mode [yes or no, default=${debug_default}]]),,)
+    AC_HELP_STRING([--enable-debug=ARG], [Enable debug compilation mode yes or no, default=${debug_default}]),,)
 
 AC_MSG_CHECKING([for debug enabled])
 
@@ -73,7 +73,7 @@ else
 fi
 
 dnl #########################################################################
-dnl Definiion of custom Autoconf macros
+dnl Definition of custom Autoconf macros
 dnl #########################################################################
 
 AC_DEFUN([LOC_MSG],[
