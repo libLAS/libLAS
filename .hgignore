@@ -36,7 +36,7 @@ test/data/*.idx
 python/build/*
 python/dist/*
 python/libLAS.egg-info/*
-python/liblas/*.pyc
+*.pyc
 src/CMakeFiles
 CMakeFiles
 CMakeCache.txt
