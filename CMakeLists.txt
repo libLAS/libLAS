@@ -18,6 +18,9 @@ SET(LIBLAS_LIB_NAME las)
 # Name of C library
 SET(LIBLAS_C_LIB_NAME las_c)
 
+# Name of test suite runner
+SET(LIBLAS_UNIT_TEST liblas_test)
+
 # Choose package components
 SET(WITH_UTILITIES TRUE CACHE BOOL "Choose if libLAS utilities should be built")
 SET(WITH_TESTS FALSE CACHE BOOL "Choose if libLAS unit tests should be built")
@@ -228,9 +231,20 @@ INSTALL(FILES AUTHORS ChangeLog COPYING INSTALL LICENSE.txt README
 ADD_SUBDIRECTORY(src)
 
 IF(WITH_UTILITIES)
+    MESSAGE(STATUS "Adding libLAS utilities to build - done")
     ADD_SUBDIRECTORY(apps)
 ENDIF()
 
 IF(WITH_TESTS)
+    # TODO:
+    # Waiting for Mercurial support at cdash.org --mloskot
+    # Dashboard has been prepared for experiments
+    # http://my.cdash.org/index.php?project=libLAS
+    #INCLUDE(CTest)
+
+    MESSAGE(STATUS "Adding libLAS unit test suite to build - done")
+    ENABLE_TESTING()
     ADD_SUBDIRECTORY(test)
 ENDIF()
+
+# EOF

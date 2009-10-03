@@ -1,5 +1,8 @@
-# $Id$
+###############################################################################
 #
-# List of test and sample programs subprojects
+# test/CMakeLists.txt controls building of libLAS tests
 #
-SUBDIRS( unit )
+# Copyright (c) 2009 Mateusz Loskot <mateusz@loskot.net>
+#
+###############################################################################
+SUBDIRS(unit)

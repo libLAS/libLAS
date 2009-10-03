@@ -180,8 +180,9 @@ void Writer::SetInputSRS(const LASSpatialReference& srs )
     m_in_srs = srs;
 }
 
-void Writer::CreateTransform(){
-
+void Writer::CreateTransform()
+{
+#ifdef HAVE_GDAL
     if (m_transform)
     {
         OCTDestroyCoordinateTransformation(m_transform);
@@ -195,7 +196,6 @@ void Writer::CreateTransform(){
         OSRDestroySpatialReference(m_out_ref);
     }
     
-#ifdef HAVE_GDAL
     m_in_ref = OSRNewSpatialReference(0);
     m_out_ref = OSRNewSpatialReference(0);
 
@@ -218,7 +218,6 @@ void Writer::CreateTransform(){
     }
 
     m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
-    
 #endif
 }
 
@@ -247,6 +246,7 @@ void Writer::Project(LASPoint& p)
     detail::ignore_unused_variable_warning(p);
 #endif
 }
+
 Writer* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
 {
     if (!ofs)
