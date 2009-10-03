@@ -104,12 +104,17 @@ int main(int argc, char *argv[])
     int skip_invalid = FALSE;
     int format = LAS_FORMAT_12;
     
+    int use_min_offset = FALSE;
+    
     LASReaderH reader = NULL;
     LASHeaderH header = NULL;
     LASHeaderH surviving_header = NULL;
     LASPointH p = NULL;
     LASWriterH writer = NULL;
-
+    
+    LASSRSH in_srs = NULL;
+    LASSRSH out_srs = NULL;
+    
     int first_surviving_point = TRUE;
     unsigned int surviving_number_of_point_records = 0;
     unsigned int surviving_number_of_points_by_return[] = {0,0,0,0,0,0,0,0};
@@ -126,6 +131,9 @@ int main(int argc, char *argv[])
     int eliminated_first_only = 0;
     int eliminated_last_only = 0;
 
+    double xyz_scale[3] = {0.0, 0.0, 0.0};
+    double xyz_offset[3] = {0.0, 0.0, 0.0};
+    
     double minx, maxx, miny, maxy, minz, maxz;
     
     LASPointSummary* summary = NULL;
@@ -274,6 +282,66 @@ int main(int argc, char *argv[])
         {
             remove_extra_header = TRUE;
         }
+        else if (   strcmp(argv[i],"--s_srs") == 0  ||
+                    strcmp(argv[i],"-s_srs") == 0    
+                )
+        {
+            ++i;
+            if (LAS_IsGDALEnabled()) {
+                in_srs = LASSRS_Create();
+                LASSRS_SetFromUserInput(in_srs, argv[i]);
+            }
+        }
+        else if (   strcmp(argv[i],"--t_srs") == 0  ||
+                    strcmp(argv[i],"-t_srs") == 0    
+                )
+        {
+            ++i;
+            if (LAS_IsGDALEnabled()) {
+                out_srs = LASSRS_Create();
+                LASSRS_SetFromUserInput(out_srs, argv[i]);
+            }
+        }
+        else if (   strcmp(argv[i],"--scale") == 0  ||
+                    strcmp(argv[i],"-scale") == 0    
+                )
+        {
+
+            i++;
+            sscanf(argv[i], "%lf", &(xyz_scale[2]));
+            xyz_scale[0] = xyz_scale[1] = xyz_scale[2];
+        }
+        else if (   strcmp(argv[i],"--xyz_scale") == 0  ||
+                    strcmp(argv[i],"-xyz_scale") == 0    
+                )
+
+        {
+            i++;
+            sscanf(argv[i], "%lf", &(xyz_scale[0]));
+            i++;
+            sscanf(argv[i], "%lf", &(xyz_scale[1]));
+            i++;
+            sscanf(argv[i], "%lf", &(xyz_scale[2]));
+        }
+        else if (   strcmp(argv[i],"--xyz_offset") == 0  ||
+                    strcmp(argv[i],"-xyz_offset") == 0    
+                )
+        {
+
+            if (strncasecmp(argv[i], "min", 3)) {
+                i++;
+                use_min_offset = TRUE;
+                printf("Offset was !\n");
+            } else
+            {
+                i++;                
+                sscanf(argv[i], "%lf", &(xyz_offset[0]));
+                i++;
+                sscanf(argv[i], "%lf", &(xyz_offset[1]));
+                i++;
+                sscanf(argv[i], "%lf", &(xyz_offset[2]));
+            }
+        }
         else if (file_name_in == NULL && file_name_out == NULL)
         {
             file_name_in = argv[i];
@@ -297,7 +365,7 @@ int main(int argc, char *argv[])
         if (!reader) { 
             LASError_Print("Could not open file to read");
             exit(1);
-        } 
+        }
     }
     else
     {
@@ -306,7 +374,14 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-
+    if (in_srs != NULL) {
+        LASReader_SetInputSRS(reader, in_srs);
+    }
+    
+    if (out_srs != NULL) {
+        LASReader_SetOutputSRS(reader, out_srs);
+    }
+        
     header = LASReader_GetHeader(reader);
     if (!header) { 
         LASError_Print("Could not fetch header");
@@ -605,7 +680,14 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-
+    if (in_srs != NULL) {
+        LASReader_SetInputSRS(reader, in_srs);
+    }
+    
+    if (out_srs != NULL) {
+        LASReader_SetOutputSRS(reader, out_srs);
+    }
+    
     header = LASReader_GetHeader(reader);
     if (!header) { 
         LASError_Print("Could not read header");
