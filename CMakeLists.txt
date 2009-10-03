@@ -236,6 +236,12 @@ IF(WITH_UTILITIES)
 ENDIF()
 
 IF(WITH_TESTS)
+    # TODO:
+    # Waiting for Mercurial support at cdash.org --mloskot
+    # Dashboard has been prepared for experiments
+    # http://my.cdash.org/index.php?project=libLAS
+    #INCLUDE(CTest)
+
     MESSAGE(STATUS "Adding libLAS unit test suite to build - done")
     ENABLE_TESTING()
     ADD_SUBDIRECTORY(test)
