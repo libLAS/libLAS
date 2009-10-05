@@ -104,8 +104,6 @@ int main(int argc, char *argv[])
     int skip_invalid = FALSE;
     int format = LAS_FORMAT_12;
     
-    int use_min_offset = FALSE;
-    
     LASReaderH reader = NULL;
     LASHeaderH header = NULL;
     LASHeaderH surviving_header = NULL;
@@ -114,6 +112,13 @@ int main(int argc, char *argv[])
     
     LASSRSH in_srs = NULL;
     LASSRSH out_srs = NULL;
+    int use_min_offset = FALSE;
+    int do_reprojection = FALSE;
+    int do_set_offset = FALSE;
+    int do_set_scale = FALSE;
+    int do_pad_header = FALSE;
+    
+    int header_pad = 0;
     
     int first_surviving_point = TRUE;
     unsigned int surviving_number_of_point_records = 0;
@@ -137,6 +142,8 @@ int main(int argc, char *argv[])
     double minx, maxx, miny, maxy, minz, maxz;
     
     LASPointSummary* summary = NULL;
+    
+    int ret = 0;
     
     for (i = 1; i < argc; i++) {
         if (    strcmp(argv[i],"-h") == 0 ||
@@ -299,7 +306,12 @@ int main(int argc, char *argv[])
             ++i;
             if (LAS_IsGDALEnabled()) {
                 out_srs = LASSRS_Create();
-                LASSRS_SetFromUserInput(out_srs, argv[i]);
+                ret = LASSRS_SetFromUserInput(out_srs, argv[i]);
+                if (ret) {
+                    LASError_Print("Unable to import SRS");
+                    exit(1);
+                }
+                do_reprojection = TRUE;
             }
         }
         else if (   strcmp(argv[i],"--scale") == 0  ||
@@ -310,6 +322,7 @@ int main(int argc, char *argv[])
             i++;
             sscanf(argv[i], "%lf", &(xyz_scale[2]));
             xyz_scale[0] = xyz_scale[1] = xyz_scale[2];
+            do_set_scale = TRUE;
         }
         else if (   strcmp(argv[i],"--xyz_scale") == 0  ||
                     strcmp(argv[i],"-xyz_scale") == 0    
@@ -322,25 +335,34 @@ int main(int argc, char *argv[])
             sscanf(argv[i], "%lf", &(xyz_scale[1]));
             i++;
             sscanf(argv[i], "%lf", &(xyz_scale[2]));
+            do_set_scale = TRUE;
         }
         else if (   strcmp(argv[i],"--xyz_offset") == 0  ||
                     strcmp(argv[i],"-xyz_offset") == 0    
                 )
         {
-
-            if (strncasecmp(argv[i], "min", 3)) {
-                i++;
+            i++;
+            if (!strncasecmp(argv[i], "min", 3)) {
                 use_min_offset = TRUE;
-                printf("Offset was !\n");
+                do_set_offset = TRUE;
             } else
             {
-                i++;                
                 sscanf(argv[i], "%lf", &(xyz_offset[0]));
                 i++;
                 sscanf(argv[i], "%lf", &(xyz_offset[1]));
                 i++;
                 sscanf(argv[i], "%lf", &(xyz_offset[2]));
+                do_set_offset = TRUE;
             }
+        }
+        else if (   strcmp(argv[i],"--pad-header") == 0  ||
+                    strcmp(argv[i],"-pad-header") == 0   ||
+                    strcmp(argv[i],"-ph") == 0 
+                )        
+        {
+            i++;
+            do_pad_header = TRUE;
+            header_pad = atoi(argv[i]);
         }
         else if (file_name_in == NULL && file_name_out == NULL)
         {
@@ -379,6 +401,10 @@ int main(int argc, char *argv[])
     }
     
     if (out_srs != NULL) {
+        if (verbose) {
+            fprintf(stderr,
+                "Setting LASReader_SetOutputSRS to %s", LASSRS_GetProj4(out_srs));
+        }
         LASReader_SetOutputSRS(reader, out_srs);
     }
         
@@ -537,13 +563,10 @@ int main(int argc, char *argv[])
             else if (LASPoint_GetTime(p) > LASPoint_GetTime(surviving_point_max)) 
                 LASPoint_SetTime(surviving_point_max,LASPoint_GetTime(p));
 
-/*
-      if (lasreader->point.point_source_ID < surviving_point_min.point_source_ID) surviving_point_min.point_source_ID = lasreader->point.point_source_ID;
-      else if (lasreader->point.point_source_ID > surviving_point_max.point_source_ID) surviving_point_max.point_source_ID = lasreader->point.point_source_ID;
-*/
         }
   
         p  = LASReader_GetNextPoint(reader);
+       
     }
 
     if (eliminated_first_only) 
@@ -652,11 +675,8 @@ int main(int argc, char *argv[])
                 LASPoint_GetTime(surviving_point_max), 
                 LASPoint_GetTime(surviving_point_max) - LASPoint_GetTime(surviving_point_min)
                 );
-/*
-    fprintf(stderr, "point_source_ID %d %d %d\n",surviving_point_min.point_source_ID, surviving_point_max.point_source_ID, surviving_point_max.point_source_ID - surviving_point_min.point_source_ID);
-*/
-    }
 
+    }
 
     if (file_name_out == NULL && !use_stdout)
     {
@@ -664,7 +684,8 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    
+
+    fprintf(stderr, "Creating another reader...\n");
     if (file_name_in)
     {
         reader = LASReader_Create(file_name_in);
@@ -702,7 +723,10 @@ int main(int argc, char *argv[])
 
     for (i = 0; i < 5; i++) LASHeader_SetPointRecordsByReturnCount(surviving_header, i, surviving_number_of_points_by_return[i]);
 
-    minx = LASPoint_GetX(surviving_point_min) * LASHeader_GetScaleX(surviving_header) + LASHeader_GetOffsetX(surviving_header);
+    minx =  LASPoint_GetX(surviving_point_min) * \
+            LASHeader_GetScaleX(surviving_header) + \
+            LASHeader_GetOffsetX(surviving_header);
+            
     maxx = LASPoint_GetX(surviving_point_max) * LASHeader_GetScaleX(surviving_header) + LASHeader_GetOffsetX(surviving_header);
 
     miny = LASPoint_GetY(surviving_point_min) * LASHeader_GetScaleY(surviving_header) + LASHeader_GetOffsetY(surviving_header);
@@ -718,11 +742,60 @@ int main(int argc, char *argv[])
     } else if (format == LAS_FORMAT_12) {
         LASHeader_SetVersionMinor(surviving_header, 2);
     }
+
+    if (do_set_offset) {
+        if (use_min_offset) {
+            if (verbose) {
+                fprintf(stderr, 
+                    "Setting xyz offset to minimums...\n");
+            }
+            LASHeader_SetOffset(surviving_header, 
+                                LASPoint_GetX(surviving_point_min), 
+                                LASPoint_GetY(surviving_point_min), 
+                                LASPoint_GetZ(surviving_point_min));
+        } else {
+            if (verbose) {
+                fprintf(stderr, 
+                    "Setting xyz offset to commandline-assigned values...\n");
+            }
+            LASHeader_SetOffset(surviving_header,
+                                xyz_offset[0],
+                                xyz_offset[1],
+                                xyz_offset[2]);
+        }
+    }
+
+    if (do_set_scale) {
+        if (verbose) {
+            fprintf(stderr, 
+                "Setting xyz scale...\n");
+        }
+        LASHeader_SetScale( surviving_header, 
+                            xyz_scale[0],
+                            xyz_scale[1],
+                            xyz_scale[2]);
+    }
     
-
-/*  if (remove_extra_header) surviving_header.offset_to_point_data = surviving_header.header_size;
-*/
-
+    if (do_pad_header){
+        if (verbose) {
+            fprintf(stderr, 
+                "Padding header by %d bytes. New header will be %d bytes long instead of %d bytes ...\n", 
+                header_pad, 
+                LASHeader_GetDataOffset(surviving_header)+abs(header_pad), 
+                LASHeader_GetDataOffset(surviving_header));
+        }
+        
+        LASHeader_SetDataOffset(surviving_header, LASHeader_GetDataOffset(surviving_header)+abs(header_pad));
+    }
+    
+    if (do_reprojection) {
+        if (verbose) {
+            fprintf(stderr,
+                "Setting new coordinate system to %s", LASSRS_GetProj4(out_srs));
+        }
+        LASHeader_SetSRS(surviving_header, out_srs);
+        
+    }
     if (verbose) {
         fprintf(stderr, 
                 "second pass reading %d and writing %d points ...\n", 
@@ -730,9 +803,12 @@ int main(int argc, char *argv[])
                 surviving_number_of_point_records);
     }
     
+    
     if (use_stdout) file_name_out = "stdout";
     
-    writer = LASWriter_Create(file_name_out, surviving_header, LAS_MODE_WRITE);
+    writer = LASWriter_Create(  file_name_out, 
+                                surviving_header, 
+                                LAS_MODE_WRITE);
     if (!writer) { 
         LASError_Print("Could not open file to write");
         exit(1);
@@ -767,6 +843,14 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    if (in_srs != NULL) {
+        LASReader_SetInputSRS(reader, in_srs);
+    }
+    
+    if (out_srs != NULL) {
+        LASReader_SetOutputSRS(reader, out_srs);
+    }
+    
     p = LASReader_GetNextPoint(reader);
     if (!p) {
         if (LASError_GetLastErrorNum()) 
