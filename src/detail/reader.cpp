@@ -99,16 +99,25 @@ std::istream& Reader::GetStream() const
     return m_ifs;
 }
 
-void Reader::FillPoint(PointRecord& record, LASPoint& point) 
+void Reader::FillPoint(PointRecord& record, LASPoint& point, const LASHeader& header) 
 {
-    
-    point.SetX(record.x);
-    point.SetY(record.y);
-    point.SetZ(record.z);
-    
-    if (m_transform)
-    {
+
+    if (m_transform) {
+        point.SetCoordinates(header, record.x, record.y, record.z);
         Project(point);
+        
+        int32_t x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
+        int32_t y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
+        int32_t z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
+        point.SetX(x);
+        point.SetY(y);
+        point.SetZ(z);
+        
+        
+    } else {
+        point.SetX(record.x);
+        point.SetY(record.y);
+        point.SetZ(record.z);
     }
 
     point.SetIntensity(record.intensity);

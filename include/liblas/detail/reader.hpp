@@ -91,7 +91,7 @@ protected:
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
 
-    void FillPoint(PointRecord& record, LASPoint& point);
+    void FillPoint(PointRecord& record, LASPoint& point, const LASHeader& header);
     void Project(LASPoint& point);
 
 private:

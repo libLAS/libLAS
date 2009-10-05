@@ -250,7 +250,7 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, LASHeader const& header)
             return false;
         }
         
-        Reader::FillPoint(record, point);
+        Reader::FillPoint(record, point, header);
         point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
 
         double gpst = 0;
@@ -332,7 +332,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, LASHeader const& he
 
     bytesread += sizeof(PointRecord);
     
-    Reader::FillPoint(record, point);
+    Reader::FillPoint(record, point, header);
     point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
 
     if (header.GetDataFormatId() == LASHeader::ePointFormat1)
