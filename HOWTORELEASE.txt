@@ -49,7 +49,15 @@ Release Process
       python setup.py bdist_wininst
       python setup.py bdist_egg
  
-  - Upload Python bindings to PyPI
+  - Upload source distribution to PyPI.  Do this from OS X or Linux instead 
+    of windows or otherwise the source distribution will be a busted zip file 
+    because setuptools sucks.
+    
+    ::
+        
+        python setup.py sdist upload
+        
+  - Upload Python binary bindings to PyPI
   
   ::
       
@@ -60,10 +68,10 @@ Release Process
       c:\python24\python.exe setup.py bdist_wininst upload
       c:\python24\python.exe setup.py bdist_egg upload
       c:\python25\python.exe setup.py bdist_egg upload
+      c:\python26\python.exe setup.py bdist_egg upload
       
-  - Create a zip file from the .\bin directory.  This will contain the 
-    utilities and relevant DLLs.  The Python bindings are packaged with their 
-    own copies of the DLLs.  I usually call this file liblas$(VERSION).zip.
+  - Copy the liblas-1.3.1-win32.zip file to a Unix box so you can generate 
+    the appropriate md5 for it in #5.
     
 
 4) Make the source distribution
@@ -72,32 +80,35 @@ Release Process
       
       make dist
 
-5) Only bz2 files can be uploaded to trac, so gunzip the dist file and 
-   recompress it as bz2.
-
        
-6) Generate MD5 sums 
+5) Generate MD5 sums 
 
   ::
       
-      md5 las-0.9.7.tar.bz2
-      md5 liblas0.9.7.zip
+      md5 liblas-src-1.3.1.tar.bz2 > liblas-src-1.3.1.tar.bz2.md5
+      md5 liblas-src-1.3.1.tar.gz > liblas-src-1.3.1.tar.gz.md5
+      md5 liblas-1.3.1-win32.zip > liblas-1.3.1-win32.zip.md5
 
 6) Create a new release page on http://liblas.org/wiki/Releases
 
 7) Upload windows and source package as attachments to the new release page.
 
-8) Tag the release
+8) Tag the release.  Use the ``-f`` switch if you are retagging because you 
+   missed something.
 
   ::
       
-      svn cp http://liblas.org/svn/trunk http://liblas.org/svn/tags/0.9.7
-
+      hg tag 1.3.1
+      
 9) Write the release notes.  Place a copy of the release notes on the release 
    page you created as well as send an email to liblas-devel announcing the 
    new release.
 
 10) Update Freshmeat: http://freshmeat.net  
+
+11) Update liblas.org homepage
+
+12) Update ohloh liblas journal entry http://www.ohloh.net/p/liblas
 
 
 $Id$
