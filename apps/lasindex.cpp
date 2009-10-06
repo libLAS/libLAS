@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
     LASIndex* idx = new LASIndex(input);
     idx->SetType(LASIndex::eExternalIndex);
     idx->SetLeafCapacity(10000);
-    idx->SetFillFactor(0.99);
+    idx->SetFillFactor(0.8);
     idx->Initialize(*idxstrm);
 
 
