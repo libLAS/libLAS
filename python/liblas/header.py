@@ -54,14 +54,19 @@ def leap_year(year):
     elif (year % 4) == 0:
         return False
     return False
-    
+
 class Header(object):
-    def __init__(self, owned=True, handle=None):
+    def __init__(self, owned=True, handle=None, copy=False):
         if handle:
-            self.handle = handle
+            if copy:
+                self.handle = core.las.LASHeader_Copy(handle)
+                self.owned = True
+            else:
+                self.handle = handle
+                self.owned = False
         else:
             self.handle = core.las.LASHeader_Create()
-        self.owned = owned
+            self.owned = True
     def __del__(self):
         if self.owned:
             if self.handle and core:
