@@ -66,10 +66,9 @@
   ...         if int(p.x) != 47069244: return False
   ...         f.set_srs(s2)
   ...         p = f.read(0)
-  ...         p.descale(f.header)
   ...         if not s2.vlr_count() == 3: return False
   ...         if not s2.GetVLR(0).recordlength == 64: return False
-  ...         return int(round(p.x)) == -93  and int(round(p.y)) == 90
+  ...         return int(round(p.x)) == -93  and int(round(p.y)) == 42
   ...     return False  
 
   >>> test_srs_2()
@@ -77,9 +76,9 @@
   
   >>> del f
 
-  >>> f = file.File('../test/data/1.2_3.las',mode='r')
-  >>> f.header.data_offset
-  438L
+
+# -93.3515625902 41.5771483954
+
   >>> utm_wkt = """PROJCS["NAD83 / UTM zone 15N",GEOGCS["NAD83",DATUM["North_American_Datum_1983",SPHEROID["GRS 1980",6378137,298.2572221010002,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6269"]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["EPSG","4269"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-93],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","26915"]]"""
 
   >>> dd_wkt = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]"""
@@ -87,6 +86,28 @@
   >>> s_dd.wkt = dd_wkt
   >>> s_utm = srs.SRS()
   >>> s_utm.wkt = utm_wkt
+
+  >>> f = file.File('../test/data/1.2_3.las',mode='r')
+  >>> dd_header = f.header
+  >>> utm_header = f.header
+  >>> del f
+
+  >>> utm_header.offset
+  [0.0, 0.0, 0.0]
+  >>> utm_header.offset = [offset+1.0/0.000001 for offset in utm_header.offset]
+  >>> utm_header.offset
+  [1000000.0, 1000000.0, 1000000.0]
+  >>> utm_header.scale = [0.000001,0.000001,0.000001]
+  >>> utm_header.srs = s_utm
+  
+  >>> dd_header.scale = [0.000001,0.000001,0.000001]
+  >>> dd_header.srs = s_dd
+  
+  >>> f = file.File('../test/data/1.2_3.las',mode='r', header = utm_header)
+  >>> f.header.data_offset
+  438L
+  >>> f.header.scale
+  [9.9999999999999995e-07, 9.9999999999999995e-07, 9.9999999999999995e-07]
   >>> p = f.read(0)
   >>> origx, origy = p.x, p.y
   >>> origx, origy
@@ -94,12 +115,11 @@
   >>> f.set_srs(s_dd)
   True
   >>> p = f.read(0)
-  >>> p.descale(f.header)
   >>> p.x, p.y
-  (-92.999999999999972, 89.999999999999972)
-  >>> dd_header = f.header
-  >>> dd_header.scale = [0.000001,0.000001,0.000001]
-  >>> dd_header.srs = s_dd
+  (-93.350000000000009, 41.57)
+  
+  
+
   >>> f_project = file.File('junk_srs_project.las',mode='w',header=dd_header)
   >>> dd_header.srs.proj4
   '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs '
@@ -112,11 +132,11 @@
   >>> s_utm = srs.SRS()
   >>> s_utm.wkt = utm_wkt
   >>> p3 = f3.read(1)
-  >>> p3.x, p3.y
-  (-92.999999000000003, 89.999999000000003)
+  >>> int(round(p3.x)), int(round(p3.y))
+  (-93, 42)
   >>> p3 = f3.read(0)
-  >>> p3.x,p3.y
-  (-92.999999000000003, 89.999999000000003)
+  >>> int(round(p3.x)), int(round(p3.y))
+  (-93, 42)
 
   >>> import os
   >>> os.remove('junk_srs_project.las')

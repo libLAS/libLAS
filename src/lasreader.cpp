@@ -55,12 +55,21 @@ namespace liblas
 {
 
 LASReader::LASReader(std::istream& ifs) :
-    m_pimpl(detail::ReaderFactory::Create(ifs))
+    m_pimpl(detail::ReaderFactory::Create(ifs)),
+    bCustomHeader(false)
 {
 
     Init();
 }
 
+LASReader::LASReader(std::istream& ifs, LASHeader& header) :
+    m_pimpl(detail::ReaderFactory::Create(ifs)),
+    bCustomHeader(false)
+{
+    m_header = header;
+    bCustomHeader = true;
+    Init();
+}
 LASReader::~LASReader()
 {
     // empty, but required so we can implement PIMPL using
@@ -111,7 +120,12 @@ LASPoint const& LASReader::operator[](std::size_t n)
 }
 
 void LASReader::Init()
-{    
+{   
+    // Copy our existing header in case we have already set a custom 
+    // one.  We will use this instead of the one from the file if 
+    // the constructor with the header was used.
+    LASHeader custom_header(m_header);
+
     bool ret = m_pimpl->ReadHeader(m_header);
     if (!ret)
         throw std::runtime_error("public header block reading failure");
@@ -122,6 +136,11 @@ void LASReader::Init()
 
     m_pimpl->ReadGeoreference(m_header);
     m_pimpl->Reset(m_header);
+    
+    if (bCustomHeader) {
+        custom_header.SetDataOffset(m_header.GetDataOffset());
+        m_header = custom_header;
+    }
 }
 
 std::istream& LASReader::GetStream() const

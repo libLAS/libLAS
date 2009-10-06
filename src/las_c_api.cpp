@@ -181,28 +181,36 @@ LAS_DLL int LASError_GetErrorCount(void) {
     return static_cast<int>(errors.size());
 }
 
+std::istream* OpenInput(std::string filename) 
+{
+    std::ios::openmode const mode = std::ios::in | std::ios::binary;
+    std::istream* istrm = 0;
+    if (compare_no_case(filename.c_str(),"STDIN",5) == 0)
+    {
+        istrm = &std::cin;
+    }
+    else 
+    {
+        istrm = new std::ifstream(filename.c_str(), mode);
+    }
+    
+    if (!istrm->good())
+    {
+        delete istrm;
+        throw std::runtime_error("Reading stream was not able to be created");
+        exit(1);
+    }
+    return istrm;
+}
+
 LAS_DLL LASReaderH LASReader_Create(const char* filename) 
 
 {
     VALIDATE_LAS_POINTER1(filename, "LASReader_Create", NULL);
 
     try {
-        std::ios::openmode const mode = std::ios::in | std::ios::binary;
-        std::istream* istrm;
-        if (compare_no_case(filename,"STDIN",5) == 0)
-        {
-            istrm = &std::cin;
-        }
-        else 
-        {
-            istrm = new std::ifstream(filename, mode);
-        }
         
-        if (!istrm->good())
-        {
-            delete istrm;
-            throw std::runtime_error("Reading stream was not able to be created");
-        }
+        std::istream* istrm = OpenInput(std::string(filename));
         return (LASReaderH) new LASReader(*istrm);
 
     
@@ -212,7 +220,29 @@ LAS_DLL LASReaderH LASReader_Create(const char* filename)
          return NULL;
      }
 
+}
+
+LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
+                                                LASHeaderH hHeader) 
+
+{
+    VALIDATE_LAS_POINTER1(filename, "LASReader_CreateWithHeader", NULL);
+    VALIDATE_LAS_POINTER1(hHeader, "LASReader_CreateWithHeader", NULL);
+
+    try {
+        
+        std::istream* istrm = OpenInput(std::string(filename));
+        
+        LASHeader* header = ((LASHeader*) hHeader);
+        return (LASReaderH) new LASReader(*istrm, *header);
+
     
+    } catch (std::exception const& e)
+     {
+         LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
+         return NULL;
+     }
+
 }
 
 LAS_DLL void LASReader_Destroy(LASReaderH hReader)

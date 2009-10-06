@@ -168,6 +168,10 @@ las.LASReader_Create.argtypes = [ctypes.c_char_p]
 las.LASReader_Create.restype = ctypes.c_void_p
 las.LASReader_Create.errcheck = check_void
 
+las.LASReader_CreateWithHeader.argtypes = [ctypes.c_char_p, ctypes.c_void_p]
+las.LASReader_CreateWithHeader.restype = ctypes.c_void_p
+las.LASReader_CreateWithHeader.errcheck = check_void
+
 las.LASReader_GetNextPoint.restype=ctypes.c_void_p
 las.LASReader_GetNextPoint.argtypes = [ctypes.c_void_p]
 las.LASReader_GetNextPoint.errcheck = check_void_done

@@ -182,6 +182,15 @@ LAS_DLL void LASError_Print(const char* message);
 */
 LAS_DLL LASReaderH LASReader_Create(const char * filename);
 
+/** Creates a LASReaderH object that can be used to read LASHeaderH and 
+ *  LASPointH objects with.  The LASReaderH must not be created with a 
+ *  filename that is opened for read or write by any other API functions.
+ *  @return opaque pointer to a LASReaderH instance.
+ *  @param filename Filename to open for read 
+*/
+LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char * filename, 
+                                                LASHeaderH hHeader);
+
 /** Reads the next available point on the LASReaderH instance.  If no point 
  *  is available to read, NULL is returned.  If an error happens during 
  *  the reading of the next available point, an error will be added to the 

@@ -75,9 +75,14 @@ class File(object):
         
     def open(self):
         if self._mode == 'r' or self._mode =='rb':
-            self.handle = core.las.LASReader_Create(self.filename)
+            
+            if not self._header:
+                self.handle = core.las.LASReader_Create(self.filename)
+                self._header = lasheader.Header(handle = core.las.LASReader_GetHeader(self.handle))
+            else:
+                self.handle = core.las.LASReader_CreateWithHeader(self.filename, self._header.handle)
+
             self.mode = 0
-            self._header = lasheader.Header(handle = core.las.LASReader_GetHeader(self.handle))
             files['read'].append(self.filename)
             
             if self.in_srs:

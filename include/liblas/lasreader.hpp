@@ -67,6 +67,11 @@ public:
     /// @excepion std::runtime_error - on failure state of the input stream.
     LASReader(std::istream& ifs);
 
+    /// User-defined consructor initializes reader with input stream and
+    /// a header to override the values in the file
+    /// @excepion std::runtime_error - on failure state of the input stream.
+    LASReader(std::istream& ifs, LASHeader& header);
+    
     /// Destructor.
     /// @excepion nothrow
     ~LASReader();
@@ -144,6 +149,8 @@ private:
     LASHeader m_header;
     LASPoint m_point;
     std::vector<LASVariableRecord> m_vlrs;
+    
+    bool bCustomHeader;
     
 };
 

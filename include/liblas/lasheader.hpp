@@ -108,7 +108,7 @@ public:
 
     /// Default constructor.
     /// The default constructed header is configured according to the ASPRS
-    /// LAS 1.1 Specification, point data format set to 0.
+    /// LAS 1.2 Specification, point data format set to 0.
     /// Other fields filled with 0.
     LASHeader();
 
