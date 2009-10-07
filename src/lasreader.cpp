@@ -122,7 +122,7 @@ LASPoint const& LASReader::operator[](std::size_t n)
 void LASReader::Init()
 {   
     // Copy our existing header in case we have already set a custom 
-    // one.  We will use this instead of the one from the file if 
+    // one.  We will use this instead of the one from the stream if 
     // the constructor with the header was used.
     LASHeader custom_header(m_header);
 
