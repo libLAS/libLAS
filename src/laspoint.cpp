@@ -94,9 +94,9 @@ LASPoint& LASPoint::operator=(LASPoint const& rhs)
 
 void LASPoint::SetCoordinates(LASHeader const& header, double x, double y, double z)
 {
-    double const cx = x * header.GetScaleX() + header.GetOffsetX();
-    double const cy = y * header.GetScaleY() + header.GetOffsetY();
-    double const cz = z * header.GetScaleZ() + header.GetOffsetZ();
+    double const cx = (x * header.GetScaleX()) + header.GetOffsetX();
+    double const cy = (y * header.GetScaleY()) + header.GetOffsetY();
+    double const cz = (z * header.GetScaleZ()) + header.GetOffsetZ();
 
     SetCoordinates(cx, cy, cz);
 }
