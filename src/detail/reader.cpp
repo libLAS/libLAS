@@ -205,7 +205,6 @@ void Reader::SetSRS(const LASSpatialReference& srs)
 void Reader::SetInputSRS(const LASSpatialReference& srs)
 {
     m_in_srs = srs;
-    CreateTransform();
 }
 
 

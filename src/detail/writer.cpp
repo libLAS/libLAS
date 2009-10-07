@@ -180,7 +180,6 @@ void Writer::SetSRS(const LASSpatialReference& srs )
 void Writer::SetInputSRS(const LASSpatialReference& srs )
 {
     m_in_srs = srs;
-    CreateTransform();
 }
 
 void Writer::CreateTransform()
