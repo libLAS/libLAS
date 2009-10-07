@@ -113,7 +113,6 @@ void Reader::FillPoint(PointRecord& record, LASPoint& point, const LASHeader& he
         point.SetY(y);
         point.SetZ(z);
         
-        
     } else {
         point.SetX(record.x);
         point.SetY(record.y);
@@ -276,6 +275,33 @@ void Reader::Project(LASPoint& point)
 #endif
 }
 
+bool Reader::HasPointDataSignature() 
+{
+    uint8_t const sgn1 = 0xCC;
+    uint8_t const sgn2 = 0xDD;
+    uint8_t pad1 = 0x0; 
+    uint8_t pad2 = 0x0;
+
+    std::streamsize const current_pos = m_ifs.tellg();
+        
+    detail::read_n(pad1, m_ifs, sizeof(uint8_t));
+    detail::read_n(pad2, m_ifs, sizeof(uint8_t));
+    
+    LIBLAS_SWAP_BYTES(pad1);
+    LIBLAS_SWAP_BYTES(pad2);
+    
+    // Put the stream back where we found it
+    m_ifs.seekg(current_pos, std::ios::beg);  
+
+    // FIXME: we have to worry about swapping issues
+    // but some people write the pad bytes backwards 
+    // anyway.  Let's check both ways.
+    bool found = false;
+    if (sgn1 == pad2 && sgn2 == pad1) found = true;
+    if (sgn1 == pad1 && sgn2 == pad2) found = true;
+    
+    return found;
+}
 Reader* ReaderFactory::Create(std::istream& ifs)
 {
     if (!ifs)
@@ -318,5 +344,6 @@ void ReaderFactory::Destroy(Reader* p)
     delete p;
     p = 0;
 }
+
 
 }} // namespace liblas::detail

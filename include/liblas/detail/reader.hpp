@@ -93,7 +93,7 @@ protected:
 
     void FillPoint(PointRecord& record, LASPoint& point, const LASHeader& header);
     void Project(LASPoint& point);
-
+    bool HasPointDataSignature();
 private:
 
     // Blocked copying operations, declared but not defined.
