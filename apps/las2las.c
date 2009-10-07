@@ -90,6 +90,7 @@ int main(int argc, char *argv[])
     int use_stdout = FALSE;
     char* file_name_in = 0;
     char* file_name_out = 0;
+    char* proj4_text = NULL;
     double *clip_xy_min = NULL;
     double *clip_xy_max = NULL;
     int clip = FALSE;
@@ -776,8 +777,10 @@ int main(int argc, char *argv[])
     
     if (do_reprojection) {
         if (verbose) {
+            proj4_text =  LASSRS_GetProj4(out_srs);
             fprintf(stderr,
                 "Setting new coordinate system to %s", LASSRS_GetProj4(out_srs));
+            free(proj4_text);
         }
         LASHeader_SetSRS(surviving_header, out_srs);
         
@@ -919,18 +922,21 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    header = LASReader_GetHeader(reader);
+    header = LASHeader_Copy(LASReader_GetHeader(reader));
     if (!header) { 
         LASError_Print("Could not read header");
         exit(1);
-    } 
+    }
+    
+    LASReader_Destroy(reader);
+    
     summary = SummarizePoints(reader);
     if (verbose) {
         print_point_summary(stderr, summary, header);
     }
     repair_header(stderr, header, summary) ;
 
-    if (summary) {
+    if (summary != NULL) {
         LASPoint_Destroy(summary->pmin);
         LASPoint_Destroy(summary->pmax);
         free(summary);
