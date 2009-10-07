@@ -168,16 +168,19 @@ uint32_t Writer::WriteVLR(LASHeader const& header)
 void Writer::SetOutputSRS(const LASSpatialReference& srs )
 {
     m_out_srs = srs;
+    CreateTransform();
+
 }
 
 void Writer::SetSRS(const LASSpatialReference& srs )
 {
-    m_out_srs = srs;
+    SetOutputSRS(srs);
 }
 
 void Writer::SetInputSRS(const LASSpatialReference& srs )
 {
     m_in_srs = srs;
+    CreateTransform();
 }
 
 void Writer::CreateTransform()
