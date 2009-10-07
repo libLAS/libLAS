@@ -61,7 +61,8 @@ LASSpatialReference& LASSpatialReference::operator=(LASSpatialReference const& r
 {
     if (&rhs != this)
     {
-        SetVLRs(rhs.GetVLRs());
+        std::vector<LASVariableRecord> vlrs = rhs.GetVLRs();
+        SetVLRs(vlrs);
         GetGTIF();
     }
     return *this;
@@ -101,10 +102,7 @@ LASSpatialReference::LASSpatialReference(std::vector<LASVariableRecord> const& v
 
 /// Keep a copy of the VLRs that are related to GeoTIFF SRS information.
 void LASSpatialReference::SetVLRs(std::vector<LASVariableRecord> const& vlrs)
-{
-    
-    std::string const uid("LASF_Projection");
-    
+{ 
     // Wipe out any existing VLRs that might exist on the LASSpatialReference
     m_vlrs.clear();
     
@@ -308,13 +306,13 @@ const GTIF* LASSpatialReference::GetGTIF()
     // If we already have m_gtiff and m_tiff, that is because we have 
     // already called GetGTIF once before.  VLRs ultimately drive how the 
     // LASSpatialReference is defined, not the GeoTIFF keys.  
-    if (m_tiff)
+    if (m_tiff != 0)
     {
         ST_Destroy(m_tiff);
         m_tiff = 0;
     }
 
-    if (m_gtiff)
+    if (m_gtiff != 0)
     {
         GTIFFree(m_gtiff);
         m_gtiff = 0;
