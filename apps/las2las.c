@@ -296,7 +296,11 @@ int main(int argc, char *argv[])
             ++i;
             if (LAS_IsGDALEnabled()) {
                 in_srs = LASSRS_Create();
-                LASSRS_SetFromUserInput(in_srs, argv[i]);
+                ret = LASSRS_SetFromUserInput(in_srs, argv[i]);
+                if (ret) {
+                    LASError_Print("Unable to import assigned SRS");
+                    exit(1);
+                }
             }
         }
         else if (   strcmp(argv[i],"--t_srs") == 0  ||
@@ -308,7 +312,7 @@ int main(int argc, char *argv[])
                 out_srs = LASSRS_Create();
                 ret = LASSRS_SetFromUserInput(out_srs, argv[i]);
                 if (ret) {
-                    LASError_Print("Unable to import SRS");
+                    LASError_Print("Unable to import output SRS");
                     exit(1);
                 }
                 do_reprojection = TRUE;
@@ -797,7 +801,7 @@ int main(int argc, char *argv[])
     }  
 
     if (in_srs != NULL) {
-        LASWriter_SetInputSRS(reader, in_srs);
+        LASWriter_SetInputSRS(writer, in_srs);
     }
     
     if (out_srs != NULL) {
@@ -805,7 +809,7 @@ int main(int argc, char *argv[])
             fprintf(stderr,
                 "Setting LASWriter_SetOutputSRS to %s", LASSRS_GetProj4(out_srs));
         }
-        LASWriter_SetOutputSRS(reader, out_srs);
+        LASWriter_SetOutputSRS(writer, out_srs);
     }
 /*
 
