@@ -70,12 +70,12 @@ LASSpatialReference& LASSpatialReference::operator=(LASSpatialReference const& r
 LASSpatialReference::~LASSpatialReference() 
 {
 #ifdef HAVE_LIBGEOTIFF
-    if (m_gtiff)
+    if (m_gtiff != 0)
     {
         GTIFFree(m_gtiff);
         m_gtiff = 0;
     }
-    if (m_tiff)
+    if (m_tiff != 0)
     {
         ST_Destroy(m_tiff);
         m_tiff = 0;
@@ -308,13 +308,13 @@ const GTIF* LASSpatialReference::GetGTIF()
     // If we already have m_gtiff and m_tiff, that is because we have 
     // already called GetGTIF once before.  VLRs ultimately drive how the 
     // LASSpatialReference is defined, not the GeoTIFF keys.  
-    if (m_tiff)
+    if (m_tiff != 0 )
     {
         ST_Destroy(m_tiff);
         m_tiff = 0;
     }
 
-    if (m_gtiff)
+    if (m_gtiff != 0 )
     {
         GTIFFree(m_gtiff);
         m_gtiff = 0;
