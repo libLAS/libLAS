@@ -947,7 +947,13 @@ int main(int argc, char *argv[])
     LASWriter_Destroy(writer);
     writer = NULL;
     LASHeader_Destroy(header);
-    header = NULL;   
+    header = NULL;
+    
+    if (out_srs != NULL)
+        LASSRS_Destroy(out_srs);
+    
+    if (in_srs != NULL)
+        LASSRS_Destroy(in_srs);
 
     if (verbose) ptime("done.");
 
