@@ -927,8 +927,7 @@ int main(int argc, char *argv[])
         LASError_Print("Could not read header");
         exit(1);
     }
-    
-    LASReader_Destroy(reader);
+
     
     summary = SummarizePoints(reader);
     if (verbose) {
@@ -942,7 +941,7 @@ int main(int argc, char *argv[])
         free(summary);
     }
 
-    if (reader) {
+    if (reader != NULL) {
         LASReader_Destroy(reader);
         reader = NULL;
     }
