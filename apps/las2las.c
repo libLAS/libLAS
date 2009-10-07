@@ -396,17 +396,6 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    if (in_srs != NULL) {
-        LASReader_SetInputSRS(reader, in_srs);
-    }
-    
-    if (out_srs != NULL) {
-        if (verbose) {
-            fprintf(stderr,
-                "Setting LASReader_SetOutputSRS to %s", LASSRS_GetProj4(out_srs));
-        }
-        LASReader_SetOutputSRS(reader, out_srs);
-    }
         
     header = LASReader_GetHeader(reader);
     if (!header) { 
@@ -701,13 +690,6 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    if (in_srs != NULL) {
-        LASReader_SetInputSRS(reader, in_srs);
-    }
-    
-    if (out_srs != NULL) {
-        LASReader_SetOutputSRS(reader, out_srs);
-    }
     
     header = LASReader_GetHeader(reader);
     if (!header) { 
@@ -814,6 +796,17 @@ int main(int argc, char *argv[])
         exit(1);
     }  
 
+    if (in_srs != NULL) {
+        LASWriter_SetInputSRS(reader, in_srs);
+    }
+    
+    if (out_srs != NULL) {
+        if (verbose) {
+            fprintf(stderr,
+                "Setting LASWriter_SetOutputSRS to %s", LASSRS_GetProj4(out_srs));
+        }
+        LASWriter_SetOutputSRS(reader, out_srs);
+    }
 /*
 
   if (!remove_extra_header)
@@ -843,13 +836,6 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    if (in_srs != NULL) {
-        LASReader_SetInputSRS(reader, in_srs);
-    }
-    
-    if (out_srs != NULL) {
-        LASReader_SetOutputSRS(reader, out_srs);
-    }
     
     p = LASReader_GetNextPoint(reader);
     if (!p) {
