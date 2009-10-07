@@ -922,7 +922,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    header = LASHeader_Copy(LASReader_GetHeader(reader));
+    header = LASReader_GetHeader(reader);
     if (!header) { 
         LASError_Print("Could not read header");
         exit(1);
