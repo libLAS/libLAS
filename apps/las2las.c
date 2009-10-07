@@ -779,7 +779,7 @@ int main(int argc, char *argv[])
         if (verbose) {
             proj4_text =  LASSRS_GetProj4(out_srs);
             fprintf(stderr,
-                "Setting new coordinate system to %s", LASSRS_GetProj4(out_srs));
+                "Setting new coordinate system to %s", proj4_text);
             free(proj4_text);
         }
         LASHeader_SetSRS(surviving_header, out_srs);
