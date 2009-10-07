@@ -260,7 +260,7 @@ void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header
 
     long rgpsum = 0;
     long pbretsum = 0;
-    
+    LASColorH color = NULL;
     int i = 0;
 
     if (!summary) {LASError_Print("Point Summary does not exist!"); exit(1);}
@@ -330,18 +330,23 @@ void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header
                   LASPoint_GetPointSourceId(summary->pmin),
                   LASPoint_GetPointSourceId(summary->pmax)
                   );
+                  
+    color = LASPoint_GetColor(summary->pmin);
     fprintf(file, "  Minimum Color:\t %d %d %d\n",
-                  LASColor_GetRed(LASPoint_GetColor(summary->pmin)),
-                  LASColor_GetGreen(LASPoint_GetColor(summary->pmin)),
-                  LASColor_GetBlue(LASPoint_GetColor(summary->pmin))
+                  LASColor_GetRed(color),
+                  LASColor_GetGreen(color),
+                  LASColor_GetBlue(color)
         );
+    LASColor_Destroy(color);
 
+    color = LASPoint_GetColor(summary->pmax);
     fprintf(file, "  Maximum Color:\t %d %d %d\n",
-                  LASColor_GetRed(LASPoint_GetColor(summary->pmax)),
-                  LASColor_GetGreen(LASPoint_GetColor(summary->pmax)),
-                  LASColor_GetBlue(LASPoint_GetColor(summary->pmax))
+                  LASColor_GetRed(color),
+                  LASColor_GetGreen(color),
+                  LASColor_GetBlue(color)
         );
-
+    LASColor_Destroy(color);
+    
     fprintf(file, "\n  Number of Points by Return\n");
     fprintf(file, "---------------------------------------------------------\n");
 
