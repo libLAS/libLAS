@@ -150,6 +150,8 @@ private:
     LASPoint m_point;
     std::vector<LASVariableRecord> m_vlrs;
     
+    // Set if the user provides a header to override the header as 
+    // read from the istream
     bool bCustomHeader;
     
 };
