@@ -66,7 +66,7 @@ void LASIndex::Setup()
     m_idxType = eExternalIndex;
     m_idxId = 1;
     
-    m_idxCapacity = 100;
+    m_idxCapacity = 1000;
     m_idxLeafCap = 1000;
     m_idxDimension = 3;
     
