@@ -12,6 +12,9 @@ syntax: glob
 *.pyc
 *.res
 *.swp
+*.bz2
+*.gz
+*.orig
 aclocal.m4
 apps/las2las
 apps/las2txt
