@@ -20,6 +20,8 @@
 #include <algorithm>
 #include <cctype>
 
+#include <sys/stat.h>
+
 #ifdef HAVE_SPATIALINDEX
 #include <spatialindex/SpatialIndex.h>
 #endif
@@ -474,6 +476,23 @@ oss << "declare\n"
 }
 void usage() {}
 
+bool ExternalIndexExists(std::string& filename)
+{
+    struct stat stats;
+    std::ostringstream os;
+    os << filename << ".dat";
+    
+    std::string indexname = os.str();
+    
+    // ret is -1 for no file existing and 0 for existing
+    int ret = stat(indexname.c_str(),&stats);
+
+    bool output = false;
+    if (ret == 0) output= true; else output =false;
+    return output;
+}
+
+
 // select sdo_pc_pkg.to_geometry(a.points, a.num_points, 3, 8307) from NACHES_BAREEARTH_BLOCK1 a where a.obj_id= 8907
 int main(int argc, char* argv[])
 {
@@ -483,10 +502,10 @@ int main(int argc, char* argv[])
     std::string username;
     std::string password;
     std::string instance;
-    std::string block_table_name;
     std::string point_cloud_name("CLOUD");
     std::string base_table_name("HOBU");
-    
+    std::string block_table_name("");
+        
     bool bDropTable = false;
     liblas::uint32_t nCapacity = 10000;
     double dFillFactor = 0.99;
@@ -556,6 +575,14 @@ int main(int argc, char* argv[])
             i++;
             base_table_name = std::string(argv[i]);
         }
+        else if (   strcmp(argv[i],"--block-table-name") == 0  ||
+                    strcmp(argv[i],"-bk") == 0  
+                )
+        {
+            i++;
+            printf("have bk");
+            block_table_name = std::string(argv[i]);
+        }
         else if (input.empty())
         {
             input = std::string(argv[i]);
@@ -571,7 +598,13 @@ int main(int argc, char* argv[])
         }
     }
 
-
+    string table_name ;
+    if (block_table_name.size() == 0) {
+        string::size_type dot_pos = input.find_first_of(".");
+        table_name = input.substr(0,dot_pos);
+    } else {
+        table_name = block_table_name;
+    }
     string::size_type slash_pos = connection.find("/",0);
     username = connection.substr(0,slash_pos);
     string::size_type at_pos = connection.find("@",slash_pos);
@@ -580,7 +613,7 @@ int main(int argc, char* argv[])
     instance = connection.substr(at_pos+1);
     std::cout << "Connecting with username: " << username << " password: "<< password<< " instance: " << instance << std::endl;    
 
-    std::cout << "Base table name " << base_table_name << " cloud column: " << point_cloud_name << std::endl;
+    std::cout << "Base table name " << base_table_name << " cloud column: " << point_cloud_name <<" block table: " << block_table_name << std::endl;
     if (bDropTable) std::cout << "dropping existing tables..." << std::endl;
     // OCI_SUCCESS_WITH_INFO error, which according to google relates to 
     // a warning related to expired or expiring passwords needs to be 
@@ -619,8 +652,7 @@ int main(int argc, char* argv[])
     // and no extraneous characters.
     
     // We need an option for the user to specify the blk tablename
-    string::size_type dot_pos = input.find_first_of(".");
-    string table_name = input.substr(0,dot_pos);
+
     
     if (bDropTable) DeleteTable(con, table_name.c_str(), base_table_name.c_str(), point_cloud_name.c_str());
     CreateTable(con, table_name.c_str());
