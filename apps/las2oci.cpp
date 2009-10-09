@@ -124,7 +124,7 @@ bool Cleanup(OWConnection* connection, const char* tableName)
 }
 
 
-bool CreateTable(OWConnection* connection, const char* tableName)
+bool CreateBlockTable(OWConnection* connection, const char* tableName)
 {
     ostringstream oss;
     OWStatement* statement = 0;
@@ -410,8 +410,38 @@ bool CreateBlockIndex(OWConnection* connection, const char* tableName)
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");
-    
+
+    oss << "CREATE INDEX "<< tableName <<"_objectid_idx on "<<tableName<<"(OBJ_ID)" ;
+    statement = Run(connection, oss);
+    if (statement != 0) delete statement; else return false;
+    oss.str("");    
     return true;
+        
+}
+
+bool BlockTableExists(OWConnection* connection, const char* tableName)
+{
+    ostringstream oss;
+
+    char szTable[OWNAME]= "";
+    oss << "select table_name from user_tables where table_name like upper('%%"<< tableName <<"%%') ";
+
+    OWStatement* statement = 0;
+    
+    statement = connection->CreateStatement(oss.str().c_str());
+    statement->Define(szTable);
+    
+    if (statement->Execute() == false) {
+        
+        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
+        delete statement;
+        return 0;
+    }
+    
+    while( statement->Fetch() ) {
+        return true;
+    }
+    return false;
         
 }
 
@@ -474,7 +504,29 @@ oss << "declare\n"
     
     return true;
 }
-void usage() {}
+void usage() {
+    fprintf(stderr,"----------------------------------------------------------\n");
+    fprintf(stderr,"    las2oci (version ) usage:\n");
+    fprintf(stderr,"----------------------------------------------------------\n");
+    fprintf(stderr,"\n");
+
+    fprintf(stderr,"--block-table-name: (-bk)\n");
+    fprintf(stderr,"--base-table-name: (-bn)\n");
+    fprintf(stderr,"--cloud-table-name: (-cn) \n");
+    fprintf(stderr,"--overwrite: (-d) \n");
+    fprintf(stderr,"--srid: (-s) \n");
+    
+    
+    fprintf(stderr,"las2oci -i output.las lidar/lidar@oraclemachine/instance \n"
+                   "--block-table-name  hobu_blocks --base-table-name hobu_base\n"
+                   "--cloud-column-name PC --srid 8307 -d\n");
+    
+    
+
+    fprintf(stderr, "\nFor more information, see the full documentation for las2las at:\n"
+                    " http://liblas.org/browser/trunk/doc/las2las.txt\n");
+    fprintf(stderr,"----------------------------------------------------------\n");    
+}
 
 bool ExternalIndexExists(std::string& filename)
 {
@@ -497,8 +549,8 @@ bool ExternalIndexExists(std::string& filename)
 int main(int argc, char* argv[])
 {
 
-    std::string input;
-    std::string connection;
+    std::string input ("");
+    std::string connection("");
     std::string username;
     std::string password;
     std::string instance;
@@ -598,8 +650,16 @@ int main(int argc, char* argv[])
         }
     }
 
+    
+    if (connection.empty() || input.empty()) {
+        usage();
+        exit(1);
+    }
     string table_name ;
     if (block_table_name.size() == 0) {
+        // change filename foo.las -> foo for an appropriate
+        // block tablename for oracle... must be less than 30 characters
+        // and no extraneous characters.
         string::size_type dot_pos = input.find_first_of(".");
         table_name = input.substr(0,dot_pos);
     } else {
@@ -614,7 +674,6 @@ int main(int argc, char* argv[])
     std::cout << "Connecting with username: " << username << " password: "<< password<< " instance: " << instance << std::endl;    
 
     std::cout << "Base table name " << base_table_name << " cloud column: " << point_cloud_name <<" block table: " << block_table_name << std::endl;
-    if (bDropTable) std::cout << "dropping existing tables..." << std::endl;
     // OCI_SUCCESS_WITH_INFO error, which according to google relates to 
     // a warning related to expired or expiring passwords needs to be 
     // handled in the oracle wrapper.
@@ -647,15 +706,16 @@ int main(int argc, char* argv[])
 
     
     
-    // change filename foo.las -> foo for an appropriate
-    // block tablename for oracle... must be less than 30 characters
-    // and no extraneous characters.
-    
-    // We need an option for the user to specify the blk tablename
+    if (bDropTable) {
+        std::cout << "dropping existing tables..." << std::endl;
 
+        DeleteTable(con, table_name.c_str(), base_table_name.c_str(), point_cloud_name.c_str());
+    }
     
-    if (bDropTable) DeleteTable(con, table_name.c_str(), base_table_name.c_str(), point_cloud_name.c_str());
-    CreateTable(con, table_name.c_str());
+    if (!BlockTableExists(con, table_name.c_str()))
+        CreateBlockTable(con, table_name.c_str());
+    else
+        std::cout << "Using existing block table ... " << std::endl;
 
     LASReader* reader = new LASReader(*istrm);
     LASIndexDataStream* idxstrm = new LASIndexDataStream(reader);
@@ -686,9 +746,10 @@ int main(int argc, char* argv[])
         bool inserted = InsertBlock(con, *i, srid, reader2, table_name.c_str());
     }
     
-
-    CreateSDOEntry(con, table_name.c_str(), query, srid );
-    CreateBlockIndex(con, table_name.c_str());
+    if (!BlockTableExists(con, table_name.c_str())) {
+        CreateSDOEntry(con, table_name.c_str(), query, srid );
+        CreateBlockIndex(con, table_name.c_str());
+    }
 
     bool output = CreatePCEntry(  con, 
                     query, 
@@ -698,55 +759,6 @@ int main(int argc, char* argv[])
                     3, // we're assuming 3d for now
                     srid,
                     nCapacity);
-
-//    Cleanup(con, "base");
-
- // int   iCol = 0;
- //    char  szField[OWNAME];
- //    int   hType = 0;
- //    int   nSize = 0;
- //    int   nPrecision = 0;
- //    signed short nScale = 0;
- // 
- //    char szColumnList[OWTEXT];
- //    szColumnList[0] = '\0';
- //    OCIParam* phDesc = NULL;
- // 
- //    const char* pszVATName="base";
- //    phDesc = con->GetDescription( (char*) pszVATName );
- //    while( con->GetNextField(
- //                phDesc, iCol, szField, &hType, &nSize, &nPrecision, &nScale ) )
- //    {
- //        printf("field ... %s",szField);
- //        switch( hType )
- //        {
- //            case SQLT_FLT:
- //                printf("float...\n");
- //                break;
- //            case SQLT_NUM:
- //                printf ("number...\n");
- //                break;
- //            case SQLT_CHR:
- //            case SQLT_AFC:
- //            case SQLT_DAT:
- //            case SQLT_DATE:
- //            case SQLT_TIMESTAMP:
- //            case SQLT_TIMESTAMP_TZ:
- //            case SQLT_TIMESTAMP_LTZ:
- //            case SQLT_TIME:
- //            case SQLT_TIME_TZ:
- //                printf ("character...\n");
- //                break;
- //            default:
- //                CPLDebug("GEORASTER", "VAT (%s) Column (%s) type (%d) not supported"
- //                    "as GDAL RAT", pszVATName, szField, hType );
- //                break;
- //        }
- //        // strcpy( szColumnList, CPLSPrintf( "%s substr(%s,1,%d),",
- //        //     szColumnList, szField, MIN(nSize,OWNAME) ) );
- // 
- //        iCol++;
- //    }
 
 
 
