@@ -10,7 +10,8 @@
 #include <liblas/index/index.hpp>
 
 
-#include <iostream>
+#include <cstring>
+#include <iterator>
 #include <iterator>
 #include <fstream>
 #include <vector>
@@ -50,33 +51,31 @@ using namespace liblas;
 
 int main(int argc, char* argv[])
 {
-    int rc = 0;
-
     std::string input;
     std::string output;
     
     for (int i = 1; i < argc; i++)
     {
-        if (    strcmp(argv[i],"-h") == 0 ||
-                strcmp(argv[i],"--help") == 0
+        if (    std::strcmp(argv[i],"-h") == 0 ||
+                std::strcmp(argv[i],"--help") == 0
             )
         {
             usage();
             exit(0);
         }
-        else if (   strcmp(argv[i],"--input") == 0  ||
-                    strcmp(argv[i],"-input") == 0   ||
-                    strcmp(argv[i],"-i") == 0       ||
-                    strcmp(argv[i],"-in") == 0
+        else if (   std::strcmp(argv[i],"--input") == 0  ||
+                    std::strcmp(argv[i],"-input") == 0   ||
+                    std::strcmp(argv[i],"-i") == 0       ||
+                    std::strcmp(argv[i],"-in") == 0
                 )
         {
             i++;
             input = std::string(argv[i]);
         }
-        else if (   strcmp(argv[i],"--output") == 0  ||
-                    strcmp(argv[i],"--out") == 0     ||
-                    strcmp(argv[i],"-out") == 0     ||
-                    strcmp(argv[i],"-o") == 0       
+        else if (   std::strcmp(argv[i],"--output") == 0  ||
+                    std::strcmp(argv[i],"--out") == 0     ||
+                    std::strcmp(argv[i],"-out") == 0     ||
+                    std::strcmp(argv[i],"-o") == 0       
                 )
         {
             i++;
@@ -106,13 +105,12 @@ int main(int argc, char* argv[])
         exit(-1);
     }
 
+    // FIXME: Missing RAII and try-catch, no LAS throws exceptions.
     std::istream* istrm = OpenInput(input);
     LASReader* reader = new LASReader(*istrm);
     std::cout << "Indexing " << input<< " "<<std::endl;
 
-
     LASIndexDataStream* idxstrm = new LASIndexDataStream(reader);
-
     
     LASIndex* idx = new LASIndex(input);
     idx->SetType(LASIndex::eExternalIndex);
@@ -120,11 +118,8 @@ int main(int argc, char* argv[])
     idx->SetFillFactor(0.8);
     idx->Initialize(*idxstrm);
 
-
-    
     delete idx;
     delete idxstrm;
     delete reader;
     delete istrm;
-    
 }
