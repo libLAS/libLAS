@@ -68,7 +68,6 @@ namespace tut
             test_default_header(hdr_default);
         }
 
-            exit(0);
         // Read previously created LAS file and check its header block
         {
             std::ifstream ifs;
