@@ -58,7 +58,6 @@ LASReader::LASReader(std::istream& ifs) :
     m_pimpl(detail::ReaderFactory::Create(ifs)),
     bCustomHeader(false)
 {
-
     Init();
 }
 

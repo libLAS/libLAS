@@ -89,6 +89,7 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     read_n(fsig, m_ifs, 4);
     header.SetFileSignature(fsig);
 
+
     // 2. Reserved
     // This data must always contain Zeros.
     read_n(n4, m_ifs, sizeof(n4));
