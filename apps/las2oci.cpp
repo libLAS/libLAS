@@ -763,3 +763,23 @@ int main(int argc, char* argv[])
 
 
 }
+// 
+// select t.x, t.y, t.id from (
+// select 
+// 
+//  sdo_pc_pkg.to_geometry(
+//                     a.points,   -- point LOB
+//                     a.num_points, -- # of points in the LOB
+//                     2,  -- total dimensionality
+//                     8265 -- SRID
+//                     ) shape from line_27006_reproj a
+//                     --)
+//      )c ,  TABLE(SDO_UTIL.GETVERTICES(c.shape)) t
+// select sdo_pc_pkg.to_geometry(
+//                     a.points,   -- point LOB
+//                     a.num_points, -- # of points in the LOB
+//                     2,  -- total dimensionality
+//                     8265 -- SRID
+//                     ) shape from line_27006_reproj a
+//                     where rownum < 10
+                    
