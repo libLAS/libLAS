@@ -310,7 +310,7 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss_geom.precision(2);
     oss_geom << "mdsys.sdo_geometry(3008,"<<srid<<", null,"
-              "mdsys.sdo_elem_info_array(1,1003,3),"
+              "mdsys.sdo_elem_info_array(1,1007,3),"
               "mdsys.sdo_ordinate_array("<< b->getLow(0) <<","<<
                                             b->getLow(1) <<","<<
                                             b->getLow(2) <<","<<
@@ -489,13 +489,15 @@ oss << "declare\n"
 "          '"<< cloudColumnName_u<<"',   -- Column name of the SDO_POINT_CLOUD object\n"
 "          '"<<blkTableName_u<<"', -- Table to store blocks of the point cloud\n"
 "           'blk_capacity="<<blk_capacity<<"', -- max # of points per block\n"
-"           mdsys.sdo_geometry(2003, "<<srid<<", null,\n"
-"              mdsys.sdo_elem_info_array(1,1003,3),\n"
+"           mdsys.sdo_geometry(3008, "<<srid<<", null,\n"
+"              mdsys.sdo_elem_info_array(1,1007,3),\n"
 "              mdsys.sdo_ordinate_array(\n"
 << query->bounds.getLow(0) << ","
 << query->bounds.getLow(1) << ","
+<< query->bounds.getLow(2) << ","
 << query->bounds.getHigh(0) << ","
-<< query->bounds.getHigh(1) << ")),  -- Extent\n"
+<< query->bounds.getHigh(1) << ","
+<< query->bounds.getHigh(2) << ")),  -- Extent\n"
 "     0.5, -- Tolerance for point cloud\n"
 "           "<<nDimension<<", -- Total number of dimensions\n"
 "           null);\n"
