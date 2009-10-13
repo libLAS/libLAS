@@ -565,7 +565,8 @@ int main(int argc, char* argv[])
     std::string point_cloud_name("CLOUD");
     std::string base_table_name("HOBU");
     std::string block_table_name("");
-        
+    
+    bool bUseExistingBlockTable = false;
     bool bDropTable = false;
     liblas::uint32_t nCapacity = 10000;
     double dFillFactor = 0.99;
@@ -722,8 +723,11 @@ int main(int argc, char* argv[])
     
     if (!BlockTableExists(con, table_name.c_str()))
         CreateBlockTable(con, table_name.c_str());
-    else
+    else {
+        bUseExistingBlockTable = true;
         std::cout << "Using existing block table ... " << std::endl;
+
+    }
 
     LASReader* reader = new LASReader(*istrm);
     LASIndexDataStream* idxstrm = new LASIndexDataStream(reader);
@@ -754,7 +758,7 @@ int main(int argc, char* argv[])
         bool inserted = InsertBlock(con, *i, srid, reader2, table_name.c_str());
     }
     
-    if (!BlockTableExists(con, table_name.c_str())) {
+    if (!bUseExistingBlockTable) {
         CreateSDOEntry(con, table_name.c_str(), query, srid );
         CreateBlockIndex(con, table_name.c_str());
     }
