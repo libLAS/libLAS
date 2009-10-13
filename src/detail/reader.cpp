@@ -283,15 +283,24 @@ bool Reader::HasPointDataSignature()
     uint8_t pad2 = 0x0;
 
     std::streamsize const current_pos = m_ifs.tellg();
-        
-    detail::read_n(pad1, m_ifs, sizeof(uint8_t));
-    detail::read_n(pad2, m_ifs, sizeof(uint8_t));
     
+    // If our little test reads off the end, we'll try to put the 
+    // borken dishes back up in the cabinet
+    try {
+        detail::read_n(pad1, m_ifs, sizeof(uint8_t));
+        detail::read_n(pad2, m_ifs, sizeof(uint8_t));
+    } catch (std::out_of_range& e) {
+        m_ifs.seekg(current_pos, std::ios::beg);
+        return false;
+    } catch (std::runtime_error& e) {
+        m_ifs.seekg(current_pos, std::ios::beg);
+        return false;        
+    }
     LIBLAS_SWAP_BYTES(pad1);
     LIBLAS_SWAP_BYTES(pad2);
     
     // Put the stream back where we found it
-    m_ifs.seekg(current_pos, std::ios::beg);  
+    m_ifs.seekg(current_pos, std::ios::beg);
 
     // FIXME: we have to worry about swapping issues
     // but some people write the pad bytes backwards 
