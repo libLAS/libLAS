@@ -309,9 +309,14 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
     
     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss_geom.precision(2);
-    oss_geom << "mdsys.sdo_geometry(2003,"<<srid<<", null,"
+    oss_geom << "mdsys.sdo_geometry(3008,"<<srid<<", null,"
               "mdsys.sdo_elem_info_array(1,1003,3),"
-              "mdsys.sdo_ordinate_array("<< b->getLow(0) <<","<<b->getLow(1)<<","<<b->getHigh(0) <<","<<b->getHigh(1)<<"))";
+              "mdsys.sdo_ordinate_array("<< b->getLow(0) <<","<<
+                                            b->getLow(1) <<","<<
+                                            b->getLow(2) <<","<<
+                                            b->getHigh(0) <<","<<
+                                            b->getHigh(1) <<","<<
+                                            b->getHigh(2)<<"))";
     oss << "INSERT INTO "<< tableName << "(OBJ_ID, NUM_POINTS, BLK_EXTENT, POINTS) VALUES ( " 
                          << result.GetID() <<"," << num_points << ", " << oss_geom.str() <<", EMPTY_BLOB())";
 
@@ -391,7 +396,8 @@ bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* q
     oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
             "','blk_extent', MDSYS.SDO_DIM_ARRAY(" 
             "MDSYS.SDO_DIM_ELEMENT('X', "<< query->bounds.getLow(0) <<","<< query->bounds.getHigh(0)<<",0.05),"
-            "MDSYS.SDO_DIM_ELEMENT('Y', "<< query->bounds.getLow(1) <<","<< query->bounds.getHigh(1)<<",0.05)),"
+            "MDSYS.SDO_DIM_ELEMENT('Y', "<< query->bounds.getLow(1) <<","<< query->bounds.getHigh(1)<<",0.05),"
+            "MDSYS.SDO_DIM_ELEMENT('Z', "<< query->bounds.getLow(2) <<","<< query->bounds.getHigh(2)<<",0.05)),"
             << srid << ")";
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
