@@ -456,6 +456,8 @@ bool CreatePCEntry( OWConnection* connection,
                     const char* blkTableName, 
                     const char* pcTableName, 
                     const char* cloudColumnName,
+                    const char* aux_columns,
+                    const char* aux_values,
                     int nDimension, 
                     int srid,
                     int blk_capacity)
@@ -474,10 +476,23 @@ bool CreatePCEntry( OWConnection* connection,
     
     std::string cloudColumnName_l = std::string(cloudColumnName);
     std::string cloudColumnName_u = std::string(cloudColumnName_l);
-    
+
+    std::string aux_columns_l = std::string(aux_columns);
+    std::string aux_columns_u = std::string(aux_columns);
+ 
+    std::string aux_values_l = std::string(aux_values);
+           
     std::transform(blkTableName_l.begin(), blkTableName_l.end(), blkTableName_u.begin(), static_cast < int(*)(int) > (toupper));
     std::transform(pcTableName_l.begin(), pcTableName_l.end(), pcTableName_u.begin(), static_cast < int(*)(int) > (toupper));
     std::transform(cloudColumnName_l.begin(), cloudColumnName_l.end(), cloudColumnName_u.begin(), static_cast < int(*)(int) > (toupper));
+    std::transform(aux_columns_l.begin(), aux_columns_l.end(), aux_columns_u.begin(), static_cast < int(*)(int) > (toupper));
+    
+    ostringstream columns;
+    ostringstream values;
+    
+    columns << cloudColumnName_u << "," << aux_columns_u;
+    
+    values << "pc," << aux_values_l;
     
     
 oss << "declare\n"
@@ -503,7 +518,7 @@ oss << "declare\n"
 "           null);\n"
 
 "  -- Insert the Point Cloud object  into the \"base\" table.\n"
-"  insert into "<< pcTableName_u<<" ("<<cloudColumnName_u<<") values (pc);\n"
+"  insert into "<< pcTableName_u<<" ("<<columns.str()<<") values ("<<values.str()<<");\n"
 "end;\n";
     
     statement = Run(connection, oss);
@@ -569,6 +584,8 @@ int main(int argc, char* argv[])
     
     std::string pre_sql("");
     std::string post_sql("");
+    std::string aux_columns("");
+    std::string aux_values("");
     
     bool bUseExistingBlockTable = false;
     bool bDropTable = false;
@@ -659,6 +676,20 @@ int main(int argc, char* argv[])
         {
             i++;
             post_sql = std::string(argv[i]);
+        }
+        else if (   strcmp(argv[i],"--aux-columns") == 0  ||
+                    strcmp(argv[i],"-ac") == 0  
+                )
+        {
+            i++;
+            aux_columns = std::string(argv[i]);
+        }
+        else if (   strcmp(argv[i],"--aux-values") == 0  ||
+                    strcmp(argv[i],"-av") == 0  
+                )
+        {
+            i++;
+            aux_values = std::string(argv[i]);
         }
         else if (input.empty())
         {
@@ -799,6 +830,8 @@ int main(int argc, char* argv[])
                     table_name.c_str(),
                     base_table_name.c_str(),
                     point_cloud_name.c_str(),
+                    aux_columns.c_str(),
+                    aux_values.c_str(),
                     3, // we're assuming 3d for now
                     srid,
                     nCapacity);
@@ -808,7 +841,7 @@ int main(int argc, char* argv[])
         std::cout << "running post-sql ..." << std::endl;
 
         ostringstream oss;
-        oss << pre_sql;
+        oss << post_sql;
         OWStatement* statement = 0;
         statement = Run(con, oss);
         if (statement != 0) {
