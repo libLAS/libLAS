@@ -523,7 +523,8 @@ void usage() {
     fprintf(stderr,"--cloud-table-name: (-cn) \n");
     fprintf(stderr,"--overwrite: (-d) \n");
     fprintf(stderr,"--srid: (-s) \n");
-    
+    fprintf(stderr,"--pre-sql: (-prs) \"CREATE TABLE BASE (id number, cloud mdsys.sdo_pc)\" \n");    
+    fprintf(stderr,"--post-sql: (-prs) \"UPDATE TABLE BASE SET ID=1\" \n");    
     
     fprintf(stderr,"las2oci -i output.las lidar/lidar@oraclemachine/instance \n"
                    "--block-table-name  hobu_blocks --base-table-name hobu_base\n"
@@ -566,6 +567,9 @@ int main(int argc, char* argv[])
     std::string base_table_name("HOBU");
     std::string block_table_name("");
     
+    std::string pre_sql("");
+    std::string post_sql("");
+    
     bool bUseExistingBlockTable = false;
     bool bDropTable = false;
     liblas::uint32_t nCapacity = 10000;
@@ -595,7 +599,6 @@ int main(int argc, char* argv[])
                     strcmp(argv[i],"-d") == 0 
                 )
         {
-            i++;
             bDropTable=true;
         }
         else if (   strcmp(argv[i],"--blk_capacity") == 0  ||
@@ -641,8 +644,21 @@ int main(int argc, char* argv[])
                 )
         {
             i++;
-            printf("have bk");
             block_table_name = std::string(argv[i]);
+        }
+        else if (   strcmp(argv[i],"--pre-sql") == 0  ||
+                    strcmp(argv[i],"-prs") == 0  
+                )
+        {
+            i++;
+            pre_sql = std::string(argv[i]);
+        }
+        else if (   strcmp(argv[i],"--post-sql") == 0  ||
+                    strcmp(argv[i],"-pos") == 0  
+                )
+        {
+            i++;
+            post_sql = std::string(argv[i]);
         }
         else if (input.empty())
         {
@@ -721,6 +737,21 @@ int main(int argc, char* argv[])
         DeleteTable(con, table_name.c_str(), base_table_name.c_str(), point_cloud_name.c_str());
     }
     
+    if (!pre_sql.empty()) {
+        std::cout << "running pre-sql ..." << std::endl;
+        ostringstream oss;
+        oss << pre_sql;
+        OWStatement* statement = 0;
+        statement = Run(con, oss);
+        if (statement != 0) {
+            delete statement; 
+        }
+        else {
+            std::cout << "pre-sql execution failed.." << std::endl;
+            return false;
+        }
+        oss.str("");        
+    }
     if (!BlockTableExists(con, table_name.c_str()))
         CreateBlockTable(con, table_name.c_str());
     else {
@@ -773,6 +804,22 @@ int main(int argc, char* argv[])
                     nCapacity);
 
 
+    if (!post_sql.empty()) {
+        std::cout << "running post-sql ..." << std::endl;
+
+        ostringstream oss;
+        oss << pre_sql;
+        OWStatement* statement = 0;
+        statement = Run(con, oss);
+        if (statement != 0) {
+            delete statement; 
+        }
+        else {
+            std::cout << "post-sql execution failed.." << std::endl;
+            return false;
+        }
+        oss.str("");        
+    }
 
 }
 // 
