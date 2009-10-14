@@ -391,7 +391,7 @@ bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* q
 //     MDSYS.SDO_DIM_ARRAY(
 // MDSYS.SDO_DIM_ELEMENT('X', 630250.000000, 630500.000000, 0.05),
 // MDSYS.SDO_DIM_ELEMENT('Y', 4834500, 4834750, 0.05)),
-//     8307)
+//     4327)
 // """
     oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
             "','blk_extent', MDSYS.SDO_DIM_ARRAY(" 
@@ -412,7 +412,7 @@ bool CreateBlockIndex(OWConnection* connection, const char* tableName)
     ostringstream oss;
     OWStatement* statement = 0;
     
-    oss << "CREATE INDEX "<< tableName <<"_cloud_idx on "<<tableName<<"(blk_extent) INDEXTYPE IS MDSYS.SPATIAL_INDEX" ;
+    oss << "CREATE INDEX "<< tableName <<"_cloud_idx on "<<tableName<<"(blk_extent) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS('sdo_indx_dims=3')" ;
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");
@@ -527,7 +527,7 @@ void usage() {
     
     fprintf(stderr,"las2oci -i output.las lidar/lidar@oraclemachine/instance \n"
                    "--block-table-name  hobu_blocks --base-table-name hobu_base\n"
-                   "--cloud-column-name PC --srid 8307 -d\n");
+                   "--cloud-column-name PC --srid 4327 -d\n");
     
     
 
@@ -553,7 +553,7 @@ bool ExternalIndexExists(std::string& filename)
 }
 
 
-// select sdo_pc_pkg.to_geometry(a.points, a.num_points, 3, 8307) from NACHES_BAREEARTH_BLOCK1 a where a.obj_id= 8907
+// select sdo_pc_pkg.to_geometry(a.points, a.num_points, 3, 4327) from NACHES_BAREEARTH_BLOCK1 a where a.obj_id= 8907
 int main(int argc, char* argv[])
 {
 
@@ -570,7 +570,7 @@ int main(int argc, char* argv[])
     bool bDropTable = false;
     liblas::uint32_t nCapacity = 10000;
     double dFillFactor = 0.99;
-    int srid = 8307;
+    int srid = 4327;
     
     for (int i = 1; i < argc; i++)
     {
