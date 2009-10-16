@@ -308,7 +308,7 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
     ostringstream oss_geom;
     
     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    oss_geom.precision(2);
+    oss_geom.precision(8);
     oss_geom << "mdsys.sdo_geometry(3008,"<<srid<<", null,"
               "mdsys.sdo_elem_info_array(1,1007,3),"
               "mdsys.sdo_ordinate_array("<< b->getLow(0) <<","<<
@@ -382,7 +382,7 @@ bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* q
     ostringstream oss_geom;
     
     oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    oss.precision(2);
+    oss.precision(8);
      
 //     code = """
 // INSERT INTO user_sdo_geom_metadata VALUES (
@@ -466,7 +466,7 @@ bool CreatePCEntry( OWConnection* connection,
     OWStatement* statement = 0;
 
     oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    oss.precision(2);
+    oss.precision(8);
     
     std::string blkTableName_l = std::string(blkTableName);
     std::string blkTableName_u = std::string(blkTableName_l);
