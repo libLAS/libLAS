@@ -298,7 +298,7 @@ bool GetResultData(const LASQueryResult& result, LASReader* reader, std::vector<
     return true;
 }
 
-bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int srid, LASReader* reader, const char* tableName)
+bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int srid, LASReader* reader, const char* tableName, long precision)
 {
     ostringstream oss;
 
@@ -308,7 +308,7 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
     ostringstream oss_geom;
     
     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    oss_geom.precision(8);
+    oss_geom.precision(precision);
     oss_geom << "mdsys.sdo_geometry(3008,"<<srid<<", null,"
               "mdsys.sdo_elem_info_array(1,1007,3),"
               "mdsys.sdo_ordinate_array("<< b->getLow(0) <<","<<
@@ -374,7 +374,7 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
 
 }
 
-bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* query, int srid)
+bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* query, long srid, long precision)
 {
     ostringstream oss;
     OWStatement* statement = 0;
@@ -382,7 +382,7 @@ bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* q
     ostringstream oss_geom;
     
     oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    oss.precision(8);
+    oss.precision(precision);
      
 //     code = """
 // INSERT INTO user_sdo_geom_metadata VALUES (
@@ -460,13 +460,14 @@ bool CreatePCEntry( OWConnection* connection,
                     const char* aux_values,
                     int nDimension, 
                     int srid,
-                    int blk_capacity)
+                    int blk_capacity,
+                    long precision)
 {
     ostringstream oss;
     OWStatement* statement = 0;
 
     oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    oss.precision(8);
+    oss.precision(precision);
     
     std::string blkTableName_l = std::string(blkTableName);
     std::string blkTableName_u = std::string(blkTableName_l);
@@ -540,7 +541,10 @@ void usage() {
     fprintf(stderr,"--srid: (-s) \n");
     fprintf(stderr,"--pre-sql: (-prs) \"CREATE TABLE BASE (id number, cloud mdsys.sdo_pc)\" \n");    
     fprintf(stderr,"--post-sql: (-prs) \"UPDATE TABLE BASE SET ID=1\" \n");    
-    
+    fprintf(stderr,"--aux-columns: \"id,description\" \n");    
+    fprintf(stderr,"--aux-values: \"0,'A description'\" \n");    
+    fprintf(stderr,"--precision: 8\n");    
+        
     fprintf(stderr,"las2oci -i output.las lidar/lidar@oraclemachine/instance \n"
                    "--block-table-name  hobu_blocks --base-table-name hobu_base\n"
                    "--cloud-column-name PC --srid 4327 -d\n");
@@ -592,6 +596,7 @@ int main(int argc, char* argv[])
     liblas::uint32_t nCapacity = 10000;
     double dFillFactor = 0.99;
     int srid = 4327;
+    long precision = 8;
     
     for (int i = 1; i < argc; i++)
     {
@@ -690,6 +695,13 @@ int main(int argc, char* argv[])
         {
             i++;
             aux_values = std::string(argv[i]);
+        }
+        else if (   strcmp(argv[i],"--precision") == 0  ||
+                    strcmp(argv[i],"-p") == 0  
+                )
+        {
+            i++;
+            precision = atoi(argv[i]);
         }
         else if (input.empty())
         {
@@ -817,11 +829,11 @@ int main(int argc, char* argv[])
     LASReader* reader2 = new LASReader(*istrm2);
     for (i=results.begin(); i!=results.end(); i++)
     {
-        bool inserted = InsertBlock(con, *i, srid, reader2, table_name.c_str());
+        bool inserted = InsertBlock(con, *i, srid, reader2, table_name.c_str(), precision);
     }
     
     if (!bUseExistingBlockTable) {
-        CreateSDOEntry(con, table_name.c_str(), query, srid );
+        CreateSDOEntry(con, table_name.c_str(), query, srid , precision);
         CreateBlockIndex(con, table_name.c_str());
     }
 
@@ -834,7 +846,8 @@ int main(int argc, char* argv[])
                     aux_values.c_str(),
                     3, // we're assuming 3d for now
                     srid,
-                    nCapacity);
+                    nCapacity,
+                    precision);
 
 
     if (!post_sql.empty()) {

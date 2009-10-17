@@ -30,6 +30,8 @@ void repair_header(FILE *file, LASHeaderH header, LASPointSummary* summary) ;
 #define LAS_FORMAT_11 1
 #define LAS_FORMAT_12 2
 
+
+
 void usage()
 {
     fprintf(stderr,"----------------------------------------------------------\n");
@@ -69,6 +71,11 @@ void usage()
     fprintf(stderr,"  las2las --input in.las --last_only --eliminate_intensity_below 2000 --stdout > out.las\n");
     fprintf(stderr,"\n");
 
+    fprintf(stderr,"Reproject the data (requires GDAL support):\n");
+    fprintf(stderr,"  las2las -v in.las output.las -xyz_offset 0 0 0 "
+                   "-t_srs EPSG:4326 --xyz_scale 0.0000001 0.0000001 0.0000001"
+                   "-s_srs EPSG:26915\n");
+    fprintf(stderr,"\n");
 
     fprintf(stderr, "\nFor more information, see the full documentation for las2las at:\n"
                     " http://liblas.org/browser/trunk/doc/las2las.txt\n");
