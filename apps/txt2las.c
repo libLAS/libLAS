@@ -831,6 +831,8 @@ int main(int argc, char *argv[])
             LASPoint_SetY(point, xyz[1]);
             LASPoint_SetZ(point, xyz[2]);
 
+            LASPoint_SetTime(point, gps_time); 
+
             /* write the first point */
             err = LASWriter_WritePoint(writer, point);
             if (err) {
@@ -879,6 +881,8 @@ int main(int argc, char *argv[])
             LASPoint_SetY(point, xyz[1]);
             LASPoint_SetZ(point, xyz[2]);
 
+            LASPoint_SetTime(point, gps_time); 
+            
             /* write the first point */
             err = LASWriter_WritePoint(writer, point);
             if (err) {
