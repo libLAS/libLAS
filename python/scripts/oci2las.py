@@ -124,13 +124,12 @@ class Translator(object):
                 return False
 
             
-    def get_points(self, num_points, block_blob):
+    def get_points(self, num_points, blob):
         points = []
-        num, blk = num_points,block_blob
-        data = blk.read()
-        for i in xrange(num):
+
+        for i in xrange(num_points):
             rng = ptsize*i,ptsize*(i+1)
-            d = struct.unpack(format,data[ptsize*i:ptsize*(i+1)])
+            d = struct.unpack(format,blob[ptsize*i:ptsize*(i+1)])
             x, y, z, blk_id, pt_id = d
             p = point.Point()
             p.x = x; p.y = y; p.z = z
@@ -219,7 +218,8 @@ class Translator(object):
             blocks = self.cur.fetchall()
         
             for block in blocks:
-                points.append(self.get_points(*block))
+                num_points, blob = block[0], block[1].read()
+                points.append(self.get_points(num_points,blob))
         
         num_pts_index, blob_index = self.get_block_indexes(self.cur)
         
@@ -228,8 +228,8 @@ class Translator(object):
         if not clouds:
             for row in res:
                 num_points = row[num_pts_index]
-                block_blob = row[blob_index]
-                points.append(self.get_points(num_points, block_blob))
+                blob = row[blob_index].read()
+                points.append(self.get_points(num_points, blob))
         
 
         self.output = self.open_output()
