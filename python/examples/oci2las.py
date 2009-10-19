@@ -33,11 +33,18 @@ class Translator(object):
                           help="SQL to select the point cloud ", metavar="SQL")
         g.add_option("-l", "--column", dest='column',
                           help="Column name containing the point cloud object ", metavar="COLUMN")
-                    
+
+        g.add_option("-p", "--precision", dest='precision',
+                          help="Numeric precision (# of digits) to maintain for the output file ", metavar="PRECISION")
+                          
         g.add_option("-w", "--overwrite",
                           action="store_true", dest="overwrite", 
                           help="overwrite the existing file")
 
+        g.add_option("-m", "--min-offset",
+                          action="store_false", dest="offset", 
+                          help="Use the minimum values as base for offset")
+                          
         g.add_option("-q", "--quiet",
                           action="store_false", dest="verbose", default=False,
                           help="Don't say what we're doing on stdout")
@@ -50,7 +57,7 @@ class Translator(object):
                 g.add_option(o)
             parser.add_option_group(g)
             
-        parser.set_defaults(verbose=True, recursive=False)
+        parser.set_defaults(verbose=True, recursive=False, precision = 6, offset = False)
 
         self.parser = parser
         
@@ -89,6 +96,13 @@ class Translator(object):
         else:
             raise self.parser.error("No output was specified")
 
+        try:
+            self.options.precision = int(self.options.precision)
+            if not self.options.precision:
+                raise self.parser.error("Precision cannot be 0")
+        except:
+            raise self.parser.error("Precision was not an number")
+            
         self.min = point.Point()
         self.max = point.Point()
         self.count = 0
@@ -140,6 +154,8 @@ class Translator(object):
     def open_output(self):
         h = header.Header()
         
+        prec = 10**-(self.options.precision-1)
+        h.scale = [prec, prec, prec]
         output = lasfile.File(self.options.output,mode='w',header=h)
         return output
     
