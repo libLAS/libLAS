@@ -491,10 +491,14 @@ bool CreatePCEntry( OWConnection* connection,
     ostringstream columns;
     ostringstream values;
     
-    columns << cloudColumnName_u << "," << aux_columns_u;
+    if (!aux_columns_u.empty() ) {
+        columns << cloudColumnName_u << "," << aux_columns_u;
     
-    values << "pc," << aux_values_l;
-    
+        values << "pc," << aux_values_l;
+    } else {
+        columns << cloudColumnName_u;
+        values << "pc";
+    }
     
 oss << "declare\n"
 "  pc sdo_pc;\n"
