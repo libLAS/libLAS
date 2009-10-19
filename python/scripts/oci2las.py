@@ -129,7 +129,6 @@ class Translator(object):
 
         for i in xrange(num_points):
             rng = ptsize*i,ptsize*(i+1)
-            print num_points, len(blob)
             d = struct.unpack(format,blob[ptsize*i:ptsize*(i+1)])
             x, y, z, blk_id, pt_id = d
             p = point.Point()
@@ -220,8 +219,6 @@ class Translator(object):
             cur2.execute('SELECT NUM_POINTS, POINTS FROM %s'% cloud.BLK_TABLE)
         
             for num_points, blob in cur2:
-#                num_points, blob = block[0], block[1].read()
-#                print num_points, blob
                 b = blob.read()
                 points.append(self.get_points(num_points,b))
         
