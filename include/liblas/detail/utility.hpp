@@ -371,8 +371,6 @@ inline void check_stream_state(std::basic_ios<C, T>& srtm)
 template <typename T>
 inline void read_n(T& dest, std::istream& src, std::streamsize const& num)
 {
-    assert(src);
-
     // TODO: Review and redesign errors handling logic if necessary
     if (!src)
         throw std::runtime_error("detail::liblas::read_n input stream is not readable");
@@ -388,8 +386,6 @@ inline void read_n(T& dest, std::istream& src, std::streamsize const& num)
 template <>
 inline void read_n<PointRecord>(PointRecord& dest, std::istream& src, std::streamsize const& num)
 {
-    assert(src);
-
     // TODO: Review and redesign errors handling logic if necessary
     if (!src)
         throw std::runtime_error("detail::liblas::read_n input stream is not readable");
@@ -412,8 +408,6 @@ inline void read_n<PointRecord>(PointRecord& dest, std::istream& src, std::strea
 template <>
 inline void read_n<VLRHeader>(VLRHeader& dest, std::istream& src, std::streamsize const& num)
 {
-    assert(src);
-
     // TODO: Review and redesign errors handling logic if necessary
     if (!src)
         throw std::runtime_error("detail::liblas::read_n input stream is not readable");
@@ -430,7 +424,6 @@ inline void read_n<VLRHeader>(VLRHeader& dest, std::istream& src, std::streamsiz
 template <>
 inline void read_n<std::string>(std::string& dest, std::istream& src, std::streamsize const& num)
 {
-    assert(src);
     assert(dest.max_size() >= static_cast<std::string::size_type>(num));
 
     // TODO: Review and redesign errors handling logic if necessary
