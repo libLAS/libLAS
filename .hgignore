@@ -1,20 +1,29 @@
 syntax: glob
 .deps
 .libs
+*~
 *.dll
+*.embed.manifest
 *.exe
 *.exp
+*.idb
+*.ilk
+*.intermediate.manifest
 *.la
 *.lib
 *.lo
+*.ncb
 *.o
 *.obj
+*.pdb
 *.pyc
 *.res
+*.suo
 *.swp
 *.bz2
 *.gz
 *.orig
+*.user
 aclocal.m4
 apps/las2las
 apps/las2txt
@@ -51,3 +60,5 @@ CMakeFiles
 CMakeCache.txt
 cmake_install.cmake
 src/liblas.a
+Debug
+Release
