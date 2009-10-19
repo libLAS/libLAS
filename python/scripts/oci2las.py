@@ -42,7 +42,7 @@ class Translator(object):
                           help="overwrite the existing file")
 
         g.add_option("-m", "--min-offset",
-                          action="store_false", dest="offset", 
+                          action="store_true", dest="offset", default=False,
                           help="Use the minimum values as base for offset")
                           
         g.add_option("-q", "--quiet",
@@ -57,7 +57,7 @@ class Translator(object):
                 g.add_option(o)
             parser.add_option_group(g)
             
-        parser.set_defaults(verbose=True, recursive=False, precision = 6, offset = False)
+        parser.set_defaults(verbose=True, precision = 6)
 
         self.parser = parser
         
@@ -107,45 +107,56 @@ class Translator(object):
         self.max = point.Point()
         self.count = 0
         self.first_point = True
+        self.cloud_column = True
     def print_options(self):
         print self.options
         
     def connect(self):
         self.con = oci.Connection(self.options.connection)
 
-    def get_clouds(self):
-        self.cur = self.con.cursor()
-        self.cur.execute(self.options.sql)
-        clouds = []
-        res = self.cur.fetchall()
-        for row in res:
-            for column in row:
-                try:
-                    column.BASE_TABLE_COL
-                    clouds.append(column)
-                except AttributeError:
-                    # This column isn't a cloud
-                    pass
-        
-        return clouds
-        
-    def get_points(self, cloud):
+    def is_block_table(self, cursor_description):
+        output = True
+        names = [   'OBJ_ID','BLK_ID','BLK_EXTENT','BLK_DOMAIN',
+                    'PCBLK_MIN_RES','PCBLK_MAX_RES','NUM_POINTS',
+                    'NUM_UNSORTED_POINTS','PT_SORT_DIM','POINTS']
+        for name in cursor_description:
+            if name.upper() not in names:
+                return False
+
+            
+    def get_points(self, num_points, block_blob):
         points = []
+        num, blk = num_points,block_blob
+        data = blk.read()
+        for i in xrange(num):
+            rng = ptsize*i,ptsize*(i+1)
+            d = struct.unpack(format,data[ptsize*i:ptsize*(i+1)])
+            x, y, z, blk_id, pt_id = d
+            p = point.Point()
+            p.x = x; p.y = y; p.z = z
+
+            if self.first_point:
+                self.min.x = p.x
+                self.min.y = p.y
+                self.max.x = p.x
+                self.max.y = p.y
+                self.min.z = p.z
+                self.max.z = p.z
+                self.first_point = False
+
+            # cumulate min/max for the header
+            self.min.x = min(self.min.x, p.x)
+            self.max.x = max(self.max.x, p.x)
         
-        # fetch the point data from the block table
-        self.cur.execute('SELECT NUM_POINTS, POINTS FROM %s'% cloud.BLK_TABLE)
-        blocks = self.cur.fetchall()
+            self.min.y = min(self.min.y, p.y)
+            self.max.y = max(self.max.y, p.y)
         
-        for block in blocks:
-            num, blk = block
-            data = blk.read()
-            for i in xrange(num):
-                rng = ptsize*i,ptsize*(i+1)
-                d = struct.unpack(format,data[ptsize*i:ptsize*(i+1)])
-                x, y, z, blk_id, pt_id = d
-                p = point.Point()
-                p.x = x; p.y = y; p.z = z
-                points.append(p)
+            self.min.z = min(self.min.z, p.z)
+            self.max.z = max(self.max.z, p.z)
+        
+            self.count += 1
+            
+            points.append(p)
         return points
     
     def summarize_files(self):
@@ -156,31 +167,17 @@ class Translator(object):
         
         prec = 10**-(self.options.precision-1)
         h.scale = [prec, prec, prec]
+        
+        if self.options.offset:
+            h.offset = [self.min.x, self.min.y, self.min.z]
+            if self.options.verbose:
+                print 'using minimum offsets', h.offset
         output = lasfile.File(self.options.output,mode='w',header=h)
         return output
     
     def write_points(self, points):
         
         for p in points:
-            
-            if self.first_point:
-                self.min.x = p.x
-                self.min.y = p.y
-                self.max.x = p.x
-                self.max.y = p.y
-                self.first_point = False
-            # cumulate min/max for the header
-            self.min.x = min(self.min.x, p.x)
-            self.max.x = max(self.max.x, p.x)
-            
-            self.min.y = min(self.min.y, p.y)
-            self.max.y = max(self.max.y, p.y)
-            
-            self.min.z = min(self.min.z, p.z)
-            self.max.z = max(self.max.z, p.z)
-            
-            self.count += 1
-            
             self.output.write(p)
     
     def rewrite_header(self):
@@ -193,26 +190,68 @@ class Translator(object):
         rc[0] = self.count
         h.point_return_count = rc
         
-        import pdb;pdb.set_trace()
-                
         self.output = lasfile.File(self.options.output, mode='w+', header=h)
         self.output.close()
     def process(self):
         self.print_options()
         self.connect()
+
+        self.cur = self.con.cursor()
+        self.cur.execute(self.options.sql)
+        clouds = []
+
+        res = self.cur.fetchall()
+
+        for row in res:
+            for column in row:
+                try:
+                    column.BASE_TABLE_COL
+                    clouds.append(column)
+                except AttributeError:
+                    # This column isn't a cloud
+                    pass
+
+        points = []
         
-        self.output = self.open_output()
-        clouds = self.get_clouds()
-        
-        print clouds
+        # write an actual cloud column
         for cloud in clouds:
-            pts = self.get_points(cloud)
-            print len(pts)
+            self.cur.execute('SELECT NUM_POINTS, POINTS FROM %s'% cloud.BLK_TABLE)
+            blocks = self.cur.fetchall()
+        
+            for block in blocks:
+                points.append(self.get_points(*block))
+        
+        num_pts_index, blob_index = self.get_block_indexes(self.cur)
+        
+        # if we don't have a cloud object, we'll assume that NUM_POINTS and 
+        # the POINTS blob exist in our already queried cursor
+        if not clouds:
+            for row in res:
+                num_points = row[num_pts_index]
+                block_blob = row[blob_index]
+                points.append(self.get_points(num_points, block_blob))
+        
+
+        self.output = self.open_output()
+        for pts in points:
             self.write_points(pts)
         
         self.rewrite_header()
-        
 
+    def get_block_indexes(self, cursor):
+        
+        num_pts_index = None
+        blob_index = None
+        i = 0
+        for name in cursor.description:
+            name = name[0]
+            if name.upper() == 'POINTS':
+                blob_index = i
+            if name.upper() == 'NUM_POINTS':
+                num_pts_index = i
+            i+=1
+        return (num_pts_index, blob_index)
+        
 def main():
     import optparse
 

@@ -27,6 +27,8 @@ if os.name == 'nt':
 else:
     data_files = None
 
+scripts =['scripts/oci2las.py',]
+        
 setup(name          = 'libLAS',
       version       = version,
       description   = 'LAS 1.0/1.1/1.2 LiDAR data format translation',
@@ -51,5 +53,6 @@ setup(name          = 'libLAS',
         'Programming Language :: Python',
         'Topic :: Scientific/Engineering :: GIS',
         ],
+      scripts = scripts
 )
 

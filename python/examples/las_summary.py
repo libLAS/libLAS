@@ -2,10 +2,51 @@
 
 from liblas import file as lasfile
 from liblas import header
+from liblas import point
 
 import glob
 
 import os, sys
+
+class PointSummary(object):
+    def __init__(self):
+        self.number_of_point_records = (0,) * 8
+        self.number_of_returns_of_given_pulse = (0,) * 8
+        self.classifications = (0,) * 32
+        self.classification_synthetic = 0
+        self.classification_keypoint = 0
+        self.classification_withheld = 0
+        
+        self.min = point.Point()
+        self.max = point.Point()
+    
+    
+class LAS(object):
+    def __init__(self, filename):
+        self.las = lasfile.File(filename,mode='r')
+        
+        self.s = PointSummary()
+        
+        self.summarize_points()
+        
+    def summarize_points(self):
+        import pdb;pdb.set_trace()
+        i = 0
+        for p in self.las:
+            i = i + 1
+            self.s.min.x = min(self.s.min.x, p.x)
+            self.s.max.x = max(self.s.max.x, p.x)
+            
+            self.s.min.y = min(self.s.min.y, p.y)
+            self.s.max.y = max(self.s.max.y, p.y)
+            
+            self.s.min.z = min(self.s.min.z, p.z)
+            self.s.max.z = max(self.s.max.z, p.z)
+            
+            self.s.min.time = min(self.s.min.time, p.time)
+            self.s.max.time = max(self.s.max.time, p.time)
+                    
+        import pdb;pdb.set_trace()
 
 class Summary(object):
 
@@ -56,7 +97,6 @@ class Summary(object):
                 self.options.output = self.args[1]
             except IndexError:
                 self.options.output = 'output.txt'
-        print self.options, self.args
             
     
     def list_files(self):
@@ -84,20 +124,24 @@ class Summary(object):
             
             self.files = []
             for d in directories:
-                print d
                 files = get_files(d)
-                print files
                 if files:
                     self.files.extend(files)
 
         else:
-            get_files(self.options.input)
-        
-        print self.files
+            self.files = get_files(self.options.input)
+    
+    def summarize_files(self):
+        files = []
+        for f in self.files:
+            import pdb;pdb.set_trace()
+            files.append(LAS(f))
             
     def process(self):
         self.list_files()
+        self.summarize_files()
         return None
+        
 
 def main():
     import optparse
