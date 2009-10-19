@@ -73,40 +73,40 @@ VLRStorageManager::VLRStorageManager(Tools::PropertySet& ps)
 
 VLRStorageManager::~VLRStorageManager()
 {
-
-    // uint32_t vlrsize=0;
-    for (std::vector<LASVariableRecord*>::iterator vit = m_vlrbuffer.begin(); vit != m_vlrbuffer.end(); vit++) {
-        // vlrsize = vlrsize+(*vit)->GetRecordLength();
+    for (vlrbuffer_t::iterator vit = m_vlrbuffer.begin(); vit != m_vlrbuffer.end(); ++vit)
+    {
         delete *vit;
     }
-
 }
 
-void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, ::uint32_t& len, uint8_t** data)
+void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, std::size_t& len, uint8_t** data)
 {
-    LASVariableRecord* v;
+    LASVariableRecord* v = 0;
     try
     {
-        v = m_vlrbuffer.at(id);
+        v = m_vlrbuffer.at(static_cast<vlrbuffer_t::size_type>(id));
         if (v == 0) throw SpatialIndex::InvalidPageException(id);
     }
     catch (std::out_of_range)
     {
         throw SpatialIndex::InvalidPageException(id);
     }
+    assert(0 != v);
 
-    len = v->GetRecordLength();
+    len = static_cast<std::size_t>(v->GetRecordLength());
     *data = new uint8_t[len];
 
-    memcpy(*data, (uint8_t*)&(v->GetData()[0]), len);
+    std::vector<uint8_t> const& vlrdata = v->GetData();
+    std::memcpy(*data, &vlrdata[0], len);
 }
 
-void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const ::uint32_t len, const uint8_t* const data)
+void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const std::size_t len, const uint8_t* const data)
 {
     
     if (id == SpatialIndex::StorageManager::NewPage)
     {
-        LASVariableRecord* v = makeVLR(len,data);
+        LASVariableRecord* v = makeVLR(len, data);
+        assert(0 != v);
 
         if (m_emptyPages.empty())
         {
@@ -115,58 +115,67 @@ void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const ::uint32
         }
         else
         {
-            id = m_emptyPages.top(); m_emptyPages.pop();
-            m_vlrbuffer[id] = v;
+            id = m_emptyPages.top();
+            m_emptyPages.pop();
+            m_vlrbuffer[static_cast<vlrbuffer_t::size_type>(id)] = v;
         }
     }
     else
     {
-        LASVariableRecord* v_old;
+        LASVariableRecord* v_old = 0;
         try
         {
-            v_old = m_vlrbuffer.at(id);
-            if (v_old == 0) throw SpatialIndex::InvalidPageException(id);
+            v_old = m_vlrbuffer.at(static_cast<vlrbuffer_t::size_type>(id));
+            if (v_old == 0)
+                throw SpatialIndex::InvalidPageException(id);
         }
         catch (std::out_of_range)
         {
             throw SpatialIndex::InvalidPageException(id);
         }
 
-        LASVariableRecord* v = makeVLR(len,data);
+        LASVariableRecord* v = makeVLR(len, data);
+        assert(0 != v);
         
         delete v_old;
-        m_vlrbuffer[id] = v;
+        m_vlrbuffer[static_cast<vlrbuffer_t::size_type>(id)] = v;
     }
 }
 
 void VLRStorageManager::deleteByteArray(const SpatialIndex::id_type id)
 {
-    LASVariableRecord* v;
+    LASVariableRecord* v = 0;
     try
     {
-        v = m_vlrbuffer.at(id);
-        if (v == 0) throw SpatialIndex::InvalidPageException(id);
+        v = m_vlrbuffer.at(static_cast<vlrbuffer_t::size_type>(id));
+        if (v == 0)
+            throw SpatialIndex::InvalidPageException(id);
     }
     catch (std::out_of_range)
     {
         throw SpatialIndex::InvalidPageException(id);
     }
 
-    m_vlrbuffer[id] = 0;
+    m_vlrbuffer[static_cast<vlrbuffer_t::size_type>(id)] = 0;
     m_emptyPages.push(id);
 
     delete v;
 }
 
 
-LASVariableRecord* VLRStorageManager::makeVLR(const size_t len, const uint8_t* data)
+LASVariableRecord* VLRStorageManager::makeVLR(const std::size_t len, const uint8_t* data)
 {
     LASVariableRecord* v = new LASVariableRecord();
-    v->SetRecordLength(len);
+    v->SetRecordLength(static_cast<uint16_t>(len));
     v->SetUserId("liblas.org");
     v->SetRecordId(2112);
-    std::vector<uint8_t> d;
-    for (size_t i=0;i<len;i++){d.push_back(data[i]);}
+    
+    typedef std::vector<uint8_t> data_t;
+    data_t d;
+    for (data_t::size_type i = 0; i < len; ++i)
+    {
+        d.push_back(data[i]);
+    }
     v->SetData(d);
     return v;
 }
