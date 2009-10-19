@@ -79,7 +79,7 @@ VLRStorageManager::~VLRStorageManager()
     }
 }
 
-void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, std::size_t& len, uint8_t** data)
+void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, uint32_t& len, uint8_t** data)
 {
     LASVariableRecord* v = 0;
     try
@@ -100,7 +100,7 @@ void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, std::size_
     std::memcpy(*data, &vlrdata[0], len);
 }
 
-void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const std::size_t len, const uint8_t* const data)
+void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const uint32_t len, const uint8_t* const data)
 {
     if (id == SpatialIndex::StorageManager::NewPage)
     {
