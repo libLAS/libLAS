@@ -44,22 +44,23 @@
 
 #include <cstddef>
 #include <iostream>
+#include <list>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <stdexcept>
 
-
 namespace liblas
 {
 
-    LASQuery::LASQuery() :m_count(0),m_first(true){}
+LASQuery::LASQuery() : m_count(0), m_first(true) {}
 
-void LASQuery::getNextEntry(const SpatialIndex::IEntry& entry, SpatialIndex::id_type& nextEntry, bool& hasNext) {
+void LASQuery::getNextEntry(const SpatialIndex::IEntry& entry, SpatialIndex::id_type& nextEntry, bool& hasNext)
+{
     // the first time we are called, entry points to the root.
-    
-    if (m_first) {
-        SpatialIndex::IShape* ps;
+    if (m_first)
+    {
+        SpatialIndex::IShape* ps = 0; // FIXME: No RAII, use smart pointer
         entry.getShape(&ps);
         ps->getMBR(bounds);
         delete ps;
@@ -69,39 +70,34 @@ void LASQuery::getNextEntry(const SpatialIndex::IEntry& entry, SpatialIndex::id_
         m_first = false;
     }
     const SpatialIndex::INode* n = dynamic_cast<const SpatialIndex::INode*>(&entry);
-    
-    // if (n !=0 ) {
-    //     for (size_t i = 0; i < n->getChildrenCount(); i++) 
-    //     {
-    //         m_ids.push(n->getChildIdentifier(i));
-    //     }
-    // }
+    assert(0 != n);
 
-		// traverse only index nodes at levels 2 and higher.
-		if (n != 0 && n->getLevel() > 0)
-		{
-            m_count +=n->getChildrenCount();
-			for (size_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
-			{
-				m_ids.push(n->getChildIdentifier(cChild));
-			}
-		}
-		
-		if (n->isLeaf()) {
+    // traverse only index nodes at levels 2 and higher.
+    if (n != 0 && n->getLevel() > 0)
+    {
+        m_count +=n->getChildrenCount();
+        for (std::size_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
+        {
+            m_ids.push(n->getChildIdentifier(cChild));
+        }
+    }
 
-            SpatialIndex::IShape* ps;
-		    entry.getShape(&ps);
-		    SpatialIndex::Region* pr = dynamic_cast<SpatialIndex::Region*>(ps);
-            std::list<SpatialIndex::id_type> ids;
-			for (size_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
-			{
-				ids.push_back(n->getChildIdentifier(cChild));
-			}
-            LASQueryResult result(n->getIdentifier());
-            result.SetIDs(ids);
-            result.SetBounds(pr);
-            m_results.push_back(result);
-		}
+    if (n->isLeaf())
+    {
+        SpatialIndex::IShape* ps = 0; // FIXME: Use RAII
+        entry.getShape(&ps);
+        SpatialIndex::Region* pr = dynamic_cast<SpatialIndex::Region*>(ps);
+        assert(0 != pr);
+        std::list<SpatialIndex::id_type> ids;
+        for (std::size_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
+        {
+            ids.push_back(n->getChildIdentifier(cChild));
+        }
+        LASQueryResult result(static_cast<uint32_t>(n->getIdentifier()));
+        result.SetIDs(ids);
+        result.SetBounds(pr);
+        m_results.push_back(result);
+    }
 		    
     if (! m_ids.empty())
     {
@@ -140,6 +136,7 @@ const SpatialIndex::Region*  LASQueryResult::GetBounds() const
 
 void LASQueryResult::SetBounds(const SpatialIndex::Region*  b) 
 {
+    assert(0 != b);
     bounds = new SpatialIndex::Region(*b);
 }
 
@@ -163,6 +160,5 @@ LASQueryResult& LASQueryResult::operator=(LASQueryResult const& rhs)
     }
     return *this;
 }
-
 
 } // namespace liblas

@@ -54,7 +54,6 @@
 namespace liblas
 {
 
-
 SpatialIndex::IStorageManager* returnVLRStorageManager(Tools::PropertySet& ps)
 {
     SpatialIndex::IStorageManager* sm = new VLRStorageManager(ps);
@@ -69,6 +68,7 @@ SpatialIndex::IStorageManager* createNewVLRStorageManager()
 
 VLRStorageManager::VLRStorageManager(Tools::PropertySet& ps)
 {
+    detail::ignore_unused_variable_warning(ps);
 }
 
 VLRStorageManager::~VLRStorageManager()
@@ -102,7 +102,6 @@ void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, std::size_
 
 void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const std::size_t len, const uint8_t* const data)
 {
-    
     if (id == SpatialIndex::StorageManager::NewPage)
     {
         LASVariableRecord* v = makeVLR(len, data);
@@ -136,7 +135,7 @@ void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const std::siz
 
         LASVariableRecord* v = makeVLR(len, data);
         assert(0 != v);
-        
+
         delete v_old;
         m_vlrbuffer[static_cast<vlrbuffer_t::size_type>(id)] = v;
     }
@@ -169,7 +168,7 @@ LASVariableRecord* VLRStorageManager::makeVLR(const std::size_t len, const uint8
     v->SetRecordLength(static_cast<uint16_t>(len));
     v->SetUserId("liblas.org");
     v->SetRecordId(2112);
-    
+
     typedef std::vector<uint8_t> data_t;
     data_t d;
     for (data_t::size_type i = 0; i < len; ++i)

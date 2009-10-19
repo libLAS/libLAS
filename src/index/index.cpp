@@ -99,6 +99,7 @@ LASIndex::LASIndex(std::string& filename)
 
 LASIndex::LASIndex(LASIndex const& other) 
 {
+    detail::ignore_unused_variable_warning(other);
     std::cout << "Index copy called" << std::endl;
 }
 

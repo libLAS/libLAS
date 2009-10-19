@@ -50,6 +50,7 @@
 #endif
 
 //std
+#include <list>
 #include <string>
 #include <vector>
 #include <stack>
@@ -60,14 +61,9 @@ namespace liblas {
 
 class LASQueryResult 
 {
-private:
-    std::list<SpatialIndex::id_type> ids;
-    SpatialIndex::Region* bounds;
-    uint32_t m_id;
-    LASQueryResult();
 public:
-    LASQueryResult(uint32_t id) : bounds(0), m_id(id){};
-    ~LASQueryResult() {if (bounds!=0) delete bounds;};
+    LASQueryResult(uint32_t id) : bounds(0), m_id(id) {}
+    ~LASQueryResult() { delete bounds; } // FIXME: wrap bounds with smart pointer
 
     /// Copy constructor.
     LASQueryResult(LASQueryResult const& other);
@@ -76,34 +72,40 @@ public:
     LASQueryResult& operator=(LASQueryResult const& rhs);
         
     std::list<SpatialIndex::id_type> const& GetIDs() const;
-    void SetIDs(std::list<SpatialIndex::id_type>& v);
+    void SetIDs(std::list<SpatialIndex::id_type>& v); // FIXME: Why not const-reference?
     const SpatialIndex::Region* GetBounds() const;
-    void SetBounds(const SpatialIndex::Region*  b);
+    void SetBounds(const SpatialIndex::Region* b);
     uint32_t GetID() const {return m_id;}
     void SetID(uint32_t v) {m_id = v;}
+
+private:
+    std::list<SpatialIndex::id_type> ids;
+    SpatialIndex::Region* bounds;
+    uint32_t m_id;
+    LASQueryResult();
 };
 
 class LASQuery : public SpatialIndex::IQueryStrategy
 {
+public:
+
+    LASQuery();
+    ~LASQuery()
+    {
+        std::cout << "child count was" << m_count << std::endl;
+        std::cout << "results count was" << m_results.size() << std::endl;
+    }
+    void getNextEntry(const SpatialIndex::IEntry& entry, SpatialIndex::id_type& nextEntry, bool& hasNext);
+    
+    std::list<LASQueryResult>& GetResults() {return m_results;}
+    SpatialIndex::Region bounds;
+
 private:
     std::queue<SpatialIndex::id_type> m_ids;
     uint32_t m_count;
     std::list<LASQueryResult> m_results;
     bool m_first;
-    
-public:
-
-    LASQuery();
-    ~LASQuery() {
-        std::cout << "child count was" << m_count << std::endl;
-        std::cout << "results count was" << m_results.size() << std::endl;};
-    void getNextEntry(const SpatialIndex::IEntry& entry, SpatialIndex::id_type& nextEntry, bool& hasNext);
-    
-    std::list<LASQueryResult>& GetResults() {return m_results;}
-    SpatialIndex::Region bounds;
 };
-
-
 
 }
 
