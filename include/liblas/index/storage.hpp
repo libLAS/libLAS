@@ -70,8 +70,8 @@ public:
 
     virtual ~VLRStorageManager();
 
-    virtual void loadByteArray(const SpatialIndex::id_type id, uint32_t& len, uint8_t** data);
-    virtual void storeByteArray(SpatialIndex::id_type& id, const uint32_t len, const uint8_t* const data);
+    virtual void loadByteArray(const SpatialIndex::id_type id, ::uint32_t& len, ::uint8_t** data);
+    virtual void storeByteArray(SpatialIndex::id_type& id, const ::uint32_t len, const ::uint8_t* const data);
     virtual void deleteByteArray(const SpatialIndex::id_type id);
     
     LASVariableRecord* getVLR() const;
@@ -100,7 +100,7 @@ private:
     vlrbuffer_t m_vlrbuffer;
     std::stack<SpatialIndex::id_type> m_emptyPages;
 
-    LASVariableRecord* makeVLR(const std::size_t len, const uint8_t* data);
+    LASVariableRecord* makeVLR(const std::size_t len, const ::uint8_t* data);
 
 }; // MemoryStorageManager
 
