@@ -158,8 +158,18 @@ IF(WITH_GDAL)
     FIND_PACKAGE(GDAL 1.6.0)
 
     IF(GDAL_FOUND)
-        INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR})
-	    ADD_DEFINITIONS(-DHAVE_GDAL=1)
+        # Confirm required API is available
+        INCLUDE(CheckFunctionExists) 
+        SET(CMAKE_REQUIRED_LIBRARIES ${GDAL_LIBRARY})
+        CHECK_FUNCTION_EXISTS(OSRSetEquirectangular2 HAVE_OSRSETEQUIRECTANGULAR2)
+    
+        IF(NOT HAVE_OSRSETEQUIRECTANGULAR2)
+            GDALSET(_FOUND) # Reset to NOT found for GDAL/OGR
+            MESSAGE(FATAL_ERROR "GDAL support requires GDAL 1.6.0 or newer.")
+        ELSE()
+            INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR})
+            ADD_DEFINITIONS(-DHAVE_GDAL=1)
+        ENDIF()
     ENDIF()
 ENDIF()
 
