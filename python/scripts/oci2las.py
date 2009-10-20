@@ -3,6 +3,7 @@
 from liblas import file as lasfile
 from liblas import header
 from liblas import point
+from liblas import srs
 
 import glob
 import struct
@@ -36,6 +37,9 @@ class Translator(object):
 
         g.add_option("-p", "--precision", dest='precision',
                           help="Numeric precision (# of digits) to maintain for the output file ", metavar="PRECISION")
+
+        g.add_option("-r", "--srs", dest='srs',
+                          help="Coordinate system override", metavar="SRS")
                           
         g.add_option("-w", "--overwrite",
                           action="store_true", dest="overwrite", 
@@ -108,6 +112,13 @@ class Translator(object):
         self.count = 0
         self.first_point = True
         self.cloud_column = True
+        
+        if self.options.srs:
+            self.srs = srs.SRS()
+            self.srs.set_userinput(self.options.srs)
+        else:
+            self.srs = None
+            
     def print_options(self):
         print self.options
         
@@ -171,6 +182,10 @@ class Translator(object):
             h.offset = [self.min.x, self.min.y, self.min.z]
             if self.options.verbose:
                 print 'using minimum offsets', h.offset
+        
+        if self.srs:
+            h.srs = self.srs
+            
         output = lasfile.File(self.options.output,mode='w',header=h)
         return output
     
@@ -180,6 +195,8 @@ class Translator(object):
             self.output.write(p)
     
     def rewrite_header(self):
+        self.output.close()
+        self.output = lasfile.File(self.options.output)
         h = self.output.header
         self.output.close()
         h.min = [self.min.x, self.min.y, self.min.z]
@@ -191,6 +208,21 @@ class Translator(object):
         
         self.output = lasfile.File(self.options.output, mode='w+', header=h)
         self.output.close()
+    
+    def get_srid(self, srid):
+        cur = self.con.cursor()
+        cur.execute('SELECT WKTEXT,WKTEXT3D from MDSYS.CS_SRS where srid=%d'%(int(srid)))
+        res = cur.fetchall()
+        for wkt in res:
+            text = wkt[0]
+            text3d = wkt[1]
+            s = srs.SRS()
+            if text3d:
+                s.wkt = text3d
+            else:
+                s.wkt = text
+            return s
+        
     def process(self):
         self.print_options()
         self.connect()
@@ -216,9 +248,14 @@ class Translator(object):
         for cloud in clouds:
             cur2 = self.con.cursor()
 
-            cur2.execute('SELECT NUM_POINTS, POINTS FROM %s'% cloud.BLK_TABLE)
-        
-            for num_points, blob in cur2:
+            cur2.execute('SELECT NUM_POINTS, POINTS, BLK_EXTENT FROM %s'% cloud.BLK_TABLE)
+            
+            
+            for num_points, blob, extent in cur2:
+                # set the SRS from the first geometry
+                if not self.srs:
+                    self.srs = self.get_srid(extent.SDO_SRID)
+                    
                 b = blob.read()
                 points.append(self.get_points(num_points,b))
         
@@ -231,7 +268,21 @@ class Translator(object):
                 num_points = row[num_pts_index]
                 blob = row[blob_index].read()
                 points.append(self.get_points(num_points, blob))
-        
+                # try to set the SRS
+                if not self.srs:
+                    for col in row:
+                        try:
+                            col.SDO_SRID
+                            self.srs = self.get_srid(col.SDO_SRID)
+                            import pdb;pdb.set_trace()
+                            break
+                        except AttributeError:
+                            continue
+                    
+                    # if we still haven't been able to set an SRS, don't try 
+                    # to anymore
+                    if not self.srs:
+                        self.srs = srs.SRS()
 
         self.output = self.open_output()
         for pts in points:
@@ -252,7 +303,7 @@ class Translator(object):
                 num_pts_index = i
             i+=1
         return (num_pts_index, blob_index)
-        
+
 def main():
     import optparse
 
