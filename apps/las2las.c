@@ -19,6 +19,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
+#else
+#define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
+#endif
 
 LASPointSummary* SummarizePoints(LASReaderH reader);
 void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header);
@@ -354,7 +359,7 @@ int main(int argc, char *argv[])
                 )
         {
             i++;
-            if (!strncasecmp(argv[i], "min", 3)) {
+            if (!compare_no_case(argv[i], "min", 3)) {
                 use_min_offset = TRUE;
                 do_set_offset = TRUE;
             } else

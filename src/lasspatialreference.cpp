@@ -197,8 +197,7 @@ void LASSpatialReference::ResetVLRs()
         std::vector<uint8_t> data;
 
         // Shorts are 2 bytes in length
-        uint16_t length = 2*kcount;
-
+        uint16_t length = 2 * static_cast<uint16_t>(kcount);
         record.SetRecordLength(length);
         
         // Copy the data into the data vector
@@ -227,7 +226,7 @@ void LASSpatialReference::ResetVLRs()
         std::vector<uint8_t> data;
 
         // Doubles are 8 bytes in length
-        uint16_t length = 8*dcount;
+        uint16_t length = 8 * static_cast<uint16_t>(dcount);
         record.SetRecordLength(length);
         
         // Copy the data into the data vector
@@ -272,18 +271,15 @@ void LASSpatialReference::ResetVLRs()
                                       "than r1531 (libgeotiff 1.2.6)");
          }
 
-         uint16_t length = acount;
+         uint16_t length = static_cast<uint16_t>(acount);
          record.SetRecordLength(length);
          
          // Copy the data into the data vector
          for (i=0; i<acount;i++)
          {
              avalue = adata[i];
-             
              uint8_t* v =  reinterpret_cast<uint8_t*>(&avalue);
-             
              data.push_back(v[0]);
-             
          }
          record.SetData(data);
          m_vlrs.push_back(record);

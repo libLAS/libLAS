@@ -54,8 +54,10 @@
 namespace liblas
 {
 
-
-LASVisitor::LASVisitor(std::vector<uint32_t>* vect){m_vector = vect;}
+LASVisitor::LASVisitor(std::vector<uint32_t>* vect) : m_vector(vect)
+{
+    assert(0 != vect);
+}
 
 void LASVisitor::visitNode(const SpatialIndex::INode& n)
 {
@@ -66,9 +68,12 @@ void LASVisitor::visitNode(const SpatialIndex::INode& n)
 
 void LASVisitor::visitData(const SpatialIndex::IData& d)
 {
-    SpatialIndex::IShape* pS;
+    SpatialIndex::IShape* pS = 0;
     d.getShape(&pS);
+    assert(0 != pS);
+
     SpatialIndex::Region *r = new SpatialIndex::Region();
+    assert(0 != r);
     pS->getMBR(*r);
     std::cout <<"found shape: " << *r << " dimension: " <<pS->getDimension() << std::endl;
         // do something.
@@ -76,7 +81,7 @@ void LASVisitor::visitData(const SpatialIndex::IData& d)
     delete r;
 
     // data should be an array of characters representing a Region as a string.
-    uint8_t* pData = 0;
+    ::uint8_t* pData = 0;
     ::uint32_t cLen = 0;
     d.getData(cLen, &pData);
     // do something.
@@ -84,9 +89,8 @@ void LASVisitor::visitData(const SpatialIndex::IData& d)
     //cout << s << endl;
     delete[] pData;
 
-     // std::cout << "found: " <<d.getIdentifier() << std::endl;
-    m_vector->push_back(d.getIdentifier());
-        // the ID of this data entry is an answer to the query. I will just print it to stdout.
+    m_vector->push_back(static_cast<uint32_t>(d.getIdentifier()));
+    // the ID of this data entry is an answer to the query. I will just print it to stdout.
 }
 
 void LASVisitor::visitData(std::vector<const SpatialIndex::IData*>& v)

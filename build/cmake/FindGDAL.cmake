@@ -14,10 +14,20 @@
 #
 ###############################################################################
 MESSAGE(STATUS "Searching for GDAL ${GDAL_FIND_VERSION}+ library")
+MESSAGE(STATUS "   NOTE: Required version is not checked - to be implemented")
 
 SET(GDAL_NAMES gdal)
 
 IF(WIN32)
+
+    SET(OSGEO4W_IMPORT_LIBRARY gdal_i)
+    IF(DEFINED ENV{OSGEO4W_ROOT})
+        SET(OSGEO4W_ROOT_DIR $ENV{OSGEO4W_ROOT})
+        MESSAGE(STATUS "Trying OSGeo4W using environment variable OSGEO4W_ROOT=$ENV{OSGEO4W_ROOT}")
+    ELSE()
+        SET(OSGEO4W_ROOT_DIR c:/OSGeo4W)
+        MESSAGE(STATUS "Trying OSGeo4W using default location OSGEO4W_ROOT=${OSGEO4W_ROOT_DIR}")
+    ENDIF()
 
     IF(MINGW)
         FIND_PATH(GDAL_INCLUDE_DIR
@@ -26,7 +36,8 @@ IF(WIN32)
             PATHS
             /usr/local/include
             /usr/include
-            c:/msys/local/include)
+            c:/msys/local/include
+            ${OSGEO4W_ROOT_DIR}/include)
 
         FIND_LIBRARY(GDAL_LIBRARY
             NAMES ${GDAL_NAMES}
@@ -34,21 +45,28 @@ IF(WIN32)
             PATHS
             /usr/local/lib
             /usr/lib
-            c:/msys/local/lib)
+            c:/msys/local/lib
+            ${OSGEO4W_ROOT_DIR}/lib)
     ENDIF(MINGW)
 
     IF(MSVC)
-        SET(GDAL_INCLUDE_DIR "$ENV{LIB_DIR}/include/gdal" CACHE STRING INTERNAL)
 
+        FIND_PATH(GDAL_INCLUDE_DIR
+            NAMES gdal.h 
+            PATH_PREFIXES gdal gdal-1.6
+            PATHS
+            "$ENV{LIB_DIR}/include/gdal"
+            ${OSGEO4W_ROOT_DIR}/include)
 
-        SET(GDAL_NAMES ${GDAL_NAMES} gdal_I)
+        SET(GDAL_NAMES ${OSGEO4W_IMPORT_LIBRARY} ${GDAL_NAMES})
         FIND_LIBRARY(GDAL_LIBRARY
             NAMES ${GDAL_NAMES}
             PATH_PREFIXES gdal gdal-1.6
             PATHS
             "$ENV{LIB_DIR}/lib"
             /usr/lib
-            c:/msys/local/lib)
+            c:/msys/local/lib
+            ${OSGEO4W_ROOT_DIR}/lib)
         
         IF(GDAL_LIBRARY)
             SET(GDAL_LIBRARY;odbc32;odbccp32 CACHE STRING INTERNAL)

@@ -286,13 +286,20 @@ bool Reader::HasPointDataSignature()
     
     // If our little test reads off the end, we'll try to put the 
     // borken dishes back up in the cabinet
-    try {
+    try
+    {
         detail::read_n(pad1, m_ifs, sizeof(uint8_t));
         detail::read_n(pad2, m_ifs, sizeof(uint8_t));
-    } catch (std::out_of_range& e) {
+    }
+    catch (std::out_of_range& e) 
+    {
+        ignore_unused_variable_warning(e);
         m_ifs.seekg(current_pos, std::ios::beg);
         return false;
-    } catch (std::runtime_error& e) {
+    }
+    catch (std::runtime_error& e)
+    {
+        ignore_unused_variable_warning(e);
         m_ifs.seekg(current_pos, std::ios::beg);
         return false;        
     }

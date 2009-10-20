@@ -1,15 +1,17 @@
 ###############################################################################
+#
 # CMake module to search for GeoTIFF library
 #
 # On success, the macro sets the following variables:
 # GEOTIFF_FOUND       = if the library found
-# GEOTIFF_LIBRARY     = full path to the library
+# GEOTIFF_LIBRARIES   = full path to the library
 # GEOTIFF_INCLUDE_DIR = where to find the library headers 
-#
-# On Unix, macro sets also:
-# GEOTIFF_VERSION_STRING = human-readable string containing version of the library
+# also defined, but not for general use are
+# GEOTIFF_LIBRARY, where to find the PROJ.4 library.
 #
 # Copyright (c) 2009 Mateusz Loskot <mateusz@loskot.net>
+#
+# Module source: http://github.com/mloskot/workshop/tree/master/cmake/
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
@@ -18,54 +20,40 @@
 MESSAGE(STATUS "Searching for GeoTIFF ${GeoTIFF_FIND_VERSION}+ library")
 MESSAGE(STATUS "   NOTE: Required version is not checked - to be implemented")
 
-SET(GEOTIFF_NAMES geotiff)
-
-IF(WIN32)
-
-    IF(MINGW)
-        FIND_PATH(GEOTIFF_INCLUDE_DIR
-            geotiff.h
-            PATH_PREFIXES geotiff
-            PATHS
-            /usr/local/include
-            /usr/include
-            c:/msys/local/include)
-
-        FIND_LIBRARY(GEOTIFF_LIBRARY
-            NAMES ${GEOTIFF_NAMES}
-            PATHS
-            /usr/local/lib
-            /usr/lib
-            c:/msys/local/lib)
-    ENDIF(MINGW)
-
-    IF(MSVC)
-        SET(GEOTIFF_INCLUDE_DIR "$ENV{LIB_DIR}/include" CACHE STRING INTERNAL)
-
-        SET(GEOTIFF_NAMES ${GEOTIFF_NAMES} geotiff_i)
-        FIND_LIBRARY(GEOTIFF_LIBRARY NAMES 
-            NAMES ${GEOTIFF_NAMES}
-            PATHS
-            "$ENV{LIB_DIR}/lib"
-            /usr/lib
-            c:/msys/local/lib)
-    ENDIF(MSVC)
-  
-ELSEIF(UNIX)
-
-    FIND_PATH(GEOTIFF_INCLUDE_DIR geotiff.h PATH_PREFIXES geotiff)
-
-    FIND_LIBRARY(GEOTIFF_LIBRARY NAMES ${GEOTIFF_NAMES})
-
-ELSE()
-    MESSAGE("FindGeoTIFF.cmake: unrecognized or unsupported operating system (use Unix or Windows)")
+IF(GEOTIFF_INCLUDE_DIR)
+    # Already in cache, be silent
+    SET(GEOTIFF_FIND_QUIETLY TRUE)
 ENDIF()
 
-# Handle the QUIETLY and REQUIRED arguments and set SPATIALINDEX_FOUND to TRUE
+IF(WIN32)
+    SET(OSGEO4W_IMPORT_LIBRARY geotiff_i)
+    IF(DEFINED ENV{OSGEO4W_ROOT})
+        SET(OSGEO4W_ROOT_DIR $ENV{OSGEO4W_ROOT})
+        MESSAGE(STATUS "Trying OSGeo4W using environment variable OSGEO4W_ROOT=$ENV{OSGEO4W_ROOT}")
+    ELSE()
+        SET(OSGEO4W_ROOT_DIR c:/OSGeo4W)
+        MESSAGE(STATUS "Trying OSGeo4W using default location OSGEO4W_ROOT=${OSGEO4W_ROOT_DIR}")
+    ENDIF()
+ENDIF()
+     
+FIND_PATH(GEOTIFF_INCLUDE_DIR
+    geotiff.h
+    PATH_PREFIXES geotiff
+    PATHS
+    ${OSGEO4W_ROOT_DIR}/include)
+
+SET(GEOTIFF_NAMES ${OSGEO4W_IMPORT_LIBRARY} geotiff)
+
+FIND_LIBRARY(GEOTIFF_LIBRARY
+    NAMES ${GEOTIFF_NAMES}
+    PATHS
+    ${OSGEO4W_ROOT_DIR}/lib)
+
+IF(GEOTIFF_FOUND)
+  SET(GEOTIFF_LIBRARIES ${GEOTIFF_LIBRARY})
+ENDIF()
+
+# Handle the QUIETLY and REQUIRED arguments and set GEOTIFF_FOUND to TRUE
 # if all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(GEOTIFF DEFAULT_MSG GEOTIFF_LIBRARY GEOTIFF_INCLUDE_DIR)
-
-# TODO: Do we want to mark these as advanced? --mloskot
-# http://www.cmake.org/cmake/help/cmake2.6docs.html#command:mark_as_advanced
-#MARK_AS_ADVANCED(GEOTIFF_LIBRARY GEOTIFF_INCLUDE_DIR)
