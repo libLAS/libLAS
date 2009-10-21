@@ -317,7 +317,7 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
                                             b->getHigh(0) <<","<<
                                             b->getHigh(1) <<","<<
                                             b->getHigh(2)<<"))";
-    oss << "INSERT INTO "<< tableName << "(OBJ_ID, NUM_POINTS, BLK_EXTENT, POINTS) VALUES ( " 
+    oss << "INSERT INTO "<< tableName << "(BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS) VALUES ( " 
                          << result.GetID() <<"," << num_points << ", " << oss_geom.str() <<", EMPTY_BLOB())";
 
     OWStatement* statement = 0;
@@ -331,7 +331,8 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
     delete statement; statement = 0;
     oss.str("");
     
-    oss << "SELECT POINTS FROM " << tableName << " WHERE OBJ_ID=" << result.GetID() << " FOR UPDATE";
+    // FIXME (BLK_ID *and* OBJ_ID must be used as part of the query.)
+    oss << "SELECT POINTS FROM " << tableName << " WHERE BLK_ID=" << result.GetID() << " FOR UPDATE";
     
     // we only expect one blob to come back
     OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
