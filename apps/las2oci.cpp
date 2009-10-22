@@ -291,7 +291,8 @@ bool InsertBlock(OWConnection* connection,
                 int srid, 
                 LASReader* reader, 
                 const char* tableName, 
-                long precision)
+                long precision,
+                long pc_id)
 {
     ostringstream oss;
 
@@ -331,8 +332,8 @@ bool InsertBlock(OWConnection* connection,
         oss_geom                            <<","<< b->getHigh(2);
 
     oss_geom << "))";
-    oss << "INSERT INTO "<< tableName << "(BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS) VALUES ( " 
-                         << result.GetID() <<"," << num_points << ", " << oss_geom.str() <<", EMPTY_BLOB())";
+    oss << "INSERT INTO "<< tableName << "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS) VALUES ( " 
+                         << pc_id << "," << result.GetID() <<"," << num_points << ", " << oss_geom.str() <<", EMPTY_BLOB())";
 
     OWStatement* statement = 0;
     statement = connection->CreateStatement(oss.str().c_str());
@@ -346,7 +347,7 @@ bool InsertBlock(OWConnection* connection,
     oss.str("");
     
     // FIXME (BLK_ID *and* OBJ_ID must be used as part of the query.)
-    oss << "SELECT POINTS FROM " << tableName << " WHERE BLK_ID=" << result.GetID() << " FOR UPDATE";
+    oss << "SELECT POINTS FROM " << tableName << " WHERE BLK_ID=" << result.GetID() << " and OBJ_ID=" << pc_id<<"  FOR UPDATE";
     
     // we only expect one blob to come back
     OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
@@ -500,7 +501,7 @@ bool BlockTableExists(OWConnection* connection, const char* tableName)
         
 }
 
-bool CreatePCEntry( OWConnection* connection, 
+long CreatePCEntry( OWConnection* connection, 
                     LASQuery* query, 
                     const char* blkTableName, 
                     const char* pcTableName, 
@@ -560,7 +561,9 @@ bool CreatePCEntry( OWConnection* connection,
     }
     
 oss << "declare\n"
+"  pc_id NUMBER := :1;\n"
 "  pc sdo_pc;\n"
+
 "begin\n"
 "  -- Initialize the Point Cloud object.\n"
 "  pc := sdo_pc_pkg.init( \n"
@@ -580,16 +583,32 @@ oss << "declare\n"
 "     0.5, -- Tolerance for point cloud\n"
 "           "<<nDimension<<", -- Total number of dimensions\n"
 "           null);\n"
+"  :1 := pc.pc_id;\n"
 
 "  -- Insert the Point Cloud object  into the \"base\" table.\n"
 "  insert into "<< pcTableName_u<<" ("<<columns.str()<<") values ("<<values.str()<<");\n"
+
+"  "
 "end;\n";
+
+
+    int* pc_id = (int*) malloc (1*sizeof(int));
+    *pc_id = 0;
+    long output = 0;
+    statement = connection->CreateStatement(oss.str().c_str());
+    statement->Bind(pc_id);
+    if (statement->Execute() == false) {
+        
+        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
+        delete statement;
+        return 0;
+    }
+    output = *pc_id;
     
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
-    oss.str("");
-    
-    return true;
+    delete pc_id;
+    return output;
+
+    return output;
 }
 void usage() {
     fprintf(stderr,"----------------------------------------------------------\n");
@@ -890,18 +909,9 @@ int main(int argc, char* argv[])
     std::istream* istrm2;
     istrm2 = OpenInput(input);
     LASReader* reader2 = new LASReader(*istrm2);
-    for (i=results.begin(); i!=results.end(); i++)
-    {
-        bool inserted = InsertBlock(con, *i, srid, reader2, table_name.c_str(), precision);
-    }
     
-    if (!bUseExistingBlockTable) {
-        std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
-        CreateSDOEntry(con, table_name.c_str(), query, srid , precision);
-        CreateBlockIndex(con, table_name.c_str(), srid);
-    }
 
-    bool output = CreatePCEntry(  con, 
+    long pc_id = CreatePCEntry(  con, 
                     query, 
                     table_name.c_str(),
                     base_table_name.c_str(),
@@ -912,6 +922,20 @@ int main(int argc, char* argv[])
                     srid,
                     nCapacity,
                     precision);
+                    
+
+    for (i=results.begin(); i!=results.end(); i++)
+    {
+        bool inserted = InsertBlock(con, *i, srid, reader2, table_name.c_str(), precision, pc_id);
+    }
+    
+    if (!bUseExistingBlockTable) {
+        std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
+        CreateSDOEntry(con, table_name.c_str(), query, srid , precision);
+        CreateBlockIndex(con, table_name.c_str(), srid);
+    }
+
+
 
 
     if (!post_sql.empty()) {
