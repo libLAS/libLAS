@@ -232,7 +232,7 @@ int main(int argc, char* argv[])
 #ifdef HAVE_GDAL
     try
     {
-        OGRRegisterAll();
+        ::OGRRegisterAll();
 
         // Parse command-line options
         std::string in_file;
@@ -386,6 +386,8 @@ int main(int argc, char* argv[])
     std::cout << "Missing GDAL/OGR support built-in las2ogr. Aborted." << std::endl;
 #endif // #ifdef HAVE_GDAL
 
+    ::OGRCleanupAll();
     return rc;
 }
+
 
