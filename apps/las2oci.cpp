@@ -84,38 +84,18 @@ bool Cleanup(OWConnection* connection, const char* tableName)
     
     oss << "DELETE FROM " << tableName;
     statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
+    if (statement != 0) delete statement;
     oss.str("");
 
     oss << "DROP TABLE " << tableName;
     cout << oss.str() << endl;
     statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
-    oss.str("");    
-    
-    oss << "DROP TABLE BLKTAB ";
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
-    oss.str("");
-    
-    oss << "DROP TABLE RES ";
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
-    oss.str("");
-
-    oss << "DROP TABLE INPTAB ";
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
-    oss.str("");
-
-    oss << "DROP TABLE LIDAR_DATA";
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
-    oss.str("");    
+    if (statement != 0) delete statement; 
+    oss.str("");       
 
     oss << "DELETE FROM USER_SDO_GEOM_METADATA WHERE TABLE_NAME='"<< tableName << "'";
     statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
+    if (statement != 0) delete statement; 
     oss.str("");
 
     return true;
@@ -141,7 +121,10 @@ bool CreateBlockTable(OWConnection* connection, const char* tableName)
 
 }
 
-bool DeleteTable(OWConnection* connection, const char* tableName, const char* cloudTableName, const char* cloudColumnName)
+bool DeleteTable(   OWConnection* connection, 
+                    const char* tableName, 
+                    const char* cloudTableName, 
+                    const char* cloudColumnName)
 {
     ostringstream oss;
     OWStatement* statement = 0;
@@ -187,7 +170,9 @@ oss << "declare\n"
     return true;
 
 }
-bool GetPointData(LASPoint const& p, bool bTime, std::vector<liblas::uint8_t>& point_data)
+bool GetPointData(  LASPoint const& p, 
+                    bool bTime, 
+                    std::vector<liblas::uint8_t>& point_data)
 {
     // This function returns an array of bytes describing the 
     // x,y,z and optionally time values for the point.  
@@ -238,7 +223,10 @@ bool GetPointData(LASPoint const& p, bool bTime, std::vector<liblas::uint8_t>& p
 
     return true;
 }
-bool GetResultData(const LASQueryResult& result, LASReader* reader, std::vector<liblas::uint8_t>& data, int nDimension)
+bool GetResultData( const LASQueryResult& result, 
+                    LASReader* reader, 
+                    std::vector<liblas::uint8_t>& data, 
+                    int nDimension)
 {
     list<SpatialIndex::id_type> const& ids = result.GetIDs();
 
@@ -298,7 +286,12 @@ bool GetResultData(const LASQueryResult& result, LASReader* reader, std::vector<
     return true;
 }
 
-bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int srid, LASReader* reader, const char* tableName, long precision)
+bool InsertBlock(OWConnection* connection, 
+                const LASQueryResult& result, 
+                int srid, 
+                LASReader* reader, 
+                const char* tableName, 
+                long precision)
 {
     ostringstream oss;
 
@@ -306,17 +299,38 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
     const SpatialIndex::Region* b = result.GetBounds();
     liblas::uint32_t num_points =ids.size();
     ostringstream oss_geom;
+
+    ostringstream s_srid;
+    ostringstream s_gtype;
+    ostringstream s_eleminfo;
+    bool bUse3d = true;
+    if (srid == 0) {
+        s_srid << "NULL";
+        s_gtype << "2003";
+        s_eleminfo  << "(1,1003,3)";
+        bUse3d = false;
+    } else {
+        s_srid << srid;
+        s_gtype << "3008";
+        s_eleminfo << "(1,1007,3)";
+    }
     
     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss_geom.precision(precision);
-    oss_geom << "mdsys.sdo_geometry(3008,"<<srid<<", null,"
-              "mdsys.sdo_elem_info_array(1,1007,3),"
-              "mdsys.sdo_ordinate_array("<< b->getLow(0) <<","<<
-                                            b->getLow(1) <<","<<
-                                            b->getLow(2) <<","<<
-                                            b->getHigh(0) <<","<<
-                                            b->getHigh(1) <<","<<
-                                            b->getHigh(2)<<"))";
+    oss_geom << "mdsys.sdo_geometry(" << s_gtype.str() << "," << s_srid.str() << ", null,";
+    oss_geom << "mdsys.sdo_elem_info_array" << s_eleminfo.str() << ",";
+    oss_geom << "mdsys.sdo_ordinate_array("<< b->getLow(0) <<","<<
+                                            b->getLow(1) <<",";
+
+    if (bUse3d)
+        oss_geom <<                         b->getLow(2) <<",";
+    
+    oss_geom <<                             b->getHigh(0) <<","<<
+                                            b->getHigh(1);
+    if (bUse3d)
+        oss_geom                            <<","<< b->getHigh(2);
+
+    oss_geom << "))";
     oss << "INSERT INTO "<< tableName << "(BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS) VALUES ( " 
                          << result.GetID() <<"," << num_points << ", " << oss_geom.str() <<", EMPTY_BLOB())";
 
@@ -375,7 +389,11 @@ bool InsertBlock(OWConnection* connection, const LASQueryResult& result, int sri
 
 }
 
-bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* query, long srid, long precision)
+bool CreateSDOEntry(    OWConnection* connection, 
+                        const char* tableName, 
+                        LASQuery* query, 
+                        long srid, 
+                        long precision)
 {
     ostringstream oss;
     OWStatement* statement = 0;
@@ -384,6 +402,16 @@ bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* q
     
     oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss.precision(precision);
+    
+    ostringstream s_srid;
+    bool bUse3d = true;
+    
+    if (srid == 0) {
+        s_srid << "NULL";
+        bUse3d = false;
+    } else {
+        s_srid << srid;
+    }
      
 //     code = """
 // INSERT INTO user_sdo_geom_metadata VALUES (
@@ -397,9 +425,14 @@ bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* q
     oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
             "','blk_extent', MDSYS.SDO_DIM_ARRAY(" 
             "MDSYS.SDO_DIM_ELEMENT('X', "<< query->bounds.getLow(0) <<","<< query->bounds.getHigh(0)<<",0.05),"
-            "MDSYS.SDO_DIM_ELEMENT('Y', "<< query->bounds.getLow(1) <<","<< query->bounds.getHigh(1)<<",0.05),"
-            "MDSYS.SDO_DIM_ELEMENT('Z', "<< query->bounds.getLow(2) <<","<< query->bounds.getHigh(2)<<",0.05)),"
-            << srid << ")";
+            "MDSYS.SDO_DIM_ELEMENT('Y', "<< query->bounds.getLow(1) <<","<< query->bounds.getHigh(1)<<",0.05)";
+            
+    if (bUse3d) {
+        oss << "," <<
+            "MDSYS.SDO_DIM_ELEMENT('Z', "<< query->bounds.getLow(2) <<","<< query->bounds.getHigh(2)<<",0.05)";
+    }
+    oss << ")," << s_srid.str() << ")";
+    
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");
@@ -408,12 +441,27 @@ bool CreateSDOEntry(OWConnection* connection, const char* tableName, LASQuery* q
         
 }
 
-bool CreateBlockIndex(OWConnection* connection, const char* tableName)
+bool CreateBlockIndex(OWConnection* connection, const char* tableName, long srid)
 {
     ostringstream oss;
     OWStatement* statement = 0;
+
+    ostringstream s_srid;
+    bool bUse3d = true;
     
-    oss << "CREATE INDEX "<< tableName <<"_cloud_idx on "<<tableName<<"(blk_extent) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS('sdo_indx_dims=3')" ;
+    if (srid == 0) {
+        s_srid << "NULL";
+        bUse3d = false;
+    } else {
+        s_srid << srid;
+    }
+    
+    oss << "CREATE INDEX "<< tableName <<"_cloud_idx on "<<tableName<<"(blk_extent) INDEXTYPE IS MDSYS.SPATIAL_INDEX";
+    
+    if (bUse3d) {
+        oss <<" PARAMETERS('sdo_indx_dims=3')" ;
+    }
+    
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");
@@ -465,6 +513,9 @@ bool CreatePCEntry( OWConnection* connection,
                     long precision)
 {
     ostringstream oss;
+    ostringstream s_srid;
+    bool bUse3d = true;
+
     OWStatement* statement = 0;
 
     oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
@@ -500,6 +551,13 @@ bool CreatePCEntry( OWConnection* connection,
         columns << cloudColumnName_u;
         values << "pc";
     }
+
+    if (srid == 0) {
+        s_srid << "NULL";
+        bUse3d = false;
+    } else {
+        s_srid << srid;
+    }
     
 oss << "declare\n"
 "  pc sdo_pc;\n"
@@ -510,7 +568,7 @@ oss << "declare\n"
 "          '"<< cloudColumnName_u<<"',   -- Column name of the SDO_POINT_CLOUD object\n"
 "          '"<<blkTableName_u<<"', -- Table to store blocks of the point cloud\n"
 "           'blk_capacity="<<blk_capacity<<"', -- max # of points per block\n"
-"           mdsys.sdo_geometry(3008, "<<srid<<", null,\n"
+"           mdsys.sdo_geometry(3008, "<<s_srid.str()<<", null,\n"
 "              mdsys.sdo_elem_info_array(1,1007,3),\n"
 "              mdsys.sdo_ordinate_array(\n"
 << query->bounds.getLow(0) << ","
@@ -600,7 +658,7 @@ int main(int argc, char* argv[])
     bool bDropTable = false;
     liblas::uint32_t nCapacity = 10000;
     double dFillFactor = 0.99;
-    int srid = 4327;
+    int srid = 0;
     long precision = 8;
     
     for (int i = 1; i < argc; i++)
@@ -838,8 +896,9 @@ int main(int argc, char* argv[])
     }
     
     if (!bUseExistingBlockTable) {
+        std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
         CreateSDOEntry(con, table_name.c_str(), query, srid , precision);
-        CreateBlockIndex(con, table_name.c_str());
+        CreateBlockIndex(con, table_name.c_str(), srid);
     }
 
     bool output = CreatePCEntry(  con, 
