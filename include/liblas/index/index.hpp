@@ -146,6 +146,14 @@ public:
     /// Gets the index type
     /// \return index type.
     IndexType GetType() { return m_idxType; }
+
+    /// Sets the index dimension
+    /// \param v - dimension value.  Defaults to 3.
+    void SetDimension(uint32_t v) { m_idxDimension = v; }
+
+    /// Get index dimension
+    /// \return index dimension value.
+    uint32_t GetDimension() { return m_idxDimension; }
     
     LASVariableRecord* GetVLR();
     

@@ -52,7 +52,8 @@ using namespace liblas;
 int main(int argc, char* argv[])
 {
     std::string input;
-    std::string output;
+    
+    long dimension = 3;
     
     for (int i = 1; i < argc; i++)
     {
@@ -72,27 +73,19 @@ int main(int argc, char* argv[])
             i++;
             input = std::string(argv[i]);
         }
-        else if (   std::strcmp(argv[i],"--output") == 0  ||
-                    std::strcmp(argv[i],"--out") == 0     ||
-                    std::strcmp(argv[i],"-out") == 0     ||
-                    std::strcmp(argv[i],"-o") == 0       
+        else if (   std::strcmp(argv[i],"--dimension") == 0  ||
+                    std::strcmp(argv[i],"-dim") == 0     ||
+                    std::strcmp(argv[i],"-d") == 0       
                 )
         {
             i++;
-            output = std::string(argv[i]);
+            dimension = atoi(argv[i]);
         }
-        else if (i == argc - 2 && output.empty() && input.empty())
+        else if (input.empty())
         {
             input = std::string(argv[i]);
         }
-        else if (i == argc - 1 && output.empty() && input.empty())
-        {
-            input = std::string(argv[i]);
-        }
-        else if (i == argc - 1 && output.empty() && input.empty())
-        {
-            output = std::string(argv[i]);
-        }
+
         else 
         {
             usage();
@@ -110,12 +103,14 @@ int main(int argc, char* argv[])
     LASReader* reader = new LASReader(*istrm);
     std::cout << "Indexing " << input<< " "<<std::endl;
 
-    LASIndexDataStream* idxstrm = new LASIndexDataStream(reader);
+    LASIndexDataStream* idxstrm = new LASIndexDataStream(reader, dimension);
+    
     
     LASIndex* idx = new LASIndex(input);
     idx->SetType(LASIndex::eExternalIndex);
     idx->SetLeafCapacity(10000);
     idx->SetFillFactor(0.8);
+    idx->SetDimension(dimension);
     idx->Initialize(*idxstrm);
 
     delete idx;

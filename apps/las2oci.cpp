@@ -719,6 +719,7 @@ int main(int argc, char* argv[])
     double dFillFactor = 0.99;
     int srid = 0;
     long precision = 8;
+    long idx_dimension = 3;
     
     for (int i = 1; i < argc; i++)
     {
@@ -769,6 +770,15 @@ int main(int argc, char* argv[])
             i++;
             srid=atoi(argv[i]);
         }
+
+        else if (   strcmp(argv[i],"--idx-dimension") == 0  ||
+                    strcmp(argv[i],"-dim") == 0  
+                )
+        {
+            i++;
+            idx_dimension=atoi(argv[i]);
+        }
+        
         else if (   strcmp(argv[i],"--cloud-column-name") == 0  ||
                     strcmp(argv[i],"-cn") == 0  
                 )
@@ -931,7 +941,7 @@ int main(int argc, char* argv[])
     }
 
     LASReader* reader = new LASReader(*istrm);
-    LASIndexDataStream* idxstrm = new LASIndexDataStream(reader);
+    LASIndexDataStream* idxstrm = new LASIndexDataStream(reader, idx_dimension);
 
     LASIndex* idx = new LASIndex(input);
     idx->SetType(LASIndex::eExternalIndex);

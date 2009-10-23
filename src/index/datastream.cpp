@@ -57,7 +57,7 @@ namespace liblas
 
 
 
-LASIndexDataStream::LASIndexDataStream(LASReader *reader) : m_reader(reader), m_pNext(0), m_id(0)
+LASIndexDataStream::LASIndexDataStream(LASReader *reader, long dimension) : m_reader(reader), m_pNext(0), m_id(0), m_idxDimension(dimension)
 {
     bool read = readPoint();
     if (read) m_id = 0;
@@ -87,7 +87,7 @@ bool LASIndexDataStream::readPoint()
     max[0] = x; max[1] = y; max[2] = z;
     
 
-    SpatialIndex::Region r = SpatialIndex::Region(min, max, 3);
+    SpatialIndex::Region r = SpatialIndex::Region(min, max, m_idxDimension);
     m_pNext = new SpatialIndex::RTree::Data(0, 0, r, m_id);
     
      // std::cout << "Read point " << r <<  "Id: " << m_id << std::endl;

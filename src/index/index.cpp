@@ -331,7 +331,7 @@ void LASIndex::insert(LASPoint& p, int64_t id)
         throw std::runtime_error("Spatial index has not been initialized");
         
     try {
-        m_rtree->insertData(0, 0, SpatialIndex::Region(min, max, 3), id);
+        m_rtree->insertData(0, 0, SpatialIndex::Region(min, max, m_idxDimension), id);
     } catch (Tools::Exception& e) {
         std::ostringstream os;
         os << "Spatial Index Error: " << e.what();
@@ -361,7 +361,7 @@ std::vector<uint32_t>* LASIndex::intersects(double minx, double miny, double max
     std::vector<uint32_t>* vect = new std::vector<uint32_t>;
     LASVisitor* visitor = new LASVisitor(vect);
 
-    SpatialIndex::Region* region = new SpatialIndex::Region(min, max, 3);
+    SpatialIndex::Region* region = new SpatialIndex::Region(min, max, m_idxDimension);
 
     try {
         m_rtree->intersectsWithQuery(*region, *visitor);
