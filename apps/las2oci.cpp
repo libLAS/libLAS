@@ -493,7 +493,7 @@ bool CreateBlockIndex(  OWConnection* connection,
     if (statement != 0) delete statement; else return false;
     oss.str("");
 
-    oss << "CREATE INDEX "<< tableName <<"_objectid_idx on "<<tableName<<"(OBJ_ID)" ;
+    oss << "CREATE INDEX "<< tableName <<"_objectid_idx on "<<tableName<<"(OBJ_ID,BLK_ID) COMPRESS 2" ;
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");    
