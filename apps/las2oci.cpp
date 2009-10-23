@@ -317,7 +317,7 @@ bool InsertBlock(OWConnection* connection,
         bUse3d = false;
     }
     
-    if (srid == 4327) {
+    if (srid == 4326) {
         bUse3d = false;
         bUseSolidGeometry = false;
     } else {
@@ -439,7 +439,7 @@ bool CreateSDOEntry(    OWConnection* connection,
         s_srid << srid;
     }
      
-    if (srid == 4327) {
+    if (srid == 4326) {
         bUse3d = false;
     }
     oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
@@ -479,7 +479,7 @@ bool CreateBlockIndex(  OWConnection* connection,
         bUse3d = true;
     } 
     
-    if (srid == 4327) {
+    if (srid == 4326) {
         bUse3d = false;
     }
     
@@ -582,10 +582,15 @@ long CreatePCEntry( OWConnection* connection,
     ostringstream s_srid;
     ostringstream s_gtype;
     ostringstream s_eleminfo;
-
+    ostringstream s_geom;
+    
+    bool bUse3d = true;
     if (srid == 0) {
         s_srid << "NULL";}
     else {
+        if (srid == 4326) {
+            bUse3d = false;
+        }
         s_srid << srid;
     }
     if (bUseSolidGeometry == true) {
@@ -599,6 +604,25 @@ long CreatePCEntry( OWConnection* connection,
 
     }
     
+    s_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
+"              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
+"              mdsys.sdo_ordinate_array(\n";
+
+    s_geom << query->bounds.getLow(0) <<","<<
+                                            query->bounds.getLow(1) <<",";
+
+    if (bUse3d)
+        s_geom <<                         query->bounds.getLow(2) <<",";
+    
+    s_geom <<                             query->bounds.getHigh(0) <<","<<
+                                            query->bounds.getHigh(1);
+    if (bUse3d)
+        s_geom                            <<","<< query->bounds.getHigh(2);
+
+    s_geom << "))";
+
+    
+    
 oss << "declare\n"
 "  pc_id NUMBER := :1;\n"
 "  pc sdo_pc;\n"
@@ -610,15 +634,8 @@ oss << "declare\n"
 "          '"<< cloudColumnName_u<<"',   -- Column name of the SDO_POINT_CLOUD object\n"
 "          '"<<blkTableName_u<<"', -- Table to store blocks of the point cloud\n"
 "           'blk_capacity="<<blk_capacity<<"', -- max # of points per block\n"
-"           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
-"              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
-"              mdsys.sdo_ordinate_array(\n"
-<< query->bounds.getLow(0) << ","
-<< query->bounds.getLow(1) << ","
-<< query->bounds.getLow(2) << ","
-<< query->bounds.getHigh(0) << ","
-<< query->bounds.getHigh(1) << ","
-<< query->bounds.getHigh(2) << ")),  -- Extent\n"
+<< s_geom.str() <<
+",  -- Extent\n"
 "     0.5, -- Tolerance for point cloud\n"
 "           "<<nDimension<<", -- Total number of dimensions\n"
 "           null);\n"
@@ -668,7 +685,7 @@ void usage() {
         
     fprintf(stderr,"las2oci -i output.las lidar/lidar@oraclemachine/instance \n"
                    "--block-table-name  hobu_blocks --base-table-name hobu_base\n"
-                   "--cloud-column-name PC --srid 4327 -d\n");
+                   "--cloud-column-name PC --srid 4326 -d\n");
     
     
 
@@ -694,7 +711,7 @@ bool ExternalIndexExists(std::string& filename)
 }
 
 
-// select sdo_pc_pkg.to_geometry(a.points, a.num_points, 3, 4327) from NACHES_BAREEARTH_BLOCK1 a where a.obj_id= 8907
+// select sdo_pc_pkg.to_geometry(a.points, a.num_points, 3, 4326) from NACHES_BAREEARTH_BLOCK1 a where a.obj_id= 8907
 int main(int argc, char* argv[])
 {
 
