@@ -292,7 +292,8 @@ bool InsertBlock(OWConnection* connection,
                 LASReader* reader, 
                 const char* tableName, 
                 long precision,
-                long pc_id)
+                long pc_id,
+                bool bUseSolidGeometry)
 {
     ostringstream oss;
 
@@ -305,17 +306,36 @@ bool InsertBlock(OWConnection* connection,
     ostringstream s_gtype;
     ostringstream s_eleminfo;
     bool bUse3d = true;
+    
     if (srid == 0) {
         s_srid << "NULL";
-        s_gtype << "2003";
-        s_eleminfo  << "(1,1003,3)";
-        bUse3d = false;
-    } else {
+        bUse3d = true;
+        bUseSolidGeometry = true;
+        }
+    else {
         s_srid << srid;
-        s_gtype << "3008";
-        s_eleminfo << "(1,1007,3)";
+        bUse3d = false;
     }
     
+    if (srid == 4327) {
+        bUse3d = false;
+        bUseSolidGeometry = false;
+    } else {
+        // If the user set an srid and set it to solid, we're still 3d
+        if (bUseSolidGeometry == true)
+            bUse3d = true;
+    }
+    if (bUseSolidGeometry == true) {
+        s_gtype << "3008";
+        s_eleminfo << "(1,1007,3)";
+
+    } else {
+        s_gtype << "2003";
+        s_eleminfo  << "(1,1003,3)";
+
+    }
+    
+    // std::cout << "use 3d?: " << bUse3d << " srid: " << s_srid.str() << std::endl;
     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss_geom.precision(precision);
     oss_geom << "mdsys.sdo_geometry(" << s_gtype.str() << "," << s_srid.str() << ", null,";
@@ -394,7 +414,8 @@ bool CreateSDOEntry(    OWConnection* connection,
                         const char* tableName, 
                         LASQuery* query, 
                         long srid, 
-                        long precision)
+                        long precision,
+                        bool bUseSolidGeometry)
 {
     ostringstream oss;
     OWStatement* statement = 0;
@@ -405,24 +426,22 @@ bool CreateSDOEntry(    OWConnection* connection,
     oss.precision(precision);
     
     ostringstream s_srid;
-    bool bUse3d = true;
+    bool bUse3d = false;
+    
+    if (bUseSolidGeometry == true) {
+        bUse3d = true;
+    }
     
     if (srid == 0) {
         s_srid << "NULL";
-        bUse3d = false;
+        bUse3d = true;
     } else {
         s_srid << srid;
     }
      
-//     code = """
-// INSERT INTO user_sdo_geom_metadata VALUES (
-//     'foo',
-//     'blk_extent',
-//     MDSYS.SDO_DIM_ARRAY(
-// MDSYS.SDO_DIM_ELEMENT('X', 630250.000000, 630500.000000, 0.05),
-// MDSYS.SDO_DIM_ELEMENT('Y', 4834500, 4834750, 0.05)),
-//     4327)
-// """
+    if (srid == 4327) {
+        bUse3d = false;
+    }
     oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
             "','blk_extent', MDSYS.SDO_DIM_ARRAY(" 
             "MDSYS.SDO_DIM_ELEMENT('X', "<< query->bounds.getLow(0) <<","<< query->bounds.getHigh(0)<<",0.05),"
@@ -442,19 +461,26 @@ bool CreateSDOEntry(    OWConnection* connection,
         
 }
 
-bool CreateBlockIndex(OWConnection* connection, const char* tableName, long srid)
+bool CreateBlockIndex(  OWConnection* connection, 
+                        const char* tableName, 
+                        long srid, 
+                        bool bUseSolidGeometry)
 {
     ostringstream oss;
     OWStatement* statement = 0;
-
-    ostringstream s_srid;
-    bool bUse3d = true;
+    
+    bool bUse3d = false;
+    
+    if (bUseSolidGeometry == true) {
+        bUse3d = true;
+    }
     
     if (srid == 0) {
-        s_srid << "NULL";
+        bUse3d = true;
+    } 
+    
+    if (srid == 4327) {
         bUse3d = false;
-    } else {
-        s_srid << srid;
     }
     
     oss << "CREATE INDEX "<< tableName <<"_cloud_idx on "<<tableName<<"(blk_extent) INDEXTYPE IS MDSYS.SPATIAL_INDEX";
@@ -511,11 +537,10 @@ long CreatePCEntry( OWConnection* connection,
                     int nDimension, 
                     int srid,
                     int blk_capacity,
-                    long precision)
+                    long precision,
+                    bool bUseSolidGeometry)
 {
     ostringstream oss;
-    ostringstream s_srid;
-    bool bUse3d = true;
 
     OWStatement* statement = 0;
 
@@ -553,11 +578,25 @@ long CreatePCEntry( OWConnection* connection,
         values << "pc";
     }
 
+
+    ostringstream s_srid;
+    ostringstream s_gtype;
+    ostringstream s_eleminfo;
+
     if (srid == 0) {
-        s_srid << "NULL";
-        bUse3d = false;
-    } else {
+        s_srid << "NULL";}
+    else {
         s_srid << srid;
+    }
+    if (bUseSolidGeometry == true) {
+        s_gtype << "3008";
+        s_eleminfo << "(1,1007,3)";
+
+    } else {
+        s_gtype << "2003";
+        s_eleminfo  << "(1,1003,3)";
+
+
     }
     
 oss << "declare\n"
@@ -571,8 +610,8 @@ oss << "declare\n"
 "          '"<< cloudColumnName_u<<"',   -- Column name of the SDO_POINT_CLOUD object\n"
 "          '"<<blkTableName_u<<"', -- Table to store blocks of the point cloud\n"
 "           'blk_capacity="<<blk_capacity<<"', -- max # of points per block\n"
-"           mdsys.sdo_geometry(3008, "<<s_srid.str()<<", null,\n"
-"              mdsys.sdo_elem_info_array(1,1007,3),\n"
+"           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
+"              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
 "              mdsys.sdo_ordinate_array(\n"
 << query->bounds.getLow(0) << ","
 << query->bounds.getLow(1) << ","
@@ -675,6 +714,7 @@ int main(int argc, char* argv[])
     
     bool bUseExistingBlockTable = false;
     bool bDropTable = false;
+    bool bUseSolidGeometry = false;
     liblas::uint32_t nCapacity = 10000;
     double dFillFactor = 0.99;
     int srid = 0;
@@ -785,6 +825,11 @@ int main(int argc, char* argv[])
             i++;
             precision = atoi(argv[i]);
         }
+        else if (   strcmp(argv[i],"--solid") == 0 
+                )
+        {
+            bUseSolidGeometry=true;
+        }
         else if (input.empty())
         {
             input = std::string(argv[i]);
@@ -887,7 +932,6 @@ int main(int argc, char* argv[])
 
     LASReader* reader = new LASReader(*istrm);
     LASIndexDataStream* idxstrm = new LASIndexDataStream(reader);
-    // reader->Reset();
 
     LASIndex* idx = new LASIndex(input);
     idx->SetType(LASIndex::eExternalIndex);
@@ -921,18 +965,19 @@ int main(int argc, char* argv[])
                     3, // we're assuming 3d for now
                     srid,
                     nCapacity,
-                    precision);
+                    precision,
+                    bUseSolidGeometry);
                     
 
     for (i=results.begin(); i!=results.end(); i++)
     {
-        bool inserted = InsertBlock(con, *i, srid, reader2, table_name.c_str(), precision, pc_id);
+        bool inserted = InsertBlock(con, *i, srid, reader2, table_name.c_str(), precision, pc_id, bUseSolidGeometry);
     }
     
     if (!bUseExistingBlockTable) {
         std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
-        CreateSDOEntry(con, table_name.c_str(), query, srid , precision);
-        CreateBlockIndex(con, table_name.c_str(), srid);
+        CreateSDOEntry(con, table_name.c_str(), query, srid , precision, bUseSolidGeometry);
+        CreateBlockIndex(con, table_name.c_str(), srid, bUseSolidGeometry);
     }
 
 
