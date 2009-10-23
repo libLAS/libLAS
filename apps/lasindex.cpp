@@ -54,6 +54,7 @@ int main(int argc, char* argv[])
     std::string input;
     
     long dimension = 3;
+    long capacity = 10000;
     
     for (int i = 1; i < argc; i++)
     {
@@ -80,6 +81,14 @@ int main(int argc, char* argv[])
         {
             i++;
             dimension = atoi(argv[i]);
+        }
+        else if (   std::strcmp(argv[i],"--capacity") == 0  ||
+                    std::strcmp(argv[i],"-cap") == 0     ||
+                    std::strcmp(argv[i],"-c") == 0       
+                )
+        {
+            i++;
+            capacity = atoi(argv[i]);
         }
         else if (input.empty())
         {
@@ -108,7 +117,7 @@ int main(int argc, char* argv[])
     
     LASIndex* idx = new LASIndex(input);
     idx->SetType(LASIndex::eExternalIndex);
-    idx->SetLeafCapacity(10000);
+    idx->SetLeafCapacity(capacity);
     idx->SetFillFactor(0.8);
     idx->SetDimension(dimension);
     idx->Initialize(*idxstrm);
