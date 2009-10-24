@@ -1,4 +1,4 @@
-###############################################################################
+##############################################################################
 # Main CMake configuration file for libLAS
 #
 # Author: Mateusz Loskot <mateusz@loskot.net>
@@ -24,6 +24,11 @@ SET(LIBLAS_UNIT_TEST liblas_test)
 # Choose package components
 SET(WITH_UTILITIES TRUE CACHE BOOL "Choose if libLAS utilities should be built")
 SET(WITH_TESTS FALSE CACHE BOOL "Choose if libLAS unit tests should be built")
+
+# Enable CTest and submissions to libLAS dashboard at CDash
+# http://my.cdash.org/index.php?project=libLAS
+SET(ENABLE_CTEST FALSE CACHE BOOL
+    "Enable CTest to support submissions of results to CDash at http://cdash.org")
 
 ###############################################################################
 # CMake settings
@@ -244,20 +249,29 @@ INSTALL(FILES AUTHORS ChangeLog COPYING INSTALL LICENSE.txt README
 ADD_SUBDIRECTORY(src)
 
 IF(WITH_UTILITIES)
-    MESSAGE(STATUS "Adding libLAS utilities to build - done")
+    MESSAGE(STATUS "Enable libLAS utilities to build - done")
     ADD_SUBDIRECTORY(apps)
 ENDIF()
 
 IF(WITH_TESTS)
-    # TODO:
-    # Waiting for Mercurial support at cdash.org --mloskot
-    # Dashboard has been prepared for experiments
-    # http://my.cdash.org/index.php?project=libLAS
-    #INCLUDE(CTest)
-
-    MESSAGE(STATUS "Adding libLAS unit test suite to build - done")
+    MESSAGE(STATUS "Enable libLAS unit tests to build - done")
     ENABLE_TESTING()
+
+
+    IF(ENABLE_CTEST)
+        MESSAGE(STATUS "Enable CTest to support submissions of results to CDash at http://cdash.org")
+        CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0)
+        # Dashboard has been prepared for experiments
+        # http://my.cdash.org/index.php?project=libLAS
+        INCLUDE(CTest)
+        MESSAGE(STATUS "Enable CTest to support submissions of results to CDash at http://cdash.org - done")
+    ENDIF()
+
     ADD_SUBDIRECTORY(test)
+ELSE()
+    IF(ENABLE_CTEST)
+        MESSAGE(WARNING "CTest support requested but WITH_TESTS option not specified to build of libLAS unit tests")
+    ENDIF()
 ENDIF()
 
 # EOF
