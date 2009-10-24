@@ -306,31 +306,33 @@ bool InsertBlock(OWConnection* connection,
     ostringstream s_gtype;
     ostringstream s_eleminfo;
     bool bUse3d = true;
+    bool bGeographic = true;
     
     if (srid == 0) {
         s_srid << "NULL";
         bUse3d = true;
         bUseSolidGeometry = true;
         }
+    else if (srid == 4326) {
+        bUse3d = true;
+        bUseSolidGeometry = true;
+        bGeographic = true;
+        s_srid << "NULL";
+    }
     else {
         s_srid << srid;
         bUse3d = false;
-    }
-    
-    if (srid == 4326) {
-        bUse3d = false;
-        bUseSolidGeometry = false;
-    } else {
         // If the user set an srid and set it to solid, we're still 3d
         if (bUseSolidGeometry == true)
             bUse3d = true;
     }
+    
     if (bUseSolidGeometry == true) {
         s_gtype << "3008";
         s_eleminfo << "(1,1007,3)";
 
     } else {
-        s_gtype << "2003";
+        s_gtype << "3003";
         s_eleminfo  << "(1,1003,3)";
 
     }
@@ -338,22 +340,37 @@ bool InsertBlock(OWConnection* connection,
     // std::cout << "use 3d?: " << bUse3d << " srid: " << s_srid.str() << std::endl;
     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss_geom.precision(precision);
-    oss_geom << "mdsys.sdo_geometry(" << s_gtype.str() << "," << s_srid.str() << ", null,";
-    oss_geom << "mdsys.sdo_elem_info_array" << s_eleminfo.str() << ",";
-    oss_geom << "mdsys.sdo_ordinate_array("<< b->getLow(0) <<","<<
+
+    oss_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
+"              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
+"              mdsys.sdo_ordinate_array(\n";
+
+    oss_geom << b->getLow(0) <<","<<
                                             b->getLow(1) <<",";
 
-    if (bUse3d)
-        oss_geom <<                         b->getLow(2) <<",";
+    if (bUse3d) {
+        if (!bGeographic) {
+            oss_geom <<                         b->getLow(2) <<",";
+        } else {
+            oss_geom <<"0,";
+        }
+    }
     
     oss_geom <<                             b->getHigh(0) <<","<<
                                             b->getHigh(1);
-    if (bUse3d)
-        oss_geom                            <<","<< b->getHigh(2);
+    if (bUse3d) {
+        if (!bGeographic) {
+            oss_geom                            <<","<< b->getHigh(2);
+        } else {
+            oss_geom <<",20000";
+        }
+    }
 
     oss_geom << "))";
-    oss << "INSERT INTO "<< tableName << "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS) VALUES ( " 
-                         << pc_id << "," << result.GetID() <<"," << num_points << ", " << oss_geom.str() <<", EMPTY_BLOB())";
+    oss << "INSERT INTO "<< tableName << 
+            "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS, PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) VALUES ( " 
+            << pc_id << "," << result.GetID() <<"," << num_points << ", " 
+            << oss_geom.str() <<", EMPTY_BLOB(), 1, 1, 0, 1)";
 
     OWStatement* statement = 0;
     statement = connection->CreateStatement(oss.str().c_str());
@@ -427,6 +444,7 @@ bool CreateSDOEntry(    OWConnection* connection,
     
     ostringstream s_srid;
     bool bUse3d = false;
+    bool bGeographic = false;
     
     if (bUseSolidGeometry == true) {
         bUse3d = true;
@@ -435,21 +453,36 @@ bool CreateSDOEntry(    OWConnection* connection,
     if (srid == 0) {
         s_srid << "NULL";
         bUse3d = true;
+    }
+    else if (srid == 4326) {
+        s_srid << "NULL";
+        bUse3d = true;
+        bGeographic = true;
     } else {
         s_srid << srid;
     }
      
-    if (srid == 4326) {
-        bUse3d = false;
-    }
     oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
-            "','blk_extent', MDSYS.SDO_DIM_ARRAY(" 
-            "MDSYS.SDO_DIM_ELEMENT('X', "<< query->bounds.getLow(0) <<","<< query->bounds.getHigh(0)<<",0.05),"
+        "','blk_extent', MDSYS.SDO_DIM_ARRAY(";
+    
+    if (bGeographic == true) {
+        oss << "MDSYS.SDO_DIM_ELEMENT('X', -180, 180, .000000005),"
+               "MDSYS.SDO_DIM_ELEMENT('Y', -180, 180, .000000005)";
+    } else {
+        oss << "MDSYS.SDO_DIM_ELEMENT('X', "<< query->bounds.getLow(0) <<","<< query->bounds.getHigh(0)<<",0.05),"
             "MDSYS.SDO_DIM_ELEMENT('Y', "<< query->bounds.getLow(1) <<","<< query->bounds.getHigh(1)<<",0.05)";
+        
+    }
+
+            // "MDSYS.SDO_DIM_ELEMENT('X', "<< query->bounds.getLow(0) <<","<< query->bounds.getHigh(0)<<",0.05),"
+            // "MDSYS.SDO_DIM_ELEMENT('Y', "<< query->bounds.getLow(1) <<","<< query->bounds.getHigh(1)<<",0.05)";
             
     if (bUse3d) {
-        oss << "," <<
-            "MDSYS.SDO_DIM_ELEMENT('Z', "<< query->bounds.getLow(2) <<","<< query->bounds.getHigh(2)<<",0.05)";
+        oss << ",";
+        if (bGeographic)
+            oss <<"MDSYS.SDO_DIM_ELEMENT('Z', "<< 0 <<","<< 200000<<",0.000000005)";
+        else
+            oss << "MDSYS.SDO_DIM_ELEMENT('Z', "<< query->bounds.getLow(2) <<","<< query->bounds.getHigh(2)<<",0.00000005)";
     }
     oss << ")," << s_srid.str() << ")";
     
@@ -480,7 +513,7 @@ bool CreateBlockIndex(  OWConnection* connection,
     } 
     
     if (srid == 4326) {
-        bUse3d = false;
+        bUse3d = true;
     }
     
     oss << "CREATE INDEX "<< tableName <<"_cloud_idx on "<<tableName<<"(blk_extent) INDEXTYPE IS MDSYS.SPATIAL_INDEX";
@@ -583,27 +616,41 @@ long CreatePCEntry( OWConnection* connection,
     ostringstream s_gtype;
     ostringstream s_eleminfo;
     ostringstream s_geom;
-    
+
+
     bool bUse3d = true;
+    bool bGeographic = false;
+    
     if (srid == 0) {
-        s_srid << "NULL";}
-    else {
-        if (srid == 4326) {
-            bUse3d = false;
+        s_srid << "NULL";
+        bUse3d = true;
+        bUseSolidGeometry = true;
         }
-        s_srid << srid;
+    else if (srid == 4326) {
+        bUse3d = true;
+        bUseSolidGeometry = false;
+        bGeographic = true;
+        s_srid << "NULL";
     }
+    else {
+        s_srid << srid;
+        bUse3d = false;
+        // If the user set an srid and set it to solid, we're still 3d
+        if (bUseSolidGeometry == true)
+            bUse3d = true;
+    }
+    
     if (bUseSolidGeometry == true) {
         s_gtype << "3008";
         s_eleminfo << "(1,1007,3)";
 
     } else {
-        s_gtype << "2003";
+        s_gtype << "3003";
         s_eleminfo  << "(1,1003,3)";
-
 
     }
     
+
     s_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
 "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
 "              mdsys.sdo_ordinate_array(\n";
@@ -611,13 +658,23 @@ long CreatePCEntry( OWConnection* connection,
     s_geom << query->bounds.getLow(0) <<","<<
                                             query->bounds.getLow(1) <<",";
 
-    if (bUse3d)
-        s_geom <<                         query->bounds.getLow(2) <<",";
+    if (bUse3d) {
+        if (!bGeographic) {
+            s_geom <<                         query->bounds.getLow(2) <<",";
+        } else {
+            s_geom <<"0,";
+        }
+    }
     
     s_geom <<                             query->bounds.getHigh(0) <<","<<
                                             query->bounds.getHigh(1);
-    if (bUse3d)
-        s_geom                            <<","<< query->bounds.getHigh(2);
+    if (bUse3d) {
+        if (!bGeographic) {
+            s_geom                            <<","<< query->bounds.getHigh(2);
+        } else {
+            s_geom <<",20000";
+        }
+    }
 
     s_geom << "))";
 
