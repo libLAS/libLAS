@@ -1,3 +1,6 @@
+FIXME: The log is way behind the reality. Are we going to maintain it? --mloskot
+
+
 2009-03-25 16:58  hobu
 
 	* trunk/nmake.opt: tweak some comments
