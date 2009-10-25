@@ -49,12 +49,28 @@ void usage() {}
 
 using namespace liblas;
 
+void LoadIndex (LASIndex* index, LASReader* reader, long dimension) 
+{
+
+    bool read = reader->ReadNextPoint();
+    liblas::int64_t id = 0;
+    if (read) {
+        const LASPoint& p = reader->GetPoint();
+        index->insert(const_cast<LASPoint&>(p), id);
+    }
+    while (reader->ReadNextPoint()) {
+        id += 1;
+        const LASPoint& p = reader->GetPoint();
+        index->insert(const_cast<LASPoint&>(p), id);
+    }
+}
 int main(int argc, char* argv[])
 {
     std::string input;
     
     long dimension = 3;
     long capacity = 10000;
+    bool bBulkLoad = true;
     
     for (int i = 1; i < argc; i++)
     {
@@ -82,6 +98,7 @@ int main(int argc, char* argv[])
             i++;
             dimension = atoi(argv[i]);
         }
+        
         else if (   std::strcmp(argv[i],"--capacity") == 0  ||
                     std::strcmp(argv[i],"-cap") == 0     ||
                     std::strcmp(argv[i],"-c") == 0       
@@ -89,6 +106,14 @@ int main(int argc, char* argv[])
         {
             i++;
             capacity = atoi(argv[i]);
+        }
+        else if (   std::strcmp(argv[i],"--individual") == 0  ||
+                    std::strcmp(argv[i],"--non-bulk") == 0     ||
+                    std::strcmp(argv[i],"-g") == 0       
+                )
+        {
+
+            bBulkLoad = false;
         }
         else if (input.empty())
         {
@@ -112,18 +137,29 @@ int main(int argc, char* argv[])
     LASReader* reader = new LASReader(*istrm);
     std::cout << "Indexing " << input<< " "<<std::endl;
 
-    LASIndexDataStream* idxstrm = new LASIndexDataStream(reader, dimension);
-    
+    LASIndexDataStream* idxstrm = 0;
     
     LASIndex* idx = new LASIndex(input);
     idx->SetType(LASIndex::eExternalIndex);
     idx->SetLeafCapacity(capacity);
     idx->SetFillFactor(0.8);
     idx->SetDimension(dimension);
-    idx->Initialize(*idxstrm);
 
-    delete idx;
-    delete idxstrm;
-    delete reader;
+    if (bBulkLoad) {
+        idxstrm = new LASIndexDataStream(reader, dimension);
+        idx->Initialize(*idxstrm);
+    } else {
+        idx->Initialize();
+        LoadIndex(idx, reader, dimension);
+    }
+
+    if (idx)
+        delete idx;
+    
+    if (idxstrm)
+        delete idxstrm;
+    if (reader)
+        delete reader;
+    
     delete istrm;
 }

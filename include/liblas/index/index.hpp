@@ -185,6 +185,7 @@ private:
     SpatialIndex::IStorageManager* CreateStorage(std::string& filename);
     SpatialIndex::StorageManager::IBuffer* CreateIndexBuffer(SpatialIndex::IStorageManager& storage);
     SpatialIndex::ISpatialIndex* CreateIndex(LASIndexDataStream& strm);
+    SpatialIndex::ISpatialIndex* CreateIndex();
     SpatialIndex::ISpatialIndex* LoadIndex();
     bool ExternalIndexExists(std::string& filename);
 };

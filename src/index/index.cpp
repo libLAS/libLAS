@@ -128,7 +128,8 @@ void LASIndex::Initialize()
     }
     else
     {
-        throw std::runtime_error("can't create index with only a filename, must have LASDatastream");
+        m_rtree = CreateIndex();
+        // throw std::runtime_error("can't create index with only a filename, must have LASDatastream");
     }
     
     m_Initialized = true;
@@ -190,6 +191,33 @@ SpatialIndex::ISpatialIndex* LASIndex::CreateIndex(LASIndexDataStream& strm)
     }    
 }
 
+SpatialIndex::ISpatialIndex* LASIndex::CreateIndex() 
+{
+    using namespace SpatialIndex;
+    
+    ISpatialIndex* index = 0;
+    
+    try{
+        index = RTree::createNewRTree( 
+                                                      *m_buffer,
+                                                      m_idxFillFactor,
+                                                      m_idxCapacity,
+                                                      m_idxLeafCap,
+                                                      m_idxDimension,
+                                                      SpatialIndex::RTree::RV_RSTAR,
+                                                      m_idxId);
+        bool ret = index->isIndexValid();
+        if (ret == false) 
+            throw std::runtime_error(   "Spatial index error: index is not "
+                                        "valid after CreateIndex");
+
+        return index;
+    } catch (Tools::Exception& e) {
+        std::ostringstream os;
+        os << "Spatial Index Error: " << e.what();
+        throw std::runtime_error(os.str());
+    }    
+}
 SpatialIndex::ISpatialIndex* LASIndex::LoadIndex() 
 {
     using namespace SpatialIndex;
