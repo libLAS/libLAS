@@ -147,7 +147,11 @@ int main(int argc, char *argv[])
     int eliminated_intensity = 0;
     int eliminated_class = 0;
     int eliminated_first_only = 0;
-    int eliminated_last_only = 0;
+    int eliminated_last_only = 0; 
+    int thinned = 0;
+    
+    int bThin = FALSE;
+    int nThin = 0;
 
     double xyz_scale[3] = {0.0, 0.0, 0.0};
     double xyz_offset[3] = {0.0, 0.0, 0.0};
@@ -318,7 +322,8 @@ int main(int argc, char *argv[])
             }
         }
         else if (   strcmp(argv[i],"--t_srs") == 0  ||
-                    strcmp(argv[i],"-t_srs") == 0    
+                    strcmp(argv[i],"-t_srs") == 0    ||
+                    strcmp(argv[i],"-t") == 0 
                 )
         {
             ++i;
@@ -382,6 +387,15 @@ int main(int argc, char *argv[])
             do_pad_header = TRUE;
             header_pad = atoi(argv[i]);
         }
+        else if (   strcmp(argv[i],"--thin") == 0  ||
+                    strcmp(argv[i],"-y") == 0    
+                )
+        {
+            i++;
+            bThin = TRUE;
+            nThin = atoi(argv[i]);
+            printf("nThin %d\n");
+        }
         else if (file_name_in == NULL && file_name_out == NULL)
         {
             file_name_in = argv[i];
@@ -436,9 +450,15 @@ int main(int argc, char *argv[])
         exit(1);
     }
     
+    i = 0;
     while (p)
     {
-
+        if (bThin && ((i % nThin) != 0)) {
+            thinned++;
+            i++;
+            p = LASReader_GetNextPoint(reader);
+            continue;
+        }
         if (last_only && LASPoint_GetReturnNumber(p) != LASPoint_GetNumberOfReturns(p))
         {
             eliminated_last_only++;
@@ -573,7 +593,7 @@ int main(int argc, char *argv[])
         }
   
         p  = LASReader_GetNextPoint(reader);
-       
+        i++;
     }
 
     if (eliminated_first_only) 
@@ -605,6 +625,11 @@ int main(int argc, char *argv[])
         "eliminated based on intensity: %d\n", 
         eliminated_intensity);
 
+    if (bThin) 
+        fprintf(stderr, 
+        "thinned: %d\n", 
+        thinned);
+        
     LASReader_Destroy(reader);
     LASHeader_Destroy(header);
   
@@ -883,8 +908,15 @@ int main(int argc, char *argv[])
         exit(1);
     }
     
+    i = 0;
     while (p) {
 
+        if (bThin && ((i % nThin) != 0)) {
+            i++;
+            p = LASReader_GetNextPoint(reader);
+            continue;
+        }
+        
         if (skip_invalid && !LASPoint_IsValid(p)) {
             p = LASReader_GetNextPoint(reader);
             continue;
@@ -937,6 +969,7 @@ int main(int argc, char *argv[])
         LASWriter_WritePoint(writer,p);
 
         p  = LASReader_GetNextPoint(reader);
+        i++;
     }
 
     LASWriter_Destroy(writer);
