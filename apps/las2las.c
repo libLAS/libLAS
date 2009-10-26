@@ -156,6 +156,7 @@ int main(int argc, char *argv[])
     
     LASPointSummary* summary = NULL;
     
+    char* in_wkt = NULL;
     int ret = 0;
     
     for (i = 1; i < argc; i++) {
@@ -794,6 +795,12 @@ int main(int argc, char *argv[])
                 "Setting new coordinate system to %s", proj4_text);
             free(proj4_text);
         }
+        
+        /* keep around the header's SRS if we don't have on set by the user */
+        if (in_srs == NULL) {
+            in_srs = LASHeader_GetSRS(surviving_header);
+        }
+        
         LASHeader_SetSRS(surviving_header, out_srs);
         
     }
@@ -815,16 +822,27 @@ int main(int argc, char *argv[])
         exit(1);
     }  
 
-    if (in_srs != NULL) {
-        LASWriter_SetInputSRS(writer, in_srs);
-    }
-    
-    if (out_srs != NULL) {
-        if (verbose) {
-            fprintf(stderr,
-                "Setting LASWriter_SetOutputSRS to %s", LASSRS_GetProj4(out_srs));
+    if (do_reprojection) {
+        if (in_srs != NULL) {
+            char* in_wkt = LASSRS_GetWKT(in_srs);
+            if (strlen(in_wkt) == 0) {
+                free(in_wkt);
+                LASError_Print("Input SRS is empty, please specify with -s_srs");
+                exit(1);
+            }
+            free(in_wkt);
+            LASWriter_SetInputSRS(writer, in_srs);
+        } else {
+            
         }
-        LASWriter_SetOutputSRS(writer, out_srs);
+    
+        if (out_srs != NULL) {
+            if (verbose) {
+                fprintf(stderr,
+                    "Setting LASWriter_SetOutputSRS to %s", LASSRS_GetProj4(out_srs));
+            }
+            LASWriter_SetOutputSRS(writer, out_srs);
+        }
     }
 /*
 
