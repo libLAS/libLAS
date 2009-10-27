@@ -211,6 +211,7 @@ class Translator(object):
     
     def get_srid(self, srid):
         cur = self.con.cursor()
+        if not srid: return ''
         cur.execute('SELECT WKTEXT,WKTEXT3D from MDSYS.CS_SRS where srid=%d'%(int(srid)))
         res = cur.fetchall()
         for wkt in res:
@@ -231,9 +232,10 @@ class Translator(object):
         self.cur.execute(self.options.sql)
         clouds = []
 
-        res = self.cur.fetchall()
+        res = [] #self.cur.fetchall()
 
-        for row in res:
+        for row in self.cur:
+            res.append(row)
             for column in row:
                 try:
                     column.BASE_TABLE_COL
@@ -274,7 +276,6 @@ class Translator(object):
                         try:
                             col.SDO_SRID
                             self.srs = self.get_srid(col.SDO_SRID)
-                            import pdb;pdb.set_trace()
                             break
                         except AttributeError:
                             continue
