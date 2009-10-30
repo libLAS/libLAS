@@ -13,12 +13,12 @@ with new development and porting Martin's tools this new code.
 
 libLAS' initial development was supported by the `IGSB`_ of the Iowa DNR 
 for use in its state-wide `LIDAR`_ project.
- 
 
-Download   
+
+Download
 ------------------------------------------------------------------------------
- 
-The 1.2.0 version of libLAS can be downloaded from http://liblas.org/wiki/1.2.0
+
+The 1.2.1 version of libLAS can be downloaded from http://liblas.org/wiki/1.2.1
 
 Older releases may be obtained from http://liblas.org/wiki/Releases
 
@@ -70,6 +70,7 @@ format standard documents are available in PDF format:
 * `LAS 1.2 Format Standard`_ (2008-09-02)
 * `LAS 1.1 Format Standard`_ (2005-05-07)
 * `LAS 1.0 Format Standard`_ (2003-05-09)
+* `LAS permutation matrix`_
 
 License
 ------------------------------------------------------------------------------
@@ -149,11 +150,10 @@ Mercurial Repository Tree
 
 The Mercurial repository for libLAS is located at http://hg.liblas.org/main
 
-You can obtain a copy of the active source code by issuing the following:
-
-::
+You can obtain a copy of the active source code by issuing the following::
 
     hg clone http://hg.liblas.org/main
+
 
 Information about Trac
 ..............................................................................
@@ -189,6 +189,7 @@ Mailing Lists
 .. _`LAS 1.2 Format Standard`: http://liblas.org/raw-attachment/wiki/WikiStart/asprs_las_format_v12.pdf
 .. _`LAS 1.1 Format Standard`: http://liblas.org/raw-attachment/wiki/WikiStart/asprs_las_format_v11.pdf
 .. _`LAS 1.0 Format Standard`: http://liblas.org/raw-attachment/wiki/WikiStart/asprs_las_format_v10.pdf
+.. _`LAS permutation matrix`: http://liblas.org/raw-attachment/wiki/WikiStart/LAS-1.0-1.3-feature-matrix.pdf
 .. _`ASPRS Standards Committee`: http://www.asprs.org/society/committees/standards/lidar_exchange_format.html
 .. _`Howard Butler`: http://hobu.biz
 .. _`Mateusz Loskot`: http://mateusz.loskot.net
