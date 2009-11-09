@@ -90,6 +90,7 @@ class LASQuery : public SpatialIndex::IQueryStrategy
 public:
 
     LASQuery();
+    LASQuery(std::istream& input);
     ~LASQuery()
     {
         std::cout << "child count was" << m_count << std::endl;

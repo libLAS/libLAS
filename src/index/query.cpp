@@ -161,4 +161,9 @@ LASQueryResult& LASQueryResult::operator=(LASQueryResult const& rhs)
     return *this;
 }
 
+
+LASQuery::LASQuery(std::istream& input) : m_count(0), m_first(true) 
+{
+    
+}
 } // namespace liblas

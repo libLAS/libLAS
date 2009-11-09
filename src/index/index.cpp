@@ -67,12 +67,12 @@ void LASIndex::Setup()
     m_idxId = 1;
     
     m_idxCapacity = 1000;
-    m_idxLeafCap = 1000;
+    m_idxLeafCap = 250;
     m_idxDimension = 3;
     
-    m_idxFillFactor = 0.7;
+    m_idxFillFactor = 0.99;
     
-    m_bufferCapacity = 10;
+    m_bufferCapacity = 100;
     m_bufferWriteThrough = false;
 
     m_idxExists = false;

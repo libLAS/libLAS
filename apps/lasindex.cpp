@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
     LASIndex* idx = new LASIndex(input);
     idx->SetType(LASIndex::eExternalIndex);
     idx->SetLeafCapacity(capacity);
-    idx->SetFillFactor(0.8);
+    idx->SetFillFactor(0.99);
     idx->SetDimension(dimension);
 
     if (bBulkLoad) {
