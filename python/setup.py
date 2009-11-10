@@ -27,7 +27,7 @@ if os.name == 'nt':
 else:
     data_files = None
 
-scripts =['scripts/oci2las.py',]
+scripts =['scripts/oci2las.py','scripts/laskdtree.py',]
         
 setup(name          = 'libLAS',
       version       = version,
