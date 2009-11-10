@@ -38,6 +38,21 @@ using namespace liblas;
 #endif
 
 
+bool KDTreeIndexExists(std::string& filename)
+{
+    struct stat stats;
+    std::ostringstream os;
+    os << filename << ".kdx";
+
+    std::string indexname = os.str();
+    
+    // ret is -1 for no file existing and 0 for existing
+    int ret = stat(indexname.c_str(),&stats);
+
+    bool output = false;
+    if (ret == 0) output= true; else output =false;
+    return output;
+}
 
 
 std::istream* OpenInput(std::string filename) 
@@ -1015,21 +1030,31 @@ int main(int argc, char* argv[])
     }
 
     LASReader* reader = new LASReader(*istrm);
-    LASIndexDataStream* idxstrm = new LASIndexDataStream(reader, idx_dimension);
+    LASQuery* query = 0;
+    if (!KDTreeIndexExists(input)) {
 
-    LASIndex* idx = new LASIndex(input);
-    idx->SetType(LASIndex::eExternalIndex);
-    idx->SetLeafCapacity(nCapacity);
-    idx->SetFillFactor(dFillFactor);
-    idx->Initialize(*idxstrm);
+        LASIndexDataStream* idxstrm = new LASIndexDataStream(reader, idx_dimension);
 
-    LASQuery* query = new LASQuery;
-    idx->Query(*query);    
+        LASIndex* idx = new LASIndex(input);
+        idx->SetType(LASIndex::eExternalIndex);
+        idx->SetLeafCapacity(nCapacity);
+        idx->SetFillFactor(dFillFactor);
+        idx->Initialize(*idxstrm);
+        query = new LASQuery;
+        idx->Query(*query);
+        if (idx != 0) delete idx;
+        if (reader != 0) delete reader;
+        if (istrm != 0 ) delete istrm;
+            
+    } else {
+        std::cout << "Using kdtree ... " << std::endl;
+        std::ostringstream os;
+        os << input << ".kdx" ;
+        
+        std::istream* kdx = OpenInput(os.str());
+        query = new LASQuery(*kdx);
+    }
 
-    if (idx != 0) delete idx;
-    if (reader != 0) delete reader;
-    if (istrm != 0 ) delete istrm;
-    
     std::list<LASQueryResult>& results = query->GetResults();
     
     std::list<LASQueryResult>::const_iterator i;

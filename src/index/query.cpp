@@ -164,6 +164,53 @@ LASQueryResult& LASQueryResult::operator=(LASQueryResult const& rhs)
 
 LASQuery::LASQuery(std::istream& input) : m_count(0), m_first(true) 
 {
+    long id_count = 0;
+    long id = 0;
+    long i = 0;
+
     
+    double low[2];
+    double high[2];
+    
+    double mins[2];
+    double maxs[2];
+    
+    bool first = true;
+    
+    while(input) {
+        input >> id >> id_count >> low[0] >> low[1] >> high[0] >> high[1];
+        // printf("count:%d %.2f %.2f %.2f %.2f\n", id_count, low[0], low[1], high[0], high[1]);
+        
+        if (first) {
+            mins[0] = low[0];
+            mins[1] = low[1];
+            maxs[0] = high[0];
+            maxs[1] = high[1];
+            first = false;
+        }
+        
+        mins[0] = std::min(mins[0], low[0]);
+        mins[1] = std::min(mins[1], low[1]);
+        
+        maxs[0] = std::max(maxs[0], high[0]);
+        maxs[1] = std::max(maxs[1], high[1]);
+        // if (!input.good()) continue;
+        
+        std::list<SpatialIndex::id_type> ids;
+        for (int j=0; j<id_count; j++) {
+            input >> i;
+            ids.push_back(i);
+        }
+        SpatialIndex::Region* pr = new SpatialIndex::Region(low, high, 2);
+        // printf("Ids size: %d %.3f\n", ids.size(), pr->getLow(0));
+        LASQueryResult result(static_cast<uint32_t>(id));
+        result.SetIDs(ids);
+        result.SetBounds(pr);
+        m_results.push_back(result);
+        delete pr;
+    }
+
+    bounds = SpatialIndex::Region(mins, maxs, 2);
+
 }
 } // namespace liblas

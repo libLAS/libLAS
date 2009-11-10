@@ -19,13 +19,13 @@ class Translator(object):
 
     def construct_parser(self):
         from optparse import OptionParser, OptionGroup
-        usage = "usage: %prog [options] arg"
+        usage = "usage: %prog --leaf-size 1000 filename.las"
         parser = OptionParser(usage)
         g = OptionGroup(parser, "Base options", "Basic Translation Options")
         g.add_option("-i", "--input", dest="input",
                           help="Input LAS file", metavar="INPUT")
         g.add_option("-s", "--leaf-size", dest='leafsize',
-                          help="Maximum Leaf size", metavar="SQL")
+                          help="Maximum Leaf size", metavar="LEAFSIZE")
         g.add_option("-o", "--output", dest='output',
                           help="Column name containing the point cloud object ", metavar="OUTPUT")
 
@@ -117,9 +117,9 @@ class Translator(object):
     
         return (minx, miny, maxx, maxy)
     
-    def write(self, id, leaf, minx, miny, maxx, maxy):
-        ids = ' '.join([str(id) for id in leaf.idx])
-        output = '%d %d %.8f %.8f %.8f %.8f \n%s' % (id, len(leaf.idx), minx, miny, maxx, maxy, ids)
+    def write(self, i, leaf, minx, miny, maxx, maxy):
+        ids = ' '.join([str(i) for i in leaf.idx])
+        output = '%d %d %.8f %.8f %.8f %.8f \n%s\n' % (i, len(leaf.idx), minx, miny, maxx, maxy, ids)
         
         self.options.output.write(output)
     def process(self):
