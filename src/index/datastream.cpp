@@ -112,7 +112,7 @@ bool LASIndexDataStream::hasNext() throw (Tools::NotSupportedException)
     return (m_pNext != 0);
 }
 
-::uint32_t LASIndexDataStream::size() throw (Tools::NotSupportedException)
+uint32_t LASIndexDataStream::size() throw (Tools::NotSupportedException)
 {
     throw Tools::NotSupportedException("Operation not supported.");
 }
