@@ -146,7 +146,22 @@ bool DeleteTable(   OWConnection* connection,
 
     oss << "DELETE from " <<cloudTableName;
     statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
+    if (statement != 0) delete statement; else 
+    {
+        // if we failed, try dropping the index
+        std::cout << "Dropping index ..." << std::endl;
+        oss.str("");  
+        oss << "DROP INDEX "<<tableName<<"_cloud_idx" ;
+        statement = Run(connection, oss);
+        if (statement != 0) delete statement; else return false;
+        oss.str("");
+        
+        // redelete from the table
+        oss << "DELETE from " <<cloudTableName;
+        statement = Run(connection, oss);
+        if (statement != 0) delete statement; else return false;
+        oss.str("");
+    }
     oss.str("");
     
     std::string cloudColumnName_l = std::string(cloudColumnName);
@@ -181,7 +196,9 @@ oss << "declare\n"
     oss << "DELETE FROM USER_SDO_GEOM_METADATA WHERE TABLE_NAME='"<<table<<"'" ;
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
-    oss.str("");    
+    oss.str("");   
+
+   
     return true;
 
 }
@@ -308,7 +325,8 @@ bool InsertBlock(OWConnection* connection,
                 const char* tableName, 
                 long precision,
                 long pc_id,
-                bool bUseSolidGeometry)
+                bool bUseSolidGeometry,
+                bool bUse3d)
 {
     ostringstream oss;
 
@@ -320,38 +338,81 @@ bool InsertBlock(OWConnection* connection,
     ostringstream s_srid;
     ostringstream s_gtype;
     ostringstream s_eleminfo;
-    bool bUse3d = true;
-    bool bGeographic = true;
+    bool bGeographic = false;
     
     if (srid == 0) {
         s_srid << "NULL";
-        bUse3d = true;
-        bUseSolidGeometry = true;
+        // bUse3d = true;
+        // bUseSolidGeometry = true;
         }
     else if (srid == 4326) {
-        bUse3d = true;
-        bUseSolidGeometry = true;
+        // bUse3d = true;
+        // bUseSolidGeometry = true;
         bGeographic = true;
-        s_srid << "NULL";
+        s_srid << srid;
+        // s_srid << "NULL";
     }
     else {
         s_srid << srid;
-        bUse3d = false;
+        // bUse3d = false;
         // If the user set an srid and set it to solid, we're still 3d
-        if (bUseSolidGeometry == true)
-            bUse3d = true;
+        // if (bUseSolidGeometry == true)
+        //     bUse3d = true;
     }
     
-    if (bUseSolidGeometry == true) {
-        s_gtype << "3008";
-        s_eleminfo << "(1,1007,3)";
+    if (bUse3d) {
+        if (bUseSolidGeometry == true) {
+            s_gtype << "3008";
+            s_eleminfo << "(1,1007,3)";
 
+        } else {
+            s_gtype << "3003";
+            s_eleminfo  << "(1,1003,3)";
+
+        }
     } else {
-        s_gtype << "3003";
-        s_eleminfo  << "(1,1003,3)";
+        if (bUseSolidGeometry == true) {
+            s_gtype << "2008";
+            s_eleminfo << "(1,1007,3)";
 
+        } else {
+            s_gtype << "2003";
+            s_eleminfo  << "(1,1003,3)";
+
+        }
+    }
+
+    double x0, x1, y0, y1, z0, z1;
+    double tolerance = 0.05;
+    
+
+    x0 = b->getLow(0);
+    x1 = b->getHigh(0);
+    y0 = b->getLow(1);
+    y1 = b->getHigh(1);
+    
+    if (bUse3d) {
+        try {
+            z0 = b->getLow(2);
+            z1 = b->getHigh(2);
+        } catch (Tools::IndexOutOfBoundsException& e) {
+            z0 = 0;
+            z1 = 20000;
+        }
+    } else if (bGeographic) {
+        x0 = -180.0;
+        x1 = 180.0;
+        y0 = -90.0;
+        y1 = 90.0;
+        z0 = 0.0;
+        z1 = 20000.0;
+        tolerance = 0.000000005;
+    } else {
+        z0 = 0.0;
+        z1 = 20000.0;            
     }
     
+        
     // std::cout << "use 3d?: " << bUse3d << " srid: " << s_srid.str() << std::endl;
     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss_geom.precision(precision);
@@ -360,26 +421,19 @@ bool InsertBlock(OWConnection* connection,
 "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
 "              mdsys.sdo_ordinate_array(\n";
 
-    oss_geom << b->getLow(0) <<","<<
-                                            b->getLow(1) <<",";
+    oss_geom << x0 << ",\n" << y0 << ",\n";
 
     if (bUse3d) {
-        if (!bGeographic) {
-            oss_geom <<                         b->getLow(2) <<",";
-        } else {
-            oss_geom <<"0,";
-        }
+        oss_geom << z0 << ",\n";
     }
-    
-    oss_geom <<                             b->getHigh(0) <<","<<
-                                            b->getHigh(1);
+
+    oss_geom << x1 << ",\n" << y1 << "\n";
+
     if (bUse3d) {
-        if (!bGeographic) {
-            oss_geom                            <<","<< b->getHigh(2);
-        } else {
-            oss_geom <<",20000";
-        }
+        oss_geom << ",\n";
+        oss_geom << z1;
     }
+
 
     oss_geom << "))";
     oss << "INSERT INTO "<< tableName << 
@@ -447,7 +501,15 @@ bool CreateSDOEntry(    OWConnection* connection,
                         LASQuery* query, 
                         long srid, 
                         long precision,
-                        bool bUseSolidGeometry)
+                        bool bUseSolidGeometry,
+                        bool bUse3d,
+                        bool bSetExtents,
+                        double xmin,
+                        double xmax,
+                        double ymin,
+                        double ymax,
+                        double zmin,
+                        double zmax)
 {
     ostringstream oss;
     OWStatement* statement = 0;
@@ -456,48 +518,73 @@ bool CreateSDOEntry(    OWConnection* connection,
     
     oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss.precision(precision);
-    
+
     ostringstream s_srid;
-    bool bUse3d = false;
     bool bGeographic = false;
     
-    if (bUseSolidGeometry == true) {
-        bUse3d = true;
-    }
+    // if (bUseSolidGeometry == true) {
+    //     bUse3d = true;
+    // }
     
     if (srid == 0) {
         s_srid << "NULL";
-        bUse3d = true;
+        // bUse3d = true;
     }
-    else if (srid == 4326) {
-        s_srid << "NULL";
-        bUse3d = true;
-        bGeographic = true;
-    } else {
+    // else if (srid == 4326) {
+    //     s_srid << "NULL";
+    //     // bUse3d = true;
+    //     bGeographic = true;
+    // } 
+    else {
         s_srid << srid;
     }
+    
+    double x0, x1, y0, y1, z0, z1;
+    double tolerance = 0.05;
+    
+    if (bSetExtents){
+        x0 = xmin; x1 = xmax;
+        y0 = ymin; y1 = ymax;
+        z0 = zmin; z1 = zmax;
+    } else {
+        x0 = query->bounds.getLow(0);
+        x1 = query->bounds.getHigh(0);
+        y0 = query->bounds.getLow(1);
+        y1 = query->bounds.getHigh(1);
+        
+        if (bUse3d) {
+            try {
+                z0 = query->bounds.getLow(2);
+                z1 = query->bounds.getHigh(2);
+            } catch (Tools::IndexOutOfBoundsException& e) {
+                z0 = 0;
+                z1 = 20000;
+            }
+        } else if (bGeographic) {
+            x0 = -180.0;
+            x1 = 180.0;
+            y0 = -90.0;
+            y1 = 90.0;
+            z0 = 0.0;
+            z1 = 20000.0;
+            tolerance = 0.000000005;
+        } else {
+            z0 = 0.0;
+            z1 = 20000.0;            
+        }
+    }
+    
+
      
     oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
         "','blk_extent', MDSYS.SDO_DIM_ARRAY(";
     
-    if (bGeographic == true) {
-        oss << "MDSYS.SDO_DIM_ELEMENT('X', -180, 180, .000000005),"
-               "MDSYS.SDO_DIM_ELEMENT('Y', -180, 180, .000000005)";
-    } else {
-        oss << "MDSYS.SDO_DIM_ELEMENT('X', "<< query->bounds.getLow(0) <<","<< query->bounds.getHigh(0)<<",0.05),"
-            "MDSYS.SDO_DIM_ELEMENT('Y', "<< query->bounds.getLow(1) <<","<< query->bounds.getHigh(1)<<",0.05)";
-        
-    }
-
-            // "MDSYS.SDO_DIM_ELEMENT('X', "<< query->bounds.getLow(0) <<","<< query->bounds.getHigh(0)<<",0.05),"
-            // "MDSYS.SDO_DIM_ELEMENT('Y', "<< query->bounds.getLow(1) <<","<< query->bounds.getHigh(1)<<",0.05)";
-            
+    oss << "MDSYS.SDO_DIM_ELEMENT('X', " << x0 << "," << x1 <<"," << tolerance << "),"
+           "MDSYS.SDO_DIM_ELEMENT('Y', " << y0 << "," << y1 <<"," << tolerance << ")";
+           
     if (bUse3d) {
         oss << ",";
-        if (bGeographic)
-            oss <<"MDSYS.SDO_DIM_ELEMENT('Z', "<< 0 <<","<< 200000<<",0.000000005)";
-        else
-            oss << "MDSYS.SDO_DIM_ELEMENT('Z', "<< query->bounds.getLow(2) <<","<< query->bounds.getHigh(2)<<",0.00000005)";
+        oss <<"MDSYS.SDO_DIM_ELEMENT('Z', "<< z0 << "," << z1 << "," << tolerance << ")";
     }
     oss << ")," << s_srid.str() << ")";
     
@@ -512,24 +599,24 @@ bool CreateSDOEntry(    OWConnection* connection,
 bool CreateBlockIndex(  OWConnection* connection, 
                         const char* tableName, 
                         long srid, 
-                        bool bUseSolidGeometry)
+                        bool bUseSolidGeometry,
+                        bool bUse3d)
 {
     ostringstream oss;
     OWStatement* statement = 0;
     
-    bool bUse3d = false;
     
-    if (bUseSolidGeometry == true) {
-        bUse3d = true;
-    }
+    // if (bUseSolidGeometry == true) {
+    //     bUse3d = true;
+    // }
     
-    if (srid == 0) {
-        bUse3d = true;
-    } 
+    // if (srid == 0) {
+        // bUse3d = true;
+    // } 
     
-    if (srid == 4326) {
-        bUse3d = true;
-    }
+    // if (srid == 4326) {
+    //     bUse3d = true;
+    // }
     
     oss << "CREATE INDEX "<< tableName <<"_cloud_idx on "<<tableName<<"(blk_extent) INDEXTYPE IS MDSYS.SPATIAL_INDEX";
     
@@ -586,7 +673,15 @@ long CreatePCEntry( OWConnection* connection,
                     int srid,
                     int blk_capacity,
                     long precision,
-                    bool bUseSolidGeometry)
+                    bool bUseSolidGeometry,
+                    bool bUse3d,
+                    bool bSetExtents,
+                    double xmin,
+                    double xmax,
+                    double ymin,
+                    double ymax,
+                    double zmin,
+                    double zmax)
 {
     ostringstream oss;
 
@@ -633,62 +728,100 @@ long CreatePCEntry( OWConnection* connection,
     ostringstream s_geom;
 
 
-    bool bUse3d = true;
     bool bGeographic = false;
     
     if (srid == 0) {
         s_srid << "NULL";
-        bUse3d = true;
-        bUseSolidGeometry = true;
+        // bUse3d = true;
+        // bUseSolidGeometry = true;
         }
-    else if (srid == 4326) {
-        bUse3d = true;
-        bUseSolidGeometry = false;
-        bGeographic = true;
-        s_srid << "NULL";
-    }
+    // else if (srid == 4326) {
+    //     // bUse3d = true;
+    //     // bUseSolidGeometry = false;
+    //     bGeographic = true;
+    //     s_srid << "NULL";
+    // }
     else {
         s_srid << srid;
-        bUse3d = false;
-        // If the user set an srid and set it to solid, we're still 3d
-        if (bUseSolidGeometry == true)
-            bUse3d = true;
+        // bUse3d = false;
+        // // If the user set an srid and set it to solid, we're still 3d
+        // if (bUseSolidGeometry == true)
+        //     bUse3d = true;
     }
     
-    if (bUseSolidGeometry == true) {
-        s_gtype << "3008";
-        s_eleminfo << "(1,1007,3)";
+    if (bUse3d) {
+        if (bUseSolidGeometry == true) {
+            s_gtype << "3008";
+            s_eleminfo << "(1,1007,3)";
 
+        } else {
+            s_gtype << "3003";
+            s_eleminfo  << "(1,1003,3)";
+
+        }
     } else {
-        s_gtype << "3003";
-        s_eleminfo  << "(1,1003,3)";
+        if (bUseSolidGeometry == true) {
+            s_gtype << "2008";
+            s_eleminfo << "(1,1007,3)";
 
+        } else {
+            s_gtype << "2003";
+            s_eleminfo  << "(1,1003,3)";
+
+        }
     }
     
+
+
+    double x0, x1, y0, y1, z0, z1;
+    double tolerance = 0.05;
+    
+    if (bSetExtents){
+        x0 = xmin; x1 = xmax;
+        y0 = ymin; y1 = ymax;
+        z0 = zmin; z1 = zmax;
+    } else {
+        x0 = query->bounds.getLow(0);
+        x1 = query->bounds.getHigh(0);
+        y0 = query->bounds.getLow(1);
+        y1 = query->bounds.getHigh(1);
+        
+        if (bUse3d) {
+            try {
+                z0 = query->bounds.getLow(2);
+                z1 = query->bounds.getHigh(2);
+            } catch (Tools::IndexOutOfBoundsException& e) {
+                z0 = 0;
+                z1 = 20000;
+            }
+        } else if (bGeographic) {
+            x0 = -180.0;
+            y0 = 180.0;
+            y0 = -90.0;
+            y1 = 90.0;
+            z0 = 0.0;
+            z1 = 20000.0;
+            tolerance = 0.000000005;
+        } else {
+            z0 = 0.0;
+            z1 = 20000.0;            
+        }
+    }    
 
     s_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
 "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
 "              mdsys.sdo_ordinate_array(\n";
 
-    s_geom << query->bounds.getLow(0) <<","<<
-                                            query->bounds.getLow(1) <<",";
+    s_geom << x0 << "," << y0 << ",";
 
     if (bUse3d) {
-        if (!bGeographic) {
-            s_geom <<                         query->bounds.getLow(2) <<",";
-        } else {
-            s_geom <<"0,";
-        }
+        s_geom << z0 << ",";
     }
     
-    s_geom <<                             query->bounds.getHigh(0) <<","<<
-                                            query->bounds.getHigh(1);
+    s_geom << x1 << "," << y1;
+
     if (bUse3d) {
-        if (!bGeographic) {
-            s_geom                            <<","<< query->bounds.getHigh(2);
-        } else {
-            s_geom <<",20000";
-        }
+        s_geom << "," << z1;
     }
 
     s_geom << "))";
@@ -804,11 +937,22 @@ int main(int argc, char* argv[])
     bool bUseExistingBlockTable = false;
     bool bDropTable = false;
     bool bUseSolidGeometry = false;
+    bool bUse3d = false;
+    
     liblas::uint32_t nCapacity = 10000;
     double dFillFactor = 0.99;
     int srid = 0;
     long precision = 8;
     long idx_dimension = 3;
+    
+    double xmin = 0.0;
+    double ymin = 0.0;
+    double zmin = 0.0;
+    double xmax = 0.0;
+    double ymax = 0.0;
+    double zmax = 0.0;
+    bool bSetExtents = false;
+        
     
     for (int i = 1; i < argc; i++)
     {
@@ -924,10 +1068,78 @@ int main(int argc, char* argv[])
             i++;
             precision = atoi(argv[i]);
         }
-        else if (   strcmp(argv[i],"--solid") == 0 
+        else if (   strcmp(argv[i],"--solid") == 0 ||
+                    strcmp(argv[i],"-solid") == 0
                 )
         {
             bUseSolidGeometry=true;
+        }
+        else if (   strcmp(argv[i],"--3d") == 0  ||
+                    strcmp(argv[i],"-3d") == 0
+                )
+        {
+            bUse3d=true;
+        }
+        else if (   strcmp(argv[i],"--xmin") == 0  ||
+                    strcmp(argv[i],"-xmin") == 0
+                )
+        {
+            i++;
+            xmin = atof(argv[i]);
+            bSetExtents = true;
+        }
+        else if (   strcmp(argv[i],"--xmin") == 0  ||
+                    strcmp(argv[i],"-xmin") == 0
+                )
+        {
+            i++;
+            xmin = atof(argv[i]);
+            printf("xmin: %.3f", xmin);
+            bSetExtents = true;
+        }
+
+        else if (   strcmp(argv[i],"--xmax") == 0  ||
+                    strcmp(argv[i],"-xmax") == 0
+                )
+        {
+            i++;
+            xmax = atof(argv[i]);
+            bSetExtents = true;
+        }
+
+        else if (   strcmp(argv[i],"--ymin") == 0  ||
+                    strcmp(argv[i],"-ymin") == 0
+                )
+        {
+            i++;
+            ymin = atof(argv[i]);
+            bSetExtents = true;
+        }
+
+        else if (   strcmp(argv[i],"--ymax") == 0  ||
+                    strcmp(argv[i],"-ymax") == 0
+                )
+        {
+            i++;
+            ymax = atof(argv[i]);
+            bSetExtents = true;
+        }
+        else if (   strcmp(argv[i],"--zmin") == 0  ||
+                    strcmp(argv[i],"-zmin") == 0
+                )
+        {
+            i++;
+            zmin = atof(argv[i]);
+            bSetExtents = true;
+        }
+
+        else if (   strcmp(argv[i],"--zmax") == 0  ||
+                    strcmp(argv[i],"-zmax") == 0
+                )
+        {
+            i++;
+            zmax = atof(argv[i]);
+            bSetExtents = true;
         }
         else if (input.empty())
         {
@@ -1075,18 +1287,48 @@ int main(int argc, char* argv[])
                     srid,
                     nCapacity,
                     precision,
-                    bUseSolidGeometry);
+                    bUseSolidGeometry,
+                    bUse3d,
+                    bSetExtents,
+                    xmin, xmax, ymin, ymax, zmin, zmax);
                     
-
+    
+    std::cout << "Writing " << results.size() << " blocks ..." << std::endl;
     for (i=results.begin(); i!=results.end(); i++)
     {
-        bool inserted = InsertBlock(con, *i, srid, reader2, table_name.c_str(), precision, pc_id, bUseSolidGeometry);
+        bool inserted = InsertBlock(con, 
+                                    *i, 
+                                    srid, 
+                                    reader2, 
+                                    table_name.c_str(), 
+                                    precision, 
+                                    pc_id, 
+                                    bUseSolidGeometry, 
+                                    bUse3d);
     }
     
     if (!bUseExistingBlockTable) {
         std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
-        CreateSDOEntry(con, table_name.c_str(), query, srid , precision, bUseSolidGeometry);
-        CreateBlockIndex(con, table_name.c_str(), srid, bUseSolidGeometry);
+        CreateSDOEntry( con, 
+                        table_name.c_str(), 
+                        query, 
+                        srid , 
+                        precision, 
+                        bUseSolidGeometry,
+                        bUse3d,
+                        bSetExtents,
+                        xmin,
+                        xmax,
+                        ymin,
+                        ymax,
+                        zmin,
+                        zmax);
+                        
+        CreateBlockIndex(   con, 
+                            table_name.c_str(), 
+                            srid, 
+                            bUseSolidGeometry, 
+                            bUse3d);
     }
 
 
