@@ -179,6 +179,13 @@ if test "$with_geotiff" != "no" -a "$with_geotiff" != "" -a "${GEOTIFF_CONFIG}" 
     AC_CHECK_LIB([geotiff], [ST_Create],
                  [GEOTIFF_CONFIG=external], [GEOTIFF_CONFIG=no],
                  [-L$with_geotiff/lib])
+
+dnl see if we're in lib64 instead of lib
+    if test "${GEOTIFF_CONFIG}" = "no" ; then
+        AC_CHECK_LIB([geotiff], [ST_Create],
+                     [GEOTIFF_CONFIG=external], [GEOTIFF_CONFIG=no],
+                     [-L$with_geotiff/lib64])    
+    fi
 fi
 
 if test "${GEOTIFF_CONFIG}" != "no" ; then
@@ -192,7 +199,10 @@ if test "${GEOTIFF_CONFIG}" != "no" ; then
     AC_MSG_RESULT([yes])
     elif test -f ${with_gdal}/frmts/gtiff/libgeotiff/geo_simpletags.h ; then
         GEOTIFF_INC="-I$with_gdal/frmts/gtiff/libgeotiff/ -I$with_gdal/frmts/gtiff/libtiff"
-    AC_MSG_RESULT([yes, from GDAL]) 
+    AC_MSG_RESULT([yes, from GDAL])
+    elif test -f ${with_geotiff}/include/libgeotiff/geo_simpletags.h ; then
+        GEOTIFF_INC="-I$with_geotiff/include/libgeotiff"
+    AC_MSG_RESULT([yes])
     else
         GEOTIFF_CONFIG="no"
     AC_MSG_RESULT([no])
