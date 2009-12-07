@@ -162,7 +162,16 @@ Please, locate Oracle directories using --with-oci or \
         dnl
         dnl Check OCI headers
         dnl
-        AC_MSG_CHECKING([for Oracle OCI headers in $oracle_include_dir])
+        if test -f "$oracle_include_dir/oci.h"; then
+            ACTIVE_INCLUDE_DIR="$oracle_include_dir"
+        fi
+        if test -f "$oracle_include_dir2/oci.h"; then
+            ACTIVE_INCLUDE_DIR="$oracle_include_dir2"
+        fi
+        if test -f "$oracle_include_dir3/oci.h"; then
+            ACTIVE_INCLUDE_DIR="$oracle_include_dir3"
+        fi  
+        AC_MSG_CHECKING([for Oracle OCI headers in $ACTIVE_INCLUDE_DIR])
 
         AC_LANG_PUSH(C++)
         AC_COMPILE_IFELSE([
@@ -242,17 +251,26 @@ if (envh) OCIHandleFree(envh, OCI_HTYPE_ENV);
     if test "$oci_header_found" = "yes" -a "$oci_lib_found" = "yes" -a \
         -n "$oracle_version_req"; then
 
-        oracle_version_major=`cat $oracle_include_dir/oci.h \
+        if test -f "$oracle_include_dir/oci.h"; then
+            ACTIVE_INCLUDE_DIR="$oracle_include_dir"
+        fi
+        if test -f "$oracle_include_dir2/oci.h"; then
+            ACTIVE_INCLUDE_DIR="$oracle_include_dir2"
+        fi
+        if test -f "$oracle_include_dir3/oci.h"; then
+            ACTIVE_INCLUDE_DIR="$oracle_include_dir3"
+        fi        
+        oracle_version_major=`cat $ACTIVE_INCLUDE_DIR/oci.h \
                              | grep '#define.*OCI_MAJOR_VERSION.*' \
                              | sed -e 's/#define OCI_MAJOR_VERSION  *//' \
                              | sed -e 's/  *\/\*.*\*\///'`
 
-        oracle_version_minor=`cat $oracle_include_dir/oci.h \
+        oracle_version_minor=`cat $ACTIVE_INCLUDE_DIR/oci.h \
                              | grep '#define.*OCI_MINOR_VERSION.*' \
                              | sed -e 's/#define OCI_MINOR_VERSION  *//' \
                              | sed -e 's/  *\/\*.*\*\///'`
 
-        AC_MSG_CHECKING([if Oracle OCI version is >= $oracle_version_req])
+        AC_MSG_CHECKING([if Oracle OCI version is >= $oracle_version_req ])
 
         if test -n "$oracle_version_major" -a -n $"oracle_version_minor"; then
 
