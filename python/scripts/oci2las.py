@@ -116,6 +116,7 @@ class Translator(object):
         if self.options.srs:
             self.srs = srs.SRS()
             self.srs.set_userinput(self.options.srs)
+            print 'setting srs to %s' %self.srs.proj4
         else:
             self.srs = None
             
@@ -229,44 +230,48 @@ class Translator(object):
         self.connect()
 
         self.cur = self.con.cursor()
-        self.cur.execute(self.options.sql)
-        clouds = []
+#        self.cur.execute(self.options.sql)
+#        clouds = []
+#
+#        res = self.cur.fetchall()
 
-        res = [] #self.cur.fetchall()
+#        for row in res:
+#            for column in row:
+#                try:
+#                    column.BASE_TABLE_COL
+#                    clouds.append(column)
+#                except AttributeError:
+#                    # This column isn't a cloud
+#                    pass
 
-        for row in self.cur:
-            res.append(row)
-            for column in row:
-                try:
-                    column.BASE_TABLE_COL
-                    clouds.append(column)
-                except AttributeError:
-                    # This column isn't a cloud
-                    pass
-
-        points = []
+#        points = []
         
         # write an actual cloud column
-        for cloud in clouds:
-            cur2 = self.con.cursor()
-
-            cur2.execute('SELECT NUM_POINTS, POINTS, BLK_EXTENT FROM %s'% cloud.BLK_TABLE)
+#        for cloud in clouds:
+#            cur2 = self.con.cursor()
+#
+#            cur2.execute('SELECT NUM_POINTS, POINTS, BLK_EXTENT FROM %s'% cloud.BLK_TABLE)
             
             
-            for num_points, blob, extent in cur2:
-                # set the SRS from the first geometry
-                if not self.srs:
-                    self.srs = self.get_srid(extent.SDO_SRID)
+#            for num_points, blob, extent in cur2:
+#                # set the SRS from the first geometry
+#                if not self.srs:
+#                    self.srs = self.get_srid(extent.SDO_SRID)
                     
-                b = blob.read()
-                points.append(self.get_points(num_points,b))
+#                b = blob.read()
+#                points.append(self.get_points(num_points,b))
         
-        num_pts_index, blob_index = self.get_block_indexes(self.cur)
+#        num_pts_index, blob_index = self.get_block_indexes(self.cur)
         
         # if we don't have a cloud object, we'll assume that NUM_POINTS and 
         # the POINTS blob exist in our already queried cursor
+        clouds = None
+        points = []
+        print 'have srs?: %s' % bool(self.srs)
         if not clouds:
-            for row in res:
+            cur = self.cur.execute(self.options.sql)
+            num_pts_index, blob_index = self.get_block_indexes(cur)
+            for row in cur:
                 num_points = row[num_pts_index]
                 blob = row[blob_index].read()
                 points.append(self.get_points(num_points, blob))
