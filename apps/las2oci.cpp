@@ -439,10 +439,20 @@ bool InsertBlock(OWConnection* connection,
     oss << "INSERT INTO "<< tableName << 
             "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS, PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) VALUES ( " 
             << pc_id << "," << result.GetID() <<"," << num_points << ", " 
-            << oss_geom.str() <<", EMPTY_BLOB(), 1, 1, 0, 1)";
+            << oss_geom.str() <<", :1, 1, 1, 0, 1)";
 
     OWStatement* statement = 0;
+    OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
+
     statement = connection->CreateStatement(oss.str().c_str());
+    statement->Define( locator, 1 ); // fetch one blob
+    
+    std::vector<liblas::uint8_t> data;
+    bool gotdata = GetResultData(result, reader, data, 3);
+    if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
+
+    statement->Bind((char*)&(data[0]),(long)data.size());
+
 
     if (statement->Execute() == false) {
         delete statement;
@@ -453,39 +463,46 @@ bool InsertBlock(OWConnection* connection,
     oss.str("");
     
     // FIXME (BLK_ID *and* OBJ_ID must be used as part of the query.)
-    oss << "SELECT POINTS FROM " << tableName << " WHERE BLK_ID=" << result.GetID() << " and OBJ_ID=" << pc_id<<"  FOR UPDATE";
+    // oss << "SELECT POINTS FROM " << tableName << " WHERE BLK_ID=" << result.GetID() << " and OBJ_ID=" << pc_id<<"  FOR UPDATE";
     
     // we only expect one blob to come back
-    OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
+    // OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
 
-    statement = connection->CreateStatement(oss.str().c_str());
-    statement->Define( locator, 1 ); // fetch one blob
+    // statement = connection->CreateStatement(oss.str().c_str());
+    // statement->Define( locator, 1 ); // fetch one blob
+    // 
+    // 
+    // if( statement->Execute() == false )
+    // {
+    //     std::cout << "Unable to execute statement!" << std::endl;
+    //     delete statement;
+    //     return false;
+    // }
+    // 
+    // if( statement->Fetch( 1 ) == false )
+    // {
+    //     std::cout << "Unable to fetch POINTS blob!" << std::endl;
+    //     delete statement;
+    //     return false;
+    // }
     
-
-    if( statement->Execute() == false )
-    {
-        std::cout << "Unable to execute statement!" << std::endl;
-        delete statement;
-        return false;
-    }
-
-    if( statement->Fetch( 1 ) == false )
-    {
-        std::cout << "Unable to fetch POINTS blob!" << std::endl;
-        delete statement;
-        return false;
-    }
-    
-    std::vector<liblas::uint8_t> data;
-    bool gotdata = GetResultData(result, reader, data, 3);
-    if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
-    
-    liblas::uint32_t wroteblob = statement->WriteBlob(  locator[0],
-                                                        (void*)&(data[0]),
-                                                        data.size());
-    
-    if (! wroteblob) throw std::runtime_error("No blob bytes could be written!");
+    // std::vector<liblas::uint8_t> data;
+    // bool gotdata = GetResultData(result, reader, data, 3);
+    // if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
+    // 
+    // liblas::uint32_t wroteblob = statement->WriteBlob(  locator[0],
+    //                                                     (void*)&(data[0]),
+    //                                                     data.size());
+    // 
+    // if (! wroteblob) throw std::runtime_error("No blob bytes could be written!");
 //select dbms_lob.getlength(points) from TO_core_last_clip
+
+    // oss << "";
+    // oss <<  "COMMIT";
+    // statement = Run(connection, oss);
+    // if (statement != 0) delete statement; else return false;
+    // oss.str("");
+
     OWStatement::Free(locator, 1);
 
     delete statement;

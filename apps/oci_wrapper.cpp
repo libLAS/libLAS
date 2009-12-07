@@ -436,6 +436,8 @@ OWStatement::OWStatement( OWConnection* pConnection,
     if( nStmtType != OCI_STMT_SELECT )
     {
         nStmtMode = OCI_COMMIT_ON_SUCCESS;
+        // nStmtMode = OCI_DEFAULT;
+
     }
 }
 
@@ -450,10 +452,15 @@ bool OWStatement::Execute( int nRows )
 {
     CPLDebug("PL/SQL","\n%s\n", pszStatement );
 
+    ub4 iters = ( nStmtMode != OCI_DEFAULT );
+    
+    if (nStmtMode == OCI_DEFAULT) {
+        iters = 1;
+    }
     sword nStatus = OCIStmtExecute( poConnect->hSvcCtx,
         hStmt,
         hError,
-        (ub4) ( nStmtMode != OCI_DEFAULT ),
+        iters,
         (ub4) nRows,
         (OCISnapshot*) NULL,
         (OCISnapshot*) NULL,
@@ -555,6 +562,29 @@ void OWStatement::Bind( double* pnData )
         (dvoid*) pnData,
         (sb4) sizeof(double),
         (ub2) SQLT_BDOUBLE,
+        (void*) NULL,
+        (ub2*) NULL,
+        (ub2*) NULL,
+        (ub4) NULL,
+        (ub4) NULL,
+        (ub4) OCI_DEFAULT ),
+        hError );
+}
+
+void OWStatement::Bind( char* pData, long nData )
+{
+    OCIBind* hBind = NULL;
+
+    nNextBnd++;
+
+    CheckError( OCIBindByPos( 
+        hStmt,
+        &hBind,
+        hError,
+        (ub4) nNextBnd,
+        (dvoid*) pData,
+        (sb4) nData,
+        (ub2) SQLT_LBI,
         (void*) NULL,
         (ub2*) NULL,
         (ub2*) NULL,
@@ -1372,7 +1402,7 @@ bool CheckError( sword nStatus, OCIError* hError )
     case OCI_CONTINUE:
         CPLError( CE_Failure, CPLE_AppDefined, "OCI_CONTINUE\n" );
         break;
-    case OCI_ERROR || OCI_SUCCESS_WITH_INFO:
+    case OCI_ERROR: case OCI_SUCCESS_WITH_INFO:
 
         if( hError == NULL)
         {
