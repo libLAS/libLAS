@@ -160,7 +160,6 @@ int main(int argc, char *argv[])
     
     LASPointSummary* summary = NULL;
     
-    char* in_wkt = NULL;
     int ret = 0;
     
     for (i = 1; i < argc; i++) {
@@ -394,7 +393,6 @@ int main(int argc, char *argv[])
             i++;
             bThin = TRUE;
             nThin = atoi(argv[i]);
-            printf("nThin %d\n");
         }
         else if (file_name_in == NULL && file_name_out == NULL)
         {
