@@ -21,15 +21,14 @@
   True
   
   >>> s = srs.SRS()
-  >>> s.set_userinput('EPSG:4326')
-  True
-  
+
   >>> def test_userinput():
   ...     if not liblas.HAVE_LIBGEOTIFF:
   ...         return True
   ...     if not liblas.HAVE_GDAL: 
   ...         return s.proj4 == ''
   ...     if liblas.HAVE_GDAL:
+  ...         s.set_userinput('EPSG:4326')
   ...         return s.proj4 == '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs '
   ...     return False
   
