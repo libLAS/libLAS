@@ -3,151 +3,19 @@
   >>> from liblas import header
   
   >>> import liblas
-  >>> s = srs.SRS()
-  >>> s.proj4
-  ''
-  >>> s.proj4 = '+proj=utm +zone=15 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
-  >>> def test_srs():
-  ...     if not liblas.HAVE_LIBGEOTIFF:
-  ...         return True
-  ...     if not liblas.HAVE_GDAL: 
-  ...         return s.proj4 == '+proj=tmerc +lat_0=0.000000000 +lon_0=-93.000000000 +k=0.999600 +x_0=500000.000 +y_0=0.000 +ellps=WGS84 +units=m '
-  ...     if liblas.HAVE_GDAL:
-  ...         return s.proj4 == '+proj=utm +zone=15 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
-  ...     return False
-  
-  >>> test_srs()
-  True
-  
-  >>> s = srs.SRS()
-
-  >>> def test_userinput():
-  ...     if not liblas.HAVE_LIBGEOTIFF:
-  ...         return True
-  ...     if not liblas.HAVE_GDAL: 
-  ...         return s.proj4 == ''
-  ...     if liblas.HAVE_GDAL:
-  ...         s.set_userinput('EPSG:4326')
-  ...         return s.proj4 == '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs '
-  ...     return False
-  
-  >>> test_userinput()
-  True
   
   >>> from liblas import file
   >>> f = file.File('../test/data/1.2_3.las',mode='r')
   >>> s = f.header.srs
-  >>> def test_srs():
-  ...     if not liblas.HAVE_LIBGEOTIFF:
-  ...         return True
-  ...     if not liblas.HAVE_GDAL: 
-  ...         return s.wkt == ''
-  ...     if liblas.HAVE_GDAL:
-  ...         return s.wkt == """PROJCS["NAD83 / UTM zone 15N",GEOGCS["NAD83",DATUM["North_American_Datum_1983",SPHEROID["GRS 1980",6378137,298.2572221010002,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6269"]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["EPSG","4269"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-93],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","26915"]]"""
-  ...     return False
-  
-  >>> test_srs()
-  True
-  
-
-#  ...         s2.wkt = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]"""
-#  ...         s2.wkt = """PROJCS["NAD83 / UTM zone 16N",GEOGCS["NAD83",DATUM["North_American_Datum_1983",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6269"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4269"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-87],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],AUTHORITY["EPSG","26916"],AXIS["Easting",EAST],AXIS["Northing",NORTH]]"""
-
-  >>> def test_srs_2():
-  ...     if not liblas.HAVE_LIBGEOTIFF:
-  ...         return True
-  ...     if not liblas.HAVE_GDAL: 
-  ...         return True
-  ...     if liblas.HAVE_GDAL:
-  ...         s2 = srs.SRS()
-  ...         s2.wkt = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]"""
-  ...         p = f.read(0)
-  ...         p.descale(f.header)
-  ...         if int(p.x) != 47069244: return False
-  ...         f.set_srs(s2)
-  ...         p = f.read(0)
-  ...         if not s2.vlr_count() == 3: return False
-  ...         if not s2.GetVLR(0).recordlength == 64: return False
-  ...         return int(round(p.x)) == -93  and int(round(p.y)) == 42
-  ...     return False  
-
-  >>> test_srs_2()
-  True
-  
+  >>> s.proj4
+  ''
   >>> del f
 
-
-# -93.3515625902 41.5771483954
 
   >>> def new_offset(old_scale, new_scale, old_offset, x):
   ...       return (new_scale*(x - old_offset) - old_scale*x)/(-1.0*old_scale)
   
-  >>> utm_wkt = """PROJCS["NAD83 / UTM zone 15N",GEOGCS["NAD83",DATUM["North_American_Datum_1983",SPHEROID["GRS 1980",6378137,298.2572221010002,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6269"]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["EPSG","4269"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-93],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","26915"]]"""
-
-  >>> dd_wkt = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]"""
-  >>> s_dd = srs.SRS()
-  >>> s_dd.wkt = dd_wkt
-  >>> s_utm = srs.SRS()
-  >>> s_utm.wkt = utm_wkt
-
-  >>> f = file.File('../test/data/1.2_3.las',mode='r')
-  >>> dd_header = liblas.header.Header(handle=f.header.handle,copy=True)
-  >>> utm_header = liblas.header.Header(handle=f.header.handle,copy=True)
-  >>> del f
-
-  >>> utm_header.offset
-  [0.0, 0.0, 0.0]
-  >>> utm_header.scale
-  [0.01, 0.01, 0.01]
-  
-#  >>> new_offset(0.01, 0.0001, 0.0, 470692.44)
-#  >>> utm_header.offset = [offset+1.0/0.000001 for offset in utm_header.offset]
-#  >>> utm_header.offset
-  [1000000.0, 1000000.0, 1000000.0]
-#  >>> utm_header.scale = [0.000001,0.000001,0.000001]
-  >>> utm_header.srs = s_utm
-  
-  >>> dd_header.scale = [0.000001,0.000001,0.000001]
-  >>> dd_header.srs = s_dd
-  
-  >>> f = file.File('../test/data/1.2_3.las',mode='r', header = utm_header)
-  >>> f.header.data_offset
-  438L
-  >>> f.header.scale
-  [0.01, 0.01, 0.01]
-  >>> p = f.read(0)
-  >>> origx, origy = p.x, p.y
-  >>> origx, origy
-  (470692.44, 4602888.9000000004)
-  >>> f.set_srs(s_dd)
-  True
-  >>> p = f.read(0)
-  >>> p.x, p.y
-  (-93.350000000000009, 41.57)
-  
-  
-
-  >>> f_project = file.File('junk_srs_project.las',mode='w',header=dd_header)
-  >>> dd_header.srs.proj4
-  '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs '
-  >>> f_project.write(p);f_project.write(p);f_project.write(p)
-  >>> f_project.close()
-  >>> del f_project
-  >>> f3 = file.File('junk_srs_project.las')
-  >>> f3.header.data_offset
-  476L
-  >>> s_utm = srs.SRS()
-  >>> s_utm.wkt = utm_wkt
-  >>> p3 = f3.read(1)
-  >>> int(round(p3.x)), int(round(p3.y))
-  (-93, 42)
-  >>> p3 = f3.read(0)
-  >>> int(round(p3.x)), int(round(p3.y))
-  (-93, 42)
-
-  >>> import os
-  >>> os.remove('junk_srs_project.las')
 
 
   
