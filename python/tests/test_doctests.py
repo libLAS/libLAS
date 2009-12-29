@@ -44,6 +44,7 @@ import doctest
 import unittest
 import glob
 import os
+import copy
 
 optionflags = (doctest.REPORT_ONLY_FIRST_FAILURE |
                doctest.NORMALIZE_WHITESPACE |
@@ -52,28 +53,26 @@ optionflags = (doctest.REPORT_ONLY_FIRST_FAILURE |
 def list_doctests():
     
     files = glob.glob(os.path.join(os.path.dirname(__file__), '*.txt'))
-    
     import liblas
-    if not liblas.HAVE_LIBGEOTIFF:
-        for f in files:
+    
+    for f in copy.copy(files):
+        if liblas.HAVE_LIBGEOTIFF and liblas.HAVE_GDAL:
+            
+            # run GDAL's tests only
             if 'GeoTIFF' in f:
                 files.remove(f)
-    else:
-        for f in files:
-            if 'GDAL' or 'SRS.txt' in f:
-                files.remove(f)        
-    
-    if not liblas.HAVE_GDAL:
-        for f in files:
+            if 'SRS.txt' in f:
+                files.remove(f)
+        if liblas.HAVE_LIBGEOTIFF and not liblas.HAVE_GDAL:
             if 'GDAL' in f:
                 files.remove(f)
-
-    else:
-        # use GDAL's tests instead of geotiff's if we 
-        # have GDAL
-        # don't run the generic test if we have gdal
-        for f in files:
-            if 'GeoTIFF' or 'SRS.txt' in f:
+            if 'SRS.txt' in f:
+                files.remove(f)
+        
+        if not liblas.HAVE_LIBGEOTIFF and not liblas.HAVE_GDAL:
+            if 'GDAL' in f:
+                files.remove(f)
+            if 'GeoTIFF' in f:
                 files.remove(f)
     return files
 

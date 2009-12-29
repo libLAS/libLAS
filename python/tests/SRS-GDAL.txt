@@ -12,6 +12,7 @@
   
   >>> s = srs.SRS()
   >>> s.set_userinput('EPSG:4326')
+  True
   >>> s.proj4 == '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs '
   True
   
@@ -28,6 +29,7 @@
   >>> int(p.x)
   47069244
   >>> f.set_srs(s2)
+  True
   >>> p = f.read(0)
   >>> s2.vlr_count()
   3
