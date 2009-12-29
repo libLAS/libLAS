@@ -135,6 +135,10 @@ LAS_DLL int LAS_IsLibGeoTIFFEnabled(void) {
     return IsLibGeoTIFFEnabled();
 }
 
+LAS_DLL int LAS_IsLibSpatialIndexEnabled(void) {
+    return IsLibSpatialIndexEnabled();
+}
+
 LAS_DLL void LASError_Reset(void) {
     if (errors.empty()) return;
     for (std::size_t i=0;i<errors.size();i++) errors.pop();

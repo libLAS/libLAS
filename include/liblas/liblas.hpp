@@ -118,6 +118,16 @@ inline bool IsLibGeoTIFFEnabled()
 #endif
 }
 
+/// Check if libspatialindex support has been built in to libLAS.
+inline bool IsLibSpatialIndexEnabled()
+{
+#ifdef HAVE_SPATIALINDEX
+    return true;
+#else
+    return false;
+#endif
+}
+
 } // namespace liblas
 
 #endif // LIBLAS_HPP_INCLUDED

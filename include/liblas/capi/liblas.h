@@ -131,6 +131,7 @@ LAS_DLL int LAS_IsLibGeoTIFFEnabled(void);
 
 LAS_DLL int LAS_IsGDALEnabled(void);
 
+LAS_DLL int LAS_IsLibSpatialIndexEnabled(void);
 /****************************************************************************/
 /* Error handling                                                           */
 /****************************************************************************/

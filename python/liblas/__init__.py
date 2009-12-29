@@ -4,6 +4,7 @@ from core import las
 version = get_version()
 HAVE_GDAL = bool(las.LAS_IsGDALEnabled())
 HAVE_LIBGEOTIFF = bool(las.LAS_IsLibGeoTIFFEnabled())
+HAVE_SPATIALINDEX = bool(las.LAS_IsLibSpatialIndexEnabled())
 
 import sys
 
