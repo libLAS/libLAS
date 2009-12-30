@@ -424,7 +424,7 @@ void LASHeader::SetPointRecordsCount(uint32_t v)
     m_pointRecordsCount = v;
 }
 
-std::vector<uint32_t> const& LASHeader::GetPointRecordsByReturnCount() const
+LASHeader::RecordsByReturnArray const& LASHeader::GetPointRecordsByReturnCount() const
 {
     return m_pointRecordsByReturn;
 }
@@ -555,16 +555,14 @@ void LASHeader::Init()
     m_dataFormatId = ePointFormat0;
     m_dataRecordLen = ePointSize0;
 
-
     std::time_t now;
-    std::tm *ptm;
-
     std::time(&now);
-    ptm = std::gmtime(&now);
+    std::tm* ptm = std::gmtime(&now);
+    assert(0 != ptm);
     
     m_createDOY = static_cast<uint16_t>(ptm->tm_yday);
     m_createYear = static_cast<uint16_t>(ptm->tm_year + 1900);
-    
+
     m_headerSize = eHeaderSize;
 
     m_sourceId = m_reserved = m_projectId2 = m_projectId3 = uint16_t();
@@ -604,13 +602,10 @@ void LASHeader::ClearGeoKeyVLRs()
     for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i)
     {
         LASVariableRecord record = *i;
-        // beg_size += (*i).GetTotalSize();
 
-        std::string user = record.GetUserId(true);
-        if (uid == user.c_str())
+        if (record.GetUserId(true) == uid)
         {
-            uint16_t id = record.GetRecordId();
-
+            uint16_t const id = record.GetRecordId();
             if (34735 == id)
             {
                 // Geotiff SHORT key
@@ -626,7 +621,7 @@ void LASHeader::ClearGeoKeyVLRs()
             else if (34736 == id)
             {
                 // Geotiff DOUBLE key
-                for(j = vlrs.begin(); j != vlrs.end(); ++j)
+                for (j = vlrs.begin(); j != vlrs.end(); ++j)
                 {
                     if (*j == *i)
                     {
@@ -649,13 +644,13 @@ void LASHeader::ClearGeoKeyVLRs()
             }
         } // uid == user
     }
-    
+
     // Copy our list of surviving VLRs back to our member variable
     // and update header information
     m_vlrs = vlrs;
     m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
-
 }
+
 void LASHeader::SetGeoreference() 
 {    
     std::vector<LASVariableRecord> vlrs = m_srs.GetVLRs();
@@ -669,7 +664,6 @@ void LASHeader::SetGeoreference()
     {
         AddVLR(*i);
     }
-
 }
 
 LASSpatialReference LASHeader::GetSRS() const
@@ -682,4 +676,3 @@ void LASHeader::SetSRS(LASSpatialReference& srs)
 }
 
 } // namespace liblas
-

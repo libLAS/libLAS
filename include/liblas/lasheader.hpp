@@ -49,8 +49,8 @@
 #include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/detail/fwd.hpp>
-
 //std
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -83,8 +83,7 @@ public:
         ePointFormat0 = 0, ///< Point Data Format \e 0
         ePointFormat1 = 1, ///< Point Data Format \e 1
         ePointFormat2 = 2, ///< Point Data Format \e 2
-        ePointFormat3 = 3 ///< Point Data Format \e 3
-
+        ePointFormat3 = 3  ///< Point Data Format \e 3
     };
 
     /// Number of bytes of point record storage in particular format.
@@ -94,7 +93,6 @@ public:
         ePointSize1 = 28, ///< Size of point record in data format \e 1
         ePointSize2 = 26, ///< Size of point record in data format \e 2
         ePointSize3 = 34  ///< Size of point record in data format \e 3
-
     };
 
     /// Official signature of ASPRS LAS file format, always \b "LASF".
@@ -105,6 +103,10 @@ public:
 
     /// Default software identifier used by libLAS, always \b "libLAS X.Y".
     static char const* const SoftwareIdentifier;
+
+    /// Array of 5 elements - numbers of points recorded by each return.
+    /// \todo TODO: Consider replacing with {boost|std::tr1}::array<T, 5> --mloskot
+    typedef std::vector<uint32_t> RecordsByReturnArray;
 
     /// Default constructor.
     /// The default constructed header is configured according to the ASPRS
@@ -262,7 +264,7 @@ public:
     void SetPointRecordsCount(uint32_t v);
     
     /// Get array of the total point records per return.
-    std::vector<uint32_t> const& GetPointRecordsByReturnCount() const;
+    RecordsByReturnArray const& GetPointRecordsByReturnCount() const;
 
     /// Set values of 5-elements array of total point records per return.
     /// \exception std::out_of_range - if index is bigger than 4.
@@ -385,7 +387,7 @@ private:
     uint8_t m_dataFormatId;
     uint16_t m_dataRecordLen;
     uint32_t m_pointRecordsCount;
-    std::vector<uint32_t> m_pointRecordsByReturn;
+    RecordsByReturnArray m_pointRecordsByReturn;
     PointScales m_scales;
     PointOffsets m_offsets;
     PointExtents m_extents;
