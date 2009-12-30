@@ -431,9 +431,10 @@ inline void read_n<std::string>(std::string& dest, std::istream& src, std::strea
         throw std::runtime_error("detail::liblas::read_n input stream is not readable");
 
     // Read bytes into temporary buffer then assign as string
-    char* buf = new char[num];
+    std::size_t const bufsize = static_cast<std::size_t>(num);
+    char* buf = new char[bufsize]; // TODO:this is a leak, make exception safe with RAII
     src.read(buf, num);
-    dest.assign(buf, num);
+    dest.assign(buf, bufsize);
     delete [] buf;
 
     assert(dest.size() == static_cast<std::string::size_type>(num));
