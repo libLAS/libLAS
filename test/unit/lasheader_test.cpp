@@ -50,13 +50,13 @@ namespace tut
         
         h1.SetFileSignature(sig);
         ensure_not(h1.GetFileSignature() == sig);
-        ensure_equals(h1.GetFileSignature().size(), 4);
+        ensure_equals(h1.GetFileSignature().size(), std::string::size_type(4));
         ensure_equals(h1.GetFileSignature(), LASHeader::FileSignature);
 
         LASHeader h2(h1);
 
         ensure_not(h2.GetFileSignature() == sig);
-        ensure_equals(h2.GetFileSignature().size(), 4);
+        ensure_equals(h2.GetFileSignature().size(), std::string::size_type(4));
         ensure_equals(h2.GetFileSignature(), LASHeader::FileSignature);
     }
 
@@ -87,14 +87,14 @@ namespace tut
         h1.SetFileSignature(sig);
 
         ensure_not(h1.GetFileSignature() == sig);
-        ensure_equals(h1.GetFileSignature().size(), 4);
+        ensure_equals(h1.GetFileSignature().size(), std::string::size_type(4));
         ensure_equals(h1.GetFileSignature(), LASHeader::FileSignature);
 
         LASHeader h2;
         h2 = h1;
 
         ensure_not(h2.GetFileSignature() == sig);
-        ensure_equals(h2.GetFileSignature().size(), 4);
+        ensure_equals(h2.GetFileSignature().size(), std::string::size_type(4));
         ensure_equals(h2.GetFileSignature(), LASHeader::FileSignature);
     }
 
@@ -210,12 +210,12 @@ namespace tut
         h.SetSystemId(sysid1);
         ensure_equals(h.GetSystemId(), sysid1);
         ensure_equals(h.GetSystemId().size(), len1);
-        ensure_equals(h.GetSystemId(true).size(), 32);
+        ensure_equals(h.GetSystemId(true).size(), std::string::size_type(32));
 
         h.SetSystemId(sysid2);
         ensure_equals(h.GetSystemId(), sysid2);
         ensure_equals(h.GetSystemId().size(), len2);
-        ensure_equals(h.GetSystemId(true).size(), 32);
+        ensure_equals(h.GetSystemId(true).size(), std::string::size_type(32));
     }
 
     // Test Get/SetSoftwareId
@@ -234,12 +234,12 @@ namespace tut
         h.SetSoftwareId(softid1);
         ensure_equals(h.GetSoftwareId(), softid1);
         ensure_equals(h.GetSoftwareId().size(), len1);
-        ensure_equals(h.GetSoftwareId(true).size(), 32);
+        ensure_equals(h.GetSoftwareId(true).size(), std::string::size_type(32));
 
         h.SetSoftwareId(softid2);
         ensure_equals(h.GetSoftwareId(), softid2);
         ensure_equals(h.GetSoftwareId().size(), len2);
-        ensure_equals(h.GetSoftwareId(true).size(), 32);
+        ensure_equals(h.GetSoftwareId(true).size(), std::string::size_type(32));
     }
 
     // Test GetPointRecordsByReturnCount
@@ -247,28 +247,31 @@ namespace tut
     template<>
     void to::test<11>()
     {
+        typedef ::liblas::LASHeader::RecordsByReturnArray::size_type size_type;
+        typedef ::liblas::uint32_t count_type;
+
         liblas::LASHeader h;
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), 5);
+        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
 
         h.SetPointRecordsByReturnCount(0, 100);
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), 5);
-        ensure_equals(h.GetPointRecordsByReturnCount().at(0), 100);
+        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        ensure_equals(h.GetPointRecordsByReturnCount().at(0), count_type(100));
 
         h.SetPointRecordsByReturnCount(1, 101);
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), 5);
-        ensure_equals(h.GetPointRecordsByReturnCount().at(1), 101);
+        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        ensure_equals(h.GetPointRecordsByReturnCount().at(1), count_type(101));
 
         h.SetPointRecordsByReturnCount(2, 102);
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), 5);
-        ensure_equals(h.GetPointRecordsByReturnCount().at(2), 102);
+        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        ensure_equals(h.GetPointRecordsByReturnCount().at(2), count_type(102));
 
         h.SetPointRecordsByReturnCount(3, 103);
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), 5);
-        ensure_equals(h.GetPointRecordsByReturnCount().at(3), 103);
+        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        ensure_equals(h.GetPointRecordsByReturnCount().at(3), count_type(103));
 
         h.SetPointRecordsByReturnCount(4, 104);
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), 5);
-        ensure_equals(h.GetPointRecordsByReturnCount().at(4), 104);
+        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        ensure_equals(h.GetPointRecordsByReturnCount().at(4), count_type(104));
 
         try
         {
