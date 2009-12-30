@@ -49,6 +49,7 @@ SET(LIBLAS_HPP
     ${LIBLAS_HEADERS_DIR}/lasreader.hpp
 	${LIBLAS_HEADERS_DIR}/lasspatialreference.hpp
     ${LIBLAS_HEADERS_DIR}/lasvariablerecord.hpp
+	${LIBLAS_HEADERS_DIR}/lasversion.hpp
     ${LIBLAS_HEADERS_DIR}/laswriter.hpp
     ${LIBLAS_HEADERS_DIR}/liblas.hpp)
 
