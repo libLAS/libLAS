@@ -100,7 +100,7 @@ void test_default_point(liblas::LASPoint const& p)
     ensure_equals("wrong defualt edge of flight line",
         p.GetFlightLineEdge(), 0);
     ensure_equals("wrong defualt classification",
-        p.GetClassification(), liblas::LASClassification::bitset_type(0));
+        p.GetClassification(), liblas::LASClassification::bitset_type());
     ensure_equals("wrong defualt scan angle rank",
         p.GetScanAngleRank(), 0);
     ensure_equals("wrong defualt file marker/user data value",

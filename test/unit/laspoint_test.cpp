@@ -247,7 +247,7 @@ namespace tut
     void to::test<11>()
     {
         ensure_equals("invalid default classification",
-            m_default.GetClassification(), liblas::LASClassification::bitset_type(0));
+            m_default.GetClassification(), liblas::LASClassification::bitset_type());
 
         liblas::LASClassification c;
         

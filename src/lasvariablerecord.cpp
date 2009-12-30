@@ -244,8 +244,9 @@ std::istream& operator >> ( std::istream& in, LASVariableRecord& d)
     std::cout << "Stream length: " << length << std::endl;
     
     // FIXME: If read_n throws, buffer will leak.
-    //        Replace with std::vector --mloskot
-    uint8_t* buffer = new uint8_t[length];
+    //        Replace with std::vector or any other RAII --mloskot
+    std::size_t const buffersize = static_cast<std::size_t>(length);
+    uint8_t* buffer = new uint8_t[buffersize];
 
     liblas::detail::read_n(buffer, in, length);
     
@@ -256,7 +257,7 @@ std::istream& operator >> ( std::istream& in, LASVariableRecord& d)
     LIBLAS_SWAP_BYTES_N(buffer, length);
     
     std::vector<uint8_t> data;
-    for (std::size_t i = 0; i < static_cast<std::size_t>(length); ++i)
+    for (std::size_t i = 0; i < buffersize; ++i)
     {
         data.push_back(buffer[i]);
     }
