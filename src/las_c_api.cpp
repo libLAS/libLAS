@@ -202,7 +202,6 @@ std::istream* OpenInput(std::string filename)
     {
         delete istrm;
         throw std::runtime_error("Reading stream was not able to be created");
-        exit(1);
     }
     return istrm;
 }
