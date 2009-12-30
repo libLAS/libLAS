@@ -8,13 +8,13 @@
 
 # Collect dependencies configuration
 IF(GDAL_FOUND)
-    SET(LIBLAS_GDAL_CPP gt_wkt_srs.cpp gt_citation.cpp tifvsi.cpp)
+    SET(LIBLAS_GDAL_CPP gt_citation.cpp gt_wkt_srs.cpp tifvsi.cpp)
 ENDIF()
 
 IF(SPATIALINDEX_FOUND)
     SET(LIBLAS_INDEX_CPP
-        index/index.cpp
         index/datastream.cpp
+        index/index.cpp
         index/visitor.cpp
         index/query.cpp
         index/storage.cpp)
@@ -25,12 +25,23 @@ ENDIF()
 
 SET(LIBLAS_HEADERS_DIR ../include/liblas)
 
+
+IF(SPATIALINDEX_FOUND)
+    SET(LIBLAS_INDEX_HPP
+        ${LIBLAS_HEADERS_DIR}/index/datastream.hpp
+        ${LIBLAS_HEADERS_DIR}/index/index.hpp
+        ${LIBLAS_HEADERS_DIR}/index/visitor.hpp
+        ${LIBLAS_HEADERS_DIR}/index/query.hpp
+        ${LIBLAS_HEADERS_DIR}/index/storage.hpp)
+ENDIF()
+
 SET(LIBLAS_HPP
     ${LIBLAS_HEADERS_DIR}/cstdint.hpp
     ${LIBLAS_HEADERS_DIR}/exception.hpp
     ${LIBLAS_HEADERS_DIR}/guid.hpp
     ${LIBLAS_HEADERS_DIR}/iterator.hpp
-    ${LIBLAS_HEADERS_DIR}/lascolor.hpp
+    ${LIBLAS_HEADERS_DIR}/lasclassification.hpp
+	${LIBLAS_HEADERS_DIR}/lascolor.hpp
     ${LIBLAS_HEADERS_DIR}/laserror.hpp
     ${LIBLAS_HEADERS_DIR}/lasfile.hpp
     ${LIBLAS_HEADERS_DIR}/lasheader.hpp
@@ -85,6 +96,7 @@ SET(LIBLAS_DETAIL_CPP
 SET(LIBLAS_SOURCES
     ${LIBLAS_HPP}
     ${LIBLAS_DETAIL_HPP}
+	${LIBLAS_INDEX_HPP}
     ${LIBLAS_CPP}
     ${LIBLAS_DETAIL_CPP}
     ${LIBLAS_INDEX_CPP}
