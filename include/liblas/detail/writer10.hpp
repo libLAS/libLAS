@@ -42,6 +42,7 @@
 #ifndef LIBLAS_DETAIL_WRITER10_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER10_HPP_INCLUDED
 
+#include <liblas/lasversion.hpp>
 #include <liblas/detail/writer.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/cstdint.hpp>
@@ -57,7 +58,7 @@ public:
     typedef Writer Base;
     
     WriterImpl(std::ostream& ofs);
-    std::size_t GetVersion() const;
+    LASVersion GetVersion() const;
     void WriteHeader(LASHeader& header);
     void UpdateHeader(LASHeader const& header);
     void WritePointRecord(LASPoint const& record, const LASHeader& header);

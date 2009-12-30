@@ -43,6 +43,7 @@
 #define LIBLAS_DETAIL_READER_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
+#include <liblas/lasversion.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 
@@ -64,7 +65,7 @@ public:
 
     Reader(std::istream& ifs);
     virtual ~Reader();
-    virtual std::size_t GetVersion() const = 0;
+    virtual LASVersion GetVersion() const = 0;
     virtual bool ReadHeader(LASHeader& header) = 0;
     virtual bool ReadNextPoint(LASPoint& point, const LASHeader& header) = 0;
     virtual bool ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& header) = 0;

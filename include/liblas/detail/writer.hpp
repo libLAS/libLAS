@@ -42,6 +42,7 @@
 #ifndef LIBLAS_DETAIL_WRITER_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_HPP_INCLUDED
 
+#include <liblas/lasversion.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
@@ -62,7 +63,7 @@ public:
 
     Writer(std::ostream& ofs);
     virtual ~Writer();
-    virtual std::size_t GetVersion() const = 0;
+    virtual LASVersion GetVersion() const = 0;
     virtual void WriteHeader(LASHeader& header) = 0;
     virtual void UpdateHeader(LASHeader const& header) = 0;
     virtual void WritePointRecord(LASPoint const& point, const LASHeader& header) = 0;

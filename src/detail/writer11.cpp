@@ -41,6 +41,7 @@
 
 #include <liblas/detail/writer11.hpp>
 #include <liblas/detail/utility.hpp>
+#include <liblas/lasversion.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/liblas.hpp>
@@ -58,7 +59,7 @@ WriterImpl::WriterImpl(std::ostream& ofs) :
 {
 }
 
-std::size_t WriterImpl::GetVersion() const
+LASVersion WriterImpl::GetVersion() const
 {
     return eLASVersion11;
 }

@@ -42,6 +42,7 @@
 #ifndef LIBLAS_LASWRITER_HPP_INCLUDED
 #define LIBLAS_LASWRITER_HPP_INCLUDED
 
+#include <liblas/lasversion.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/detail/fwd.hpp>
@@ -62,7 +63,7 @@ public:
     LASWriter(std::ostream& ofs, LASHeader const& header);
     ~LASWriter();
     
-    std::size_t GetVersion() const;
+    LASVersion GetVersion() const;
     LASHeader const& GetHeader() const;
 
     /// \todo TODO: Move point record composition deep into writer implementation.

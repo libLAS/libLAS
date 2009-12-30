@@ -56,7 +56,7 @@ public:
     typedef Reader Base;
     
     ReaderImpl(std::istream& ifs);
-    std::size_t GetVersion() const;
+    LASVersion GetVersion() const;
     bool ReadHeader(LASHeader& header);
     bool ReadNextPoint(LASPoint& point, LASHeader const& header);
     bool ReadPointAt(std::size_t n, LASPoint& record, LASHeader const& header);

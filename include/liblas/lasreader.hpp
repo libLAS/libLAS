@@ -43,6 +43,7 @@
 #ifndef LIBLAS_LASREADER_HPP_INCLUDED
 #define LIBLAS_LASREADER_HPP_INCLUDED
 
+#include <liblas/lasversion.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasvariablerecord.hpp>
@@ -78,7 +79,7 @@ public:
 
     /// Returns version of LAS file being accessed by the reader.
     /// @excepion nothrow
-    std::size_t GetVersion() const;
+    LASVersion GetVersion() const;
     
     /// Provides read-only access to header of LAS file being read.
     /// @excepion nothrow

@@ -59,7 +59,7 @@ ReaderImpl::ReaderImpl(std::istream& ifs) : Base(ifs)
 {
 }
 
-std::size_t ReaderImpl::GetVersion() const
+LASVersion ReaderImpl::GetVersion() const
 {
     return eLASVersion11;
 }

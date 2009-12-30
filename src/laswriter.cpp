@@ -39,6 +39,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
+#include <liblas/lasversion.hpp>
 #include <liblas/laswriter.hpp>
 #include <liblas/detail/writer.hpp>
 // std
@@ -64,7 +65,7 @@ LASWriter::~LASWriter()
     m_pimpl->UpdateHeader(m_header);
 }
 
-std::size_t LASWriter::GetVersion() const
+LASVersion LASWriter::GetVersion() const
 {
     return m_pimpl->GetVersion();
 }

@@ -59,17 +59,6 @@
 namespace liblas
 {
 
-/// Version numbers of the ASPRS LAS Specification.
-/// Numerical representation of versions is calculated according to 
-/// following formula: <em>major * 100000 + minor</em>
-enum LASFileVersion
-{
-    eLASVersion10 = 1 * 100000 + 0, ///< LAS Format 1.0
-    eLASVersion11 = 1 * 100000 + 1, ///< LAS Format 1.1
-    eLASVersion12 = 1 * 100000 + 2, ///< LAS Format 1.2
-    eLASVersion20 = 2 * 100000 + 0  ///< LAS Format 2.0
-};
-
 /// Open file to read in binary mode.
 /// The input file is also attached to input stream.
 /// \param ifs - reference to input file stream to

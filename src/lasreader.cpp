@@ -40,6 +40,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
+#include <liblas/lasversion.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/detail/reader.hpp>
 // std
@@ -75,7 +76,7 @@ LASReader::~LASReader()
     // std::auto_ptr with incomplete type (Reader).
 }
 
-std::size_t LASReader::GetVersion() const
+LASVersion LASReader::GetVersion() const
 {
     return m_pimpl->GetVersion();
 }

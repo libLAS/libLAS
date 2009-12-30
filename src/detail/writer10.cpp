@@ -58,7 +58,7 @@ WriterImpl::WriterImpl(std::ostream& ofs) :
 {
 }
 
-std::size_t WriterImpl::GetVersion() const
+LASVersion WriterImpl::GetVersion() const
 {
     return eLASVersion10;
 }
