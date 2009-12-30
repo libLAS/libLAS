@@ -366,7 +366,7 @@ void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header
     fprintf(file, "\n Total Pulses: %ld\n", rgpsum); 
 
     for (i = 0; i < 5; i++) {
-        if (LASHeader_GetPointRecordsByReturnCount(header, i) != summary->number_of_points_by_return[i]) 
+        if (LASHeader_GetPointRecordsByReturnCount(header, i) != (uint32_t)summary->number_of_points_by_return[i]) 
         {
             fprintf(file, " \n Actual number of points by return \n is different from header (actual, header):\n"); 
             for (i = 0; i < 5; i++) {
@@ -629,7 +629,7 @@ void repair_header(FILE *file, LASHeaderH header, LASPointSummary* summary) {
     for (i = 0; i < 5; i++) {
 
         if (LASHeader_GetPointRecordsByReturnCount(header, i) != 
-            summary->number_of_points_by_return[i]) 
+            (uint8_t)summary->number_of_points_by_return[i]) 
         {
             update_return_counts = TRUE;
             break;
