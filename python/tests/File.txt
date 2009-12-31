@@ -139,15 +139,15 @@ requirement to write pad bytes at the end of the header
   <liblas.point.Point object at ...>
 
   >>> for g in points:
-  ...   print int(g.x), int(g.y)
-  630262 4834500
-  630282 4834500
-  630300 4834500
-  630346 4834500
-  630327 4834500
-  630323 4834500
-  630320 4834500
-  630280 4834500
+  ...   print round(g.x, 6), round(g.y, 6)
+  630262.3 4834500.0
+  630282.45 4834500.0
+  630300.07 4834500.0
+  630346.82 4834500.0
+  630327.58 4834500.0
+  630323.57 4834500.0
+  630320.95 4834500.0
+  630280.89 4834500.0
 
 Now try writing a 1.2 version of the junk2.las file above to ensure that
 the data_offset *doesn't* change at all
