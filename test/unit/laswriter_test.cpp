@@ -62,7 +62,7 @@ namespace tut
             liblas::LASHeader header;
             liblas::LASWriter writer(ofs, header);
 
-            ensure_equals<std::size_t>(writer.GetVersion(), liblas::eLASVersion12);
+            ensure_equals(writer.GetVersion(), liblas::eLASVersion12);
 
             liblas::LASHeader const& hdr_default = writer.GetHeader();
             test_default_header(hdr_default);
@@ -76,7 +76,7 @@ namespace tut
 
             liblas::LASReader reader(ifs);
 
-            ensure_equals<std::size_t>(reader.GetVersion(), liblas::eLASVersion12);
+            ensure_equals(reader.GetVersion(), liblas::eLASVersion12);
             
             liblas::LASHeader const& hdr_default = reader.GetHeader();
             test_default_header(hdr_default);
