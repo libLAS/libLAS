@@ -179,7 +179,7 @@ IF(WITH_GDAL)
 ENDIF()
 
 # Spatial Index support - optional, default=OFF
-SET(WITH_SPATIALINDEX FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
+SET(WITH_SPATIALINDEX FALSE CACHE BOOL "Choose if SpatialIndex support should be built")
 
 IF(WITH_SPATIALINDEX)
     FIND_PACKAGE(SpatialIndex 1.4.0)
