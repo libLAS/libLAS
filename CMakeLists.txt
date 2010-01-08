@@ -149,8 +149,8 @@ IF(WITH_GEOTIFF)
             INCLUDE_DIRECTORIES(${GEOTIFF_INCLUDE_DIR})
             ADD_DEFINITIONS(-DHAVE_LIBGEOTIFF=1)
         ENDIF()
-    ENDIF(GEOTIFF_FOUND)
-ENDIF(WITH_GEOTIFF)
+    ENDIF()
+ENDIF()
 
 # GDAL/OGR support - optional, default=OFF
 SET(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
@@ -195,7 +195,16 @@ IF(WITH_SPATIALINDEX)
 ENDIF()
 
 # Oracle support - optional, default=OFF
-# TODO
+SET(WITH_ORACLE FALSE CACHE BOOL "Choose if Oracle support should be built")
+
+IF(WITH_ORACLE)
+    FIND_PACKAGE(Oracle)
+
+    IF(ORACLE_FOUND)
+        INCLUDE_DIRECTORIES(${ORACLE_INCLUDE_DIR})
+        ADD_DEFINITIONS(-DHAVE_ORACLE=1)
+    ENDIF()
+ENDIF()
 
 ###############################################################################
 # Installation settings
