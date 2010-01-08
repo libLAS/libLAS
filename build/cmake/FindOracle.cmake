@@ -42,10 +42,9 @@ find_path(ORACLE_INCLUDE_DIR
   ${ORACLE_HOME}/OCI/include # Oracle XE on Windows
   )
 
-set(ORACLE_OCI_NAMES libclntsh clntsh oci)
-set(ORACLE_NNZ_NAMES libnnz10 nnz10 libnnz11 nnz11 ociw32)
-# TODO: Not used at the moment
-#set(ORACLE_OCCI_NAMES libocci occi oraocci10 oraocci11)
+set(ORACLE_OCI_NAMES clntsh libclntsh oci)
+set(ORACLE_NNZ_NAMES nnz10 libnnz10 nnz11 libnnz11 ociw32)
+set(ORACLE_OCCI_NAMES libocci occi oraocci10 oraocci11)
 
 set(ORACLE_LIB_DIR 
   ${ORACLE_HOME}/lib
@@ -53,7 +52,7 @@ set(ORACLE_LIB_DIR
 )
 
 find_library(ORACLE_OCI_LIBRARY  NAMES ${ORACLE_OCI_NAMES} PATHS ${ORACLE_LIB_DIR})
-#find_library(ORACLE_OCCI_LIBRARY NAMES ${ORACLE_OCCI_NAMES} PATHS ${ORACLE_LIB_DIR})
+find_library(ORACLE_OCCI_LIBRARY NAMES ${ORACLE_OCCI_NAMES} PATHS ${ORACLE_LIB_DIR})
 find_library(ORACLE_NNZ_LIBRARY NAMES ${ORACLE_NNZ_NAMES} PATHS ${ORACLE_LIB_DIR})
 
 set(ORACLE_LIBRARY ${ORACLE_OCI_LIBRARY} ${ORACLE_OCCI_LIBRARY} ${ORACLE_NNZ_LIBRARY})
