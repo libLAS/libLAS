@@ -328,7 +328,20 @@ const GTIF* LASSpatialReference::GetGTIF()
         if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
         {
             int count = data.size()/sizeof(int16_t);
-            ST_SetKey(m_tiff, record.GetRecordId(), count, STT_SHORT, &(data[0]));
+            short *data_s = (short *) &(data[0]);
+
+            // discard invalid "zero" geotags some software emits.
+            while( count > 4 
+                   && data_s[count-1] == 0
+                   && data_s[count-2] == 0
+                   && data_s[count-3] == 0
+                   && data_s[count-4] == 0 )
+            {
+                count -= 4;
+                data_s[3] -= 1;
+            }
+
+            ST_SetKey(m_tiff, record.GetRecordId(), count, STT_SHORT, data_s );
         }
 
         if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
