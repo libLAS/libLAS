@@ -169,7 +169,7 @@ IF(WITH_GDAL)
         CHECK_FUNCTION_EXISTS(OSRSetEquirectangular2 HAVE_OSRSETEQUIRECTANGULAR2)
     
         IF(NOT HAVE_OSRSETEQUIRECTANGULAR2)
-			# Reset to NOT found for GDAL/OGR
+            # Reset to NOT found for GDAL/OGR
             SET(GDAL_FOUND)
             MESSAGE(FATAL_ERROR "GDAL support requires GDAL 1.6.0 or newer")
         ELSE()
