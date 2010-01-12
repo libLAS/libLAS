@@ -1864,7 +1864,16 @@ LAS_DLL char* LASSRS_GetWKT(LASSRSH hSRS)
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetWKT", NULL);
     LASSpatialReference* srs = (LASSpatialReference*)hSRS;
 
-    return strdup((srs)->GetWKT().c_str());
+    return strdup((srs)->GetWKT(LASSpatialReference::eHorizontalOnly).c_str());
+    
+}
+
+LAS_DLL char* LASSRS_GetWKT_CompoundOK(LASSRSH hSRS) 
+{
+    VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetWKT_CompoundOK", NULL);
+    LASSpatialReference* srs = (LASSpatialReference*)hSRS;
+
+    return strdup((srs)->GetWKT(LASSpatialReference::eCompoundOK).c_str());
     
 }
 
@@ -1878,6 +1887,27 @@ LAS_DLL LASErrorEnum LASSRS_SetWKT(LASSRSH hSRS, const char* value)
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetWKT");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASSRS_SetVerticalCS(LASSRSH hSRS, 
+                                          int verticalCSType,
+                                          const char *citation,
+                                          int verticalDatum, 
+                                          int verticalUnits ) {
+    
+    VALIDATE_LAS_POINTER1(hSRS, "LASSRS_SetVerticalCS", LE_Failure);
+
+    try {
+        ((LASSpatialReference*) hSRS)->SetVerticalCS( verticalCSType, citation,
+                                                      verticalDatum, 
+                                                      verticalUnits);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASSRS_SetVerticalCS");
         return LE_Failure;
     }
 

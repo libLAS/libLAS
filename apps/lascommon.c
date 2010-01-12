@@ -435,7 +435,7 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     
     pSRS = LASHeader_GetSRS(header);
     pszProj4 = LASSRS_GetProj4(pSRS);
-    pszWKT = LASSRS_GetWKT(pSRS);
+    pszWKT = LASSRS_GetWKT_CompoundOK(pSRS);
     pGTIF = LASSRS_GetGTIF(pSRS);
     
     nVLR = LASHeader_GetRecordsCount(header);

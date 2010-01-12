@@ -140,6 +140,8 @@ int main(int argc, char *argv[])
     LASPointH surviving_point_max = NULL;
     double surviving_gps_time_min;
     double surviving_gps_time_max;
+    int verticalCSType = -1, verticalDatum = -1, verticalUnits = 9001;
+    const char *verticalCitation = "";
 
     int clipped = 0;
     int eliminated_return = 0;
@@ -334,6 +336,44 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
                 do_reprojection = TRUE;
+            }
+        }
+        else if (   strcmp(argv[i],"--a_srs") == 0  ||
+                    strcmp(argv[i],"-a_srs") == 0 
+                )
+        {
+            ++i;
+            if (LAS_IsGDALEnabled()) {
+                out_srs = LASSRS_Create();
+                ret = LASSRS_SetFromUserInput(out_srs, argv[i]);
+                if (ret) {
+                    LASError_Print("Unable to import output SRS");
+                    exit(1);
+                }
+            }
+        }
+        else if (   strcmp(argv[i],"--a_vertcs") == 0  ||
+                    strcmp(argv[i],"-a_vertcs") == 0 
+                )
+        {
+            ++i;
+            verticalCSType = atoi(argv[i]);
+            ++i;
+            if( i < argc && argv[i][0] != '-' )
+            {
+                verticalCitation = argv[i];
+                ++i;
+
+                if( i < argc && argv[i][0] != '-' )
+                {
+                    verticalDatum = atoi(argv[i]);
+                    ++i;
+                    if( i < argc && argv[i][0] != '-' )
+                    {
+                        verticalUnits = atoi(argv[i]);
+                        ++i;
+                    }
+                }
             }
         }
         else if (   strcmp(argv[i],"--scale") == 0  ||
@@ -811,6 +851,22 @@ int main(int argc, char *argv[])
         LASHeader_SetDataOffset(surviving_header, LASHeader_GetDataOffset(surviving_header)+abs(header_pad));
     }
     
+    /* Do we have vertical cs info to set? */
+    if( verticalCSType > 0 )
+    {
+        if( out_srs == NULL )
+            out_srs = LASHeader_GetSRS(surviving_header);
+
+        if( out_srs == NULL )
+            out_srs = LASSRS_Create();
+
+        LASSRS_SetVerticalCS( out_srs,
+                              verticalCSType, 
+                              verticalCitation, 
+                              verticalDatum, 
+                              verticalUnits );
+    }
+
     if (do_reprojection) {
         if (verbose) {
             proj4_text =  LASSRS_GetProj4(out_srs);
@@ -825,8 +881,14 @@ int main(int argc, char *argv[])
         }
         
         LASHeader_SetSRS(surviving_header, out_srs);
-        
     }
+
+    /* Are we just assigning an override SRS? (-a_srs) */
+    else if( out_srs != NULL )
+    {
+        LASHeader_SetSRS(surviving_header, out_srs);
+    }
+
     if (verbose) {
         fprintf(stderr, 
                 "second pass reading %d and writing %d points ...\n", 

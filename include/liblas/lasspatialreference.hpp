@@ -90,6 +90,11 @@ namespace liblas {
 class LASSpatialReference
 {
 public:
+    enum WKTModeFlag
+    {
+        eHorizontalOnly = 1,
+        eCompoundOK = 2
+    };
 
     /// Default constructor.
     LASSpatialReference();
@@ -116,12 +121,34 @@ public:
     /// Returns the OGC WKT describing Spatial Reference System.
     /// If GDAL is linked, it uses GDAL's operations and methods to determine 
     /// the WKT.  If GDAL is not linked, no WKT is returned.
-    std::string GetWKT() const;
-    
+    /// \param mode_flag May be eHorizontalOnly indicating the WKT will not 
+    /// include vertical coordinate system info (the default), or 
+    /// eCompoundOK indicating the the returned WKT may be a compound 
+    /// coordinate system if there is vertical coordinate system info 
+    /// available.
+    std::string GetWKT( WKTModeFlag mode_flag = eHorizontalOnly ) const;
+
     /// Sets the SRS using GDAL's OGC WKT. If GDAL is not linked, this 
     /// operation has no effect.
     /// \param v - a string containing the WKT string.  
     void SetWKT(std::string const& v);
+
+    /// Sets the vertical coordinate system using geotiff key values.
+    /// This operation should normally be done after setting the horizontal
+    /// portion of the coordinate system with something like SetWKT(), 
+    /// SetProj4(), SetGTIF() or SetFromUserInput()
+    /// \param verticalCSType - An EPSG vertical coordinate system code, 
+    /// normally in the range 5600 to 5799, or -1 if one is not available.
+    /// \param citation - a textual description of the vertical coordinate 
+    /// system or an empty string if nothing is available.
+    /// \param verticalDatum - the EPSG vertical datum code, often in the 
+    /// range 5100 to 5299 - implied by verticalCSType if that is provided, or 
+    /// -1 if no value is available.
+    /// \param verticalUnits - the EPSG vertical units code, often 9001 for Metre.
+    void SetVerticalCS(int verticalCSType, 
+                       std::string const& citation = "",
+                       int verticalDatum = -1,
+                       int verticalUnits = 9001 );
 
     /// Sets the SRS using GDAL's SetFromUserInput function. If GDAL is not linked, this 
     /// operation has no effect.
