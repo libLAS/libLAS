@@ -55,9 +55,18 @@ class SRS(object):
         if self.owned:
             if self.handle and core:
                 core.las.LASSRS_Destroy(self.handle)
-    
+
+    def set_verticalcs( self, verticalCSType, citation = '',
+                        verticalDatum = -1,
+                        verticalUnits = 9001 ):
+        return core.las.LASSRS_SetVerticalCS( self.handle, verticalCSType,
+                                              citation, verticalDatum,
+                                              verticalUnits )
+                                              
     def get_wkt(self):
         return core.las.LASSRS_GetWKT(self.handle)
+    def get_wkt_compoundok(self):
+        return core.las.LASSRS_GetWKT_CompoundOK(self.handle)
     def set_wkt(self, value):
         return core.las.LASSRS_SetWKT(self.handle, value)
     wkt = property(get_wkt, set_wkt)
