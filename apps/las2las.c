@@ -667,7 +667,12 @@ int main(int argc, char *argv[])
         fprintf(stderr, 
         "thinned: %d\n", 
         thinned);
-        
+    
+    if (surviving_number_of_point_records == 0) {
+        fprintf(stderr, "All points were eliminated!\n");
+        exit(0);
+    }
+    
     LASReader_Destroy(reader);
     LASHeader_Destroy(header);
   
@@ -875,7 +880,7 @@ int main(int argc, char *argv[])
             free(proj4_text);
         }
         
-        /* keep around the header's SRS if we don't have on set by the user */
+        /* keep around the header's SRS if we don't have one set by the user */
         if (in_srs == NULL) {
             in_srs = LASHeader_GetSRS(surviving_header);
         }
@@ -1036,8 +1041,11 @@ int main(int argc, char *argv[])
     LASReader_Destroy(reader);
     LASHeader_Destroy(header);
     LASHeader_Destroy(surviving_header);
-    LASPoint_Destroy(surviving_point_max);
-    LASPoint_Destroy(surviving_point_min);
+
+    if (surviving_point_max != NULL)
+        LASPoint_Destroy(surviving_point_max);
+    if (surviving_point_min != NULL)
+        LASPoint_Destroy(surviving_point_min);
 
     reader = LASReader_Create(file_name_out);
     if (!reader) { 
@@ -1059,8 +1067,10 @@ int main(int argc, char *argv[])
     repair_header(stderr, header, summary) ;
 
     if (summary != NULL) {
-        LASPoint_Destroy(summary->pmin);
-        LASPoint_Destroy(summary->pmax);
+        if (summary->pmin != NULL)
+            LASPoint_Destroy(summary->pmin);
+        if (summary->pmax != NULL)
+            LASPoint_Destroy(summary->pmax);
         free(summary);
     }
 
