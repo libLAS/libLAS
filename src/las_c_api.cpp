@@ -811,7 +811,7 @@ LAS_DLL LASErrorEnum LASHeader_SetProjectId(LASHeaderH hHeader, const char* valu
 
     try {
         liblas::guid id;
-        id = liblas::guid::guid(value);
+        id = liblas::guid(value);
         ((LASHeader*) hHeader)->SetProjectId(id);    
     } catch (std::exception const& e)
     {
