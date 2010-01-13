@@ -59,12 +59,13 @@
 
 namespace liblas {
 
-/// \todo To be documented.
+/// Defines public interface to LAS reader implementation.
 class LASReader
 {
 public:
 
-    /// User-defined consructor initializes reader with input stream.
+    /// Consructor initializes reader with input stream as source of LAS records.
+    /// @param ifs - stream used as source of LAS records.
     /// @excepion std::runtime_error - on failure state of the input stream.
     LASReader(std::istream& ifs);
 

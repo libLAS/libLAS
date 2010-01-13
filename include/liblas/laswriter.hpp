@@ -55,33 +55,45 @@
 namespace liblas
 {
 
-/// \todo To be documented.
+/// Defines public interface to LAS writer implementation.
+/// This class 
 class LASWriter
 {
 public:
 
+    /// Consructor initializes reader with specified output stream and header specification.
+    /// @param ofs - stream used as destination for LAS records.
+    /// @param header - specifies obligatory properties of LAS file.
+    /// @excepion std::runtime_error - on failure state of the input stream.
     LASWriter(std::ostream& ofs, LASHeader const& header);
+
+    /// Destructor does not close file attached to the output stream
+    /// Header may be updated after writing operation completed, if necessary
+    /// in order to maintain data consistency.
     ~LASWriter();
     
+    /// Queries version of LAS file being process.
+    /// It corresponds to version specified in the LAS header provided on construction.
     LASVersion GetVersion() const;
+
+    /// Provides access to header structure.
     LASHeader const& GetHeader() const;
 
     /// \todo TODO: Move point record composition deep into writer implementation.
     /// \todo TODO: How to handle point_source_id in portable way, for LAS 1.0 and 1.1
     bool WritePoint(LASPoint const& point);
 
-    // Allow fetching of the stream
+    /// Allow fetching of the stream
     std::ostream& GetStream() const;
     
-    // Allow in-place writing of header
+    /// Allow in-place writing of header
     void WriteHeader(LASHeader& header);
 
-    // Reproject data as they are written if the LASWriter's reference is
-    // different than the LASHeader's
+    /// Reproject data as they are written if the LASWriter's reference is
+    /// different than the LASHeader's
     bool SetSRS(const LASSpatialReference& ref);
     bool SetInputSRS(const LASSpatialReference& ref);
     bool SetOutputSRS(const LASSpatialReference& ref);
-    
     
 private:
     
@@ -93,7 +105,6 @@ private:
 
     LASHeader m_header;
     detail::PointRecord m_record;
-
 };
 
 } // namespace liblas
