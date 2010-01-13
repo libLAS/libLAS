@@ -1653,7 +1653,7 @@ LAS_DLL LASGuidH LASGuid_CreateFromString(const char* string) {
     VALIDATE_LAS_POINTER1(string, "LASGuid_CreateFromString", NULL);    
     liblas::guid id;
     try {
-        id = liblas::guid::guid(string);
+        id = liblas::guid(string);
         return (LASGuidH) new liblas::guid(id);
     }
     catch (std::exception const& e) {
