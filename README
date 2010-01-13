@@ -1,4 +1,4 @@
-     
+   
 libLAS - LAS 1.0/1.1/1.2 ASPRS LiDAR data translation toolset
 ==============================================================================
 
@@ -104,7 +104,9 @@ Spatial Reference System Support
 Linked against a 1.2.5+ version of `libgeotiff`_, you can set and get the spatial reference 
 systems of LAS files using simple `proj.4`_ coordinate system definitions.  
 Alternatively, with libLAS 1.2, you can link against `GDAL`_ to be able to 
-manipulate spatial references using WKT.
+manipulate spatial references using WKT.  The current development version of 
+libLAS can be used in combination with `GDAL`_ 1.7 to support `vertical coordinate systems`_ 
+as well.
 
 Simple Variable Length Record Abstraction
 ..............................................................................
@@ -221,3 +223,4 @@ Mailing Lists
 .. _`dotnetLibLAS API`: http://liblas.org/wiki/dotnetapi
 .. _`FOSS4G 2008`: http://liblas.org/raw-attachment/wiki/WikiStart/liblas_foss4g_2008.pdf
 .. _`ASPRS Workshop Demo`: http://liblas.org/raw-attachment/wiki/WikiStart/ASPRS-Workshop-NOAA-Demo.pdf
+.. _`vertical coordinate systems`: http://liblas.org/wiki/VerticalCS

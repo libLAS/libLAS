@@ -41,15 +41,15 @@ SET(LIBLAS_HPP
     ${LIBLAS_HEADERS_DIR}/guid.hpp
     ${LIBLAS_HEADERS_DIR}/iterator.hpp
     ${LIBLAS_HEADERS_DIR}/lasclassification.hpp
-	${LIBLAS_HEADERS_DIR}/lascolor.hpp
+    ${LIBLAS_HEADERS_DIR}/lascolor.hpp
     ${LIBLAS_HEADERS_DIR}/laserror.hpp
     ${LIBLAS_HEADERS_DIR}/lasfile.hpp
     ${LIBLAS_HEADERS_DIR}/lasheader.hpp
     ${LIBLAS_HEADERS_DIR}/laspoint.hpp
     ${LIBLAS_HEADERS_DIR}/lasreader.hpp
-	${LIBLAS_HEADERS_DIR}/lasspatialreference.hpp
+    ${LIBLAS_HEADERS_DIR}/lasspatialreference.hpp
     ${LIBLAS_HEADERS_DIR}/lasvariablerecord.hpp
-	${LIBLAS_HEADERS_DIR}/lasversion.hpp
+    ${LIBLAS_HEADERS_DIR}/lasversion.hpp
     ${LIBLAS_HEADERS_DIR}/laswriter.hpp
     ${LIBLAS_HEADERS_DIR}/liblas.hpp)
 
@@ -60,7 +60,7 @@ SET(LIBLAS_DETAIL_HPP
     ${LIBLAS_HEADERS_DIR}/detail/reader.hpp
     ${LIBLAS_HEADERS_DIR}/detail/reader10.hpp
     ${LIBLAS_HEADERS_DIR}/detail/reader11.hpp
-	${LIBLAS_HEADERS_DIR}/detail/reader12.hpp
+    ${LIBLAS_HEADERS_DIR}/detail/reader12.hpp
     ${LIBLAS_HEADERS_DIR}/detail/sha1.hpp
     ${LIBLAS_HEADERS_DIR}/detail/sharedptr.hpp
     ${LIBLAS_HEADERS_DIR}/detail/timer.hpp
@@ -68,7 +68,7 @@ SET(LIBLAS_DETAIL_HPP
     ${LIBLAS_HEADERS_DIR}/detail/writer.hpp
     ${LIBLAS_HEADERS_DIR}/detail/writer10.hpp
     ${LIBLAS_HEADERS_DIR}/detail/writer11.hpp
-	${LIBLAS_HEADERS_DIR}/detail/writer12.hpp
+    ${LIBLAS_HEADERS_DIR}/detail/writer12.hpp
 )
 
 SET(LIBLAS_CPP
@@ -88,16 +88,16 @@ SET(LIBLAS_DETAIL_CPP
     detail/reader.cpp
     detail/reader10.cpp
     detail/reader11.cpp
-	detail/reader12.cpp
+    detail/reader12.cpp
     detail/writer.cpp
     detail/writer10.cpp
     detail/writer11.cpp
-	detail/writer12.cpp)
+    detail/writer12.cpp)
 
 SET(LIBLAS_SOURCES
     ${LIBLAS_HPP}
     ${LIBLAS_DETAIL_HPP}
-	${LIBLAS_INDEX_HPP}
+    ${LIBLAS_INDEX_HPP}
     ${LIBLAS_CPP}
     ${LIBLAS_DETAIL_CPP}
     ${LIBLAS_INDEX_CPP}
@@ -133,11 +133,11 @@ ADD_LIBRARY(${LIBLAS_LIB_NAME} STATIC ${LIBLAS_SOURCES})
 ADD_LIBRARY(${LIBLAS_C_LIB_NAME} SHARED ${LIBLAS_C_SOURCES})
 
 TARGET_LINK_LIBRARIES(${LIBLAS_C_LIB_NAME}
-	${LIBLAS_LIB_NAME}
-	${GDAL_LIBRARY}
-    ${GEOTIFF_LIBRARY}
-	${SPATIALINDEX_LIBRARY}
-	${ZLIB_LIBRARIES})
+  ${LIBLAS_LIB_NAME}
+  ${ZLIB_LIBRARIES}
+  ${GEOTIFF_LIBRARY}
+  ${GDAL_LIBRARY}
+  ${SPATIALINDEX_LIBRARY})
 
 ###############################################################################
 # Targets installation

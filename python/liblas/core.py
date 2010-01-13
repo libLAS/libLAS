@@ -628,6 +628,15 @@ las.LASSRS_SetProj4.restype = ctypes.c_int
 las.LASSRS_SetProj4.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 las.LASSRS_SetProj4.errcheck = check_return
 
+las.LASSRS_SetVerticalCS.restype = ctypes.c_int
+las.LASSRS_SetVerticalCS.argtypes = [ctypes.c_void_p, ctypes.c_int,
+                                     ctypes.c_char_p, ctypes.c_int,
+                                     ctypes.c_int]
+las.LASSRS_SetVerticalCS.errcheck = check_return
+
+las.LASSRS_GetWKT_CompoundOK.argtypes = [ctypes.c_void_p]
+las.LASSRS_GetWKT_CompoundOK.errcheck = check_value_free
+las.LASSRS_GetWKT_CompoundOK.restype = ctypes.c_char_p
 las.LASSRS_GetWKT.argtypes = [ctypes.c_void_p]
 las.LASSRS_GetWKT.errcheck = check_value_free
 las.LASSRS_GetWKT.restype = ctypes.c_char_p

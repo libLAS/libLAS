@@ -811,7 +811,7 @@ LAS_DLL LASErrorEnum LASHeader_SetProjectId(LASHeaderH hHeader, const char* valu
 
     try {
         liblas::guid id;
-        id = liblas::guid::guid(value);
+        id = liblas::guid(value);
         ((LASHeader*) hHeader)->SetProjectId(id);    
     } catch (std::exception const& e)
     {
@@ -1653,7 +1653,7 @@ LAS_DLL LASGuidH LASGuid_CreateFromString(const char* string) {
     VALIDATE_LAS_POINTER1(string, "LASGuid_CreateFromString", NULL);    
     liblas::guid id;
     try {
-        id = liblas::guid::guid(string);
+        id = liblas::guid(string);
         return (LASGuidH) new liblas::guid(id);
     }
     catch (std::exception const& e) {
@@ -1864,7 +1864,16 @@ LAS_DLL char* LASSRS_GetWKT(LASSRSH hSRS)
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetWKT", NULL);
     LASSpatialReference* srs = (LASSpatialReference*)hSRS;
 
-    return strdup((srs)->GetWKT().c_str());
+    return strdup((srs)->GetWKT(LASSpatialReference::eHorizontalOnly).c_str());
+    
+}
+
+LAS_DLL char* LASSRS_GetWKT_CompoundOK(LASSRSH hSRS) 
+{
+    VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetWKT_CompoundOK", NULL);
+    LASSpatialReference* srs = (LASSpatialReference*)hSRS;
+
+    return strdup((srs)->GetWKT(LASSpatialReference::eCompoundOK).c_str());
     
 }
 
@@ -1878,6 +1887,27 @@ LAS_DLL LASErrorEnum LASSRS_SetWKT(LASSRSH hSRS, const char* value)
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetWKT");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASSRS_SetVerticalCS(LASSRSH hSRS, 
+                                          int verticalCSType,
+                                          const char *citation,
+                                          int verticalDatum, 
+                                          int verticalUnits ) {
+    
+    VALIDATE_LAS_POINTER1(hSRS, "LASSRS_SetVerticalCS", LE_Failure);
+
+    try {
+        ((LASSpatialReference*) hSRS)->SetVerticalCS( verticalCSType, citation,
+                                                      verticalDatum, 
+                                                      verticalUnits);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASSRS_SetVerticalCS");
         return LE_Failure;
     }
 

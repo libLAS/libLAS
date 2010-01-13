@@ -140,6 +140,8 @@ int main(int argc, char *argv[])
     LASPointH surviving_point_max = NULL;
     double surviving_gps_time_min;
     double surviving_gps_time_max;
+    int verticalCSType = -1, verticalDatum = -1, verticalUnits = 9001;
+    const char *verticalCitation = "";
 
     int clipped = 0;
     int eliminated_return = 0;
@@ -334,6 +336,44 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
                 do_reprojection = TRUE;
+            }
+        }
+        else if (   strcmp(argv[i],"--a_srs") == 0  ||
+                    strcmp(argv[i],"-a_srs") == 0 
+                )
+        {
+            ++i;
+            if (LAS_IsGDALEnabled()) {
+                out_srs = LASSRS_Create();
+                ret = LASSRS_SetFromUserInput(out_srs, argv[i]);
+                if (ret) {
+                    LASError_Print("Unable to import output SRS");
+                    exit(1);
+                }
+            }
+        }
+        else if (   strcmp(argv[i],"--a_vertcs") == 0  ||
+                    strcmp(argv[i],"-a_vertcs") == 0 
+                )
+        {
+            ++i;
+            verticalCSType = atoi(argv[i]);
+            ++i;
+            if( i < argc && argv[i][0] != '-' )
+            {
+                verticalCitation = argv[i];
+                ++i;
+
+                if( i < argc && argv[i][0] != '-' )
+                {
+                    verticalDatum = atoi(argv[i]);
+                    ++i;
+                    if( i < argc && argv[i][0] != '-' )
+                    {
+                        verticalUnits = atoi(argv[i]);
+                        ++i;
+                    }
+                }
             }
         }
         else if (   strcmp(argv[i],"--scale") == 0  ||
@@ -627,7 +667,12 @@ int main(int argc, char *argv[])
         fprintf(stderr, 
         "thinned: %d\n", 
         thinned);
-        
+    
+    if (surviving_number_of_point_records == 0) {
+        fprintf(stderr, "All points were eliminated!\n");
+        exit(0);
+    }
+    
     LASReader_Destroy(reader);
     LASHeader_Destroy(header);
   
@@ -811,6 +856,22 @@ int main(int argc, char *argv[])
         LASHeader_SetDataOffset(surviving_header, LASHeader_GetDataOffset(surviving_header)+abs(header_pad));
     }
     
+    /* Do we have vertical cs info to set? */
+    if( verticalCSType > 0 )
+    {
+        if( out_srs == NULL )
+            out_srs = LASHeader_GetSRS(surviving_header);
+
+        if( out_srs == NULL )
+            out_srs = LASSRS_Create();
+
+        LASSRS_SetVerticalCS( out_srs,
+                              verticalCSType, 
+                              verticalCitation, 
+                              verticalDatum, 
+                              verticalUnits );
+    }
+
     if (do_reprojection) {
         if (verbose) {
             proj4_text =  LASSRS_GetProj4(out_srs);
@@ -819,14 +880,20 @@ int main(int argc, char *argv[])
             free(proj4_text);
         }
         
-        /* keep around the header's SRS if we don't have on set by the user */
+        /* keep around the header's SRS if we don't have one set by the user */
         if (in_srs == NULL) {
             in_srs = LASHeader_GetSRS(surviving_header);
         }
         
         LASHeader_SetSRS(surviving_header, out_srs);
-        
     }
+
+    /* Are we just assigning an override SRS? (-a_srs) */
+    else if( out_srs != NULL )
+    {
+        LASHeader_SetSRS(surviving_header, out_srs);
+    }
+
     if (verbose) {
         fprintf(stderr, 
                 "second pass reading %d and writing %d points ...\n", 
@@ -974,8 +1041,11 @@ int main(int argc, char *argv[])
     LASReader_Destroy(reader);
     LASHeader_Destroy(header);
     LASHeader_Destroy(surviving_header);
-    LASPoint_Destroy(surviving_point_max);
-    LASPoint_Destroy(surviving_point_min);
+
+    if (surviving_point_max != NULL)
+        LASPoint_Destroy(surviving_point_max);
+    if (surviving_point_min != NULL)
+        LASPoint_Destroy(surviving_point_min);
 
     reader = LASReader_Create(file_name_out);
     if (!reader) { 
@@ -997,8 +1067,10 @@ int main(int argc, char *argv[])
     repair_header(stderr, header, summary) ;
 
     if (summary != NULL) {
-        LASPoint_Destroy(summary->pmin);
-        LASPoint_Destroy(summary->pmax);
+        if (summary->pmin != NULL)
+            LASPoint_Destroy(summary->pmin);
+        if (summary->pmax != NULL)
+            LASPoint_Destroy(summary->pmax);
         free(summary);
     }
 

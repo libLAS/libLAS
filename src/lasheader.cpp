@@ -603,7 +603,7 @@ void LASHeader::ClearGeoKeyVLRs()
     {
         LASVariableRecord record = *i;
 
-        if (record.GetUserId(true) == uid)
+        if (record.GetUserId(false) == uid)
         {
             uint16_t const id = record.GetRecordId();
             if (34735 == id)

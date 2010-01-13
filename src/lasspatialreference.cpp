@@ -4,6 +4,7 @@
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
  * Purpose:  LAS Spatial Reference class 
  * Author:   Howard Butler, hobu.inc@gmail.com
+ *           Frank Warmerdam, warmerdam@pobox.com
  *
  ******************************************************************************
  * Copyright (c) 2009, Howard Butler
@@ -328,7 +329,20 @@ const GTIF* LASSpatialReference::GetGTIF()
         if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
         {
             int count = data.size()/sizeof(int16_t);
-            ST_SetKey(m_tiff, record.GetRecordId(), count, STT_SHORT, &(data[0]));
+            short *data_s = (short *) &(data[0]);
+
+            // discard invalid "zero" geotags some software emits.
+            while( count > 4 
+                   && data_s[count-1] == 0
+                   && data_s[count-2] == 0
+                   && data_s[count-3] == 0
+                   && data_s[count-4] == 0 )
+            {
+                count -= 4;
+                data_s[3] -= 1;
+            }
+
+            ST_SetKey(m_tiff, record.GetRecordId(), count, STT_SHORT, data_s);
         }
 
         if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
@@ -353,7 +367,7 @@ const GTIF* LASSpatialReference::GetGTIF()
 }
 
 /// Fetch the SRS as WKT
-std::string LASSpatialReference::GetWKT() const 
+std::string LASSpatialReference::GetWKT( WKTModeFlag mode_flag ) const 
 {
 #ifndef HAVE_GDAL
     return std::string();
@@ -368,6 +382,26 @@ std::string LASSpatialReference::GetWKT() const
     if (GTIFGetDefn(m_gtiff, &sGTIFDefn))
     {
         pszWKT = GTIFGetOGISDefn( m_gtiff, &sGTIFDefn );
+
+        // Older versions of GDAL lack StripVertical(), but should never
+        // actually return COMPD_CS anyways.
+#if (GDAL_VERSION_NUM >= 1700) && (GDAL_RELEASE_DATE >= 20100110)
+        if( pszWKT 
+            && mode_flag == eHorizontalOnly 
+            && strstr(pszWKT,"COMPD_CS") != NULL )
+        {
+            OGRSpatialReference* poSRS = new OGRSpatialReference();
+            char *pszOrigWKT = pszWKT;
+            poSRS->importFromWkt( &pszOrigWKT );
+
+            CPLFree( pszWKT );
+            pszWKT = NULL;
+
+            poSRS->StripVertical();
+            poSRS->exportToWkt( &pszWKT );
+        }
+#endif
+        
         if (pszWKT)
         {
             std::string tmp(pszWKT);
@@ -433,6 +467,45 @@ void LASSpatialReference::SetWKT(std::string const& v)
     throw std::runtime_error("GDAL is not available, LASSpatialReference could not be set from WKT");
 #endif
 }
+
+void LASSpatialReference::SetVerticalCS( int verticalCSType, 
+                                         std::string const& citation,
+                                         int verticalDatum,
+                                         int verticalUnits )
+
+{
+    if (!m_gtiff)
+    {
+        GetGTIF(); 
+    }
+
+#ifdef HAVE_LIBGEOTIFF
+    if( verticalCSType != KvUserDefined && verticalCSType > 0 )
+        GTIFKeySet( m_gtiff, VerticalCSTypeGeoKey, TYPE_SHORT, 1,
+                    verticalCSType );
+
+    if( citation != "" )
+        GTIFKeySet( m_gtiff, VerticalCitationGeoKey, TYPE_ASCII, 0, 
+                    citation.c_str() );			       
+
+    if( verticalDatum > 0 && verticalDatum != KvUserDefined )
+        GTIFKeySet( m_gtiff, VerticalDatumGeoKey, TYPE_SHORT, 1,
+                    verticalDatum );
+        
+    if( verticalUnits > 0 && verticalUnits != KvUserDefined )
+        GTIFKeySet( m_gtiff, VerticalUnitsGeoKey, TYPE_SHORT, 1,
+                    verticalUnits );
+
+    int ret = GTIFWriteKeys(m_gtiff);
+    if (!ret) 
+    {
+        throw std::runtime_error("The geotiff keys could not be written");
+    }
+
+    ResetVLRs();
+#endif /* def HAVE_LIBGEOTIFF */
+}
+                                         
 
 std::string LASSpatialReference::GetProj4() const 
 {

@@ -105,7 +105,7 @@ namespace tut
         }
         catch (liblas::invalid_point_data const& e)
         {
-            ensure_equals(e.who() & liblas::LASPoint::eReturnNumber,
+            ensure_equals(e.who(), liblas::LASPoint::eReturnNumber,
                 liblas::LASPoint::eReturnNumber);
         }
     }
@@ -140,7 +140,7 @@ namespace tut
         }
         catch (liblas::invalid_point_data const& e)
         {
-            ensure_equals(e.who() & liblas::LASPoint::eNumberOfReturns,
+            ensure_equals(e.who(), liblas::LASPoint::eNumberOfReturns,
                 liblas::LASPoint::eNumberOfReturns);
         }
     }
@@ -175,7 +175,7 @@ namespace tut
         }
         catch (liblas::invalid_point_data const& e)
         {
-            ensure_equals(e.who() & liblas::LASPoint::eScanDirection,
+            ensure_equals(e.who(), liblas::LASPoint::eScanDirection,
                 liblas::LASPoint::eScanDirection);
         }
     }
@@ -210,7 +210,7 @@ namespace tut
         }
         catch (liblas::invalid_point_data const& e)
         {
-            ensure_equals(e.who() & liblas::LASPoint::eFlightLineEdge,
+            ensure_equals(e.who(), liblas::LASPoint::eFlightLineEdge,
                 liblas::LASPoint::eFlightLineEdge);
         }
     }
@@ -293,7 +293,7 @@ namespace tut
         }
         catch (liblas::invalid_point_data const& e)
         {
-            ensure_equals(e.who() & liblas::LASPoint::eScanAngleRank,
+            ensure_equals(e.who(), liblas::LASPoint::eScanAngleRank,
                 liblas::LASPoint::eScanAngleRank);
         }
     }
