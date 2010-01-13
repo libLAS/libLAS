@@ -40,3 +40,4 @@ autoconf || giveup
 echo "======================================"
 echo "Now you are ready to run './configure'"
 echo "======================================"
+
