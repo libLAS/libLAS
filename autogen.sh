@@ -1,7 +1,7 @@
 #!/bin/sh
 # $Id$
 #
-# Autotools boostrapping script
+# Autotools boostrapping script for libLAS (http://liblas.org)
 #
 giveup()
 {
@@ -40,3 +40,4 @@ autoconf || giveup
 echo "======================================"
 echo "Now you are ready to run './configure'"
 echo "======================================"
+
