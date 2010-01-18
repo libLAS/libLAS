@@ -22,6 +22,7 @@ nobase_las_HEADERS = \
     liblas/detail/endian.hpp \
     liblas/detail/file.hpp \
     liblas/detail/fwd.hpp \
+    liblas/detail/format.hpp \
     liblas/detail/reader.hpp \
     liblas/detail/reader10.hpp \
     liblas/detail/reader11.hpp \
