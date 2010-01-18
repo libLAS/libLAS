@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS 1.0 writer implementation for C++ libLAS 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  LAS PointFormat implementation for C++ libLAS 
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Howard Butler
  *
  * All rights reserved.
  * 
@@ -39,73 +39,53 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_DETAIL_FORMAT_HPP_INCLUDED
-#define LIBLAS_DETAIL_FORMAT_HPP_INCLUDED
-
-#include <liblas/detail/fwd.hpp>
-#include <liblas/cstdint.hpp>
+#include <liblas/lasformat.hpp>
+#include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
+#include <liblas/laspoint.hpp>
+#include <liblas/liblas.hpp>
 // std
-#include <iosfwd>
+#include <vector>
+#include <fstream>
+#include <stdexcept>
+#include <cstdlib> // std::size_t
+#include <cassert>
 
-namespace liblas { namespace detail { 
+namespace liblas { 
 
-class Format
+LASFormat::LASFormat( liblas::uint8_t major, 
+                liblas::uint8_t minor, 
+                liblas::LASHeader::PointSize size) :
+    m_size(size),
+    m_versionminor(minor), 
+    m_versionmajor(major),
+    m_compressed(false)
 {
-public:
+    
+}
 
-    Format(liblas::uint8_t major, liblas::uint8_t minor, liblas::LASHeader::PointSize& size);
-    virtual ~Format();
-    
-    virtual liblas::LASHeader::PointSize GetByteSize() const = 0;
-    virtual void SetByteSize(liblas::LASHeader::PointSize& size) const = 0;
-    
-    liblas::uint8_t GetVersionMajor() { return m_versionmajor; }
-    void SetVersionMajor(liblas::uint8_t v) {m_versionmajor = v; }
-    
-    liblas::uint8_t GetVersionMinor() { return m_versionminor; }
-    void SetVersionMinor(liblas::uint8_t v) {m_versionminor = v; }
-
-    bool IsCompressed() { return m_compressed; } 
-    void SetCompressed(bool v) {m_compressed = v;}
-
-    virtual bool HasColor() const = 0;
-    virtual bool HasTime() const = 0;
-    
-  
-protected:
-    
-    liblas::LASHeader::PointSize m_size;
-    uint8_t m_versionminor;
-    uint8_t m_versionmajor;
-    bool m_compressed;
-    
-private:
-
-    // Blocked copying operations, declared but not defined.
-    Format(Format const& other);
-    Format& operator=(Format const& rhs);
-    
-    
-};
-
-class PointFormat : public Format
+LASPointFormat::LASPointFormat( liblas::uint8_t major, 
+                liblas::uint8_t minor, 
+                liblas::LASHeader::PointSize size) :
+    Base(major, minor, size),
+    m_hasColor(false),
+    m_hasTime(false)
 {
-public:
-
-    typedef Format Base;
+    // PointFormat is assumed to be used for the standard point formats
+    // that are specified in the specification.  They have standard byte 
+    // sizes of the following:
+    //      ePointSize0 = 20 -> point data format 0
+    //      ePointSize1 = 28 -> point data format 1
+    //      ePointSize2 = 26 -> point data format 2
+    //      ePointSize3 = 34 -> point data format 3
     
-    PointFormat(liblas::uint8_t major, liblas::uint8_t minor, liblas::LASHeader::PointSize& size);
-    bool HasColor() { return m_hasColor; }
-    bool HasTime() { return m_hasTime; }
-    bool IsCompressed() { return false; }
+    // If the size we were given is not one of these values, we are not 
+    // going to be able to determine automatically whether or not the record
+    // has color or time values.  
+    
+    if (size == LASHeader::ePointSize0) {
+        
+    }
+}
 
-private:
-
-    bool m_hasColor;
-    bool m_hasTime;
-};
-
-}} // namespace liblas::detail
-
-#endif // LIBLAS_DETAIL_FORMAT_HPP_INCLUDED
+} // namespace liblas

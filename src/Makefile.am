@@ -26,8 +26,8 @@ AM_CPPFLAGS = -I../include/liblas/capi -I../include $(GEOTIFF_CPPFLAGS) $(GDAL_C
 lib_LTLIBRARIES = liblas.la
 
 liblas_la_SOURCES = \
-    lasclassification.cpp \
-    lascolor.cpp \
+	lasclassification.cpp \
+	lascolor.cpp \
 	laserror.cpp \
 	laspoint.cpp \
 	lasheader.cpp \
@@ -37,27 +37,27 @@ liblas_la_SOURCES = \
 	lasfile.cpp \
 	las_c_api.cpp \
 	lasspatialreference.cpp \
-	detail/format.cpp \
-    detail/reader.cpp \
-    detail/reader10.cpp \
-    detail/reader11.cpp \
-    detail/reader12.cpp \
-    detail/writer.cpp \
-    detail/writer10.cpp \
-    detail/writer11.cpp \
+	lasformat.cpp \
+	detail/reader.cpp \
+	detail/reader10.cpp \
+	detail/reader11.cpp \
+	detail/reader12.cpp \
+	detail/writer.cpp \
+	detail/writer10.cpp \
+	detail/writer11.cpp \
 	detail/writer12.cpp \
-    detail/file.cpp 
+	detail/file.cpp 
 
 if GDAL_IS_CONFIG
 liblas_la_SOURCES += gt_wkt_srs.cpp gt_citation.cpp tifvsi.cpp
 endif
 
 if SPATIALINDEX_IS_CONFIG
-liblas_la_SOURCES +=    index/index.cpp \
-                        index/datastream.cpp \
-                        index/visitor.cpp \
+liblas_la_SOURCES +=	index/index.cpp \
+						index/datastream.cpp \
+						index/visitor.cpp \
 						index/query.cpp \
-                        index/storage.cpp
+						index/storage.cpp
 
 
 endif

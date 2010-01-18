@@ -16,13 +16,13 @@ nobase_las_HEADERS = \
     liblas/lasspatialreference.hpp \
     liblas/laswriter.hpp \
     liblas/liblas.hpp \
+    liblas/lasformat.hpp \
     liblas/capi/liblas.h \
     liblas/capi/las_version.h \
     liblas/capi/las_config.h \
     liblas/detail/endian.hpp \
     liblas/detail/file.hpp \
     liblas/detail/fwd.hpp \
-    liblas/detail/format.hpp \
     liblas/detail/reader.hpp \
     liblas/detail/reader10.hpp \
     liblas/detail/reader11.hpp \
