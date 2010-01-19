@@ -974,7 +974,7 @@ LAS_DLL liblas::uint32_t LASHeader_GetRecordsCount(const LASHeaderH hHeader) {
 LAS_DLL liblas::uint8_t LASHeader_GetDataFormatId(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetDataFormatId", 0);
     
-    LASHeader::PointFormat id = ((LASHeader*) hHeader)->GetDataFormatId();
+    liblas::PointFormat id = ((LASHeader*) hHeader)->GetDataFormatId();
     return static_cast<liblas::uint8_t>(id);
 }
 
@@ -982,7 +982,7 @@ LAS_DLL LASErrorEnum LASHeader_SetDataFormatId(LASHeaderH hHeader, liblas::uint8
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetDataFormatId", LE_Failure); 
     
     try {
-            ((LASHeader*) hHeader)->SetDataFormatId((liblas::LASHeader::PointFormat)value);
+            ((LASHeader*) hHeader)->SetDataFormatId((liblas::PointFormat)value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetDataFormatId");

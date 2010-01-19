@@ -150,21 +150,21 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     // 17. Point Data Format ID
     read_n(n1, m_ifs, sizeof(n1));
-    if (n1 == LASHeader::ePointFormat0)
+    if (n1 == liblas::ePointFormat0)
     {
-        header.SetDataFormatId(LASHeader::ePointFormat0);
+        header.SetDataFormatId(liblas::ePointFormat0);
     } 
-    else if (n1 == LASHeader::ePointFormat1)
+    else if (n1 == liblas::ePointFormat1)
     {
-        header.SetDataFormatId(LASHeader::ePointFormat1);
+        header.SetDataFormatId(liblas::ePointFormat1);
     }
-    else if (n1 == LASHeader::ePointFormat2)
+    else if (n1 == liblas::ePointFormat2)
     {
-        header.SetDataFormatId(LASHeader::ePointFormat2);
+        header.SetDataFormatId(liblas::ePointFormat2);
     }
-    else if (n1 == LASHeader::ePointFormat3)
+    else if (n1 == liblas::ePointFormat3)
     {
-        header.SetDataFormatId(LASHeader::ePointFormat3);
+        header.SetDataFormatId(liblas::ePointFormat3);
     }
     else
     {
@@ -247,7 +247,7 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
         
         detail::PointRecord record;
         // TODO: Replace with compile-time assert
-        assert(LASHeader::ePointSize0 == sizeof(record));
+        assert(liblas::ePointSize0 == sizeof(record));
 
         try
         {
@@ -266,7 +266,7 @@ bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
 
         // printf("ReadNextPoint: %d %d %d\n%.3f %.3f %.3f\n", record.x, record.y, record.z, point.GetX(), point.GetY(), point.GetZ());
     
-        if (header.GetDataFormatId() == LASHeader::ePointFormat1)
+        if (header.GetDataFormatId() == liblas::ePointFormat1)
         {
             double gpst = 0;
             detail::read_n(gpst, m_ifs, sizeof(double));
@@ -300,7 +300,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     
     detail::PointRecord record;
     // TODO: Replace with compile-time assert
-    assert(LASHeader::ePointSize0 == sizeof(record));
+    assert(liblas::ePointSize0 == sizeof(record));
 
     detail::read_n(record, m_ifs, sizeof(record));
     bytesread += sizeof(PointRecord);
@@ -308,7 +308,7 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     Reader::FillPoint(record, point, header);
     point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
     
-    if (header.GetDataFormatId() == LASHeader::ePointFormat1)
+    if (header.GetDataFormatId() == liblas::ePointFormat1)
     {
         double gpst = 0;
         detail::read_n(gpst, m_ifs, sizeof(double));

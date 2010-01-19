@@ -377,7 +377,7 @@ void LASHeader::SetRecordsCount(uint32_t v)
     m_recordsCount = v;
 }
 
-LASHeader::PointFormat LASHeader::GetDataFormatId() const
+liblas::PointFormat LASHeader::GetDataFormatId() const
 {
     if (ePointFormat0 == m_dataFormatId)
         return ePointFormat0;
@@ -389,7 +389,7 @@ LASHeader::PointFormat LASHeader::GetDataFormatId() const
         return ePointFormat3;
 }
 
-void LASHeader::SetDataFormatId(LASHeader::PointFormat v)
+void LASHeader::SetDataFormatId(liblas::PointFormat v)
 {
     m_dataFormatId = static_cast<uint8_t>(v);
 

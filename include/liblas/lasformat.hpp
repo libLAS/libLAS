@@ -50,15 +50,15 @@
 
 namespace liblas {  
 
-class LASFormat
+class LASPointFormat
 {
 public:
 
-    LASFormat(liblas::uint8_t major, liblas::uint8_t minor, liblas::LASHeader::PointSize size);
-    virtual ~LASFormat();
+    LASPointFormat(liblas::uint8_t major, liblas::uint8_t minor, liblas::PointSize size);
+    virtual ~LASPointFormat();
     
-    virtual liblas::LASHeader::PointSize GetByteSize() const = 0;
-    virtual void SetByteSize(liblas::LASHeader::PointSize& size) const = 0;
+    virtual liblas::PointSize GetByteSize() const = 0;
+    virtual void SetByteSize(liblas::PointSize& size) const = 0;
     
     liblas::uint8_t GetVersionMajor() { return m_versionmajor; }
     void SetVersionMajor(liblas::uint8_t v) {m_versionmajor = v; }
@@ -66,45 +66,30 @@ public:
     liblas::uint8_t GetVersionMinor() { return m_versionminor; }
     void SetVersionMinor(liblas::uint8_t v) {m_versionminor = v; }
 
-    bool IsCompressed() { return m_compressed; } 
-    void SetCompressed(bool v) {m_compressed = v;}
-
-    virtual bool HasColor() const = 0;
-    virtual bool HasTime() const = 0;
+    bool HasColor() const;
+    bool HasTime() const;
+    
+    
     
   
 protected:
     
-    liblas::LASHeader::PointSize m_size;
+    liblas::PointSize m_size;
     uint8_t m_versionminor;
     uint8_t m_versionmajor;
-    bool m_compressed;
-    
+
+    bool m_hasColor;
+    bool m_hasTime;    
+
 private:
 
     // Blocked copying operations, declared but not defined.
-    LASFormat(LASFormat const& other);
-    LASFormat& operator=(LASFormat const& rhs);
+    LASPointFormat(LASPointFormat const& other);
+    LASPointFormat& operator=(LASPointFormat const& rhs);
     
     
 };
 
-class LASPointFormat : public LASFormat
-{
-public:
-
-    typedef LASFormat Base;
-    
-    LASPointFormat(liblas::uint8_t major, liblas::uint8_t minor, liblas::LASHeader::PointSize size);
-    bool HasColor() { return m_hasColor; }
-    bool HasTime() { return m_hasTime; }
-    bool IsCompressed() { return false; }
-
-private:
-
-    bool m_hasColor;
-    bool m_hasTime;
-};
 
 } // namespace liblas
 

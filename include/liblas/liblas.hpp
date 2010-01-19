@@ -117,6 +117,34 @@ inline bool IsLibSpatialIndexEnabled()
 #endif
 }
 
+/// Range of allowed ASPRS LAS file format versions.
+enum FormatVersion
+{
+    eVersionMajorMin = 1, ///< Minimum of major component
+    eVersionMajorMax = 1, ///< Maximum of major component
+    eVersionMinorMin = 0, ///< Minimum of minor component
+    eVersionMinorMax = 2 ///< Maximum of minor component
+};
+
+/// Versions of point record format.
+enum PointFormat
+{
+    ePointFormat0 = 0, ///< Point Data Format \e 0
+    ePointFormat1 = 1, ///< Point Data Format \e 1
+    ePointFormat2 = 2, ///< Point Data Format \e 2
+    ePointFormat3 = 3  ///< Point Data Format \e 3
+};
+
+/// Number of bytes of point record storage in particular format.
+enum PointSize
+{
+    ePointSize0 = 20, ///< Size of point record in data format \e 0
+    ePointSize1 = 28, ///< Size of point record in data format \e 1
+    ePointSize2 = 26, ///< Size of point record in data format \e 2
+    ePointSize3 = 34,  ///< Size of point record in data format \e 3
+    ePointSizeUnknown = -99
+};
+    
 } // namespace liblas
 
 #endif // LIBLAS_HPP_INCLUDED

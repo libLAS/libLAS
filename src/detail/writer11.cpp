@@ -251,11 +251,11 @@ void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header
     // TODO: Static assert would be better
     
     double t = 0;
-    assert(LASHeader::ePointSize0 == sizeof(m_record));
+    assert(liblas::ePointSize0 == sizeof(m_record));
     Writer::FillPointRecord(m_record, point, header);
     detail::write_n(m_ofs, m_record, sizeof(m_record));
 
-    if (header.GetDataFormatId() == LASHeader::ePointFormat1) {
+    if (header.GetDataFormatId() == liblas::ePointFormat1) {
         t = point.GetTime();
         detail::write_n(m_ofs, t, sizeof(double));
     }

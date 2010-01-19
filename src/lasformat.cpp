@@ -53,21 +53,14 @@
 
 namespace liblas { 
 
-LASFormat::LASFormat( liblas::uint8_t major, 
-                liblas::uint8_t minor, 
-                liblas::LASHeader::PointSize size) :
-    m_size(size),
-    m_versionminor(minor), 
-    m_versionmajor(major),
-    m_compressed(false)
-{
-    
-}
+
 
 LASPointFormat::LASPointFormat( liblas::uint8_t major, 
                 liblas::uint8_t minor, 
-                liblas::LASHeader::PointSize size) :
-    Base(major, minor, size),
+                liblas::PointSize size) :
+    m_size(size),
+    m_versionminor(minor), 
+    m_versionmajor(major),
     m_hasColor(false),
     m_hasTime(false)
 {
@@ -83,7 +76,7 @@ LASPointFormat::LASPointFormat( liblas::uint8_t major,
     // going to be able to determine automatically whether or not the record
     // has color or time values.  
     
-    if (size == LASHeader::ePointSize0) {
+    if (size == liblas::ePointSize0) {
         
     }
 }

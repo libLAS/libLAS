@@ -260,16 +260,16 @@ void WriterImpl::WritePointRecord(LASPoint const& point, LASHeader const& header
     uint16_t green = 0;
     LASColor color;
     
-    assert(LASHeader::ePointSize0 == sizeof(m_record));
+    assert(liblas::ePointSize0 == sizeof(m_record));
     Writer::FillPointRecord(m_record, point, header);
     detail::write_n(m_ofs, m_record, sizeof(m_record));
 
-    if (header.GetDataFormatId() == LASHeader::ePointFormat1)
+    if (header.GetDataFormatId() == liblas::ePointFormat1)
     {
         t = point.GetTime();
         detail::write_n(m_ofs, t, sizeof(double));
     }
-    else if (header.GetDataFormatId() == LASHeader::ePointFormat2)
+    else if (header.GetDataFormatId() == liblas::ePointFormat2)
     {
         color = point.GetColor();
         red = color.GetRed();
@@ -279,7 +279,7 @@ void WriterImpl::WritePointRecord(LASPoint const& point, LASHeader const& header
         detail::write_n(m_ofs, green, sizeof(uint16_t));
         detail::write_n(m_ofs, blue, sizeof(uint16_t));
     }
-    else if (header.GetDataFormatId() == LASHeader::ePointFormat3)
+    else if (header.GetDataFormatId() == liblas::ePointFormat3)
     {
         t = point.GetTime();
         detail::write_n(m_ofs, t, sizeof(double));

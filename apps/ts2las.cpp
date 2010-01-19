@@ -71,16 +71,16 @@ LASHeader CreateHeader(ScanHdr* hdr)
     LASHeader header;
     
     // Checks for time and color values
-    liblas::LASHeader::PointFormat format = liblas::LASHeader::ePointFormat0;
+    liblas::PointFormat format = liblas::ePointFormat0;
     
     if (hdr->Time) {
         if (hdr->Color) {
-            format = liblas::LASHeader::ePointFormat3;
+            format = liblas::ePointFormat3;
         } else {
-            format = liblas::LASHeader::ePointFormat1;
+            format = liblas::ePointFormat1;
         }
     } else if (hdr->Color) {
-        format = liblas::LASHeader::ePointFormat2;
+        format = liblas::ePointFormat2;
     } 
     header.SetVersionMinor(2);
     header.SetDataFormatId(format);
