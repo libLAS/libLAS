@@ -66,8 +66,10 @@ public:
     liblas::uint8_t GetVersionMinor() { return m_versionminor; }
     void SetVersionMinor(liblas::uint8_t v) {m_versionminor = v; }
 
-    bool HasColor() const;
-    bool HasTime() const;
+    bool Color() const {return m_hasColor; }
+    void Color(bool bColor) {m_hasColor = bColor; }
+    bool Time() const { return m_hasTime; }
+    void Time(bool bTime) {m_hasTime = bTime; }
     
     
     
