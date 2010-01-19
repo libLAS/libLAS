@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: gt_wkt_srs.cpp 18490 2010-01-09 05:44:49Z warmerdam $
+ * $Id: gt_wkt_srs.cpp 18562 2010-01-16 04:56:05Z warmerdam $
  *
  * Project:  GeoTIFF Driver
  * Purpose:  Implements translation between GeoTIFF normalized projection
@@ -41,6 +41,8 @@
 #include "gdal.h"
 #include "xtiffio.h"
 #include "cpl_multiproc.h"
+
+CPL_CVSID("$Id: gt_wkt_srs.cpp 18562 2010-01-16 04:56:05Z warmerdam $")
 
 CPL_C_START
 void GTiffOneTimeInit();
@@ -178,11 +180,11 @@ static void WKTMassageDatum( char ** ppszDatum )
 /************************************************************************/
 
 /* For example:
-   GTCitationGeoKey (Ascii,215): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 18490 $ $Date: 2010-01-09 00:44:49 -0500 (Sat, 09 Jan 2010) $\nProjection Name = UTM\nUnits = meters\nGeoTIFF Units = meters"
+   GTCitationGeoKey (Ascii,215): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 18562 $ $Date: 2010-01-15 23:56:05 -0500 (Fri, 15 Jan 2010) $\nProjection Name = UTM\nUnits = meters\nGeoTIFF Units = meters"
 
-   GeogCitationGeoKey (Ascii,267): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 18490 $ $Date: 2010-01-09 00:44:49 -0500 (Sat, 09 Jan 2010) $\nUnable to match Ellipsoid (Datum) to a GeographicTypeGeoKey value\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
+   GeogCitationGeoKey (Ascii,267): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 18562 $ $Date: 2010-01-15 23:56:05 -0500 (Fri, 15 Jan 2010) $\nUnable to match Ellipsoid (Datum) to a GeographicTypeGeoKey value\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
 
-   PCSCitationGeoKey (Ascii,214): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 18490 $ $Date: 2010-01-09 00:44:49 -0500 (Sat, 09 Jan 2010) $\nUTM Zone 10N\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
+   PCSCitationGeoKey (Ascii,214): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 18562 $ $Date: 2010-01-15 23:56:05 -0500 (Fri, 15 Jan 2010) $\nUTM Zone 10N\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
  
 */
 
@@ -681,6 +683,20 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
         }
 
 /* -------------------------------------------------------------------- */
+/*      Somewhat similarly, codes 5001 to 5033 were treated as          */
+/*      vertical coordinate systems based on ellipsoidal heights.       */
+/*      We use the corresponding 2d geodetic datum as the vertical      */
+/*      datum and clear the vertical coordinate system code since       */
+/*      there isn't one in epsg.                                        */
+/* -------------------------------------------------------------------- */
+        if( (verticalCSType >= 5001 && verticalCSType <= 5033)
+            && verticalDatum == -1 )
+        {
+            verticalDatum = verticalCSType+1000;
+            verticalCSType = -1;
+        }
+
+/* -------------------------------------------------------------------- */
 /*      Promote to being a compound coordinate system.                  */
 /* -------------------------------------------------------------------- */
         OGR_SRSNode *poOldRoot = oSRS.GetRoot()->Clone();
@@ -714,7 +730,7 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
                                         "coord_ref_sys_code", 
                                         szSearchKey, CC_Integer, 
                                         "coord_ref_sys_name" );
-                if( pszValue != NULL )
+                if( pszValue != NULL && *pszValue != '\0' )
                     strncpy( citation, pszValue, sizeof(citation) );
             }
 
@@ -746,22 +762,35 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
 /*      Setup the vertical datum.                                       */
 /* -------------------------------------------------------------------- */
         const char *pszVDatumName = "unknown";
+        const char *pszVDatumType = "2005"; // CS_VD_GeoidModelDerived
 
         if( verticalDatum > 0 && verticalDatum != KvUserDefined )
         {
-            pszFilename = CSVFilename( "gdal_datum.csv" );
+            pszFilename = CSVFilename( "datum.csv" );
+            if( EQUAL(pszFilename,"datum.csv") )
+                pszFilename = CSVFilename( "gdal_datum.csv" );
+
             sprintf( szSearchKey, "%d", verticalDatum );
 
             pszValue = CSVGetField( pszFilename,
                                     "DATUM_CODE", szSearchKey, CC_Integer,
                                     "DATUM_NAME" );
-            if( pszValue != NULL )
+            if( pszValue != NULL && *pszValue != '\0' )
                 pszVDatumName = pszValue;
+
+            pszValue = CSVGetField( pszFilename,
+                                    "DATUM_CODE", szSearchKey, CC_Integer,
+                                    "DATUM_TYPE" );
+            if( pszValue != NULL && EQUALN(pszValue,"geodetic",8) )
+                pszVDatumType = "2002"; // CS_VD_Ellipsoidal
+
+            // We unfortunately don't know how to identify other 
+            // vertical datum types, particularly orthometric (2001). 
         }
 
         oSRS.SetNode( "COMPD_CS|VERT_CS|VERT_DATUM", pszVDatumName );
         oSRS.GetAttrNode( "COMPD_CS|VERT_CS|VERT_DATUM" )
-            ->AddChild( new OGR_SRSNode( "2005" ) );
+            ->AddChild( new OGR_SRSNode( pszVDatumType ) );
         if( verticalDatum > 0 && verticalDatum != KvUserDefined )
             oSRS.SetAuthority( "COMPD_CS|VERT_CS|VERT_DATUM", "EPSG", 
                                   verticalDatum );
