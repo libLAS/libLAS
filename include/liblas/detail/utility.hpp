@@ -45,9 +45,9 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/endian.hpp>
 // std
+#include <cassert>
 #include <cstddef>
 #include <cstring>
-#include <cassert>
 #include <algorithm>
 #include <iosfwd>
 #include <limits>
@@ -299,8 +299,8 @@ inline T generate_random_byte()
 {
     // Requires pseudo-random numbers generator to be initialized
     // in create_random_based() function - a poor man solution.
-    T const rmin = std::numeric_limits<T>::min();
-    T const rmax = std::numeric_limits<T>::max();
+    T const rmin = (std::numeric_limits<T>::min)();
+    T const rmax = (std::numeric_limits<T>::max)();
     unsigned int const rnd = std::rand() % rmax + rmin;
 
     assert(rnd <= 255);
