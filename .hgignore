@@ -4,6 +4,7 @@ syntax: glob
 *~
 *.dll
 *.embed.manifest
+*.exe.manifest
 *.exe
 *.exp
 *.idb
