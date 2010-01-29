@@ -134,6 +134,7 @@ bool Reader::ReadVLR(LASHeader& header)
     reader.read();
     header = reader.GetHeader();
 
+    std::cout << "vlrs size: " << header.GetVLRs().size() << std::endl;
     LASSpatialReference srs(header.GetVLRs());    
     header.SetSRS(srs);
 
