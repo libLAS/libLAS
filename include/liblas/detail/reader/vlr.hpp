@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Reader implementation for C++ libLAS 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  VLR Reader implementation for C++ libLAS 
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Howard Butler
  *
  * All rights reserved.
  * 
@@ -39,78 +39,46 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  
-#ifndef LIBLAS_DETAIL_READER_HPP_INCLUDED
-#define LIBLAS_DETAIL_READER_HPP_INCLUDED
+#ifndef LIBLAS_DETAIL_READER_VLR_HPP_INCLUDED
+#define LIBLAS_DETAIL_READER_VLR_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
 #include <liblas/lasversion.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
-
-#ifndef HAVE_GDAL
-    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
-    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
-#endif
+#include <liblas/lasheader.hpp>
 
 // std
 #include <iosfwd>
 
-namespace liblas { namespace detail {
+namespace liblas { namespace detail { namespace reader {
 
-struct PointRecord;
-
-class Reader
+class VLR
 {
 public:
 
-    Reader(std::istream& ifs);
-    virtual ~Reader();
-    virtual LASVersion GetVersion() const = 0;
-    virtual bool ReadHeader(LASHeader& header) = 0;
-    virtual bool ReadNextPoint(LASPoint& point, const LASHeader& header) = 0;
-    virtual bool ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& header) = 0;
+    VLR(std::istream& ifs, const LASHeader& header);
+    virtual ~VLR();
 
     std::istream& GetStream() const;
-    bool ReadVLR(LASHeader& header);
-    void Reset(LASHeader const& header);
-    void SetSRS(const LASSpatialReference& srs);
-    void SetInputSRS(const LASSpatialReference& srs);
-    void SetOutputSRS(const LASSpatialReference& srs);
+    const LASHeader& GetHeader() const { return m_header; }
+    void read();
     
 protected:
 
-    typedef std::istream::off_type off_type;
-    typedef std::istream::pos_type pos_type;
     
     std::istream& m_ifs;
-    uint32_t m_size;
-    uint32_t m_current;
-    LASSpatialReference m_out_srs;
-    LASSpatialReference m_in_srs;    
-    OGRCoordinateTransformationH m_transform;
-    OGRSpatialReferenceH m_in_ref;
-    OGRSpatialReferenceH m_out_ref;
+    LASHeader m_header;
 
-    void FillPoint(PointRecord& record, LASPoint& point, const LASHeader& header);
-    void Project(LASPoint& point);
-    bool HasPointDataSignature();
 private:
 
     // Blocked copying operations, declared but not defined.
-    Reader(Reader const& other);
-    Reader& operator=(Reader const& rhs);
-    void CreateTransform();
+    VLR(VLR const& other);
+    VLR& operator=(VLR const& rhs);
+
 };
 
-class ReaderFactory
-{
-public:
 
-    // TODO: prototypes
-    static Reader* Create(std::istream& ifs);
-    static void Destroy(Reader* p);
-};
+}}} // namespace liblas::detail::reader
 
-}} // namespace liblas::detail
-
-#endif // LIBLAS_DETAIL_READER_HPP_INCLUDED
+#endif // LIBLAS_DETAIL_READER_VLR_HPP_INCLUDED

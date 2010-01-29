@@ -41,6 +41,7 @@ liblas_la_SOURCES = \
 	detail/reader/reader10.cpp \
 	detail/reader/reader11.cpp \
 	detail/reader/reader12.cpp \
+	detail/reader/vlr.cpp \
 	detail/writer.cpp \
 	detail/writer10.cpp \
 	detail/writer11.cpp \

@@ -39,11 +39,12 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  
-#include <liblas/detail/reader.hpp>
-#include <liblas/detail/reader10.hpp>
-#include <liblas/detail/reader11.hpp>
-#include <liblas/detail/reader12.hpp>
+#include <liblas/detail/reader/reader.hpp>
+#include <liblas/detail/reader/reader10.hpp>
+#include <liblas/detail/reader/reader11.hpp>
+#include <liblas/detail/reader/reader12.hpp>
 #include <liblas/detail/utility.hpp>
+#include <liblas/detail/reader/vlr.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasclassification.hpp>
@@ -129,48 +130,11 @@ void Reader::FillPoint(PointRecord& record, LASPoint& point, const LASHeader& he
 
 bool Reader::ReadVLR(LASHeader& header)
 {
-    VLRHeader vlrh = { 0 };
+    detail::reader::VLR reader(m_ifs, header);
+    reader.read();
+    header = reader.GetHeader();
 
-    m_ifs.seekg(header.GetHeaderSize(), std::ios::beg);
-    uint32_t count = header.GetRecordsCount();
-    header.SetRecordsCount(0);
-    for (uint32_t i = 0; i < count; ++i)
-    {
-        read_n(vlrh, m_ifs, sizeof(VLRHeader));
-
-        uint16_t length = vlrh.recordLengthAfterHeader;
-        if (length < 1)
-        {
-            throw std::domain_error("VLR record length must be at least 1 byte long");
-        } 
-        std::vector<uint8_t> data;
-        data.resize(length);
-
-        read_n(data.front(), m_ifs, length);
-         
-        LASVariableRecord vlr;
-        vlr.SetReserved(vlrh.reserved);
-        vlr.SetUserId(std::string(vlrh.userId));
-        vlr.SetDescription(std::string(vlrh.description));
-        vlr.SetRecordLength(vlrh.recordLengthAfterHeader);
-        vlr.SetRecordId(vlrh.recordId);
-        vlr.SetData(data);
-
-        header.AddVLR(vlr);
-    }
-    return true;
-}
-
-bool Reader::ReadGeoreference(LASHeader& header)
-{
-    std::vector<LASVariableRecord> vlrs;
-    for (uint16_t i = 0; i < header.GetRecordsCount(); ++i)
-    {
-        LASVariableRecord record = header.GetVLR(i);
-        vlrs.push_back(record);
-    }
-
-    LASSpatialReference srs(vlrs);    
+    LASSpatialReference srs(header.GetVLRs());    
     header.SetSRS(srs);
 
     // keep a copy on the reader in case we're going to reproject data 
@@ -179,6 +143,7 @@ bool Reader::ReadGeoreference(LASHeader& header)
 
     return true;
 }
+
 
 void Reader::Reset(LASHeader const& header)
 {

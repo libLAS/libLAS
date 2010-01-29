@@ -134,7 +134,6 @@ void LASReader::Init()
     if (!ret)
         throw std::runtime_error("public vlr header block reading failure");
 
-    m_pimpl->ReadGeoreference(m_header);
     m_pimpl->Reset(m_header);
     
     if (bCustomHeader) {
