@@ -24,7 +24,6 @@ liblas_test_SOURCES = \
     guid_test.cpp \
     lasclassification_test.cpp \
     laserror_test.cpp \
-    lasfile_test.cpp \
     lasheader_test.cpp \
     lasspatialreference_test.cpp \
     laspoint_test.cpp \

@@ -59,9 +59,9 @@ void test_default_header(liblas::LASHeader const& h)
     ensure_equals("wrong default records count",
         h.GetRecordsCount(), liblas::uint32_t(0));
     ensure_equals("wrong default data format id",
-        h.GetDataFormatId(), LASHeader::ePointFormat0);
+        h.GetDataFormatId(), liblas::ePointFormat0);
     ensure_equals("wrong default data record length",
-        h.GetDataRecordLength(), LASHeader::ePointSize0);
+        h.GetDataRecordLength(), liblas::ePointSize0);
     ensure_equals("wrong default point records count",
         h.GetPointRecordsCount(), liblas::uint32_t(0));
 
@@ -139,8 +139,8 @@ void test_file10_header(liblas::LASHeader const& h)
     ensure_equals(h.GetHeaderSize(), liblas::uint16_t(227));
     ensure_equals(h.GetDataOffset(), liblas::uint32_t(229));
     ensure_equals(h.GetRecordsCount(), liblas::uint32_t(0));
-    ensure_equals(h.GetDataFormatId(), liblas::LASHeader::ePointFormat1);
-    ensure_equals(h.GetDataRecordLength(), liblas::LASHeader::ePointSize1);
+    ensure_equals(h.GetDataFormatId(), liblas::ePointFormat1);
+    ensure_equals(h.GetDataRecordLength(), liblas::ePointSize1);
     ensure_equals(h.GetPointRecordsCount(), liblas::uint32_t(8));
     ensure_equals(h.GetScaleX(), double(0.01));
     ensure_equals(h.GetScaleY(), double(0.01));

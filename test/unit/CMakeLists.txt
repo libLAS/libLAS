@@ -11,7 +11,6 @@ SET(LIBLAS_UNIT_TEST_SRC
     common.cpp
     guid_test.cpp
     laserror_test.cpp
-    lasfile_test.cpp
     lasheader_test.cpp
     laspoint_test.cpp
     lasreader_iterator_test.cpp
