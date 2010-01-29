@@ -55,7 +55,7 @@ class LASPointFormat
 public:
 
     LASPointFormat(liblas::uint8_t major, liblas::uint8_t minor, liblas::PointSize size);
-    virtual ~LASPointFormat();
+    // virtual ~LASPointFormat();
     
     virtual liblas::PointSize GetByteSize() const = 0;
     virtual void SetByteSize(liblas::PointSize& size) const = 0;
@@ -70,9 +70,6 @@ public:
     void Color(bool bColor) {m_hasColor = bColor; }
     bool Time() const { return m_hasTime; }
     void Time(bool bTime) {m_hasTime = bTime; }
-    
-    
-    
   
 protected:
     
@@ -91,7 +88,6 @@ private:
     
     
 };
-
 
 } // namespace liblas
 
