@@ -37,10 +37,10 @@ liblas_la_SOURCES = \
 	las_c_api.cpp \
 	lasspatialreference.cpp \
 	lasformat.cpp \
-	detail/reader.cpp \
-	detail/reader10.cpp \
-	detail/reader11.cpp \
-	detail/reader12.cpp \
+	detail/reader/reader.cpp \
+	detail/reader/reader10.cpp \
+	detail/reader/reader11.cpp \
+	detail/reader/reader12.cpp \
 	detail/writer.cpp \
 	detail/writer10.cpp \
 	detail/writer11.cpp \
