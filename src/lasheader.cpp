@@ -532,6 +532,11 @@ LASVariableRecord const& LASHeader::GetVLR(uint32_t index) const
     return m_vlrs[index];
 }
 
+const std::vector<LASVariableRecord>& LASHeader::GetVLRs() const
+{
+    return m_vlrs;
+}
+
 void LASHeader::DeleteVLR(uint32_t index) 
 {    
     if (index >= m_vlrs.size())

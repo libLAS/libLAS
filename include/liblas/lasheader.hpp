@@ -300,6 +300,9 @@ public:
     
     /// Returns a VLR 
     LASVariableRecord const& GetVLR(uint32_t index) const;
+    
+    /// Returns all of the VLRs
+    const std::vector<LASVariableRecord>& GetVLRs() const;
 
     /// Removes a VLR from the the header.
     void DeleteVLR(uint32_t index);
