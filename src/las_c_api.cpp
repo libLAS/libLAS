@@ -45,7 +45,6 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/laserror.hpp>
 #include <liblas/laswriter.hpp>
-#include <liblas/lasfile.hpp>
 #include <liblas/exception.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/guid.hpp>

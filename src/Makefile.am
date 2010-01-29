@@ -34,7 +34,6 @@ liblas_la_SOURCES = \
 	lasvariablerecord.cpp \
 	lasreader.cpp \
 	laswriter.cpp \
-	lasfile.cpp \
 	las_c_api.cpp \
 	lasspatialreference.cpp \
 	lasformat.cpp \
@@ -45,8 +44,7 @@ liblas_la_SOURCES = \
 	detail/writer.cpp \
 	detail/writer10.cpp \
 	detail/writer11.cpp \
-	detail/writer12.cpp \
-	detail/file.cpp 
+	detail/writer12.cpp 
 
 if GDAL_IS_CONFIG
 liblas_la_SOURCES += gt_wkt_srs.cpp gt_citation.cpp tifvsi.cpp

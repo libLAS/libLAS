@@ -8,7 +8,6 @@ nobase_las_HEADERS = \
     liblas/lasclassification.hpp \
     liblas/lascolor.hpp \
     liblas/laserror.hpp \
-    liblas/lasfile.hpp \
     liblas/lasheader.hpp \
     liblas/laspoint.hpp \
     liblas/lasreader.hpp \
@@ -21,7 +20,6 @@ nobase_las_HEADERS = \
     liblas/capi/las_version.h \
     liblas/capi/las_config.h \
     liblas/detail/endian.hpp \
-    liblas/detail/file.hpp \
     liblas/detail/fwd.hpp \
     liblas/detail/reader.hpp \
     liblas/detail/reader10.hpp \
