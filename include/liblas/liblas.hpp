@@ -132,7 +132,8 @@ enum PointFormat
     ePointFormat0 = 0, ///< Point Data Format \e 0
     ePointFormat1 = 1, ///< Point Data Format \e 1
     ePointFormat2 = 2, ///< Point Data Format \e 2
-    ePointFormat3 = 3  ///< Point Data Format \e 3
+    ePointFormat3 = 3,  ///< Point Data Format \e 3
+    ePointFormatUnknown = -99 ///< Point Data Format is unknown
 };
 
 /// Number of bytes of point record storage in particular format.
@@ -142,7 +143,7 @@ enum PointSize
     ePointSize1 = 28, ///< Size of point record in data format \e 1
     ePointSize2 = 26, ///< Size of point record in data format \e 2
     ePointSize3 = 34,  ///< Size of point record in data format \e 3
-    ePointSizeUnknown = -99
+    ePointSizeUnknown = -99 ///< Size of point record is unknown and may possibly be variable
 };
     
 } // namespace liblas
