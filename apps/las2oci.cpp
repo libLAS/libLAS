@@ -900,7 +900,8 @@ void usage() {
     fprintf(stderr,"--overwrite: (-d) \n");
     fprintf(stderr,"--srid: (-s) \n");
     fprintf(stderr,"--pre-sql: (-prs) \"CREATE TABLE BASE (id number, cloud mdsys.sdo_pc)\" \n");    
-    fprintf(stderr,"--post-sql: (-prs) \"UPDATE TABLE BASE SET ID=1\" \n");    
+    fprintf(stderr,"--post-sql: (-pos) \"UPDATE TABLE BASE SET ID=1\" \n");    
+    fprintf(stderr,"--pre-block-sql: (-pbs) \"UPDATE TABLE PC a set a.geometry = (SELECT b.geometry from boundaries b where a.filename = b.filename))\"");
     fprintf(stderr,"--aux-columns: \"id,description\" \n");    
     fprintf(stderr,"--aux-values: \"0,'A description'\" \n");    
     fprintf(stderr,"--precision: 8\n");    
@@ -948,6 +949,8 @@ int main(int argc, char* argv[])
     
     std::string pre_sql("");
     std::string post_sql("");
+    std::string pre_block_sql("");
+    
     std::string aux_columns("");
     std::string aux_values("");
     
@@ -1063,6 +1066,13 @@ int main(int argc, char* argv[])
         {
             i++;
             post_sql = std::string(argv[i]);
+        }
+        else if (   strcmp(argv[i],"--pre-block-sql") == 0  ||
+                    strcmp(argv[i],"-pbs") == 0  
+                )
+        {
+            i++;
+            pre_block_sql = std::string(argv[i]);
         }
         else if (   strcmp(argv[i],"--aux-columns") == 0  ||
                     strcmp(argv[i],"-ac") == 0  
@@ -1311,6 +1321,25 @@ int main(int argc, char* argv[])
                     
     
     std::cout << "Writing " << results.size() << " blocks ..." << std::endl;
+
+
+    if (!pre_block_sql.empty()) {
+        std::cout << "running pre-block-sql ..." << std::endl;
+
+        ostringstream oss;
+        oss << pre_block_sql;
+        OWStatement* statement = 0;
+        statement = Run(con, oss);
+        if (statement != 0) {
+            delete statement; 
+        }
+        else {
+            std::cout << " pre-block-sql execution failed.." << std::endl;
+            return false;
+        }
+        oss.str("");        
+    }
+
     for (i=results.begin(); i!=results.end(); i++)
     {
         bool inserted = InsertBlock(con, 
