@@ -50,11 +50,21 @@
 
 namespace liblas {  
 
+
+
 class LASPointFormat
 {
 public:
 
-    LASPointFormat(liblas::uint8_t major, liblas::uint8_t minor, liblas::PointSize size);
+    LASPointFormat( liblas::uint8_t major, 
+                    liblas::uint8_t minor, 
+                    liblas::uint32_t size);
+
+    LASPointFormat( liblas::uint8_t major, 
+                    liblas::uint8_t minor, 
+                    liblas::uint32_t size,
+                    bool bColor,
+                    bool bTime);
     // virtual ~LASPointFormat();
     
     virtual liblas::PointSize GetByteSize() const = 0;
@@ -66,14 +76,14 @@ public:
     liblas::uint8_t GetVersionMinor() { return m_versionminor; }
     void SetVersionMinor(liblas::uint8_t v) {m_versionminor = v; }
 
-    bool Color() const {return m_hasColor; }
+    bool HasColor() const {return m_hasColor; }
     void Color(bool bColor) {m_hasColor = bColor; }
-    bool Time() const { return m_hasTime; }
+    bool HasTime() const { return m_hasTime; }
     void Time(bool bTime) {m_hasTime = bTime; }
   
 protected:
     
-    liblas::PointSize m_size;
+    uint32_t m_size;
     uint8_t m_versionminor;
     uint8_t m_versionmajor;
 

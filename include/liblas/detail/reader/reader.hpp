@@ -76,6 +76,8 @@ public:
     void SetSRS(const LASSpatialReference& srs);
     void SetInputSRS(const LASSpatialReference& srs);
     void SetOutputSRS(const LASSpatialReference& srs);
+
+    void FillPoint(PointRecord& record, LASPoint& point, const LASHeader& header);
     
 protected:
 
@@ -91,9 +93,8 @@ protected:
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
 
-    void FillPoint(PointRecord& record, LASPoint& point, const LASHeader& header);
     void Project(LASPoint& point);
-    bool HasPointDataSignature();
+    // bool HasPointDataSignature();
 private:
 
     // Blocked copying operations, declared but not defined.

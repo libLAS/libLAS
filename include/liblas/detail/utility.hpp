@@ -103,7 +103,6 @@ public:
         assert(0 != del_);
     }
 
-    // FIXME: ooh, this is really, really bad. - hobu
     raii_wrapper& operator=(raii_wrapper const& rhs)
     {
         if (&rhs != this)
