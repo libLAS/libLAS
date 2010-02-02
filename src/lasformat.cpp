@@ -67,6 +67,30 @@ LASPointFormat::LASPointFormat( liblas::uint8_t major,
 
 }
 
+LASPointFormat::LASPointFormat(LASPointFormat const& other) :
+    m_size(other.m_size),
+    m_versionminor(other.m_versionminor),
+    m_versionmajor(other.m_versionmajor),
+    m_hasColor(other.m_hasColor),
+    m_hasTime(other.m_hasTime)
+{
+    
+}
+
+LASPointFormat& LASPointFormat::operator=(LASPointFormat const& rhs)
+{
+    if (&rhs != this)
+    {
+        m_size = rhs.m_size;
+        m_versionminor = rhs.m_versionminor;
+        m_versionmajor = rhs.m_versionmajor;
+        m_hasColor = rhs.m_hasColor;
+        m_hasTime = rhs.m_hasTime;
+
+    }
+    return *this;
+}
+
 LASPointFormat::LASPointFormat( liblas::uint8_t major, 
                 liblas::uint8_t minor, 
                 liblas::uint32_t size,

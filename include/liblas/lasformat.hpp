@@ -65,10 +65,13 @@ public:
                     liblas::uint32_t size,
                     bool bColor,
                     bool bTime);
+    LASPointFormat& operator=(LASPointFormat const& rhs);
+    LASPointFormat(LASPointFormat const& other);
+    
     // virtual ~LASPointFormat();
     
-    virtual liblas::PointSize GetByteSize() const = 0;
-    virtual void SetByteSize(liblas::PointSize& size) const = 0;
+    liblas::uint16_t GetByteSize() const {return m_size;}
+    void SetByteSize(liblas::uint16_t size) {m_size = size;}
     
     liblas::uint8_t GetVersionMajor() { return m_versionmajor; }
     void SetVersionMajor(liblas::uint8_t v) {m_versionmajor = v; }
@@ -83,18 +86,16 @@ public:
   
 protected:
     
-    uint32_t m_size;
-    uint8_t m_versionminor;
-    uint8_t m_versionmajor;
+    liblas::uint16_t m_size;
+    liblas::uint8_t m_versionminor;
+    liblas::uint8_t m_versionmajor;
 
     bool m_hasColor;
     bool m_hasTime;    
 
 private:
 
-    // Blocked copying operations, declared but not defined.
-    LASPointFormat(LASPointFormat const& other);
-    LASPointFormat& operator=(LASPointFormat const& rhs);
+
     
     
 };

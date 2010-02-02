@@ -316,6 +316,8 @@ public:
     /// Set the georeference
     void SetSRS(LASSpatialReference& srs);
 
+    LASPointFormat GetPointFormat() const;
+    
 private:
     
     typedef detail::Point<double> PointScales;
