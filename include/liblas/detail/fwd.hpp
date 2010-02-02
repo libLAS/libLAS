@@ -51,6 +51,7 @@ class LASReader;
 class LASWriter;
 class LASColor;
 class LASSpatialReference;
+class LASPointFormat;
 
 namespace detail {
 
