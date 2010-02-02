@@ -68,8 +68,6 @@ public:
     LASPointFormat& operator=(LASPointFormat const& rhs);
     LASPointFormat(LASPointFormat const& other);
     
-    // virtual ~LASPointFormat();
-    
     liblas::uint16_t GetByteSize() const {return m_size;}
     void SetByteSize(liblas::uint16_t size) {m_size = size;}
     
@@ -92,12 +90,6 @@ protected:
 
     bool m_hasColor;
     bool m_hasTime;    
-
-private:
-
-
-    
-    
 };
 
 } // namespace liblas

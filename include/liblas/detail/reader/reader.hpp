@@ -65,7 +65,7 @@ public:
     
     ReaderImpl(std::istream& ifs);
     ~ReaderImpl();
-    // LASVersion GetVersion() const;
+
     bool ReadHeader(LASHeader& header);
     bool ReadNextPoint(LASPoint& point, const LASHeader& header);
     bool ReadPointAt(std::size_t n, LASPoint& record, const LASHeader& header);
@@ -76,8 +76,6 @@ public:
     void SetSRS(const LASSpatialReference& srs, const LASHeader& header);
     void SetInputSRS(const LASSpatialReference& srs);
     void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header);
-
-    // void FillPoint(PointRecord& record, LASPoint& point, const LASHeader& header);
 
 protected:
 
@@ -93,7 +91,6 @@ protected:
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
 
-    // bool HasPointDataSignature();
 private:
 
     // Blocked copying operations, declared but not defined.
@@ -102,7 +99,6 @@ private:
     void CreateTransform();
     
     detail::reader::Point* m_point_reader;
-    // std::auto_ptr<detail::reader::Point> m_point_reader;
 
 };
 
