@@ -42,8 +42,8 @@
 
 #include <liblas/lasversion.hpp>
 #include <liblas/lasreader.hpp>
-#include <liblas/detail/reader/reader.hpp>
 #include <liblas/detail/reader/reader10.hpp>
+
 // std
 #include <stdexcept>
 #include <fstream>

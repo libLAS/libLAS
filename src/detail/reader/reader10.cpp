@@ -245,5 +245,51 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     return true;
 }
 
+
+ReaderImpl* ReaderFactory::Create(std::istream& ifs)
+{
+    if (!ifs)
+    {
+        throw std::runtime_error("input stream state is invalid");
+    }
+
+    // Determine version of given LAS file and
+    // instantiate appropriate reader.
+    uint8_t verMajor = 0;
+    uint8_t verMinor = 0;
+    ifs.seekg(24, std::ios::beg);
+    detail::read_n(verMajor, ifs, 1);
+    detail::read_n(verMinor, ifs, 1);
+
+    return new ReaderImpl(ifs);
+    
+    // if (1 == verMajor && 0 == verMinor)
+    // {
+    // 
+    //     return new ReaderImpl(ifs);
+    // }
+    // else if (1 == verMajor && 1 == verMinor)
+    // {
+    //     return new v11::ReaderImpl(ifs);
+    // }
+    // else if (1 == verMajor && 2 == verMinor)
+    // {
+    //     return new v12::ReaderImpl(ifs);
+    // }
+    // else if (2 == verMajor && 0 == verMinor )
+    // {
+    //     // TODO: LAS 2.0 read/write support
+    //     throw std::runtime_error("LAS 2.0+ file detected but unsupported");
+    // }
+
+    // throw std::runtime_error("LAS file of unknown version");
+}
+
+
+void ReaderFactory::Destroy(ReaderImpl* p) 
+{
+    delete p;
+    p = 0;
+}
 }} // namespace liblas::detail
 

@@ -42,14 +42,12 @@
 #ifndef LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED
 #define LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED
 
-#include <liblas/detail/reader.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/reader/point.hpp>
 
 // std
 #include <iosfwd>
 
-#include <liblas/detail/reader/point.hpp>
 
 #ifndef HAVE_GDAL
     typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
@@ -107,6 +105,16 @@ private:
     // std::auto_ptr<detail::reader::Point> m_point_reader;
 
 };
+
+class ReaderFactory
+{
+public:
+
+    // TODO: prototypes
+    static ReaderImpl* Create(std::istream& ifs);
+    static void Destroy(ReaderImpl* p);
+};
+
 
 }} // namespace liblas::detail
 
