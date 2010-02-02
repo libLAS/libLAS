@@ -71,17 +71,11 @@ LASReader::LASReader(std::istream& ifs, LASHeader& header) :
     bCustomHeader = true;
     Init();
 }
+
 LASReader::~LASReader()
 {
     // empty, but required so we can implement PIMPL using
     // std::auto_ptr with incomplete type (Reader).
-}
-
-LASVersion LASReader::GetVersion() const
-{
-    // FIXME with proper versions
-    return eLASVersion10;
-    // return m_pimpl->GetVersion();
 }
 
 LASHeader const& LASReader::GetHeader() const

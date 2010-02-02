@@ -77,10 +77,6 @@ public:
     /// Destructor.
     /// @excepion nothrow
     ~LASReader();
-
-    /// Returns version of LAS file being accessed by the reader.
-    /// @excepion nothrow
-    LASVersion GetVersion() const;
     
     /// Provides read-only access to header of LAS file being read.
     /// @excepion nothrow
