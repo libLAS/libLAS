@@ -43,6 +43,7 @@
 #include <liblas/lasversion.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/detail/reader/reader.hpp>
+#include <liblas/detail/reader/reader10.hpp>
 // std
 #include <stdexcept>
 #include <fstream>
@@ -78,7 +79,9 @@ LASReader::~LASReader()
 
 LASVersion LASReader::GetVersion() const
 {
-    return m_pimpl->GetVersion();
+    // FIXME with proper versions
+    return eLASVersion10;
+    // return m_pimpl->GetVersion();
 }
 
 LASHeader const& LASReader::GetHeader() const
@@ -159,7 +162,7 @@ bool LASReader::IsEOF() const
 
 bool LASReader::SetSRS(const LASSpatialReference& srs)
 {
-    m_pimpl->SetOutputSRS(srs);
+    m_pimpl->SetOutputSRS(srs, m_header);
     return true;
 }
 
@@ -171,7 +174,7 @@ bool LASReader::SetInputSRS(const LASSpatialReference& srs)
 
 bool LASReader::SetOutputSRS(const LASSpatialReference& srs)
 {
-    m_pimpl->SetOutputSRS(srs);
+    m_pimpl->SetOutputSRS(srs, m_header);
     return true;
 }
 

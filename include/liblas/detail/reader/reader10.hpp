@@ -39,30 +39,75 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_DETAIL_READER10_HPP_INCLUDED
-#define LIBLAS_DETAIL_READER10_HPP_INCLUDED
+#ifndef LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED
+#define LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED
 
 #include <liblas/detail/reader.hpp>
 #include <liblas/detail/fwd.hpp>
+#include <liblas/detail/reader/point.hpp>
+
 // std
 #include <iosfwd>
 
-namespace liblas { namespace detail { namespace v10 {
+#include <liblas/detail/reader/point.hpp>
 
-class ReaderImpl : public Reader
+#ifndef HAVE_GDAL
+    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
+    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
+#endif
+
+
+namespace liblas { namespace detail { 
+
+class ReaderImpl
 {
 public:
 
-    typedef Reader Base;
+    // typedef Reader Base;
     
     ReaderImpl(std::istream& ifs);
-    LASVersion GetVersion() const;
+    ~ReaderImpl();
+    // LASVersion GetVersion() const;
     bool ReadHeader(LASHeader& header);
     bool ReadNextPoint(LASPoint& point, const LASHeader& header);
     bool ReadPointAt(std::size_t n, LASPoint& record, const LASHeader& header);
 
+    std::istream& GetStream() const;
+    bool ReadVLR(LASHeader& header);
+    void Reset(LASHeader const& header);
+    void SetSRS(const LASSpatialReference& srs, const LASHeader& header);
+    void SetInputSRS(const LASSpatialReference& srs);
+    void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header);
+
+    // void FillPoint(PointRecord& record, LASPoint& point, const LASHeader& header);
+
+protected:
+
+    typedef std::istream::off_type off_type;
+    typedef std::istream::pos_type pos_type;
+    
+    std::istream& m_ifs;
+    uint32_t m_size;
+    uint32_t m_current;
+    LASSpatialReference m_out_srs;
+    LASSpatialReference m_in_srs;    
+    OGRCoordinateTransformationH m_transform;
+    OGRSpatialReferenceH m_in_ref;
+    OGRSpatialReferenceH m_out_ref;
+
+    // bool HasPointDataSignature();
+private:
+
+    // Blocked copying operations, declared but not defined.
+    ReaderImpl(ReaderImpl const& other);
+    ReaderImpl& operator=(ReaderImpl const& rhs);
+    void CreateTransform();
+    
+    detail::reader::Point* m_point_reader;
+    // std::auto_ptr<detail::reader::Point> m_point_reader;
+
 };
 
-}}} // namespace liblas::detail::v10
+}} // namespace liblas::detail
 
-#endif // LIBLAS_DETAIL_READER10_HPP_INCLUDED
+#endif // LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED

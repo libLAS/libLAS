@@ -23,8 +23,6 @@ nobase_las_HEADERS = \
     liblas/detail/fwd.hpp \
     liblas/detail/reader/reader.hpp \
     liblas/detail/reader/reader10.hpp \
-    liblas/detail/reader/reader11.hpp \
-    liblas/detail/reader/reader12.hpp \
     liblas/detail/reader/vlr.hpp \
     liblas/detail/reader/header.hpp \
     liblas/detail/reader/point.hpp \

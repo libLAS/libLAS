@@ -39,8 +39,6 @@ liblas_la_SOURCES = \
 	lasformat.cpp \
 	detail/reader/reader.cpp \
 	detail/reader/reader10.cpp \
-	detail/reader/reader11.cpp \
-	detail/reader/reader12.cpp \
 	detail/reader/vlr.cpp \
 	detail/reader/header.cpp \
 	detail/reader/point.cpp \

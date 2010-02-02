@@ -65,10 +65,9 @@ class Point
 {
 public:
 
-    Point(std::istream& ifs, const LASHeader& header, const LASPointFormat& format);
+    Point(std::istream& ifs, const LASHeader& header);
     Point(  std::istream& ifs, 
             const LASHeader& header, 
-            const LASPointFormat& format,
             OGRCoordinateTransformationH transform);
     virtual ~Point();
 
@@ -92,7 +91,6 @@ private:
 
     std::istream& m_ifs;
     const LASHeader& m_header;
-    const LASPointFormat& m_format;
     LASPoint m_point;
     OGRCoordinateTransformationH m_transform;
     

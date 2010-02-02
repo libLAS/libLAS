@@ -76,7 +76,7 @@ namespace tut
 
             liblas::LASReader reader(ifs);
 
-            ensure_equals(reader.GetVersion(), liblas::eLASVersion12);
+            ensure_equals(reader.GetHeader().GetVersionMinor(), 2);
             
             liblas::LASHeader const& hdr_default = reader.GetHeader();
             test_default_header(hdr_default);

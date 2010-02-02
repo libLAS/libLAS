@@ -55,7 +55,7 @@ class LASPointFormat;
 
 namespace detail {
 
-class Reader;
+class ReaderImpl;
 class Writer;
 struct PointRecord;
 struct Color;

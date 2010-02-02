@@ -54,17 +54,16 @@ void Point::setup()
 
 }
 
-Point::Point(std::istream& ifs, const LASHeader& header, const LASPointFormat& format) :
-    m_ifs(ifs), m_header(header), m_format(format), m_point(LASPoint()), m_transform(0)
+Point::Point(std::istream& ifs, const LASHeader& header) :
+    m_ifs(ifs), m_header(header), m_point(LASPoint()), m_transform(0)
 {
     setup();
 }
 
 Point::Point(   std::istream& ifs, 
                 const LASHeader& header, 
-                const LASPointFormat& format,
                 OGRCoordinateTransformationH transform) :
-    m_ifs(ifs), m_header(header), m_format(format), m_point(LASPoint()), m_transform(transform)
+    m_ifs(ifs), m_header(header), m_point(LASPoint()), m_transform(transform)
 {
     setup();
 }
@@ -104,17 +103,18 @@ void Point::read()
         std::cerr << e.what() << std::endl;
     }
 
+    fill(record);
     // Reader::FillPoint(record, m_point, m_header);
     m_point.SetCoordinates(m_header, m_point.GetX(), m_point.GetY(), m_point.GetZ());
 
-    if (m_format.HasTime()) 
+    if (m_header.GetPointFormat().HasTime()) 
     {
 
         detail::read_n(gpst, m_ifs, sizeof(double));
         m_point.SetTime(gpst);
         bytesread += sizeof(double);
         
-        if (m_format.HasColor()) 
+        if (m_header.GetPointFormat().HasColor()) 
         {
             detail::read_n(red, m_ifs, sizeof(uint16_t));
             detail::read_n(green, m_ifs, sizeof(uint16_t));
@@ -126,7 +126,7 @@ void Point::read()
             bytesread += 3 * sizeof(uint16_t);
         }
     } else {
-        if (m_format.HasColor()) 
+        if (m_header.GetPointFormat().HasColor()) 
         {
             detail::read_n(red, m_ifs, sizeof(uint16_t));
             detail::read_n(green, m_ifs, sizeof(uint16_t));
