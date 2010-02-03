@@ -29,10 +29,7 @@ nobase_las_HEADERS = \
     liblas/detail/sharedptr.hpp \
     liblas/detail/timer.hpp \
     liblas/detail/utility.hpp \
-    liblas/detail/writer.hpp \
-    liblas/detail/writer10.hpp \
-    liblas/detail/writer11.hpp \
-    liblas/detail/writer12.hpp \
+    liblas/detail/writer/writer.hpp \
     liblas/index/datastream.hpp \
     liblas/index/index.hpp \
     liblas/index/storage.hpp \
