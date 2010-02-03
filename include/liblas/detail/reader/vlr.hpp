@@ -60,7 +60,6 @@ public:
     VLR(std::istream& ifs, const LASHeader& header);
     virtual ~VLR();
 
-    std::istream& GetStream() const;
     const LASHeader& GetHeader() const { return m_header; }
     void read();
     

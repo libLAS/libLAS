@@ -61,8 +61,6 @@ class ReaderImpl
 {
 public:
 
-    // typedef Reader Base;
-    
     ReaderImpl(std::istream& ifs);
     ~ReaderImpl();
 

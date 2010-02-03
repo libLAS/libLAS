@@ -57,11 +57,6 @@ VLR::~VLR()
 
 }
 
-std::istream& VLR::GetStream() const
-{
-    return m_ifs;
-}
-
 void VLR::read()
 {
     VLRHeader vlrh = { 0 };
