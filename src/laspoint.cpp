@@ -71,6 +71,7 @@ LASPoint::LASPoint(LASPoint const& other) :
     m_angleRank(other.m_angleRank)
 {
     std::memcpy(m_coords, other.m_coords, sizeof(m_coords));
+    std::vector<uint8_t>(other.m_extra_data).swap(m_extra_data);
 }
 
 LASPoint& LASPoint::operator=(LASPoint const& rhs)
@@ -88,6 +89,7 @@ LASPoint& LASPoint::operator=(LASPoint const& rhs)
         m_pointSourceId = rhs.m_pointSourceId;
         m_gpsTime = rhs.m_gpsTime;
         m_color = rhs.m_color;
+        std::vector<uint8_t>(rhs.m_extra_data).swap(m_extra_data);
     }
     return *this;
 }

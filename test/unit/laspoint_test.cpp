@@ -9,8 +9,11 @@
 #include <liblas/lascolor.hpp>
 #include <liblas/exception.hpp>
 #include <tut/tut.hpp>
+
 #include <bitset>
 #include <stdexcept>
+#include <vector>
+
 #include "common.hpp"
 
 namespace tut
@@ -413,6 +416,33 @@ namespace tut
             
         ensure_equals("invalid copied blue color",
             p.GetColor().GetBlue(), 211);        
+        
+    }
+
+    // Test Get/SetColor
+    template<>
+    template<>
+    void to::test<17>()
+    {
+        std::vector<liblas::uint8_t> data;
+        
+        data.push_back(254);
+        data.push_back(254);
+        data.push_back(1);
+        
+        ensure_equals("invalid default extra data",
+            m_default.GetExtraData().size(), 0);
+
+
+        m_default.SetExtraData(data);
+
+        ensure_equals("invalid set red color",
+            m_default.GetExtraData().size(), 3);
+
+        ensure_equals("invalid set green color",
+            m_default.GetExtraData()[1], 254);
+
+              
         
     }
 }

@@ -47,9 +47,11 @@
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasclassification.hpp>
 #include <liblas/lascolor.hpp>
+
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
+#include <vector> // std::vector
 
 namespace liblas {
 
@@ -182,6 +184,8 @@ public:
     bool Validate() const;
     bool IsValid() const;
     
+    std::vector<liblas::uint8_t> const& GetExtraData() const {return m_extra_data; }
+    void SetExtraData(std::vector<uint8_t> const& v) { m_extra_data = v;}
 
 private:
 
@@ -198,6 +202,8 @@ private:
     uint8_t m_userData;
     int8_t m_angleRank;
 
+    std::vector<uint8_t> m_extra_data;
+    
     void throw_out_of_range() const
     {
         throw std::out_of_range("coordinate subscript out of range");

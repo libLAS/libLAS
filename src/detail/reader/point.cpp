@@ -142,8 +142,17 @@ void Point::read()
     
     if (bytesread != m_header.GetDataRecordLength())
     {
-        off_type const pos(static_cast<off_type>(m_header.GetDataRecordLength() - bytesread));
-        m_ifs.seekg(pos, std::ios::cur);
+        std::size_t bytesleft = m_header.GetDataRecordLength() - bytesread;
+
+        std::vector<uint8_t> data;
+        data.resize(bytesleft);
+
+        detail::read_n(data.front(), m_ifs, bytesleft);
+        
+        m_point.SetExtraData(data); 
+        
+        // off_type const pos(static_cast<off_type>(m_header.GetDataRecordLength() - bytesread));
+        // m_ifs.seekg(pos, std::ios::cur);
     }
 }
 
