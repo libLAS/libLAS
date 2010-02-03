@@ -42,7 +42,8 @@
 
 #include <liblas/lasversion.hpp>
 #include <liblas/lasreader.hpp>
-#include <liblas/detail/reader.hpp>
+#include <liblas/detail/reader/reader10.hpp>
+
 // std
 #include <stdexcept>
 #include <fstream>
@@ -70,15 +71,11 @@ LASReader::LASReader(std::istream& ifs, LASHeader& header) :
     bCustomHeader = true;
     Init();
 }
+
 LASReader::~LASReader()
 {
     // empty, but required so we can implement PIMPL using
     // std::auto_ptr with incomplete type (Reader).
-}
-
-LASVersion LASReader::GetVersion() const
-{
-    return m_pimpl->GetVersion();
 }
 
 LASHeader const& LASReader::GetHeader() const
@@ -134,7 +131,6 @@ void LASReader::Init()
     if (!ret)
         throw std::runtime_error("public vlr header block reading failure");
 
-    m_pimpl->ReadGeoreference(m_header);
     m_pimpl->Reset(m_header);
     
     if (bCustomHeader) {
@@ -160,7 +156,7 @@ bool LASReader::IsEOF() const
 
 bool LASReader::SetSRS(const LASSpatialReference& srs)
 {
-    m_pimpl->SetOutputSRS(srs);
+    m_pimpl->SetOutputSRS(srs, m_header);
     return true;
 }
 
@@ -172,7 +168,7 @@ bool LASReader::SetInputSRS(const LASSpatialReference& srs)
 
 bool LASReader::SetOutputSRS(const LASSpatialReference& srs)
 {
-    m_pimpl->SetOutputSRS(srs);
+    m_pimpl->SetOutputSRS(srs, m_header);
     return true;
 }
 

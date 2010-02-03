@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS 1.0 reader implementation for C++ libLAS 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  Header Reader implementation for C++ libLAS 
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Howard Butler
  *
  * All rights reserved.
  * 
@@ -38,31 +38,48 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  ****************************************************************************/
+ 
+#ifndef LIBLAS_DETAIL_READER_HEADER_HPP_INCLUDED
+#define LIBLAS_DETAIL_READER_HEADER_HPP_INCLUDED
 
-#ifndef LIBLAS_DETAIL_READER10_HPP_INCLUDED
-#define LIBLAS_DETAIL_READER10_HPP_INCLUDED
-
-#include <liblas/detail/reader.hpp>
+#include <liblas/cstdint.hpp>
+#include <liblas/lasversion.hpp>
+#include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
+#include <liblas/lasheader.hpp>
+
 // std
 #include <iosfwd>
 
-namespace liblas { namespace detail { namespace v10 {
+namespace liblas { namespace detail { namespace reader {
 
-class ReaderImpl : public Reader
+class Header
 {
 public:
 
-    typedef Reader Base;
+    Header(std::istream& ifs);
+    virtual ~Header();
+
+    const LASHeader& GetHeader() const { return m_header; }
+    void read();
     
-    ReaderImpl(std::istream& ifs);
-    LASVersion GetVersion() const;
-    bool ReadHeader(LASHeader& header);
-    bool ReadNextPoint(LASPoint& point, const LASHeader& header);
-    bool ReadPointAt(std::size_t n, LASPoint& record, const LASHeader& header);
+protected:
+
+    
+    std::istream& m_ifs;
+    LASHeader m_header;
+
+private:
+
+    // Blocked copying operations, declared but not defined.
+    Header(Header const& other);
+    Header& operator=(Header const& rhs);
+    
+    bool HasLAS10PadSignature();
 
 };
 
-}}} // namespace liblas::detail::v10
 
-#endif // LIBLAS_DETAIL_READER10_HPP_INCLUDED
+}}} // namespace liblas::detail::reader
+
+#endif // LIBLAS_DETAIL_READER_HEADER_HPP_INCLUDED

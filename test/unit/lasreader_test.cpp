@@ -41,7 +41,7 @@ namespace tut
         ifs.open(file10_.c_str(), std::ios::in | std::ios::binary);
         liblas::LASReader reader(ifs);
 
-        ensure_equals(reader.GetVersion(), liblas::eLASVersion10);
+        ensure_equals(reader.GetHeader().GetVersionMinor(), 0);
     }
 
     // Test reading header

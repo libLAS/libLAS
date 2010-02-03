@@ -21,10 +21,10 @@ nobase_las_HEADERS = \
     liblas/capi/las_config.h \
     liblas/detail/endian.hpp \
     liblas/detail/fwd.hpp \
-    liblas/detail/reader.hpp \
-    liblas/detail/reader10.hpp \
-    liblas/detail/reader11.hpp \
-    liblas/detail/reader12.hpp \
+    liblas/detail/reader/reader.hpp \
+    liblas/detail/reader/vlr.hpp \
+    liblas/detail/reader/header.hpp \
+    liblas/detail/reader/point.hpp \
     liblas/detail/sha1.hpp \
     liblas/detail/sharedptr.hpp \
     liblas/detail/timer.hpp \

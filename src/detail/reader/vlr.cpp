@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS 1.1 reader implementation for C++ libLAS 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  VLR Reader implementation for C++ libLAS 
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Howard Butler
  *
  * All rights reserved.
  * 
@@ -38,31 +38,63 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  ****************************************************************************/
+ 
+#include <liblas/detail/reader/vlr.hpp>
+#include <liblas/detail/utility.hpp>
+#include <liblas/lasheader.hpp>
+#include <liblas/lasvariablerecord.hpp>
 
-#ifndef LIBLAS_DETAIL_READER11_HPP_INCLUDED
-#define LIBLAS_DETAIL_READER11_HPP_INCLUDED
 
-#include <liblas/detail/reader.hpp>
-#include <liblas/detail/fwd.hpp>
-// std
-#include <iosfwd>
+namespace liblas { namespace detail { namespace reader {
 
-namespace liblas { namespace detail { namespace v11 {
-
-class ReaderImpl : public Reader
+VLR::VLR(std::istream& ifs, const LASHeader& header) :
+    m_ifs(ifs), m_header(header)
 {
-public:
+}
 
-    typedef Reader Base;
+VLR::~VLR()
+{
+
+}
+
+void VLR::read()
+{
+    VLRHeader vlrh = { 0 };
+
+    // seek to the start of the VLRs
+    m_ifs.seekg(m_header.GetHeaderSize(), std::ios::beg);
+
+    uint32_t count = m_header.GetRecordsCount();
     
-    ReaderImpl(std::istream& ifs);
-    LASVersion GetVersion() const;
-    bool ReadHeader(LASHeader& header);
-    bool ReadNextPoint(LASPoint& point, const LASHeader& header);
-    bool ReadPointAt(std::size_t n, LASPoint& record, const LASHeader& header);
+    // We set the VLR records count to 0 because AddVLR 
+    // will ++ it each time we add a VLR instance to the 
+    // header.
+    m_header.SetRecordsCount(0);
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        read_n(vlrh, m_ifs, sizeof(VLRHeader));
 
-};
+        uint16_t length = vlrh.recordLengthAfterHeader;
+        if (length < 1)
+        {
+            throw std::domain_error("VLR record length must be at least 1 byte long");
+        } 
+        std::vector<uint8_t> data;
+        data.resize(length);
 
-}}} // namespace liblas::detail::v11
+        read_n(data.front(), m_ifs, length);
+         
+        LASVariableRecord vlr;
+        vlr.SetReserved(vlrh.reserved);
+        vlr.SetUserId(std::string(vlrh.userId));
+        vlr.SetDescription(std::string(vlrh.description));
+        vlr.SetRecordLength(vlrh.recordLengthAfterHeader);
+        vlr.SetRecordId(vlrh.recordId);
+        vlr.SetData(data);
 
-#endif // LIBLAS_DETAIL_READER11_HPP_INCLUDED
+        m_header.AddVLR(vlr);
+    }
+}
+
+
+}}} // namespace liblas::detail::reader

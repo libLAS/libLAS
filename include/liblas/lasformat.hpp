@@ -50,15 +50,26 @@
 
 namespace liblas {  
 
+
+
 class LASPointFormat
 {
 public:
 
-    LASPointFormat(liblas::uint8_t major, liblas::uint8_t minor, liblas::PointSize size);
-    // virtual ~LASPointFormat();
+    LASPointFormat( liblas::uint8_t major, 
+                    liblas::uint8_t minor, 
+                    liblas::uint32_t size);
+
+    LASPointFormat( liblas::uint8_t major, 
+                    liblas::uint8_t minor, 
+                    liblas::uint32_t size,
+                    bool bColor,
+                    bool bTime);
+    LASPointFormat& operator=(LASPointFormat const& rhs);
+    LASPointFormat(LASPointFormat const& other);
     
-    virtual liblas::PointSize GetByteSize() const = 0;
-    virtual void SetByteSize(liblas::PointSize& size) const = 0;
+    liblas::uint16_t GetByteSize() const {return m_size;}
+    void SetByteSize(liblas::uint16_t size) {m_size = size;}
     
     liblas::uint8_t GetVersionMajor() { return m_versionmajor; }
     void SetVersionMajor(liblas::uint8_t v) {m_versionmajor = v; }
@@ -66,27 +77,19 @@ public:
     liblas::uint8_t GetVersionMinor() { return m_versionminor; }
     void SetVersionMinor(liblas::uint8_t v) {m_versionminor = v; }
 
-    bool Color() const {return m_hasColor; }
+    bool HasColor() const {return m_hasColor; }
     void Color(bool bColor) {m_hasColor = bColor; }
-    bool Time() const { return m_hasTime; }
+    bool HasTime() const { return m_hasTime; }
     void Time(bool bTime) {m_hasTime = bTime; }
   
 protected:
     
-    liblas::PointSize m_size;
-    uint8_t m_versionminor;
-    uint8_t m_versionmajor;
+    liblas::uint16_t m_size;
+    liblas::uint8_t m_versionminor;
+    liblas::uint8_t m_versionmajor;
 
     bool m_hasColor;
     bool m_hasTime;    
-
-private:
-
-    // Blocked copying operations, declared but not defined.
-    LASPointFormat(LASPointFormat const& other);
-    LASPointFormat& operator=(LASPointFormat const& rhs);
-    
-    
 };
 
 } // namespace liblas

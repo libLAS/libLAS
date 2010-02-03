@@ -45,6 +45,7 @@
 #include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasspatialreference.hpp>
+#include <liblas/lasformat.hpp>
 
 // GeoTIFF
 #ifdef HAVE_LIBGEOTIFF
@@ -532,6 +533,11 @@ LASVariableRecord const& LASHeader::GetVLR(uint32_t index) const
     return m_vlrs[index];
 }
 
+const std::vector<LASVariableRecord>& LASHeader::GetVLRs() const
+{
+    return m_vlrs;
+}
+
 void LASHeader::DeleteVLR(uint32_t index) 
 {    
     if (index >= m_vlrs.size())
@@ -673,6 +679,29 @@ LASSpatialReference LASHeader::GetSRS() const
 void LASHeader::SetSRS(LASSpatialReference& srs)
 {
     m_srs = srs;
+}
+
+LASPointFormat LASHeader::GetPointFormat() const
+{
+    bool bHasColor(false);
+    bool bHasTime(false);
+    liblas::uint8_t minor(GetVersionMinor());
+    liblas::uint8_t major(GetVersionMajor());
+    liblas::uint16_t size(GetDataRecordLength());
+    
+    if (GetDataFormatId() == liblas::ePointFormat3) {
+        bHasColor = true;
+        bHasTime = true;
+    } else if (GetDataFormatId() == liblas::ePointFormat2) {
+        bHasColor = true;
+        bHasTime = false;
+    } else if (GetDataFormatId() == liblas::ePointFormat1) {
+        bHasColor = false;
+        bHasTime = true;
+    } 
+        
+    return LASPointFormat(major, minor, size, bHasColor, bHasTime);
+    
 }
 
 } // namespace liblas

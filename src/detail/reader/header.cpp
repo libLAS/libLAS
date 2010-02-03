@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS 1.1 reader implementation for C++ libLAS 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  Header Reader implementation for C++ libLAS 
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Howard Butler
  *
  * All rights reserved.
  * 
@@ -38,33 +38,27 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  ****************************************************************************/
-
-#include <liblas/detail/reader11.hpp>
+ 
+#include <liblas/detail/reader/header.hpp>
 #include <liblas/detail/utility.hpp>
-#include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
 #include <liblas/lasvariablerecord.hpp>
 
-// std
-#include <fstream>
-#include <iostream>
-#include <stdexcept>
-#include <cstdlib> // std::size_t
-#include <cassert>
 
-namespace liblas { namespace detail { namespace v11 {
+namespace liblas { namespace detail { namespace reader {
 
-ReaderImpl::ReaderImpl(std::istream& ifs) : Base(ifs)
+Header::Header(std::istream& ifs) :
+    m_ifs(ifs)
 {
 }
 
-LASVersion ReaderImpl::GetVersion() const
+Header::~Header()
 {
-    return eLASVersion11;
+
 }
 
-bool ReaderImpl::ReadHeader(LASHeader& header)
+
+void Header::read()
 {
     using detail::read_n;
 
@@ -85,11 +79,11 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     // 1. File Signature
     read_n(fsig, m_ifs, 4);
-    header.SetFileSignature(fsig);
+    m_header.SetFileSignature(fsig);
 
     // 2. File Source ID
     read_n(n2, m_ifs, sizeof(n2));
-    header.SetFileSourceId(n2);
+    m_header.SetFileSourceId(n2);
 
     // 3. Reserved
     // This data must always contain Zeros.
@@ -105,31 +99,31 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     read_n(d3, m_ifs, sizeof(d3));
     read_n(d4, m_ifs, sizeof(d4));
     liblas::guid g(d1, d2, d3, d4);
-    header.SetProjectId(g);
+    m_header.SetProjectId(g);
 
     // 8. Version major
     read_n(n1, m_ifs, sizeof(n1));
-    header.SetVersionMajor(n1);
+    m_header.SetVersionMajor(n1);
 
     // 9. Version minor
     read_n(n1, m_ifs, sizeof(n1));
-    header.SetVersionMinor(n1);
+    m_header.SetVersionMinor(n1);
 
     // 10. System ID
     read_n(buf, m_ifs, 32);
-    header.SetSystemId(buf);
+    m_header.SetSystemId(buf);
 
     // 11. Generating Software ID
     read_n(buf, m_ifs, 32);
-    header.SetSoftwareId(buf);
+    m_header.SetSoftwareId(buf);
 
     // 12. File Creation Day of Year
     read_n(n2, m_ifs, sizeof(n2));
-    header.SetCreationDOY(n2);
+    m_header.SetCreationDOY(n2);
 
     // 13. File Creation Year
     read_n(n2, m_ifs, sizeof(n2));
-    header.SetCreationYear(n2);
+    m_header.SetCreationYear(n2);
 
     // 14. Header Size
     // NOTE: Size of the stanard header block must always be 227 bytes
@@ -137,34 +131,34 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
 
     // 15. Offset to data
     read_n(n4, m_ifs, sizeof(n4));
-    if (n4 < header.GetHeaderSize())
+    if (n4 < m_header.GetHeaderSize())
     {
         // TODO: Move this test to LASHeader::Validate()
         throw std::domain_error("offset to point data smaller than header size");
     }
-    header.SetDataOffset(n4);
+    m_header.SetDataOffset(n4);
 
     // 16. Number of variable length records
     read_n(n4, m_ifs, sizeof(n4));
-    header.SetRecordsCount(n4);
+    m_header.SetRecordsCount(n4);
 
     // 17. Point Data Format ID
     read_n(n1, m_ifs, sizeof(n1));
     if (n1 == liblas::ePointFormat0)
     {
-        header.SetDataFormatId(liblas::ePointFormat0);
+        m_header.SetDataFormatId(liblas::ePointFormat0);
     } 
     else if (n1 == liblas::ePointFormat1)
     {
-        header.SetDataFormatId(liblas::ePointFormat1);
+        m_header.SetDataFormatId(liblas::ePointFormat1);
     }
     else if (n1 == liblas::ePointFormat2)
     {
-        header.SetDataFormatId(liblas::ePointFormat2);
+        m_header.SetDataFormatId(liblas::ePointFormat2);
     }
     else if (n1 == liblas::ePointFormat3)
     {
-        header.SetDataFormatId(liblas::ePointFormat3);
+        m_header.SetDataFormatId(liblas::ePointFormat3);
     }
     else
     {
@@ -173,11 +167,11 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     
     // 18. Point Data Record Length
     read_n(n2, m_ifs, sizeof(n2));
-    header.SetDataRecordLength(n2);
+    m_header.SetDataRecordLength(n2);
 
     // 19. Number of point records
     read_n(n4, m_ifs, sizeof(n4));
-    header.SetPointRecordsCount(n4);
+    m_header.SetPointRecordsCount(n4);
 
     // 20. Number of points by return
     std::vector<uint32_t>::size_type const srbyr = 5;
@@ -185,20 +179,20 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     read_n(rbyr, m_ifs, sizeof(rbyr));
     for (std::size_t i = 0; i < srbyr; ++i)
     {
-        header.SetPointRecordsByReturnCount(i, rbyr[i]);
+        m_header.SetPointRecordsByReturnCount(i, rbyr[i]);
     }
 
     // 21-23. Scale factors
     read_n(x1, m_ifs, sizeof(x1));
     read_n(y1, m_ifs, sizeof(y1));
     read_n(z1, m_ifs, sizeof(z1));
-    header.SetScale(x1, y1, z1);
+    m_header.SetScale(x1, y1, z1);
 
     // 24-26. Offsets
     read_n(x1, m_ifs, sizeof(x1));
     read_n(y1, m_ifs, sizeof(y1));
     read_n(z1, m_ifs, sizeof(z1));
-    header.SetOffset(x1, y1, z1);
+    m_header.SetOffset(x1, y1, z1);
 
     // 27-28. Max/Min X
     read_n(x1, m_ifs, sizeof(x1));
@@ -212,114 +206,66 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     read_n(z1, m_ifs, sizeof(z1));
     read_n(z2, m_ifs, sizeof(z2));
 
-    header.SetMax(x1, y1, z1);
-    header.SetMin(x2, y2, z2);
+    m_header.SetMax(x1, y1, z1);
+    m_header.SetMin(x2, y2, z2);
 
     // We're going to check the two bytes off the end of the header to 
     // see if they're pad bytes anyway.  Some softwares, notably older QTModeler, 
     // write 1.0-style pad bytes off the end of their files but state that the
     // offset is actually 2 bytes back.  We need to set the dataoffset 
     // appropriately in those cases anyway. 
-    m_ifs.seekg(header.GetDataOffset());
-    bool has_pad = HasPointDataSignature();
+    m_ifs.seekg(m_header.GetDataOffset());
+    bool has_pad = HasLAS10PadSignature();
     if (has_pad) {
         std::streamsize const current_pos = m_ifs.tellg();
         m_ifs.seekg(current_pos + 2);
-        header.SetDataOffset(header.GetDataOffset() + 2);
+        m_header.SetDataOffset(m_header.GetDataOffset() + 2);
     }
 
-    Reset(header);
-
-    return true;
 }
 
-bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
+bool Header::HasLAS10PadSignature() 
 {
-    if (0 == m_current)
-    {
-        m_ifs.clear();
-        m_ifs.seekg(header.GetDataOffset(), std::ios::beg);
-    }
+    uint8_t const sgn1 = 0xCC;
+    uint8_t const sgn2 = 0xDD;
+    uint8_t pad1 = 0x0; 
+    uint8_t pad2 = 0x0;
 
-    if (m_current < m_size)
-    {
-        size_t bytesread = 0;
-        
-        detail::PointRecord record;
-        // TODO: Replace with compile-time assert
-        assert(liblas::ePointSize0 == sizeof(record));
-
-        try
-        {
-            detail::read_n(record, m_ifs, sizeof(PointRecord));
-            ++m_current;
-            bytesread += sizeof(PointRecord);
-        }        
-        catch (std::out_of_range const& e) // we reached the end of the file
-        {
-            std::cerr << e.what() << std::endl;
-            return false;
-        }
-
-        Reader::FillPoint(record, point, header);
-        point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
-
-        // printf("ReadNextPoint: %d %d %d\n%.3f %.3f %.3f\n", record.x, record.y, record.z, point.GetX(), point.GetY(), point.GetZ());
+    std::streamsize const current_pos = m_ifs.tellg();
     
-        if (header.GetDataFormatId() == liblas::ePointFormat1)
-        {
-            double gpst = 0;
-            detail::read_n(gpst, m_ifs, sizeof(double));
-            point.SetTime(gpst);
-            bytesread += sizeof(double);
-        }
-        if (bytesread != header.GetDataRecordLength())
-            m_ifs.seekg(header.GetDataRecordLength() - bytesread, std::ios::cur);
-        return true;
-        
+    // If our little test reads off the end, we'll try to put the 
+    // borken dishes back up in the cabinet
+    try
+    {
+        detail::read_n(pad1, m_ifs, sizeof(uint8_t));
+        detail::read_n(pad2, m_ifs, sizeof(uint8_t));
     }
-
-    return false;
-}
-
-
-bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& header)
-{
-    if (m_size <= n)
+    catch (std::out_of_range& e) 
+    {
+        ignore_unused_variable_warning(e);
+        m_ifs.seekg(current_pos, std::ios::beg);
         return false;
-
-    std::streamsize pos = (static_cast<std::streamsize>(n) * header.GetDataRecordLength()) + header.GetDataOffset();
-
-    m_ifs.clear();
-    m_ifs.seekg(pos, std::ios::beg);
-
-    
-    // accounting to keep track of the fact that the DataRecordLength 
-    // might not map to ePointSize0 or ePointSize1 (see http://liblas.org/ticket/142)
-    size_t bytesread = 0;
-    
-    detail::PointRecord record;
-    // TODO: Replace with compile-time assert
-    assert(liblas::ePointSize0 == sizeof(record));
-
-    detail::read_n(record, m_ifs, sizeof(record));
-    bytesread += sizeof(PointRecord);
-
-    Reader::FillPoint(record, point, header);
-    point.SetCoordinates(header, point.GetX(), point.GetY(), point.GetZ());
-    
-    if (header.GetDataFormatId() == liblas::ePointFormat1)
-    {
-        double gpst = 0;
-        detail::read_n(gpst, m_ifs, sizeof(double));
-        point.SetTime(gpst);
-        bytesread += sizeof(double);
     }
+    catch (std::runtime_error& e)
+    {
+        ignore_unused_variable_warning(e);
+        m_ifs.seekg(current_pos, std::ios::beg);
+        return false;        
+    }
+    LIBLAS_SWAP_BYTES(pad1);
+    LIBLAS_SWAP_BYTES(pad2);
+    
+    // Put the stream back where we found it
+    m_ifs.seekg(current_pos, std::ios::beg);
 
-    if (bytesread != header.GetDataRecordLength())
-        m_ifs.seekg(header.GetDataRecordLength() - bytesread, std::ios::cur);
-    return true;
+    // FIXME: we have to worry about swapping issues
+    // but some people write the pad bytes backwards 
+    // anyway.  Let's check both ways.
+    bool found = false;
+    if (sgn1 == pad2 && sgn2 == pad1) found = true;
+    if (sgn1 == pad1 && sgn2 == pad2) found = true;
+    
+    return found;
 }
 
-}}} // namespace liblas::detail::v11
-
+}}} // namespace liblas::detail::reader

@@ -77,10 +77,6 @@ public:
     /// Destructor.
     /// @excepion nothrow
     ~LASReader();
-
-    /// Returns version of LAS file being accessed by the reader.
-    /// @excepion nothrow
-    LASVersion GetVersion() const;
     
     /// Provides read-only access to header of LAS file being read.
     /// @excepion nothrow
@@ -147,7 +143,7 @@ private:
 
     void Init(); // throws on error
 
-    const std::auto_ptr<detail::Reader> m_pimpl;
+    const std::auto_ptr<detail::ReaderImpl> m_pimpl;
     LASHeader m_header;
     LASPoint m_point;
     std::vector<LASVariableRecord> m_vlrs;

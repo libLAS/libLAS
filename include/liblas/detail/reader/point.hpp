@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS PointFormat implementation for C++ libLAS 
+ * Purpose:  Point Reader implementation for C++ libLAS 
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
@@ -38,70 +38,69 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  ****************************************************************************/
+ 
+#ifndef LIBLAS_DETAIL_READER_POINT_HPP_INCLUDED
+#define LIBLAS_DETAIL_READER_POINT_HPP_INCLUDED
 
-#include <liblas/lasformat.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/cstdint.hpp>
+#include <liblas/lasversion.hpp>
+#include <liblas/lasspatialreference.hpp>
+#include <liblas/detail/fwd.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/liblas.hpp>
+#include <liblas/lasformat.hpp>
+
+
+#ifndef HAVE_GDAL
+    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
+    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
+#endif
+
 // std
-#include <vector>
-#include <fstream>
-#include <stdexcept>
-#include <cstdlib> // std::size_t
-#include <cassert>
+#include <iosfwd>
 
-namespace liblas { 
+namespace liblas { namespace detail { namespace reader {
 
-
-
-LASPointFormat::LASPointFormat( liblas::uint8_t major, 
-                liblas::uint8_t minor, 
-                liblas::uint32_t size) :
-    m_size(size),
-    m_versionminor(minor), 
-    m_versionmajor(major),
-    m_hasColor(false),
-    m_hasTime(false)
+class Point
 {
+public:
 
-}
+    Point(std::istream& ifs, const LASHeader& header);
+    Point(  std::istream& ifs, 
+            const LASHeader& header, 
+            OGRCoordinateTransformationH transform);
+    virtual ~Point();
 
-LASPointFormat::LASPointFormat(LASPointFormat const& other) :
-    m_size(other.m_size),
-    m_versionminor(other.m_versionminor),
-    m_versionmajor(other.m_versionmajor),
-    m_hasColor(other.m_hasColor),
-    m_hasTime(other.m_hasTime)
-{
+    std::istream& GetStream() const;
+    const LASPoint& GetPoint() const { return m_point; }
+    void read();
     
-}
+protected:
 
-LASPointFormat& LASPointFormat::operator=(LASPointFormat const& rhs)
-{
-    if (&rhs != this)
-    {
-        m_size = rhs.m_size;
-        m_versionminor = rhs.m_versionminor;
-        m_versionmajor = rhs.m_versionmajor;
-        m_hasColor = rhs.m_hasColor;
-        m_hasTime = rhs.m_hasTime;
+    typedef std::istream::off_type off_type;
+    typedef std::istream::pos_type pos_type;
+        
+    
+private:
 
-    }
-    return *this;
-}
+    // Blocked copying operations, declared but not defined.
+    Point(Point const& other);
+    Point& operator=(Point const& rhs);
+    
+    
 
-LASPointFormat::LASPointFormat( liblas::uint8_t major, 
-                liblas::uint8_t minor, 
-                liblas::uint32_t size,
-                bool bColor,
-                bool bTime) :
-    m_size(size),
-    m_versionminor(minor), 
-    m_versionmajor(major),
-    m_hasColor(bColor),
-    m_hasTime(bTime)
-{
+    std::istream& m_ifs;
+    const LASHeader& m_header;
+    LASPoint m_point;
+    OGRCoordinateTransformationH m_transform;
+    
+    
+    void project();
+    void setup();
+    void fill(PointRecord& record);
+};
 
-}
-} // namespace liblas
+
+}}} // namespace liblas::detail::reader
+
+#endif // LIBLAS_DETAIL_READER_POINT_HPP_INCLUDED

@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS 1.2 reader implementation for C++ libLAS 
+ * Purpose:  VLR Reader implementation for C++ libLAS 
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Howard Butler
+ * Copyright (c) 2010, Howard Butler
  *
  * All rights reserved.
  * 
@@ -38,31 +38,46 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  ****************************************************************************/
+ 
+#ifndef LIBLAS_DETAIL_READER_VLR_HPP_INCLUDED
+#define LIBLAS_DETAIL_READER_VLR_HPP_INCLUDED
 
-#ifndef LIBLAS_DETAIL_READER12_HPP_INCLUDED
-#define LIBLAS_DETAIL_READER12_HPP_INCLUDED
-
-#include <liblas/detail/reader.hpp>
+#include <liblas/cstdint.hpp>
+#include <liblas/lasversion.hpp>
+#include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
+#include <liblas/lasheader.hpp>
+
 // std
 #include <iosfwd>
 
-namespace liblas { namespace detail { namespace v12 {
+namespace liblas { namespace detail { namespace reader {
 
-class ReaderImpl : public Reader
+class VLR
 {
 public:
 
-    typedef Reader Base;
+    VLR(std::istream& ifs, const LASHeader& header);
+    virtual ~VLR();
+
+    const LASHeader& GetHeader() const { return m_header; }
+    void read();
     
-    ReaderImpl(std::istream& ifs);
-    LASVersion GetVersion() const;
-    bool ReadHeader(LASHeader& header);
-    bool ReadNextPoint(LASPoint& point, LASHeader const& header);
-    bool ReadPointAt(std::size_t n, LASPoint& record, LASHeader const& header);
+protected:
+
+    
+    std::istream& m_ifs;
+    LASHeader m_header;
+
+private:
+
+    // Blocked copying operations, declared but not defined.
+    VLR(VLR const& other);
+    VLR& operator=(VLR const& rhs);
 
 };
 
-}}} // namespace liblas::detail::v12
 
-#endif // LIBLAS_DETAIL_READER12_HPP_INCLUDED
+}}} // namespace liblas::detail::reader
+
+#endif // LIBLAS_DETAIL_READER_VLR_HPP_INCLUDED

@@ -51,10 +51,11 @@ class LASReader;
 class LASWriter;
 class LASColor;
 class LASSpatialReference;
+class LASPointFormat;
 
 namespace detail {
 
-class Reader;
+class ReaderImpl;
 class Writer;
 struct PointRecord;
 struct Color;
