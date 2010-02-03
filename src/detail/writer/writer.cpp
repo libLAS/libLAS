@@ -39,10 +39,10 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/detail/writer.hpp>
-#include <liblas/detail/writer10.hpp>
-#include <liblas/detail/writer11.hpp>
-#include <liblas/detail/writer12.hpp>
+#include <liblas/detail/writer/writer.hpp>
+#include <liblas/detail/writer/writer10.hpp>
+#include <liblas/detail/writer/writer11.hpp>
+#include <liblas/detail/writer/writer12.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>

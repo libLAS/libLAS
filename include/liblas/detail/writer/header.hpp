@@ -53,6 +53,29 @@
 
 namespace liblas { namespace detail { namespace writer {
 
+class Header
+{
+public:
+
+    Header(std::ostream& ofs);
+    virtual ~Header();
+
+    LASHeader write(const LASHeader& header);
+
+protected:
+
+
+    std::ostream& m_ofs;
+
+private:
+
+    // Blocked copying operations, declared but not defined.
+    Header(Header const& other);
+    Header& operator=(Header const& rhs);
+
+
+};
+    
 }}} // namespace liblas::detail::writer
 
 #endif // LIBLAS_DETAIL_WRITER_HEADER_HPP_INCLUDED
