@@ -103,9 +103,18 @@ void Header::write()
     assert(filesig.size() == 4);
     detail::write_n(GetStream(), filesig, 4);
     
-    // 2. Reserved
-    n4 = m_header.GetReserved();
-    detail::write_n(GetStream(), n4, sizeof(n4));
+    
+    // 2. File SourceId / Reserved
+    if (m_header.GetVersionMinor()  ==  0) {
+        n4 = m_header.GetReserved();
+        detail::write_n(GetStream(), n4, sizeof(n4));         
+    } else if (m_header.GetVersionMinor()  >  0) {
+        n2 = m_header.GetFileSourceId();
+        detail::write_n(GetStream(), n2, sizeof(n2));                
+        n2 = m_header.GetReserved();
+        detail::write_n(GetStream(), n2, sizeof(n2));        
+    } 
+
 
     // 3-6. GUID data
     uint32_t d1 = 0;
@@ -126,7 +135,6 @@ void Header::write()
     
     // 8. Version minor
     n1 = m_header.GetVersionMinor();
-    // assert(0 == n1);
     detail::write_n(GetStream(), n1, sizeof(n1));
 
     // 9. System ID
@@ -153,12 +161,32 @@ void Header::write()
     detail::write_n(GetStream(), n2, sizeof(n2));
 
     // 14. Offset to data
-    // Because we are 1.0, we must also add pad bytes to the end of the 
-    // m_header.  This means resetting the dataoffset +=2, but we 
-    // don't want to change the header's actual offset until after we 
-    // write the VLRs or else we'll be off by 2 when we write the pad
-    // bytes
-    n4 = m_header.GetDataOffset() + 2;
+    // For 1.0 data, we must also add pad bytes to the end of the 
+    // m_header.  This means resetting the dataoffset +=2 
+    if (m_header.GetVersionMinor()  ==  0) {
+        int32_t difference = m_header.GetDataOffset() - m_header.GetHeaderSize();
+        if (    (m_header.GetDataOffset() != m_header.GetHeaderSize()) &&
+                (difference > 0) && ( difference >= 2)
+            ) 
+            {
+                n4 = m_header.GetDataOffset();
+            } 
+        else if (difference == 0) 
+        {
+            n4 = m_header.GetDataOffset() + 2;
+        } 
+        else if (difference < 0) 
+        {
+            throw std::out_of_range("DataOffset is smaller than HeaderSize!");
+        } 
+        else 
+        {
+            n4 = m_header.GetDataOffset() + 2;            
+        }
+        // n4 = m_header.GetDataOffset() + 2;
+    } else {
+        n4 = m_header.GetDataOffset();        
+    }
     detail::write_n(GetStream(), n4, sizeof(n4));
 
     // 15. Number of variable length records
@@ -218,29 +246,21 @@ void Header::write()
     if (difference < 0) {
         m_header.SetDataOffset(m_header.GetDataOffset() + abs(difference) );
         WriteVLRs();
+        
+        // Make sure to rewrite the dataoffset in the header portion now that
+        // we've changed it.
+        std::streamsize const current_pos = GetStream().tellp();
+        std::streamsize const offset_pos = 96; 
+        GetStream().seekp(offset_pos, std::ios::beg);
+        detail::write_n(GetStream(), m_header.GetDataOffset() , sizeof(m_header.GetDataOffset()));
+        GetStream().seekp(current_pos, std::ios::beg);      
     }
-    
-    // Write the pad bytes.
-    uint8_t const sgn1 = 0xCC;
-    uint8_t const sgn2 = 0xDD;
-    detail::write_n(GetStream(), sgn1, sizeof(uint8_t));
-    detail::write_n(GetStream(), sgn2, sizeof(uint8_t));
 
-    // We can now reset the header's offset to +=2.  If we monkeypatched
-    // the offset because we were too small to write the VLRs, this will 
-    // end up being header.GetDataOffset() + difference + 2 (see above).
-    m_header.SetDataOffset(m_header.GetDataOffset() + 2);
+ 
 
-    // Make sure to rewrite the dataoffset in the header portion now that
-    // we've changed it.
-    std::streamsize const current_pos = GetStream().tellp();
-    std::streamsize const offset_pos = 96; 
-    GetStream().seekp(offset_pos, std::ios::beg);
-    detail::write_n(GetStream(), m_header.GetDataOffset() , sizeof(m_header.GetDataOffset()));
-    GetStream().seekp(current_pos, std::ios::beg);        
-
-
-    
+    // Write the 1.0 pad signature if we need to.
+    WriteLAS10PadSignature(); 
+           
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
     if (GetPointCount() != 0)
@@ -285,7 +305,7 @@ int32_t Header::WriteVLRs()
         std::streamsize const size = static_cast<std::streamsize>(data.size());
         detail::write_n(GetStream(), data.front(), size);
     }
-    
+
     // if we had more room than we need for the VLRs, we need to pad that with 
     // 0's.  We must also not forget to add the 1.0 pad bytes to the end of this
     // but the impl should be the one doing that, not us.
@@ -295,227 +315,22 @@ int32_t Header::WriteVLRs()
     return 0;
 }
 
+void Header::WriteLAS10PadSignature()
+{
+    // Only write pad signature bytes for LAS 1.0 files.  Any other files 
+    // will not get the pad bytes and we are *not* allowing anyone to 
+    // override this either - hobu
+    
+    if (m_header.GetVersionMinor() > 0) {
+        return;
+    }
+    
+    // Write the pad bytes.
+    uint8_t const sgn1 = 0xCC;
+    uint8_t const sgn2 = 0xDD;
+    detail::write_n(GetStream(), sgn1, sizeof(uint8_t));
+    detail::write_n(GetStream(), sgn2, sizeof(uint8_t));
+}
 
-// Writer::Writer(std::ostream& ofs) : m_ofs(ofs), m_transform(0), m_in_ref(0), m_out_ref(0)
-// {
-// }
-// 
-// Writer::~Writer()
-// {
-// #ifdef HAVE_GDAL
-//     if (m_transform) {
-//         OCTDestroyCoordinateTransformation(m_transform);
-//     }
-//     if (m_in_ref) {
-//         OSRDestroySpatialReference(m_in_ref);
-//     }
-//     if (m_out_ref) {
-//         OSRDestroySpatialReference(m_out_ref);
-//     }
-// #endif
-// }
-// 
-// std::ostream& Writer::GetStream() const
-// {
-//     return m_ofs;
-// }
-// 
-// 
-// void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header) 
-// {
-// 
-//     if (m_transform) {
-//         // let's just copy the point for now.
-//         LASPoint p = LASPoint(point);
-//         Project(p);
-//         record.x = static_cast<int32_t>((p.GetX() - header.GetOffsetX()) / header.GetScaleX());
-//         record.y = static_cast<int32_t>((p.GetY() - header.GetOffsetY()) / header.GetScaleY());
-//         record.z = static_cast<int32_t>((p.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
-//     } else {
-//         record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
-//         record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
-//         record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
-//     }
-// 
-//     LASClassification::bitset_type clsflags(point.GetClassification());
-//     record.classification = static_cast<uint8_t>(clsflags.to_ulong());
-// 
-//     record.intensity = point.GetIntensity();
-//     record.flags = point.GetScanFlags();
-//     record.scan_angle_rank = point.GetScanAngleRank();
-//     record.user_data = point.GetUserData();
-//     record.point_source_id = point.GetPointSourceID();
-// }
-// 
-// uint32_t Writer::WriteVLR(LASHeader const& header) 
-// {
-//     // If this function returns a value, it is the size that the header's 
-//     // data offset must be increased by in order for the VLRs to fit in 
-//     // the header.  
-//     m_ofs.seekp(header.GetHeaderSize(), std::ios::beg);
-// 
-//     // if the VLRs won't fit because the data offset is too 
-//     // small, we need to throw an error.
-//     uint32_t vlr_total_size = 0;
-//         
-//     // Calculate a new data offset size
-//     for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
-//     {
-//         LASVariableRecord vlr = header.GetVLR(i);
-//         vlr_total_size += vlr.GetTotalSize();
-//     }
-//     
-//     int32_t difference = header.GetDataOffset() - (vlr_total_size + header.GetHeaderSize());
-// 
-//     if (difference < 0) 
-//     {
-//         return difference;
-//     }
-//     
-//     for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
-//     {
-//         LASVariableRecord vlr = header.GetVLR(i);
-// 
-//         detail::write_n(m_ofs, vlr.GetReserved(), sizeof(uint16_t));
-//         detail::write_n(m_ofs, vlr.GetUserId(true).c_str(), 16);
-//         detail::write_n(m_ofs, vlr.GetRecordId(), sizeof(uint16_t));
-//         detail::write_n(m_ofs, vlr.GetRecordLength(), sizeof(uint16_t));
-//         detail::write_n(m_ofs, vlr.GetDescription(true).c_str(), 32);
-//         std::vector<uint8_t> const& data = vlr.GetData();
-//         std::streamsize const size = static_cast<std::streamsize>(data.size());
-//         detail::write_n(m_ofs, data.front(), size);
-//     }
-//     
-//     // if we had more room than we need for the VLRs, we need to pad that with 
-//     // 0's.  We must also not forget to add the 1.0 pad bytes to the end of this
-//     // but the impl should be the one doing that, not us.
-//     if (difference > 0) {
-//         detail::write_n(m_ofs, "\0", difference);
-//     }
-//     return 0;
-// }
-// 
-// 
-// void Writer::SetOutputSRS(const LASSpatialReference& srs )
-// {
-//     m_out_srs = srs;
-//     CreateTransform();
-// 
-// }
-// 
-// void Writer::SetSRS(const LASSpatialReference& srs )
-// {
-//     SetOutputSRS(srs);
-// }
-// 
-// void Writer::SetInputSRS(const LASSpatialReference& srs )
-// {
-//     m_in_srs = srs;
-// }
-// 
-// void Writer::CreateTransform()
-// {
-// #ifdef HAVE_GDAL
-//     if (m_transform)
-//     {
-//         OCTDestroyCoordinateTransformation(m_transform);
-//     }
-//     if (m_in_ref)
-//     {
-//         OSRDestroySpatialReference(m_in_ref);
-//     }
-//     if (m_out_ref)
-//     {
-//         OSRDestroySpatialReference(m_out_ref);
-//     }
-//     
-//     m_in_ref = OSRNewSpatialReference(0);
-//     m_out_ref = OSRNewSpatialReference(0);
-// 
-//     int result = OSRSetFromUserInput(m_in_ref, m_in_srs.GetWKT().c_str());
-//     if (result != OGRERR_NONE) 
-//     {
-//         std::ostringstream msg; 
-//         msg << "Could not import input spatial reference for Writer::" << CPLGetLastErrorMsg() << result;
-//         std::string message(msg.str());
-//         throw std::runtime_error(message);
-//     }
-//     
-//     result = OSRSetFromUserInput(m_out_ref, m_out_srs.GetWKT().c_str());
-//     if (result != OGRERR_NONE) 
-//     {
-//         std::ostringstream msg; 
-//         msg << "Could not import output spatial reference for Writer::" << CPLGetLastErrorMsg() << result;
-//         std::string message(msg.str());
-//         throw std::runtime_error(message);
-//     }
-// 
-//     m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
-// #endif
-// }
-// 
-// void Writer::Project(LASPoint& p)
-// {
-// #ifdef HAVE_GDAL
-//     
-//     int ret = 0;
-//     double x = p.GetX();
-//     double y = p.GetY();
-//     double z = p.GetZ();
-//     
-//     ret = OCTTransform(m_transform, 1, &x, &y, &z);
-//     
-//     if (!ret) {
-//         std::ostringstream msg; 
-//         msg << "Could not project point for Writer::" << CPLGetLastErrorMsg() << ret;
-//         std::string message(msg.str());
-//         throw std::runtime_error(message);
-//     }
-//     
-//     p.SetX(x);
-//     p.SetY(y);
-//     p.SetZ(z);
-// #else
-//     detail::ignore_unused_variable_warning(p);
-// #endif
-// }
-// 
-// Writer* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
-// {
-//     if (!ofs)
-//     {
-//         throw std::runtime_error("output stream state is invalid");
-//     }
-// 
-//     // Select writer implementation based on requested LAS version.
-//     uint8_t major = header.GetVersionMajor();
-//     uint8_t minor = header.GetVersionMinor();
-//     
-//     if (1 == major && 0 == minor)
-//     {
-//         return new v10::WriterImpl(ofs);
-//     }
-//     if (1 == major && 1 == minor)
-//     {
-//         return new v11::WriterImpl(ofs);
-//     }
-//     if (1 == major && 2 == minor)
-//     {
-//         return new v12::WriterImpl(ofs);
-//     }
-//     else if (2 == major && 0 == minor)
-//     {
-//         // TODO: LAS 2.0 read/write support
-//         throw std::runtime_error("LAS 2.0 file detected but unsupported");
-//     }
-// 
-//     throw std::runtime_error("LAS file of unknown version");
-// }
-// 
-// void WriterFactory::Destroy(Writer* p) 
-// {
-//     delete p;
-//     p = 0;
-// }
 
 }}} // namespace liblas::detail::writer

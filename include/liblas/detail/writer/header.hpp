@@ -69,6 +69,7 @@ protected:
 private:
     
     int32_t WriteVLRs();
+    void WriteLAS10PadSignature();
     LASHeader m_header;
     
 };

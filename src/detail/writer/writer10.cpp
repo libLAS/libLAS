@@ -85,13 +85,41 @@ void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header
     // TODO: Static assert would be better
     
     double t = 0;
+    uint16_t red = 0;
+    uint16_t blue = 0;
+    uint16_t green = 0;
+    LASColor color;
+    
     assert(liblas::ePointSize0 == sizeof(m_record));
     FillPointRecord(m_record, point, header);
     detail::write_n(m_ofs, m_record, sizeof(m_record));
 
-    if (header.GetDataFormatId() == liblas::ePointFormat1) {
+    if (header.GetDataFormatId() == liblas::ePointFormat1)
+    {
         t = point.GetTime();
         detail::write_n(m_ofs, t, sizeof(double));
+    }
+    else if (header.GetDataFormatId() == liblas::ePointFormat2)
+    {
+        color = point.GetColor();
+        red = color.GetRed();
+        green = color.GetGreen();
+        blue = color.GetBlue();
+        detail::write_n(m_ofs, red, sizeof(uint16_t));
+        detail::write_n(m_ofs, green, sizeof(uint16_t));
+        detail::write_n(m_ofs, blue, sizeof(uint16_t));
+    }
+    else if (header.GetDataFormatId() == liblas::ePointFormat3)
+    {
+        t = point.GetTime();
+        detail::write_n(m_ofs, t, sizeof(double));
+        color = point.GetColor();
+        red = color.GetRed();
+        green = color.GetGreen();
+        blue = color.GetBlue();
+        detail::write_n(m_ofs, red, sizeof(uint16_t));
+        detail::write_n(m_ofs, green, sizeof(uint16_t));
+        detail::write_n(m_ofs, blue, sizeof(uint16_t));
     }
     ++m_pointCount;
 }
