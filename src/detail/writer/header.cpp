@@ -56,7 +56,196 @@
 #include <vector>
 
 
-// namespace liblas { namespace detail { namespace writer {
+namespace liblas { namespace detail { namespace writer {
+
+Header::Header(std::ostream& ofs, liblas::uint32_t& count, LASHeader const& header) :
+    Base(ofs, count)
+{
+    m_header = header;
+}
+
+void Header::write()
+{
+
+    uint8_t n1 = 0;
+    uint16_t n2 = 0;
+    uint32_t n4 = 0;
+
+    // Rewrite the georeference VLR entries if they exist
+    m_header.SetGeoreference();
+    
+    // Seek to the beginning
+    GetStream().seekp(0, std::ios::beg);
+    std::ios::pos_type beginning = GetStream().tellp();
+
+    // Seek to the end
+    GetStream().seekp(0, std::ios::end);
+    std::ios::pos_type end = GetStream().tellp();
+    
+    // Figure out how many points we already have.  Each point record 
+    // should be 20 bytes long, and header.GetDataOffset tells
+    // us the location to start counting points from.  
+    
+    // This test should only be true if we were opened in both 
+    // std::ios::in *and* std::ios::out, otherwise it should return false 
+    // and we won't adjust the point count.
+    
+    if ((beginning != end) && ((uint32_t)end != 0)) {
+        uint32_t count = ((uint32_t) end - m_header.GetDataOffset())/m_header.GetDataRecordLength();
+        SetPointCount(count);
+
+        // Position to the beginning of the file to start writing the header
+        GetStream().seekp(0, std::ios::beg);
+    }
+
+    // 1. File Signature
+    std::string const filesig(m_header.GetFileSignature());
+    assert(filesig.size() == 4);
+    detail::write_n(GetStream(), filesig, 4);
+    
+    // 2. Reserved
+    n4 = m_header.GetReserved();
+    detail::write_n(GetStream(), n4, sizeof(n4));
+
+    // 3-6. GUID data
+    uint32_t d1 = 0;
+    uint16_t d2 = 0;
+    uint16_t d3 = 0;
+    uint8_t d4[8] = { 0 };
+    liblas::guid g = m_header.GetProjectId();
+    g.output_data(d1, d2, d3, d4);
+    detail::write_n(GetStream(), d1, sizeof(d1));
+    detail::write_n(GetStream(), d2, sizeof(d2));
+    detail::write_n(GetStream(), d3, sizeof(d3));
+    detail::write_n(GetStream(), d4, sizeof(d4));
+    
+    // 7. Version major
+    n1 = m_header.GetVersionMajor();
+    assert(1 == n1);
+    detail::write_n(GetStream(), n1, sizeof(n1));
+    
+    // 8. Version minor
+    n1 = m_header.GetVersionMinor();
+    assert(0 == n1);
+    detail::write_n(GetStream(), n1, sizeof(n1));
+
+    // 9. System ID
+    std::string sysid(m_header.GetSystemId(true));
+    assert(sysid.size() == 32);
+    detail::write_n(GetStream(), sysid, 32);
+    
+    // 10. Generating Software ID
+    std::string softid(m_header.GetSoftwareId(true));
+    assert(softid.size() == 32);
+    detail::write_n(GetStream(), softid, 32);
+
+    // 11. Flight Date Julian
+    n2 = m_header.GetCreationDOY();
+    detail::write_n(GetStream(), n2, sizeof(n2));
+
+    // 12. Year
+    n2 = m_header.GetCreationYear();
+    detail::write_n(GetStream(), n2, sizeof(n2));
+
+    // 13. Header Size
+    n2 = m_header.GetHeaderSize();
+    assert(227 <= n2);
+    detail::write_n(GetStream(), n2, sizeof(n2));
+
+    // 14. Offset to data
+    // Because we are 1.0, we must also add pad bytes to the end of the 
+    // m_header.  This means resetting the dataoffset +=2, but we 
+    // don't want to change the header's actual offset until after we 
+    // write the VLRs or else we'll be off by 2 when we write the pad
+    // bytes
+    n4 = m_header.GetDataOffset() + 2;
+    detail::write_n(GetStream(), n4, sizeof(n4));
+
+    // 15. Number of variable length records
+    // TODO: This value must be updated after new variable length record is added.
+    n4 = m_header.GetRecordsCount();
+    detail::write_n(GetStream(), n4, sizeof(n4));
+
+    // 16. Point Data Format ID
+    n1 = static_cast<uint8_t>(m_header.GetDataFormatId());
+    detail::write_n(GetStream(), n1, sizeof(n1));
+
+    // 17. Point Data Record Length
+    n2 = m_header.GetDataRecordLength();
+    detail::write_n(GetStream(), n2, sizeof(n2));
+
+    // 18. Number of point records
+    // This value is updated if necessary, see UpdateHeader function.
+    n4 = m_header.GetPointRecordsCount();
+    detail::write_n(GetStream(), n4, sizeof(n4));
+
+    // 19. Number of points by return
+    std::vector<uint32_t>::size_type const srbyr = 5;
+    std::vector<uint32_t> const& vpbr = m_header.GetPointRecordsByReturnCount();
+    assert(vpbr.size() <= srbyr);
+    uint32_t pbr[srbyr] = { 0 };
+    std::copy(vpbr.begin(), vpbr.end(), pbr);
+    detail::write_n(GetStream(), pbr, sizeof(pbr));
+
+    // 20-22. Scale factors
+    detail::write_n(GetStream(), m_header.GetScaleX(), sizeof(double));
+    detail::write_n(GetStream(), m_header.GetScaleY(), sizeof(double));
+    detail::write_n(GetStream(), m_header.GetScaleZ(), sizeof(double));
+
+    // 23-25. Offsets
+    detail::write_n(GetStream(), m_header.GetOffsetX(), sizeof(double));
+    detail::write_n(GetStream(), m_header.GetOffsetY(), sizeof(double));
+    detail::write_n(GetStream(), m_header.GetOffsetZ(), sizeof(double));
+
+    // 26-27. Max/Min X
+    detail::write_n(GetStream(), m_header.GetMaxX(), sizeof(double));
+    detail::write_n(GetStream(), m_header.GetMinX(), sizeof(double));
+
+    // 28-29. Max/Min Y
+    detail::write_n(GetStream(), m_header.GetMaxY(), sizeof(double));
+    detail::write_n(GetStream(), m_header.GetMinY(), sizeof(double));
+
+    // 30-31. Max/Min Z
+    detail::write_n(GetStream(), m_header.GetMaxZ(), sizeof(double));
+    detail::write_n(GetStream(), m_header.GetMinZ(), sizeof(double));
+
+    // If WriteVLR returns a value, it is because the header's 
+    // offset is not large enough to contain the VLRs.  The value 
+    // it returns is the number of bytes we must increase the header
+    // by in order for it to contain the VLRs.
+    
+    // int32_t difference = WriteVLR(m_header);
+    // if (difference < 0) {
+    //     m_header.SetDataOffset(m_header.GetDataOffset() + abs(difference) );
+    //     WriteVLR(header);
+    // }
+    
+    // Write the pad bytes.
+    uint8_t const sgn1 = 0xCC;
+    uint8_t const sgn2 = 0xDD;
+    detail::write_n(GetStream(), sgn1, sizeof(uint8_t));
+    detail::write_n(GetStream(), sgn2, sizeof(uint8_t));
+
+    // We can now reset the header's offset to +=2.  If we monkeypatched
+    // the offset because we were too small to write the VLRs, this will 
+    // end up being header.GetDataOffset() + difference + 2 (see above).
+    m_header.SetDataOffset(m_header.GetDataOffset() + 2);
+
+    // Make sure to rewrite the dataoffset in the header portion now that
+    // we've changed it.
+    std::streamsize const current_pos = GetStream().tellp();
+    std::streamsize const offset_pos = 96; 
+    GetStream().seekp(offset_pos, std::ios::beg);
+    detail::write_n(GetStream(), m_header.GetDataOffset() , sizeof(m_header.GetDataOffset()));
+    GetStream().seekp(current_pos, std::ios::beg);        
+
+
+    
+    // If we already have points, we're going to put it at the end of the file.  
+    // If we don't have any points,  we're going to leave it where it is.
+    if (GetPointCount() != 0)
+        GetStream().seekp(0, std::ios::end);    
+}
 
 // Writer::Writer(std::ostream& ofs) : m_ofs(ofs), m_transform(0), m_in_ref(0), m_out_ref(0)
 // {
@@ -280,4 +469,4 @@
 //     p = 0;
 // }
 
-// }}} // namespace liblas::detail::writer
+}}} // namespace liblas::detail::writer

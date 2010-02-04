@@ -42,16 +42,35 @@
 #ifndef LIBLAS_DETAIL_WRITER_HEADER_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_HEADER_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
-#include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
 
+#include <liblas/lasheader.hpp>
+#include <liblas/detail/writer/writer.hpp>
 
 // std
-// #include <iosfwd>
+#include <iosfwd>
 
 namespace liblas { namespace detail { namespace writer {
+
+class Header : public WriterCan
+{
+    
+public:
+    typedef WriterCan Base;
+
+    Header(std::ostream& ofs, liblas::uint32_t& count, LASHeader const& header );
+    
+    LASHeader GetHeader() const;
+    void write();
+    
+protected:
+
+private:
+    
+    LASHeader m_header;
+    
+};
 
 }}} // namespace liblas::detail::writer
 

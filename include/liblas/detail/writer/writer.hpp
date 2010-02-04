@@ -105,6 +105,30 @@ public:
     static void Destroy(Writer* p);
 };
 
+class WriterCan
+{
+public:
+
+    WriterCan(std::ostream& ofs, liblas::uint32_t& count);
+    ~WriterCan();
+    
+    std::ostream& GetStream() const { return m_ofs; }
+    liblas::uint32_t& GetPointCount() const { return m_pointCount; }
+    void SetPointCount(liblas::uint32_t& count) { m_pointCount = count; }
+    
+    
+private:
+
+    // Blocked copying operations, declared but not defined.
+    WriterCan(WriterCan const& other);
+    WriterCan& operator=(WriterCan const& rhs);
+
+    
+    liblas::uint32_t& m_pointCount;
+    std::ostream& m_ofs;
+    
+    
+};
 }} // namespace liblas::detail
 
 #endif // LIBLAS_DETAIL_WRITER_HPP_INCLUDED

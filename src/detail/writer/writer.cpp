@@ -39,10 +39,10 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/detail/writer.hpp>
-#include <liblas/detail/writer10.hpp>
-#include <liblas/detail/writer11.hpp>
-#include <liblas/detail/writer12.hpp>
+#include <liblas/detail/writer/writer.hpp>
+#include <liblas/detail/writer/writer10.hpp>
+#include <liblas/detail/writer/writer11.hpp>
+#include <liblas/detail/writer/writer12.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
@@ -285,6 +285,16 @@ void WriterFactory::Destroy(Writer* p)
 {
     delete p;
     p = 0;
+}
+
+
+WriterCan::WriterCan(std::ostream& ofs, liblas::uint32_t& count) : m_pointCount(count), m_ofs(ofs) 
+{
+}
+
+WriterCan::~WriterCan()
+{
+
 }
 
 }} // namespace liblas::detail
