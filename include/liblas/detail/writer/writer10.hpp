@@ -43,31 +43,88 @@
 #define LIBLAS_DETAIL_WRITER10_HPP_INCLUDED
 
 #include <liblas/lasversion.hpp>
-#include <liblas/detail/writer.hpp>
-#include <liblas/detail/fwd.hpp>
+
+#include <liblas/lasspatialreference.hpp>
 #include <liblas/cstdint.hpp>
+
+
+#ifndef HAVE_GDAL
+    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
+    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
+#endif
+
+
 // std
 #include <iosfwd>
 
-namespace liblas { namespace detail { namespace v10 {
+namespace liblas { namespace detail { 
 
-class WriterImpl : public Writer
+class WriterCan
 {
 public:
 
-    typedef Writer Base;
+    WriterCan(std::ostream& ofs, liblas::uint32_t& count);
+    ~WriterCan();
+    
+    std::ostream& GetStream() const { return m_ofs; }
+    liblas::uint32_t& GetPointCount() const { return m_pointCount; }
+    void SetPointCount(liblas::uint32_t& count) { m_pointCount = count; }
+    
+    
+private:
+
+    // Blocked copying operations, declared but not defined.
+    WriterCan(WriterCan const& other);
+    WriterCan& operator=(WriterCan const& rhs);
+
+    
+    liblas::uint32_t& m_pointCount;
+    std::ostream& m_ofs;
+    
+    
+};
+
+
+
+class WriterImpl 
+{
+public:
+
     
     WriterImpl(std::ostream& ofs);
+    ~WriterImpl();
     LASVersion GetVersion() const;
     void WriteHeader(LASHeader& header);
     void UpdateHeader(LASHeader const& header);
     void WritePointRecord(LASPoint const& record, const LASHeader& header);
 
+    std::ostream& GetStream() const;
+    uint32_t WriteVLR(LASHeader const& header);
+
+    void SetSRS(const LASSpatialReference& srs);
+    void SetInputSRS(const LASSpatialReference& srs);
+    void SetOutputSRS(const LASSpatialReference& srs);
+
+protected:
+    PointRecord m_record;
+    std::ostream& m_ofs;
+
+    void FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header);
+
+    void Project(LASPoint& point);      
+    LASSpatialReference m_out_srs;
+    LASSpatialReference m_in_srs;
+    
+    OGRCoordinateTransformationH m_transform;
+    OGRSpatialReferenceH m_in_ref;
+    OGRSpatialReferenceH m_out_ref;
+        
 private:
 
+    void CreateTransform();
     liblas::uint32_t m_pointCount;
 };
 
-}}} // namespace liblas::detail::v10
+}} // namespace liblas::detail
 
 #endif // LIBLAS_DETAIL_WRITER10_HPP_INCLUDED

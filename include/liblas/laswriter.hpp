@@ -72,10 +72,6 @@ public:
     /// in order to maintain data consistency.
     ~LASWriter();
     
-    /// Queries version of LAS file being process.
-    /// It corresponds to version specified in the LAS header provided on construction.
-    LASVersion GetVersion() const;
-
     /// Provides access to header structure.
     LASHeader const& GetHeader() const;
 
@@ -101,7 +97,7 @@ private:
     LASWriter(LASWriter const& other);
     LASWriter& operator=(LASWriter const& rhs);
 
-    const std::auto_ptr<detail::Writer> m_pimpl;
+    const std::auto_ptr<detail::WriterImpl> m_pimpl;
 
     LASHeader m_header;
     detail::PointRecord m_record;

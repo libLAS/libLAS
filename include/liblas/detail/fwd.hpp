@@ -56,9 +56,10 @@ class LASPointFormat;
 namespace detail {
 
 class ReaderImpl;
-class Writer;
+class WriterImpl;
 struct PointRecord;
 struct Color;
+
 
 }} // namespace liblas::detail
 

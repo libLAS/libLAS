@@ -126,7 +126,7 @@ void Header::write()
     
     // 8. Version minor
     n1 = m_header.GetVersionMinor();
-    assert(0 == n1);
+    // assert(0 == n1);
     detail::write_n(GetStream(), n1, sizeof(n1));
 
     // 9. System ID
@@ -214,11 +214,11 @@ void Header::write()
     // it returns is the number of bytes we must increase the header
     // by in order for it to contain the VLRs.
     
-    // int32_t difference = WriteVLR(m_header);
-    // if (difference < 0) {
-    //     m_header.SetDataOffset(m_header.GetDataOffset() + abs(difference) );
-    //     WriteVLR(header);
-    // }
+    int32_t difference = WriteVLRs();
+    if (difference < 0) {
+        m_header.SetDataOffset(m_header.GetDataOffset() + abs(difference) );
+        WriteVLRs();
+    }
     
     // Write the pad bytes.
     uint8_t const sgn1 = 0xCC;
@@ -246,6 +246,55 @@ void Header::write()
     if (GetPointCount() != 0)
         GetStream().seekp(0, std::ios::end);    
 }
+
+int32_t Header::WriteVLRs() 
+{
+    // If this function returns a value, it is the size that the header's 
+    // data offset must be increased by in order for the VLRs to fit in 
+    // the header.  
+    GetStream().seekp(m_header.GetHeaderSize(), std::ios::beg);
+
+    // if the VLRs won't fit because the data offset is too 
+    // small, we need to throw an error.
+    uint32_t vlr_total_size = 0;
+        
+    // Calculate a new data offset size
+    for (uint32_t i = 0; i < m_header.GetRecordsCount(); ++i)
+    {
+        LASVariableRecord vlr = m_header.GetVLR(i);
+        vlr_total_size += vlr.GetTotalSize();
+    }
+    
+    int32_t difference = m_header.GetDataOffset() - (vlr_total_size + m_header.GetHeaderSize());
+
+    if (difference < 0) 
+    {
+        return difference;
+    }
+    
+    for (uint32_t i = 0; i < m_header.GetRecordsCount(); ++i)
+    {
+        LASVariableRecord vlr = m_header.GetVLR(i);
+
+        detail::write_n(GetStream(), vlr.GetReserved(), sizeof(uint16_t));
+        detail::write_n(GetStream(), vlr.GetUserId(true).c_str(), 16);
+        detail::write_n(GetStream(), vlr.GetRecordId(), sizeof(uint16_t));
+        detail::write_n(GetStream(), vlr.GetRecordLength(), sizeof(uint16_t));
+        detail::write_n(GetStream(), vlr.GetDescription(true).c_str(), 32);
+        std::vector<uint8_t> const& data = vlr.GetData();
+        std::streamsize const size = static_cast<std::streamsize>(data.size());
+        detail::write_n(GetStream(), data.front(), size);
+    }
+    
+    // if we had more room than we need for the VLRs, we need to pad that with 
+    // 0's.  We must also not forget to add the 1.0 pad bytes to the end of this
+    // but the impl should be the one doing that, not us.
+    if (difference > 0) {
+        detail::write_n(GetStream(), "\0", difference);
+    }
+    return 0;
+}
+
 
 // Writer::Writer(std::ostream& ofs) : m_ofs(ofs), m_transform(0), m_in_ref(0), m_out_ref(0)
 // {
