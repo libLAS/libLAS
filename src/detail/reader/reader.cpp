@@ -39,7 +39,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/detail/reader/reader10.hpp>
+#include <liblas/detail/reader/reader.hpp>
 #include <liblas/detail/reader/header.hpp>
 #include <liblas/detail/reader/vlr.hpp>
 #include <liblas/detail/utility.hpp>
