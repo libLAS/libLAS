@@ -43,7 +43,7 @@
 #define LIBLAS_DETAIL_WRITER11_HPP_INCLUDED
 
 #include <liblas/lasversion.hpp>
-#include <liblas/detail/writer.hpp>
+#include <liblas/detail/writer/writer.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/cstdint.hpp>
 // std

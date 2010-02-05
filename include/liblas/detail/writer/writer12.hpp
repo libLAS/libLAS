@@ -42,7 +42,7 @@
 #ifndef LIBLAS_DETAIL_WRITER12_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER12_HPP_INCLUDED
 
-#include <liblas/detail/writer.hpp>
+#include <liblas/detail/writer/writer.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/cstdint.hpp>
 // std

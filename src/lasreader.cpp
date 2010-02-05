@@ -42,7 +42,7 @@
 
 #include <liblas/lasversion.hpp>
 #include <liblas/lasreader.hpp>
-#include <liblas/detail/reader/reader10.hpp>
+#include <liblas/detail/reader/reader.hpp>
 
 // std
 #include <stdexcept>
