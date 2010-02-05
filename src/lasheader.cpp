@@ -685,9 +685,9 @@ LASPointFormat LASHeader::GetPointFormat() const
 {
     bool bHasColor(false);
     bool bHasTime(false);
-    liblas::uint8_t minor(GetVersionMinor());
-    liblas::uint8_t major(GetVersionMajor());
-    liblas::uint16_t size(GetDataRecordLength());
+    liblas::uint8_t minor_ver(GetVersionMinor());
+    liblas::uint8_t major_ver(GetVersionMajor());
+    liblas::uint16_t bytesize(GetDataRecordLength());
     
     if (GetDataFormatId() == liblas::ePointFormat3) {
         bHasColor = true;
@@ -700,7 +700,7 @@ LASPointFormat LASHeader::GetPointFormat() const
         bHasTime = true;
     } 
         
-    return LASPointFormat(major, minor, size, bHasColor, bHasTime);
+    return LASPointFormat(major_ver, minor_ver, bytesize, bHasColor, bHasTime);
     
 }
 
