@@ -178,7 +178,7 @@ void Point::project()
     m_point.SetY(y);
     m_point.SetZ(z);
 #else
-    detail::ignore_unused_variable_warning(point);
+    detail::ignore_unused_variable_warning(m_point);
 #endif
 }
 
