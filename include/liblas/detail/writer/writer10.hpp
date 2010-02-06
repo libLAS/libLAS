@@ -42,11 +42,8 @@
 #ifndef LIBLAS_DETAIL_WRITER10_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER10_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
-
-#include <liblas/lasspatialreference.hpp>
-#include <liblas/cstdint.hpp>
-
+#include <liblas/detail/fwd.hpp>
+#include <liblas/detail/writer/point.hpp>
 
 #ifndef HAVE_GDAL
     typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
@@ -59,30 +56,30 @@
 
 namespace liblas { namespace detail { 
 
-class WriterCan
-{
-public:
-
-    WriterCan(std::ostream& ofs, liblas::uint32_t& count);
-    ~WriterCan();
-    
-    std::ostream& GetStream() const { return m_ofs; }
-    liblas::uint32_t& GetPointCount() const { return m_pointCount; }
-    void SetPointCount(liblas::uint32_t& count) { m_pointCount = count; }
-    
-    
-private:
-
-    // Blocked copying operations, declared but not defined.
-    WriterCan(WriterCan const& other);
-    WriterCan& operator=(WriterCan const& rhs);
-
-    
-    liblas::uint32_t& m_pointCount;
-    std::ostream& m_ofs;
-    
-    
-};
+// class WriterCan
+// {
+// public:
+// 
+//     WriterCan(std::ostream& ofs, liblas::uint32_t& count);
+//     ~WriterCan();
+//     
+//     std::ostream& GetStream() const { return m_ofs; }
+//     liblas::uint32_t& GetPointCount() const { return m_pointCount; }
+//     void SetPointCount(liblas::uint32_t& count) { m_pointCount = count; }
+//     
+//     
+// private:
+// 
+//     // Blocked copying operations, declared but not defined.
+//     WriterCan(WriterCan const& other);
+//     WriterCan& operator=(WriterCan const& rhs);
+// 
+//     
+//     liblas::uint32_t& m_pointCount;
+//     std::ostream& m_ofs;
+//     
+//     
+// };
 
 
 
@@ -100,9 +97,9 @@ public:
 
     std::ostream& GetStream() const;
 
-    void SetSRS(const LASSpatialReference& srs);
+    void SetSRS(const LASSpatialReference& srs, const LASHeader& header);
     void SetInputSRS(const LASSpatialReference& srs);
-    void SetOutputSRS(const LASSpatialReference& srs);
+    void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header);
 
 protected:
     PointRecord m_record;
@@ -117,11 +114,21 @@ protected:
     OGRCoordinateTransformationH m_transform;
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
-        
+    
+    detail::writer::Point* m_point_writer;
+    
 private:
 
     void CreateTransform();
     liblas::uint32_t m_pointCount;
+};
+
+class WriterFactory
+{
+public:
+
+    static WriterImpl* Create(std::ostream& ofs, LASHeader const& header);
+    static void Destroy(WriterImpl* p);
 };
 
 }} // namespace liblas::detail

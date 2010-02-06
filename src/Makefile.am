@@ -43,6 +43,7 @@ liblas_la_SOURCES = \
 	detail/reader/point.cpp \
 	detail/writer/writer.cpp \
 	detail/writer/header.cpp \
+	detail/writer/point.cpp \
 	detail/writer/writer10.cpp 
 
 if GDAL_IS_CONFIG

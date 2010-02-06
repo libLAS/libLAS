@@ -41,6 +41,7 @@
 
 #include <liblas/detail/writer/writer10.hpp>
 #include <liblas/detail/writer/header.hpp>
+#include <liblas/detail/writer/point.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
@@ -55,7 +56,7 @@
 namespace liblas { namespace detail { 
 
 WriterImpl::WriterImpl(std::ostream& ofs) :
-    m_ofs(ofs), m_transform(0),  m_in_ref(0), m_out_ref(0), m_pointCount(0)
+    m_ofs(ofs), m_transform(0),  m_in_ref(0), m_out_ref(0), m_point_writer(0), m_pointCount(0)
 {
 }
 
@@ -82,46 +83,54 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
 
 void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header)
 {
-    // TODO: Static assert would be better
-    
-    double t = 0;
-    uint16_t red = 0;
-    uint16_t blue = 0;
-    uint16_t green = 0;
-    LASColor color;
-    
-    assert(liblas::ePointSize0 == sizeof(m_record));
-    FillPointRecord(m_record, point, header);
-    detail::write_n(m_ofs, m_record, sizeof(m_record));
-
-    if (header.GetDataFormatId() == liblas::ePointFormat1)
-    {
-        t = point.GetTime();
-        detail::write_n(m_ofs, t, sizeof(double));
-    }
-    else if (header.GetDataFormatId() == liblas::ePointFormat2)
-    {
-        color = point.GetColor();
-        red = color.GetRed();
-        green = color.GetGreen();
-        blue = color.GetBlue();
-        detail::write_n(m_ofs, red, sizeof(uint16_t));
-        detail::write_n(m_ofs, green, sizeof(uint16_t));
-        detail::write_n(m_ofs, blue, sizeof(uint16_t));
-    }
-    else if (header.GetDataFormatId() == liblas::ePointFormat3)
-    {
-        t = point.GetTime();
-        detail::write_n(m_ofs, t, sizeof(double));
-        color = point.GetColor();
-        red = color.GetRed();
-        green = color.GetGreen();
-        blue = color.GetBlue();
-        detail::write_n(m_ofs, red, sizeof(uint16_t));
-        detail::write_n(m_ofs, green, sizeof(uint16_t));
-        detail::write_n(m_ofs, blue, sizeof(uint16_t));
-    }
-    ++m_pointCount;
+    if (m_point_writer == 0) {
+        if (m_transform != 0) {
+            m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header, m_transform);
+        } else {
+            m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header);
+        }
+    } 
+    m_point_writer->write(point);
+    // // TODO: Static assert would be better
+    // 
+    // double t = 0;
+    // uint16_t red = 0;
+    // uint16_t blue = 0;
+    // uint16_t green = 0;
+    // LASColor color;
+    // 
+    // assert(liblas::ePointSize0 == sizeof(m_record));
+    // FillPointRecord(m_record, point, header);
+    // detail::write_n(m_ofs, m_record, sizeof(m_record));
+    // 
+    // if (header.GetDataFormatId() == liblas::ePointFormat1)
+    // {
+    //     t = point.GetTime();
+    //     detail::write_n(m_ofs, t, sizeof(double));
+    // }
+    // else if (header.GetDataFormatId() == liblas::ePointFormat2)
+    // {
+    //     color = point.GetColor();
+    //     red = color.GetRed();
+    //     green = color.GetGreen();
+    //     blue = color.GetBlue();
+    //     detail::write_n(m_ofs, red, sizeof(uint16_t));
+    //     detail::write_n(m_ofs, green, sizeof(uint16_t));
+    //     detail::write_n(m_ofs, blue, sizeof(uint16_t));
+    // }
+    // else if (header.GetDataFormatId() == liblas::ePointFormat3)
+    // {
+    //     t = point.GetTime();
+    //     detail::write_n(m_ofs, t, sizeof(double));
+    //     color = point.GetColor();
+    //     red = color.GetRed();
+    //     green = color.GetGreen();
+    //     blue = color.GetBlue();
+    //     detail::write_n(m_ofs, red, sizeof(uint16_t));
+    //     detail::write_n(m_ofs, green, sizeof(uint16_t));
+    //     detail::write_n(m_ofs, blue, sizeof(uint16_t));
+    // }
+    // ++m_pointCount;
 }
 
 WriterImpl::~WriterImpl()
@@ -145,43 +154,49 @@ std::ostream& WriterImpl::GetStream() const
 }
 
 
-void WriterImpl::FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header) 
-{
+// void WriterImpl::FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header) 
+// {
+// 
+//     if (m_transform) {
+//         // let's just copy the point for now.
+//         LASPoint p = LASPoint(point);
+//         Project(p);
+//         record.x = static_cast<int32_t>((p.GetX() - header.GetOffsetX()) / header.GetScaleX());
+//         record.y = static_cast<int32_t>((p.GetY() - header.GetOffsetY()) / header.GetScaleY());
+//         record.z = static_cast<int32_t>((p.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
+//     } else {
+//         record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
+//         record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
+//         record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
+//     }
+// 
+//     LASClassification::bitset_type clsflags(point.GetClassification());
+//     record.classification = static_cast<uint8_t>(clsflags.to_ulong());
+// 
+//     record.intensity = point.GetIntensity();
+//     record.flags = point.GetScanFlags();
+//     record.scan_angle_rank = point.GetScanAngleRank();
+//     record.user_data = point.GetUserData();
+//     record.point_source_id = point.GetPointSourceID();
+// }
 
-    if (m_transform) {
-        // let's just copy the point for now.
-        LASPoint p = LASPoint(point);
-        Project(p);
-        record.x = static_cast<int32_t>((p.GetX() - header.GetOffsetX()) / header.GetScaleX());
-        record.y = static_cast<int32_t>((p.GetY() - header.GetOffsetY()) / header.GetScaleY());
-        record.z = static_cast<int32_t>((p.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
-    } else {
-        record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
-        record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
-        record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
-    }
 
-    LASClassification::bitset_type clsflags(point.GetClassification());
-    record.classification = static_cast<uint8_t>(clsflags.to_ulong());
-
-    record.intensity = point.GetIntensity();
-    record.flags = point.GetScanFlags();
-    record.scan_angle_rank = point.GetScanAngleRank();
-    record.user_data = point.GetUserData();
-    record.point_source_id = point.GetPointSourceID();
-}
-
-
-void WriterImpl::SetOutputSRS(const LASSpatialReference& srs )
+void WriterImpl::SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header )
 {
     m_out_srs = srs;
     CreateTransform();
 
+    // reset the point writer to include our new transform
+    if (m_point_writer != 0) {
+        delete m_point_writer;
+        m_point_writer = 0;
+        m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header, m_transform);
+    }
 }
 
-void WriterImpl::SetSRS(const LASSpatialReference& srs )
+void WriterImpl::SetSRS(const LASSpatialReference& srs , const LASHeader& header)
 {
-    SetOutputSRS(srs);
+    SetOutputSRS(srs, header);
 }
 
 void WriterImpl::SetInputSRS(const LASSpatialReference& srs )

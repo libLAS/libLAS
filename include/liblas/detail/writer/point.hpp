@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS writer class 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  Point Writer implementation for C++ libLAS 
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Howard Butler
  *
  * All rights reserved.
  * 
@@ -38,78 +38,74 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  ****************************************************************************/
+ 
+#ifndef LIBLAS_DETAIL_WRITER_POINT_HPP_INCLUDED
+#define LIBLAS_DETAIL_WRITER_POINT_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
-#include <liblas/laswriter.hpp>
-#include <liblas/detail/writer/writer10.hpp>
+#include <liblas/lasspatialreference.hpp>
+#include <liblas/detail/fwd.hpp>
+
+#include <liblas/laspoint.hpp>
+
+#include <liblas/detail/fwd.hpp>
+#include <liblas/detail/utility.hpp>
+
+#include <liblas/lasheader.hpp>
+#include <liblas/detail/writer/writer.hpp>
+
+#ifndef HAVE_GDAL
+    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
+    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
+#endif
 
 // std
-#include <stdexcept>
-#include <fstream>
-#include <string>
-#include <cstring> // std::memset
-#include <cassert>
+#include <iosfwd>
 
-namespace liblas
+namespace liblas { namespace detail { namespace writer {
+
+class Point : public WriterCan
 {
+public:
+    
+    typedef WriterCan Base;
+    
+    Point(std::ostream& ofs, liblas::uint32_t& count, LASHeader const& header);
+    Point(  std::ostream& ofs, 
+            liblas::uint32_t& count, 
+            LASHeader const& header,
+            OGRCoordinateTransformationH transform);
+    virtual ~Point();
 
-LASWriter::LASWriter(std::ostream& ofs, LASHeader const& header) :
-    m_pimpl(detail::WriterFactory::Create(ofs, header)), m_header(header)
-{
-    m_pimpl->WriteHeader(m_header);
-}
+    const LASPoint& GetPoint() const { return m_point; }
+    void write( const LASPoint& );
+    
+protected:
 
-LASWriter::~LASWriter()
-{
-    assert(0 != m_pimpl.get());
+    typedef std::ostream::off_type off_type;
+    typedef std::ostream::pos_type pos_type;
+        
+    
+private:
 
-    m_pimpl->UpdateHeader(m_header);
-}
+    // Blocked copying operations, declared but not defined.
+    Point(Point const& other);
+    Point& operator=(Point const& rhs);
+    
+    
 
-LASHeader const& LASWriter::GetHeader() const
-{
-    return m_header;
-}
+    std::ostream& m_ofs;
+    const LASHeader& m_header;
+    LASPoint m_point;
+    OGRCoordinateTransformationH m_transform;
+    
+    PointRecord m_record;
+    
+    void project();
+    void setup();
+    void fill();
+};
 
-bool LASWriter::WritePoint(LASPoint const& point)
-{
-    if (!point.IsValid())
-    {
-        return false;
-    }
 
-    m_pimpl->WritePointRecord(point, m_header);
+}}} // namespace liblas::detail::writer
 
-    return true;
-}
-
-std::ostream& LASWriter::GetStream() const
-{
-    return m_pimpl->GetStream();
-}
-
-void LASWriter::WriteHeader(LASHeader& header)
-{
-    m_pimpl->WriteHeader(header);
-    m_header = header;
-}
-
-bool LASWriter::SetSRS(const LASSpatialReference& srs)
-{
-    m_pimpl->SetOutputSRS(srs, m_header);
-    return true;
-}
-
-bool LASWriter::SetInputSRS(const LASSpatialReference& srs)
-{
-    m_pimpl->SetInputSRS(srs);
-    return true;
-}
-
-bool LASWriter::SetOutputSRS(const LASSpatialReference& srs)
-{
-    m_pimpl->SetOutputSRS(srs, m_header);
-    return true;
-}
-} // namespace liblas
-
+#endif // LIBLAS_DETAIL_WRITER_POINT_HPP_INCLUDED

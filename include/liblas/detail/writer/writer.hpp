@@ -46,7 +46,6 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
 
-#include <liblas/detail/writer/writer10.hpp>
 
 
 // std
@@ -94,14 +93,32 @@ namespace liblas { namespace detail {
 //     
 // };
 
-class WriterFactory
+
+
+class WriterCan
 {
 public:
 
-    static WriterImpl* Create(std::ostream& ofs, LASHeader const& header);
-    static void Destroy(WriterImpl* p);
-};
+    WriterCan(std::ostream& ofs, liblas::uint32_t& count);
+    ~WriterCan();
+    
+    std::ostream& GetStream() const { return m_ofs; }
+    liblas::uint32_t& GetPointCount() const { return m_pointCount; }
+    void SetPointCount(liblas::uint32_t& count) { m_pointCount = count; }
+    
+    
+private:
 
+    // Blocked copying operations, declared but not defined.
+    WriterCan(WriterCan const& other);
+    WriterCan& operator=(WriterCan const& rhs);
+
+    
+    liblas::uint32_t& m_pointCount;
+    std::ostream& m_ofs;
+    
+    
+};
 
 }} // namespace liblas::detail
 
