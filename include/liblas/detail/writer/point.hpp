@@ -47,11 +47,11 @@
 
 #include <liblas/laspoint.hpp>
 
-#include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
 
 #include <liblas/lasheader.hpp>
-#include <liblas/detail/writer/writer.hpp>
+
+#include <liblas/detail/writer/base.hpp>
 
 #ifndef HAVE_GDAL
     typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
@@ -63,11 +63,11 @@
 
 namespace liblas { namespace detail { namespace writer {
 
-class Point : public WriterCan
+class Point : public WriterBase
 {
 public:
     
-    typedef WriterCan Base;
+    typedef WriterBase Base;
     
     Point(std::ostream& ofs, liblas::uint32_t& count, LASHeader const& header);
     Point(  std::ostream& ofs, 

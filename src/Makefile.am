@@ -44,7 +44,7 @@ liblas_la_SOURCES = \
 	detail/writer/writer.cpp \
 	detail/writer/header.cpp \
 	detail/writer/point.cpp \
-	detail/writer/writer10.cpp 
+	detail/writer/base.cpp 
 
 if GDAL_IS_CONFIG
 liblas_la_SOURCES += gt_wkt_srs.cpp gt_citation.cpp tifvsi.cpp

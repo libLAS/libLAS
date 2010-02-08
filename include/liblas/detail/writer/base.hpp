@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS 1.2 writer implementation for C++ libLAS 
- * Author:   Howard Butler, hobu.inc@gmail.com
+ * Purpose:  LAS writer implementation for C++ libLAS 
+ * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
- * Copyright (c) 2008, Howard Butler
+ * Copyright (c) 2008, Mateusz Loskot
  *
  * All rights reserved.
  * 
@@ -39,34 +39,49 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_DETAIL_WRITER12_HPP_INCLUDED
-#define LIBLAS_DETAIL_WRITER12_HPP_INCLUDED
+#ifndef LIBLAS_DETAIL_WRITER_BASE_HPP_INCLUDED
+#define LIBLAS_DETAIL_WRITER_BASE_HPP_INCLUDED
 
-#include <liblas/detail/writer/writer.hpp>
+#include <liblas/lasversion.hpp>
 #include <liblas/detail/fwd.hpp>
-#include <liblas/cstdint.hpp>
+#include <liblas/detail/utility.hpp>
+
+
+
 // std
 #include <iosfwd>
 
-namespace liblas { namespace detail { namespace v12 {
+namespace liblas { namespace detail {
 
-class WriterImpl : public Writer
+
+class WriterBase
 {
 public:
 
-    typedef Writer Base;
+    WriterBase(std::ostream& ofs, liblas::uint32_t& count);
+    ~WriterBase();
     
-    WriterImpl(std::ostream& ofs);
-    LASVersion GetVersion() const;
-    void WriteHeader(LASHeader& header);
-    void UpdateHeader(LASHeader const& header);
-    void WritePointRecord(LASPoint const& record, LASHeader const& header);
+    std::ostream& GetStream() const { return m_ofs; }
+    liblas::uint32_t& GetPointCount() const { return m_pointCount; }
+    void SetPointCount(liblas::uint32_t& count) { m_pointCount = count; }
+    
     
 private:
 
-    liblas::uint32_t m_pointCount;
+    // Blocked copying operations, declared but not defined.
+    WriterBase(WriterBase const& other);
+    WriterBase& operator=(WriterBase const& rhs);
+
+    
+    liblas::uint32_t& m_pointCount;
+    std::ostream& m_ofs;
+    
+    
 };
 
-}}} // namespace liblas::detail::v12
+}} // namespace liblas::detail
 
-#endif // LIBLAS_DETAIL_WRITER12_HPP_INCLUDED
+
+
+
+#endif // LIBLAS_DETAIL_WRITER_BASE_HPP_INCLUDED

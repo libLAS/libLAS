@@ -41,7 +41,7 @@
 
 #include <liblas/lasversion.hpp>
 #include <liblas/laswriter.hpp>
-#include <liblas/detail/writer/writer10.hpp>
+#include <liblas/detail/writer/writer.hpp>
 
 // std
 #include <stdexcept>

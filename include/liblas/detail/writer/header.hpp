@@ -46,18 +46,18 @@
 #include <liblas/detail/utility.hpp>
 
 #include <liblas/lasheader.hpp>
-#include <liblas/detail/writer/writer10.hpp>
+#include <liblas/detail/writer/writer.hpp>
 
 // std
 #include <iosfwd>
 
 namespace liblas { namespace detail { namespace writer {
 
-class Header : public WriterCan
+class Header : public WriterBase
 {
     
 public:
-    typedef WriterCan Base;
+    typedef WriterBase Base;
 
     Header(std::ostream& ofs, liblas::uint32_t& count, LASHeader const& header );
     

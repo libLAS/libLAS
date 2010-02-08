@@ -39,7 +39,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  
-#include <liblas/detail/writer/writer10.hpp>
+#include <liblas/detail/writer/writer.hpp>
 #include <liblas/detail/writer/point.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>

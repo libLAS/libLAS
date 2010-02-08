@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS writer implementation for C++ libLAS 
+ * Purpose:  LAS 1.0 writer implementation for C++ libLAS 
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
@@ -40,213 +40,149 @@
  ****************************************************************************/
 
 #include <liblas/detail/writer/writer.hpp>
-#include <liblas/detail/writer/writer10.hpp>
-
+#include <liblas/detail/writer/header.hpp>
+#include <liblas/detail/writer/point.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/lasspatialreference.hpp>
-
-#ifdef HAVE_GDAL
-#include <ogr_srs_api.h>
-#endif
-
+#include <liblas/liblas.hpp>
 // std
-#include <cassert>
-#include <cstdlib> // std::size_t
-#include <fstream>
-#include <iosfwd>
-#include <ostream>
-#include <sstream>
-#include <stdexcept>
-#include <string>
 #include <vector>
+#include <fstream>
+#include <stdexcept>
+#include <cstdlib> // std::size_t
+#include <cassert>
 
-namespace liblas { namespace detail {
+namespace liblas { namespace detail { 
 
-// Writer::Writer(std::ostream& ofs) : m_ofs(ofs), m_transform(0), m_in_ref(0), m_out_ref(0)
-// {
-// }
-// 
-// Writer::~Writer()
-// {
-// #ifdef HAVE_GDAL
-//     if (m_transform) {
-//         OCTDestroyCoordinateTransformation(m_transform);
-//     }
-//     if (m_in_ref) {
-//         OSRDestroySpatialReference(m_in_ref);
-//     }
-//     if (m_out_ref) {
-//         OSRDestroySpatialReference(m_out_ref);
-//     }
-// #endif
-// }
-// 
-// std::ostream& Writer::GetStream() const
-// {
-//     return m_ofs;
-// }
-// 
-// 
-// void Writer::FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header) 
-// {
-// 
-//     if (m_transform) {
-//         // let's just copy the point for now.
-//         LASPoint p = LASPoint(point);
-//         Project(p);
-//         record.x = static_cast<int32_t>((p.GetX() - header.GetOffsetX()) / header.GetScaleX());
-//         record.y = static_cast<int32_t>((p.GetY() - header.GetOffsetY()) / header.GetScaleY());
-//         record.z = static_cast<int32_t>((p.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
-//     } else {
-//         record.x = static_cast<int32_t>((point.GetX() - header.GetOffsetX()) / header.GetScaleX());
-//         record.y = static_cast<int32_t>((point.GetY() - header.GetOffsetY()) / header.GetScaleY());
-//         record.z = static_cast<int32_t>((point.GetZ() - header.GetOffsetZ()) / header.GetScaleZ());
-//     }
-// 
-//     LASClassification::bitset_type clsflags(point.GetClassification());
-//     record.classification = static_cast<uint8_t>(clsflags.to_ulong());
-// 
-//     record.intensity = point.GetIntensity();
-//     record.flags = point.GetScanFlags();
-//     record.scan_angle_rank = point.GetScanAngleRank();
-//     record.user_data = point.GetUserData();
-//     record.point_source_id = point.GetPointSourceID();
-// }
-// 
-// // uint32_t Writer::WriteVLR(LASHeader const& header) 
-// // {
-// //     // If this function returns a value, it is the size that the header's 
-// //     // data offset must be increased by in order for the VLRs to fit in 
-// //     // the header.  
-// //     m_ofs.seekp(header.GetHeaderSize(), std::ios::beg);
-// // 
-// //     // if the VLRs won't fit because the data offset is too 
-// //     // small, we need to throw an error.
-// //     uint32_t vlr_total_size = 0;
-// //         
-// //     // Calculate a new data offset size
-// //     for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
-// //     {
-// //         LASVariableRecord vlr = header.GetVLR(i);
-// //         vlr_total_size += vlr.GetTotalSize();
-// //     }
-// //     
-// //     int32_t difference = header.GetDataOffset() - (vlr_total_size + header.GetHeaderSize());
-// // 
-// //     if (difference < 0) 
-// //     {
-// //         return difference;
-// //     }
-// //     
-// //     for (uint32_t i = 0; i < header.GetRecordsCount(); ++i)
-// //     {
-// //         LASVariableRecord vlr = header.GetVLR(i);
-// // 
-// //         detail::write_n(m_ofs, vlr.GetReserved(), sizeof(uint16_t));
-// //         detail::write_n(m_ofs, vlr.GetUserId(true).c_str(), 16);
-// //         detail::write_n(m_ofs, vlr.GetRecordId(), sizeof(uint16_t));
-// //         detail::write_n(m_ofs, vlr.GetRecordLength(), sizeof(uint16_t));
-// //         detail::write_n(m_ofs, vlr.GetDescription(true).c_str(), 32);
-// //         std::vector<uint8_t> const& data = vlr.GetData();
-// //         std::streamsize const size = static_cast<std::streamsize>(data.size());
-// //         detail::write_n(m_ofs, data.front(), size);
-// //     }
-// //     
-// //     // if we had more room than we need for the VLRs, we need to pad that with 
-// //     // 0's.  We must also not forget to add the 1.0 pad bytes to the end of this
-// //     // but the impl should be the one doing that, not us.
-// //     if (difference > 0) {
-// //         detail::write_n(m_ofs, "\0", difference);
-// //     }
-// //     return 0;
-// // }
-// 
-// 
-// void Writer::SetOutputSRS(const LASSpatialReference& srs )
-// {
-//     m_out_srs = srs;
-//     CreateTransform();
-// 
-// }
-// 
-// void Writer::SetSRS(const LASSpatialReference& srs )
-// {
-//     SetOutputSRS(srs);
-// }
-// 
-// void Writer::SetInputSRS(const LASSpatialReference& srs )
-// {
-//     m_in_srs = srs;
-// }
-// 
-// void Writer::CreateTransform()
-// {
-// #ifdef HAVE_GDAL
-//     if (m_transform)
-//     {
-//         OCTDestroyCoordinateTransformation(m_transform);
-//     }
-//     if (m_in_ref)
-//     {
-//         OSRDestroySpatialReference(m_in_ref);
-//     }
-//     if (m_out_ref)
-//     {
-//         OSRDestroySpatialReference(m_out_ref);
-//     }
-//     
-//     m_in_ref = OSRNewSpatialReference(0);
-//     m_out_ref = OSRNewSpatialReference(0);
-// 
-//     int result = OSRSetFromUserInput(m_in_ref, m_in_srs.GetWKT().c_str());
-//     if (result != OGRERR_NONE) 
-//     {
-//         std::ostringstream msg; 
-//         msg << "Could not import input spatial reference for Writer::" << CPLGetLastErrorMsg() << result;
-//         std::string message(msg.str());
-//         throw std::runtime_error(message);
-//     }
-//     
-//     result = OSRSetFromUserInput(m_out_ref, m_out_srs.GetWKT().c_str());
-//     if (result != OGRERR_NONE) 
-//     {
-//         std::ostringstream msg; 
-//         msg << "Could not import output spatial reference for Writer::" << CPLGetLastErrorMsg() << result;
-//         std::string message(msg.str());
-//         throw std::runtime_error(message);
-//     }
-// 
-//     m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
-// #endif
-// }
-// 
-// void Writer::Project(LASPoint& p)
-// {
-// #ifdef HAVE_GDAL
-//     
-//     int ret = 0;
-//     double x = p.GetX();
-//     double y = p.GetY();
-//     double z = p.GetZ();
-//     
-//     ret = OCTTransform(m_transform, 1, &x, &y, &z);
-//     
-//     if (!ret) {
-//         std::ostringstream msg; 
-//         msg << "Could not project point for Writer::" << CPLGetLastErrorMsg() << ret;
-//         std::string message(msg.str());
-//         throw std::runtime_error(message);
-//     }
-//     
-//     p.SetX(x);
-//     p.SetY(y);
-//     p.SetZ(z);
-// #else
-//     detail::ignore_unused_variable_warning(p);
-// #endif
-// }
+WriterImpl::WriterImpl(std::ostream& ofs) :
+    m_ofs(ofs), m_transform(0),  m_in_ref(0), m_out_ref(0), m_point_writer(0), m_pointCount(0)
+{
+}
+
+
+void WriterImpl::WriteHeader(LASHeader& header)
+{
+    detail::writer::Header hwriter(m_ofs,m_pointCount, header );
+    hwriter.write();
+    header = hwriter.GetHeader();
+    
+}
+
+void WriterImpl::UpdateHeader(LASHeader const& header)
+{
+    if (m_pointCount != header.GetPointRecordsCount())
+    {
+        // Skip to first byte of number of point records data member
+        std::streamsize const dataPos = 107; 
+        m_ofs.seekp(dataPos, std::ios::beg);
+
+        detail::write_n(m_ofs, m_pointCount , sizeof(m_pointCount));
+    }
+}
+
+void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header)
+{
+    if (m_point_writer == 0) {
+        if (m_transform != 0) {
+            m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header, m_transform);
+        } else {
+            m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header);
+        }
+    } 
+    m_point_writer->write(point);
+
+}
+
+WriterImpl::~WriterImpl()
+{
+    if (m_point_writer != 0)
+        delete m_point_writer;
+        
+#ifdef HAVE_GDAL
+    if (m_transform) {
+        OCTDestroyCoordinateTransformation(m_transform);
+    }
+    if (m_in_ref) {
+        OSRDestroySpatialReference(m_in_ref);
+    }
+    if (m_out_ref) {
+        OSRDestroySpatialReference(m_out_ref);
+    }
+#endif
+}
+
+std::ostream& WriterImpl::GetStream() const
+{
+    return m_ofs;
+}
+
+
+void WriterImpl::SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header )
+{
+    m_out_srs = srs;
+    CreateTransform();
+
+    // reset the point writer to include our new transform
+    if (m_point_writer != 0) {
+        delete m_point_writer;
+        m_point_writer = 0;
+        m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header, m_transform);
+    }
+}
+
+void WriterImpl::SetSRS(const LASSpatialReference& srs , const LASHeader& header)
+{
+    SetOutputSRS(srs, header);
+}
+
+void WriterImpl::SetInputSRS(const LASSpatialReference& srs )
+{
+    m_in_srs = srs;
+}
+
+void WriterImpl::CreateTransform()
+{
+#ifdef HAVE_GDAL
+    if (m_transform)
+    {
+        OCTDestroyCoordinateTransformation(m_transform);
+    }
+    if (m_in_ref)
+    {
+        OSRDestroySpatialReference(m_in_ref);
+    }
+    if (m_out_ref)
+    {
+        OSRDestroySpatialReference(m_out_ref);
+    }
+    
+    m_in_ref = OSRNewSpatialReference(0);
+    m_out_ref = OSRNewSpatialReference(0);
+
+    int result = OSRSetFromUserInput(m_in_ref, m_in_srs.GetWKT().c_str());
+    if (result != OGRERR_NONE) 
+    {
+        std::ostringstream msg; 
+        msg << "Could not import input spatial reference for Writer::" << CPLGetLastErrorMsg() << result;
+        std::string message(msg.str());
+        throw std::runtime_error(message);
+    }
+    
+    result = OSRSetFromUserInput(m_out_ref, m_out_srs.GetWKT().c_str());
+    if (result != OGRERR_NONE) 
+    {
+        std::ostringstream msg; 
+        msg << "Could not import output spatial reference for Writer::" << CPLGetLastErrorMsg() << result;
+        std::string message(msg.str());
+        throw std::runtime_error(message);
+    }
+
+    m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
+#endif
+}
+
+
 
 WriterImpl* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
 {
@@ -254,35 +190,15 @@ WriterImpl* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
     {
         throw std::runtime_error("output stream state is invalid");
     }
-
-    // Select writer implementation based on requested LAS version.
-    // uint8_t major = header.GetVersionMajor();
-    // uint8_t minor = header.GetVersionMinor();
     
     return new detail::WriterImpl(ofs);
-    // else if (2 == major && 0 == minor)
-    // {
-    //     // TODO: LAS 2.0 read/write support
-    //     throw std::runtime_error("LAS 2.0 file detected but unsupported");
-    // }
-    // 
-    // throw std::runtime_error("LAS file of unknown version");
+
 }
 
 void WriterFactory::Destroy(detail::WriterImpl* p) 
 {
     delete p;
     p = 0;
-}
-
-
-WriterCan::WriterCan(std::ostream& ofs, liblas::uint32_t& count) : m_pointCount(count), m_ofs(ofs) 
-{
-}
-
-WriterCan::~WriterCan()
-{
-
 }
 
 }} // namespace liblas::detail
