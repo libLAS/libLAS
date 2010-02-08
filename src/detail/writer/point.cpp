@@ -44,6 +44,7 @@
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/lasvariablerecord.hpp>
+#include <liblas/lasformat.hpp>
 
 #include <sstream> 
 
@@ -90,14 +91,20 @@ void Point::write(const LASPoint& point)
     uint16_t green = 0;
     LASColor color;
     
+    // std::size_t byteswritten(0);
+    
     m_point = point;
     fill();
+    
     detail::write_n(m_ofs, m_record, sizeof(m_record));
+    // byteswritten += sizeof(PointRecord);
 
     if (m_header.GetDataFormatId() == liblas::ePointFormat1)
     {
         t = point.GetTime();
         detail::write_n(m_ofs, t, sizeof(double));
+
+        // byteswritten += sizeof(double);
     }
     else if (m_header.GetDataFormatId() == liblas::ePointFormat2)
     {
@@ -108,11 +115,15 @@ void Point::write(const LASPoint& point)
         detail::write_n(m_ofs, red, sizeof(uint16_t));
         detail::write_n(m_ofs, green, sizeof(uint16_t));
         detail::write_n(m_ofs, blue, sizeof(uint16_t));
+        
+        // byteswritten += 3 * sizeof(uint16_t);
     }
     else if (m_header.GetDataFormatId() == liblas::ePointFormat3)
     {
         t = point.GetTime();
         detail::write_n(m_ofs, t, sizeof(double));
+        // byteswritten += sizeof(double);
+        
         color = point.GetColor();
         red = color.GetRed();
         green = color.GetGreen();
@@ -120,28 +131,22 @@ void Point::write(const LASPoint& point)
         detail::write_n(m_ofs, red, sizeof(uint16_t));
         detail::write_n(m_ofs, green, sizeof(uint16_t));
         detail::write_n(m_ofs, blue, sizeof(uint16_t));
+        
+        // byteswritten += 3 * sizeof(uint16_t);
     }
 
     liblas::uint32_t& count = GetPointCount();
     count++;
     SetPointCount(count);
 
-  
-    // 
-    // if (bytesread != m_header.GetDataRecordLength())
-    // {
-    //     std::size_t bytesleft = m_header.GetDataRecordLength() - bytesread;
-    // 
-    //     std::vector<uint8_t> data;
-    //     data.resize(bytesleft);
-    // 
-    //     detail::read_n(data.front(), m_ifs, bytesleft);
-    //     
-    //     m_point.SetExtraData(data); 
-    //     
-    //     // off_type const pos(static_cast<off_type>(m_header.GetDataRecordLength() - bytesread));
-    //     // m_ifs.seekg(pos, std::ios::cur);
-    // }
+    // write in our extra data that the user set on the 
+    // point up to the header's specified DataRecordLength
+    if (m_header.GetPointFormat().GetByteSize() != m_header.GetDataRecordLength()) {
+
+        std::vector<uint8_t> const& data = point.GetExtraData();
+        std::streamsize const size = static_cast<std::streamsize>(m_header.GetDataRecordLength() - data.size());
+        detail::write_n(GetStream(), data.front(), size);
+    }
 }
 
 void Point::project()

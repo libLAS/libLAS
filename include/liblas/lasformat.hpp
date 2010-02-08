@@ -78,9 +78,9 @@ public:
     void SetVersionMinor(liblas::uint8_t v) {m_versionminor = v; }
 
     bool HasColor() const {return m_hasColor; }
-    void Color(bool bColor) {m_hasColor = bColor; }
+    void Color(bool bColor) {m_hasColor = bColor; updatesize(); }
     bool HasTime() const { return m_hasTime; }
-    void Time(bool bTime) {m_hasTime = bTime; }
+    void Time(bool bTime) {m_hasTime = bTime; updatesize(); }
   
 protected:
     
@@ -90,6 +90,9 @@ protected:
 
     bool m_hasColor;
     bool m_hasTime;    
+
+private:
+    void updatesize();
 };
 
 } // namespace liblas

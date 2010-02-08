@@ -54,6 +54,17 @@
 namespace liblas { 
 
 
+void LASPointFormat::updatesize() {
+    m_size = sizeof(detail::PointRecord);
+    
+    if (HasColor()) {
+        m_size += 3 * sizeof(liblas::uint16_t);
+    }
+    
+    if (HasTime()) {
+        m_size += sizeof(double);
+    }
+}
 
 LASPointFormat::LASPointFormat( liblas::uint8_t major, 
                 liblas::uint8_t minor, 
@@ -64,9 +75,25 @@ LASPointFormat::LASPointFormat( liblas::uint8_t major,
     m_hasColor(false),
     m_hasTime(false)
 {
-
+    updatesize();
 }
 
+
+LASPointFormat::LASPointFormat( liblas::uint8_t major, 
+                liblas::uint8_t minor, 
+                liblas::uint32_t size,
+                bool bColor,
+                bool bTime) :
+    m_size(size),
+    m_versionminor(minor), 
+    m_versionmajor(major),
+    m_hasColor(bColor),
+    m_hasTime(bTime)
+{
+    updatesize();
+}
+
+// copy constructor
 LASPointFormat::LASPointFormat(LASPointFormat const& other) :
     m_size(other.m_size),
     m_versionminor(other.m_versionminor),
@@ -74,9 +101,10 @@ LASPointFormat::LASPointFormat(LASPointFormat const& other) :
     m_hasColor(other.m_hasColor),
     m_hasTime(other.m_hasTime)
 {
-    
+    updatesize();
 }
 
+// assignment constructor
 LASPointFormat& LASPointFormat::operator=(LASPointFormat const& rhs)
 {
     if (&rhs != this)
@@ -91,17 +119,5 @@ LASPointFormat& LASPointFormat::operator=(LASPointFormat const& rhs)
     return *this;
 }
 
-LASPointFormat::LASPointFormat( liblas::uint8_t major, 
-                liblas::uint8_t minor, 
-                liblas::uint32_t size,
-                bool bColor,
-                bool bTime) :
-    m_size(size),
-    m_versionminor(minor), 
-    m_versionmajor(major),
-    m_hasColor(bColor),
-    m_hasTime(bTime)
-{
 
-}
 } // namespace liblas

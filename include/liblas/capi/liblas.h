@@ -1105,6 +1105,29 @@ LAS_DLL LASColorH LASPoint_GetColor(const LASPointH hPoint);
 */
 LAS_DLL LASError LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor);
 
+/** Gets the extra data stream for the LASPointH as an array of bytes.  The length of this 
+ *  array should be the difference between the LASPointFormat_GetByteSize() and the 
+ *  a LASHeader_GetDataRecordLength().  Points with data larger than this (fixed) size 
+ *  will be clipped upong being written into the file. You must allocate it on 
+ *  the heap and you are responsible for its destruction.
+ *  @param hPoint the LASPointH instance
+ *  @param data a pointer to your array where you want the data copied
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASPoint_GetExtraData(const LASPointH hPoint, uint8_t** data, uint16_t* length);
+
+/** Sets the extra data stream for the LASPointH as an array of bytes.  The length of this 
+ *  array should be the difference between the LASPointFormat_GetByteSize() and the 
+ *  a LASHeader_GetDataRecordLength().  Points with data larger than this (fixed) size 
+ *  will be clipped upong being written into the file. 
+ *  the VLR structure.
+ *  @param hPoint the LASPointH instance
+ *  @param data a pointer to your array.  
+ *  @param length a pointer to an integer defining the size of the data array 
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASPoint_SetExtraData(const LASPointH hPoint, uint8_t* data, uint16_t length);
+
 
 /****************************************************************************/
 /* SRS Operations                                                           */

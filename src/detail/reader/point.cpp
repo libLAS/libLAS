@@ -139,8 +139,16 @@ void Point::read()
         }        
     }
 
-    
-    if (bytesread != m_header.GetDataRecordLength())
+    if (bytesread != m_header.GetPointFormat().GetByteSize()) {
+        std::ostringstream msg; 
+        msg <<  "The number of bytes that were read ("<< bytesread <<") does not " 
+                "match the number of bytes the point's format "
+                "says it should have (" << 
+                m_header.GetPointFormat().GetByteSize() << ")";
+        throw std::runtime_error(msg.str());
+        
+    }
+    if (m_header.GetPointFormat().GetByteSize() != m_header.GetDataRecordLength())
     {
         std::size_t bytesleft = m_header.GetDataRecordLength() - bytesread;
 
