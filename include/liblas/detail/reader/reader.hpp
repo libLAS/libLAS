@@ -69,7 +69,6 @@ public:
     bool ReadPointAt(std::size_t n, LASPoint& record, const LASHeader& header);
 
     std::istream& GetStream() const;
-    bool ReadVLR(LASHeader& header);
     void Reset(LASHeader const& header);
     void SetSRS(const LASSpatialReference& srs, const LASHeader& header);
     void SetInputSRS(const LASSpatialReference& srs);

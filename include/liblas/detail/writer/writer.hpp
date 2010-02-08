@@ -77,10 +77,7 @@ public:
 protected:
     PointRecord m_record;
     std::ostream& m_ofs;
-
-    // void FillPointRecord(PointRecord& record, const LASPoint& point, const LASHeader& header);
-    // 
-    // void Project(LASPoint& point);      
+     
     LASSpatialReference m_out_srs;
     LASSpatialReference m_in_srs;
     

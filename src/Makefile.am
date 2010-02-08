@@ -38,7 +38,6 @@ liblas_la_SOURCES = \
 	lasspatialreference.cpp \
 	lasformat.cpp \
 	detail/reader/reader.cpp \
-	detail/reader/vlr.cpp \
 	detail/reader/header.cpp \
 	detail/reader/point.cpp \
 	detail/writer/writer.cpp \

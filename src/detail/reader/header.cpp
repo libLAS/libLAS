@@ -221,7 +221,8 @@ void Header::read()
         m_ifs.seekg(current_pos + 2);
         m_header.SetDataOffset(m_header.GetDataOffset() + 2);
     }
-
+    
+    readvlrs();
 }
 
 bool Header::HasLAS10PadSignature() 
@@ -266,6 +267,49 @@ bool Header::HasLAS10PadSignature()
     if (sgn1 == pad1 && sgn2 == pad2) found = true;
     
     return found;
+}
+
+void Header::readvlrs()
+{
+    VLRHeader vlrh = { 0 };
+
+    // seek to the start of the VLRs
+    m_ifs.seekg(m_header.GetHeaderSize(), std::ios::beg);
+
+    uint32_t count = m_header.GetRecordsCount();
+    
+    // We set the VLR records count to 0 because AddVLR 
+    // will ++ it each time we add a VLR instance to the 
+    // header.
+    m_header.SetRecordsCount(0);
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        read_n(vlrh, m_ifs, sizeof(VLRHeader));
+
+        uint16_t length = vlrh.recordLengthAfterHeader;
+        if (length < 1)
+        {
+            throw std::domain_error("VLR record length must be at least 1 byte long");
+        } 
+        std::vector<uint8_t> data;
+        data.resize(length);
+
+        read_n(data.front(), m_ifs, length);
+         
+        LASVariableRecord vlr;
+        vlr.SetReserved(vlrh.reserved);
+        vlr.SetUserId(std::string(vlrh.userId));
+        vlr.SetDescription(std::string(vlrh.description));
+        vlr.SetRecordLength(vlrh.recordLengthAfterHeader);
+        vlr.SetRecordId(vlrh.recordId);
+        vlr.SetData(data);
+
+        m_header.AddVLR(vlr);
+    }
+
+    LASSpatialReference srs(m_header.GetVLRs());    
+    m_header.SetSRS(srs);
+
 }
 
 }}} // namespace liblas::detail::reader

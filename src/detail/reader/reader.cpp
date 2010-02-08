@@ -92,23 +92,6 @@ std::istream& ReaderImpl::GetStream() const
     return m_ifs;
 }
 
-bool ReaderImpl::ReadVLR(LASHeader& header)
-{
-    detail::reader::VLR reader(m_ifs, header);
-    reader.read();
-    header = reader.GetHeader();
-
-    LASSpatialReference srs(header.GetVLRs());    
-    header.SetSRS(srs);
-
-    // keep a copy on the reader in case we're going to reproject data 
-    // on the way out.
-    m_in_srs = srs;
-
-    return true;
-}
-
-
 void ReaderImpl::Reset(LASHeader const& header)
 {
     m_ifs.clear();
@@ -206,7 +189,11 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     header = h.GetHeader();
     
     Reset(header);
-
+    
+    // keep a copy on the reader in case we're going to reproject data 
+    // on the way out.
+    m_in_srs = header.GetSRS();
+    
     return true;
 }
 
