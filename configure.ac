@@ -28,7 +28,7 @@ dnl #########################################################################
 dnl Checks for programs.
 dnl #########################################################################
 
-AM_INIT_AUTOMAKE([dist-bzip2])
+AM_INIT_AUTOMAKE([dist-bzip2 subdir-objects])
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_INSTALL

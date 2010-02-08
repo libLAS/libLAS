@@ -62,7 +62,7 @@ namespace tut
             liblas::LASHeader header;
             liblas::LASWriter writer(ofs, header);
 
-            ensure_equals(writer.GetVersion(), liblas::eLASVersion12);
+            ensure_equals(writer.GetHeader().GetVersionMinor(), 2);
 
             liblas::LASHeader const& hdr_default = writer.GetHeader();
             test_default_header(hdr_default);

@@ -42,6 +42,7 @@
 #include <liblas/detail/reader/reader.hpp>
 #include <liblas/detail/reader/header.hpp>
 #include <liblas/detail/reader/vlr.hpp>
+
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/liblas.hpp>
@@ -90,23 +91,6 @@ std::istream& ReaderImpl::GetStream() const
 {
     return m_ifs;
 }
-
-bool ReaderImpl::ReadVLR(LASHeader& header)
-{
-    detail::reader::VLR reader(m_ifs, header);
-    reader.read();
-    header = reader.GetHeader();
-
-    LASSpatialReference srs(header.GetVLRs());    
-    header.SetSRS(srs);
-
-    // keep a copy on the reader in case we're going to reproject data 
-    // on the way out.
-    m_in_srs = srs;
-
-    return true;
-}
-
 
 void ReaderImpl::Reset(LASHeader const& header)
 {
@@ -205,7 +189,11 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     header = h.GetHeader();
     
     Reset(header);
-
+    
+    // keep a copy on the reader in case we're going to reproject data 
+    // on the way out.
+    m_in_srs = header.GetSRS();
+    
     return true;
 }
 
@@ -255,11 +243,11 @@ ReaderImpl* ReaderFactory::Create(std::istream& ifs)
 
     // Determine version of given LAS file and
     // instantiate appropriate reader.
-    uint8_t verMajor = 0;
-    uint8_t verMinor = 0;
-    ifs.seekg(24, std::ios::beg);
-    detail::read_n(verMajor, ifs, 1);
-    detail::read_n(verMinor, ifs, 1);
+    // uint8_t verMajor = 0;
+    // uint8_t verMinor = 0;
+    // ifs.seekg(24, std::ios::beg);
+    // detail::read_n(verMajor, ifs, 1);
+    // detail::read_n(verMinor, ifs, 1);
 
     return new ReaderImpl(ifs);
     

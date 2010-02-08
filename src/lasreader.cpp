@@ -127,10 +127,6 @@ void LASReader::Init()
     if (!ret)
         throw std::runtime_error("public header block reading failure");
 
-    ret = m_pimpl->ReadVLR(m_header);
-    if (!ret)
-        throw std::runtime_error("public vlr header block reading failure");
-
     m_pimpl->Reset(m_header);
     
     if (bCustomHeader) {

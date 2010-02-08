@@ -66,3 +66,4 @@ src/CMakeFiles
 src/liblas.a
 test/data/*.dat
 test/data/*.idx
+.dirstamp

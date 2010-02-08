@@ -62,7 +62,8 @@ public:
 
     const LASHeader& GetHeader() const { return m_header; }
     void read();
-    
+    void readvlrs();
+
 protected:
 
     

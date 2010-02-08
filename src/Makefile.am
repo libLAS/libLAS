@@ -38,13 +38,12 @@ liblas_la_SOURCES = \
 	lasspatialreference.cpp \
 	lasformat.cpp \
 	detail/reader/reader.cpp \
-	detail/reader/vlr.cpp \
 	detail/reader/header.cpp \
 	detail/reader/point.cpp \
-	detail/writer.cpp \
-	detail/writer10.cpp \
-	detail/writer11.cpp \
-	detail/writer12.cpp 
+	detail/writer/writer.cpp \
+	detail/writer/header.cpp \
+	detail/writer/point.cpp \
+	detail/writer/base.cpp 
 
 if GDAL_IS_CONFIG
 liblas_la_SOURCES += gt_wkt_srs.cpp gt_citation.cpp tifvsi.cpp

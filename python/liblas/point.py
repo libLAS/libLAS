@@ -45,6 +45,7 @@ import datetime
 import time
 import math
 import color
+import ctypes
 
 class Point(object):
     def __init__(self, owned=True, handle=None, copy=False):
@@ -229,3 +230,25 @@ class Point(object):
         self.x = (self.x * header.scale[0]) + header.offset[0]
         self.y = (self.y * header.scale[1]) + header.offset[1]
         self.z = (self.z * header.scale[2]) + header.offset[2]
+    
+    def get_data(self):
+        l = ctypes.pointer(ctypes.c_int())
+        d = ctypes.pointer(ctypes.c_ubyte())
+        core.las.LASPoint_GetExtraData(self.handle, ctypes.byref(d), l)
+        
+        d2 = ctypes.cast(d, ctypes.POINTER(ctypes.c_ubyte * l.contents.value))
+        s = (ctypes.c_ubyte * l.contents.value)()
+        for i in range(l.contents.value):
+            s[i] = d2.contents[i]
+        p_d = ctypes.cast(d, ctypes.POINTER(ctypes.c_char_p))
+        core.las.LASString_Free(p_d)
+
+        return s
+
+    def set_data(self, data):
+                                                              
+        d =  ctypes.cast(data, ctypes.POINTER(ctypes.c_ubyte))
+
+        core.las.LASPoint_SetExtraData(self.handle, d, len(data))
+        
+    data = property(get_data, set_data)

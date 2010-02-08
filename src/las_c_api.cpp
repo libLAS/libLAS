@@ -729,6 +729,49 @@ LAS_DLL LASErrorEnum LASPoint_SetUserData(LASPointH hPoint, liblas::uint8_t valu
 
 }
 
+LAS_DLL LASErrorEnum LASPoint_GetExtraData(const LASPointH hPoint, liblas::uint8_t** data, liblas::uint16_t* length) {
+    
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetData", LE_Failure);
+
+    try {
+        LASPoint* p = ((LASPoint*) hPoint);
+        std::vector<liblas::uint8_t> d = p->GetExtraData();
+        *length = d.size();
+        *data = (uint8_t*) malloc (*length * sizeof(uint8_t));
+        for (liblas::uint16_t i=0; i < *length; i++) {
+            (*data)[i] = d[i];
+        }
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_GetData");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASPoint_SetExtraData(const LASPointH hPoint, liblas::uint8_t* data, liblas::uint16_t length) {
+    
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetData", LE_Failure);
+
+    try {
+        LASPoint* p = ((LASPoint*) hPoint);
+        std::vector<liblas::uint8_t> d;
+        d.resize(length);
+        for (liblas::uint16_t i=0; i < length; i++) {
+            d[i] = data[i];
+        }
+        p->SetExtraData(d);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetData");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
 LAS_DLL int LASPoint_Equal(const LASPointH hPoint1, const LASPointH hPoint2) {
     VALIDATE_LAS_POINTER1(hPoint1, "LASPoint_Equal", 0);
     VALIDATE_LAS_POINTER1(hPoint2, "LASPoint_Equal", 0);

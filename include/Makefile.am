@@ -22,17 +22,13 @@ nobase_las_HEADERS = \
     liblas/detail/endian.hpp \
     liblas/detail/fwd.hpp \
     liblas/detail/reader/reader.hpp \
-    liblas/detail/reader/vlr.hpp \
     liblas/detail/reader/header.hpp \
     liblas/detail/reader/point.hpp \
     liblas/detail/sha1.hpp \
     liblas/detail/sharedptr.hpp \
     liblas/detail/timer.hpp \
     liblas/detail/utility.hpp \
-    liblas/detail/writer.hpp \
-    liblas/detail/writer10.hpp \
-    liblas/detail/writer11.hpp \
-    liblas/detail/writer12.hpp \
+    liblas/detail/writer/writer.hpp \
     liblas/index/datastream.hpp \
     liblas/index/index.hpp \
     liblas/index/storage.hpp \

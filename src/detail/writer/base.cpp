@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS 1.2 writer implementation for C++ libLAS 
- * Author:   Howard Butler, hobu.inc@gmail.com
+ * Purpose:  LAS writer implementation for C++ libLAS 
+ * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
- * Copyright (c) 2008, Howard Butler
+ * Copyright (c) 2008, Mateusz Loskot
  *
  * All rights reserved.
  * 
@@ -39,34 +39,22 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_DETAIL_WRITER12_HPP_INCLUDED
-#define LIBLAS_DETAIL_WRITER12_HPP_INCLUDED
+#include <liblas/detail/writer/writer.hpp>
 
-#include <liblas/detail/writer.hpp>
-#include <liblas/detail/fwd.hpp>
-#include <liblas/cstdint.hpp>
-// std
-#include <iosfwd>
 
-namespace liblas { namespace detail { namespace v12 {
+namespace liblas { namespace detail {
 
-class WriterImpl : public Writer
+
+
+WriterBase::WriterBase(   std::ostream& ofs, 
+                        liblas::uint32_t& count) : 
+        m_pointCount(count), m_ofs(ofs) 
 {
-public:
+}
 
-    typedef Writer Base;
-    
-    WriterImpl(std::ostream& ofs);
-    LASVersion GetVersion() const;
-    void WriteHeader(LASHeader& header);
-    void UpdateHeader(LASHeader const& header);
-    void WritePointRecord(LASPoint const& record, LASHeader const& header);
-    
-private:
+WriterBase::~WriterBase()
+{
 
-    liblas::uint32_t m_pointCount;
-};
+}
 
-}}} // namespace liblas::detail::v12
-
-#endif // LIBLAS_DETAIL_WRITER12_HPP_INCLUDED
+}} // namespace liblas::detail

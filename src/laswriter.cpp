@@ -41,7 +41,8 @@
 
 #include <liblas/lasversion.hpp>
 #include <liblas/laswriter.hpp>
-#include <liblas/detail/writer.hpp>
+#include <liblas/detail/writer/writer.hpp>
+
 // std
 #include <stdexcept>
 #include <fstream>
@@ -63,11 +64,6 @@ LASWriter::~LASWriter()
     assert(0 != m_pimpl.get());
 
     m_pimpl->UpdateHeader(m_header);
-}
-
-LASVersion LASWriter::GetVersion() const
-{
-    return m_pimpl->GetVersion();
 }
 
 LASHeader const& LASWriter::GetHeader() const
@@ -100,7 +96,7 @@ void LASWriter::WriteHeader(LASHeader& header)
 
 bool LASWriter::SetSRS(const LASSpatialReference& srs)
 {
-    m_pimpl->SetOutputSRS(srs);
+    m_pimpl->SetOutputSRS(srs, m_header);
     return true;
 }
 
@@ -112,7 +108,7 @@ bool LASWriter::SetInputSRS(const LASSpatialReference& srs)
 
 bool LASWriter::SetOutputSRS(const LASSpatialReference& srs)
 {
-    m_pimpl->SetOutputSRS(srs);
+    m_pimpl->SetOutputSRS(srs, m_header);
     return true;
 }
 } // namespace liblas

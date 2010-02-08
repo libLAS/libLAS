@@ -105,10 +105,6 @@ public:
     /// @excepion may throw std::exception
     bool ReadPointAt(std::size_t n);
 
-    /// Reads all variable-length records from file.
-    /// @excepion may throw std::exception
-    bool ReadVLR();
-
     /// Reinitializes state of the reader.
     /// @excepion may throw std::exception
     void Reset();
@@ -122,7 +118,6 @@ public:
     /// writing purposes.
     /// @excepion may throw std::exception
     bool SetInputSRS(const LASSpatialReference& ref);
-
 
     /// Override the spatial reference of the LASReader's LASHeader for 
     /// writing purposes.

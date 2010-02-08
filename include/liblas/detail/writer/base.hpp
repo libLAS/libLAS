@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  VLR Reader implementation for C++ libLAS 
- * Author:   Howard Butler, hobu.inc@gmail.com
+ * Purpose:  LAS writer implementation for C++ libLAS 
+ * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
- * Copyright (c) 2010, Howard Butler
+ * Copyright (c) 2008, Mateusz Loskot
  *
  * All rights reserved.
  * 
@@ -38,63 +38,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  ****************************************************************************/
- 
-#include <liblas/detail/reader/vlr.hpp>
+
+#ifndef LIBLAS_DETAIL_WRITER_BASE_HPP_INCLUDED
+#define LIBLAS_DETAIL_WRITER_BASE_HPP_INCLUDED
+
+#include <liblas/lasversion.hpp>
+#include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/lasvariablerecord.hpp>
 
 
-namespace liblas { namespace detail { namespace reader {
 
-VLR::VLR(std::istream& ifs, const LASHeader& header) :
-    m_ifs(ifs), m_header(header)
+// std
+#include <iosfwd>
+
+namespace liblas { namespace detail {
+
+
+class WriterBase
 {
-}
+public:
 
-VLR::~VLR()
-{
-
-}
-
-void VLR::read()
-{
-    VLRHeader vlrh = { 0 };
-
-    // seek to the start of the VLRs
-    m_ifs.seekg(m_header.GetHeaderSize(), std::ios::beg);
-
-    uint32_t count = m_header.GetRecordsCount();
+    WriterBase(std::ostream& ofs, liblas::uint32_t& count);
+    ~WriterBase();
     
-    // We set the VLR records count to 0 because AddVLR 
-    // will ++ it each time we add a VLR instance to the 
-    // header.
-    m_header.SetRecordsCount(0);
-    for (uint32_t i = 0; i < count; ++i)
-    {
-        read_n(vlrh, m_ifs, sizeof(VLRHeader));
+    std::ostream& GetStream() const { return m_ofs; }
+    liblas::uint32_t& GetPointCount() const { return m_pointCount; }
+    void SetPointCount(liblas::uint32_t& count) { m_pointCount = count; }
+    
+    
+private:
 
-        uint16_t length = vlrh.recordLengthAfterHeader;
-        if (length < 1)
-        {
-            throw std::domain_error("VLR record length must be at least 1 byte long");
-        } 
-        std::vector<uint8_t> data;
-        data.resize(length);
+    // Blocked copying operations, declared but not defined.
+    WriterBase(WriterBase const& other);
+    WriterBase& operator=(WriterBase const& rhs);
 
-        read_n(data.front(), m_ifs, length);
-         
-        LASVariableRecord vlr;
-        vlr.SetReserved(vlrh.reserved);
-        vlr.SetUserId(std::string(vlrh.userId));
-        vlr.SetDescription(std::string(vlrh.description));
-        vlr.SetRecordLength(vlrh.recordLengthAfterHeader);
-        vlr.SetRecordId(vlrh.recordId);
-        vlr.SetData(data);
+    
+    liblas::uint32_t& m_pointCount;
+    std::ostream& m_ofs;
+    
+    
+};
 
-        m_header.AddVLR(vlr);
-    }
-}
+}} // namespace liblas::detail
 
 
-}}} // namespace liblas::detail::reader
+
+
+#endif // LIBLAS_DETAIL_WRITER_BASE_HPP_INCLUDED

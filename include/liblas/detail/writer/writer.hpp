@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  VLR Reader implementation for C++ libLAS 
- * Author:   Howard Butler, hobu.inc@gmail.com
+ * Purpose:  LAS 1.0 writer implementation for C++ libLAS 
+ * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
- * Copyright (c) 2010, Howard Butler
+ * Copyright (c) 2008, Mateusz Loskot
  *
  * All rights reserved.
  * 
@@ -38,46 +38,69 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  ****************************************************************************/
- 
-#ifndef LIBLAS_DETAIL_READER_VLR_HPP_INCLUDED
-#define LIBLAS_DETAIL_READER_VLR_HPP_INCLUDED
 
-#include <liblas/cstdint.hpp>
-#include <liblas/lasversion.hpp>
-#include <liblas/lasspatialreference.hpp>
+#ifndef LIBLAS_DETAIL_WRITER10_HPP_INCLUDED
+#define LIBLAS_DETAIL_WRITER10_HPP_INCLUDED
+
 #include <liblas/detail/fwd.hpp>
-#include <liblas/lasheader.hpp>
+#include <liblas/detail/writer/point.hpp>
+
+#ifndef HAVE_GDAL
+    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
+    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
+#endif
+
 
 // std
 #include <iosfwd>
 
-namespace liblas { namespace detail { namespace reader {
+namespace liblas { namespace detail { 
 
-class VLR
+class WriterImpl 
 {
 public:
 
-    VLR(std::istream& ifs, const LASHeader& header);
-    virtual ~VLR();
-
-    const LASHeader& GetHeader() const { return m_header; }
-    void read();
     
+    WriterImpl(std::ostream& ofs);
+    ~WriterImpl();
+    LASVersion GetVersion() const;
+    void WriteHeader(LASHeader& header);
+    void UpdateHeader(LASHeader const& header);
+    void WritePointRecord(LASPoint const& record, const LASHeader& header);
+
+    std::ostream& GetStream() const;
+
+    void SetSRS(const LASSpatialReference& srs, const LASHeader& header);
+    void SetInputSRS(const LASSpatialReference& srs);
+    void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header);
+
 protected:
-
+    PointRecord m_record;
+    std::ostream& m_ofs;
+     
+    LASSpatialReference m_out_srs;
+    LASSpatialReference m_in_srs;
     
-    std::istream& m_ifs;
-    LASHeader m_header;
-
+    OGRCoordinateTransformationH m_transform;
+    OGRSpatialReferenceH m_in_ref;
+    OGRSpatialReferenceH m_out_ref;
+    
+    detail::writer::Point* m_point_writer;
+    
 private:
 
-    // Blocked copying operations, declared but not defined.
-    VLR(VLR const& other);
-    VLR& operator=(VLR const& rhs);
-
+    void CreateTransform();
+    liblas::uint32_t m_pointCount;
 };
 
+class WriterFactory
+{
+public:
 
-}}} // namespace liblas::detail::reader
+    static WriterImpl* Create(std::ostream& ofs, LASHeader const& header);
+    static void Destroy(WriterImpl* p);
+};
 
-#endif // LIBLAS_DETAIL_READER_VLR_HPP_INCLUDED
+}} // namespace liblas::detail
+
+#endif // LIBLAS_DETAIL_WRITER10_HPP_INCLUDED

@@ -94,3 +94,22 @@
   >>> p.color = c
   >>> p.color.red
   124
+  
+  >>> import ctypes
+  >>> data = (ctypes.c_ubyte * 256)()
+  >>> data[10]
+  0
+  
+  >>> for i in range(256):
+  ...     data[i] = 2+i
+  
+  >>> data[10]
+  12
+  >>> p.data = data
+  
+# Ensure we can round trip the data
+  >>> [data[i] for i in range(10)]
+  [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  >>> [p.data[i] for i in range(10)]
+  [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
