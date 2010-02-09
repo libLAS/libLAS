@@ -61,6 +61,7 @@ typedef struct LASGuidHS *LASGuidH;
 typedef struct LASVLRHS *LASVLRH;
 typedef struct LASColorHS *LASColorH;
 typedef struct LASSRSHS *LASSRSH;
+typedef struct LASPointFormatHS *LASPointFormatH;
 
 
 /* Fake out the compiler if we don't have libgeotiff */
@@ -1160,6 +1161,24 @@ LAS_DLL uint32_t LASSRS_GetVLRCount(const LASSRSH hSRS);
  *  @param string the string to free
 */
 LAS_DLL void LASString_Free(char* string);
+
+LAS_DLL LASPointFormatH LASPointFormat_Create(  uint8_t version_major,
+                                                uint8_t version_minor,
+                                                uint32_t size,
+                                                uint8_t bHasColor,
+                                                uint8_t bHasTime);
+
+LAS_DLL uint8_t LASPointFormat_GetVersionMinor( LASPointFormatH hFormat);
+LAS_DLL uint8_t LASPointFormat_GetMajorVersion( LASPointFormatH hFormat);
+LAS_DLL uint8_t LASPointFormat_HasColor( LASPointFormatH hFormat);
+LAS_DLL uint8_t LASPointFormat_SetColor( LASPointFormatH hFormat, uint8_t bColor);
+LAS_DLL uint8_t LASPointFormat_HasTime( LASPointFormatH hFormat);
+LAS_DLL uint8_t LASPointFormat_SetTime( LASPointFormatH hFormat, uint8_t bTime);
+LAS_DLL uint32_t LASPointFormat_GetByteSize( LASPointFormatH hFormat);
+LAS_DLL void LASPointFormat_SetByteSize( LASPointFormatH hFormat, uint32_t size);
+
+LAS_DLL void LASPointFormat_Destroy(LASPointFormatH hFormat);
+
 
 LAS_C_END
 #endif

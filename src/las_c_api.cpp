@@ -49,6 +49,7 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/lasspatialreference.hpp>
+#include <liblas/lasformat.hpp>
 #include <liblas/capi/las_config.h>
 #include <liblas/capi/las_version.h>
 
@@ -60,6 +61,7 @@ typedef struct LASGuidHS *LASGuidH;
 typedef struct LASVLRHS *LASVLRH;
 typedef struct LASColorHS *LASColorH;
 typedef struct LASSRSHS *LASSRSH;
+typedef struct LASPointFormatHS *LASPointFormatH;
 
 #include <cstdio>
 #include <bitset>
@@ -2031,6 +2033,74 @@ LAS_DLL LASSRSH LASHeader_GetSRS(const LASHeaderH hHeader) {
 LAS_DLL void LASString_Free(char* string) {
     if (string)
         free(string);
+}
+
+
+LAS_DLL LASPointFormatH LASPointFormat_Create(  uint8_t version_major,
+                                                uint8_t version_minor,
+                                                uint32_t size,
+                                                uint8_t bHasColor,
+                                                uint8_t bHasTime) {
+    return (LASPointFormatH) new LASPointFormat(version_minor, 
+                                                version_major, 
+                                                size, 
+                                                bHasColor, 
+                                                bHasTime  );
+}
+
+LAS_DLL liblas::uint8_t LASPointFormat_GetVersionMinor( LASPointFormatH hFormat)
+{
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_GetVersionMinor", 0);
+    
+    return ((LASPointFormat*) hFormat)->GetVersionMinor();    
+}
+
+LAS_DLL liblas::uint8_t LASPointFormat_GetVersionMajor( LASPointFormatH hFormat)
+{
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_GetVersionMajor", 0);
+    
+    return ((LASPointFormat*) hFormat)->GetVersionMajor();    
+}
+
+LAS_DLL liblas::uint8_t LASPointFormat_HasColor( LASPointFormatH hFormat)
+{
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_HasColor", 0);
+    
+    return static_cast<int>(((LASPointFormat*) hFormat)->HasTime());    
+}
+
+LAS_DLL void LASPointFormat_SetColor( LASPointFormatH hFormat, liblas::uint8_t bColor)
+{
+    VALIDATE_LAS_POINTER0(hFormat, "LASPointFormat_SetColor");
+    
+    return ((LASPointFormat*) hFormat)->Color(static_cast<bool>(bColor));    
+}
+
+LAS_DLL void LASPointFormat_SetTime( LASPointFormatH hFormat, liblas::uint8_t bTime)
+{
+    VALIDATE_LAS_POINTER0(hFormat, "LASPointFormat_SetTime");
+    
+    return ((LASPointFormat*) hFormat)->Time(static_cast<bool>(bTime));    
+}
+
+LAS_DLL liblas::uint32_t LASPointFormat_GetByteSize( LASPointFormatH hFormat)
+{
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_GetByteSize", 0);
+    
+    return static_cast<liblas::uint32_t>(((LASPointFormat*) hFormat)->GetByteSize());    
+}
+
+LAS_DLL void LASPointFormat_SetByteSize( LASPointFormatH hFormat, liblas::uint32_t size)
+{
+    VALIDATE_LAS_POINTER0(hFormat, "LASPointFormat_SetByteSize");
+    
+    return ((LASPointFormat*) hFormat)->SetByteSize(size);    
+}
+
+LAS_DLL void LASPointFormat_Destroy(LASPointFormatH hFormat) {
+    VALIDATE_LAS_POINTER0(hFormat, "LASPointFormat_Destroy");
+    delete (LASPointFormat*) hFormat;
+    hFormat = NULL;    
 }
 
 LAS_C_END

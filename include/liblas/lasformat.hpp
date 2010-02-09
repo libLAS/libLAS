@@ -68,8 +68,8 @@ public:
     LASPointFormat& operator=(LASPointFormat const& rhs);
     LASPointFormat(LASPointFormat const& other);
     
-    liblas::uint16_t GetByteSize() const {return m_size;}
-    void SetByteSize(liblas::uint16_t size) {m_size = size;}
+    liblas::uint32_t GetByteSize() const {return m_size;}
+    void SetByteSize(liblas::uint32_t size) {m_size = size;}
     
     liblas::uint8_t GetVersionMajor() { return m_versionmajor; }
     void SetVersionMajor(liblas::uint8_t v) {m_versionmajor = v; }
