@@ -50,7 +50,6 @@ class Format(object):
             self.handle = handle
         else:
             self.handle = core.las.LASPointFormat_Create(major, minor, size, time, color)
-            import pdb;pdb.set_trace()
             
     def __del__(self):
         if self.handle and core:

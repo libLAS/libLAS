@@ -149,6 +149,21 @@ private:
     
 };
 
+
+class ReaderI
+{
+public:
+
+    virtual ~ReaderI() {}
+
+    virtual LASHeader& ReadHeader(const LASHeader& header) const = 0;
+    virtual LASPoint const& ReadNextPoint(const LASHeader& header) = 0;
+    virtual LASPoint const& ReadPointAt(std::size_t n, const LASHeader& header) = 0;
+
+    virtual void Reset(const LASHeader& header);
+    virtual void SetInputSRS(const LASSpatialReference& srs);
+    virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header);
+};
 } // namespace liblas
 
 #endif // ndef LIBLAS_LASREADER_HPP_INCLUDED
