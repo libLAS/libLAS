@@ -1,0 +1,41 @@
+  >>> from liblas import format
+  >>> from liblas import header
+  >>> from liblas import file
+  
+  >>> f2 = file.File('../test/data/TO_core_last_clip.las')
+
+
+  >>> h = f2.header
+  >>> f = h.format
+  
+  >>> f.major, f.minor
+  (1, 0)
+  
+  >>> f.size
+  28L
+  
+  >>> f.color
+  False
+  
+  >>> f.time
+  True
+  
+  >>> h = header.Header()
+  >>> f = h.format
+
+  
+  >>> f.size
+  20L
+
+  >>> f.major
+  1
+  
+    
+  >>> f.minor = 2
+ 
+  >>> f.size = 40
+
+  >>> h.format = f
+  
+  >>> h.data_record_length
+  40

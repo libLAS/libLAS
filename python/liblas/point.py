@@ -241,7 +241,7 @@ class Point(object):
         for i in range(l.contents.value):
             s[i] = d2.contents[i]
         p_d = ctypes.cast(d, ctypes.POINTER(ctypes.c_char_p))
-        core.las.LASString_Free(p_d)
+        # core.las.LASString_Free(p_d)
 
         return s
 

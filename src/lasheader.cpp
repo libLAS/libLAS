@@ -66,6 +66,7 @@
 #include <cstring> // std::memset, std::memcpy, std::strncpy
 #include <cassert>
 #include <ctime>
+#include <cmath>
 
 
 namespace liblas
@@ -685,10 +686,7 @@ LASPointFormat LASHeader::GetPointFormat() const
 {
     bool bHasColor(false);
     bool bHasTime(false);
-    liblas::uint8_t minor_ver(GetVersionMinor());
-    liblas::uint8_t major_ver(GetVersionMajor());
-    liblas::uint16_t bytesize(GetDataRecordLength());
-    
+
     if (GetDataFormatId() == liblas::ePointFormat3) {
         bHasColor = true;
         bHasTime = true;
@@ -700,8 +698,39 @@ LASPointFormat LASHeader::GetPointFormat() const
         bHasTime = true;
     } 
         
-    return LASPointFormat(major_ver, minor_ver, bytesize, bHasColor, bHasTime);
+    return LASPointFormat(  GetVersionMajor(), 
+                            GetVersionMinor(), 
+                            GetDataRecordLength(), 
+                            bHasColor, 
+                            bHasTime);
     
 }
 
+void LASHeader::SetPointFormat(const LASPointFormat& format)
+{
+
+    // A user can use the set the header's version information and 
+    // format information and sizes by using a LASPointFormat instance
+    // in addition to setting all the settings individually by hand
+    SetVersionMinor(format.GetVersionMinor());
+    SetVersionMajor(format.GetVersionMajor());
+    
+    // The DataRecordLength will be set to the max of either the format's 
+    // byte size or the pointformat's specified size according to whether 
+    // or not it has color or time (FIXME: or waveform packets once we get to 1.3 )
+    // The extra space that is available can be used to store LASPoint::GetExtraData.
+    if (format.HasColor() && format.HasTime()) {
+        SetDataFormatId(liblas::ePointFormat3);
+        SetDataRecordLength(std::max(static_cast<uint32_t>(ePointSize3),format.GetByteSize()));
+    } else if (format.HasColor()  && !format.HasTime()) {
+        SetDataFormatId(liblas::ePointFormat2);
+        SetDataRecordLength(std::max(static_cast<uint32_t>(ePointSize2),format.GetByteSize()));
+    } else if (!format.HasColor()  && format.HasTime()) {
+        SetDataFormatId(liblas::ePointFormat1);
+        SetDataRecordLength(std::max(static_cast<uint32_t>(ePointSize1),format.GetByteSize()));
+    } else 
+        SetDataFormatId(liblas::ePointFormat0);
+        SetDataRecordLength(std::max(static_cast<uint32_t>(ePointSize0),format.GetByteSize()));
+    } 
+    
 } // namespace liblas

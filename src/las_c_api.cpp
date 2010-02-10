@@ -2041,11 +2041,12 @@ LAS_DLL LASPointFormatH LASPointFormat_Create(  uint8_t version_major,
                                                 uint32_t size,
                                                 uint8_t bHasColor,
                                                 uint8_t bHasTime) {
-    return (LASPointFormatH) new LASPointFormat(version_minor, 
+    LASPointFormat* format = new LASPointFormat(version_minor, 
                                                 version_major, 
                                                 size, 
-                                                bHasColor, 
-                                                bHasTime  );
+                                                (bool)bHasColor, 
+                                                (bool)bHasTime  );
+    return (LASPointFormatH) format;
 }
 
 LAS_DLL liblas::uint8_t LASPointFormat_GetVersionMinor( LASPointFormatH hFormat)
@@ -2055,6 +2056,23 @@ LAS_DLL liblas::uint8_t LASPointFormat_GetVersionMinor( LASPointFormatH hFormat)
     return ((LASPointFormat*) hFormat)->GetVersionMinor();    
 }
 
+LAS_DLL LASErrorEnum LASPointFormat_SetVersionMinor( LASPointFormatH hFormat, liblas::uint8_t nMinor)
+{
+
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_SetVersionMinor", LE_Failure);
+
+    try {
+        LASPointFormat* format = ((LASPointFormat*) hFormat);
+        format->SetVersionMinor(nMinor);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPointFormat_SetVersionMinor");
+        return LE_Failure;
+    }
+    
+    return LE_None;
+}
+
 LAS_DLL liblas::uint8_t LASPointFormat_GetVersionMajor( LASPointFormatH hFormat)
 {
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_GetVersionMajor", 0);
@@ -2062,45 +2080,124 @@ LAS_DLL liblas::uint8_t LASPointFormat_GetVersionMajor( LASPointFormatH hFormat)
     return ((LASPointFormat*) hFormat)->GetVersionMajor();    
 }
 
+LAS_DLL LASErrorEnum LASPointFormat_SetVersionMajor( LASPointFormatH hFormat, liblas::uint8_t nMajor)
+{
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_SetVersionMajor", LE_Failure);
+
+    try {
+        LASPointFormat* format = ((LASPointFormat*) hFormat);
+        format->SetVersionMajor(nMajor);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPointFormat_SetVersionMajor");
+        return LE_Failure;
+    }
+    
+    return LE_None;
+}
+
 LAS_DLL liblas::uint8_t LASPointFormat_HasColor( LASPointFormatH hFormat)
 {
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_HasColor", 0);
     
+    return static_cast<int>(((LASPointFormat*) hFormat)->HasColor());    
+}
+
+LAS_DLL LASErrorEnum LASPointFormat_SetColor( LASPointFormatH hFormat, liblas::uint8_t bColor)
+{
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_SetColor", LE_Failure);
+
+    try {
+        LASPointFormat* format = ((LASPointFormat*) hFormat);
+        format->Color(static_cast<bool>(bColor));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPointFormat_SetColor");
+        return LE_Failure;
+    }
+    
+    return LE_None;
+}
+
+LAS_DLL liblas::uint8_t LASPointFormat_HasTime( LASPointFormatH hFormat)
+{
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_HasTime", 0);
+    
     return static_cast<int>(((LASPointFormat*) hFormat)->HasTime());    
 }
 
-LAS_DLL void LASPointFormat_SetColor( LASPointFormatH hFormat, liblas::uint8_t bColor)
+LAS_DLL LASErrorEnum LASPointFormat_SetTime( LASPointFormatH hFormat, liblas::uint8_t bTime)
 {
-    VALIDATE_LAS_POINTER0(hFormat, "LASPointFormat_SetColor");
-    
-    return ((LASPointFormat*) hFormat)->Color(static_cast<bool>(bColor));    
-}
 
-LAS_DLL void LASPointFormat_SetTime( LASPointFormatH hFormat, liblas::uint8_t bTime)
-{
-    VALIDATE_LAS_POINTER0(hFormat, "LASPointFormat_SetTime");
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_SetTime", LE_Failure);
+
+    try {
+        LASPointFormat* format = ((LASPointFormat*) hFormat);
+        format->Time(static_cast<bool>(bTime));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPointFormat_SetTime");
+        return LE_Failure;
+    }
     
-    return ((LASPointFormat*) hFormat)->Time(static_cast<bool>(bTime));    
+    return LE_None;
+
 }
 
 LAS_DLL liblas::uint32_t LASPointFormat_GetByteSize( LASPointFormatH hFormat)
 {
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_GetByteSize", 0);
     
-    return static_cast<liblas::uint32_t>(((LASPointFormat*) hFormat)->GetByteSize());    
+    LASPointFormat* format = ((LASPointFormat*) hFormat);
+    return static_cast<liblas::uint32_t>(format->GetByteSize());    
 }
 
-LAS_DLL void LASPointFormat_SetByteSize( LASPointFormatH hFormat, liblas::uint32_t size)
+LAS_DLL LASErrorEnum LASPointFormat_SetByteSize( LASPointFormatH hFormat, liblas::uint32_t size)
 {
-    VALIDATE_LAS_POINTER0(hFormat, "LASPointFormat_SetByteSize");
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_SetByteSize", LE_Failure);
+
+    try {
+        LASPointFormat* format = ((LASPointFormat*) hFormat);
+        format->SetByteSize(size);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPointFormat_SetByteSize");
+        return LE_Failure;
+    }
     
-    return ((LASPointFormat*) hFormat)->SetByteSize(size);    
+    return LE_None;
+
 }
 
 LAS_DLL void LASPointFormat_Destroy(LASPointFormatH hFormat) {
     VALIDATE_LAS_POINTER0(hFormat, "LASPointFormat_Destroy");
     delete (LASPointFormat*) hFormat;
     hFormat = NULL;    
+}
+
+LAS_DLL LASPointFormatH LASHeader_GetPointFormat( LASHeaderH hHeader )
+{
+    VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetPointFormat", 0);
+    
+    LASPointFormat format = ((LASHeader*) hHeader)->GetPointFormat();
+    return (LASPointFormatH) new LASPointFormat(format);
+
+}
+
+LAS_DLL LASErrorEnum LASHeader_SetPointFormat( LASHeaderH hHeader, const LASPointFormatH hFormat)
+{
+    VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetPointFormat", LE_Failure);
+    VALIDATE_LAS_POINTER1(hFormat, "LASHeader_SetPointFormat", LE_Failure);
+    
+    try {
+        ((LASHeader*) hHeader)->SetPointFormat(*((LASPointFormat*)hFormat));
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetPointFormat");
+        return LE_Failure;
+    }
+
+    return LE_None;
 }
 
 LAS_C_END

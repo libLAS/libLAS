@@ -317,6 +317,7 @@ public:
     void SetSRS(LASSpatialReference& srs);
 
     LASPointFormat GetPointFormat() const;
+    void SetPointFormat(const LASPointFormat& format);
     
 private:
     
