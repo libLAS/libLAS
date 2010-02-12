@@ -44,6 +44,8 @@ build.hobu
 cmake_install.cmake
 CMakeCache.txt
 CMakeFiles
+CTestTestfile.cmake
+src/CMakeFiles
 config.guess
 config.log
 config.status
@@ -62,7 +64,6 @@ python/build/*
 python/dist/*
 python/libLAS.egg-info/*
 Release
-src/CMakeFiles
 src/liblas.a
 test/data/*.dat
 test/data/*.idx
