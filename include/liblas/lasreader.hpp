@@ -50,6 +50,8 @@
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 
+#include <liblas/interfaces.hpp>
+
 // std
 #include <iosfwd>
 #include <string>
@@ -59,8 +61,6 @@
 
 namespace liblas {
 
-class ReaderI;
-    
 /// Defines public interface to LAS reader implementation.
 class LASReader
 {
@@ -155,20 +155,6 @@ private:
 };
 
 
-class ReaderI
-{
-public:
-
-    virtual LASHeader const& ReadHeader() = 0;
-    virtual LASPoint const& ReadNextPoint(const LASHeader& header) = 0;
-    virtual LASPoint const& ReadPointAt(std::size_t n, const LASHeader& header) = 0;
-
-    virtual void Reset(const LASHeader& header) = 0;
-    virtual void SetInputSRS(const LASSpatialReference& srs) = 0;
-    virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header) = 0;
-
-    virtual ~ReaderI() {};    
-};
 
 } // namespace liblas
 

@@ -45,7 +45,7 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/reader/point.hpp>
 #include <liblas/detail/reader/header.hpp>
-#include <liblas/lasreader.hpp>
+#include <liblas/interfaces.hpp>
 
 // std
 #include <iosfwd>
