@@ -39,11 +39,12 @@ SET(LIBLAS_HPP
     ${LIBLAS_HEADERS_DIR}/cstdint.hpp
     ${LIBLAS_HEADERS_DIR}/exception.hpp
     ${LIBLAS_HEADERS_DIR}/guid.hpp
+    ${LIBLAS_HEADERS_DIR}/interfaces.hpp
     ${LIBLAS_HEADERS_DIR}/iterator.hpp
     ${LIBLAS_HEADERS_DIR}/lasclassification.hpp
     ${LIBLAS_HEADERS_DIR}/lascolor.hpp
     ${LIBLAS_HEADERS_DIR}/laserror.hpp
-    ${LIBLAS_HEADERS_DIR}/lasfile.hpp
+    ${LIBLAS_HEADERS_DIR}/lasformat.hpp    
     ${LIBLAS_HEADERS_DIR}/lasheader.hpp
     ${LIBLAS_HEADERS_DIR}/laspoint.hpp
     ${LIBLAS_HEADERS_DIR}/lasreader.hpp
@@ -55,27 +56,25 @@ SET(LIBLAS_HPP
 
 SET(LIBLAS_DETAIL_HPP
     ${LIBLAS_HEADERS_DIR}/detail/endian.hpp
-    ${LIBLAS_HEADERS_DIR}/detail/file.hpp
     ${LIBLAS_HEADERS_DIR}/detail/fwd.hpp
-    ${LIBLAS_HEADERS_DIR}/detail/reader.hpp
-    ${LIBLAS_HEADERS_DIR}/detail/reader10.hpp
-    ${LIBLAS_HEADERS_DIR}/detail/reader11.hpp
-    ${LIBLAS_HEADERS_DIR}/detail/reader12.hpp
+    ${LIBLAS_HEADERS_DIR}/detail/reader/reader.hpp
+    ${LIBLAS_HEADERS_DIR}/detail/reader/header.hpp
+    ${LIBLAS_HEADERS_DIR}/detail/reader/point.hpp
     ${LIBLAS_HEADERS_DIR}/detail/sha1.hpp
     ${LIBLAS_HEADERS_DIR}/detail/sharedptr.hpp
     ${LIBLAS_HEADERS_DIR}/detail/timer.hpp
     ${LIBLAS_HEADERS_DIR}/detail/utility.hpp
-    ${LIBLAS_HEADERS_DIR}/detail/writer.hpp
-    ${LIBLAS_HEADERS_DIR}/detail/writer10.hpp
-    ${LIBLAS_HEADERS_DIR}/detail/writer11.hpp
-    ${LIBLAS_HEADERS_DIR}/detail/writer12.hpp
+    ${LIBLAS_HEADERS_DIR}/detail/writer/writer.hpp
+    ${LIBLAS_HEADERS_DIR}/detail/writer/base.hpp
+    ${LIBLAS_HEADERS_DIR}/detail/writer/point.hpp
+    ${LIBLAS_HEADERS_DIR}/detail/writer/header.hpp    
 )
 
 SET(LIBLAS_CPP
     lasclassification.cpp
     lascolor.cpp
     laserror.cpp
-    lasfile.cpp
+    lasformat.cpp
     lasheader.cpp
     laspoint.cpp
     lasreader.cpp
@@ -84,15 +83,13 @@ SET(LIBLAS_CPP
     laswriter.cpp)
 
 SET(LIBLAS_DETAIL_CPP
-    detail/file.cpp
-    detail/reader.cpp
-    detail/reader10.cpp
-    detail/reader11.cpp
-    detail/reader12.cpp
-    detail/writer.cpp
-    detail/writer10.cpp
-    detail/writer11.cpp
-    detail/writer12.cpp)
+    detail/reader/reader.cpp
+    detail/reader/point.cpp
+    detail/reader/header.cpp
+    detail/writer/writer.cpp
+    detail/writer/base.cpp
+    detail/writer/point.cpp
+    detail/writer/header.cpp)
 
 SET(LIBLAS_SOURCES
     ${LIBLAS_HPP}
