@@ -40,8 +40,6 @@
  ****************************************************************************/
 
 #include <liblas/detail/reader/reader.hpp>
-#include <liblas/detail/reader/header.hpp>
-#include <liblas/detail/reader/vlr.hpp>
 
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasvariablerecord.hpp>
@@ -62,7 +60,9 @@ namespace liblas { namespace detail {
 
 ReaderImpl::ReaderImpl(std::istream& ifs) :
     m_ifs(ifs), m_size(0), m_current(0),
-    m_transform(0), m_in_ref(0), m_out_ref(0), m_point_reader(0)
+    m_transform(0), m_in_ref(0), m_out_ref(0), m_point_reader(0),     
+    m_header_reader(new reader::Header(m_ifs))
+
 {
 }
 
@@ -85,6 +85,7 @@ ReaderImpl::~ReaderImpl()
 #endif
 
     delete m_point_reader;
+    delete m_header_reader;
 }
 
 std::istream& ReaderImpl::GetStream() const
@@ -105,9 +106,9 @@ void ReaderImpl::Reset(LASHeader const& header)
     // we'll create a point reader at this point.
     if (m_point_reader == 0) {
         if (m_transform != 0) {
-            m_point_reader = new detail::reader::Point(m_ifs, header, m_transform);
+            m_point_reader = new reader::Point(m_ifs, header, m_transform);
         } else {
-            m_point_reader = new detail::reader::Point(m_ifs, header);
+            m_point_reader = new reader::Point(m_ifs, header);
         }
     } 
 }
@@ -121,7 +122,7 @@ void ReaderImpl::SetOutputSRS(const LASSpatialReference& srs, const LASHeader& h
     if (m_point_reader != 0) {
         delete m_point_reader;
         m_point_reader = 0;
-        m_point_reader = new detail::reader::Point(m_ifs, header, m_transform);
+        m_point_reader = new reader::Point(m_ifs, header, m_transform);
     }
 }
 
@@ -179,14 +180,10 @@ void ReaderImpl::CreateTransform(){
 }
 
 
-bool ReaderImpl::ReadHeader(LASHeader& header)
+LASHeader const& ReaderImpl::ReadHeader()
 {
-    using detail::read_n;
-    using detail::reader::Header;
-    
-    Header h(m_ifs);
-    h.read();
-    header = h.GetHeader();
+    m_header_reader->read();
+    const LASHeader& header = m_header_reader->GetHeader();
     
     Reset(header);
     
@@ -194,32 +191,45 @@ bool ReaderImpl::ReadHeader(LASHeader& header)
     // on the way out.
     m_in_srs = header.GetSRS();
     
-    return true;
+    return header;
 }
 
-bool ReaderImpl::ReadNextPoint(LASPoint& point, const LASHeader& header)
+LASPoint const& ReaderImpl::ReadNextPoint(const LASHeader& header)
 {
     if (0 == m_current)
     {
         m_ifs.clear();
         m_ifs.seekg(header.GetDataOffset(), std::ios::beg);
+
     }
 
     if (m_current < m_size)
     {
         m_point_reader->read();
-        point = m_point_reader->GetPoint();
+        const LASPoint& point = m_point_reader->GetPoint();
         ++m_current;
-        return true;
+        return point;
+        // return true;
+    } else if (m_current == m_size ){
+        throw std::out_of_range("file has no more points to read, end of file reached");
+    } else {
+        throw std::runtime_error("ReadNextPoint: m_current > m_size, something has gone extremely awry");
     }
 
-    return false;
+    // return false;
 }
 
-bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& header)
+LASPoint const& ReaderImpl::ReadPointAt(std::size_t n, const LASHeader& header)
 {
-    if (m_size <= n)
-        return false;
+    // FIXME: Throw in this case.
+    if (m_size == n) {
+        throw std::out_of_range("file has no more points to read, end of file reached");
+    } else if (m_size < n) {
+        std::ostringstream output;
+        output << "ReadPointAt:: Inputted value: " << n << " is greater than the number of points: " << m_size;
+        std::string out(output.str());
+        throw std::runtime_error(out);
+    } 
 
     std::streamsize pos = (static_cast<std::streamsize>(n) * header.GetDataRecordLength()) + header.GetDataOffset();    
 
@@ -227,10 +237,9 @@ bool ReaderImpl::ReadPointAt(std::size_t n, LASPoint& point, const LASHeader& he
     m_ifs.seekg(pos, std::ios::beg);
 
     m_point_reader->read();
-    point = m_point_reader->GetPoint();
-
-
-    return true;
+    const LASPoint& point = m_point_reader->GetPoint();
+    
+    return point;
 }
 
 

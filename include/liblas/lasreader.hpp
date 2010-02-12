@@ -59,6 +59,8 @@
 
 namespace liblas {
 
+class ReaderI;
+    
 /// Defines public interface to LAS reader implementation.
 class LASReader
 {
@@ -69,6 +71,8 @@ public:
     /// @excepion std::runtime_error - on failure state of the input stream.
     LASReader(std::istream& ifs);
 
+    LASReader(ReaderI* reader);
+    
     /// User-defined consructor initializes reader with input stream and
     /// a header to override the values in the file
     /// @excepion std::runtime_error - on failure state of the input stream.
@@ -140,8 +144,9 @@ private:
 
     const std::auto_ptr<detail::ReaderImpl> m_pimpl;
     LASHeader m_header;
-    LASPoint m_point;
-    std::vector<LASVariableRecord> m_vlrs;
+    LASPoint* m_point;
+    LASPoint* m_empty_point;
+    // std::vector<LASVariableRecord> m_vlrs;
     
     // Set if the user provides a header to override the header as 
     // read from the istream
@@ -154,16 +159,17 @@ class ReaderI
 {
 public:
 
-    virtual ~ReaderI() {}
-
-    virtual LASHeader& ReadHeader(const LASHeader& header) const = 0;
+    virtual LASHeader const& ReadHeader() = 0;
     virtual LASPoint const& ReadNextPoint(const LASHeader& header) = 0;
     virtual LASPoint const& ReadPointAt(std::size_t n, const LASHeader& header) = 0;
 
-    virtual void Reset(const LASHeader& header);
-    virtual void SetInputSRS(const LASSpatialReference& srs);
-    virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header);
+    virtual void Reset(const LASHeader& header) = 0;
+    virtual void SetInputSRS(const LASSpatialReference& srs) = 0;
+    virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header) = 0;
+
+    virtual ~ReaderI() {};    
 };
+
 } // namespace liblas
 
 #endif // ndef LIBLAS_LASREADER_HPP_INCLUDED

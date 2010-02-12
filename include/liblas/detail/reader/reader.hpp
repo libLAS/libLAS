@@ -44,6 +44,8 @@
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/reader/point.hpp>
+#include <liblas/detail/reader/header.hpp>
+#include <liblas/lasreader.hpp>
 
 // std
 #include <iosfwd>
@@ -57,16 +59,16 @@
 
 namespace liblas { namespace detail { 
 
-class ReaderImpl
+class ReaderImpl : public ReaderI
 {
 public:
 
     ReaderImpl(std::istream& ifs);
     ~ReaderImpl();
 
-    bool ReadHeader(LASHeader& header);
-    bool ReadNextPoint(LASPoint& point, const LASHeader& header);
-    bool ReadPointAt(std::size_t n, LASPoint& record, const LASHeader& header);
+    LASHeader const& ReadHeader();
+    LASPoint const& ReadNextPoint(const LASHeader& header);
+    LASPoint const& ReadPointAt(std::size_t n, const LASHeader& header);
 
     std::istream& GetStream() const;
     void Reset(LASHeader const& header);
@@ -96,6 +98,7 @@ private:
     void CreateTransform();
     
     detail::reader::Point* m_point_reader;
+    detail::reader::Header* m_header_reader;
 
 };
 
