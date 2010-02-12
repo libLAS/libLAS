@@ -78,7 +78,7 @@ bool LASWriter::WritePoint(LASPoint const& point)
         return false;
     }
 
-    m_pimpl->WritePointRecord(point, m_header);
+    m_pimpl->WritePoint(point, m_header);
 
     return true;
 }
@@ -90,8 +90,9 @@ std::ostream& LASWriter::GetStream() const
 
 void LASWriter::WriteHeader(LASHeader& header)
 {
-    m_pimpl->WriteHeader(header);
-    m_header = header;
+    // The writer may update our header as part of its 
+    // writing process (change VLRs for SRS's, for instance).
+    m_header = m_pimpl->WriteHeader(header);
 }
 
 bool LASWriter::SetSRS(const LASSpatialReference& srs)

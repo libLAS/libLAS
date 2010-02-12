@@ -56,17 +56,22 @@
 namespace liblas { namespace detail { 
 
 WriterImpl::WriterImpl(std::ostream& ofs) :
-    m_ofs(ofs), m_transform(0),  m_in_ref(0), m_out_ref(0), m_point_writer(0), m_pointCount(0)
+    m_ofs(ofs), 
+    m_transform(0),  
+    m_in_ref(0), 
+    m_out_ref(0), 
+    m_point_writer(0), 
+    m_header_writer(0), 
+    m_pointCount(0)
 {
 }
 
 
-void WriterImpl::WriteHeader(LASHeader& header)
+LASHeader const&  WriterImpl::WriteHeader(LASHeader const& header)
 {
-    detail::writer::Header hwriter(m_ofs,m_pointCount, header );
-    hwriter.write();
-    header = hwriter.GetHeader();
-    
+    m_header_writer = new detail::writer::Header(m_ofs,m_pointCount, header );
+    m_header_writer->write();
+    return m_header_writer->GetHeader();
 }
 
 void WriterImpl::UpdateHeader(LASHeader const& header)
@@ -81,7 +86,7 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
     }
 }
 
-void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header)
+void WriterImpl::WritePoint(LASPoint const& point, const LASHeader& header)
 {
     if (m_point_writer == 0) {
         if (m_transform != 0) {
@@ -96,8 +101,6 @@ void WriterImpl::WritePointRecord(LASPoint const& point, const LASHeader& header
 
 WriterImpl::~WriterImpl()
 {
-    if (m_point_writer != 0)
-        delete m_point_writer;
         
 #ifdef HAVE_GDAL
     if (m_transform) {
@@ -110,6 +113,13 @@ WriterImpl::~WriterImpl()
         OSRDestroySpatialReference(m_out_ref);
     }
 #endif
+
+    if (m_point_writer != 0)
+        delete m_point_writer;
+
+    if (m_header_writer != 0)
+        delete m_header_writer;
+
 }
 
 std::ostream& WriterImpl::GetStream() const
@@ -131,10 +141,6 @@ void WriterImpl::SetOutputSRS(const LASSpatialReference& srs, const LASHeader& h
     }
 }
 
-void WriterImpl::SetSRS(const LASSpatialReference& srs , const LASHeader& header)
-{
-    SetOutputSRS(srs, header);
-}
 
 void WriterImpl::SetInputSRS(const LASSpatialReference& srs )
 {

@@ -73,6 +73,28 @@ public:
     virtual ~ReaderI() {};    
 };
 
+class WriterI
+{
+public:
+
+    virtual LASHeader const& WriteHeader(const LASHeader& header) = 0;
+    virtual void UpdateHeader(const LASHeader& header) = 0;
+    virtual void WritePoint(const LASPoint& point, const LASHeader& header) = 0;
+
+    virtual void SetInputSRS(const LASSpatialReference& srs) = 0;
+    virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header) = 0;
+
+    virtual ~WriterI() {};    
+    // virtual LASHeader const& ReadHeader() = 0;
+    // virtual LASPoint const& ReadNextPoint(const LASHeader& header) = 0;
+    // virtual LASPoint const& ReadPointAt(std::size_t n, const LASHeader& header) = 0;
+    // 
+    // virtual void Reset(const LASHeader& header) = 0;
+    // virtual void SetInputSRS(const LASSpatialReference& srs) = 0;
+    // virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header) = 0;
+    // 
+    // virtual ~ReaderI() {};    
+};
 } // namespace liblas
 
 #endif // ndef LIBLAS_INTERFACES_HPP_INCLUDED

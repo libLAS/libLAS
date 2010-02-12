@@ -43,20 +43,14 @@
 #define LIBLAS_DETAIL_WRITER10_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
+#include <liblas/interfaces.hpp>
 #include <liblas/detail/writer/point.hpp>
+#include <liblas/detail/writer/header.hpp>
 
-#ifndef HAVE_GDAL
-    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
-    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
-#endif
-
-
-// std
-#include <iosfwd>
 
 namespace liblas { namespace detail { 
 
-class WriterImpl 
+class WriterImpl : public WriterI
 {
 public:
 
@@ -64,13 +58,12 @@ public:
     WriterImpl(std::ostream& ofs);
     ~WriterImpl();
     LASVersion GetVersion() const;
-    void WriteHeader(LASHeader& header);
+    LASHeader const& WriteHeader(LASHeader const& header);
     void UpdateHeader(LASHeader const& header);
-    void WritePointRecord(LASPoint const& record, const LASHeader& header);
+    void WritePoint(LASPoint const& record, const LASHeader& header);
 
     std::ostream& GetStream() const;
 
-    void SetSRS(const LASSpatialReference& srs, const LASHeader& header);
     void SetInputSRS(const LASSpatialReference& srs);
     void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header);
 
@@ -85,7 +78,8 @@ protected:
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
     
-    detail::writer::Point* m_point_writer;
+    writer::Point* m_point_writer;
+    writer::Header* m_header_writer;
     
 private:
 

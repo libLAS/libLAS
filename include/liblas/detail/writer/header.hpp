@@ -46,7 +46,7 @@
 #include <liblas/detail/utility.hpp>
 
 #include <liblas/lasheader.hpp>
-#include <liblas/detail/writer/writer.hpp>
+#include <liblas/detail/writer/base.hpp>
 
 // std
 #include <iosfwd>
@@ -60,8 +60,8 @@ public:
     typedef WriterBase Base;
 
     Header(std::ostream& ofs, liblas::uint32_t& count, LASHeader const& header );
-    
-    LASHeader GetHeader() const { return m_header; }
+
+    const LASHeader& GetHeader() const { return m_header; }
     void write();
     
 protected:
