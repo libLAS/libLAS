@@ -172,8 +172,6 @@ void Point::project()
     p.SetX(x);
     p.SetY(y);
     p.SetZ(z);
-#else
-    detail::ignore_unused_variable_warning(p);
 #endif
 }
 
