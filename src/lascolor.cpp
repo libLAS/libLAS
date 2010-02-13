@@ -42,9 +42,6 @@
 #include <liblas/lascolor.hpp>
 #include <liblas/cstdint.hpp>
 
-// std
-#include <cstring>
-
 namespace liblas {
 
 LASColor::LASColor() :

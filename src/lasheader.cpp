@@ -40,22 +40,13 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasheader.hpp>
 #include <liblas/cstdint.hpp>
-#include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
+
+#include <liblas/lasheader.hpp>
+#include <liblas/guid.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lasformat.hpp>
-
-// GeoTIFF
-#ifdef HAVE_LIBGEOTIFF
-#include <geotiff.h>
-#include <geo_simpletags.h>
-#include "geo_normalize.h"
-#include "geo_simpletags.h"
-#include "geovalues.h"
-#include "geotiffio.h"
-#endif // HAVE_LIBGEOTIFF
 
 //std
 #include <algorithm>
@@ -66,7 +57,6 @@
 #include <cstring> // std::memset, std::memcpy, std::strncpy
 #include <cassert>
 #include <ctime>
-#include <cmath>
 
 
 namespace liblas

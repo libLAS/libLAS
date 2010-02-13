@@ -43,8 +43,6 @@
 
 #include <liblas/laserror.hpp>
 #include <liblas/cstdint.hpp>
-//std
-#include <string>
 
 namespace liblas
 {

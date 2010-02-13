@@ -42,6 +42,7 @@
 
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/utility.hpp>
+
 // std
 #include <stdexcept>
 #include <string>

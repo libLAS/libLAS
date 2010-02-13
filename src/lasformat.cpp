@@ -41,15 +41,6 @@
 
 #include <liblas/lasformat.hpp>
 #include <liblas/detail/utility.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/liblas.hpp>
-// std
-#include <vector>
-#include <fstream>
-#include <stdexcept>
-#include <cstdlib> // std::size_t
-#include <cassert>
 
 namespace liblas { 
 
