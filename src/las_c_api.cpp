@@ -739,7 +739,7 @@ LAS_DLL LASErrorEnum LASPoint_GetExtraData(const LASPointH hPoint, liblas::uint8
         LASPoint* p = ((LASPoint*) hPoint);
         std::vector<liblas::uint8_t> d = p->GetExtraData();
         *length = d.size();
-        *data = (uint8_t*) malloc (*length * sizeof(uint8_t));
+        *data = (liblas::uint8_t*) malloc (*length * sizeof(liblas::uint8_t));
         for (liblas::uint16_t i=0; i < *length; i++) {
             (*data)[i] = d[i];
         }
@@ -2036,11 +2036,11 @@ LAS_DLL void LASString_Free(char* string) {
 }
 
 
-LAS_DLL LASPointFormatH LASPointFormat_Create(  uint8_t version_major,
-                                                uint8_t version_minor,
-                                                uint32_t size,
-                                                uint8_t bHasColor,
-                                                uint8_t bHasTime) {
+LAS_DLL LASPointFormatH LASPointFormat_Create(  liblas::uint8_t version_major,
+                                                liblas::uint8_t version_minor,
+                                                liblas::uint32_t size,
+                                                liblas::uint8_t bHasColor,
+                                                liblas::uint8_t bHasTime) {
     LASPointFormat* format = new LASPointFormat(version_minor, 
                                                 version_major, 
                                                 size, 
