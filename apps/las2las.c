@@ -35,6 +35,54 @@ void repair_header(FILE *file, LASHeaderH header, LASPointSummary* summary) ;
 #define LAS_FORMAT_11 1
 #define LAS_FORMAT_12 2
 
+void do_bulk_copy(const char* infile, size_t in_start_point, const char* outfile)
+{
+    /* bulk copy assumes that the header has already been written to outfile 
+       as it is supposed to be, and that we're just going to copy all of the 
+       points in infile as they are.  
+    */
+    FILE* file_out = 0;
+    FILE* file_in = 0;
+    
+    size_t read = 0;
+    size_t written = 0;
+    size_t size = 1000;
+
+    char *buffer = 0;
+    
+    buffer = (char*) malloc(size * sizeof(char));
+    
+    if (buffer == 0) {
+        LASError_Print("unable to allocate buffer copy");
+        exit(1);
+    }
+    file_in = fopen(infile, "rb");
+    fseek(file_in, in_start_point, SEEK_SET);
+    
+    if (file_in == 0) {
+        LASError_Print("input filename not valid for bulk copy");
+        exit(1);
+    }
+    file_out = fopen(outfile, "ab+");
+    if (file_out == 0) {
+        LASError_Print("output filename not valid for bulk copy");
+        exit(1);
+    }
+    
+    while (feof(file_in) == 0) {
+        read = fread(buffer, 1, size, file_in);
+        written = fwrite(buffer, 1, read, file_out);
+        
+        if (read != written) {
+            LASError_Print("unable to write data in bulk copy");
+            exit(1);
+        }
+    }
+    
+    fclose(file_in);
+    fclose(file_out);
+    free(buffer);
+}
 
 
 void usage()
@@ -116,6 +164,7 @@ int main(int argc, char *argv[])
     int last_only = FALSE;
     int skip_invalid = FALSE;
     int format = LAS_FORMAT_12;
+    int bulk_copy = FALSE;
     
     LASReaderH reader = NULL;
     LASHeaderH header = NULL;
@@ -184,6 +233,13 @@ int main(int argc, char *argv[])
         {
             skip_invalid = TRUE;
         }
+        else if (   strcmp(argv[i],"-b") == 0 ||
+                    strcmp(argv[i],"--bulk") == 0
+            )
+        {
+            bulk_copy = TRUE;
+        }
+        
         else if (   strcmp(argv[i],"--input") == 0  ||
                     strcmp(argv[i],"-input") == 0   ||
                     strcmp(argv[i],"-i") == 0       ||
