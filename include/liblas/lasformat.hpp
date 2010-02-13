@@ -44,7 +44,7 @@
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/cstdint.hpp>
-#include <liblas/lasheader.hpp>
+
 // std
 #include <iosfwd>
 

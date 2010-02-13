@@ -45,6 +45,7 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
+
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t

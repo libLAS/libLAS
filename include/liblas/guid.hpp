@@ -62,6 +62,8 @@
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/sha1.hpp>
 #include <liblas/detail/utility.hpp>
+
+// std
 #include <iosfwd>
 #include <iomanip>
 #include <algorithm>

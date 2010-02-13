@@ -42,10 +42,13 @@
 #ifndef LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED
 #define LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED
 
-#include <liblas/lasvariablerecord.hpp>
+
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
+
+#include <liblas/lasvariablerecord.hpp>
+
 #include <liblas/exception.hpp>
 #include <liblas/capi/las_config.h>
 

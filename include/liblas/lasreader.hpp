@@ -43,14 +43,14 @@
 #ifndef LIBLAS_LASREADER_HPP_INCLUDED
 #define LIBLAS_LASREADER_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
+#include <liblas/detail/fwd.hpp>
+#include <liblas/interfaces.hpp>
+
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
-#include <liblas/detail/fwd.hpp>
 
-#include <liblas/interfaces.hpp>
 
 // std
 #include <iosfwd>
@@ -146,7 +146,6 @@ private:
     LASHeader m_header;
     LASPoint* m_point;
     LASPoint* m_empty_point;
-    // std::vector<LASVariableRecord> m_vlrs;
     
     // Set if the user provides a header to override the header as 
     // read from the istream

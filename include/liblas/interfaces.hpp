@@ -42,19 +42,11 @@
 #ifndef LIBLAS_INTERFACES_HPP_INCLUDED
 #define LIBLAS_INTERFACES_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
+
+#include <liblas/detail/fwd.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
-#include <liblas/detail/fwd.hpp>
-
-// std
-#include <iosfwd>
-#include <string>
-#include <memory>
-#include <vector>
-#include <cstddef>
 
 namespace liblas {
 
@@ -85,15 +77,7 @@ public:
     virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header) = 0;
 
     virtual ~WriterI() {};    
-    // virtual LASHeader const& ReadHeader() = 0;
-    // virtual LASPoint const& ReadNextPoint(const LASHeader& header) = 0;
-    // virtual LASPoint const& ReadPointAt(std::size_t n, const LASHeader& header) = 0;
-    // 
-    // virtual void Reset(const LASHeader& header) = 0;
-    // virtual void SetInputSRS(const LASSpatialReference& srs) = 0;
-    // virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header) = 0;
-    // 
-    // virtual ~ReaderI() {};    
+
 };
 } // namespace liblas
 

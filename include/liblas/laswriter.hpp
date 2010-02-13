@@ -46,6 +46,7 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/detail/fwd.hpp>
+
 // std
 #include <iosfwd> // std::ostream
 #include <string>

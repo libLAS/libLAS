@@ -45,7 +45,6 @@
 
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/utility.hpp>
-#include <liblas/detail/endian.hpp>
 
 // std
 #include <string>
@@ -122,44 +121,6 @@ public:
     /// Get the total size of the VLR in bytes
     uint32_t GetTotalSize() const;
     
-    friend std::ostream& operator << ( std::ostream& out, LASVariableRecord const& d);
-    friend std::istream& operator >> ( std::istream& in, LASVariableRecord& d);
-    // friend std::ostream& operator << ( std::ostream& out, LASVariableRecord const& d)
-    // {
-    //     // std::vector<uint8_t> data = d.GetData();
-    //     for (size_t i=0;i<d.GetData().size();i++) {
-    //         out << d.GetData()[i];
-    //     }
-    //     return out;
-    // }
-    // friend std::istream& operator >> ( std::istream& in, LASVariableRecord& d)
-    // {
-    //     std::streampos input_pos = in.tellg();
-    //     std::vector<uint8_t> data;
-    //     in.seekg(0, std::ios::end);
-    //     std::streampos length = in.tellg();
-    //     in.seekg(input_pos, std::ios::beg);
-    //     std::cout << "Stream length: " << length << std::endl;
-    //     
-    //     uint8_t* buffer = new uint8_t[length];
-    // 
-    //     liblas::detail::read_n(buffer, in, length);
-    //     
-    //     // FIXME:  This has probably already been properly swapped?  
-    //     //         but I'm worried about the case where we have a 
-    //     //         stream that is really some sort of zlib or bzip stream
-    //     //         and we don't know the orientation of the bytes - hobu
-    //     LIBLAS_SWAP_BYTES_N(buffer, length);
-    //     
-    //     for (size_t i=0; i < length; i++){
-    //         data.push_back(buffer[i]);
-    //     }
-    //     delete buffer;
-    //     
-    //     d.SetData(data);
-    //     return in;
-    // }
-
         
 private:
 

@@ -43,13 +43,15 @@
 #ifndef LIBLAS_LASHEADER_HPP_INCLUDED
 #define LIBLAS_LASHEADER_HPP_INCLUDED
 
-#include <liblas/lasvariablerecord.hpp>
-#include <liblas/lasspatialreference.hpp>
 #include <liblas/cstdint.hpp>
-#include <liblas/guid.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/detail/fwd.hpp>
+
 #include <liblas/liblas.hpp>
+#include <liblas/lasvariablerecord.hpp>
+#include <liblas/lasspatialreference.hpp>
+#include <liblas/guid.hpp>
+
 //std
 #include <cstddef>
 #include <string>

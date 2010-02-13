@@ -43,6 +43,7 @@
 #define LIBLAS_LASCLASSIFICATION_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
+
 // std
 #include <cassert>
 #include <cstddef>
