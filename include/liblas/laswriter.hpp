@@ -46,6 +46,7 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/detail/fwd.hpp>
+#include <liblas/interfaces.hpp>
 
 // std
 #include <iosfwd> // std::ostream
@@ -98,10 +99,12 @@ private:
     LASWriter(LASWriter const& other);
     LASWriter& operator=(LASWriter const& rhs);
 
-    const std::auto_ptr<detail::WriterImpl> m_pimpl;
+    const std::auto_ptr<WriterI> m_pimpl;
 
     LASHeader m_header;
     detail::PointRecord m_record;
+    std::ostream& m_ofs;
+
 };
 
 } // namespace liblas

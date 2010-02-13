@@ -60,7 +60,8 @@ LASReader::LASReader(std::istream& ifs) :
     m_pimpl(detail::ReaderFactory::Create(ifs)),
     m_point(0),
     m_empty_point(new LASPoint()),
-    bCustomHeader(false)
+    bCustomHeader(false),
+    m_ifs(ifs)
 {
     Init();
 }
@@ -69,7 +70,8 @@ LASReader::LASReader(std::istream& ifs, LASHeader& header) :
     m_pimpl(detail::ReaderFactory::Create(ifs)),
     m_point(0),
     m_empty_point(new LASPoint()),
-    bCustomHeader(false)
+    bCustomHeader(false),
+    m_ifs(ifs)
 
 {
     m_header = header;
@@ -163,7 +165,7 @@ void LASReader::Init()
 
 std::istream& LASReader::GetStream() const
 {
-    return m_pimpl->GetStream();
+    return m_ifs;
 }
 
 void LASReader::Reset() 

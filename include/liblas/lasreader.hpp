@@ -142,7 +142,7 @@ private:
 
     void Init(); // throws on error
 
-    const std::auto_ptr<detail::ReaderImpl> m_pimpl;
+    const std::auto_ptr<ReaderI> m_pimpl;
     LASHeader m_header;
     LASPoint* m_point;
     LASPoint* m_empty_point;
@@ -150,6 +150,8 @@ private:
     // Set if the user provides a header to override the header as 
     // read from the istream
     bool bCustomHeader;
+
+    std::istream& m_ifs;
     
 };
 
