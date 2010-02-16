@@ -318,6 +318,147 @@ bool GetResultData( const LASQueryResult& result,
     return true;
 }
 
+sdo_geometry* MakeGeometry( SpatialIndex::Region* bounds,
+                            int srid,
+                            bool bUseSolidGeometry,
+                            bool bUse3d)
+{
+    sdo_geometry* output = (sdo_geometry* ) malloc (1 * sizeof(sdo_geometry));
+    
+    OCIArray* elem_info = (OCIArray* ) malloc (3 * sizeof(OCINumber));
+    OCIArray* ordinates = 0;// =  (OCIArray* ) malloc (3 * sizeof(OCINumber));
+    
+    // 
+    // ostringstream oss_geom;
+    // 
+    // ostringstream s_srid;
+    // ostringstream s_gtype;
+    // 
+    // ostringstream s_eleminfo;
+    // bool bGeographic = false;
+    // 
+    // if (srid == 0) {
+    //     s_srid << "NULL";
+    //     // bUse3d = true;
+    //     // bUseSolidGeometry = true;
+    //     }
+    // else if (srid == 4326) {
+    //     // bUse3d = true;
+    //     // bUseSolidGeometry = true;
+    //     bGeographic = true;
+    //     s_srid << srid;
+    //     // s_srid << "NULL";
+    // }
+    // else {
+    //     s_srid << srid;
+    //     // bUse3d = false;
+    //     // If the user set an srid and set it to solid, we're still 3d
+    //     // if (bUseSolidGeometry == true)
+    //     //     bUse3d = true;
+    // }
+    // 
+    // if (bUse3d) {
+    //     if (bUseSolidGeometry == true) {
+    //         ordinates =  (OCIArray* ) malloc (6 * sizeof(OCINumber));
+    //         elem_info[0] = 1;
+    //         elem_info[1] = 1007;
+    //         elem_info[2] = 3;
+    //         output->sdo_gtype = 3008;
+    //         // s_gtype << "3008";
+    //         // s_eleminfo << "(1,1007,3)";
+    // 
+    //     } else {
+    //         ordinates =  (OCIArray* ) malloc (6 * sizeof(OCINumber));
+    //         elem_info[0] = 1;
+    //         elem_info[1] = 1003;
+    //         elem_info[2] = 3;
+    //         output->sdo_gtype = 3003;
+    // 
+    //         // s_gtype << "3003";
+    //         // s_eleminfo  << "(1,1003,3)";
+    // 
+    //     }
+    // } else {
+    //     if (bUseSolidGeometry == true) {
+    //         ordinates =  (OCIArray* ) malloc (4 * sizeof(OCINumber));
+    //         elem_info[0] = 1;
+    //         elem_info[1] = 1007;
+    //         elem_info[2] = 3;
+    //         output->sdo_gtype = 2008;
+    //         
+    //         // s_gtype << "2008";
+    //         // s_eleminfo << "(1,1007,3)";
+    // 
+    //     } else {
+    //         ordinates =  (OCIArray* ) malloc (4 * sizeof(OCINumber));
+    //         elem_info[0] = 1;
+    //         elem_info[1] = 1003;
+    //         elem_info[2] = 3;
+    //         output->sdo_gtype = 2003;
+    //         // 
+    //         // 
+    //         // s_gtype << "2003";
+    //         // s_eleminfo  << "(1,1003,3)";
+    // 
+    //     }
+    // }
+    
+// 
+//     double x0, x1, y0, y1, z0, z1;
+//     double tolerance = 0.05;
+//     
+// 
+//     x0 = b->getLow(0);
+//     x1 = b->getHigh(0);
+//     y0 = b->getLow(1);
+//     y1 = b->getHigh(1);
+//     
+//     if (bUse3d) {
+//         try {
+//             z0 = b->getLow(2);
+//             z1 = b->getHigh(2);
+//         } catch (Tools::IndexOutOfBoundsException& e) {
+//             z0 = 0;
+//             z1 = 20000;
+//         }
+//     } else if (bGeographic) {
+//         x0 = -180.0;
+//         x1 = 180.0;
+//         y0 = -90.0;
+//         y1 = 90.0;
+//         z0 = 0.0;
+//         z1 = 20000.0;
+//         tolerance = 0.000000005;
+//     } else {
+//         z0 = 0.0;
+//         z1 = 20000.0;            
+//     }
+//     
+//         
+//     // std::cout << "use 3d?: " << bUse3d << " srid: " << s_srid.str() << std::endl;
+//     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
+//     oss_geom.precision(precision);
+// 
+//     oss_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
+// "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
+// "              mdsys.sdo_ordinate_array(\n";
+// 
+//     oss_geom << x0 << ",\n" << y0 << ",\n";
+// 
+//     if (bUse3d) {
+//         oss_geom << z0 << ",\n";
+//     }
+// 
+//     oss_geom << x1 << ",\n" << y1 << "\n";
+// 
+//     if (bUse3d) {
+//         oss_geom << ",\n";
+//         oss_geom << z1;
+//     }
+//     
+    return output;
+}
+
 bool InsertBlock(OWConnection* connection, 
                 const LASQueryResult& result, 
                 int srid, 
@@ -434,18 +575,36 @@ bool InsertBlock(OWConnection* connection,
         oss_geom << z1;
     }
 
-
+    long result_id = result.GetID();
+    
     oss_geom << "))";
     oss << "INSERT INTO "<< tableName << 
-            "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS, PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) VALUES ( " 
-            << pc_id << "," << result.GetID() <<"," << num_points << ", " 
-            << oss_geom.str() <<", :1, 1, 1, 0, 1)";
+            "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS, "
+            "PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
+            "VALUES ( :1, :2, :3, :4, :5" 
+            // << pc_id << "," << result.GetID() <<"," << num_points << ", " 
+            // << oss_geom.str() <<", :1"
+            ", 1, 1, 0, 1)";
 
     OWStatement* statement = 0;
     OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
 
     statement = connection->CreateStatement(oss.str().c_str());
-    statement->Define( locator, 1 ); // fetch one blob
+    
+    long* p_pc_id = (long*) malloc( 1 * sizeof(long));
+    *p_pc_id = pc_id;
+
+    long* p_result_id = (long*) malloc( 1 * sizeof(long));
+    *p_result_id = (long)result.GetID();
+    
+    int* p_num_points = (int*) malloc (1 * sizeof(int));
+    *p_num_points = num_points;
+    
+    statement->Bind( p_pc_id );
+    statement->Bind( p_result_id );
+    statement->Bind( p_num_points);
+    statement->Bind( oss_geom.str().c_str(), (int)oss_geom.str().size());
+    statement->Define( locator, 1 ); 
     
     std::vector<liblas::uint8_t> data;
     bool gotdata = GetResultData(result, reader, data, 3);
@@ -462,46 +621,6 @@ bool InsertBlock(OWConnection* connection,
     delete statement; statement = 0;
     oss.str("");
     
-    // FIXME (BLK_ID *and* OBJ_ID must be used as part of the query.)
-    // oss << "SELECT POINTS FROM " << tableName << " WHERE BLK_ID=" << result.GetID() << " and OBJ_ID=" << pc_id<<"  FOR UPDATE";
-    
-    // we only expect one blob to come back
-    // OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
-
-    // statement = connection->CreateStatement(oss.str().c_str());
-    // statement->Define( locator, 1 ); // fetch one blob
-    // 
-    // 
-    // if( statement->Execute() == false )
-    // {
-    //     std::cout << "Unable to execute statement!" << std::endl;
-    //     delete statement;
-    //     return false;
-    // }
-    // 
-    // if( statement->Fetch( 1 ) == false )
-    // {
-    //     std::cout << "Unable to fetch POINTS blob!" << std::endl;
-    //     delete statement;
-    //     return false;
-    // }
-    
-    // std::vector<liblas::uint8_t> data;
-    // bool gotdata = GetResultData(result, reader, data, 3);
-    // if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
-    // 
-    // liblas::uint32_t wroteblob = statement->WriteBlob(  locator[0],
-    //                                                     (void*)&(data[0]),
-    //                                                     data.size());
-    // 
-    // if (! wroteblob) throw std::runtime_error("No blob bytes could be written!");
-//select dbms_lob.getlength(points) from TO_core_last_clip
-
-    // oss << "";
-    // oss <<  "COMMIT";
-    // statement = Run(connection, oss);
-    // if (statement != 0) delete statement; else return false;
-    // oss.str("");
 
     OWStatement::Free(locator, 1);
 
@@ -511,6 +630,39 @@ bool InsertBlock(OWConnection* connection,
     
     return true;
 
+}
+
+bool InsertBlocks(
+                OWConnection* con, 
+                const std::list<LASQueryResult>& results,
+                long nCommitInterval, 
+                int srid, 
+                LASReader* reader2, 
+                const std::string& table_name, 
+                long precision,
+                long pc_id,
+                bool bUseSolidGeometry,
+                bool bUse3d
+                )
+{
+
+    
+    std::list<LASQueryResult>::const_iterator i;
+
+
+    for (i=results.begin(); i!=results.end(); i++)
+    {
+        bool inserted = InsertBlock(con, 
+                                    *i, 
+                                    srid, 
+                                    reader2, 
+                                    table_name.c_str(), 
+                                    precision, 
+                                    pc_id, 
+                                    bUseSolidGeometry, 
+                                    bUse3d);
+    }
+    
 }
 
 bool CreateSDOEntry(    OWConnection* connection, 
@@ -972,7 +1124,8 @@ int main(int argc, char* argv[])
     double ymax = 0.0;
     double zmax = 0.0;
     bool bSetExtents = false;
-        
+    
+    int nCommitInterval = 100;
     
     for (int i = 1; i < argc; i++)
     {
@@ -1094,6 +1247,13 @@ int main(int argc, char* argv[])
         {
             i++;
             precision = atoi(argv[i]);
+        }
+        else if (   strcmp(argv[i],"--commit-interval") == 0  ||
+                    strcmp(argv[i],"-ci") == 0  
+                )
+        {
+            i++;
+            nCommitInterval = atoi(argv[i]);
         }
         else if (   strcmp(argv[i],"--solid") == 0 ||
                     strcmp(argv[i],"-solid") == 0
@@ -1339,19 +1499,21 @@ int main(int argc, char* argv[])
         }
         oss.str("");        
     }
-
-    for (i=results.begin(); i!=results.end(); i++)
-    {
-        bool inserted = InsertBlock(con, 
-                                    *i, 
-                                    srid, 
-                                    reader2, 
-                                    table_name.c_str(), 
-                                    precision, 
-                                    pc_id, 
-                                    bUseSolidGeometry, 
-                                    bUse3d);
-    }
+    
+    InsertBlocks(con, results, nCommitInterval, srid, reader2, table_name.c_str(), precision, pc_id, bUseSolidGeometry, bUse3d);
+    // 
+    // for (i=results.begin(); i!=results.end(); i++)
+    // {
+    //     bool inserted = InsertBlock(con, 
+    //                                 *i, 
+    //                                 srid, 
+    //                                 reader2, 
+    //                                 table_name.c_str(), 
+    //                                 precision, 
+    //                                 pc_id, 
+    //                                 bUseSolidGeometry, 
+    //                                 bUse3d);
+    // }
     
     if (!bUseExistingBlockTable) {
         std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;

@@ -435,8 +435,8 @@ OWStatement::OWStatement( OWConnection* pConnection,
 
     if( nStmtType != OCI_STMT_SELECT )
     {
-        nStmtMode = OCI_COMMIT_ON_SUCCESS;
-        // nStmtMode = OCI_DEFAULT;
+        // nStmtMode = OCI_COMMIT_ON_SUCCESS;
+        nStmtMode = OCI_DEFAULT;
 
     }
 }
@@ -548,6 +548,47 @@ void OWStatement::Bind( int* pnData )
         hError );
 }
 
+void OWStatement::Define( long* pnData )
+{
+    OCIDefine* hDefine = NULL;
+
+    nNextCol++;
+
+    CheckError( OCIDefineByPos( hStmt,
+        &hDefine,
+        hError,
+        (ub4) nNextCol,
+        (dvoid*) pnData,
+        (sb4) sizeof(long),
+        (ub2) SQLT_LNG,
+        (void*) NULL,
+        (ub2*) NULL,
+        (ub2*) NULL, 
+        (ub4) OCI_DEFAULT ), hError );
+}
+
+void OWStatement::Bind( long* pnData )
+{
+    OCIBind* hBind = NULL;
+
+    nNextBnd++;
+
+    CheckError( OCIBindByPos(
+        hStmt,
+        &hBind,
+        hError,
+        (ub4) nNextBnd,
+        (dvoid*) pnData,
+        (sb4) sizeof(long),
+        (ub2) SQLT_LNG,
+        (void*) NULL,
+        (ub2*) NULL,
+        (ub2*) NULL,
+        (ub4) NULL,
+        (ub4) NULL,
+        (ub4) OCI_DEFAULT ),
+        hError );
+}
 void OWStatement::Bind( double* pnData )
 {
     OCIBind* hBind = NULL;
@@ -635,6 +676,50 @@ void OWStatement::Define( char* pszData, int nSize )
 }
 
 void OWStatement::Bind( char* pszData, int nSize )
+{
+    OCIBind* hBind = NULL;
+
+    nNextBnd++;
+
+    CheckError( OCIBindByPos(
+        hStmt,
+        &hBind,
+        hError,
+        (ub4) nNextBnd,
+        (dvoid*) pszData,
+        (sb4) nSize,
+        (ub2) SQLT_STR,
+        (void*) NULL,
+        (ub2*) NULL,
+        (ub2*) NULL,
+        (ub4) NULL,
+        (ub4) NULL,
+        (ub4) OCI_DEFAULT ),
+        hError );
+}
+
+void OWStatement::Define( const char* pszData, int nSize )
+{
+    OCIDefine* hDefine = NULL;
+
+    nNextCol++;
+
+    CheckError( OCIDefineByPos(
+        hStmt,
+        &hDefine,
+        hError,
+        (ub4) nNextCol,
+        (dvoid*) pszData,
+        (sb4) nSize,
+        (ub2) SQLT_STR,
+        (void*) NULL,
+        (ub2*) NULL,
+        (ub2*) NULL,
+        (ub4) OCI_DEFAULT ),
+        hError );
+}
+
+void OWStatement::Bind( const char* pszData, int nSize )
 {
     OCIBind* hBind = NULL;
 
@@ -825,6 +910,18 @@ int OWStatement::GetInteger( OCINumber* ppoData )
     return nRetVal;
 }
 
+void OWStatement::SetInteger( OCINumber* ppoData, int value )
+{
+
+    CheckError( OCINumberFromReal(
+        hError,
+        &value,
+        (uword) sizeof(int),
+        ppoData ),
+        hError );
+
+}
+
 double OWStatement::GetDouble( OCINumber* ppoData )
 {
     double dfRetVal;
@@ -839,6 +936,17 @@ double OWStatement::GetDouble( OCINumber* ppoData )
     return dfRetVal;
 }
 
+void OWStatement::SetDouble( OCINumber* ppoData, double value )
+{
+
+    CheckError( OCINumberFromReal(
+        hError,
+        &value,
+        (uword) sizeof(double),
+        ppoData ),
+        hError );
+
+}
 char* OWStatement::GetString( OCIString* ppoData )
 {
     return (char*) OCIStringPtr(

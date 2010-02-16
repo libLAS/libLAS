@@ -93,6 +93,9 @@ const char*         OWReplaceString( const char* pszBaseString,
 #define SDO_GEOMETRY                TYPE_OWNER".SDO_GEOMETRY"
 #define SDO_GEORASTER               TYPE_OWNER".SDO_GEORASTER"
 #define SDO_NUMBER_ARRAY            TYPE_OWNER".SDO_NUMBER_ARRAY"
+#define SDO_ORDINATE_ARRAY          TYPE_OWNER".SDO_ORDINATE_ARRAY"
+#define SDO_ELEM_INFO_ARRAY         TYPE_OWNER".SDO_ELEM_INFO_ARRAY"
+
 #define OW_XMLNS        "xmlns=\"http://xmlns.oracle.com/spatial/georaster\""
 
 /***************************************************************************/
@@ -209,7 +212,9 @@ private:
     OCIType*            hNumArrayTDO;
     OCIType*            hGeometryTDO;
     OCIType*            hGeoRasterTDO;
-
+    OCIType*            hElemArrayTDO;
+    OCIType*            hOrdinateArrayTDO;
+    
 public:
 
     OWStatement*        CreateStatement( const char* pszStatementIn );
@@ -270,16 +275,22 @@ public:
     unsigned int        nFetchCount;
 
     int                 GetInteger( OCINumber* ppoData );
+    void                SetInteger( OCINumber* ppoData, int value);
     double              GetDouble( OCINumber* ppoData );
+    void                SetDouble( OCINumber* ppoData, double value);
     char*               GetString( OCIString* ppoData );
 
     void                Define( int* pnData );
     void                Bind( int* pnData );
+    void                Define( long* pnData );
+    void                Bind( long* pnData );
     void                Bind( double* pnData );
     void                Bind( char* pData, long nData);
     void                Define( double* pnData );
     void                Define( char* pszData, int nSize = OWNAME );
     void                Bind( char* pszData, int nSize = OWNAME );
+    void                Define( const char* pszData, int nSize = OWNAME );
+    void                Bind( const char* pszData, int nSize = OWNAME );
     void                Define( OCILobLocator** pphLocator,
                             bool bBLOB = false);
     void                Define( OCIArray** pphData );
