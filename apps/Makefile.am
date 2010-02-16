@@ -11,7 +11,9 @@ SPATIALINDEX_CPPFLAGS = @SPATIALINDEX_INC@/spatialindex @SPATIALINDEX_INC@ -DHAV
 endif
 
 if OCI_IS_CONFIG
+if SPATIALINDEX_IS_CONFIG
 OCI_CPPFLAGS = @ORACLE_OCI_CFLAGS@ -DHAVE_ORACLE=1
+endif
 endif
 
 if BOOST_IS_CONFIG
@@ -36,9 +38,11 @@ endif
 
 if OCI_IS_CONFIG 
 if GDAL_IS_CONFIG
+if SPATIALINDEX_IS_CONFIG
 AM_CPPFLAGS += -Igeoraster
 las2oci_SOURCES = las2oci.cpp oci_wrapper.cpp
 bin_PROGRAMS += las2oci
+endif
 endif
 endif
 
