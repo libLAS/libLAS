@@ -63,6 +63,8 @@ OWConnection::OWConnection( const char* pszUserIn,
     hNumArrayTDO    = NULL;
     hGeometryTDO    = NULL;
     hGeoRasterTDO   = NULL;
+    hElemArrayTDO   = NULL;
+    hOrdinateArrayTDO = NULL;
     bSuceeeded      = false;
     nCharSize       = 1;
 
@@ -155,6 +157,8 @@ OWConnection::OWConnection( const char* pszUserIn,
     hNumArrayTDO    = DescribeType( (char*) SDO_NUMBER_ARRAY );
     hGeometryTDO    = DescribeType( (char*) SDO_GEOMETRY );
     hGeoRasterTDO   = DescribeType( (char*) SDO_GEORASTER );
+    hElemArrayTDO   = DescribeType( (char*) SDO_ELEM_INFO_ARRAY);
+    hOrdinateArrayTDO = DescribeType( (char* ) SDO_ORDINATE_ARRAY);
 }
 
 OWConnection::~OWConnection()
@@ -239,6 +243,32 @@ void OWConnection::DestroyType( sdo_geometry** pphData )
         (dvoid*) *pphData,
         (ub2) 0), NULL );
 }
+
+void OWConnection::CreateType( OCIArray* phData, OCIType* otype)
+{
+    CheckError( 
+        OCIObjectNew(   hEnv, 
+                        hError, 
+                        hSvcCtx, 
+                        OCI_TYPECODE_VARRAY,
+                        otype, 
+                        (dvoid *)NULL, 
+                        OCI_DURATION_SESSION,
+                        FALSE, 
+                        (dvoid **)&phData)
+                , 
+                hError );
+}
+
+void OWConnection::DestroyType( OCIArray* phData )
+{
+    CheckError( OCIObjectFree(
+        hEnv,
+        hError,
+        (OCIColl*) phData,
+        (ub2) 0), NULL );
+}
+
 
 OWStatement* OWConnection::CreateStatement( const char* pszStatementIn )
 {
@@ -572,7 +602,8 @@ void OWStatement::Bind( long* pnData )
     OCIBind* hBind = NULL;
 
     nNextBnd++;
-
+    
+    printf("Binding long column #: %d\n", nNextBnd);
     CheckError( OCIBindByPos(
         hStmt,
         &hBind,
@@ -580,7 +611,7 @@ void OWStatement::Bind( long* pnData )
         (ub4) nNextBnd,
         (dvoid*) pnData,
         (sb4) sizeof(long),
-        (ub2) SQLT_LNG,
+        (ub2) SQLT_NUM,
         (void*) NULL,
         (ub2*) NULL,
         (ub2*) NULL,
@@ -617,7 +648,7 @@ void OWStatement::Bind( char* pData, long nData )
     OCIBind* hBind = NULL;
 
     nNextBnd++;
-
+    printf("Binding blob column #: %d\n", nNextBnd);
     CheckError( OCIBindByPos( 
         hStmt,
         &hBind,
@@ -800,6 +831,40 @@ void OWStatement::Define( OCIArray** pphData )
         (ub4*) NULL ), hError );
 }
 
+void OWStatement::Bind( OCIArray* pphData, OCIType* type )
+{
+    OCIBind* hBind = NULL;
+
+    nNextBnd++;
+
+    CheckError( OCIBindByPos( 
+        hStmt,
+        &hBind,
+        hError,
+        (ub4) nNextBnd,
+        (dvoid*) 0,
+        (sb4) 0,
+        (ub2) SQLT_NTY,
+        (void*) NULL,
+        (ub2*) NULL,
+        (ub2*) NULL,
+        (ub4) NULL,
+        (ub4) NULL,
+        (ub4) OCI_DEFAULT ),
+        hError );
+    
+    CheckError( OCIBindObject(
+        hBind, 
+        hError, 
+        type, 
+        (dvoid **)&pphData, 
+        (ub4 *)0, 
+        (dvoid **)0, 
+        (ub4 *)0 ),
+        hError);
+        
+}
+
 void OWStatement::Define( sdo_georaster** pphData )
 {
     OCIDefine* hDefine = NULL;
@@ -947,6 +1012,8 @@ void OWStatement::SetDouble( OCINumber* ppoData, double value )
         hError );
 
 }
+
+
 char* OWStatement::GetString( OCIString* ppoData )
 {
     return (char*) OCIStringPtr(
@@ -1038,7 +1105,31 @@ double OWStatement::GetElement( OCIArray** ppoData,
     return *pdfResult;
 }
 
+void OWStatement::AddElement( OCIArray* poData, 
+                              int nValue )
+{
+    OCINumber      oci_number;
 
+
+    CheckError(OCINumberFromInt(hError, (dvoid *)&nValue, 
+        (uword)sizeof(ub4), OCI_NUMBER_UNSIGNED, 
+        (OCINumber *)&oci_number), hError);
+    CheckError(OCICollAppend(poConnect->hEnv, hError, (OCINumber *)&oci_number,
+        (dvoid *)0, (OCIColl *) poData), hError);
+
+}
+
+void OWStatement::AddElement( OCIArray* poData, 
+                              double dfValue )
+{
+    OCINumber      oci_number;
+
+    CheckError(OCINumberFromReal(hError, (dvoid *)&dfValue, 
+        (uword)sizeof(double), (OCINumber *)&oci_number), hError);
+    CheckError(OCICollAppend(poConnect->hEnv, hError, (OCINumber *)&oci_number,
+        (dvoid *)0, (OCIColl *) poData), hError);
+
+}
 unsigned long OWStatement::ReadBlob( OCILobLocator* phLocator,
                                      void* pBuffer,
                                      int nSize )
@@ -1173,6 +1264,27 @@ void OWStatement::BindName( char* pszName, int* pnData )
         hError );
 }
 
+void OWStatement::BindName( char* pszName, long* pnData )
+{
+    OCIBind* hBind = NULL;
+
+    CheckError( OCIBindByName(
+        (OCIStmt*) hStmt,
+        (OCIBind**) &hBind,
+        (OCIError*) hError,
+        (text*) pszName,
+        (sb4) -1,
+        (dvoid*) pnData,
+        (sb4) sizeof(long),
+        (ub2) SQLT_LNG,
+        (dvoid*) NULL,
+        (ub2*) NULL,
+        (ub2*) NULL,
+        (ub4) 0,
+        (ub4*) NULL,
+        (ub4) OCI_DEFAULT ),
+        hError );
+}
 void OWStatement::BindName( char* pszName, char* pszData, int nSize )
 {
     OCIBind* hBind = NULL;

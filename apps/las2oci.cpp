@@ -318,145 +318,23 @@ bool GetResultData( const LASQueryResult& result,
     return true;
 }
 
-sdo_geometry* MakeGeometry( SpatialIndex::Region* bounds,
-                            int srid,
-                            bool bUseSolidGeometry,
-                            bool bUse3d)
+void GetElements(   OWStatement* statement,
+                    OCIArray* sdo_elem_info, 
+                    bool bUseSolidGeometry)
 {
-    sdo_geometry* output = (sdo_geometry* ) malloc (1 * sizeof(sdo_geometry));
     
-    OCIArray* elem_info = (OCIArray* ) malloc (3 * sizeof(OCINumber));
-    OCIArray* ordinates = 0;// =  (OCIArray* ) malloc (3 * sizeof(OCINumber));
-    
-    // 
-    // ostringstream oss_geom;
-    // 
-    // ostringstream s_srid;
-    // ostringstream s_gtype;
-    // 
-    // ostringstream s_eleminfo;
-    // bool bGeographic = false;
-    // 
-    // if (srid == 0) {
-    //     s_srid << "NULL";
-    //     // bUse3d = true;
-    //     // bUseSolidGeometry = true;
-    //     }
-    // else if (srid == 4326) {
-    //     // bUse3d = true;
-    //     // bUseSolidGeometry = true;
-    //     bGeographic = true;
-    //     s_srid << srid;
-    //     // s_srid << "NULL";
-    // }
-    // else {
-    //     s_srid << srid;
-    //     // bUse3d = false;
-    //     // If the user set an srid and set it to solid, we're still 3d
-    //     // if (bUseSolidGeometry == true)
-    //     //     bUse3d = true;
-    // }
-    // 
-    // if (bUse3d) {
-    //     if (bUseSolidGeometry == true) {
-    //         ordinates =  (OCIArray* ) malloc (6 * sizeof(OCINumber));
-    //         elem_info[0] = 1;
-    //         elem_info[1] = 1007;
-    //         elem_info[2] = 3;
-    //         output->sdo_gtype = 3008;
-    //         // s_gtype << "3008";
-    //         // s_eleminfo << "(1,1007,3)";
-    // 
-    //     } else {
-    //         ordinates =  (OCIArray* ) malloc (6 * sizeof(OCINumber));
-    //         elem_info[0] = 1;
-    //         elem_info[1] = 1003;
-    //         elem_info[2] = 3;
-    //         output->sdo_gtype = 3003;
-    // 
-    //         // s_gtype << "3003";
-    //         // s_eleminfo  << "(1,1003,3)";
-    // 
-    //     }
-    // } else {
-    //     if (bUseSolidGeometry == true) {
-    //         ordinates =  (OCIArray* ) malloc (4 * sizeof(OCINumber));
-    //         elem_info[0] = 1;
-    //         elem_info[1] = 1007;
-    //         elem_info[2] = 3;
-    //         output->sdo_gtype = 2008;
-    //         
-    //         // s_gtype << "2008";
-    //         // s_eleminfo << "(1,1007,3)";
-    // 
-    //     } else {
-    //         ordinates =  (OCIArray* ) malloc (4 * sizeof(OCINumber));
-    //         elem_info[0] = 1;
-    //         elem_info[1] = 1003;
-    //         elem_info[2] = 3;
-    //         output->sdo_gtype = 2003;
-    //         // 
-    //         // 
-    //         // s_gtype << "2003";
-    //         // s_eleminfo  << "(1,1003,3)";
-    // 
-    //     }
-    // }
-    
-// 
-//     double x0, x1, y0, y1, z0, z1;
-//     double tolerance = 0.05;
-//     
-// 
-//     x0 = b->getLow(0);
-//     x1 = b->getHigh(0);
-//     y0 = b->getLow(1);
-//     y1 = b->getHigh(1);
-//     
-//     if (bUse3d) {
-//         try {
-//             z0 = b->getLow(2);
-//             z1 = b->getHigh(2);
-//         } catch (Tools::IndexOutOfBoundsException& e) {
-//             z0 = 0;
-//             z1 = 20000;
-//         }
-//     } else if (bGeographic) {
-//         x0 = -180.0;
-//         x1 = 180.0;
-//         y0 = -90.0;
-//         y1 = 90.0;
-//         z0 = 0.0;
-//         z1 = 20000.0;
-//         tolerance = 0.000000005;
-//     } else {
-//         z0 = 0.0;
-//         z1 = 20000.0;            
-//     }
-//     
-//         
-//     // std::cout << "use 3d?: " << bUse3d << " srid: " << s_srid.str() << std::endl;
-//     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
-//     oss_geom.precision(precision);
-// 
-//     oss_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
-// "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
-// "              mdsys.sdo_ordinate_array(\n";
-// 
-//     oss_geom << x0 << ",\n" << y0 << ",\n";
-// 
-//     if (bUse3d) {
-//         oss_geom << z0 << ",\n";
-//     }
-// 
-//     oss_geom << x1 << ",\n" << y1 << "\n";
-// 
-//     if (bUse3d) {
-//         oss_geom << ",\n";
-//         oss_geom << z1;
-//     }
-//     
-    return output;
+
+    statement->AddElement(sdo_elem_info, 1);
+    if (bUseSolidGeometry == true) {
+        //"(1,1007,3)";
+        statement->AddElement(sdo_elem_info, 1007);
+    } else {
+        //"(1,1003,3)";
+        statement->AddElement(sdo_elem_info, 1003);
+    }
+
+    statement->AddElement(sdo_elem_info, 3);
+ 
 }
 
 bool InsertBlock(OWConnection* connection, 
@@ -578,32 +456,50 @@ bool InsertBlock(OWConnection* connection,
     long result_id = result.GetID();
     
     oss_geom << "))";
+    // oss << "INSERT INTO "<< tableName << 
+    //         "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS, "
+    //         "PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
+    //         "VALUES ( :1, :2, :3, :4, MDSYS.SDO_GEOMETRY(:5, :6, null, :7, :8)" 
+    //         // << pc_id << "," << result.GetID() <<"," << num_points << ", " 
+    //         // << oss_geom.str() <<", :1"
+    //         ", 1, 1, 0, 1)";
+
+
     oss << "INSERT INTO "<< tableName << 
             "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS, "
             "PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
-            "VALUES ( :1, :2, :3, :4, :5" 
+            "VALUES ( :1, :2, :3, " << oss_geom.str() <<
             // << pc_id << "," << result.GetID() <<"," << num_points << ", " 
-            // << oss_geom.str() <<", :1"
-            ", 1, 1, 0, 1)";
-
+             
+            ",:4, 1, 1, 0, 1)";
+            
     OWStatement* statement = 0;
     OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
 
     statement = connection->CreateStatement(oss.str().c_str());
     
+
+    
     long* p_pc_id = (long*) malloc( 1 * sizeof(long));
-    *p_pc_id = pc_id;
+    p_pc_id[0] = pc_id;
 
     long* p_result_id = (long*) malloc( 1 * sizeof(long));
-    *p_result_id = (long)result.GetID();
+    long n_results = result.GetID();
+    p_result_id[0] = (long)result.GetID();
     
-    int* p_num_points = (int*) malloc (1 * sizeof(int));
-    *p_num_points = num_points;
+    long* p_num_points = (long*) malloc (1 * sizeof(long));
+    p_num_points[0] = num_points;
     
-    statement->Bind( p_pc_id );
-    statement->Bind( p_result_id );
-    statement->Bind( p_num_points);
-    statement->Bind( oss_geom.str().c_str(), (int)oss_geom.str().size());
+    // :1
+    statement->Bind( &pc_id );
+    
+    // :2
+    statement->Bind( &n_results );
+
+    // :3
+    statement->Bind( (long*)&num_points);
+       
+    // :4
     statement->Define( locator, 1 ); 
     
     std::vector<liblas::uint8_t> data;
@@ -612,7 +508,34 @@ bool InsertBlock(OWConnection* connection,
 
     statement->Bind((char*)&(data[0]),(long)data.size());
 
+    // :5
+    int gtype = atoi(s_gtype.str().c_str());
+    long* p_gtype = (long*) malloc (1 * sizeof(long));
+    *p_gtype = gtype;
 
+    printf("gtype: %d %d %s\n", *p_gtype, gtype, s_gtype.str().c_str());
+    // statement->Bind(p_gtype);
+    
+    // :6
+    int* p_srid = (int*) malloc (1 * sizeof(int));
+    *p_srid = srid;
+    // statement->Bind(p_srid);
+    
+    // :7
+
+    OCIArray* sdo_elem_info=0;
+    OCIArray* sdo_ordinates=0;
+    
+    connection->CreateType(sdo_elem_info, connection->GetElemInfoType());
+    connection->CreateType(sdo_ordinates, connection->GetOrdinateType());
+
+    // GetElements(statement, sdo_elem_info, bUseSolidGeometry);
+    
+    // statement->Bind(sdo_elem_info, connection->GetElemInfoType());
+    
+    // :8
+    // statement->Bind(ordinates);
+    
     if (statement->Execute() == false) {
         delete statement;
         return false;

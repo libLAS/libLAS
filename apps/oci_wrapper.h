@@ -230,6 +230,10 @@ public:
 
     void                CreateType( sdo_geometry** pphData );
     void                DestroyType( sdo_geometry** pphData );
+
+    void                CreateType( OCIArray* phData , OCIType* type);
+    void                DestroyType( OCIArray* phData );
+
     OCIType*            DescribeType( char *pszTypeName );
 
     bool                Succeeded() { return bSuceeeded; };
@@ -239,6 +243,11 @@ public:
     char*               GetServer() { return pszServer; };
     int                 GetVersion () { return nVersion; };
     sb4                 GetCharSize () { return nCharSize; };
+    
+    OCIType*            GetGeometryType() { return hGeometryTDO; }
+    OCIType*            GetGeoRasterType() { return hGeoRasterTDO; }
+    OCIType*            GetElemInfoType() {return hElemArrayTDO; }
+    OCIType*            GetOrdinateType() {return hOrdinateArrayTDO; }
 
 };
 
@@ -286,6 +295,8 @@ public:
     void                Bind( long* pnData );
     void                Bind( double* pnData );
     void                Bind( char* pData, long nData);
+    void                Bind( OCIArray* pphData, OCIType* type );
+    
     void                Define( double* pnData );
     void                Define( char* pszData, int nSize = OWNAME );
     void                Bind( char* pszData, int nSize = OWNAME );
@@ -298,7 +309,9 @@ public:
     void                Define( sdo_geometry** pphData );
     void                Define( OCILobLocator** pphLocator,
                             int nIterations );
+
     void                BindName( char* pszName, int* pnData );
+    void                BindName( char* pszName, long* pnData );
     void                BindName( char* pszName, char* pszData,
                             int nSize = OWNAME );
     void                BindName( char* pszName,
@@ -314,6 +327,10 @@ public:
                             int nIndex, int* pnResult );
     double              GetElement( OCIArray** ppoData,
                             int nIndex, double* pdfResult );
+    void                AddElement( OCIArray* ppoData, 
+                            int nValue );                          
+    void                AddElement( OCIArray* ppoData, 
+                            double dfValue );   
 };
 
 #endif /* ifndef _ORCL_WRAP_H_INCLUDED */
