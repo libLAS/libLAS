@@ -568,6 +568,7 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     LASString_Free(pszSoftwareId);
     LASString_Free(pszProj4);
     LASString_Free(pszWKT);
+    LASSRS_Destroy(pSRS);
 }
 
 void repair_header(FILE *file, LASHeaderH header, LASPointSummary* summary) {

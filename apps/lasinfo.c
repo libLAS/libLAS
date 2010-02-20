@@ -23,6 +23,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef HAVE_GDAL
+#include <cpl_multiproc.h>
+#include <cpl_string.h>
+#endif
+
 LASPointSummary* SummarizePoints(LASReaderH reader);
 void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header);
 void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSkipVLR, int bWKT);
@@ -388,6 +393,14 @@ int main(int argc, char *argv[])
 
     if (reader) LASReader_Destroy(reader);
     if (header) LASHeader_Destroy(header);
+
+#ifdef HAVE_GDAL
+    /* Various GDAL related cleanups */
+    OSRCleanup();
+    CPLFinderClean();
+    CPLFreeConfig();
+    CPLCleanupTLS();
+#endif
 
     return 0;
 }
