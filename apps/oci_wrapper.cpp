@@ -465,8 +465,8 @@ OWStatement::OWStatement( OWConnection* pConnection,
 
     if( nStmtType != OCI_STMT_SELECT )
     {
-        // nStmtMode = OCI_COMMIT_ON_SUCCESS;
-        nStmtMode = OCI_DEFAULT;
+        nStmtMode = OCI_COMMIT_ON_SUCCESS;
+        // nStmtMode = OCI_DEFAULT;
 
     }
 }

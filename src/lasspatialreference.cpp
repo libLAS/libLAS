@@ -401,7 +401,7 @@ std::string LASSpatialReference::GetWKT( WKTModeFlag mode_flag ) const
             poSRS->StripVertical();
             poSRS->exportToWkt( &pszWKT );
             
-            OGRSpatialReference::DestroySpatialReference(poSRS);
+            delete poSRS;
         }
 #endif
         
@@ -422,15 +422,15 @@ void LASSpatialReference::SetFromUserInput( std::string const& v)
 
     char* poWKT = 0;
     const char* input = v.c_str();
-    OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
-    if (OGRERR_NONE != poSRS->SetFromUserInput((char *) input))
+    
+    // OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
+    OGRSpatialReference srs(NULL);
+    if (OGRERR_NONE != srs.SetFromUserInput((char *) input))
     {
-        OGRSpatialReference::DestroySpatialReference(poSRS);
         throw std::invalid_argument("could not import coordinate system into OSRSpatialReference SetFromUserInput");
     }
     
-    poSRS->exportToWkt(&poWKT);
-    OGRSpatialReference::DestroySpatialReference(poSRS);
+    srs.exportToWkt(&poWKT);
     
     std::string tmp(poWKT);
     CPLFree(poWKT);
@@ -517,20 +517,17 @@ std::string LASSpatialReference::GetProj4() const
     std::string wkt = GetWKT();
     const char* poWKT = wkt.c_str();
     
-    OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
-    if (OGRERR_NONE != poSRS->importFromWkt((char **) &poWKT))
+    OGRSpatialReference srs(NULL);
+    if (OGRERR_NONE != srs.importFromWkt((char **) &poWKT))
     {
-        OGRSpatialReference::DestroySpatialReference(poSRS);
         return std::string();
     }
     
     char* proj4 = 0;
-    poSRS->exportToProj4(&proj4);
+    srs.exportToProj4(&proj4);
     std::string tmp(proj4);
     CPLFree(proj4);
     
-    OGRSpatialReference::DestroySpatialReference(poSRS);
-
     return tmp;
 #endif
 
@@ -566,15 +563,14 @@ void LASSpatialReference::SetProj4(std::string const& v)
 #ifdef HAVE_GDAL
     char* poWKT = 0;
     const char* poProj4 = v.c_str();
-    OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
-    if (OGRERR_NONE != poSRS->importFromProj4((char *) poProj4))
+
+    OGRSpatialReference srs(NULL);
+    if (OGRERR_NONE != srs.importFromProj4((char *) poProj4))
     {
-        OGRSpatialReference::DestroySpatialReference(poSRS);
         throw std::invalid_argument("could not import proj4 into OSRSpatialReference SetProj4");
     }
     
-    poSRS->exportToWkt(&poWKT);
-    OGRSpatialReference::DestroySpatialReference(poSRS);
+    srs.exportToWkt(&poWKT);
     
     std::string tmp(poWKT);
     CPLFree(poWKT);
