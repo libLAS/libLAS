@@ -337,6 +337,26 @@ void GetElements(   OWStatement* statement,
  
 }
 
+void GetOrdinates(   OWStatement* statement,
+                     OCIArray* sdo_ordinates, 
+                     double x0, double x1, 
+                     double y0, double y1,
+                     double z0, double z1,
+                     bool bUse3d)
+{
+    
+    statement->AddElement(sdo_ordinates, x0);
+    statement->AddElement(sdo_ordinates, y0);
+    if (bUse3d)
+        statement->AddElement(sdo_ordinates, z0);
+    
+    statement->AddElement(sdo_ordinates, x1);
+    statement->AddElement(sdo_ordinates, y1);
+    if (bUse3d)
+        statement->AddElement(sdo_ordinates, z1);
+        
+
+}
 bool InsertBlock(OWConnection* connection, 
                 const LASQueryResult& result, 
                 int srid, 
@@ -436,10 +456,13 @@ bool InsertBlock(OWConnection* connection,
     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss_geom.precision(precision);
 
-    oss_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
+//     oss_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
+// "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
+// "              mdsys.sdo_ordinate_array(\n";
+
+    oss_geom << "           mdsys.sdo_geometry(:5, :6, null,\n"
 "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
 "              mdsys.sdo_ordinate_array(\n";
-
     oss_geom << x0 << ",\n" << y0 << ",\n";
 
     if (bUse3d) {
@@ -456,22 +479,24 @@ bool InsertBlock(OWConnection* connection,
     long result_id = result.GetID();
     
     oss_geom << "))";
+    oss << "INSERT INTO "<< tableName << 
+            "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS, BLK_EXTENT,  "
+            "PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
+            "VALUES ( :1, :2, :3, :4, " << oss_geom.str() << //:7, :8)" 
+            // << pc_id << "," << result.GetID() <<"," << num_points << ", " 
+            // << oss_geom.str() <<", :1"
+            ", 1, 1, 0, 1)";
+
+
     // oss << "INSERT INTO "<< tableName << 
     //         "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS, "
     //         "PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
-    //         "VALUES ( :1, :2, :3, :4, MDSYS.SDO_GEOMETRY(:5, :6, null, :7, :8)" 
+    //         "VALUES ( :1, :2, :3, " << oss_geom.str() <<
     //         // << pc_id << "," << result.GetID() <<"," << num_points << ", " 
-    //         // << oss_geom.str() <<", :1"
-    //         ", 1, 1, 0, 1)";
+    //          
+    //         ",:4, 1, 1, 0, 1)";
 
 
-    oss << "INSERT INTO "<< tableName << 
-            "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS, "
-            "PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
-            "VALUES ( :1, :2, :3, " << oss_geom.str() <<
-            // << pc_id << "," << result.GetID() <<"," << num_points << ", " 
-             
-            ",:4, 1, 1, 0, 1)";
             
     OWStatement* statement = 0;
     OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
@@ -491,7 +516,7 @@ bool InsertBlock(OWConnection* connection,
     p_num_points[0] = num_points;
     
     // :1
-    statement->Bind( &pc_id );
+    statement->Bind( p_pc_id );
     
     // :2
     statement->Bind( &n_results );
@@ -511,30 +536,35 @@ bool InsertBlock(OWConnection* connection,
     // :5
     int gtype = atoi(s_gtype.str().c_str());
     long* p_gtype = (long*) malloc (1 * sizeof(long));
-    *p_gtype = gtype;
+    p_gtype[0] = gtype;
 
     printf("gtype: %d %d %s\n", *p_gtype, gtype, s_gtype.str().c_str());
-    // statement->Bind(p_gtype);
+    statement->Bind(p_gtype);
     
     // :6
-    int* p_srid = (int*) malloc (1 * sizeof(int));
-    *p_srid = srid;
-    // statement->Bind(p_srid);
+    
+    long* p_srid  = 0;
+    
+    if (srid) {
+        p_srid = (long*) malloc (1 * sizeof(long));
+        p_srid[0] = srid;
+    }
+    statement->Bind(p_srid);
     
     // :7
 
     OCIArray* sdo_elem_info=0;
-    OCIArray* sdo_ordinates=0;
-    
-    connection->CreateType(sdo_elem_info, connection->GetElemInfoType());
-    connection->CreateType(sdo_ordinates, connection->GetOrdinateType());
-
+    // connection->CreateType(sdo_elem_info, connection->GetElemInfoType());
     // GetElements(statement, sdo_elem_info, bUseSolidGeometry);
     
     // statement->Bind(sdo_elem_info, connection->GetElemInfoType());
     
     // :8
-    // statement->Bind(ordinates);
+    OCIArray* sdo_ordinates=0;
+    // connection->CreateType(sdo_ordinates, connection->GetOrdinateType());
+    
+    // GetOrdinates(statement, sdo_ordinates, x0, x1, y0, y1, z0, z1, bUse3d);
+    // statement->Bind(sdo_ordinates, connection->GetOrdinateType());
     
     if (statement->Execute() == false) {
         delete statement;
