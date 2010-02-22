@@ -38,10 +38,31 @@ using namespace liblas;
 #endif
 
 typedef struct
-    {
-        long* srid;
+{
+    long* pc_ids;
+    long* block_ids;
+    long* num_points;
+    std::vector<liblas::uint8_t>** blobs;
+
+    long* srids;
+    long* gtypes;
+    OCIArray** element_arrays;
+    OCIArray** coordinate_arrays;
         
-    } block;
+} blocks;
+
+typedef struct
+{
+    double x0;
+    double x1;
+    double y0;
+    double y1;
+    double z0;
+    double z1;
+    bool bUse3d;
+   
+} extent;
+
     
 bool KDTreeIndexExists(std::string& filename)
 {
@@ -362,24 +383,132 @@ void SetElements(   OWStatement* statement,
 
 void SetOrdinates(   OWStatement* statement,
                      OCIArray* sdo_ordinates, 
-                     double x0, double x1, 
-                     double y0, double y1,
-                     double z0, double z1,
-                     bool bUse3d)
+                     extent* extent)
 {
     
-    statement->AddElement(sdo_ordinates, x0);
-    statement->AddElement(sdo_ordinates, y0);
-    if (bUse3d)
-        statement->AddElement(sdo_ordinates, z0);
+    statement->AddElement(sdo_ordinates, extent->x0);
+    statement->AddElement(sdo_ordinates, extent->y0);
+    if (extent->bUse3d)
+        statement->AddElement(sdo_ordinates, extent->z0);
     
-    statement->AddElement(sdo_ordinates, x1);
-    statement->AddElement(sdo_ordinates, y1);
-    if (bUse3d)
-        statement->AddElement(sdo_ordinates, z1);
+    statement->AddElement(sdo_ordinates, extent->x1);
+    statement->AddElement(sdo_ordinates, extent->y1);
+    if (extent->bUse3d)
+        statement->AddElement(sdo_ordinates, extent->z1);
         
 
 }
+
+extent* GetExtent(  const LASQueryResult& result,
+                    bool bUse3d,
+                    bool bGeographic
+                 )
+{
+    double x0, x1, y0, y1, z0, z1;
+    const SpatialIndex::Region* b = result.GetBounds();
+    if (bUse3d) {
+        try {
+            z0 = b->getLow(2);
+            z1 = b->getHigh(2);
+        } catch (Tools::IndexOutOfBoundsException& e) {
+            z0 = 0;
+            z1 = 20000;
+        }
+    } else if (bGeographic) {
+        x0 = -180.0;
+        x1 = 180.0;
+        y0 = -90.0;
+        y1 = 90.0;
+        z0 = 0.0;
+        z1 = 20000.0;
+    } else {
+        z0 = 0.0;
+        z1 = 20000.0;            
+    }   
+    
+    extent* e = (extent*) malloc (sizeof(extent));
+    e->x0 = x0; e->x1 = x1;
+    e->y0 = y0; e->y1 = y1;
+    e->z0 = z0; e->z1 = z1;
+    e->bUse3d = bUse3d;
+    
+    return e;    
+}
+bool FillBlock( OWConnection* connection, 
+                OWStatement* statement,
+                const LASQueryResult& result, 
+                LASReader* reader,
+                blocks* b,
+                long index,
+                
+                int srid, 
+                long pc_id,
+                long block_id,
+                long num_points,
+                long gtype,
+                bool bUseSolidGeometry,
+                bool bUse3d,
+                long nDimensions
+                
+              )
+{
+
+
+    list<SpatialIndex::id_type> const& ids = result.GetIDs();
+    const SpatialIndex::Region* bounds = result.GetBounds();
+    
+    b->pc_ids[index] = pc_id;
+    b->srids[index] = srid;
+    b->block_ids[index] = result.GetID();
+    b->num_points[index] = (long)ids.size();
+    
+    std::vector<liblas::uint8_t>* blob = new std::vector<liblas::uint8_t>;
+    
+    bool gotdata = GetResultData(result, reader, *blob, nDimensions);
+    if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
+    b->blobs[index] = blob;
+    b->srids[index] = srid;
+    b->gtypes[index] = gtype;
+
+    OCIArray* sdo_elem_info=0;
+    connection->CreateType(&sdo_elem_info, connection->GetElemInfoType());
+    SetElements(statement, sdo_elem_info, bUseSolidGeometry);
+    
+    b->element_arrays[index] = sdo_elem_info;
+
+    OCIArray* sdo_ordinates=0;
+    connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
+    
+    extent* e = (extent*) malloc(sizeof(extent));
+    SetOrdinates(statement, sdo_ordinates, e);
+
+    b->coordinate_arrays[index] = sdo_ordinates;
+    
+    return true;
+}
+
+long GetGType(  bool bUse3d,
+                bool bUseSolidGeometry)
+{
+    long gtype = 0;
+    if (bUse3d) {
+        if (bUseSolidGeometry == true) {
+            gtype = 3008;
+
+        } else {
+            gtype = 3003;
+        }
+    } else {
+        if (bUseSolidGeometry == true) {
+            gtype = 2008;
+        } else {
+            gtype = 2003;
+        }
+    }
+    
+    return gtype;   
+}
+
 bool InsertBlock(OWConnection* connection, 
                 const LASQueryResult& result, 
                 int srid, 
@@ -395,11 +524,11 @@ bool InsertBlock(OWConnection* connection,
     list<SpatialIndex::id_type> const& ids = result.GetIDs();
     const SpatialIndex::Region* b = result.GetBounds();
     liblas::uint32_t num_points =ids.size();
-    ostringstream oss_geom;
 
-    ostringstream s_srid;
-    long gtype;
-    ostringstream s_eleminfo;
+
+    long gtype = GetGType(bUse3d, bUseSolidGeometry);
+
+
     bool bGeographic = false;
     
     EnableTracing(connection);
@@ -408,27 +537,13 @@ bool InsertBlock(OWConnection* connection,
         bGeographic = true;
     }
     else {
-        s_srid << srid;
+        // s_srid << srid;
         // bUse3d = false;
         // If the user set an srid and set it to solid, we're still 3d
         // if (bUseSolidGeometry == true)
         //     bUse3d = true;
     }
-    
-    if (bUse3d) {
-        if (bUseSolidGeometry == true) {
-            gtype = 3008;
 
-        } else {
-            gtype = 3003;
-        }
-    } else {
-        if (bUseSolidGeometry == true) {
-            gtype = 2008;
-        } else {
-            gtype = 2003;
-        }
-    }
 
     double x0, x1, y0, y1, z0, z1;
     
@@ -459,8 +574,8 @@ bool InsertBlock(OWConnection* connection,
     }
     
         
-    oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    oss_geom.precision(precision);
+    // oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    // oss_geom.precision(precision);
 
     oss << "INSERT INTO "<< tableName << 
             "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS,   "
@@ -529,7 +644,11 @@ bool InsertBlock(OWConnection* connection,
     OCIArray* sdo_ordinates=0;
     connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
     
-    SetOrdinates(statement, sdo_ordinates, x0, x1, y0, y1, z0, z1, bUse3d);
+    extent* e = GetExtent(result, bUse3d, bGeographic);
+
+    
+     // x0, x1, y0, y1, z0, z1, bUse3d
+    SetOrdinates(statement, sdo_ordinates, e);
     statement->Bind(&sdo_ordinates, connection->GetOrdinateType());
     
     if (statement->Execute() == false) {
@@ -581,7 +700,7 @@ bool InsertBlocks(
                                     bUseSolidGeometry, 
                                     bUse3d);
     }
-    
+    return true;
 }
 
 bool CreateSDOEntry(    OWConnection* connection, 
