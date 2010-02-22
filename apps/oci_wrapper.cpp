@@ -244,7 +244,7 @@ void OWConnection::DestroyType( sdo_geometry** pphData )
         (ub2) 0), NULL );
 }
 
-void OWConnection::CreateType( OCIArray* phData, OCIType* otype)
+void OWConnection::CreateType( OCIArray** phData, OCIType* otype)
 {
     CheckError( 
         OCIObjectNew(   hEnv, 
@@ -255,17 +255,17 @@ void OWConnection::CreateType( OCIArray* phData, OCIType* otype)
                         (dvoid *)NULL, 
                         OCI_DURATION_SESSION,
                         FALSE, 
-                        (dvoid **)&phData)
+                        (dvoid **)phData)
                 , 
                 hError );
 }
 
-void OWConnection::DestroyType( OCIArray* phData )
+void OWConnection::DestroyType( OCIArray** phData )
 {
     CheckError( OCIObjectFree(
         hEnv,
         hError,
-        (OCIColl*) phData,
+        (OCIColl*) *phData,
         (ub2) 0), NULL );
 }
 
@@ -465,8 +465,8 @@ OWStatement::OWStatement( OWConnection* pConnection,
 
     if( nStmtType != OCI_STMT_SELECT )
     {
-        nStmtMode = OCI_COMMIT_ON_SUCCESS;
-        // nStmtMode = OCI_DEFAULT;
+        // nStmtMode = OCI_COMMIT_ON_SUCCESS;
+        nStmtMode = OCI_DEFAULT;
 
     }
 }
@@ -647,7 +647,6 @@ void OWStatement::Bind( char* pData, long nData )
     OCIBind* hBind = NULL;
 
     nNextBnd++;
-    printf("Binding blob column #: %d\n", nNextBnd);
     CheckError( OCIBindByPos( 
         hStmt,
         &hBind,
@@ -830,7 +829,7 @@ void OWStatement::Define( OCIArray** pphData )
         (ub4*) NULL ), hError );
 }
 
-void OWStatement::Bind( OCIArray* pphData, OCIType* type )
+void OWStatement::Bind( OCIArray** pphData, OCIType* type )
 {
     OCIBind* hBind = NULL;
 
@@ -856,7 +855,7 @@ void OWStatement::Bind( OCIArray* pphData, OCIType* type )
         hBind, 
         hError, 
         type, 
-        (dvoid **)&pphData, 
+        (dvoid **)pphData, 
         (ub4 *)0, 
         (dvoid **)0, 
         (ub4 *)0 ),
@@ -1108,8 +1107,7 @@ void OWStatement::AddElement( OCIArray* poData,
                               int nValue )
 {
     OCINumber      oci_number;
-
-
+    
     CheckError(OCINumberFromInt(hError, (dvoid *)&nValue, 
         (uword)sizeof(ub4), OCI_NUMBER_UNSIGNED, 
         (OCINumber *)&oci_number), hError);

@@ -231,8 +231,8 @@ public:
     void                CreateType( sdo_geometry** pphData );
     void                DestroyType( sdo_geometry** pphData );
 
-    void                CreateType( OCIArray* phData , OCIType* type);
-    void                DestroyType( OCIArray* phData );
+    void                CreateType( OCIArray** phData , OCIType* type);
+    void                DestroyType( OCIArray** phData );
 
     OCIType*            DescribeType( char *pszTypeName );
 
@@ -295,7 +295,7 @@ public:
     void                Bind( long* pnData );
     void                Bind( double* pnData );
     void                Bind( char* pData, long nData);
-    void                Bind( OCIArray* pphData, OCIType* type );
+    void                Bind( OCIArray** pphData, OCIType* type );
     
     void                Define( double* pnData );
     void                Define( char* pszData, int nSize = OWNAME );

@@ -37,7 +37,12 @@ using namespace liblas;
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
 #endif
 
-
+typedef struct
+    {
+        long* srid;
+        
+    } block;
+    
 bool KDTreeIndexExists(std::string& filename)
 {
     struct stat stats;
@@ -75,6 +80,24 @@ std::istream* OpenInput(std::string filename)
         exit(1);
     }
     return istrm;
+}
+
+bool EnableTracing(OWConnection* connection)
+{
+    ostringstream oss;
+// http://www.oracle-base.com/articles/10g/SQLTrace10046TrcsessAndTkprof10g.php
+    oss << "ALTER SESSION SET EVENTS '10046 trace name context forever, level 12'";
+
+    OWStatement* statement = 0;
+    
+    statement = connection->CreateStatement(oss.str().c_str());
+    
+    if (statement->Execute() == false) {
+        
+        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
+        delete statement;
+        return 0;
+    }    
 }
 
 OWStatement* Run(OWConnection* connection, ostringstream& command) 
@@ -318,7 +341,7 @@ bool GetResultData( const LASQueryResult& result,
     return true;
 }
 
-void GetElements(   OWStatement* statement,
+void SetElements(   OWStatement* statement,
                     OCIArray* sdo_elem_info, 
                     bool bUseSolidGeometry)
 {
@@ -337,7 +360,7 @@ void GetElements(   OWStatement* statement,
  
 }
 
-void GetOrdinates(   OWStatement* statement,
+void SetOrdinates(   OWStatement* statement,
                      OCIArray* sdo_ordinates, 
                      double x0, double x1, 
                      double y0, double y1,
@@ -375,21 +398,14 @@ bool InsertBlock(OWConnection* connection,
     ostringstream oss_geom;
 
     ostringstream s_srid;
-    ostringstream s_gtype;
+    long gtype;
     ostringstream s_eleminfo;
     bool bGeographic = false;
     
-    if (srid == 0) {
-        s_srid << "NULL";
-        // bUse3d = true;
-        // bUseSolidGeometry = true;
-        }
-    else if (srid == 4326) {
-        // bUse3d = true;
-        // bUseSolidGeometry = true;
+    EnableTracing(connection);
+    
+    if (srid == 4326) {
         bGeographic = true;
-        s_srid << srid;
-        // s_srid << "NULL";
     }
     else {
         s_srid << srid;
@@ -401,28 +417,20 @@ bool InsertBlock(OWConnection* connection,
     
     if (bUse3d) {
         if (bUseSolidGeometry == true) {
-            s_gtype << "3008";
-            s_eleminfo << "(1,1007,3)";
+            gtype = 3008;
 
         } else {
-            s_gtype << "3003";
-            s_eleminfo  << "(1,1003,3)";
-
+            gtype = 3003;
         }
     } else {
         if (bUseSolidGeometry == true) {
-            s_gtype << "2008";
-            s_eleminfo << "(1,1007,3)";
-
+            gtype = 2008;
         } else {
-            s_gtype << "2003";
-            s_eleminfo  << "(1,1003,3)";
-
+            gtype = 2003;
         }
     }
 
     double x0, x1, y0, y1, z0, z1;
-    double tolerance = 0.05;
     
 
     x0 = b->getLow(0);
@@ -445,59 +453,21 @@ bool InsertBlock(OWConnection* connection,
         y1 = 90.0;
         z0 = 0.0;
         z1 = 20000.0;
-        tolerance = 0.000000005;
     } else {
         z0 = 0.0;
         z1 = 20000.0;            
     }
     
         
-    // std::cout << "use 3d?: " << bUse3d << " srid: " << s_srid.str() << std::endl;
     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss_geom.precision(precision);
 
-//     oss_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
-// "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
-// "              mdsys.sdo_ordinate_array(\n";
-
-    oss_geom << "           mdsys.sdo_geometry(:5, :6, null,\n"
-"              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
-"              mdsys.sdo_ordinate_array(\n";
-    oss_geom << x0 << ",\n" << y0 << ",\n";
-
-    if (bUse3d) {
-        oss_geom << z0 << ",\n";
-    }
-
-    oss_geom << x1 << ",\n" << y1 << "\n";
-
-    if (bUse3d) {
-        oss_geom << ",\n";
-        oss_geom << z1;
-    }
-
-    long result_id = result.GetID();
-    
-    oss_geom << "))";
     oss << "INSERT INTO "<< tableName << 
-            "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS, BLK_EXTENT,  "
-            "PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
-            "VALUES ( :1, :2, :3, :4, " << oss_geom.str() << //:7, :8)" 
-            // << pc_id << "," << result.GetID() <<"," << num_points << ", " 
-            // << oss_geom.str() <<", :1"
-            ", 1, 1, 0, 1)";
-
-
-    // oss << "INSERT INTO "<< tableName << 
-    //         "(OBJ_ID, BLK_ID, NUM_POINTS, BLK_EXTENT, POINTS, "
-    //         "PCBLK_MIN_RES, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
-    //         "VALUES ( :1, :2, :3, " << oss_geom.str() <<
-    //         // << pc_id << "," << result.GetID() <<"," << num_points << ", " 
-    //          
-    //         ",:4, 1, 1, 0, 1)";
-
-
-            
+            "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS,   "
+            "PCBLK_MIN_RES, BLK_EXTENT, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
+            "VALUES ( :1, :2, :3, :4, 1, mdsys.sdo_geometry(:5, :6, null,:7, :8)" 
+            ", 1, 0, 1)";
+          
     OWStatement* statement = 0;
     OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
 
@@ -534,11 +504,9 @@ bool InsertBlock(OWConnection* connection,
     statement->Bind((char*)&(data[0]),(long)data.size());
 
     // :5
-    int gtype = atoi(s_gtype.str().c_str());
     long* p_gtype = (long*) malloc (1 * sizeof(long));
     p_gtype[0] = gtype;
 
-    printf("gtype: %d %d %s\n", *p_gtype, gtype, s_gtype.str().c_str());
     statement->Bind(p_gtype);
     
     // :6
@@ -552,19 +520,17 @@ bool InsertBlock(OWConnection* connection,
     statement->Bind(p_srid);
     
     // :7
-
     OCIArray* sdo_elem_info=0;
-    // connection->CreateType(sdo_elem_info, connection->GetElemInfoType());
-    // GetElements(statement, sdo_elem_info, bUseSolidGeometry);
-    
-    // statement->Bind(sdo_elem_info, connection->GetElemInfoType());
+    connection->CreateType(&sdo_elem_info, connection->GetElemInfoType());
+    SetElements(statement, sdo_elem_info, bUseSolidGeometry);    
+    statement->Bind(&sdo_elem_info, connection->GetElemInfoType());
     
     // :8
     OCIArray* sdo_ordinates=0;
-    // connection->CreateType(sdo_ordinates, connection->GetOrdinateType());
+    connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
     
-    // GetOrdinates(statement, sdo_ordinates, x0, x1, y0, y1, z0, z1, bUse3d);
-    // statement->Bind(sdo_ordinates, connection->GetOrdinateType());
+    SetOrdinates(statement, sdo_ordinates, x0, x1, y0, y1, z0, z1, bUse3d);
+    statement->Bind(&sdo_ordinates, connection->GetOrdinateType());
     
     if (statement->Execute() == false) {
         delete statement;
@@ -648,6 +614,7 @@ bool CreateSDOEntry(    OWConnection* connection,
     //     bUse3d = true;
     // }
     
+
     if (srid == 0) {
         s_srid << "NULL";
         // bUse3d = true;
@@ -783,6 +750,8 @@ bool BlockTableExists(OWConnection* connection, const char* tableName)
     return false;
         
 }
+
+
 
 long CreatePCEntry( OWConnection* connection, 
                     LASQuery* query, 
