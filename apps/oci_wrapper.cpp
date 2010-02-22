@@ -567,7 +567,7 @@ void OWStatement::Bind( int* pnData )
         hError,
         (ub4) nNextBnd,
         (dvoid*) pnData,
-        (sb4) sizeof(int),
+        (sb4) (pnData != NULL) ? (sb4)sizeof(int) : 0,
         (ub2) SQLT_INT,
         (void*) NULL,
         (ub2*) NULL,
@@ -584,18 +584,12 @@ void OWStatement::Define( long* pnData )
 
     nNextCol++;
     
-    sb4 s = -1;
-    
-    if (pnData != NULL) 
-        s = (sb4)sizeof(long);
-    
-    printf("Setting size to %d\n", s);
     CheckError( OCIDefineByPos( hStmt,
         &hDefine,
         hError,
         (ub4) nNextCol,
         (dvoid*) pnData,
-        (sb4) s,
+        (sb4) sizeof(long int),
         (ub2) SQLT_LNG,
         (void*) NULL,
         (ub2*) NULL,
@@ -609,21 +603,13 @@ void OWStatement::Bind( long* pnData )
 
     nNextBnd++;
     
-    printf("Binding long column #: %d\n", nNextBnd);
-
-    sb4 s = 0;
-    
-    if (pnData != NULL) 
-        s = (sb4)sizeof(long int);
-    
-    printf("Setting size to %d\n", s);
     CheckError( OCIBindByPos(
         hStmt,
         &hBind,
         hError,
         (ub4) nNextBnd,
         (dvoid*) pnData,
-        (sb4) s,
+        (sb4) (pnData != NULL) ? (sb4)sizeof(long int) : 0,
         (ub2) SQLT_INT,
         (void*) NULL,
         (ub2*) NULL,
@@ -645,7 +631,7 @@ void OWStatement::Bind( double* pnData )
         hError,
         (ub4) nNextBnd,
         (dvoid*) pnData,
-        (sb4) sizeof(double),
+        (sb4) (pnData != NULL) ? (sb4)sizeof(double) : 0,
         (ub2) SQLT_BDOUBLE,
         (void*) NULL,
         (ub2*) NULL,
