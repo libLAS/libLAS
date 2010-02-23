@@ -531,7 +531,7 @@ bool InsertBlock(OWConnection* connection,
 
     bool bGeographic = false;
     
-    EnableTracing(connection);
+    // EnableTracing(connection);
     
     if (srid == 4326) {
         bGeographic = true;
