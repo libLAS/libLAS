@@ -399,13 +399,13 @@ void SetOrdinates(   OWStatement* statement,
 
 }
 
-extent* GetExtent(  const LASQueryResult& result,
+extent* GetExtent(  const SpatialIndex::Region* b,
                     bool bUse3d,
                     bool bGeographic
                  )
 {
     double x0, x1, y0, y1, z0, z1;
-    const SpatialIndex::Region* b = result.GetBounds();
+    // const SpatialIndex::Region* b = result.GetBounds();
     if (bUse3d) {
         try {
             z0 = b->getLow(2);
@@ -458,8 +458,6 @@ bool FillBlock( OWConnection* connection,
                 long index,
                 int srid, 
                 long pc_id,
-                long block_id,
-                long num_points,
                 long gtype,
                 bool bUseSolidGeometry,
                 bool bUse3d,
@@ -507,7 +505,7 @@ bool FillBlock( OWConnection* connection,
         //     bUse3d = true;
     }
         
-    extent* e = GetExtent(result, bUse3d, bGeographic);
+    extent* e = GetExtent(result.GetBounds(), bUse3d, bGeographic);
     SetOrdinates(statement, sdo_ordinates, e);
 
     b->coordinate_arrays[index] = sdo_ordinates;
@@ -537,8 +535,14 @@ long GetGType(  bool bUse3d,
     return gtype;   
 }
 
+bool BindBlock(OWStatement statement, blocks* b, OCILobLocator** locator)
+{
+    return true;
+}
 bool InsertBlock(OWConnection* connection, 
                 const LASQueryResult& result, 
+                blocks* block,
+                long block_index,
                 int srid, 
                 LASReader* reader, 
                 const char* tableName, 
@@ -637,7 +641,7 @@ bool InsertBlock(OWConnection* connection,
     OCIArray* sdo_ordinates=0;
     connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
     
-    extent* e = GetExtent(result, bUse3d, bGeographic);
+    extent* e = GetExtent(result.GetBounds(), bUse3d, bGeographic);
 
     
      // x0, x1, y0, y1, z0, z1, bUse3d
@@ -671,7 +675,8 @@ bool InsertBlocks(
                 long precision,
                 long pc_id,
                 bool bUseSolidGeometry,
-                bool bUse3d
+                bool bUse3d,
+                long nDimensions
                 )
 {
 
@@ -679,10 +684,45 @@ bool InsertBlocks(
     std::list<LASQueryResult>::const_iterator i;
 
 
+
+    long commit_interval = 1000;
+    blocks* b = CreateBlock(commit_interval);
+
+    ostringstream oss;
+    oss << "INSERT INTO "<< table_name << 
+            "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS,   "
+            "PCBLK_MIN_RES, BLK_EXTENT, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
+            "VALUES ( :1, :2, :3, :4, 1, mdsys.sdo_geometry(:5, :6, null,:7, :8)" 
+            ", 1, 0, 1)";
+          
+    OWStatement* statement = 0;
+    OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1000 );
+
+    statement = con->CreateStatement(oss.str().c_str());
+    long j = 0;
+
     for (i=results.begin(); i!=results.end(); i++)
     {
+        j++;
+
+        FillBlock( con, 
+                        statement,
+                        *i, 
+                        reader2,
+                        b,
+                        j,
+                        srid, 
+                         pc_id,
+                         GetGType(bUse3d, bUseSolidGeometry),
+                         bUseSolidGeometry,
+                         bUse3d,
+                         nDimensions
+                         );
+        
         bool inserted = InsertBlock(con, 
-                                    *i, 
+                                    *i,
+                                    b,
+                                    j, 
                                     srid, 
                                     reader2, 
                                     table_name.c_str(), 
@@ -949,32 +989,35 @@ long CreatePCEntry( OWConnection* connection,
         // if (bUseSolidGeometry == true)
         //     bUse3d = true;
     }
-    
+
+    long gtype = GetGType(bUse3d, bUseSolidGeometry);
+    s_gtype << gtype;
     if (bUse3d) {
         if (bUseSolidGeometry == true) {
-            s_gtype << "3008";
+            // s_gtype << "3008";
             s_eleminfo << "(1,1007,3)";
 
         } else {
-            s_gtype << "3003";
+            // s_gtype << "3003";
             s_eleminfo  << "(1,1003,3)";
 
         }
     } else {
         if (bUseSolidGeometry == true) {
-            s_gtype << "2008";
+            // s_gtype << "2008";
             s_eleminfo << "(1,1007,3)";
 
         } else {
-            s_gtype << "2003";
+            // s_gtype << "2003";
             s_eleminfo  << "(1,1003,3)";
 
         }
     }
     
 
+    extent* e = GetExtent(  &(query->bounds), bUse3d, bGeographic );
 
-    double x0, x1, y0, y1, z0, z1;
+    // double x0, x1, y0, y1, z0, z1;
     double tolerance = 0.05;
     
     // if (bSetExtents){
@@ -982,47 +1025,47 @@ long CreatePCEntry( OWConnection* connection,
     //     y0 = ymin; y1 = ymax;
     //     z0 = zmin; z1 = zmax;
     // } else {
-        x0 = query->bounds.getLow(0);
-        x1 = query->bounds.getHigh(0);
-        y0 = query->bounds.getLow(1);
-        y1 = query->bounds.getHigh(1);
-        
-        if (bUse3d) {
-            try {
-                z0 = query->bounds.getLow(2);
-                z1 = query->bounds.getHigh(2);
-            } catch (Tools::IndexOutOfBoundsException& e) {
-                z0 = 0;
-                z1 = 20000;
-            }
-        } else if (bGeographic) {
-            x0 = -180.0;
-            y0 = 180.0;
-            y0 = -90.0;
-            y1 = 90.0;
-            z0 = 0.0;
-            z1 = 20000.0;
-            tolerance = 0.000000005;
-        } else {
-            z0 = 0.0;
-            z1 = 20000.0;            
-        }
+        // x0 = query->bounds.getLow(0);
+        //  x1 = query->bounds.getHigh(0);
+        //  y0 = query->bounds.getLow(1);
+        //  y1 = query->bounds.getHigh(1);
+        //  
+        //  if (bUse3d) {
+        //      try {
+        //          z0 = query->bounds.getLow(2);
+        //          z1 = query->bounds.getHigh(2);
+        //      } catch (Tools::IndexOutOfBoundsException& e) {
+        //          z0 = 0;
+        //          z1 = 20000;
+        //      }
+        //  } else if (bGeographic) {
+        //      x0 = -180.0;
+        //      y0 = 180.0;
+        //      y0 = -90.0;
+        //      y1 = 90.0;
+        //      z0 = 0.0;
+        //      z1 = 20000.0;
+        //      tolerance = 0.000000005;
+        //  } else {
+        //      z0 = 0.0;
+        //      z1 = 20000.0;            
+        //  }
     // }    
 
     s_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
 "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
 "              mdsys.sdo_ordinate_array(\n";
 
-    s_geom << x0 << "," << y0 << ",";
+    s_geom << e->x0 << "," << e->y0 << ",";
 
     if (bUse3d) {
-        s_geom << z0 << ",";
+        s_geom << e->z0 << ",";
     }
     
-    s_geom << x1 << "," << y1;
+    s_geom << e->x1 << "," << e->y1;
 
     if (bUse3d) {
-        s_geom << "," << z1;
+        s_geom << "," << e->z1;
     }
 
     s_geom << "))";
@@ -1535,20 +1578,9 @@ int main(int argc, char* argv[])
         oss.str("");        
     }
     
-    InsertBlocks(con, results, nCommitInterval, srid, reader2, table_name.c_str(), precision, pc_id, bUseSolidGeometry, bUse3d);
-    // 
-    // for (i=results.begin(); i!=results.end(); i++)
-    // {
-    //     bool inserted = InsertBlock(con, 
-    //                                 *i, 
-    //                                 srid, 
-    //                                 reader2, 
-    //                                 table_name.c_str(), 
-    //                                 precision, 
-    //                                 pc_id, 
-    //                                 bUseSolidGeometry, 
-    //                                 bUse3d);
-    // }
+    long nDimensions = 3;
+    InsertBlocks(con, results, nCommitInterval, srid, reader2, table_name.c_str(), precision, pc_id, bUseSolidGeometry, bUse3d, nDimensions);
+ 
     
     if (!bUseExistingBlockTable) {
         std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
