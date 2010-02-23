@@ -248,6 +248,10 @@ public:
     OCIType*            GetGeoRasterType() { return hGeoRasterTDO; }
     OCIType*            GetElemInfoType() {return hElemArrayTDO; }
     OCIType*            GetOrdinateType() {return hOrdinateArrayTDO; }
+    
+    bool                Commit(); // OCITransCommit() 
+    bool                StartTransaction(); //  //OCITransStart()
+    bool                EndTransaction() {Commit(); } 
 
 };
 

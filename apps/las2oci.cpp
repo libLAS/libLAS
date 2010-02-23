@@ -434,13 +434,28 @@ extent* GetExtent(  const LASQueryResult& result,
     
     return e;    
 }
+blocks* CreateBlock(int size)
+{
+    blocks* b = (blocks*) malloc( sizeof(blocks));
+    
+    b->pc_ids = (long*) malloc( size * sizeof(long));
+    b->block_ids = (long*) malloc ( size * sizeof(long));
+    b->num_points = (long*) malloc ( size * sizeof(long));
+    b->blobs = (std::vector<liblas::uint8_t>**) malloc ( size * sizeof(std::vector<liblas::uint8_t>*));
+
+    b->srids = (long*) malloc ( size * sizeof(long));
+    b->gtypes = (long*) malloc ( size * sizeof(long));
+
+    b->element_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
+    b->coordinate_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
+   
+}
 bool FillBlock( OWConnection* connection, 
                 OWStatement* statement,
                 const LASQueryResult& result, 
                 LASReader* reader,
                 blocks* b,
                 long index,
-                
                 int srid, 
                 long pc_id,
                 long block_id,
@@ -449,7 +464,6 @@ bool FillBlock( OWConnection* connection,
                 bool bUseSolidGeometry,
                 bool bUse3d,
                 long nDimensions
-                
               )
 {
 
@@ -478,8 +492,22 @@ bool FillBlock( OWConnection* connection,
 
     OCIArray* sdo_ordinates=0;
     connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
+
+
+    bool bGeographic = false;
     
-    extent* e = (extent*) malloc(sizeof(extent));
+    if (srid == 4326) {
+        bGeographic = true;
+    }
+    else {
+        // s_srid << srid;
+        // bUse3d = false;
+        // If the user set an srid and set it to solid, we're still 3d
+        // if (bUseSolidGeometry == true)
+        //     bUse3d = true;
+    }
+        
+    extent* e = GetExtent(result, bUse3d, bGeographic);
     SetOrdinates(statement, sdo_ordinates, e);
 
     b->coordinate_arrays[index] = sdo_ordinates;
@@ -523,10 +551,7 @@ bool InsertBlock(OWConnection* connection,
 
     list<SpatialIndex::id_type> const& ids = result.GetIDs();
     const SpatialIndex::Region* b = result.GetBounds();
-    liblas::uint32_t num_points =ids.size();
-
-
-    long gtype = GetGType(bUse3d, bUseSolidGeometry);
+    liblas::uint32_t num_points = ids.size();
 
 
     bool bGeographic = false;
@@ -544,38 +569,7 @@ bool InsertBlock(OWConnection* connection,
         //     bUse3d = true;
     }
 
-
-    double x0, x1, y0, y1, z0, z1;
-    
-
-    x0 = b->getLow(0);
-    x1 = b->getHigh(0);
-    y0 = b->getLow(1);
-    y1 = b->getHigh(1);
-    
-    if (bUse3d) {
-        try {
-            z0 = b->getLow(2);
-            z1 = b->getHigh(2);
-        } catch (Tools::IndexOutOfBoundsException& e) {
-            z0 = 0;
-            z1 = 20000;
-        }
-    } else if (bGeographic) {
-        x0 = -180.0;
-        x1 = 180.0;
-        y0 = -90.0;
-        y1 = 90.0;
-        z0 = 0.0;
-        z1 = 20000.0;
-    } else {
-        z0 = 0.0;
-        z1 = 20000.0;            
-    }
-    
-        
-    // oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    // oss_geom.precision(precision);
+    long gtype = GetGType(bUse3d, bUseSolidGeometry);
 
     oss << "INSERT INTO "<< tableName << 
             "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS,   "
@@ -625,7 +619,6 @@ bool InsertBlock(OWConnection* connection,
     statement->Bind(p_gtype);
     
     // :6
-    
     long* p_srid  = 0;
     
     if (srid) {
@@ -663,8 +656,6 @@ bool InsertBlock(OWConnection* connection,
     OWStatement::Free(locator, 1);
 
     delete statement;
-
-
     
     return true;
 
@@ -1074,6 +1065,8 @@ oss << "declare\n"
         delete statement;
         return 0;
     }
+    
+    connection->Commit();
     output = *pc_id;
     
     delete pc_id;
@@ -1427,6 +1420,7 @@ int main(int argc, char* argv[])
         std::cout <<"Oracle connection failed" << std::endl; exit(1);
     }
 
+    con->StartTransaction();
 
     std::istream* istrm;
     try {

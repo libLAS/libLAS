@@ -407,6 +407,29 @@ bool OWConnection::GetNextField( OCIParam* phTable,
 
 }
 
+bool OWConnection::StartTransaction()
+{
+    CheckError( OCITransStart (
+        hSvcCtx,
+        hError,
+        (uword) 30,
+        OCI_TRANS_NEW), 
+    hError );   
+    
+    return true;
+}
+
+bool OWConnection::Commit()
+{
+    CheckError( OCITransCommit (
+        hSvcCtx,
+        hError,
+        OCI_DEFAULT), 
+    hError );
+    
+    return true;
+}
+
 /*****************************************************************************/
 /*                           OWStatement                                     */
 /*****************************************************************************/
