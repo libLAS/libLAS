@@ -19,6 +19,7 @@
 #include <exception>
 #include <algorithm>
 #include <cctype>
+#include <cmath>
 
 #include <sys/stat.h>
 
@@ -479,6 +480,7 @@ bool FillBlock( OWConnection* connection,
     bool gotdata = GetResultData(result, reader, *blob, nDimensions);
     if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
     b->blobs[index] = blob;
+    // FIXME: null srids not supported 
     b->srids[index] = srid;
     b->gtypes[index] = gtype;
 
@@ -535,8 +537,56 @@ long GetGType(  bool bUse3d,
     return gtype;   
 }
 
-bool BindBlock(OWStatement statement, blocks* b, OCILobLocator** locator)
+bool BindBlock(OWStatement* statement, blocks* b, OCILobLocator** locator, long commit_interval)
 {
+    // oss << "INSERT INTO "<< table_name << 
+    //         "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS,   "
+    //         "PCBLK_MIN_RES, BLK_EXTENT, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
+    //         "VALUES ( :1, :2, :3, :4, 1, mdsys.sdo_geometry(:5, :6, null,:7, :8)" 
+    //         ", 1, 0, 1)";    
+    
+    // :1
+    statement->Bind( b->pc_ids );
+    
+    // :2
+    statement->Bind( b->block_ids );
+
+    // :3
+    statement->Bind( b->num_points);
+       
+    // :4
+    statement->Define( locator, (int)commit_interval ); 
+    
+    long max_size = 0;
+    for (int i = 0; i < commit_interval; i++) {
+        max_size = std::max(max_size, (long)b->blobs[i]->size());
+    }
+
+    statement->Bind((char*)b->blobs,(long)max_size);    
+
+    // :5
+    statement->Bind(b->gtypes);
+
+    // :6
+    statement->Bind(b->srids);    
+
+    
+    // :7
+    // OCIArray* sdo_elem_info=0;
+    // connection->CreateType(&sdo_elem_info, connection->GetElemInfoType());
+    // SetElements(statement, sdo_elem_info, bUseSolidGeometry);    
+    // statement->Bind(&sdo_elem_info, connection->GetElemInfoType());
+
+    // long* pc_ids;
+    // long* block_ids;
+    // long* num_points;
+    // std::vector<liblas::uint8_t>** blobs;
+    // 
+    // long* srids;
+    // long* gtypes;
+    // OCIArray** element_arrays;
+    // OCIArray** coordinate_arrays;
+
     return true;
 }
 bool InsertBlock(OWConnection* connection, 
