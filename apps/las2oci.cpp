@@ -407,6 +407,12 @@ extent* GetExtent(  const SpatialIndex::Region* b,
 {
     double x0, x1, y0, y1, z0, z1;
     // const SpatialIndex::Region* b = result.GetBounds();
+
+    x0 = b->getLow(0); 
+    x1 = b->getHigh(0); 
+    y0 = b->getLow(1); 
+    y1 = b->getHigh(1);
+
     if (bUse3d) {
         try {
             z0 = b->getLow(2);
@@ -646,16 +652,19 @@ bool InsertBlock(OWConnection* connection,
     p_result_id[0] = (long)result.GetID();
     
     long* p_num_points = (long*) malloc (1 * sizeof(long));
-    p_num_points[0] = num_points;
+    p_num_points[0] = (long)num_points;
+    
+    printf("num points: %d", *p_num_points);
     
     // :1
     statement->Bind( p_pc_id );
     
     // :2
-    statement->Bind( &n_results );
+    statement->Bind( p_result_id );
 
     // :3
-    statement->Bind( (long*)&num_points);
+    statement->Bind( p_num_points );
+    printf("num poitns: %d", num_points);
        
     // :4
     statement->Define( locator, 1 ); 
@@ -1676,6 +1685,7 @@ int main(int argc, char* argv[])
         oss.str("");        
     }
 
+    con->Commit();
 }
 // 
 // select t.x, t.y, t.id from (
