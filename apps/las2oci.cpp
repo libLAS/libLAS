@@ -654,7 +654,6 @@ bool InsertBlock(OWConnection* connection,
     long* p_num_points = (long*) malloc (1 * sizeof(long));
     p_num_points[0] = (long)num_points;
     
-    printf("num points: %d", *p_num_points);
     
     // :1
     statement->Bind( p_pc_id );
@@ -664,7 +663,6 @@ bool InsertBlock(OWConnection* connection,
 
     // :3
     statement->Bind( p_num_points );
-    printf("num poitns: %d", num_points);
        
     // :4
     statement->Define( locator, 1 ); 
