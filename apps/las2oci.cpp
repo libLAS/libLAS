@@ -686,7 +686,6 @@ bool InsertBlock(OWConnection* connection,
     if (srid != 0) {
         p_srid = (long*) malloc (1 * sizeof(long));
         p_srid[0] = srid;
-        printf("srid: %d", p_srid[0]);
     }
     statement->Bind(p_srid);
     
@@ -708,6 +707,7 @@ bool InsertBlock(OWConnection* connection,
     statement->Bind(&sdo_ordinates, connection->GetOrdinateType());
     
     if (statement->Execute() == false) {
+        blocks* b = CreateBlock(324);
         delete statement;
         return false;
     }
@@ -763,20 +763,20 @@ bool InsertBlocks(
     for (i=results.begin(); i!=results.end(); i++)
     {
         j++;
-
-        FillBlock( con, 
-                        statement,
-                        *i, 
-                        reader2,
-                        b,
-                        j,
-                        srid, 
-                         pc_id,
-                         GetGType(bUse3d, bUseSolidGeometry),
-                         bUseSolidGeometry,
-                         bUse3d,
-                         nDimensions
-                         );
+        // 
+        // FillBlock( con, 
+        //                 statement,
+        //                 *i, 
+        //                 reader2,
+        //                 b,
+        //                 j,
+        //                 srid, 
+        //                  pc_id,
+        //                  GetGType(bUse3d, bUseSolidGeometry),
+        //                  bUseSolidGeometry,
+        //                  bUse3d,
+        //                  nDimensions
+        //                  );
         
         bool inserted = InsertBlock(con, 
                                     *i,
