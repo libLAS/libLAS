@@ -682,9 +682,11 @@ bool InsertBlock(OWConnection* connection,
     // :6
     long* p_srid  = 0;
     
-    if (srid) {
+    
+    if (srid != 0) {
         p_srid = (long*) malloc (1 * sizeof(long));
         p_srid[0] = srid;
+        printf("srid: %d", p_srid[0]);
     }
     statement->Bind(p_srid);
     
@@ -1077,11 +1079,12 @@ long CreatePCEntry( OWConnection* connection,
     // double x0, x1, y0, y1, z0, z1;
     double tolerance = 0.05;
     
-    // if (bSetExtents){
-    //     x0 = xmin; x1 = xmax;
-    //     y0 = ymin; y1 = ymax;
-    //     z0 = zmin; z1 = zmax;
-    // } else {
+    // Nuke our extents of we're overridding them
+    if (bSetExtents){
+        e->x0 = xmin; e->x1 = xmax;
+        e->y0 = ymin; e->y1 = ymax;
+        e->z0 = zmin; e->z1 = zmax;
+    }
         // x0 = query->bounds.getLow(0);
         //  x1 = query->bounds.getHigh(0);
         //  y0 = query->bounds.getLow(1);
@@ -1407,15 +1410,6 @@ int main(int argc, char* argv[])
         {
             i++;
             xmin = atof(argv[i]);
-            bSetExtents = true;
-        }
-        else if (   strcmp(argv[i],"--xmin") == 0  ||
-                    strcmp(argv[i],"-xmin") == 0
-                )
-        {
-            i++;
-            xmin = atof(argv[i]);
-            printf("xmin: %.3f", xmin);
             bSetExtents = true;
         }
 
