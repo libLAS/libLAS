@@ -40,7 +40,7 @@ set(CMAKE_COLOR_MAKEFILE ON)
 mark_as_advanced(CMAKE_VERBOSE_MAKEFILE)
 
 # Path to additional CMake modules
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/build/cmake ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${libLAS_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 ###############################################################################
 # General build settings
