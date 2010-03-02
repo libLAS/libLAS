@@ -4,6 +4,7 @@
 #
 # On success, the macro sets the following variables:
 # ORACLE_FOUND       = if the library found
+# ORACLE_LIBRARY     = full path to the library
 # ORACLE_LIBRARIES   = full path to the library
 # ORACLE_INCLUDE_DIR = where to find the library headers also defined,
 #                       but not for general use are
@@ -20,11 +21,14 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
 ###############################################################################
-message(STATUS "Searching for Oracle ${Oracle_FIND_VERSION}+ OCI client library")
 
-if(ORACLE_INCLUDE_DIR)
+if(ORACLE_INCLUDE_DIR AND (ORACLE_LIBRARIES OR ORACLE_LIBRARY))
   # Already in cache, be silent
   set(ORACLE_FIND_QUIETLY TRUE)
+endif()
+
+if(NOT ORACLE_FIND_QUIETLY)
+  message(STATUS "Searching for Oracle ${Oracle_FIND_VERSION}+ OCI client library")
 endif()
 
 if(NOT DEFINED ENV{ORACLE_HOME})
@@ -39,8 +43,7 @@ find_path(ORACLE_INCLUDE_DIR
   ${ORACLE_HOME}/rdbms/public
   ${ORACLE_HOME}/include
   ${ORACLE_HOME}/sdk/include # Oracle SDK
-  ${ORACLE_HOME}/OCI/include # Oracle XE on Windows
-  )
+  ${ORACLE_HOME}/OCI/include # Oracle XE on Windows)
 
 set(ORACLE_OCI_NAMES clntsh libclntsh oci)
 set(ORACLE_NNZ_NAMES nnz10 libnnz10 nnz11 libnnz11 ociw32)
@@ -48,8 +51,7 @@ set(ORACLE_OCCI_NAMES libocci occi oraocci10 oraocci11)
 
 set(ORACLE_LIB_DIR 
   ${ORACLE_HOME}/lib
-  ${ORACLE_HOME}/OCI/lib/MSVC # Oracle XE on Windows
-)
+  ${ORACLE_HOME}/OCI/lib/MSVC # Oracle XE on Windows)
 
 find_library(ORACLE_OCI_LIBRARY  NAMES ${ORACLE_OCI_NAMES} PATHS ${ORACLE_LIB_DIR})
 find_library(ORACLE_OCCI_LIBRARY NAMES ${ORACLE_OCCI_NAMES} PATHS ${ORACLE_LIB_DIR})
@@ -71,7 +73,9 @@ if(APPLE)
   endif()
 endif()
 
+set(ORACLE_LIBRARIES ${ORACLE_LIBRARY})
+
 # Handle the QUIETLY and REQUIRED arguments and set ORACLE_FOUND to TRUE
 # if all listed variables are TRUE
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Oracle DEFAULT_MSG ORACLE_LIBRARY ORACLE_INCLUDE_DIR)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(ORACLE DEFAULT_MSG ORACLE_LIBRARY ORACLE_INCLUDE_DIR)
