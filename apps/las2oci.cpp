@@ -18,6 +18,7 @@
 #include <fstream>
 #include <exception>
 #include <algorithm>
+#include <vector>
 #include <cctype>
 #include <cmath>
 
@@ -391,7 +392,7 @@ bool GetResultData( const LASQueryResult& result,
 
     std::vector<liblas::uint8_t> point_data;
     
-    for (i=ids.begin(); i!=ids.end(); i++) 
+    for (i=ids.begin(); i!=ids.end(); ++i) 
     {
         SpatialIndex::id_type id = *i;
 
@@ -404,7 +405,7 @@ bool GetResultData( const LASQueryResult& result,
             
             if (!gotdata) { throw std::runtime_error("Unable to fetch Point Data"); exit(1);}
             std::vector<liblas::uint8_t>::const_iterator d;
-            for (d = point_data.begin(); d!=point_data.end(); d++) {
+            for (d = point_data.begin(); d!=point_data.end(); ++d) {
                 data.push_back(*d);
             }
 
@@ -533,6 +534,7 @@ bool FillBlock( OWConnection* connection,
     b->block_ids[index] = result.GetID();
     b->num_points[index] = (long)ids.size();
     
+    // TODO: This probably is a memory leak if the gotdata == false --mloskot
     std::vector<liblas::uint8_t>* blob = new std::vector<liblas::uint8_t>;
     
     bool gotdata = GetResultData(result, reader, *blob, nDimensions);
@@ -763,11 +765,7 @@ bool InsertBlocks(
                 long nDimensions
                 )
 {
-
-    
     std::list<LASQueryResult>::const_iterator i;
-
-
 
     long commit_interval = 1000;
     blocks* b = CreateBlock(commit_interval);
