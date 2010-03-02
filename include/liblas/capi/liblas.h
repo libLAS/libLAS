@@ -127,6 +127,7 @@ typedef struct  {
  *  @return the version string for this library.
 */
 LAS_DLL char* LAS_GetVersion(void);
+LAS_DLL char* LAS_GetFullVersion(void);
 
 LAS_DLL int LAS_IsLibGeoTIFFEnabled(void);
 

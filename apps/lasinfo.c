@@ -102,7 +102,14 @@ int main(int argc, char *argv[])
 
     for (i = 1; i < argc; i++)
     {
-        if (strcmp(argv[i],"-h") == 0 || strcmp(argv[i],"--help") == 0)
+        if (strcmp(argv[i],"-v") == 0 || strcmp(argv[i],"--version") == 0)
+        {
+            char* ver = LAS_GetFullVersion();
+            fprintf(stderr,"%s", ver);
+            free(ver);
+            exit(0);
+        }
+        else if (strcmp(argv[i],"-h") == 0 || strcmp(argv[i],"--help") == 0)
         {
             usage();
             exit(0);

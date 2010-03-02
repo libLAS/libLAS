@@ -83,6 +83,11 @@ LAS_C_START
 #include <stdint.h>
 #endif
 
+
+#ifdef HAVE_SPATIALINDEX
+#include <spatialindex/Version.h>
+#endif
+
 #ifdef _WIN32
 #define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
 #else
@@ -1525,25 +1530,46 @@ LAS_DLL void LASError_Print(const char* message) {
 
 }
 
-LAS_DLL char * LAS_GetVersion() {
+LAS_DLL char* LAS_GetVersion() {
 
-    /* XXX - mloskot: I'd suggest to define PACKAGE_VERSION as static object
-       and return safe const pointer, instead of newly allocated string. */
-
-    /* FIXME - mloskot: Termporarily, I defined PACKAGE_VERSION
-       in las_config.h to solve Visual C++ compilation  (Ticket #23) */
-
-    std::ostringstream output;
-        
 //    output << LIBLAS_VERSION_MAJOR;
 //    output << "." << LIBLAS_VERSION_MINOR;
 //    output << "." << LIBLAS_VERSION_REV;
 //    output << "." << LIBLAS_VERSION_BUILD;
-    output << LIBLAS_RELEASE_NAME;
-    std::string out(output.str());
-    return strdup(out.c_str());
+    char const* version = LIBLAS_RELEASE_NAME;
+    return strdup(version);
 }
 
+LAS_DLL char* LAS_GetFullVersion(void) {
+
+    std::ostringstream os;
+#ifdef HAVE_LIBGEOTIFF
+    os << " GeoTIFF "
+       << (LIBGEOTIFF_VERSION / 1000) << '.'
+       << (LIBGEOTIFF_VERSION / 100 % 10) << '.'
+       << (LIBGEOTIFF_VERSION % 100 / 10);
+#endif
+#ifdef HAVE_GDAL
+    os << " GDAL " << GDALVersionInfo("RELEASE_NAME");
+#endif
+#ifdef HAVE_SPATIALINDEX
+    os << " SpatialIndex "
+       << SIDX_VERSION_MAJOR << '.'
+       << SIDX_VERSION_MINOR << '.'
+       << SIDX_VERSION_REV;
+#endif
+
+    std::string info(os.str());
+    os.str("");
+    os << "libLAS " << LIBLAS_RELEASE_NAME;
+    if (!info.empty())
+    {
+        os << " with" << info;
+    }
+    os << std::endl;
+
+    return strdup(os.str().c_str());
+}
 
 
 LAS_DLL LASVLRH LASVLR_Create(void) {
