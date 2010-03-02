@@ -36,6 +36,8 @@ FIND_PATH(SPATIALINDEX_INCLUDE_DIR
   HINTS
   ${OSGEO4W_ROOT_DIR}/include
   PATHS
+  /usr
+  /usr/local
   ${OSGEO4W_ROOT_DIR}/include
   PATH_SUFFIXES spatialindex
   DOC "Path to include directory of SpatialIndex library")
