@@ -46,6 +46,7 @@
 #define LIBLAS_HPP_INCLUDED
 
 #include <liblas/cstdint.hpp>
+#include <liblas/detail/fwd.hpp>
 #include <fstream>
 #include <string>
 
@@ -145,7 +146,37 @@ enum PointSize
     ePointSize3 = 34  ///< Size of point record in data format \e 3
 
 };
-    
+
+
+class ReaderI
+{
+public:
+
+    virtual LASHeader const& ReadHeader() = 0;
+    virtual LASPoint const& ReadNextPoint(const LASHeader& header) = 0;
+    virtual LASPoint const& ReadPointAt(std::size_t n, const LASHeader& header) = 0;
+
+    virtual void Reset(const LASHeader& header) = 0;
+    virtual void SetInputSRS(const LASSpatialReference& srs) = 0;
+    virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header) = 0;
+
+    virtual ~ReaderI() {};    
+};
+
+class WriterI
+{
+public:
+
+    virtual LASHeader const& WriteHeader(const LASHeader& header) = 0;
+    virtual void UpdateHeader(const LASHeader& header) = 0;
+    virtual void WritePoint(const LASPoint& point, const LASHeader& header) = 0;
+
+    virtual void SetInputSRS(const LASSpatialReference& srs) = 0;
+    virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header) = 0;
+
+    virtual ~WriterI() {};    
+
+};
 } // namespace liblas
 
 #endif // LIBLAS_HPP_INCLUDED

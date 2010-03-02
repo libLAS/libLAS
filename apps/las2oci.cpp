@@ -107,7 +107,7 @@ std::istream* OpenInput(std::string filename, bool bEnd)
     return istrm;
 }
 
-std::string ReadSQLData(char* filename)
+std::string ReadSQLData(char const* filename)
 {
     std::istream* infile = OpenInput(filename, true);
     ifstream::pos_type size;
@@ -851,59 +851,43 @@ bool CreateSDOEntry(    OWConnection* connection,
     else {
         s_srid << srid;
     }
-    
-    double x0, x1, y0, y1, z0, z1;
+
     double tolerance = 0.05;
-    
-    if (bSetExtents){
-        x0 = xmin; x1 = xmax;
-        y0 = ymin; y1 = ymax;
-        z0 = zmin; z1 = zmax;
-    } else {
-        x0 = query->bounds.getLow(0);
-        x1 = query->bounds.getHigh(0);
-        y0 = query->bounds.getLow(1);
-        y1 = query->bounds.getHigh(1);
-        
-        if (bUse3d) {
-            try {
-                z0 = query->bounds.getLow(2);
-                z1 = query->bounds.getHigh(2);
-            } catch (Tools::IndexOutOfBoundsException& e) {
-                z0 = 0;
-                z1 = 20000;
-            }
-        // } else if (bGeographic) {
-        //     x0 = -180.0;
-        //     x1 = 180.0;
-        //     y0 = -90.0;
-        //     y1 = 90.0;
-        //     z0 = 0.0;
-        //     z1 = 20000.0;
-        //     tolerance = 0.000000005;
-        } else {
-            z0 = 0.0;
-            z1 = 20000.0;            
-        }
+    extent* e = GetExtent(  &(query->bounds), bUse3d );
+
+    if (IsGeographic(connection, srid)) {
+        e->x0 = -180.0; e->x1 = 180.0;
+        e->y0 = -90.0; e->y1 = 90.0;
+        e->z0 = 0.0; e->z1 = 20000.0;
+
+        tolerance = 0.000000005;
     }
-    
+
+
+    if (bSetExtents){
+        e->x0 = xmin; e->x1 = xmax;
+        e->y0 = ymin; e->y1 = ymax;
+        e->z0 = zmin; e->z1 = zmax;
+    }     
 
      
     oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
         "','blk_extent', MDSYS.SDO_DIM_ARRAY(";
     
-    oss << "MDSYS.SDO_DIM_ELEMENT('X', " << x0 << "," << x1 <<"," << tolerance << "),"
-           "MDSYS.SDO_DIM_ELEMENT('Y', " << y0 << "," << y1 <<"," << tolerance << ")";
+    oss << "MDSYS.SDO_DIM_ELEMENT('X', " << e->x0 << "," << e->x1 <<"," << tolerance << "),"
+           "MDSYS.SDO_DIM_ELEMENT('Y', " << e->y0 << "," << e->y1 <<"," << tolerance << ")";
            
-    if (bUse3d) {
+    if (e->bUse3d) {
         oss << ",";
-        oss <<"MDSYS.SDO_DIM_ELEMENT('Z', "<< z0 << "," << z1 << "," << tolerance << ")";
+        oss <<"MDSYS.SDO_DIM_ELEMENT('Z', "<< e->z0 << "," << e->z1 << "," << tolerance << ")";
     }
     oss << ")," << s_srid.str() << ")";
     
     statement = Run(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");
+    
+    delete e;
     
     return true;
         
@@ -1044,8 +1028,7 @@ long CreatePCEntry( OWConnection* connection,
 
 
     bool is_geo = IsGeographic(connection, srid);
-    
-    std::cout <<"Is Geographic? :" << is_geo << std::endl;
+
     if (srid == 0) {
         s_srid << "NULL";
         }

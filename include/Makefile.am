@@ -4,7 +4,6 @@ nobase_las_HEADERS = \
     liblas/cstdint.hpp \
     liblas/exception.hpp \
     liblas/guid.hpp \
-    liblas/interfaces.hpp \
     liblas/iterator.hpp \
     liblas/lasclassification.hpp \
     liblas/lascolor.hpp \

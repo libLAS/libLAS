@@ -43,7 +43,7 @@
 #define LIBLAS_DETAIL_WRITER10_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
-#include <liblas/interfaces.hpp>
+#include <liblas/liblas.hpp>
 #include <liblas/detail/writer/point.hpp>
 #include <liblas/detail/writer/header.hpp>
 

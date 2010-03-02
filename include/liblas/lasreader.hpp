@@ -44,7 +44,7 @@
 #define LIBLAS_LASREADER_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
-#include <liblas/interfaces.hpp>
+#include <liblas/liblas.hpp>
 
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
