@@ -34,10 +34,13 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
 
 void usage()
 {
+    char* version = LAS_GetVersion();
     fprintf(stderr,"----------------------------------------------------------\n");
-    fprintf(stderr,"    lasinfo (version %s) usage:\n", LAS_GetVersion());
+    fprintf(stderr,"    lasinfo (version %s) usage:\n", version);
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr,"\n");
+    free(version);
+    version = NULL;
 
     fprintf(stderr,"Printing simple header info:\n");
     fprintf(stderr,"  lasinfo lidar.las\n");
