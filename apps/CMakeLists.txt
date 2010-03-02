@@ -6,7 +6,7 @@
 #
 ###############################################################################
 
-INCLUDE_DIRECTORIES(
+include_directories(
     .
     ../include
     ../include/liblas/capi)
@@ -14,47 +14,47 @@ INCLUDE_DIRECTORIES(
 ###############################################################################
 # Collect programs to build
 
-SET(LASINFO lasinfo)
-SET(LASMERGE lasmerge)
-SET(LAS2LAS las2las)
-SET(LAS2TXT las2txt)
-SET(TXT2LAS txt2las)
+set(LASINFO lasinfo)
+set(LASMERGE lasmerge)
+set(LAS2LAS las2las)
+set(LAS2TXT las2txt)
+set(TXT2LAS txt2las)
 
 # Utilities depending on 3rd-pary libraries
-IF(GDAL_FOUND)
-    SET(LAS2OGR las2ogr)
-ENDIF()
+if(GDAL_FOUND)
+    set(LAS2OGR las2ogr)
+endif()
 
-IF(SPATIALINDEX_FOUND)
-    SET(LASINDEX lasindex)
-ENDIF()
+if(SPATIALINDEX_FOUND)
+    set(LASINDEX lasindex)
+endif()
 
-IF(ORACLE_FOUND AND GDAL_FOUND)
-    SET(LAS2OCI las2oci)
-ENDIF()
+if(ORACLE_FOUND AND GDAL_FOUND)
+    set(LAS2OCI las2oci)
+endif()
 
-SET(LIBLAS_UTILITIES
+set(LIBLAS_UTILITIES
     ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
     ${LAS2OGR} ${LASINDEX} ${LAS2OCI})
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
-SET(VCPROJ_USER_REMOTE_MACHINE_DEBUG ${MACHINE_NAME})
-SET(VCPROJ_USER_ENVIRONMENT_DEBUG "${ENVIRONMENT_PATH}")
+set(VCPROJ_USER_REMOTE_MACHINE_DEBUG ${MACHINE_NAME})
+set(VCPROJ_USER_ENVIRONMENT_DEBUG "${ENVIRONMENT_PATH}")
 
-IF(MSVC)
-    FOREACH(utility ${LIBLAS_UTILITIES})
-        SET(USER_FILE ${utility}.vcproj.$ENV{USERDOMAIN}.$ENV{USERNAME}.user)
-        SET(OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${USER_FILE})
-        MESSAGE(STATUS "Generating ${CMAKE_GENERATOR} user-specific settings in ${USER_FILE}")
-        CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/build/cmake/libLAS.vcproj.user.template ${OUTPUT_PATH} @ONLY)
-    ENDFOREACH()
-ENDIF()
+if(MSVC)
+    foreach(utility ${LIBLAS_UTILITIES})
+        set(USER_FILE ${utility}.vcproj.$ENV{USERDOMAIN}.$ENV{USERNAME}.user)
+        set(OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${USER_FILE})
+        message(STATUS "Generating ${CMAKE_GENERATOR} user-specific settings in ${USER_FILE}")
+        configure_file(${CMAKE_SOURCE_DIR}/build/cmake/libLAS.vcproj.user.template ${OUTPUT_PATH} @ONLY)
+    endforeach()
+endif()
 
 ###############################################################################
 # Configure build targets
 
-SET(APPS_CPP_DEPENDENCIES
+set(APPS_CPP_DEPENDENCIES
     ${LIBLAS_LIB_NAME}
     ${ZLIB_LIBRARY}
     ${GEOTIFF_LIBRARY}
@@ -63,62 +63,62 @@ SET(APPS_CPP_DEPENDENCIES
     ${ORACLE_LIBRARY})
 
 # Build lasinfo
-IF(LASINFO)
-    SET(LASINFO_SRC lascommon.c ${LASINFO}.c)
-    ADD_EXECUTABLE(${LASINFO} ${LASINFO_SRC})
-    TARGET_LINK_LIBRARIES(${LASINFO} ${LIBLAS_C_LIB_NAME})
-ENDIF()
+if(LASINFO)
+    set(LASINFO_SRC lascommon.c ${LASINFO}.c)
+    add_executable(${LASINFO} ${LASINFO_SRC})
+    target_link_libraries(${LASINFO} ${LIBLAS_C_LIB_NAME})
+endif()
 
 # Build las2las
-IF(LAS2LAS)
-    SET(LAS2LAS_SRC lascommon.c ${LAS2LAS}.c)
-    ADD_EXECUTABLE(${LAS2LAS} ${LAS2LAS_SRC})
-    TARGET_LINK_LIBRARIES(${LAS2LAS} ${LIBLAS_C_LIB_NAME})
-ENDIF()
+if(LAS2LAS)
+    set(LAS2LAS_SRC lascommon.c ${LAS2LAS}.c)
+    add_executable(${LAS2LAS} ${LAS2LAS_SRC})
+    target_link_libraries(${LAS2LAS} ${LIBLAS_C_LIB_NAME})
+endif()
 
 # Build las2txt
-IF(LAS2TXT)
-    SET(LAS2TXT_SRC lascommon.c ${LAS2TXT}.c)
-    ADD_EXECUTABLE(${LAS2TXT} ${LAS2TXT_SRC})
-    TARGET_LINK_LIBRARIES(${LAS2TXT} ${LIBLAS_C_LIB_NAME})
-ENDIF()
+if(LAS2TXT)
+    set(LAS2TXT_SRC lascommon.c ${LAS2TXT}.c)
+    add_executable(${LAS2TXT} ${LAS2TXT_SRC})
+    target_link_libraries(${LAS2TXT} ${LIBLAS_C_LIB_NAME})
+endif()
  
 # Build txt2las
-IF(TXT2LAS)
-    SET(TXT2LAS_SRC lascommon.c ${TXT2LAS}.c)
-    ADD_EXECUTABLE(${TXT2LAS} ${TXT2LAS_SRC})
-    TARGET_LINK_LIBRARIES(${TXT2LAS} ${LIBLAS_C_LIB_NAME})
-ENDIF()
+if(TXT2LAS)
+    set(TXT2LAS_SRC lascommon.c ${TXT2LAS}.c)
+    add_executable(${TXT2LAS} ${TXT2LAS_SRC})
+    target_link_libraries(${TXT2LAS} ${LIBLAS_C_LIB_NAME})
+endif()
 
 # Build lasmerge
-IF(LASMERGE)
-    SET(LASMERGE_SRC lascommon.c ${LASMERGE}.c)
-    ADD_EXECUTABLE(${LASMERGE} ${LASMERGE_SRC})
-    TARGET_LINK_LIBRARIES(${LASMERGE} ${LIBLAS_C_LIB_NAME})
-ENDIF()
+if(LASMERGE)
+    set(LASMERGE_SRC lascommon.c ${LASMERGE}.c)
+    add_executable(${LASMERGE} ${LASMERGE_SRC})
+    target_link_libraries(${LASMERGE} ${LIBLAS_C_LIB_NAME})
+endif()
 
 # Build lasindex
-IF(LASINDEX)
-    ADD_EXECUTABLE(${LASINDEX} lasindex.cpp)
-    TARGET_LINK_LIBRARIES(${LASINDEX} ${APPS_CPP_DEPENDENCIES})
-ENDIF()
+if(LASINDEX)
+    add_executable(${LASINDEX} lasindex.cpp)
+    target_link_libraries(${LASINDEX} ${APPS_CPP_DEPENDENCIES})
+endif()
 
 # Build las2ogr
-IF(LAS2OGR)
-    ADD_EXECUTABLE(${LAS2OGR} las2ogr.cpp)
-    TARGET_LINK_LIBRARIES(${LAS2OGR} ${APPS_CPP_DEPENDENCIES})
-ENDIF()
+if(LAS2OGR)
+    add_executable(${LAS2OGR} las2ogr.cpp)
+    target_link_libraries(${LAS2OGR} ${APPS_CPP_DEPENDENCIES})
+endif()
 
 # Build las2oci
-IF(LAS2OCI)
-    ADD_EXECUTABLE(${LAS2OCI} las2oci.cpp)
-    TARGET_LINK_LIBRARIES(${LAS2OCI} ${APPS_CPP_DEPENDENCIES})
-ENDIF()
+if(LAS2OCI)
+    add_executable(${LAS2OCI} las2oci.cpp)
+    target_link_libraries(${LAS2OCI} ${APPS_CPP_DEPENDENCIES})
+endif()
 
 ###############################################################################
 # Targets installation
 
-INSTALL(TARGETS ${LIBLAS_UTILITIES}
+install(TARGETS ${LIBLAS_UTILITIES}
     RUNTIME DESTINATION ${LIBLAS_BIN_DIR}
     LIBRARY DESTINATION ${LIBLAS_LIB_DIR}
     ARCHIVE DESTINATION ${LIBLAS_LIB_DIR})

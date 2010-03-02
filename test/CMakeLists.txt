@@ -5,4 +5,4 @@
 # Copyright (c) 2009 Mateusz Loskot <mateusz@loskot.net>
 #
 ###############################################################################
-SUBDIRS(unit)
+subdirs(unit)
