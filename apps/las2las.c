@@ -933,7 +933,7 @@ int main(int argc, char *argv[])
             proj4_text =  LASSRS_GetProj4(out_srs);
             fprintf(stderr,
                 "Setting new coordinate system to %s", proj4_text);
-            free(proj4_text);
+            LASString_Free(proj4_text);
         }
         
         /* keep around the header's SRS if we don't have one set by the user */
@@ -972,11 +972,11 @@ int main(int argc, char *argv[])
         if (in_srs != NULL) {
             char* in_wkt = LASSRS_GetWKT(in_srs);
             if (strlen(in_wkt) == 0) {
-                free(in_wkt);
+                LASString_Free(in_wkt);
                 LASError_Print("Input SRS is empty, please specify with -s_srs");
                 exit(1);
             }
-            free(in_wkt);
+            LASString_Free(in_wkt);
             LASWriter_SetInputSRS(writer, in_srs);
         } else {
             

@@ -39,7 +39,7 @@ void usage()
     fprintf(stderr,"    lasinfo (version %s) usage:\n", version);
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr,"\n");
-    free(version);
+    LASString_Free(version);
     version = NULL;
 
     fprintf(stderr,"Printing simple header info:\n");
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
         {
             char* ver = LAS_GetFullVersion();
             fprintf(stderr,"%s", ver);
-            free(ver);
+            LASString_Free(ver);
             exit(0);
         }
         else if (strcmp(argv[i],"-h") == 0 || strcmp(argv[i],"--help") == 0)
