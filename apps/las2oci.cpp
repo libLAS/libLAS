@@ -147,8 +147,45 @@ bool EnableTracing(OWConnection* connection)
         delete statement;
         return 0;
     }    
+    
+    return true;
 }
+bool IsGeographic(OWConnection* connection, long srid) {
 
+    ostringstream oss;
+    char* kind = (char* ) malloc (OWNAME * sizeof(char));
+    oss << "SELECT COORD_REF_SYS_KIND from MDSYS.SDO_COORD_REF_SYSTEM WHERE SRID = :1";
+    
+    OWStatement* statement = 0;
+
+    statement = connection->CreateStatement(oss.str().c_str());
+    long* p_srid = (long*) malloc( 1 * sizeof(long));
+    p_srid[0] = srid;
+    
+    statement->Bind(p_srid);
+    statement->Define(kind);    
+    if (statement->Execute() == false) {
+        
+        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
+        delete statement;
+        return false;
+    }
+    
+    if (compare_no_case(kind, "GEOGRAPHIC2D",12) == 0) {
+        delete statement;
+        free(kind);
+        return true;
+    }
+    if (compare_no_case(kind, "GEOGRAPHIC3D",12) == 0) {
+        delete statement;
+        free(kind);
+        return true;
+    }
+
+    
+    free(kind);
+    return false;
+}
 OWStatement* Run(OWConnection* connection, ostringstream& command) 
 {
     OWStatement* statement = 0;
@@ -251,12 +288,12 @@ oss << "declare\n"
 "  mdsys.sdo_pc_pkg.drop_dependencies('"<<cloudTableName_u<<"', '"<<cloudColumnName_u<<"');"
 "end;";
     statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
+    if (statement != 0) delete statement; 
     oss.str("");
     
     oss << "DROP TABLE "<< tableName ;
     statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
+    if (statement != 0) delete statement; 
     oss.str("");
 
     // Oracle upper cases the table name when inserting it in the 
@@ -364,7 +401,8 @@ bool GetResultData( const LASQueryResult& result,
 
             // d 8-byte IEEE  big-endian doubles, where d is the PC_TOT_DIMENSIONS value
             bool gotdata = GetPointData(p, bTime, point_data);
-
+            
+            if (!gotdata) { throw std::runtime_error("Unable to fetch Point Data"); exit(1);}
             std::vector<liblas::uint8_t>::const_iterator d;
             for (d = point_data.begin(); d!=point_data.end(); d++) {
                 data.push_back(*d);
@@ -428,8 +466,7 @@ void SetOrdinates(   OWStatement* statement,
 }
 
 extent* GetExtent(  const SpatialIndex::Region* b,
-                    bool bUse3d,
-                    bool bGeographic
+                    bool bUse3d
                  )
 {
     double x0, x1, y0, y1, z0, z1;
@@ -439,27 +476,16 @@ extent* GetExtent(  const SpatialIndex::Region* b,
     x1 = b->getHigh(0); 
     y0 = b->getLow(1); 
     y1 = b->getHigh(1);
-
+    z0 = 0;
+    z1 = 20000;
     if (bUse3d) {
         try {
             z0 = b->getLow(2);
             z1 = b->getHigh(2);
         } catch (Tools::IndexOutOfBoundsException& e) {
-            z0 = 0;
-            z1 = 20000;
+            
         }
-    } else if (bGeographic) {
-        x0 = -180.0;
-        x1 = 180.0;
-        y0 = -90.0;
-        y1 = 90.0;
-        z0 = 0.0;
-        z1 = 20000.0;
-    } else {
-        z0 = 0.0;
-        z1 = 20000.0;            
-    }   
-    
+    }
     extent* e = (extent*) malloc (sizeof(extent));
     e->x0 = x0; e->x1 = x1;
     e->y0 = y0; e->y1 = y1;
@@ -482,7 +508,7 @@ blocks* CreateBlock(int size)
 
     b->element_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
     b->coordinate_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
-   
+    return b;
 }
 bool FillBlock( OWConnection* connection, 
                 OWStatement* statement,
@@ -501,8 +527,7 @@ bool FillBlock( OWConnection* connection,
 
 
     list<SpatialIndex::id_type> const& ids = result.GetIDs();
-    const SpatialIndex::Region* bounds = result.GetBounds();
-    
+   
     b->pc_ids[index] = pc_id;
     b->srids[index] = srid;
     b->block_ids[index] = result.GetID();
@@ -527,20 +552,8 @@ bool FillBlock( OWConnection* connection,
     connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
 
 
-    bool bGeographic = false;
-    
-    if (srid == 4326) {
-        bGeographic = true;
-    }
-    else {
-        // s_srid << srid;
-        // bUse3d = false;
-        // If the user set an srid and set it to solid, we're still 3d
-        // if (bUseSolidGeometry == true)
-        //     bUse3d = true;
-    }
-        
-    extent* e = GetExtent(result.GetBounds(), bUse3d, bGeographic);
+
+    extent* e = GetExtent(result.GetBounds(), bUse3d);
     SetOrdinates(statement, sdo_ordinates, e);
 
     b->coordinate_arrays[index] = sdo_ordinates;
@@ -637,25 +650,12 @@ bool InsertBlock(OWConnection* connection,
     ostringstream oss;
 
     list<SpatialIndex::id_type> const& ids = result.GetIDs();
-    const SpatialIndex::Region* b = result.GetBounds();
+    // const SpatialIndex::Region* b = result.GetBounds();
     liblas::uint32_t num_points = ids.size();
 
 
-    bool bGeographic = false;
-    
     // EnableTracing(connection);
     
-    if (srid == 4326) {
-        bGeographic = true;
-    }
-    else {
-        // s_srid << srid;
-        // bUse3d = false;
-        // If the user set an srid and set it to solid, we're still 3d
-        // if (bUseSolidGeometry == true)
-        //     bUse3d = true;
-    }
-
     long gtype = GetGType(bUse3d, bUseSolidGeometry);
 
     oss << "INSERT INTO "<< tableName << 
@@ -675,7 +675,6 @@ bool InsertBlock(OWConnection* connection,
     p_pc_id[0] = pc_id;
 
     long* p_result_id = (long*) malloc( 1 * sizeof(long));
-    long n_results = result.GetID();
     p_result_id[0] = (long)result.GetID();
     
     long* p_num_points = (long*) malloc (1 * sizeof(long));
@@ -726,7 +725,7 @@ bool InsertBlock(OWConnection* connection,
     OCIArray* sdo_ordinates=0;
     connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
     
-    extent* e = GetExtent(result.GetBounds(), bUse3d, bGeographic);
+    extent* e = GetExtent(result.GetBounds(), bUse3d);
 
     
      // x0, x1, y0, y1, z0, z1, bUse3d
@@ -734,7 +733,6 @@ bool InsertBlock(OWConnection* connection,
     statement->Bind(&sdo_ordinates, connection->GetOrdinateType());
     
     if (statement->Execute() == false) {
-        blocks* b = CreateBlock(324);
         delete statement;
         return false;
     }
@@ -782,11 +780,11 @@ bool InsertBlocks(
             ", 1, 0, 1)";
           
     OWStatement* statement = 0;
-    OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1000 );
+    // OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1000 );
 
     statement = con->CreateStatement(oss.str().c_str());
     long j = 0;
-
+    bool inserted = false;
     for (i=results.begin(); i!=results.end(); i++)
     {
         j++;
@@ -805,7 +803,7 @@ bool InsertBlocks(
         //                  nDimensions
         //                  );
         
-        bool inserted = InsertBlock(con, 
+        inserted = InsertBlock(con, 
                                     *i,
                                     b,
                                     j, 
@@ -817,7 +815,7 @@ bool InsertBlocks(
                                     bUseSolidGeometry, 
                                     bUse3d);
     }
-    return true;
+    return inserted;
 }
 
 bool CreateSDOEntry(    OWConnection* connection, 
@@ -844,22 +842,12 @@ bool CreateSDOEntry(    OWConnection* connection,
     oss.precision(precision);
 
     ostringstream s_srid;
-    bool bGeographic = false;
-    
-    // if (bUseSolidGeometry == true) {
-    //     bUse3d = true;
-    // }
     
 
     if (srid == 0) {
         s_srid << "NULL";
         // bUse3d = true;
     }
-    // else if (srid == 4326) {
-    //     s_srid << "NULL";
-    //     // bUse3d = true;
-    //     bGeographic = true;
-    // } 
     else {
         s_srid << srid;
     }
@@ -885,14 +873,14 @@ bool CreateSDOEntry(    OWConnection* connection,
                 z0 = 0;
                 z1 = 20000;
             }
-        } else if (bGeographic) {
-            x0 = -180.0;
-            x1 = 180.0;
-            y0 = -90.0;
-            y1 = 90.0;
-            z0 = 0.0;
-            z1 = 20000.0;
-            tolerance = 0.000000005;
+        // } else if (bGeographic) {
+        //     x0 = -180.0;
+        //     x1 = 180.0;
+        //     y0 = -90.0;
+        //     y1 = 90.0;
+        //     z0 = 0.0;
+        //     z1 = 20000.0;
+        //     tolerance = 0.000000005;
         } else {
             z0 = 0.0;
             z1 = 20000.0;            
@@ -1055,25 +1043,14 @@ long CreatePCEntry( OWConnection* connection,
     ostringstream s_geom;
 
 
-    bool bGeographic = false;
+    bool is_geo = IsGeographic(connection, srid);
     
+    std::cout <<"Is Geographic? :" << is_geo << std::endl;
     if (srid == 0) {
         s_srid << "NULL";
-        // bUse3d = true;
-        // bUseSolidGeometry = true;
         }
-    // else if (srid == 4326) {
-    //     // bUse3d = true;
-    //     // bUseSolidGeometry = false;
-    //     bGeographic = true;
-    //     s_srid << "NULL";
-    // }
     else {
         s_srid << srid;
-        // bUse3d = false;
-        // // If the user set an srid and set it to solid, we're still 3d
-        // if (bUseSolidGeometry == true)
-        //     bUse3d = true;
     }
 
     long gtype = GetGType(bUse3d, bUseSolidGeometry);
@@ -1101,43 +1078,8 @@ long CreatePCEntry( OWConnection* connection,
     }
     
 
-    extent* e = GetExtent(  &(query->bounds), bUse3d, bGeographic );
+    extent* e = GetExtent(  &(query->bounds), bUse3d );
 
-    // double x0, x1, y0, y1, z0, z1;
-    double tolerance = 0.05;
-    
-    // Nuke our extents of we're overridding them
-    if (bSetExtents){
-        e->x0 = xmin; e->x1 = xmax;
-        e->y0 = ymin; e->y1 = ymax;
-        e->z0 = zmin; e->z1 = zmax;
-    }
-        // x0 = query->bounds.getLow(0);
-        //  x1 = query->bounds.getHigh(0);
-        //  y0 = query->bounds.getLow(1);
-        //  y1 = query->bounds.getHigh(1);
-        //  
-        //  if (bUse3d) {
-        //      try {
-        //          z0 = query->bounds.getLow(2);
-        //          z1 = query->bounds.getHigh(2);
-        //      } catch (Tools::IndexOutOfBoundsException& e) {
-        //          z0 = 0;
-        //          z1 = 20000;
-        //      }
-        //  } else if (bGeographic) {
-        //      x0 = -180.0;
-        //      y0 = 180.0;
-        //      y0 = -90.0;
-        //      y1 = 90.0;
-        //      z0 = 0.0;
-        //      z1 = 20000.0;
-        //      tolerance = 0.000000005;
-        //  } else {
-        //      z0 = 0.0;
-        //      z1 = 20000.0;            
-        //  }
-    // }    
 
     s_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
 "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
@@ -1665,7 +1607,8 @@ int main(int argc, char* argv[])
             std::cout << " pre-block-sql execution failed.." << std::endl;
             return false;
         }
-        oss.str("");        
+        oss.str("");
+        con->Commit();     
     }
     
     long nDimensions = 3;
