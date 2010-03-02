@@ -82,9 +82,12 @@ bool KDTreeIndexExists(std::string& filename)
 }
 
 
-std::istream* OpenInput(std::string filename) 
+std::istream* OpenInput(std::string filename, bool bEnd) 
 {
-    std::ios::openmode const mode = std::ios::in | std::ios::binary;
+    std::ios::openmode mode = std::ios::in | std::ios::binary;
+    if (bEnd == true) {
+        mode = mode | std::ios::ate;
+    }
     std::istream* istrm;
     if (compare_no_case(filename.c_str(),"STDIN",5) == 0)
     {
@@ -102,6 +105,30 @@ std::istream* OpenInput(std::string filename)
         exit(1);
     }
     return istrm;
+}
+
+std::string ReadSQLData(char* filename)
+{
+    std::istream* infile = OpenInput(filename, true);
+    ifstream::pos_type size;
+    char* data;
+    if (infile->good()){
+        size = infile->tellg();
+        data = new char [size];
+        infile->seekg (0, ios::beg);
+        infile->read (data, size);
+        // infile->close();
+
+        std::string output = std::string(data);
+        delete[] data;
+        delete infile;
+        return output;
+    } 
+    else 
+    {   
+        delete infile;
+        return std::string("");
+    }
 }
 
 bool EnableTracing(OWConnection* connection)
@@ -1348,21 +1375,33 @@ int main(int argc, char* argv[])
                 )
         {
             i++;
-            pre_sql = std::string(argv[i]);
+            try {
+                pre_sql = ReadSQLData(argv[i]);
+            } catch (std::runtime_error const& e) {
+                pre_sql = std::string(argv[i]);
+            }
         }
         else if (   strcmp(argv[i],"--post-sql") == 0  ||
                     strcmp(argv[i],"-pos") == 0  
                 )
         {
             i++;
-            post_sql = std::string(argv[i]);
+            try {
+                post_sql = ReadSQLData(argv[i]);
+            } catch (std::runtime_error const& e) {
+                post_sql = std::string(argv[i]);
+            }
         }
         else if (   strcmp(argv[i],"--pre-block-sql") == 0  ||
                     strcmp(argv[i],"-pbs") == 0  
                 )
         {
             i++;
-            pre_block_sql = std::string(argv[i]);
+            try {
+                pre_block_sql = ReadSQLData(argv[i]);
+            } catch (std::runtime_error const& e) {
+                pre_block_sql = std::string(argv[i]);
+            }
         }
         else if (   strcmp(argv[i],"--aux-columns") == 0  ||
                     strcmp(argv[i],"-ac") == 0  
@@ -1518,7 +1557,7 @@ int main(int argc, char* argv[])
 
     std::istream* istrm;
     try {
-            istrm = OpenInput(input);
+            istrm = OpenInput(input, false);
     } catch (std::exception const& e)
     {
         std::cout << e.what() << std::endl;
@@ -1579,7 +1618,7 @@ int main(int argc, char* argv[])
         std::ostringstream os;
         os << input << ".kdx" ;
         
-        std::istream* kdx = OpenInput(os.str());
+        std::istream* kdx = OpenInput(os.str(), false);
         query = new LASQuery(*kdx);
     }
 
@@ -1588,7 +1627,7 @@ int main(int argc, char* argv[])
     std::list<LASQueryResult>::const_iterator i;
     
     std::istream* istrm2;
-    istrm2 = OpenInput(input);
+    istrm2 = OpenInput(input, false);
     LASReader* reader2 = new LASReader(*istrm2);
     
 
