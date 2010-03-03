@@ -667,6 +667,7 @@ bool InsertBlock(OWConnection* connection,
             ", 1, 0, 1)";
           
     OWStatement* statement = 0;
+    // TODO: If gotdata == false below, this memory probably leaks --mloskot
     OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
 
     statement = connection->CreateStatement(oss.str().c_str());
