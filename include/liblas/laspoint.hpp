@@ -56,7 +56,7 @@
 namespace liblas {
 
 /// Point data record composed with X, Y, Z coordinates and attributes.
-class LASPoint
+class Point
 {
 public:
 
@@ -96,15 +96,15 @@ public:
         eScanAngleRankMax = 90
     };
 
-    LASPoint();
-    LASPoint(LASPoint const& other);
-    LASPoint& operator=(LASPoint const& rhs);
+    Point();
+    Point(Point const& other);
+    Point& operator=(Point const& rhs);
 
     double GetX() const;
     double GetY() const;
     double GetZ() const;
     void SetCoordinates(double const& x, double const& y, double const& z);
-    void SetCoordinates(LASHeader const& header, double x, double y, double z);
+    void SetCoordinates(Header const& header, double x, double y, double z);
     
     void SetX(double const& value);
     void SetY(double const& value);
@@ -137,10 +137,10 @@ public:
     uint16_t GetFlightLineEdge() const;
     void SetFlightLineEdge(uint16_t const& edge);
 
-    //LASClassification& GetClassification();
-    LASClassification const& GetClassification() const;
-    void SetClassification(LASClassification const& cls);
-    void SetClassification(LASClassification::bitset_type const& flags);
+    //Classification& GetClassification();
+    Classification const& GetClassification() const;
+    void SetClassification(Classification const& cls);
+    void SetClassification(Classification::bitset_type const& flags);
     void SetClassification(liblas::uint8_t const& flags);
 
     int8_t GetScanAngleRank() const;
@@ -159,10 +159,10 @@ public:
     void SetPointSourceID(uint16_t const& id);
 
     /// Fetch color value associated with this point (LAS 1.2)
-    LASColor const& GetColor() const;
+    Color const& GetColor() const;
 
     /// Set color value associated with this point (LAS 1.2)
-    void SetColor(LASColor const& value);
+    void SetColor(Color const& value);
 
                 
     double GetTime() const;
@@ -179,7 +179,7 @@ public:
     double const& operator[](std::size_t const& n) const;
 
     /// \todo TODO: Should we compare other data members, but not only coordinates?
-    bool equal(LASPoint const& other) const;
+    bool equal(Point const& other) const;
 
     bool Validate() const;
     bool IsValid() const;
@@ -194,8 +194,8 @@ private:
     detail::PointRecord m_rec;
     double m_coords[coords_size];
     double m_gpsTime;
-    LASColor m_color;
-    LASClassification m_cls;
+    Color m_color;
+    Classification m_cls;
     uint16_t m_intensity;
     uint16_t m_pointSourceId;
     uint8_t m_flags;
@@ -210,141 +210,141 @@ private:
     }
 };
 
-/// Equal-to operator implemented in terms of LASPoint::equal method.
-inline bool operator==(LASPoint const& lhs, LASPoint const& rhs)
+/// Equal-to operator implemented in terms of Point::equal method.
+inline bool operator==(Point const& lhs, Point const& rhs)
 {
     return lhs.equal(rhs);
 }
 
-/// Not-equal-to operator implemented in terms of LASPoint::equal method.
-inline bool operator!=(LASPoint const& lhs, LASPoint const& rhs)
+/// Not-equal-to operator implemented in terms of Point::equal method.
+inline bool operator!=(Point const& lhs, Point const& rhs)
 {
     return (!(lhs == rhs));
 }
 
-inline void LASPoint::SetCoordinates(double const& x, double const& y, double const& z)
+inline void Point::SetCoordinates(double const& x, double const& y, double const& z)
 {
     m_coords[0] = x;
     m_coords[1] = y;
     m_coords[2] = z;
 }
 
-inline double LASPoint::GetX() const
+inline double Point::GetX() const
 {
     return m_coords[0];
 }
 
-inline void LASPoint::SetX( double const& value ) 
+inline void Point::SetX( double const& value ) 
 {
     m_coords[0] = value;
 }
 
-inline double LASPoint::GetY() const
+inline double Point::GetY() const
 {
     return m_coords[1];
 }
 
-inline void LASPoint::SetY( double const& value ) 
+inline void Point::SetY( double const& value ) 
 {
     m_coords[1] = value;
 }
 
-inline double LASPoint::GetZ() const
+inline double Point::GetZ() const
 {
     return m_coords[2];
 }
 
-inline void LASPoint::SetZ( double const& value ) 
+inline void Point::SetZ( double const& value ) 
 {
     m_coords[2] = value;
 }
 
-inline uint16_t LASPoint::GetIntensity() const
+inline uint16_t Point::GetIntensity() const
 {
     return m_intensity;
 }
 
-inline void LASPoint::SetIntensity(uint16_t const& intensity)
+inline void Point::SetIntensity(uint16_t const& intensity)
 {
     m_intensity = intensity;
 }
 
-inline uint16_t LASPoint::GetReturnNumber() const
+inline uint16_t Point::GetReturnNumber() const
 {
     // Read bits 1,2,3 (first 3 bits)
     return (m_flags & 0x07);
 }
 
-inline uint16_t LASPoint::GetNumberOfReturns() const
+inline uint16_t Point::GetNumberOfReturns() const
 {
     // Read bits 4,5,6
     return ((m_flags >> 3) & 0x07);
 }
 
-inline uint16_t LASPoint::GetScanDirection() const
+inline uint16_t Point::GetScanDirection() const
 {
     // Read 7th bit
     return ((m_flags >> 6) & 0x01);
 }
 
-inline uint16_t LASPoint::GetFlightLineEdge() const
+inline uint16_t Point::GetFlightLineEdge() const
 {
     // Read 8th bit
     return ((m_flags >> 7) & 0x01);
 }
 
-inline uint8_t LASPoint::GetScanFlags() const
+inline uint8_t Point::GetScanFlags() const
 {
     return m_flags;
 }
 
-inline void LASPoint::SetScanFlags(uint8_t const& flags)
+inline void Point::SetScanFlags(uint8_t const& flags)
 {
     m_flags = flags;
 }
 
-inline int8_t LASPoint::GetScanAngleRank() const
+inline int8_t Point::GetScanAngleRank() const
 {
     return m_angleRank;
 }
 
-inline uint8_t LASPoint::GetUserData() const
+inline uint8_t Point::GetUserData() const
 {
     return m_userData;
 }
 
-inline uint16_t LASPoint::GetPointSourceID() const
+inline uint16_t Point::GetPointSourceID() const
 {
     return m_pointSourceId;
 }
 
-inline void LASPoint::SetPointSourceID(uint16_t const& id)
+inline void Point::SetPointSourceID(uint16_t const& id)
 {
     m_pointSourceId = id;
 }
 
-inline double LASPoint::GetTime() const
+inline double Point::GetTime() const
 {
     return m_gpsTime;
 }
 
-inline void LASPoint::SetTime(double const& time)
+inline void Point::SetTime(double const& time)
 {
     m_gpsTime = time;
 }
 
-inline LASColor const& LASPoint::GetColor() const
+inline Color const& Point::GetColor() const
 {
     return m_color;
 }
 
-inline void LASPoint::SetColor(LASColor const& value)
+inline void Point::SetColor(Color const& value)
 {
     m_color = value;
 }
 
 
-inline double& LASPoint::operator[](std::size_t const& n)
+inline double& Point::operator[](std::size_t const& n)
 {
     if (coords_size <= n)
         throw_out_of_range();
@@ -352,13 +352,15 @@ inline double& LASPoint::operator[](std::size_t const& n)
     return m_coords[n];
 }
 
-inline double const& LASPoint::operator[](std::size_t const& n) const
+inline double const& Point::operator[](std::size_t const& n) const
 {
     if (coords_size <= n)
         throw_out_of_range();
 
     return m_coords[n];
 }
+
+// typedef liblas::Point LASPoint;
 
 } // namespace liblas
 

@@ -69,15 +69,15 @@ public:
     
     typedef WriterBase Base;
     
-    Point(std::ostream& ofs, liblas::uint32_t& count, LASHeader const& header);
+    Point(std::ostream& ofs, liblas::uint32_t& count, liblas::Header const& header);
     Point(  std::ostream& ofs, 
             liblas::uint32_t& count, 
-            LASHeader const& header,
+            liblas::Header const& header,
             OGRCoordinateTransformationH transform);
     virtual ~Point();
 
-    const LASPoint& GetPoint() const { return m_point; }
-    void write( const LASPoint& );
+    const liblas::Point& GetPoint() const { return m_point; }
+    void write( const liblas::Point& );
     
 protected:
 
@@ -94,8 +94,8 @@ private:
     
 
     std::ostream& m_ofs;
-    const LASHeader& m_header;
-    LASPoint m_point;
+    const liblas::Header& m_header;
+    liblas::Point m_point;
     OGRCoordinateTransformationH m_transform;
     
     PointRecord m_record;

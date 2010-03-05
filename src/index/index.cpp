@@ -155,11 +155,11 @@ void LASIndex::Initialize(LASIndexDataStream& strm)
 
 }
 
-LASVariableRecord* LASIndex::GetVLR()
+liblas::VariableRecord* LASIndex::GetVLR()
 {
     if (m_idxType == eMemoryIndex) { return static_cast<VLRStorageManager*>(m_storage)->getVLR();}
     else
-        return new LASVariableRecord();
+        return new liblas::VariableRecord();
 }
 
 SpatialIndex::ISpatialIndex* LASIndex::CreateIndex(LASIndexDataStream& strm) 
@@ -342,7 +342,7 @@ bool LASIndex::operator==(LASIndex const& other) const
     return true;
 }
 
-void LASIndex::insert(LASPoint& p, int64_t id) 
+void LASIndex::insert(Point& p, int64_t id) 
 {
     double min[3];
     double max[3];

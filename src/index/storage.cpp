@@ -81,7 +81,7 @@ VLRStorageManager::~VLRStorageManager()
 
 void VLRStorageManager::loadByteArray(const SpatialIndex::id_type id, ::uint32_t& len, ::uint8_t** data)
 {
-    LASVariableRecord* v = 0;
+    liblas::VariableRecord* v = 0;
     try
     {
         v = m_vlrbuffer.at(static_cast<vlrbuffer_t::size_type>(id));
@@ -104,7 +104,7 @@ void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const ::uint32
 {
     if (id == SpatialIndex::StorageManager::NewPage)
     {
-        LASVariableRecord* v = makeVLR(len, data);
+        liblas::VariableRecord* v = makeVLR(len, data);
         assert(0 != v);
 
         if (m_emptyPages.empty())
@@ -121,7 +121,7 @@ void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const ::uint32
     }
     else
     {
-        LASVariableRecord* v_old = 0;
+        liblas::VariableRecord* v_old = 0;
         try
         {
             v_old = m_vlrbuffer.at(static_cast<vlrbuffer_t::size_type>(id));
@@ -133,7 +133,7 @@ void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const ::uint32
             throw SpatialIndex::InvalidPageException(id);
         }
 
-        LASVariableRecord* v = makeVLR(len, data);
+        liblas::VariableRecord* v = makeVLR(len, data);
         assert(0 != v);
 
         delete v_old;
@@ -143,7 +143,7 @@ void VLRStorageManager::storeByteArray(SpatialIndex::id_type& id, const ::uint32
 
 void VLRStorageManager::deleteByteArray(const SpatialIndex::id_type id)
 {
-    LASVariableRecord* v = 0;
+    liblas::VariableRecord* v = 0;
     try
     {
         v = m_vlrbuffer.at(static_cast<vlrbuffer_t::size_type>(id));
@@ -162,9 +162,9 @@ void VLRStorageManager::deleteByteArray(const SpatialIndex::id_type id)
 }
 
 
-LASVariableRecord* VLRStorageManager::makeVLR(const std::size_t len, const uint8_t* data)
+liblas::VariableRecord* VLRStorageManager::makeVLR(const std::size_t len, const uint8_t* data)
 {
-    LASVariableRecord* v = new LASVariableRecord();
+    liblas::VariableRecord* v = new liblas::VariableRecord();
     v->SetRecordLength(static_cast<uint16_t>(len));
     v->SetUserId("liblas.org");
     v->SetRecordId(2112);
@@ -179,7 +179,7 @@ LASVariableRecord* VLRStorageManager::makeVLR(const std::size_t len, const uint8
     return v;
 }
 
-LASVariableRecord* VLRStorageManager::getVLR() const
+liblas::VariableRecord* VLRStorageManager::getVLR() const
 {
     return m_vlrbuffer[0];
 }

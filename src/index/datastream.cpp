@@ -57,7 +57,7 @@ namespace liblas
 
 
 
-LASIndexDataStream::LASIndexDataStream(LASReader *reader, long dimension) : m_reader(reader), m_pNext(0), m_id(0), m_idxDimension(dimension)
+LASIndexDataStream::LASIndexDataStream(liblas::Reader *reader, long dimension) : m_reader(reader), m_pNext(0), m_id(0), m_idxDimension(dimension)
 {
     bool read = readPoint();
     if (read) m_id = 0;
@@ -73,9 +73,9 @@ bool LASIndexDataStream::readPoint()
     double min[3], max[3];
     
     bool doRead = m_reader->ReadNextPoint();
-    LASPoint* p;
+    Point* p;
     if (doRead)
-        p = (LASPoint*) &(m_reader->GetPoint());
+        p = (Point*) &(m_reader->GetPoint());
     else
         return false;
     

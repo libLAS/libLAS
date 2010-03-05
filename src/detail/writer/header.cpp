@@ -58,7 +58,7 @@
 
 namespace liblas { namespace detail { namespace writer {
 
-Header::Header(std::ostream& ofs, liblas::uint32_t& count, LASHeader const& header) :
+Header::Header(std::ostream& ofs, liblas::uint32_t& count, liblas::Header const& header) :
     Base(ofs, count)
 {
     m_header = header;
@@ -281,7 +281,7 @@ int32_t Header::WriteVLRs()
     // Calculate a new data offset size
     for (uint32_t i = 0; i < m_header.GetRecordsCount(); ++i)
     {
-        LASVariableRecord vlr = m_header.GetVLR(i);
+        VariableRecord vlr = m_header.GetVLR(i);
         vlr_total_size += vlr.GetTotalSize();
     }
     
@@ -294,7 +294,7 @@ int32_t Header::WriteVLRs()
     
     for (uint32_t i = 0; i < m_header.GetRecordsCount(); ++i)
     {
-        LASVariableRecord vlr = m_header.GetVLR(i);
+        VariableRecord vlr = m_header.GetVLR(i);
 
         detail::write_n(GetStream(), vlr.GetReserved(), sizeof(uint16_t));
         detail::write_n(GetStream(), vlr.GetUserId(true).c_str(), 16);

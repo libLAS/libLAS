@@ -45,13 +45,13 @@
 // Forward declarations
 namespace liblas {
 
-class LASHeader;
-class LASPoint;
-class LASReader;
-class LASWriter;
-class LASColor;
-class LASSpatialReference;
-class LASPointFormat;
+class Header;
+class Point;
+class Reader;
+class Writer;
+class Color;
+class SpatialReference;
+class PointFormat;
 
 namespace detail {
 

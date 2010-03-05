@@ -62,16 +62,16 @@
 namespace liblas
 {
 
-char const* const LASHeader::FileSignature = "LASF";
-char const* const LASHeader::SystemIdentifier = "libLAS";
-char const* const LASHeader::SoftwareIdentifier = "libLAS 1.2";
+char const* const Header::FileSignature = "LASF";
+char const* const Header::SystemIdentifier = "libLAS";
+char const* const Header::SoftwareIdentifier = "libLAS 1.2";
 
-LASHeader::LASHeader()
+Header::Header()
 {
     Init();
 }
 
-LASHeader::LASHeader(LASHeader const& other) :
+Header::Header(Header const& other) :
     m_sourceId(other.m_sourceId),
     m_reserved(other.m_reserved),
     m_projectId1(other.m_projectId1),
@@ -105,11 +105,11 @@ LASHeader::LASHeader(LASHeader const& other) :
     std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
     assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
     
-    std::vector<LASVariableRecord>(other.m_vlrs).swap(m_vlrs);
+    std::vector<VariableRecord>(other.m_vlrs).swap(m_vlrs);
 
 }
 
-LASHeader& LASHeader::operator=(LASHeader const& rhs)
+Header& Header::operator=(Header const& rhs)
 {
     if (&rhs != this)
     {
@@ -142,7 +142,7 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
         std::vector<uint32_t>(rhs.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
         assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
 
-        std::vector<LASVariableRecord>(rhs.m_vlrs).swap(m_vlrs);
+        std::vector<VariableRecord>(rhs.m_vlrs).swap(m_vlrs);
         m_scales = rhs.m_scales;
         m_offsets = rhs.m_offsets;
         m_extents = rhs.m_extents;
@@ -151,7 +151,7 @@ LASHeader& LASHeader::operator=(LASHeader const& rhs)
     return *this;
 }
 
-bool LASHeader::operator==(LASHeader const& other) const
+bool Header::operator==(Header const& other) const
 {
     if (&other == this) return true;
     
@@ -183,12 +183,12 @@ bool LASHeader::operator==(LASHeader const& other) const
 }
 
 
-std::string LASHeader::GetFileSignature() const
+std::string Header::GetFileSignature() const
 {
     return std::string(m_signature, eFileSignatureSize);
 }
 
-void LASHeader::SetFileSignature(std::string const& v)
+void Header::SetFileSignature(std::string const& v)
 {
     if (0 != v.compare(0, eFileSignatureSize, FileSignature))
         throw std::invalid_argument("invalid file signature");
@@ -196,46 +196,46 @@ void LASHeader::SetFileSignature(std::string const& v)
     std::strncpy(m_signature, v.c_str(), eFileSignatureSize);
 }
 
-uint16_t LASHeader::GetFileSourceId() const
+uint16_t Header::GetFileSourceId() const
 {
     return m_sourceId;
 }
 
-void LASHeader::SetFileSourceId(uint16_t v)
+void Header::SetFileSourceId(uint16_t v)
 {
     // TODO: Should we warn or throw about type overflow occuring when
     //       user passes 65535 + 1 = 0
     m_sourceId = v;
 }
 
-uint16_t LASHeader::GetReserved() const
+uint16_t Header::GetReserved() const
 {
     return m_reserved;
 }
 
-void LASHeader::SetReserved(uint16_t v)
+void Header::SetReserved(uint16_t v)
 {
     // TODO: Should we warn or throw about type overflow occuring when
     //       user passes 65535 + 1 = 0
     m_reserved = v;
 }
 
-liblas::guid LASHeader::GetProjectId() const
+liblas::guid Header::GetProjectId() const
 {
     return liblas::guid(m_projectId1, m_projectId2, m_projectId3, m_projectId4);
 }
 
-void LASHeader::SetProjectId(guid const& v)
+void Header::SetProjectId(guid const& v)
 {
     v.output_data(m_projectId1, m_projectId2, m_projectId3, m_projectId4);
 }
 
-uint8_t LASHeader::GetVersionMajor() const
+uint8_t Header::GetVersionMajor() const
 {
     return m_versionMajor;
 }
 
-void LASHeader::SetVersionMajor(uint8_t v)
+void Header::SetVersionMajor(uint8_t v)
 {
     if (eVersionMajorMin > v || v > eVersionMajorMax)
         throw std::out_of_range("version major out of range");
@@ -243,12 +243,12 @@ void LASHeader::SetVersionMajor(uint8_t v)
     m_versionMajor = v;
 }
 
-uint8_t LASHeader::GetVersionMinor() const
+uint8_t Header::GetVersionMinor() const
 {
     return m_versionMinor;
 }
 
-void LASHeader::SetVersionMinor(uint8_t v)
+void Header::SetVersionMinor(uint8_t v)
 {
     if (v > eVersionMinorMax)
         throw std::out_of_range("version minor out of range");
@@ -256,7 +256,7 @@ void LASHeader::SetVersionMinor(uint8_t v)
     m_versionMinor = v;
 }
 
-std::string LASHeader::GetSystemId(bool pad /*= false*/) const
+std::string Header::GetSystemId(bool pad /*= false*/) const
 {
     // copy array of chars and trim zeros if smaller than 32 bytes
     std::string tmp(std::string(m_systemId, eSystemIdSize).c_str());
@@ -272,7 +272,7 @@ std::string LASHeader::GetSystemId(bool pad /*= false*/) const
     return tmp;
 }
 
-void LASHeader::SetSystemId(std::string const& v)
+void Header::SetSystemId(std::string const& v)
 {
     if (v.size() > eSystemIdSize)
         throw std::invalid_argument("system id too long");
@@ -281,7 +281,7 @@ void LASHeader::SetSystemId(std::string const& v)
     std::strncpy(m_systemId, v.c_str(), eSystemIdSize);
 }
 
-std::string LASHeader::GetSoftwareId(bool pad /*= false*/) const
+std::string Header::GetSoftwareId(bool pad /*= false*/) const
 {
     std::string tmp(std::string(m_softwareId, eSoftwareIdSize).c_str());
 
@@ -296,7 +296,7 @@ std::string LASHeader::GetSoftwareId(bool pad /*= false*/) const
     return tmp;
 }
 
-void LASHeader::SetSoftwareId(std::string const& v)
+void Header::SetSoftwareId(std::string const& v)
 {
     if (v.size() > eSoftwareIdSize)
         throw std::invalid_argument("generating software id too long");
@@ -306,12 +306,12 @@ void LASHeader::SetSoftwareId(std::string const& v)
     std::strncpy(m_softwareId, v.c_str(), eSoftwareIdSize);
 }
 
-uint16_t LASHeader::GetCreationDOY() const
+uint16_t Header::GetCreationDOY() const
 {
     return m_createDOY;
 }
 
-void LASHeader::SetCreationDOY(uint16_t v)
+void Header::SetCreationDOY(uint16_t v)
 {
     if (v > 366)
         throw std::out_of_range("day of year out of range");
@@ -319,12 +319,12 @@ void LASHeader::SetCreationDOY(uint16_t v)
     m_createDOY = v;
 }
 
-uint16_t LASHeader::GetCreationYear() const
+uint16_t Header::GetCreationYear() const
 {
     return m_createYear;
 }
 
-void LASHeader::SetCreationYear(uint16_t v)
+void Header::SetCreationYear(uint16_t v)
 {
     // mloskot: I've taken these values arbitrarily
     if (v > 9999)
@@ -333,17 +333,17 @@ void LASHeader::SetCreationYear(uint16_t v)
     m_createYear = v;
 }
 
-uint16_t LASHeader::GetHeaderSize() const
+uint16_t Header::GetHeaderSize() const
 {
     return eHeaderSize;
 }
 
-uint32_t LASHeader::GetDataOffset() const
+uint32_t Header::GetDataOffset() const
 {
     return m_dataOffset;
 }
 
-void LASHeader::SetDataOffset(uint32_t v)
+void Header::SetDataOffset(uint32_t v)
 {
     // uint32_t const dataSignatureSize = 2;
     // uint16_t const hsize = GetHeaderSize();
@@ -359,17 +359,17 @@ void LASHeader::SetDataOffset(uint32_t v)
     
 }
 
-uint32_t LASHeader::GetRecordsCount() const
+uint32_t Header::GetRecordsCount() const
 {
     return m_recordsCount;
 }
 
-void LASHeader::SetRecordsCount(uint32_t v)
+void Header::SetRecordsCount(uint32_t v)
 {
     m_recordsCount = v;
 }
 
-liblas::PointFormat LASHeader::GetDataFormatId() const
+liblas::PointFormatName Header::GetDataFormatId() const
 {
     if (ePointFormat0 == m_dataFormatId)
         return ePointFormat0;
@@ -381,7 +381,7 @@ liblas::PointFormat LASHeader::GetDataFormatId() const
         return ePointFormat3;
 }
 
-void LASHeader::SetDataFormatId(liblas::PointFormat v)
+void Header::SetDataFormatId(liblas::PointFormatName v)
 {
     m_dataFormatId = static_cast<uint8_t>(v);
 
@@ -397,55 +397,55 @@ void LASHeader::SetDataFormatId(liblas::PointFormat v)
         SetDataRecordLength(ePointSize3);
 }
 
-uint16_t LASHeader::GetDataRecordLength() const
+uint16_t Header::GetDataRecordLength() const
 {
     return m_dataRecordLen;
 }
 
-void LASHeader::SetDataRecordLength( uint16_t v )
+void Header::SetDataRecordLength( uint16_t v )
 {
     m_dataRecordLen = v;
 }
-uint32_t LASHeader::GetPointRecordsCount() const
+uint32_t Header::GetPointRecordsCount() const
 {
     return m_pointRecordsCount;
 }
 
-void LASHeader::SetPointRecordsCount(uint32_t v)
+void Header::SetPointRecordsCount(uint32_t v)
 {
     m_pointRecordsCount = v;
 }
 
-LASHeader::RecordsByReturnArray const& LASHeader::GetPointRecordsByReturnCount() const
+Header::RecordsByReturnArray const& Header::GetPointRecordsByReturnCount() const
 {
     return m_pointRecordsByReturn;
 }
 
-void LASHeader::SetPointRecordsByReturnCount(std::size_t index, uint32_t v)
+void Header::SetPointRecordsByReturnCount(std::size_t index, uint32_t v)
 {
-    assert(m_pointRecordsByReturn.size() == LASHeader::ePointsByReturnSize);
+    assert(m_pointRecordsByReturn.size() == Header::ePointsByReturnSize);
 
     uint32_t& t = m_pointRecordsByReturn.at(index);
     t = v;
 }
 
 
-double LASHeader::GetScaleX() const
+double Header::GetScaleX() const
 {
     return m_scales.x;
 }
 
-double LASHeader::GetScaleY() const
+double Header::GetScaleY() const
 {
     return m_scales.y;
 }
 
-double LASHeader::GetScaleZ() const
+double Header::GetScaleZ() const
 {
     return m_scales.z;
 }
 
-void LASHeader::SetScale(double x, double y, double z)
+void Header::SetScale(double x, double y, double z)
 {
     double const minscale = 0.01;
     m_scales.x = (0 == x) ? minscale : x;
@@ -453,88 +453,88 @@ void LASHeader::SetScale(double x, double y, double z)
     m_scales.z = (0 == z) ? minscale : z;
 }
 
-double LASHeader::GetOffsetX() const
+double Header::GetOffsetX() const
 {
     return m_offsets.x;
 }
 
-double LASHeader::GetOffsetY() const
+double Header::GetOffsetY() const
 {
     return m_offsets.y;
 }
 
-double LASHeader::GetOffsetZ() const
+double Header::GetOffsetZ() const
 {
     return m_offsets.z;
 }
 
-void LASHeader::SetOffset(double x, double y, double z)
+void Header::SetOffset(double x, double y, double z)
 {
     m_offsets = PointOffsets(x, y, z);
 }
 
-double LASHeader::GetMaxX() const
+double Header::GetMaxX() const
 {
     return m_extents.max.x;
 }
 
-double LASHeader::GetMinX() const
+double Header::GetMinX() const
 {
     return m_extents.min.x;
 }
 
-double LASHeader::GetMaxY() const
+double Header::GetMaxY() const
 {
     return m_extents.max.y;
 }
 
-double LASHeader::GetMinY() const
+double Header::GetMinY() const
 {
     return m_extents.min.y;
 }
 
-double LASHeader::GetMaxZ() const
+double Header::GetMaxZ() const
 {
     return m_extents.max.z;
 }
 
-double LASHeader::GetMinZ() const
+double Header::GetMinZ() const
 {
     return m_extents.min.z;
 }
 
-void LASHeader::SetMax(double x, double y, double z)
+void Header::SetMax(double x, double y, double z)
 {
     m_extents.max = detail::Point<double>(x, y, z);
 }
 
-void LASHeader::SetMin(double x, double y, double z)
+void Header::SetMin(double x, double y, double z)
 {
     m_extents.min = detail::Point<double>(x, y, z);
 }
 
-void LASHeader::AddVLR(LASVariableRecord const& v) 
+void Header::AddVLR(VariableRecord const& v) 
 {
     m_vlrs.push_back(v);
     m_recordsCount += 1;
 }
 
-LASVariableRecord const& LASHeader::GetVLR(uint32_t index) const 
+VariableRecord const& Header::GetVLR(uint32_t index) const 
 {
     return m_vlrs[index];
 }
 
-const std::vector<LASVariableRecord>& LASHeader::GetVLRs() const
+const std::vector<VariableRecord>& Header::GetVLRs() const
 {
     return m_vlrs;
 }
 
-void LASHeader::DeleteVLR(uint32_t index) 
+void Header::DeleteVLR(uint32_t index) 
 {    
     if (index >= m_vlrs.size())
         throw std::out_of_range("index is out of range");
 
-    std::vector<LASVariableRecord>::iterator i = m_vlrs.begin() + index;
+    std::vector<VariableRecord>::iterator i = m_vlrs.begin() + index;
 
     m_vlrs.erase(i);
     m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
@@ -542,7 +542,7 @@ void LASHeader::DeleteVLR(uint32_t index)
 }
 
 
-void LASHeader::Init()
+void Header::Init()
 {
     // Initialize public header block with default
     // values according to LAS 1.2
@@ -572,15 +572,15 @@ void LASHeader::Init()
 
     std::memset(m_signature, 0, eFileSignatureSize);
     std::strncpy(m_signature, FileSignature, eFileSignatureSize);
-//    m_signature = LASHeader::FileSignature;
+//    m_signature = Header::FileSignature;
 
     std::memset(m_systemId, 0, eSystemIdSize);
     std::strncpy(m_systemId, SystemIdentifier, eSystemIdSize);
-//    m_systemId = LASHeader::SystemIdentifier;
+//    m_systemId = Header::SystemIdentifier;
 
     std::memset(m_softwareId, 0, eSoftwareIdSize);
     std::strncpy(m_softwareId, SoftwareIdentifier, eSoftwareIdSize);
-//    m_softwareId = LASHeader::SoftwareIdentifier;
+//    m_softwareId = Header::SoftwareIdentifier;
 
     m_pointRecordsByReturn.resize(ePointsByReturnSize);
 
@@ -588,17 +588,17 @@ void LASHeader::Init()
     SetScale(0.01, 0.01, 0.01);
 }
 
-void LASHeader::ClearGeoKeyVLRs()
+void Header::ClearGeoKeyVLRs()
 {
     std::string const uid("LASF_Projection");
 
-    std::vector<LASVariableRecord> vlrs = m_vlrs;
-    std::vector<LASVariableRecord>::const_iterator i;
-    std::vector<LASVariableRecord>::iterator j;
+    std::vector<VariableRecord> vlrs = m_vlrs;
+    std::vector<VariableRecord>::const_iterator i;
+    std::vector<VariableRecord>::iterator j;
 
     for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i)
     {
-        LASVariableRecord record = *i;
+        VariableRecord record = *i;
 
         if (record.GetUserId(false) == uid)
         {
@@ -648,14 +648,14 @@ void LASHeader::ClearGeoKeyVLRs()
     m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
 }
 
-void LASHeader::SetGeoreference() 
+void Header::SetGeoreference() 
 {    
-    std::vector<LASVariableRecord> vlrs = m_srs.GetVLRs();
+    std::vector<VariableRecord> vlrs = m_srs.GetVLRs();
 
-    // Wipe the GeoTIFF-related VLR records off of the LASHeader
+    // Wipe the GeoTIFF-related VLR records off of the Header
     ClearGeoKeyVLRs();
 
-    std::vector<LASVariableRecord>::const_iterator i;
+    std::vector<VariableRecord>::const_iterator i;
 
     for (i = vlrs.begin(); i != vlrs.end(); ++i) 
     {
@@ -663,16 +663,16 @@ void LASHeader::SetGeoreference()
     }
 }
 
-LASSpatialReference LASHeader::GetSRS() const
+SpatialReference Header::GetSRS() const
 {
     return m_srs;
 }
-void LASHeader::SetSRS(LASSpatialReference& srs)
+void Header::SetSRS(SpatialReference& srs)
 {
     m_srs = srs;
 }
 
-LASPointFormat LASHeader::GetPointFormat() const
+PointFormat Header::GetPointFormat() const
 {
     bool bHasColor(false);
     bool bHasTime(false);
@@ -688,7 +688,7 @@ LASPointFormat LASHeader::GetPointFormat() const
         bHasTime = true;
     } 
         
-    return LASPointFormat(  GetVersionMajor(), 
+    return PointFormat(  GetVersionMajor(), 
                             GetVersionMinor(), 
                             GetDataRecordLength(), 
                             bHasColor, 
@@ -696,11 +696,11 @@ LASPointFormat LASHeader::GetPointFormat() const
     
 }
 
-void LASHeader::SetPointFormat(const LASPointFormat& format)
+void Header::SetPointFormat(const PointFormat& format)
 {
 
     // A user can use the set the header's version information and 
-    // format information and sizes by using a LASPointFormat instance
+    // format information and sizes by using a PointFormat instance
     // in addition to setting all the settings individually by hand
     SetVersionMinor(format.GetVersionMinor());
     SetVersionMajor(format.GetVersionMajor());

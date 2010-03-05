@@ -88,9 +88,9 @@ static std::string g_class_names[] =
 
 namespace liblas {
 
-std::size_t const LASClassification::class_table_size = detail::static_array_size(g_class_names);
+std::size_t const Classification::class_table_size = detail::static_array_size(g_class_names);
 
-std::string LASClassification::GetClassName() const
+std::string Classification::GetClassName() const
 {
     std::size_t const index = GetClass();
     check_class_index(index);

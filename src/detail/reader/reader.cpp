@@ -42,7 +42,6 @@
 #include <liblas/detail/reader/reader.hpp>
 
 #include <liblas/detail/utility.hpp>
-#include <liblas/lasvariablerecord.hpp>
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
@@ -93,7 +92,7 @@ std::istream& ReaderImpl::GetStream() const
     return m_ifs;
 }
 
-void ReaderImpl::Reset(LASHeader const& header)
+void ReaderImpl::Reset(liblas::Header const& header)
 {
     m_ifs.clear();
     m_ifs.seekg(0);
@@ -113,7 +112,7 @@ void ReaderImpl::Reset(LASHeader const& header)
     } 
 }
 
-void ReaderImpl::SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header)
+void ReaderImpl::SetOutputSRS(const SpatialReference& srs, const liblas::Header& header)
 {
     m_out_srs = srs;
     CreateTransform();
@@ -126,12 +125,12 @@ void ReaderImpl::SetOutputSRS(const LASSpatialReference& srs, const LASHeader& h
     }
 }
 
-void ReaderImpl::SetSRS(const LASSpatialReference& srs, const LASHeader& header)
+void ReaderImpl::SetSRS(const SpatialReference& srs, const liblas::Header& header)
 {
     SetOutputSRS(srs, header);
 }
 
-void ReaderImpl::SetInputSRS(const LASSpatialReference& srs)
+void ReaderImpl::SetInputSRS(const SpatialReference& srs)
 {
     m_in_srs = srs;
 }
@@ -180,10 +179,10 @@ void ReaderImpl::CreateTransform(){
 }
 
 
-LASHeader const& ReaderImpl::ReadHeader()
+liblas::Header const& ReaderImpl::ReadHeader()
 {
     m_header_reader->read();
-    const LASHeader& header = m_header_reader->GetHeader();
+    const liblas::Header& header = m_header_reader->GetHeader();
     
     Reset(header);
     
@@ -194,7 +193,7 @@ LASHeader const& ReaderImpl::ReadHeader()
     return header;
 }
 
-LASPoint const& ReaderImpl::ReadNextPoint(const LASHeader& header)
+liblas::Point const& ReaderImpl::ReadNextPoint(const liblas::Header& header)
 {
     if (0 == m_current)
     {
@@ -206,7 +205,7 @@ LASPoint const& ReaderImpl::ReadNextPoint(const LASHeader& header)
     if (m_current < m_size)
     {
         m_point_reader->read();
-        const LASPoint& point = m_point_reader->GetPoint();
+        const liblas::Point& point = m_point_reader->GetPoint();
         ++m_current;
         return point;
         // return true;
@@ -219,7 +218,7 @@ LASPoint const& ReaderImpl::ReadNextPoint(const LASHeader& header)
     // return false;
 }
 
-LASPoint const& ReaderImpl::ReadPointAt(std::size_t n, const LASHeader& header)
+liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n, const liblas::Header& header)
 {
     // FIXME: Throw in this case.
     if (m_size == n) {
@@ -237,7 +236,7 @@ LASPoint const& ReaderImpl::ReadPointAt(std::size_t n, const LASHeader& header)
     m_ifs.seekg(pos, std::ios::beg);
 
     m_point_reader->read();
-    const LASPoint& point = m_point_reader->GetPoint();
+	const liblas::Point& point = m_point_reader->GetPoint();
     
     return point;
 }

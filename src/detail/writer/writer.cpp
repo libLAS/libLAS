@@ -67,14 +67,14 @@ WriterImpl::WriterImpl(std::ostream& ofs) :
 }
 
 
-LASHeader const&  WriterImpl::WriteHeader(LASHeader const& header)
+liblas::Header const&  WriterImpl::WriteHeader(liblas::Header const& header)
 {
     m_header_writer = new detail::writer::Header(m_ofs,m_pointCount, header );
     m_header_writer->write();
     return m_header_writer->GetHeader();
 }
 
-void WriterImpl::UpdateHeader(LASHeader const& header)
+void WriterImpl::UpdateHeader(liblas::Header const& header)
 {
     if (m_pointCount != header.GetPointRecordsCount())
     {
@@ -86,7 +86,7 @@ void WriterImpl::UpdateHeader(LASHeader const& header)
     }
 }
 
-void WriterImpl::WritePoint(LASPoint const& point, const LASHeader& header)
+void WriterImpl::WritePoint(liblas::Point const& point, const liblas::Header& header)
 {
     if (m_point_writer == 0) {
         if (m_transform != 0) {
@@ -128,7 +128,7 @@ std::ostream& WriterImpl::GetStream() const
 }
 
 
-void WriterImpl::SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header )
+void WriterImpl::SetOutputSRS(const liblas::SpatialReference& srs, const liblas::Header& header )
 {
     m_out_srs = srs;
     CreateTransform();
@@ -142,7 +142,7 @@ void WriterImpl::SetOutputSRS(const LASSpatialReference& srs, const LASHeader& h
 }
 
 
-void WriterImpl::SetInputSRS(const LASSpatialReference& srs )
+void WriterImpl::SetInputSRS(const liblas::SpatialReference& srs )
 {
     m_in_srs = srs;
 }
@@ -190,7 +190,7 @@ void WriterImpl::CreateTransform()
 
 
 
-WriterImpl* WriterFactory::Create(std::ostream& ofs, LASHeader const& header)
+WriterImpl* WriterFactory::Create(std::ostream& ofs, liblas::Header const& header)
 {
     if (!ofs)
     {

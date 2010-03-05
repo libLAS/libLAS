@@ -312,7 +312,7 @@ oss << "declare\n"
     return true;
 
 }
-bool GetPointData(  LASPoint const& p, 
+bool GetPointData(  liblas::Point const& p, 
                     bool bTime, 
                     std::vector<liblas::uint8_t>& point_data)
 {
@@ -366,7 +366,7 @@ bool GetPointData(  LASPoint const& p,
     return true;
 }
 bool GetResultData( const LASQueryResult& result, 
-                    LASReader* reader, 
+                    liblas::Reader* reader, 
                     std::vector<liblas::uint8_t>& data, 
                     int nDimension)
 {
@@ -398,7 +398,7 @@ bool GetResultData( const LASQueryResult& result,
 
         bool doRead = reader->ReadPointAt(id);
         if (doRead) {
-            LASPoint const& p = reader->GetPoint();
+            liblas::Point const& p = reader->GetPoint();
 
             // d 8-byte IEEE  big-endian doubles, where d is the PC_TOT_DIMENSIONS value
             bool gotdata = GetPointData(p, bTime, point_data);
@@ -495,6 +495,7 @@ extent* GetExtent(  const SpatialIndex::Region* b,
     
     return e;    
 }
+
 blocks* CreateBlock(int size)
 {
     blocks* b = (blocks*) malloc( sizeof(blocks));
@@ -508,13 +509,15 @@ blocks* CreateBlock(int size)
     b->gtypes = (long*) malloc ( size * sizeof(long));
 
     b->element_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
+
     b->coordinate_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
     return b;
 }
+
 bool FillBlock( OWConnection* connection, 
                 OWStatement* statement,
                 const LASQueryResult& result, 
-                LASReader* reader,
+                liblas::Reader* reader,
                 blocks* b,
                 long index,
                 int srid, 
@@ -528,37 +531,40 @@ bool FillBlock( OWConnection* connection,
 
 
     list<SpatialIndex::id_type> const& ids = result.GetIDs();
-   
-    b->pc_ids[index] = pc_id;
-    b->srids[index] = srid;
-    b->block_ids[index] = result.GetID();
-    b->num_points[index] = (long)ids.size();
     
     // TODO: This probably is a memory leak if the gotdata == false --mloskot
     std::vector<liblas::uint8_t>* blob = new std::vector<liblas::uint8_t>;
     
-    bool gotdata = GetResultData(result, reader, *blob, nDimensions);
-    if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
-    b->blobs[index] = blob;
-    // FIXME: null srids not supported 
-    b->srids[index] = srid;
-    b->gtypes[index] = gtype;
-
-    OCIArray* sdo_elem_info=0;
-    connection->CreateType(&sdo_elem_info, connection->GetElemInfoType());
-    SetElements(statement, sdo_elem_info, bUseSolidGeometry);
+    // b->pc_ids[index] = pc_id;
+    printf("Index: %d\n", index);
+    b->srids[index] = (long)srid;
+    // b->block_ids[index] = result.GetID();
+    // b->num_points[index] = (long)ids.size();
     
-    b->element_arrays[index] = sdo_elem_info;
-
-    OCIArray* sdo_ordinates=0;
-    connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
-
-
-
-    extent* e = GetExtent(result.GetBounds(), bUse3d);
-    SetOrdinates(statement, sdo_ordinates, e);
-
-    b->coordinate_arrays[index] = sdo_ordinates;
+    // std::vector<liblas::uint8_t>* blob = new std::vector<liblas::uint8_t>;
+    
+    // bool gotdata = GetResultData(result, reader, *blob, nDimensions);
+    // if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
+    // b->blobs[index] = blob;
+    // // FIXME: null srids not supported 
+    // b->srids[index] = srid;
+    // b->gtypes[index] = gtype;
+    // 
+    // OCIArray* sdo_elem_info=0;
+    // connection->CreateType(&sdo_elem_info, connection->GetElemInfoType());
+    // SetElements(statement, sdo_elem_info, bUseSolidGeometry);
+    // 
+    // b->element_arrays[index] = sdo_elem_info;
+    // 
+    // OCIArray* sdo_ordinates=0;
+    // connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
+    // 
+    // 
+    // 
+    // extent* e = GetExtent(result.GetBounds(), bUse3d);
+    // SetOrdinates(statement, sdo_ordinates, e);
+    // 
+    // b->coordinate_arrays[index] = sdo_ordinates;
     
     return true;
 }
@@ -642,7 +648,7 @@ bool InsertBlock(OWConnection* connection,
                 blocks* block,
                 long block_index,
                 int srid, 
-                LASReader* reader, 
+                liblas::Reader* reader, 
                 const char* tableName, 
                 long precision,
                 long pc_id,
@@ -757,7 +763,7 @@ bool InsertBlocks(
                 const std::list<LASQueryResult>& results,
                 long nCommitInterval, 
                 int srid, 
-                LASReader* reader2, 
+                liblas::Reader* reader2, 
                 const std::string& table_name, 
                 long precision,
                 long pc_id,
@@ -784,24 +790,29 @@ bool InsertBlocks(
     statement = con->CreateStatement(oss.str().c_str());
     long j = 0;
     bool inserted = false;
-    for (i=results.begin(); i!=results.end(); i++)
-    {
-        j++;
-        // 
-        // FillBlock( con, 
-        //                 statement,
-        //                 *i, 
-        //                 reader2,
-        //                 b,
-        //                 j,
-        //                 srid, 
-        //                  pc_id,
-        //                  GetGType(bUse3d, bUseSolidGeometry),
-        //                  bUseSolidGeometry,
-        //                  bUse3d,
-        //                  nDimensions
-        //                  );
+
+    
+    for (int t = 0; t < commit_interval; t++) {
+        FillBlock( con, 
+                        statement,
+                        *i, 
+                        reader2,
+                        b,
+                        t,
+                        srid, 
+                         pc_id,
+                         GetGType(bUse3d, bUseSolidGeometry),
+                         bUseSolidGeometry,
+                         bUse3d,
+                         nDimensions
+                         );
         
+    }
+        
+
+
+    for (i=results.begin(); i!=results.end(); i++)
+    {        
         inserted = InsertBlock(con, 
                                     *i,
                                     b,
@@ -813,6 +824,7 @@ bool InsertBlocks(
                                     pc_id, 
                                     bUseSolidGeometry, 
                                     bUse3d);
+        j++;
     }
     return inserted;
 }
@@ -1520,7 +1532,7 @@ int main(int argc, char* argv[])
 
     }
 
-    LASReader* reader = new LASReader(*istrm);
+    liblas::Reader* reader = new liblas::Reader(*istrm);
     LASQuery* query = 0;
     if (!KDTreeIndexExists(input)) {
 
@@ -1552,7 +1564,7 @@ int main(int argc, char* argv[])
     
     std::istream* istrm2;
     istrm2 = OpenInput(input, false);
-    LASReader* reader2 = new LASReader(*istrm2);
+    liblas::Reader* reader2 = new liblas::Reader(*istrm2);
     
 
     long pc_id = CreatePCEntry(  con, 

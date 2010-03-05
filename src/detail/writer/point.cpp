@@ -57,11 +57,11 @@ void Point::setup()
 
 Point::Point(   std::ostream& ofs, 
                 liblas::uint32_t& count, 
-                const LASHeader& header) : 
+                const liblas::Header& header) : 
     Base(ofs, count), 
     m_ofs(ofs), 
     m_header(header), 
-    m_point(LASPoint()), 
+    m_point(liblas::Point()), 
     m_transform(0)
 {
     setup();
@@ -69,9 +69,9 @@ Point::Point(   std::ostream& ofs,
 
 Point::Point(   std::ostream& ofs, 
                 liblas::uint32_t& count,
-                const LASHeader& header, 
+                const liblas::Header& header, 
                 OGRCoordinateTransformationH transform) : Base(ofs, count),
-    m_ofs(ofs), m_header(header), m_point(LASPoint()), m_transform(transform)
+    m_ofs(ofs), m_header(header), m_point(liblas::Point()), m_transform(transform)
 
 {
     setup();
@@ -83,13 +83,13 @@ Point::~Point()
 }
 
 
-void Point::write(const LASPoint& point)
+void Point::write(const liblas::Point& point)
 {
     double t = 0;
     uint16_t red = 0;
     uint16_t blue = 0;
     uint16_t green = 0;
-    LASColor color;
+    liblas::Color color;
     
     // std::size_t byteswritten(0);
     
@@ -154,7 +154,7 @@ void Point::project()
 #ifdef HAVE_GDAL
     
     int ret = 0;
-    LASPoint& p = m_point;
+    liblas::Point& p = m_point;
     
     double x = p.GetX();
     double y = p.GetY();
@@ -177,7 +177,7 @@ void Point::project()
 
 void Point::fill() 
 {
-    LASPoint& p = m_point;
+    liblas::Point& p = m_point;
     if (m_transform) {
         
         project();
@@ -190,7 +190,7 @@ void Point::fill()
         m_record.z = static_cast<int32_t>((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ());
     }
 
-    LASClassification::bitset_type clsflags(p.GetClassification());
+    Classification::bitset_type clsflags(p.GetClassification());
     m_record.classification = static_cast<uint8_t>(clsflags.to_ulong());
 
     m_record.intensity = p.GetIntensity();

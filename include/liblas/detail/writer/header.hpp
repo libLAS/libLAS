@@ -59,9 +59,9 @@ class Header : public WriterBase
 public:
     typedef WriterBase Base;
 
-    Header(std::ostream& ofs, liblas::uint32_t& count, LASHeader const& header );
+    Header(std::ostream& ofs, liblas::uint32_t& count, liblas::Header const& header );
 
-    const LASHeader& GetHeader() const { return m_header; }
+    const liblas::Header& GetHeader() const { return m_header; }
     void write();
     
 protected:
@@ -70,7 +70,7 @@ private:
     
     int32_t WriteVLRs();
     void WriteLAS10PadSignature();
-    LASHeader m_header;
+    liblas::Header m_header;
     
 };
 

@@ -62,37 +62,37 @@
 namespace liblas {
 
 /// Defines public interface to LAS reader implementation.
-class LASReader
+class Reader
 {
 public:
 
     /// Consructor initializes reader with input stream as source of LAS records.
     /// @param ifs - stream used as source of LAS records.
     /// @excepion std::runtime_error - on failure state of the input stream.
-    LASReader(std::istream& ifs);
+    Reader(std::istream& ifs);
 
-    LASReader(ReaderI* reader);
+    Reader(ReaderI* reader);
     
     /// User-defined consructor initializes reader with input stream and
     /// a header to override the values in the file
     /// @excepion std::runtime_error - on failure state of the input stream.
-    LASReader(std::istream& ifs, LASHeader& header);
+    Reader(std::istream& ifs, Header& header);
     
     /// Destructor.
     /// @excepion nothrow
-    ~LASReader();
+    ~Reader();
     
     /// Provides read-only access to header of LAS file being read.
     /// @excepion nothrow
-    LASHeader const& GetHeader() const;
+    Header const& GetHeader() const;
 
     /// Provides read-only access to current point record.
     /// @excepion nothrow
-    LASPoint const& GetPoint() const;
+    Point const& GetPoint() const;
 
     /// Provides read-only access to collection of variable-length records.
     /// @excepion nothrow
-    std::vector<LASVariableRecord> const& GetVLRs() const;
+    std::vector<VariableRecord> const& GetVLRs() const;
 
     /// Allow fetching of the stream attached to the reader.
     /// @excepion nothrow
@@ -113,39 +113,39 @@ public:
     /// @excepion may throw std::exception
     void Reset();
 
-    /// Reproject data as they are written if the LASReader's reference is
-    /// different than the LASHeader's.
+    /// Reproject data as they are written if the Reader's reference is
+    /// different than the Header's.
     /// @excepion may throw std::exception
-    bool SetSRS(const LASSpatialReference& ref);
+    bool SetSRS(const SpatialReference& ref);
     
-    /// Override the spatial reference of the LASReader's LASHeader for 
+    /// Override the spatial reference of the Reader's Header for 
     /// writing purposes.
     /// @excepion may throw std::exception
-    bool SetInputSRS(const LASSpatialReference& ref);
+    bool SetInputSRS(const SpatialReference& ref);
 
-    /// Override the spatial reference of the LASReader's LASHeader for 
+    /// Override the spatial reference of the Reader's Header for 
     /// writing purposes.
     /// @excepion may throw std::exception
-    bool SetOutputSRS(const LASSpatialReference& ref);
+    bool SetOutputSRS(const SpatialReference& ref);
 
     /// Provides index-based access to point records.
     /// The operator is implemented in terms of ReadPointAt method
     /// and is not const-qualified because it updates file stream position.
     /// @excepion may throw std::exception
-    LASPoint const& operator[](std::size_t n);
+    Point const& operator[](std::size_t n);
 
 private:
 
     // Blocked copying operations, declared but not defined.
-    LASReader(LASReader const& other);
-    LASReader& operator=(LASReader const& rhs);
+    Reader(Reader const& other);
+    Reader& operator=(Reader const& rhs);
 
     void Init(); // throws on error
 
     const std::auto_ptr<ReaderI> m_pimpl;
-    LASHeader m_header;
-    LASPoint* m_point;
-    LASPoint* m_empty_point;
+    Header m_header;
+    Point* m_point;
+    Point* m_empty_point;
     
     // Set if the user provides a header to override the header as 
     // read from the istream
@@ -156,6 +156,7 @@ private:
 };
 
 
+// typedef liblas::Reader LASReader;
 
 } // namespace liblas
 

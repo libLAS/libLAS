@@ -67,7 +67,7 @@ namespace liblas {
 /// \todo  TODO (low-priority): replace static-size char arrays as data members
 ///        with std::string and return const-reference to string object.
 ///
-class LASHeader
+class Header
 {
 public:
 
@@ -89,16 +89,16 @@ public:
     /// The default constructed header is configured according to the ASPRS
     /// LAS 1.2 Specification, point data format set to 0.
     /// Other fields filled with 0.
-    LASHeader();
+    Header();
 
     /// Copy constructor.
-    LASHeader(LASHeader const& other);
+    Header(Header const& other);
 
     /// Assignment operator.
-    LASHeader& operator=(LASHeader const& rhs);
+    Header& operator=(Header const& rhs);
     
     /// Comparison operator.
-    bool operator==(const LASHeader& other) const;
+    bool operator==(const Header& other) const;
 
     /// Get ASPRS LAS file signature.
     /// \return 4-characters long string - \b "LASF".
@@ -221,10 +221,10 @@ public:
     void SetRecordsCount(uint32_t v);
     
     /// Get identifier of point data (record) format.
-    PointFormat GetDataFormatId() const;
+    PointFormatName GetDataFormatId() const;
 
     /// Set identifier of point data (record) format.
-    void SetDataFormatId(PointFormat v);
+    void SetDataFormatId(PointFormatName v);
 
     /// \todo To be documented
     uint16_t GetDataRecordLength() const;
@@ -298,13 +298,13 @@ public:
     void SetMin(double x, double y, double z);
 
     /// Adds a variable length record to the header
-    void AddVLR(LASVariableRecord const& v);
+    void AddVLR(VariableRecord const& v);
     
     /// Returns a VLR 
-    LASVariableRecord const& GetVLR(uint32_t index) const;
+    VariableRecord const& GetVLR(uint32_t index) const;
     
     /// Returns all of the VLRs
-    const std::vector<LASVariableRecord>& GetVLRs() const;
+    const std::vector<VariableRecord>& GetVLRs() const;
 
     /// Removes a VLR from the the header.
     void DeleteVLR(uint32_t index);
@@ -313,13 +313,13 @@ public:
     void SetGeoreference();
     
     /// Fetch the georeference
-    LASSpatialReference GetSRS() const;
+    SpatialReference GetSRS() const;
     
     /// Set the georeference
-    void SetSRS(LASSpatialReference& srs);
+    void SetSRS(SpatialReference& srs);
 
-    LASPointFormat GetPointFormat() const;
-    void SetPointFormat(const LASPointFormat& format);
+    PointFormat GetPointFormat() const;
+    void SetPointFormat(const PointFormat& format);
     
 private:
     
@@ -374,10 +374,11 @@ private:
     PointScales m_scales;
     PointOffsets m_offsets;
     PointExtents m_extents;
-    std::vector<LASVariableRecord> m_vlrs;
-    LASSpatialReference m_srs;
+    std::vector<VariableRecord> m_vlrs;
+    SpatialReference m_srs;
 };
 
+// typedef liblas::Header LASHeader ;
 } // namespace liblas
 
 #endif // LIBLAS_LASHEADER_HPP_INCLUDED

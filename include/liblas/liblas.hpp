@@ -128,7 +128,7 @@ enum FormatVersion
 };
 
 /// Versions of point record format.
-enum PointFormat
+enum PointFormatName
 {
     ePointFormat0 = 0, ///< Point Data Format \e 0
     ePointFormat1 = 1, ///< Point Data Format \e 1
@@ -152,13 +152,13 @@ class ReaderI
 {
 public:
 
-    virtual LASHeader const& ReadHeader() = 0;
-    virtual LASPoint const& ReadNextPoint(const LASHeader& header) = 0;
-    virtual LASPoint const& ReadPointAt(std::size_t n, const LASHeader& header) = 0;
+    virtual Header const& ReadHeader() = 0;
+    virtual Point const& ReadNextPoint(const Header& header) = 0;
+    virtual Point const& ReadPointAt(std::size_t n, const Header& header) = 0;
 
-    virtual void Reset(const LASHeader& header) = 0;
-    virtual void SetInputSRS(const LASSpatialReference& srs) = 0;
-    virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header) = 0;
+    virtual void Reset(const Header& header) = 0;
+    virtual void SetInputSRS(const SpatialReference& srs) = 0;
+    virtual void SetOutputSRS(const SpatialReference& srs, const Header& header) = 0;
 
     virtual ~ReaderI() {};    
 };
@@ -167,16 +167,19 @@ class WriterI
 {
 public:
 
-    virtual LASHeader const& WriteHeader(const LASHeader& header) = 0;
-    virtual void UpdateHeader(const LASHeader& header) = 0;
-    virtual void WritePoint(const LASPoint& point, const LASHeader& header) = 0;
+    virtual Header const& WriteHeader(const Header& header) = 0;
+    virtual void UpdateHeader(const Header& header) = 0;
+    virtual void WritePoint(const Point& point, const Header& header) = 0;
 
-    virtual void SetInputSRS(const LASSpatialReference& srs) = 0;
-    virtual void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header) = 0;
+    virtual void SetInputSRS(const SpatialReference& srs) = 0;
+    virtual void SetOutputSRS(const SpatialReference& srs, const Header& header) = 0;
 
     virtual ~WriterI() {};    
 
 };
+
+
+
 } // namespace liblas
 
 #endif // LIBLAS_HPP_INCLUDED

@@ -56,7 +56,7 @@ namespace liblas {
 
 /// Class definition to manipulate properties of point record classification.
 ///
-class LASClassification
+class Classification
 {
 public:
 
@@ -83,17 +83,17 @@ public:
     /// Default initialization constructor.
     /// Initializes all flags of classification as set to 0.
     /// Operation semantic is equivalent to bitset_type::reset().
-    LASClassification() {}
+    Classification() {}
 
     /// Initializes classification flags using given set of 8 bits.
     /// @param flags [in] - contains 8 bits representing classification flags.
-    explicit LASClassification(bitset_type const& flags)
+    explicit Classification(bitset_type const& flags)
         : m_flags(flags)
     {}
 
     /// Initializes classification flags using 8 bits of integral type.
     /// @param flags [in] - contains 8 bits representing classification flags.
-    explicit LASClassification(uint8_t const& flags)
+    explicit Classification(uint8_t const& flags)
         : m_flags(flags)
     {}
 
@@ -105,7 +105,7 @@ public:
     /// @param k [in] - If set, this point is considered to be a model keypoint and
     /// thus generally should not be withheld in a thinning algorithm.
     /// @param w [in] - If set, this point should not be included in processing.
-    LASClassification(uint8_t cls, bool s, bool k, bool w)
+    Classification(uint8_t cls, bool s, bool k, bool w)
     {
         SetClass(cls);
         SetSynthetic(s);
@@ -114,13 +114,13 @@ public:
     }
 
     /// Copy constructor.
-    LASClassification(LASClassification const& other)
+    Classification(Classification const& other)
     {
         m_flags = other.m_flags;
     }
 
     /// Assignment operator.
-    LASClassification& operator=(LASClassification const& rhs)
+    Classification& operator=(Classification const& rhs)
     {
         if (&rhs != this )
         {    
@@ -218,7 +218,7 @@ public:
     /// Compares this classification object with other one.
     /// Comparison is preformed against set of bit flags stored 
     /// in both objects.
-    bool equal(LASClassification const& other) const
+    bool equal(Classification const& other) const
     {
         return (other.m_flags == m_flags);
     }
@@ -239,14 +239,14 @@ private:
     }
 };
 
-/// Equal-to operator implemented in terms of LASClassification::equal.
-inline bool operator==(LASClassification const& lhs, LASClassification const& rhs)
+/// Equal-to operator implemented in terms of Classification::equal.
+inline bool operator==(Classification const& lhs, Classification const& rhs)
 {
     return lhs.equal(rhs);
 }
 
-/// Not-equal-to operator implemented in terms of LASClassification::equal.
-inline bool operator!=(LASClassification const& lhs, LASClassification const& rhs)
+/// Not-equal-to operator implemented in terms of Classification::equal.
+inline bool operator!=(Classification const& lhs, Classification const& rhs)
 {
     return (!(lhs == rhs));
 }
@@ -261,11 +261,14 @@ inline bool operator!=(LASClassification const& lhs, LASClassification const& rh
 /// zero. Subsequent decreasing character positions correspond to increasing
 /// bit positions. Bit value zero becomes the character 0, bit value one
 /// becomes the character 1.
-inline std::ostream& operator<<(std::ostream& os, LASClassification const& cls)
+inline std::ostream& operator<<(std::ostream& os, Classification const& cls)
 {
-    LASClassification::bitset_type flags(cls);
+    Classification::bitset_type flags(cls);
     return (os << flags);
 }
+
+// typedef liblas::Classification LASClassification ;
+
 
 } // namespace liblas
 

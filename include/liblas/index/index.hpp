@@ -91,10 +91,10 @@ public:
     bool operator==(const LASIndex& other) const;
 
     
-    /// Inserts a LASPoint into the index with a given id
-    /// \param p the LASPoint to insert
+    /// Inserts a Point into the index with a given id
+    /// \param p the Point to insert
     /// \param id the id to associate with the point
-    void insert(LASPoint& p, int64_t id);
+    void insert(Point& p, int64_t id);
     
     /// Intersects the index with the given cube and returns a 
     /// std::vector of ids.  Caller has ownership of the vector.
@@ -155,7 +155,7 @@ public:
     /// \return index dimension value.
     uint32_t GetDimension() { return m_idxDimension; }
     
-    LASVariableRecord* GetVLR();
+    liblas::VariableRecord* GetVLR();
     
     void Query(LASQuery& query);
 private:

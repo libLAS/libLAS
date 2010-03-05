@@ -65,7 +65,7 @@ namespace liblas {
 class LASIndexDataStream : public SpatialIndex::IDataStream
 {
 public:
-    LASIndexDataStream(LASReader* reader, long dimension);
+    LASIndexDataStream(Reader* reader, long dimension);
     ~LASIndexDataStream();
 
     SpatialIndex::IData* getNext();
@@ -83,7 +83,7 @@ public:
     uint32_t GetDimension() { return m_idxDimension; }
     
 protected:
-    liblas::LASReader* m_reader;
+    liblas::Reader* m_reader;
     SpatialIndex::RTree::Data* m_pNext;
     SpatialIndex::id_type m_id;
 

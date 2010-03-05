@@ -53,28 +53,28 @@
 namespace liblas {
 
 /// RGB color container
-class LASColor
+class Color
 {
 public:
 
     /// Default constructor.
     /// Initializes with black color using RGB {0, 0, 0}.
-    LASColor();
+    Color();
 
     // User-defined constructor.
     // Initializes object with given RGB values.
-    LASColor(uint16_t red, uint16_t green, uint16_t blue)
+    Color(uint16_t red, uint16_t green, uint16_t blue)
         : m_red(red), m_green(green), m_blue(blue)
     {}
 
     /// Copy constructor.
-    LASColor(LASColor const& other);
+    Color(Color const& other);
 
     /// Assignment opreator.
-    LASColor& operator=(LASColor const& rhs);
+    Color& operator=(Color const& rhs);
 
     /// Comparison operator.
-    bool operator==(const LASColor& other) const;
+    bool operator==(const Color& other) const;
     
     /// Fetch value of the red image channel 
     uint16_t GetRed() const;
@@ -118,37 +118,37 @@ private:
 };
 
 
-inline uint16_t LASColor::GetRed() const
+inline uint16_t Color::GetRed() const
 {
     return m_red;
 }
 
-inline void LASColor::SetRed(uint16_t const& value)
+inline void Color::SetRed(uint16_t const& value)
 {
     m_red = value;
 }
 
-inline uint16_t LASColor::GetBlue() const
+inline uint16_t Color::GetBlue() const
 {
     return m_blue;
 }
 
-inline void LASColor::SetBlue(uint16_t const& value)
+inline void Color::SetBlue(uint16_t const& value)
 {
     m_blue = value;
 }
 
-inline uint16_t LASColor::GetGreen() const
+inline uint16_t Color::GetGreen() const
 {
     return m_green;
 }
 
-inline void LASColor::SetGreen(uint16_t const& value)
+inline void Color::SetGreen(uint16_t const& value)
 {
     m_green = value;
 }
 
-inline uint16_t& LASColor::operator[](std::size_t const& n)
+inline uint16_t& Color::operator[](std::size_t const& n)
 {
     if (n == 0) { return m_red; }
     if (n == 1) { return m_green; }
@@ -157,7 +157,7 @@ inline uint16_t& LASColor::operator[](std::size_t const& n)
     throw_out_of_range();
 }
 
-inline uint16_t const& LASColor::operator[](std::size_t const& n) const
+inline uint16_t const& Color::operator[](std::size_t const& n) const
 {
     if (n == 0) { return m_red; }
     if (n == 1) { return m_green; }
@@ -165,6 +165,8 @@ inline uint16_t const& LASColor::operator[](std::size_t const& n) const
 
     throw_out_of_range();
 }
+
+// typedef liblas::Color LASColor;
 
 } // namespace liblas
 

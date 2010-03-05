@@ -53,26 +53,26 @@
 namespace liblas
 {
 
-LASWriter::LASWriter(std::ostream& ofs, LASHeader const& header) :
+Writer::Writer(std::ostream& ofs, Header const& header) :
     m_pimpl(detail::WriterFactory::Create(ofs, header)), m_header(header),
     m_ofs(ofs)
 {
     m_pimpl->WriteHeader(m_header);
 }
 
-LASWriter::~LASWriter()
+Writer::~Writer()
 {
     assert(0 != m_pimpl.get());
 
     m_pimpl->UpdateHeader(m_header);
 }
 
-LASHeader const& LASWriter::GetHeader() const
+Header const& Writer::GetHeader() const
 {
     return m_header;
 }
 
-bool LASWriter::WritePoint(LASPoint const& point)
+bool Writer::WritePoint(Point const& point)
 {
     if (!point.IsValid())
     {
@@ -84,31 +84,31 @@ bool LASWriter::WritePoint(LASPoint const& point)
     return true;
 }
 
-std::ostream& LASWriter::GetStream() const
+std::ostream& Writer::GetStream() const
 {
     return m_ofs;
 }
 
-void LASWriter::WriteHeader(LASHeader& header)
+void Writer::WriteHeader(Header& header)
 {
     // The writer may update our header as part of its 
     // writing process (change VLRs for SRS's, for instance).
     m_header = m_pimpl->WriteHeader(header);
 }
 
-bool LASWriter::SetSRS(const LASSpatialReference& srs)
+bool Writer::SetSRS(const SpatialReference& srs)
 {
     m_pimpl->SetOutputSRS(srs, m_header);
     return true;
 }
 
-bool LASWriter::SetInputSRS(const LASSpatialReference& srs)
+bool Writer::SetInputSRS(const SpatialReference& srs)
 {
     m_pimpl->SetInputSRS(srs);
     return true;
 }
 
-bool LASWriter::SetOutputSRS(const LASSpatialReference& srs)
+bool Writer::SetOutputSRS(const SpatialReference& srs)
 {
     m_pimpl->SetOutputSRS(srs, m_header);
     return true;

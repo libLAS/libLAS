@@ -54,27 +54,27 @@
 namespace liblas {
 
 /// Representation of variable-length record data.
-class LASVariableRecord
+class VariableRecord
 {
 public:
 
     /// Default constructor.
     /// Zero-initialization of record data.
     /// \exception No throw
-    LASVariableRecord(); 
+    VariableRecord(); 
 
     /// Copy constructor.
     /// Construction of new record object as a copy of existing one.
     /// \exception No throw
-    LASVariableRecord(LASVariableRecord const& other);
+    VariableRecord(VariableRecord const& other);
     
-    ~LASVariableRecord();
+    ~VariableRecord();
 
     /// Assignment operator.
     /// Construction and initializition of record object by
     /// assignment of another one.
     /// \exception No throw
-    LASVariableRecord& operator=(LASVariableRecord const& rhs);
+    VariableRecord& operator=(VariableRecord const& rhs);
 
     /// Get record signature (LAS 1.0) or reserved bytes (LAS 1.1).
     /// \exception No throw
@@ -116,7 +116,7 @@ public:
 
     /// Compare actual header object against the other.
     /// \exception No throw
-    bool equal(LASVariableRecord const& other) const;
+    bool equal(VariableRecord const& other) const;
 
     /// Get the total size of the VLR in bytes
     uint32_t GetTotalSize() const;
@@ -140,9 +140,9 @@ private:
 };
 
 /// Equality operator.
-/// Implemented in terms of LASVariableRecord::equal member function.
+/// Implemented in terms of VariableRecord::equal member function.
 /// \exception No throw
-inline bool operator==(LASVariableRecord const& lhs, LASVariableRecord const& rhs)
+inline bool operator==(VariableRecord const& lhs, VariableRecord const& rhs)
 {
     return lhs.equal(rhs);
 }
@@ -150,10 +150,12 @@ inline bool operator==(LASVariableRecord const& lhs, LASVariableRecord const& rh
 /// Inequality operator.
 /// Implemented in terms of LASRecordHeader::equal member function.
 /// \exception No throw
-inline bool operator!=(LASVariableRecord const& lhs, LASVariableRecord const& rhs)
+inline bool operator!=(VariableRecord const& lhs, VariableRecord const& rhs)
 {
     return (!(lhs == rhs));
 }
+
+// typedef liblas::VariableRecord LASVariableRecord ;
 
 } // namespace liblas
 

@@ -66,15 +66,15 @@ public:
     ReaderImpl(std::istream& ifs);
     ~ReaderImpl();
 
-    LASHeader const& ReadHeader();
-    LASPoint const& ReadNextPoint(const LASHeader& header);
-    LASPoint const& ReadPointAt(std::size_t n, const LASHeader& header);
+    liblas::Header const& ReadHeader();
+    liblas::Point const& ReadNextPoint(const liblas::Header& header);
+    liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
 
     std::istream& GetStream() const;
-    void Reset(LASHeader const& header);
-    void SetSRS(const LASSpatialReference& srs, const LASHeader& header);
-    void SetInputSRS(const LASSpatialReference& srs);
-    void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header);
+    void Reset(liblas::Header const& header);
+    void SetSRS(const SpatialReference& srs, const liblas::Header& header);
+    void SetInputSRS(const SpatialReference& srs);
+    void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
 
 protected:
 
@@ -84,8 +84,8 @@ protected:
     std::istream& m_ifs;
     uint32_t m_size;
     uint32_t m_current;
-    LASSpatialReference m_out_srs;
-    LASSpatialReference m_in_srs;    
+    SpatialReference m_out_srs;
+    SpatialReference m_in_srs;    
     OGRCoordinateTransformationH m_transform;
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;

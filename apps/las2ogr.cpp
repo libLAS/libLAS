@@ -295,7 +295,7 @@ int main(int argc, char* argv[])
         {
             throw std::runtime_error(std::string("Can not open \'") + in_file + "\'");
         }
-        liblas::LASReader reader(ifs);
+        liblas::Reader reader(ifs);
 
         //
         // Target
@@ -341,7 +341,7 @@ int main(int argc, char* argv[])
         
         while (reader.ReadNextPoint())
         {
-            liblas::LASPoint const& p = reader.GetPoint();   
+            liblas::Point const& p = reader.GetPoint();   
 
             OGR_F_SetFieldInteger(feat, 0, p.GetReturnNumber());
             OGR_F_SetFieldInteger(feat, 1, p.GetScanAngleRank());

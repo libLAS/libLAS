@@ -296,7 +296,7 @@ void Header::readvlrs()
 
         read_n(data.front(), m_ifs, length);
          
-        LASVariableRecord vlr;
+        VariableRecord vlr;
         vlr.SetReserved(vlrh.reserved);
         vlr.SetUserId(std::string(vlrh.userId));
         vlr.SetDescription(std::string(vlrh.description));
@@ -307,7 +307,7 @@ void Header::readvlrs()
         m_header.AddVLR(vlr);
     }
 
-    LASSpatialReference srs(m_header.GetVLRs());    
+    liblas::SpatialReference srs(m_header.GetVLRs());    
     m_header.SetSRS(srs);
 
 }

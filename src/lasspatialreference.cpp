@@ -51,7 +51,7 @@
 namespace liblas
 {
 
-LASSpatialReference::LASSpatialReference() :
+SpatialReference::SpatialReference() :
     m_gtiff(0),
     m_tiff(0)
 {
@@ -59,7 +59,7 @@ LASSpatialReference::LASSpatialReference() :
     assert(0 == m_tiff);
 }
 
-LASSpatialReference& LASSpatialReference::operator=(LASSpatialReference const& rhs)
+SpatialReference& SpatialReference::operator=(SpatialReference const& rhs)
 {
     if (&rhs != this)
     {
@@ -69,7 +69,7 @@ LASSpatialReference& LASSpatialReference::operator=(LASSpatialReference const& r
     return *this;
 }
 
-LASSpatialReference::~LASSpatialReference() 
+SpatialReference::~SpatialReference() 
 {
 #ifdef HAVE_LIBGEOTIFF
     if (m_gtiff != 0)
@@ -85,7 +85,7 @@ LASSpatialReference::~LASSpatialReference()
 #endif
 }
 
-LASSpatialReference::LASSpatialReference(LASSpatialReference const& other) 
+SpatialReference::SpatialReference(SpatialReference const& other) 
 {
     m_tiff = 0;
     m_gtiff = 0;
@@ -93,7 +93,7 @@ LASSpatialReference::LASSpatialReference(LASSpatialReference const& other)
     GetGTIF();
 }
 
-LASSpatialReference::LASSpatialReference(std::vector<LASVariableRecord> const& vlrs) 
+SpatialReference::SpatialReference(std::vector<VariableRecord> const& vlrs) 
 {
     m_tiff = 0;
     m_gtiff = 0;
@@ -102,20 +102,20 @@ LASSpatialReference::LASSpatialReference(std::vector<LASVariableRecord> const& v
 }
 
 /// Keep a copy of the VLRs that are related to GeoTIFF SRS information.
-void LASSpatialReference::SetVLRs(std::vector<LASVariableRecord> const& vlrs)
+void SpatialReference::SetVLRs(std::vector<VariableRecord> const& vlrs)
 {
     
     std::string const uid("LASF_Projection");
     
-    // Wipe out any existing VLRs that might exist on the LASSpatialReference
+    // Wipe out any existing VLRs that might exist on the SpatialReference
     m_vlrs.clear();
     
     // We only copy VLR records from the list which are related to GeoTIFF keys.
     // They must have an id of "LASF_Projection" and a record id that's related.
-    std::vector<LASVariableRecord>::const_iterator it;
+    std::vector<VariableRecord>::const_iterator it;
     for (it = vlrs.begin(); it != vlrs.end(); ++it)
     {
-        LASVariableRecord const& vlr = *it;
+        VariableRecord const& vlr = *it;
         if (IsGeoVLR(vlr))
         {
             m_vlrs.push_back(vlr);
@@ -123,7 +123,7 @@ void LASSpatialReference::SetVLRs(std::vector<LASVariableRecord> const& vlrs)
     }
 }
 
-void LASSpatialReference::AddVLR(LASVariableRecord const& vlr) 
+void SpatialReference::AddVLR(VariableRecord const& vlr) 
 {
     if (IsGeoVLR(vlr))
     {
@@ -131,7 +131,7 @@ void LASSpatialReference::AddVLR(LASVariableRecord const& vlr)
     }
 }
 
-bool LASSpatialReference::IsGeoVLR(LASVariableRecord const& vlr) const
+bool SpatialReference::IsGeoVLR(VariableRecord const& vlr) const
 {
     std::string const uid("LASF_Projection");
     
@@ -156,12 +156,12 @@ bool LASSpatialReference::IsGeoVLR(LASVariableRecord const& vlr) const
     return false;
 }
 
-std::vector<LASVariableRecord> LASSpatialReference::GetVLRs() const
+std::vector<VariableRecord> SpatialReference::GetVLRs() const
 {
     return m_vlrs;
 }
 
-void LASSpatialReference::ResetVLRs()
+void SpatialReference::ResetVLRs()
 {
 
     m_vlrs.clear();
@@ -192,7 +192,7 @@ void LASSpatialReference::ResetVLRs()
     ret = ST_GetKey(m_tiff, 34735, &kcount, &ktype, (void**)&kdata);
     if (ret)
     {    
-        LASVariableRecord record;
+        VariableRecord record;
         int i = 0;
         record.SetRecordId(34735);
         record.SetUserId("LASF_Projection");
@@ -221,7 +221,7 @@ void LASSpatialReference::ResetVLRs()
     ret = ST_GetKey(m_tiff, 34736, &dcount, &dtype, (void**)&ddata);
     if (ret)
     {    
-        LASVariableRecord record;
+        VariableRecord record;
         int i = 0;
         record.SetRecordId(34736);
         record.SetUserId("LASF_Projection");
@@ -255,7 +255,7 @@ void LASSpatialReference::ResetVLRs()
     ret = ST_GetKey(m_tiff, 34737, &acount, &atype, (void**)&adata);
     if (ret) 
     {                    
-         LASVariableRecord record;
+         VariableRecord record;
          int i = 0;
          record.SetRecordId(34737);
          record.SetUserId("LASF_Projection");
@@ -289,7 +289,7 @@ void LASSpatialReference::ResetVLRs()
 #endif // ndef HAVE_LIBGEOTIFF
 }
 
-void LASSpatialReference::SetGTIF(const GTIF* pgtiff, const ST_TIFF* ptiff) 
+void SpatialReference::SetGTIF(const GTIF* pgtiff, const ST_TIFF* ptiff) 
 {
     m_gtiff = (GTIF*)pgtiff;
     m_tiff = (ST_TIFF*)ptiff;
@@ -297,7 +297,7 @@ void LASSpatialReference::SetGTIF(const GTIF* pgtiff, const ST_TIFF* ptiff)
     m_gtiff = NULL;
     m_tiff = NULL;
 }
-const GTIF* LASSpatialReference::GetGTIF()
+const GTIF* SpatialReference::GetGTIF()
 {
 #ifndef HAVE_LIBGEOTIFF
     return 0;
@@ -305,7 +305,7 @@ const GTIF* LASSpatialReference::GetGTIF()
 
     // If we already have m_gtiff and m_tiff, that is because we have 
     // already called GetGTIF once before.  VLRs ultimately drive how the 
-    // LASSpatialReference is defined, not the GeoTIFF keys.  
+    // SpatialReference is defined, not the GeoTIFF keys.  
     if (m_tiff != 0 )
     {
         ST_Destroy(m_tiff);
@@ -322,10 +322,10 @@ const GTIF* LASSpatialReference::GetGTIF()
     std::string const uid("LASF_Projection");
     
     // Nothing is going to happen here if we don't have any VLRs describing
-    // SRS information on the LASSpatialReference.  
+    // SRS information on the SpatialReference.  
     for (uint16_t i = 0; i < m_vlrs.size(); ++i)
     {
-        LASVariableRecord record = m_vlrs[i];
+        VariableRecord record = m_vlrs[i];
         std::vector<uint8_t> data = record.GetData();
         if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
         {
@@ -368,7 +368,7 @@ const GTIF* LASSpatialReference::GetGTIF()
 }
 
 /// Fetch the SRS as WKT
-std::string LASSpatialReference::GetWKT( WKTModeFlag mode_flag ) const 
+std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const 
 {
 #ifndef HAVE_GDAL
     return std::string();
@@ -416,7 +416,7 @@ std::string LASSpatialReference::GetWKT( WKTModeFlag mode_flag ) const
 #endif
 }
 
-void LASSpatialReference::SetFromUserInput( std::string const& v)
+void SpatialReference::SetFromUserInput( std::string const& v)
 {
 #ifdef HAVE_GDAL
 
@@ -438,11 +438,11 @@ void LASSpatialReference::SetFromUserInput( std::string const& v)
     SetWKT(tmp);
 #else
     detail::ignore_unused_variable_warning(v);
-    throw std::runtime_error("GDAL is not available, LASSpatialReference could not be set from WKT");
+    throw std::runtime_error("GDAL is not available, SpatialReference could not be set from WKT");
 #endif
 }
 
-void LASSpatialReference::SetWKT(std::string const& v)
+void SpatialReference::SetWKT(std::string const& v)
 {
     if (!m_gtiff)
     {
@@ -467,11 +467,11 @@ void LASSpatialReference::SetWKT(std::string const& v)
     ResetVLRs();
 #else
     detail::ignore_unused_variable_warning(v);
-    throw std::runtime_error("GDAL is not available, LASSpatialReference could not be set from WKT");
+    throw std::runtime_error("GDAL is not available, SpatialReference could not be set from WKT");
 #endif
 }
 
-void LASSpatialReference::SetVerticalCS( int verticalCSType, 
+void SpatialReference::SetVerticalCS( int verticalCSType, 
                                          std::string const& citation,
                                          int verticalDatum,
                                          int verticalUnits )
@@ -510,7 +510,7 @@ void LASSpatialReference::SetVerticalCS( int verticalCSType,
 }
                                          
 
-std::string LASSpatialReference::GetProj4() const 
+std::string SpatialReference::GetProj4() const 
 {
 #ifdef HAVE_GDAL
     
@@ -552,7 +552,7 @@ std::string LASSpatialReference::GetProj4() const
     return std::string();
 }
 
-void LASSpatialReference::SetProj4(std::string const& v)
+void SpatialReference::SetProj4(std::string const& v)
 {
     if (!m_gtiff)
     {

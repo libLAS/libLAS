@@ -90,7 +90,7 @@ typedef struct ST_TIFFS *ST_TIFF;
 namespace liblas {
 
 /// Spatial Reference System container for libLAS
-class LASSpatialReference
+class SpatialReference
 {
 public:
     enum WKTModeFlag
@@ -100,20 +100,20 @@ public:
     };
 
     /// Default constructor.
-    LASSpatialReference();
+    SpatialReference();
 
     /// Destructor.
     /// If libgeotiff is enabled, deallocates libtiff and libgeotiff objects used internally.
-    ~LASSpatialReference();
+    ~SpatialReference();
 
-    /// Constructor creating LASSpatialReference instance from given Variable-Length Record.
-    LASSpatialReference(const std::vector<LASVariableRecord>& vlrs);
+    /// Constructor creating SpatialReference instance from given Variable-Length Record.
+    SpatialReference(const std::vector<VariableRecord>& vlrs);
 
     /// Copy constryctor.
-    LASSpatialReference(LASSpatialReference const& other);
+    SpatialReference(SpatialReference const& other);
 
     /// Assignment operator.
-    LASSpatialReference& operator=(LASSpatialReference const& rhs);
+    SpatialReference& operator=(SpatialReference const& rhs);
     
     /// Returns a pointer to the internal GTIF*.  Only available if 
     /// you have libgeotiff linked in.
@@ -173,34 +173,35 @@ public:
     /// \param v - a string containing the Proj.4 string.
     void SetProj4(std::string const& v);
     
-    /// Set the LASVLRs for the LASSpatialReference.  SetVLRs will only copy 
+    /// Set the LASVLRs for the SpatialReference.  SetVLRs will only copy 
     /// VLR records that pertain to the GeoTIFF keys, and extraneous 
     /// VLR records will not be copied.
     /// \param vlrs - A list of VLRs that contains VLRs describing GeoTIFF keys
-    void SetVLRs(const std::vector<LASVariableRecord>& vlrs);
+    void SetVLRs(const std::vector<VariableRecord>& vlrs);
     
     /// Add a VLR representing GeoTIFF keys to the SRS
-    void AddVLR(const LASVariableRecord& vlr);
+    void AddVLR(const VariableRecord& vlr);
     
-    /// Return a copy of the LASVLRs that LASSpatialReference maintains
-    std::vector<LASVariableRecord> GetVLRs() const;
+    /// Return a copy of the LASVLRs that SpatialReference maintains
+    std::vector<VariableRecord> GetVLRs() const;
 
 private:
 
     GTIF* m_gtiff;
     ST_TIFF* m_tiff;
 
-    std::vector<LASVariableRecord> m_vlrs;
-    bool IsGeoVLR(const LASVariableRecord& vlr) const;
+    std::vector<VariableRecord> m_vlrs;
+    bool IsGeoVLR(const VariableRecord& vlr) const;
 
-    /// Reset the VLRs of the LASSpatialReference using the existing GTIF* and ST_TIF*
+    /// Reset the VLRs of the SpatialReference using the existing GTIF* and ST_TIF*
     /// Until this method is called, 
-    /// the LASSpatialReference will only contain a SRS description using the VLRs 
+    /// the SpatialReference will only contain a SRS description using the VLRs 
     /// that it was first instantiated with.  SetWKT and SetProj4 can 
     /// be used to change the GTIF* 
     void ResetVLRs();
 };
 
+// typedef liblas::SpatialReference LASSpatialReference;
 } // namespace liblas
 
 #ifdef HAVE_GDAL

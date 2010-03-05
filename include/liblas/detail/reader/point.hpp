@@ -65,14 +65,14 @@ class Point
 {
 public:
 
-    Point(std::istream& ifs, const LASHeader& header);
+    Point(std::istream& ifs, const liblas::Header& header);
     Point(  std::istream& ifs, 
-            const LASHeader& header, 
+            const liblas::Header& header, 
             OGRCoordinateTransformationH transform);
     virtual ~Point();
 
     std::istream& GetStream() const;
-    const LASPoint& GetPoint() const { return m_point; }
+    const liblas::Point& GetPoint() const { return m_point; }
     void read();
     
 protected:
@@ -90,8 +90,8 @@ private:
     
 
     std::istream& m_ifs;
-    const LASHeader& m_header;
-    LASPoint m_point;
+    const liblas::Header& m_header;
+    liblas::Point m_point;
     OGRCoordinateTransformationH m_transform;
     
     

@@ -43,7 +43,6 @@
 #include <liblas/detail/reader/point.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
-#include <liblas/lasvariablerecord.hpp>
 
 #include <sstream> 
 
@@ -54,16 +53,16 @@ void Point::setup()
 
 }
 
-Point::Point(std::istream& ifs, const LASHeader& header) :
-    m_ifs(ifs), m_header(header), m_point(LASPoint()), m_transform(0)
+Point::Point(std::istream& ifs, const liblas::Header& header) :
+    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_transform(0)
 {
     setup();
 }
 
 Point::Point(   std::istream& ifs, 
-                const LASHeader& header, 
+                const liblas::Header& header, 
                 OGRCoordinateTransformationH transform) :
-    m_ifs(ifs), m_header(header), m_point(LASPoint()), m_transform(transform)
+    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_transform(transform)
 {
     setup();
 }
@@ -120,7 +119,7 @@ void Point::read()
             detail::read_n(green, m_ifs, sizeof(uint16_t));
             detail::read_n(blue, m_ifs, sizeof(uint16_t));
 
-            LASColor color(red, green, blue);
+            liblas::Color color(red, green, blue);
             m_point.SetColor(color);
             
             bytesread += 3 * sizeof(uint16_t);
@@ -132,7 +131,7 @@ void Point::read()
             detail::read_n(green, m_ifs, sizeof(uint16_t));
             detail::read_n(blue, m_ifs, sizeof(uint16_t));
 
-            LASColor color(red, green, blue);
+            liblas::Color color(red, green, blue);
             m_point.SetColor(color);
             
             bytesread += 3 * sizeof(uint16_t);

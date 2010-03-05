@@ -58,21 +58,21 @@ public:
     WriterImpl(std::ostream& ofs);
     ~WriterImpl();
     LASVersion GetVersion() const;
-    LASHeader const& WriteHeader(LASHeader const& header);
-    void UpdateHeader(LASHeader const& header);
-    void WritePoint(LASPoint const& record, const LASHeader& header);
+    liblas::Header const& WriteHeader(liblas::Header const& header);
+    void UpdateHeader(liblas::Header const& header);
+    void WritePoint(liblas::Point const& record, const liblas::Header& header);
 
     std::ostream& GetStream() const;
 
-    void SetInputSRS(const LASSpatialReference& srs);
-    void SetOutputSRS(const LASSpatialReference& srs, const LASHeader& header);
+    void SetInputSRS(const SpatialReference& srs);
+    void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
 
 protected:
     PointRecord m_record;
     std::ostream& m_ofs;
      
-    LASSpatialReference m_out_srs;
-    LASSpatialReference m_in_srs;
+    SpatialReference m_out_srs;
+    SpatialReference m_in_srs;
     
     OGRCoordinateTransformationH m_transform;
     OGRSpatialReferenceH m_in_ref;
@@ -91,7 +91,7 @@ class WriterFactory
 {
 public:
 
-    static WriterImpl* Create(std::ostream& ofs, LASHeader const& header);
+    static WriterImpl* Create(std::ostream& ofs, liblas::Header const& header);
     static void Destroy(WriterImpl* p);
 };
 

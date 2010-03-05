@@ -66,12 +66,12 @@ std::ostream* OpenOutput(std::string filename)
     return ostrm;
 }
 
-LASHeader CreateHeader(ScanHdr* hdr)
+liblas::Header CreateHeader(ScanHdr* hdr)
 {
-    LASHeader header;
+    liblas::Header header;
     
     // Checks for time and color values
-    liblas::PointFormat format = liblas::ePointFormat0;
+    liblas::PointFormatName format = liblas::ePointFormat0;
     
     if (hdr->Time) {
         if (hdr->Color) {
@@ -123,7 +123,7 @@ bool ReadHeader(ScanHdr* hdr, std::istream* istrm)
     return true;
 }
 
-bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr) 
+bool WritePoints(liblas::Writer* writer, std::istream* strm, ScanHdr* hdr) 
 {
     ScanPnt* point = new ScanPnt;
     ScanRow* row = new ScanRow;
@@ -147,7 +147,7 @@ bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr)
                     point->Intensity = row->EchoInt & 0x3FFF;
                     point->Echo = (row->EchoInt >> 14);
                 }
-                LASPoint p;
+                Point p;
 
                 p.SetCoordinates(writer->GetHeader(),
                                     point->Pnt.x,
@@ -171,7 +171,7 @@ bool WritePoints(LASWriter* writer, std::istream* strm, ScanHdr* hdr)
                 }
                 if (hdr->Color) {
                     liblas::uint8_t r, g, b, a = 0;
-                    LASColor color;
+                    liblas::Color color;
                     detail::read_n(r, *strm, sizeof(r));
                     detail::read_n(b, *strm, sizeof(b));
                     detail::read_n(g, *strm, sizeof(g));
@@ -306,8 +306,8 @@ int main(int argc, char* argv[])
     }
     
     // std::cout << "stream position is: " << istrm->tellg() << std::endl;
-    LASHeader header = CreateHeader(hdr);
-    LASWriter* writer = new LASWriter(*ostrm, header);
+    liblas::Header header = CreateHeader(hdr);
+    liblas::Writer* writer = new liblas::Writer(*ostrm, header);
     
     success = WritePoints(writer, istrm, hdr);
     delete writer;

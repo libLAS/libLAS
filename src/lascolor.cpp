@@ -44,21 +44,21 @@
 
 namespace liblas {
 
-LASColor::LASColor() :
+Color::Color() :
     m_red(0),
     m_green(0),
     m_blue(0)
 {
 }
 
-LASColor::LASColor(LASColor const& other) :
+Color::Color(Color const& other) :
     m_red(other.m_red),
     m_green(other.m_green),
     m_blue(other.m_blue)
 {
 }
 
-LASColor& LASColor::operator=(LASColor const& rhs)
+Color& Color::operator=(Color const& rhs)
 {
     if (&rhs != this)
     {
@@ -69,7 +69,7 @@ LASColor& LASColor::operator=(LASColor const& rhs)
     return *this;
 }
 
-bool LASColor::operator==(LASColor const& other) const
+bool Color::operator==(Color const& other) const
 {
     if (&other == this) return true;
     

@@ -49,19 +49,19 @@ void usage() {}
 
 using namespace liblas;
 
-void LoadIndex (LASIndex* index, LASReader* reader, long dimension) 
+void LoadIndex (LASIndex* index, liblas::Reader* reader, long dimension) 
 {
 
     bool read = reader->ReadNextPoint();
     liblas::int64_t id = 0;
     if (read) {
-        const LASPoint& p = reader->GetPoint();
-        index->insert(const_cast<LASPoint&>(p), id);
+        const liblas::Point& p = reader->GetPoint();
+        index->insert(const_cast<liblas::Point&>(p), id);
     }
     while (reader->ReadNextPoint()) {
         id += 1;
-        const LASPoint& p = reader->GetPoint();
-        index->insert(const_cast<LASPoint&>(p), id);
+        const liblas::Point& p = reader->GetPoint();
+        index->insert(const_cast<liblas::Point&>(p), id);
     }
 }
 int main(int argc, char* argv[])
@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
 
     // FIXME: Missing RAII and try-catch, no LAS throws exceptions.
     std::istream* istrm = OpenInput(input);
-    LASReader* reader = new LASReader(*istrm);
+    liblas::Reader* reader = new liblas::Reader(*istrm);
     std::cout << "Indexing " << input<< " "<<std::endl;
 
     LASIndexDataStream* idxstrm = 0;

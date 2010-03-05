@@ -60,7 +60,7 @@ public:
     Header(std::istream& ifs);
     virtual ~Header();
 
-    const LASHeader& GetHeader() const { return m_header; }
+    const liblas::Header& GetHeader() const { return m_header; }
     void read();
     void readvlrs();
 
@@ -68,7 +68,7 @@ protected:
 
     
     std::istream& m_ifs;
-    LASHeader m_header;
+    liblas::Header m_header;
 
 private:
 

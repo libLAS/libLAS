@@ -56,20 +56,20 @@
 namespace liblas
 {
 
-LASReader::LASReader(std::istream& ifs) :
+Reader::Reader(std::istream& ifs) :
     m_pimpl(detail::ReaderFactory::Create(ifs)),
     m_point(0),
-    m_empty_point(new LASPoint()),
+    m_empty_point(new Point()),
     bCustomHeader(false),
     m_ifs(ifs)
 {
     Init();
 }
 
-LASReader::LASReader(std::istream& ifs, LASHeader& header) :
+Reader::Reader(std::istream& ifs, Header& header) :
     m_pimpl(detail::ReaderFactory::Create(ifs)),
     m_point(0),
-    m_empty_point(new LASPoint()),
+    m_empty_point(new Point()),
     bCustomHeader(false),
     m_ifs(ifs)
 
@@ -79,27 +79,27 @@ LASReader::LASReader(std::istream& ifs, LASHeader& header) :
     Init();
 }
 
-LASReader::~LASReader()
+Reader::~Reader()
 {
     // empty, but required so we can implement PIMPL using
     // std::auto_ptr with incomplete type (Reader).
     delete m_empty_point;
 }
 
-LASHeader const& LASReader::GetHeader() const
+Header const& Reader::GetHeader() const
 {
     return m_header;
 }
 
-LASPoint const& LASReader::GetPoint() const
+Point const& Reader::GetPoint() const
 {
     return *m_point;
 }
 
-bool LASReader::ReadNextPoint()
+bool Reader::ReadNextPoint()
 {
     try {
-        m_point = const_cast<LASPoint*>(&(m_pimpl->ReadNextPoint(m_header)));
+        m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
         return true;
     } catch (std::out_of_range& e) {
         m_point = 0;
@@ -108,10 +108,10 @@ bool LASReader::ReadNextPoint()
 
 }
 
-bool LASReader::ReadPointAt(std::size_t n)
+bool Reader::ReadPointAt(std::size_t n)
 {
     try {
-        m_point = const_cast<LASPoint*>(&(m_pimpl->ReadPointAt(n, m_header)));
+        m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
         return true;
     } catch (std::out_of_range& e) {
         m_point = 0;
@@ -120,14 +120,14 @@ bool LASReader::ReadPointAt(std::size_t n)
 
 }
 
-LASPoint const& LASReader::operator[](std::size_t n)
+Point const& Reader::operator[](std::size_t n)
 {
     if (m_header.GetPointRecordsCount() <= n)
     {
         throw std::out_of_range("point subscript out of range");
     }
 
-    m_point = const_cast<LASPoint*>(&(m_pimpl->ReadPointAt(n, m_header)));
+    m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
     if (m_point == 0) 
     {
         throw std::out_of_range("no point record at given position");
@@ -136,12 +136,12 @@ LASPoint const& LASReader::operator[](std::size_t n)
     return *m_point;
 }
 
-void LASReader::Init()
+void Reader::Init()
 {   
     // Copy our existing header in case we have already set a custom 
     // one.  We will use this instead of the one from the stream if 
     // the constructor with the header was used.
-    LASHeader custom_header(m_header);
+    Header custom_header(m_header);
 
     m_header = m_pimpl->ReadHeader();
 
@@ -163,34 +163,34 @@ void LASReader::Init()
     m_point = m_empty_point;
 }
 
-std::istream& LASReader::GetStream() const
+std::istream& Reader::GetStream() const
 {
     return m_ifs;
 }
 
-void LASReader::Reset() 
+void Reader::Reset() 
 {
     Init();
 }
 
-bool LASReader::IsEOF() const
+bool Reader::IsEOF() const
 {
     return GetStream().eof();
 }
 
-bool LASReader::SetSRS(const LASSpatialReference& srs)
+bool Reader::SetSRS(const SpatialReference& srs)
 {
     m_pimpl->SetOutputSRS(srs, m_header);
     return true;
 }
 
-bool LASReader::SetInputSRS(const LASSpatialReference& srs)
+bool Reader::SetInputSRS(const SpatialReference& srs)
 {
     m_pimpl->SetInputSRS(srs);
     return true;
 }
 
-bool LASReader::SetOutputSRS(const LASSpatialReference& srs)
+bool Reader::SetOutputSRS(const SpatialReference& srs)
 {
     m_pimpl->SetOutputSRS(srs, m_header);
     return true;

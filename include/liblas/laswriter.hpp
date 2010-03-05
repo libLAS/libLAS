@@ -57,9 +57,11 @@
 namespace liblas
 {
 
+
+
 /// Defines public interface to LAS writer implementation.
 /// This class 
-class LASWriter
+class Writer
 {
 public:
 
@@ -67,45 +69,47 @@ public:
     /// @param ofs - stream used as destination for LAS records.
     /// @param header - specifies obligatory properties of LAS file.
     /// @excepion std::runtime_error - on failure state of the input stream.
-    LASWriter(std::ostream& ofs, LASHeader const& header);
+    Writer(std::ostream& ofs, Header const& header);
 
     /// Destructor does not close file attached to the output stream
     /// Header may be updated after writing operation completed, if necessary
     /// in order to maintain data consistency.
-    ~LASWriter();
+    ~Writer();
     
     /// Provides access to header structure.
-    LASHeader const& GetHeader() const;
+    Header const& GetHeader() const;
 
     /// \todo TODO: Move point record composition deep into writer implementation.
     /// \todo TODO: How to handle point_source_id in portable way, for LAS 1.0 and 1.1
-    bool WritePoint(LASPoint const& point);
+    bool WritePoint(Point const& point);
 
     /// Allow fetching of the stream
     std::ostream& GetStream() const;
     
     /// Allow in-place writing of header
-    void WriteHeader(LASHeader& header);
+    void WriteHeader(Header& header);
 
-    /// Reproject data as they are written if the LASWriter's reference is
-    /// different than the LASHeader's
-    bool SetSRS(const LASSpatialReference& ref);
-    bool SetInputSRS(const LASSpatialReference& ref);
-    bool SetOutputSRS(const LASSpatialReference& ref);
+    /// Reproject data as they are written if the Writer's reference is
+    /// different than the Header's
+    bool SetSRS(const SpatialReference& ref);
+    bool SetInputSRS(const SpatialReference& ref);
+    bool SetOutputSRS(const SpatialReference& ref);
     
 private:
     
     // Blocked copying operations, declared but not defined.
-    LASWriter(LASWriter const& other);
-    LASWriter& operator=(LASWriter const& rhs);
+    Writer(Writer const& other);
+    Writer& operator=(Writer const& rhs);
 
     const std::auto_ptr<WriterI> m_pimpl;
 
-    LASHeader m_header;
+    Header m_header;
     detail::PointRecord m_record;
     std::ostream& m_ofs;
 
 };
+
+// typedef liblas::Writer LASWriter ;
 
 } // namespace liblas
 

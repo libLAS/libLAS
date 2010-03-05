@@ -52,23 +52,23 @@ namespace liblas {
 
 
 
-class LASPointFormat
+class PointFormat
 {
 public:
 
-    LASPointFormat( liblas::uint8_t major, 
+    PointFormat( liblas::uint8_t major, 
                     liblas::uint8_t minor, 
                     liblas::uint32_t size);
 
-    LASPointFormat( liblas::uint8_t major, 
+    PointFormat( liblas::uint8_t major, 
                     liblas::uint8_t minor, 
                     liblas::uint32_t size,
                     bool bColor,
                     bool bTime);
-    LASPointFormat& operator=(LASPointFormat const& rhs);
-    LASPointFormat(LASPointFormat const& other);
+    PointFormat& operator=(PointFormat const& rhs);
+    PointFormat(PointFormat const& other);
     
-    ~LASPointFormat() {};
+    ~PointFormat() {};
 
     /// Fetch byte size
     uint32_t GetByteSize() const;
@@ -101,57 +101,59 @@ private:
     void updatesize();
 };
 
-inline uint32_t LASPointFormat::GetByteSize() const
+inline uint32_t PointFormat::GetByteSize() const
 {
     return m_size;
 }
 
-inline void LASPointFormat::SetByteSize(uint32_t const& value)
+inline void PointFormat::SetByteSize(uint32_t const& value)
 {
     m_size = value;
 }
 
-inline uint8_t LASPointFormat::GetVersionMajor() const
+inline uint8_t PointFormat::GetVersionMajor() const
 {
     return m_versionmajor;
 }
 
-inline void LASPointFormat::SetVersionMajor(uint8_t const& value)
+inline void PointFormat::SetVersionMajor(uint8_t const& value)
 {
     m_versionmajor = value;
 }
 
-inline uint8_t LASPointFormat::GetVersionMinor() const
+inline uint8_t PointFormat::GetVersionMinor() const
 {
     return m_versionminor;
 }
 
-inline void LASPointFormat::SetVersionMinor(uint8_t const& value)
+inline void PointFormat::SetVersionMinor(uint8_t const& value)
 {
     m_versionminor = value;
 }
 
-inline bool LASPointFormat::HasColor() const
+inline bool PointFormat::HasColor() const
 {
     return m_hasColor;
 }
 
-inline void LASPointFormat::Color(bool const& value)
+inline void PointFormat::Color(bool const& value)
 {
     m_hasColor = value;
     updatesize();
 }
 
-inline bool LASPointFormat::HasTime() const
+inline bool PointFormat::HasTime() const
 {
     return m_hasTime;
 }
 
-inline void LASPointFormat::Time(bool const& value)
+inline void PointFormat::Time(bool const& value)
 {
     m_hasTime = value;
     updatesize();
 }
+
+typedef liblas::PointFormat LASPointFormat ;
 } // namespace liblas
 
 #endif // LIBLAS_FORMAT_HPP_INCLUDED

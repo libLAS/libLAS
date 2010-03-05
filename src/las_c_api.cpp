@@ -220,7 +220,7 @@ LAS_DLL LASReaderH LASReader_Create(const char* filename)
     try {
         
         std::istream* istrm = OpenInput(std::string(filename));
-        return (LASReaderH) new LASReader(*istrm);
+        return (LASReaderH) new liblas::Reader(*istrm);
 
     
     } catch (std::exception const& e)
@@ -242,8 +242,8 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
         
         std::istream* istrm = OpenInput(std::string(filename));
         
-        LASHeader* header = ((LASHeader*) hHeader);
-        return (LASReaderH) new LASReader(*istrm, *header);
+        liblas::Header* header = ((liblas::Header*) hHeader);
+        return (LASReaderH) new liblas::Reader(*istrm, *header);
 
     
     } catch (std::exception const& e)
@@ -259,7 +259,7 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader)
     VALIDATE_LAS_POINTER0(hReader, "LASReader_Destroy");
 
     try { 
-        LASReader* reader = (LASReader*)hReader;
+        liblas::Reader* reader = (liblas::Reader*)hReader;
         std::istream* istrm = &(reader->GetStream());
 
         delete reader;
@@ -287,7 +287,7 @@ LAS_DLL const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
     VALIDATE_LAS_POINTER1(hReader, "LASReader_GetNextPoint", NULL);
 
     try {
-        LASReader *reader = ((LASReader*) hReader);
+        liblas::Reader *reader = ((liblas::Reader*) hReader);
         if (reader->ReadNextPoint()) 
             // return (LASPointH) new LASPoint(reader->GetPoint());
             return (LASPointH) &(reader->GetPoint());
@@ -308,7 +308,7 @@ LAS_DLL const LASPointH LASReader_GetPointAt(const LASReaderH hReader, liblas::u
     VALIDATE_LAS_POINTER1(hReader, "LASReader_GetPointAt", NULL);
 
     try {
-        LASReader *reader = ((LASReader*) hReader);
+        liblas::Reader *reader = ((liblas::Reader*) hReader);
         if (reader->ReadPointAt((std::size_t) position)) 
             // return (LASPointH) new LASPoint(reader->GetPoint());
             return (LASPointH) &(reader->GetPoint());
@@ -328,8 +328,8 @@ LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader)
 {
     VALIDATE_LAS_POINTER1(hReader, "LASReader_GetHeader", NULL);
 
-    LASHeader header = ((LASReader*) hReader)->GetHeader();
-    return (LASHeaderH) new LASHeader( header );
+    liblas::Header header = ((liblas::Reader*) hReader)->GetHeader();
+    return (LASHeaderH) new liblas::Header( header );
 }
 
 LAS_DLL LASErrorEnum LASReader_SetSRS(LASHeaderH hReader, const LASSRSH hSRS) {
@@ -338,7 +338,7 @@ LAS_DLL LASErrorEnum LASReader_SetSRS(LASHeaderH hReader, const LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetSRS", LE_Failure);
 
     try {
-        ((LASReader*) hReader)->SetSRS(*((LASSpatialReference*)hSRS));
+        ((liblas::Reader*) hReader)->SetSRS(*((liblas::SpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASReader_SetSRS");
@@ -354,7 +354,7 @@ LAS_DLL LASErrorEnum LASReader_SetInputSRS(LASHeaderH hReader, const LASSRSH hSR
     VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetInputSRS", LE_Failure);
 
     try {
-        ((LASReader*) hReader)->SetInputSRS(*((LASSpatialReference*)hSRS));
+        ((liblas::Reader*) hReader)->SetInputSRS(*((liblas::SpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASReader_SetInputSRS");
@@ -370,7 +370,7 @@ LAS_DLL LASErrorEnum LASReader_SetOutputSRS(LASHeaderH hReader, const LASSRSH hS
     VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetOutputSRS", LE_Failure);
 
     try {
-        ((LASReader*) hReader)->SetOutputSRS(*((LASSpatialReference*)hSRS));
+        ((liblas::Reader*) hReader)->SetOutputSRS(*((liblas::SpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASReader_SetOutputSRS");
@@ -381,20 +381,20 @@ LAS_DLL LASErrorEnum LASReader_SetOutputSRS(LASHeaderH hReader, const LASSRSH hS
 }
 
 LAS_DLL LASHeaderH LASHeader_Create(void) {
-        return (LASHeaderH) new LASHeader();
+        return (LASHeaderH) new liblas::Header();
 }
 
 LAS_DLL LASPointH LASPoint_Create(void) {
-        return (LASPointH) new LASPoint();
+        return (LASPointH) new liblas::Point();
 }
 
 LAS_DLL LASPointH LASPoint_Copy(const LASPointH hPoint) {
-        return (LASPointH) new LASPoint(*((LASPoint*) hPoint));
+        return (LASPointH) new liblas::Point(*((liblas::Point*) hPoint));
 }
 
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint) {
     VALIDATE_LAS_POINTER0(hPoint, "LASPoint_Destroy");
-    delete (LASPoint*) hPoint;
+    delete (liblas::Point*) hPoint;
     hPoint = NULL;
 }
 
@@ -402,7 +402,7 @@ LAS_DLL double LASPoint_GetX(const LASPointH hPoint) {
 
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetX", 0.0);
     
-    double value = ((LASPoint*) hPoint)->GetX();
+    double value = ((liblas::Point*) hPoint)->GetX();
     return value;
 }
 
@@ -411,7 +411,7 @@ LAS_DLL LASErrorEnum LASPoint_SetX(LASPointH hPoint, double value) {
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetX", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetX(value);
+            ((liblas::Point*) hPoint)->SetX(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetX");
@@ -426,7 +426,7 @@ LAS_DLL double LASPoint_GetY(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetY", 0.0);
     
-    double value = ((LASPoint*) hPoint)->GetY();
+    double value = ((liblas::Point*) hPoint)->GetY();
     return value;
 }
 
@@ -435,7 +435,7 @@ LAS_DLL LASErrorEnum LASPoint_SetY(LASPointH hPoint, double value) {
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetY", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetY(value);
+            ((liblas::Point*) hPoint)->SetY(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetY");
@@ -450,7 +450,7 @@ LAS_DLL double LASPoint_GetZ(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetZ", 0.0);
     
-    double value = ((LASPoint*) hPoint)->GetZ();
+    double value = ((liblas::Point*) hPoint)->GetZ();
     return value;
 }
 
@@ -459,7 +459,7 @@ LAS_DLL LASErrorEnum LASPoint_SetZ(LASPointH hPoint, double value) {
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetZ", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetZ(value);
+            ((liblas::Point*) hPoint)->SetZ(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetZ");
@@ -474,7 +474,7 @@ LAS_DLL liblas::uint16_t LASPoint_GetIntensity(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetIntensity", 0);
     
-    liblas::uint16_t value = ((LASPoint*) hPoint)->GetIntensity();
+    liblas::uint16_t value = ((liblas::Point*) hPoint)->GetIntensity();
     return value;
 }
 
@@ -483,7 +483,7 @@ LAS_DLL LASErrorEnum LASPoint_SetIntensity(LASPointH hPoint, liblas::uint16_t va
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetIntensity", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetIntensity(value);
+            ((liblas::Point*) hPoint)->SetIntensity(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetIntensity");
@@ -498,7 +498,7 @@ LAS_DLL liblas::uint16_t LASPoint_GetReturnNumber(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetReturnNumber", 0);
     
-    liblas::uint16_t value = ((LASPoint*) hPoint)->GetReturnNumber();
+    liblas::uint16_t value = ((liblas::Point*) hPoint)->GetReturnNumber();
     return value;
 }
 
@@ -507,7 +507,7 @@ LAS_DLL LASErrorEnum LASPoint_SetReturnNumber(LASPointH hPoint, liblas::uint16_t
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetReturnNumber", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetReturnNumber(value);
+            ((liblas::Point*) hPoint)->SetReturnNumber(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetReturnNumber");
@@ -522,7 +522,7 @@ LAS_DLL liblas::uint16_t LASPoint_GetNumberOfReturns(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetNumberOfReturns", 0);
     
-    liblas::uint16_t value = ((LASPoint*) hPoint)->GetNumberOfReturns();
+    liblas::uint16_t value = ((liblas::Point*) hPoint)->GetNumberOfReturns();
     return value;
 }
 
@@ -531,7 +531,7 @@ LAS_DLL LASErrorEnum LASPoint_SetNumberOfReturns(LASPointH hPoint, liblas::uint1
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetNumberOfReturns", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetNumberOfReturns(value);
+            ((liblas::Point*) hPoint)->SetNumberOfReturns(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetNumberOfReturns");
@@ -546,7 +546,7 @@ LAS_DLL liblas::uint16_t LASPoint_GetScanDirection(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetScanDirection", 0);
     
-    liblas::uint16_t value = ((LASPoint*) hPoint)->GetScanDirection();
+    liblas::uint16_t value = ((liblas::Point*) hPoint)->GetScanDirection();
     return value;
 }
 
@@ -555,7 +555,7 @@ LAS_DLL LASErrorEnum LASPoint_SetScanDirection(LASPointH hPoint, liblas::uint16_
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetScanDirection", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetScanDirection(value);
+            ((liblas::Point*) hPoint)->SetScanDirection(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetScanDirection");
@@ -570,7 +570,7 @@ LAS_DLL liblas::uint16_t LASPoint_GetFlightLineEdge(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetFlightLineEdge", 0);
     
-    liblas::uint16_t value = ((LASPoint*) hPoint)->GetFlightLineEdge();
+    liblas::uint16_t value = ((liblas::Point*) hPoint)->GetFlightLineEdge();
     return value;
 }
 
@@ -579,7 +579,7 @@ LAS_DLL LASErrorEnum LASPoint_SetFlightLineEdge(LASPointH hPoint, liblas::uint16
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetFlightLineEdge", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetFlightLineEdge(value);
+            ((liblas::Point*) hPoint)->SetFlightLineEdge(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetFlightLineEdge");
@@ -594,7 +594,7 @@ LAS_DLL liblas::uint8_t LASPoint_GetScanFlags(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetScanFlags", 0);
     
-    liblas::uint8_t value = ((LASPoint*) hPoint)->GetScanFlags();
+    liblas::uint8_t value = ((liblas::Point*) hPoint)->GetScanFlags();
     return value;
 }
 
@@ -603,7 +603,7 @@ LAS_DLL LASErrorEnum LASPoint_SetScanFlags(LASPointH hPoint, liblas::uint8_t val
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetScanFlags", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetScanFlags(value);
+            ((liblas::Point*) hPoint)->SetScanFlags(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetScanFlags");
@@ -618,7 +618,7 @@ LAS_DLL liblas::uint8_t LASPoint_GetClassification(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetClassification", 0);
 
-    LASClassification::bitset_type clsflags(((LASPoint*) hPoint)->GetClassification());
+    liblas::Classification::bitset_type clsflags(((liblas::Point*) hPoint)->GetClassification());
     liblas::uint8_t value = static_cast<liblas::uint8_t>(clsflags.to_ulong());
     return value;
 }
@@ -628,7 +628,7 @@ LAS_DLL LASErrorEnum LASPoint_SetClassification(LASPointH hPoint, liblas::uint8_
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetClassification", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetClassification(value);
+            ((liblas::Point*) hPoint)->SetClassification(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetClassification");
@@ -644,7 +644,7 @@ LAS_DLL LASErrorEnum LASPoint_SetTime(LASPointH hPoint, double value) {
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetTime", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetTime(value);
+            ((liblas::Point*) hPoint)->SetTime(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetTime");
@@ -659,7 +659,7 @@ LAS_DLL double LASPoint_GetTime(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetTime", 0.0);
     
-    double value = ((LASPoint*) hPoint)->GetTime();
+    double value = ((liblas::Point*) hPoint)->GetTime();
     return value;
 }
 
@@ -667,7 +667,7 @@ LAS_DLL liblas::int8_t LASPoint_GetScanAngleRank(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetScanAngleRank", 0);
     
-    liblas::int8_t value = ((LASPoint*) hPoint)->GetScanAngleRank();
+    liblas::int8_t value = ((liblas::Point*) hPoint)->GetScanAngleRank();
     return value;
 }
 
@@ -676,7 +676,7 @@ LAS_DLL LASErrorEnum LASPoint_SetScanAngleRank(LASPointH hPoint, liblas::int8_t 
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetScanAngleRank", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetScanAngleRank(value);
+            ((liblas::Point*) hPoint)->SetScanAngleRank(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetScanAngleRank");
@@ -691,7 +691,7 @@ LAS_DLL liblas::uint16_t LASPoint_GetPointSourceId(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetPointSourceId", 0);
     
-    liblas::uint16_t value = ((LASPoint*) hPoint)->GetPointSourceID();
+    liblas::uint16_t value = ((liblas::Point*) hPoint)->GetPointSourceID();
     return value;
 }
 
@@ -700,7 +700,7 @@ LAS_DLL LASErrorEnum LASPoint_SetPointSourceId(LASPointH hPoint, liblas::uint16_
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetPointSourceId", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetPointSourceID(value);
+            ((liblas::Point*) hPoint)->SetPointSourceID(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetPointSourceId");
@@ -716,7 +716,7 @@ LAS_DLL liblas::uint8_t LASPoint_GetUserData(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetUserData", 0);
     
-    liblas::uint8_t value = ((LASPoint*) hPoint)->GetUserData();
+    liblas::uint8_t value = ((liblas::Point*) hPoint)->GetUserData();
     return value;
 }
 
@@ -725,7 +725,7 @@ LAS_DLL LASErrorEnum LASPoint_SetUserData(LASPointH hPoint, liblas::uint8_t valu
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetUserData", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->SetUserData(value);
+            ((liblas::Point*) hPoint)->SetUserData(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetUserData");
@@ -741,7 +741,7 @@ LAS_DLL LASErrorEnum LASPoint_GetExtraData(const LASPointH hPoint, liblas::uint8
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetData", LE_Failure);
 
     try {
-        LASPoint* p = ((LASPoint*) hPoint);
+        liblas::Point* p = ((liblas::Point*) hPoint);
         std::vector<liblas::uint8_t> d = p->GetExtraData();
         *length = d.size();
         *data = (liblas::uint8_t*) malloc (*length * sizeof(liblas::uint8_t));
@@ -763,7 +763,7 @@ LAS_DLL LASErrorEnum LASPoint_SetExtraData(const LASPointH hPoint, liblas::uint8
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetData", LE_Failure);
 
     try {
-        LASPoint* p = ((LASPoint*) hPoint);
+        liblas::Point* p = ((liblas::Point*) hPoint);
         std::vector<liblas::uint8_t> d;
         d.resize(length);
         for (liblas::uint16_t i=0; i < length; i++) {
@@ -783,8 +783,8 @@ LAS_DLL int LASPoint_Equal(const LASPointH hPoint1, const LASPointH hPoint2) {
     VALIDATE_LAS_POINTER1(hPoint1, "LASPoint_Equal", 0);
     VALIDATE_LAS_POINTER1(hPoint2, "LASPoint_Equal", 0);
 
-    LASPoint* point1 = ((LASPoint*) hPoint1);
-    LASPoint* point2 = ((LASPoint*) hPoint2);
+    liblas::Point* point1 = ((liblas::Point*) hPoint1);
+    liblas::Point* point2 = ((liblas::Point*) hPoint2);
 
     return (point1 == point2);
 
@@ -795,7 +795,7 @@ LAS_DLL int LASPoint_Validate(LASPointH hPoint) {
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_Validate", LE_Failure);
 
     try {
-            ((LASPoint*) hPoint)->Validate();
+            ((liblas::Point*) hPoint)->Validate();
     } catch (invalid_point_data const& e /*e */) {
         return e.who();
     } catch (std::exception const& e)
@@ -810,27 +810,27 @@ LAS_DLL int LASPoint_Validate(LASPointH hPoint) {
 LAS_DLL int LASPoint_IsValid(LASPointH hPoint) {
 
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_IsValid", LE_Failure);
-    return ((LASPoint*) hPoint)->IsValid();
+    return ((liblas::Point*) hPoint)->IsValid();
 }
 
 LAS_DLL char* LASHeader_GetFileSignature(const LASHeaderH hHeader) {
     // caller owns it
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetFileSignature", NULL);
     
-    std::string signature = ((LASHeader*) hHeader)->GetFileSignature();
+    std::string signature = ((liblas::Header*) hHeader)->GetFileSignature();
     return strdup(signature.c_str());
 }
 
 LAS_DLL liblas::uint16_t LASHeader_GetFileSourceId(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetFileSourceId", 0);
 
-    unsigned short value = ((LASHeader*) hHeader)->GetFileSourceId();
+    unsigned short value = ((liblas::Header*) hHeader)->GetFileSourceId();
     return value;
 }
 
 LAS_DLL LASErrorEnum LASHeader_SetFileSourceId(LASHeaderH hHeader, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetFileSourceId", LE_Failure);
-    ((LASHeader*) hHeader)->SetFileSourceId(value);    
+    ((liblas::Header*) hHeader)->SetFileSourceId(value);    
     return LE_None;
 }
 
@@ -838,20 +838,20 @@ LAS_DLL LASErrorEnum LASHeader_SetFileSourceId(LASHeaderH hHeader, liblas::uint1
 LAS_DLL liblas::uint16_t LASHeader_GetReserved(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetReserved", 0);
 
-    unsigned short value = ((LASHeader*) hHeader)->GetReserved();
+    unsigned short value = ((liblas::Header*) hHeader)->GetReserved();
     return value;
 }
 
 LAS_DLL LASErrorEnum LASHeader_SetReserved(LASHeaderH hHeader, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetReserved", LE_Failure);
-    ((LASHeader*) hHeader)->SetReserved(value);    
+    ((liblas::Header*) hHeader)->SetReserved(value);    
     return LE_None;
 }
 
 LAS_DLL char* LASHeader_GetProjectId(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetProjectId", 0);
     
-    liblas::guid id = ((LASHeader*) hHeader)->GetProjectId();
+    liblas::guid id = ((liblas::Header*) hHeader)->GetProjectId();
     return strdup(id.to_string().c_str());
 }
 
@@ -861,7 +861,7 @@ LAS_DLL LASErrorEnum LASHeader_SetProjectId(LASHeaderH hHeader, const char* valu
     try {
         liblas::guid id;
         id = liblas::guid(value);
-        ((LASHeader*) hHeader)->SetProjectId(id);    
+        ((liblas::Header*) hHeader)->SetProjectId(id);    
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetGUID");
@@ -874,7 +874,7 @@ LAS_DLL LASErrorEnum LASHeader_SetProjectId(LASHeaderH hHeader, const char* valu
 LAS_DLL liblas::uint8_t LASHeader_GetVersionMajor(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetVersionMajor", 0);
 
-    long value = ((LASHeader*) hHeader)->GetVersionMajor();
+    long value = ((liblas::Header*) hHeader)->GetVersionMajor();
     return liblas::uint8_t(value);
 }
 
@@ -882,7 +882,7 @@ LAS_DLL LASErrorEnum LASHeader_SetVersionMajor(LASHeaderH hHeader, liblas::uint8
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetVersionMajor", LE_Failure);
 
     try {
-        ((LASHeader*) hHeader)->SetVersionMajor(value);    
+        ((liblas::Header*) hHeader)->SetVersionMajor(value);    
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetVersionMajor");
@@ -895,7 +895,7 @@ LAS_DLL LASErrorEnum LASHeader_SetVersionMajor(LASHeaderH hHeader, liblas::uint8
 LAS_DLL liblas::uint8_t LASHeader_GetVersionMinor(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetVersionMinor", 0);
 
-    long value = ((LASHeader*) hHeader)->GetVersionMinor();
+    long value = ((liblas::Header*) hHeader)->GetVersionMinor();
     return liblas::uint8_t(value);
 }
 
@@ -904,7 +904,7 @@ LAS_DLL LASErrorEnum LASHeader_SetVersionMinor(LASHeaderH hHeader, liblas::uint8
 
     // TODO: Maybe this should be a fatal error -- hobu
     try {
-        ((LASHeader*) hHeader)->SetVersionMinor(value);    
+        ((liblas::Header*) hHeader)->SetVersionMinor(value);    
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetVersionMinor");
@@ -918,7 +918,7 @@ LAS_DLL char* LASHeader_GetSystemId(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetSystemId", NULL);
 
     // caller owns it
-    std::string sysid = ((LASHeader*) hHeader)->GetSystemId();
+    std::string sysid = ((liblas::Header*) hHeader)->GetSystemId();
     return strdup(sysid.c_str());
 }
 
@@ -926,7 +926,7 @@ LAS_DLL LASErrorEnum LASHeader_SetSystemId(LASHeaderH hHeader, const char* value
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetSystemId", LE_Failure); 
 
     try {
-            ((LASHeader*) hHeader)->SetSystemId(value);
+            ((liblas::Header*) hHeader)->SetSystemId(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetSystemId");
@@ -940,7 +940,7 @@ LAS_DLL char* LASHeader_GetSoftwareId(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetSoftwareId", NULL);
 
     // caller owns it
-    std::string softid = ((LASHeader*) hHeader)->GetSoftwareId();
+    std::string softid = ((liblas::Header*) hHeader)->GetSoftwareId();
     return strdup(softid.c_str());
 }
 
@@ -948,7 +948,7 @@ LAS_DLL LASErrorEnum LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* val
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetSoftwareId", LE_Failure); 
 
     try {
-            ((LASHeader*) hHeader)->SetSoftwareId(value);
+            ((liblas::Header*) hHeader)->SetSoftwareId(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetSoftwareId");
@@ -961,40 +961,40 @@ LAS_DLL LASErrorEnum LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* val
 LAS_DLL liblas::uint16_t LASHeader_GetCreationDOY(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetCreationDOY", 0);
 
-    unsigned short value = ((LASHeader*) hHeader)->GetCreationDOY();
+    unsigned short value = ((liblas::Header*) hHeader)->GetCreationDOY();
     return value;
 }
 
 LAS_DLL LASErrorEnum LASHeader_SetCreationDOY(LASHeaderH hHeader, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetCreationDOY", LE_Failure);
-    ((LASHeader*) hHeader)->SetCreationDOY(value);    
+    ((liblas::Header*) hHeader)->SetCreationDOY(value);    
     return LE_None;
 }
 
 LAS_DLL liblas::uint16_t LASHeader_GetCreationYear(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetCreationYear", 0);
 
-    unsigned short value = ((LASHeader*) hHeader)->GetCreationYear();
+    unsigned short value = ((liblas::Header*) hHeader)->GetCreationYear();
     return value;
 }
 
 LAS_DLL LASErrorEnum LASHeader_SetCreationYear(LASHeaderH hHeader, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetCreationYear", LE_Failure);
-    ((LASHeader*) hHeader)->SetCreationYear(value);    
+    ((liblas::Header*) hHeader)->SetCreationYear(value);    
     return LE_None;
 }
 
 LAS_DLL liblas::uint16_t LASHeader_GetHeaderSize(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetHeaderSize", 0);
 
-    unsigned short value = ((LASHeader*) hHeader)->GetHeaderSize();
+    unsigned short value = ((liblas::Header*) hHeader)->GetHeaderSize();
     return value;
 }
 
 LAS_DLL liblas::uint32_t LASHeader_GetDataOffset(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetDataOffset", 0);
 
-    unsigned long value = ((LASHeader*) hHeader)->GetDataOffset();
+    unsigned long value = ((liblas::Header*) hHeader)->GetDataOffset();
     return value;
 }
 
@@ -1002,7 +1002,7 @@ LAS_DLL LASErrorEnum LASHeader_SetDataOffset(const LASHeaderH hHeader, liblas::u
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetDataOffset", LE_Failure);
 
     try {
-        ((LASHeader*) hHeader)->SetDataOffset(value);    
+        ((liblas::Header*) hHeader)->SetDataOffset(value);    
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetDataOffset");
@@ -1016,14 +1016,14 @@ LAS_DLL LASErrorEnum LASHeader_SetDataOffset(const LASHeaderH hHeader, liblas::u
 LAS_DLL liblas::uint32_t LASHeader_GetRecordsCount(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetRecordsCount", 0);
 
-    unsigned long value = ((LASHeader*) hHeader)->GetRecordsCount();
+    unsigned long value = ((liblas::Header*) hHeader)->GetRecordsCount();
     return value;
 }
 
 LAS_DLL liblas::uint8_t LASHeader_GetDataFormatId(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetDataFormatId", 0);
     
-    liblas::PointFormat id = ((LASHeader*) hHeader)->GetDataFormatId();
+    liblas::PointFormatName id = ((liblas::Header*) hHeader)->GetDataFormatId();
     return static_cast<liblas::uint8_t>(id);
 }
 
@@ -1031,7 +1031,7 @@ LAS_DLL LASErrorEnum LASHeader_SetDataFormatId(LASHeaderH hHeader, liblas::uint8
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetDataFormatId", LE_Failure); 
     
     try {
-            ((LASHeader*) hHeader)->SetDataFormatId((liblas::PointFormat)value);
+            ((liblas::Header*) hHeader)->SetDataFormatId((liblas::PointFormatName)value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetDataFormatId");
@@ -1044,7 +1044,7 @@ LAS_DLL LASErrorEnum LASHeader_SetDataFormatId(LASHeaderH hHeader, liblas::uint8
 LAS_DLL liblas::uint16_t LASHeader_GetDataRecordLength(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetDataRecordLength", 0);
 
-    unsigned short value = ((LASHeader*) hHeader)->GetDataRecordLength();
+    unsigned short value = ((liblas::Header*) hHeader)->GetDataRecordLength();
     return value;
 }
 
@@ -1052,7 +1052,7 @@ LAS_DLL LASErrorEnum LASHeader_SetDataRecordLength(const LASHeaderH hHeader, lib
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetDataRecordLength", LE_Failure);
 
     try {
-        ((LASHeader*) hHeader)->SetDataRecordLength(value);    
+        ((liblas::Header*) hHeader)->SetDataRecordLength(value);    
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetDataRecordLength");
@@ -1066,7 +1066,7 @@ LAS_DLL LASErrorEnum LASHeader_SetDataRecordLength(const LASHeaderH hHeader, lib
 LAS_DLL liblas::uint32_t LASHeader_GetPointRecordsByReturnCount(const LASHeaderH hHeader, int index) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetPointRecordsByReturnCount", 0);
 
-    std::vector<liblas::uint32_t> counts  = ((LASHeader*) hHeader)->GetPointRecordsByReturnCount();
+    std::vector<liblas::uint32_t> counts  = ((liblas::Header*) hHeader)->GetPointRecordsByReturnCount();
     if ( (index < 5) && (index >= 0)) {
         return counts[index];
     } 
@@ -1079,7 +1079,7 @@ LAS_DLL LASErrorEnum LASHeader_SetPointRecordsByReturnCount(const LASHeaderH hHe
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetPointRecordsByReturnCount", LE_Failure);
 
     try {
-        ((LASHeader*) hHeader)->SetPointRecordsByReturnCount(index, value);    
+        ((liblas::Header*) hHeader)->SetPointRecordsByReturnCount(index, value);    
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetPointRecordsByReturnCount");
@@ -1093,7 +1093,7 @@ LAS_DLL LASErrorEnum LASHeader_SetPointRecordsByReturnCount(const LASHeaderH hHe
 LAS_DLL liblas::uint32_t LASHeader_GetPointRecordsCount(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetPointRecordsCount", 0);
 
-    unsigned long value = ((LASHeader*) hHeader)->GetPointRecordsCount();
+    unsigned long value = ((liblas::Header*) hHeader)->GetPointRecordsCount();
     return value;
 }
 
@@ -1101,7 +1101,7 @@ LAS_DLL LASErrorEnum LASHeader_SetPointRecordsCount(const LASHeaderH hHeader, li
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetPointRecordsCount", LE_Failure);
 
     try {
-        ((LASHeader*) hHeader)->SetPointRecordsCount(value);    
+        ((liblas::Header*) hHeader)->SetPointRecordsCount(value);    
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetPointRecordsCount");
@@ -1114,21 +1114,21 @@ LAS_DLL LASErrorEnum LASHeader_SetPointRecordsCount(const LASHeaderH hHeader, li
 LAS_DLL double LASHeader_GetScaleX(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetScaleX", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetScaleX();
+    double value = ((liblas::Header*) hHeader)->GetScaleX();
     return value;
 }
 
 LAS_DLL double LASHeader_GetScaleY(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetScaleY", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetScaleY();
+    double value = ((liblas::Header*) hHeader)->GetScaleY();
     return value;
 }
 
 LAS_DLL double LASHeader_GetScaleZ(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetScaleZ", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetScaleZ();
+    double value = ((liblas::Header*) hHeader)->GetScaleZ();
     return value;
 }
 
@@ -1136,7 +1136,7 @@ LAS_DLL LASErrorEnum LASHeader_SetScale(LASHeaderH hHeader, double x, double y, 
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetScale", LE_Failure); 
     
     try {
-            ((LASHeader*) hHeader)->SetScale(x,y,z);
+            ((liblas::Header*) hHeader)->SetScale(x,y,z);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetScale");
@@ -1149,21 +1149,21 @@ LAS_DLL LASErrorEnum LASHeader_SetScale(LASHeaderH hHeader, double x, double y, 
 LAS_DLL double LASHeader_GetOffsetX(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetOffsetX", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetOffsetX();
+    double value = ((liblas::Header*) hHeader)->GetOffsetX();
     return value;
 }
 
 LAS_DLL double LASHeader_GetOffsetY(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetOffsetY", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetOffsetY();
+    double value = ((liblas::Header*) hHeader)->GetOffsetY();
     return value;
 }
 
 LAS_DLL double LASHeader_GetOffsetZ(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetOffsetZ", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetOffsetZ();
+    double value = ((liblas::Header*) hHeader)->GetOffsetZ();
     return value;
 }
 
@@ -1171,7 +1171,7 @@ LAS_DLL LASErrorEnum LASHeader_SetOffset(LASHeaderH hHeader, double x, double y,
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetOffset", LE_Failure); 
     
     try {
-            ((LASHeader*) hHeader)->SetOffset(x,y,z);
+            ((liblas::Header*) hHeader)->SetOffset(x,y,z);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetOffset");
@@ -1184,21 +1184,21 @@ LAS_DLL LASErrorEnum LASHeader_SetOffset(LASHeaderH hHeader, double x, double y,
 LAS_DLL double LASHeader_GetMinX(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetMinX", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetMinX();
+    double value = ((liblas::Header*) hHeader)->GetMinX();
     return value;
 }
 
 LAS_DLL double LASHeader_GetMinY(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetMinY", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetMinY();
+    double value = ((liblas::Header*) hHeader)->GetMinY();
     return value;
 }
 
 LAS_DLL double LASHeader_GetMinZ(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetMinZ", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetMinZ();
+    double value = ((liblas::Header*) hHeader)->GetMinZ();
     return value;
 }
 
@@ -1206,7 +1206,7 @@ LAS_DLL LASErrorEnum LASHeader_SetMin(LASHeaderH hHeader, double x, double y, do
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetMin", LE_Failure); 
     
     try {
-            ((LASHeader*) hHeader)->SetMin(x,y,z);
+            ((liblas::Header*) hHeader)->SetMin(x,y,z);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetMin");
@@ -1219,21 +1219,21 @@ LAS_DLL LASErrorEnum LASHeader_SetMin(LASHeaderH hHeader, double x, double y, do
 LAS_DLL double LASHeader_GetMaxX(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetMaxX", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetMaxX();
+    double value = ((liblas::Header*) hHeader)->GetMaxX();
     return value;
 }
 
 LAS_DLL double LASHeader_GetMaxY(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetMaxY", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetMaxY();
+    double value = ((liblas::Header*) hHeader)->GetMaxY();
     return value;
 }
 
 LAS_DLL double LASHeader_GetMaxZ(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetMaxZ", 0.0);
 
-    double value = ((LASHeader*) hHeader)->GetMaxZ();
+    double value = ((liblas::Header*) hHeader)->GetMaxZ();
     return value;
 }
 
@@ -1241,7 +1241,7 @@ LAS_DLL LASErrorEnum LASHeader_SetMax(LASHeaderH hHeader, double x, double y, do
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetMax", LE_Failure); 
     
     try {
-            ((LASHeader*) hHeader)->SetMax(x,y,z);
+            ((liblas::Header*) hHeader)->SetMax(x,y,z);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetMax");
@@ -1254,20 +1254,20 @@ LAS_DLL LASErrorEnum LASHeader_SetMax(LASHeaderH hHeader, double x, double y, do
 LAS_DLL void LASHeader_Destroy(LASHeaderH hHeader)
 {
     VALIDATE_LAS_POINTER0(hHeader, "LASHeader_Destroy");
-    delete ((LASHeader*) hHeader);
+    delete ((liblas::Header*) hHeader);
     hHeader=NULL;
 }
 
 LAS_DLL LASHeaderH LASHeader_Copy(const LASHeaderH hHeader) {
-        return (LASHeaderH) new LASHeader(*((LASHeader*) hHeader));
+        return (LASHeaderH) new liblas::Header(*((liblas::Header*) hHeader));
 }
 
 LAS_DLL int LASHeader_Equal(const LASHeaderH hHeader1, const LASHeaderH hHeader2) {
     VALIDATE_LAS_POINTER1(hHeader1, "LASHeader_Equal", 0);
     VALIDATE_LAS_POINTER1(hHeader2, "LASHeader_Equal", 0);
 
-    LASHeader* header1 = ((LASHeader*) hHeader1);
-    LASHeader* header2 = ((LASHeader*) hHeader2);
+    liblas::Header* header1 = ((liblas::Header*) hHeader1);
+    liblas::Header* header2 = ((liblas::Header*) hHeader2);
 
     return (header1 == header2);
 }
@@ -1275,7 +1275,7 @@ LAS_DLL int LASHeader_Equal(const LASHeaderH hHeader1, const LASHeaderH hHeader2
 LAS_DLL LASGuidH LASHeader_GetGUID(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetGUID", 0);
     
-    liblas::guid id = ((LASHeader*) hHeader)->GetProjectId();
+    liblas::guid id = ((liblas::Header*) hHeader)->GetProjectId();
     return (LASGuidH) new liblas::guid(id);
 }
 
@@ -1286,7 +1286,7 @@ LAS_DLL LASErrorEnum LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId) {
     try {
         liblas::guid* id = (liblas::guid*) hId;
         
-        ((LASHeader*) hHeader)->SetProjectId(*id);    
+        ((liblas::Header*) hHeader)->SetProjectId(*id);    
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetGUID");
@@ -1299,8 +1299,8 @@ LAS_DLL LASErrorEnum LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId) {
 LAS_DLL LASVLRH LASHeader_GetVLR(const LASHeaderH hHeader, liblas::uint32_t i) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetVLR", 0);
     
-    LASVariableRecord vlr = ((LASHeader*) hHeader)->GetVLR(i);
-    return (LASVLRH) new LASVariableRecord(vlr);
+    liblas::VariableRecord vlr = ((liblas::Header*) hHeader)->GetVLR(i);
+    return (LASVLRH) new liblas::VariableRecord(vlr);
 }
 
 LAS_DLL LASErrorEnum LASHeader_DeleteVLR(LASHeaderH hHeader, liblas::uint32_t index) {
@@ -1308,7 +1308,7 @@ LAS_DLL LASErrorEnum LASHeader_DeleteVLR(LASHeaderH hHeader, liblas::uint32_t in
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_DeleteVLR", LE_Failure);
 
     try {
-        ((LASHeader*) hHeader)->DeleteVLR(index);
+        ((liblas::Header*) hHeader)->DeleteVLR(index);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_DeleteVLR");
@@ -1325,7 +1325,7 @@ LAS_DLL LASErrorEnum LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASHeader_AddVLR", LE_Failure);
 
     try {
-        ((LASHeader*) hHeader)->AddVLR(*((LASVariableRecord*)hVLR));
+        ((liblas::Header*) hHeader)->AddVLR(*((liblas::VariableRecord*)hVLR));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_AddVLR");
@@ -1379,8 +1379,8 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
             throw std::runtime_error("Writing stream was not able to be created");
         }
         
-        LASHeader* header = ((LASHeader*) hHeader);
-        LASWriter* writer = new LASWriter(*ostrm, *header);
+        liblas::Header* header = ((liblas::Header*) hHeader);
+        liblas::Writer* writer = new liblas::Writer(*ostrm, *header);
         return (LASWriterH) writer;
 
     } catch (std::exception const& e)
@@ -1397,7 +1397,7 @@ LAS_DLL LASErrorEnum LASWriter_WritePoint(const LASWriterH hWriter, const LASPoi
     int ret;
 
     try {
-            ret = ((LASWriter*) hWriter)->WritePoint(*((LASPoint*) hPoint));
+            ret = ((liblas::Writer*) hWriter)->WritePoint(*((liblas::Point*) hPoint));
             if (!ret) {
                 LASError_PushError( LE_Warning, 
                                     "Failed to write point because it was invalid", 
@@ -1419,7 +1419,7 @@ LAS_DLL LASErrorEnum LASWriter_WriteHeader(const LASWriterH hWriter, const LASHe
     VALIDATE_LAS_POINTER1(hWriter, "LASWriter_WriteHeader", LE_Failure);
     
     try {
-            ((LASWriter*) hWriter)->WriteHeader(*((LASHeader*) hHeader));
+            ((liblas::Writer*) hWriter)->WriteHeader(*((liblas::Header*) hHeader));
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_WriteHeader");
@@ -1439,7 +1439,7 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
   
     
     try { 
-        LASWriter* writer = (LASWriter*)hWriter;
+        liblas::Writer* writer = (liblas::Writer*)hWriter;
         std::ostream* ostrm = &(writer->GetStream());
 
         delete writer;
@@ -1464,7 +1464,7 @@ LAS_DLL LASErrorEnum LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetSRS", LE_Failure);
 
     try {
-        ((LASWriter*) hWriter)->SetSRS(*((LASSpatialReference*)hSRS));
+        ((liblas::Writer*) hWriter)->SetSRS(*((liblas::SpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_SetSRS");
@@ -1480,7 +1480,7 @@ LAS_DLL LASErrorEnum LASWriter_SetInputSRS(LASWriterH hWriter, const LASSRSH hSR
     VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetInputSRS", LE_Failure);
 
     try {
-        ((LASWriter*) hWriter)->SetInputSRS(*((LASSpatialReference*)hSRS));
+        ((liblas::Writer*) hWriter)->SetInputSRS(*((liblas::SpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_SetInputSRS");
@@ -1496,7 +1496,7 @@ LAS_DLL LASErrorEnum LASWriter_SetOutputSRS(LASWriterH hWriter, const LASSRSH hS
     VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetOutputSRS", LE_Failure);
 
     try {
-        ((LASWriter*) hWriter)->SetOutputSRS(*((LASSpatialReference*)hSRS));
+        ((liblas::Writer*) hWriter)->SetOutputSRS(*((liblas::SpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_SetOutputSRS");
@@ -1573,19 +1573,19 @@ LAS_DLL char* LAS_GetFullVersion(void) {
 
 
 LAS_DLL LASVLRH LASVLR_Create(void) {
-    return (LASVLRH) new LASVariableRecord();
+    return (LASVLRH) new liblas::VariableRecord();
 }
 
 LAS_DLL void LASVLR_Destroy(LASVLRH hVLR){
     VALIDATE_LAS_POINTER0(hVLR, "LASVLR_Destroy");
-    delete (LASVariableRecord*)hVLR;
+    delete (liblas::VariableRecord*)hVLR;
     hVLR = NULL;
     
 }
 
 LAS_DLL char* LASVLR_GetUserId(const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetUserId", 0);
-    LASVariableRecord* vlr = (LASVariableRecord*)hVLR;
+    liblas::VariableRecord* vlr = (liblas::VariableRecord*)hVLR;
     return strdup(vlr->GetUserId(true).c_str());
 }
 
@@ -1593,7 +1593,7 @@ LAS_DLL LASErrorEnum LASVLR_SetUserId(LASVLRH hVLR, const char* value) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetUserId", LE_Failure); 
 
     try {
-            ((LASVariableRecord*) hVLR)->SetUserId(value);
+            ((liblas::VariableRecord*) hVLR)->SetUserId(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASVLR_SetUserId");
@@ -1605,7 +1605,7 @@ LAS_DLL LASErrorEnum LASVLR_SetUserId(LASVLRH hVLR, const char* value) {
 
 LAS_DLL char* LASVLR_GetDescription(const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetDescription", 0);
-    LASVariableRecord* vlr = (LASVariableRecord*)hVLR;
+    liblas::VariableRecord* vlr = (liblas::VariableRecord*)hVLR;
     return strdup(vlr->GetDescription(true).c_str());
 }
 
@@ -1613,7 +1613,7 @@ LAS_DLL LASErrorEnum LASVLR_SetDescription(LASVLRH hVLR, const char* value) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetDescription", LE_Failure); 
 
     try {
-            ((LASVariableRecord*) hVLR)->SetDescription(value);
+            ((liblas::VariableRecord*) hVLR)->SetDescription(value);
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASVLR_SetDescription");
@@ -1627,12 +1627,12 @@ LAS_DLL liblas::uint16_t LASVLR_GetRecordLength(const LASVLRH hVLR) {
     
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetRecordLength", 0);
     
-    liblas::uint16_t value = ((LASVariableRecord*) hVLR)->GetRecordLength();
+    liblas::uint16_t value = ((liblas::VariableRecord*) hVLR)->GetRecordLength();
     return value;
 }
 LAS_DLL LASErrorEnum LASVLR_SetRecordLength(LASVLRH hVLR, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetRecordLength", LE_Failure);
-    ((LASVariableRecord*) hVLR)->SetRecordLength(value);    
+    ((liblas::VariableRecord*) hVLR)->SetRecordLength(value);    
     return LE_None;
 }
 
@@ -1640,19 +1640,19 @@ LAS_DLL liblas::uint16_t LASVLR_GetRecordId(const LASVLRH hVLR) {
     
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetRecordId", 0);
     
-    liblas::uint16_t value = ((LASVariableRecord*) hVLR)->GetRecordId();
+    liblas::uint16_t value = ((liblas::VariableRecord*) hVLR)->GetRecordId();
     return value;
 }
 LAS_DLL LASErrorEnum LASVLR_SetRecordId(LASVLRH hVLR, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetRecordId", LE_Failure);
-    ((LASVariableRecord*) hVLR)->SetRecordId(value);    
+    ((liblas::VariableRecord*) hVLR)->SetRecordId(value);    
     return LE_None;
 }
 
 
 LAS_DLL LASErrorEnum LASVLR_SetReserved(LASVLRH hVLR, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetReserved", LE_Failure);
-    ((LASVariableRecord*) hVLR)->SetReserved(value);    
+    ((liblas::VariableRecord*) hVLR)->SetReserved(value);    
     return LE_None;
 }
 
@@ -1660,7 +1660,7 @@ LAS_DLL liblas::uint16_t LASVLR_GetReserved(const LASVLRH hVLR) {
     
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetReserved", 0);
     
-    liblas::uint16_t value = ((LASVariableRecord*) hVLR)->GetReserved();
+    liblas::uint16_t value = ((liblas::VariableRecord*) hVLR)->GetReserved();
     return value;
 }
 
@@ -1669,7 +1669,7 @@ LAS_DLL LASErrorEnum LASVLR_GetData(const LASVLRH hVLR, liblas::uint8_t* data) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetData", LE_Failure);
 
     try {
-        LASVariableRecord* vlr = ((LASVariableRecord*) hVLR);
+        liblas::VariableRecord* vlr = ((liblas::VariableRecord*) hVLR);
         std::vector<liblas::uint8_t> d = vlr->GetData();
         liblas::uint16_t length = vlr->GetRecordLength();
         for (liblas::uint16_t i=0; i < length; i++) {
@@ -1690,7 +1690,7 @@ LAS_DLL LASErrorEnum LASVLR_SetData(const LASVLRH hVLR, liblas::uint8_t* data, l
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_SetData", LE_Failure);
 
     try {
-        LASVariableRecord* vlr = ((LASVariableRecord*) hVLR);
+        liblas::VariableRecord* vlr = ((liblas::VariableRecord*) hVLR);
         std::vector<liblas::uint8_t> d;
         d.resize(length);
         for (liblas::uint16_t i=0; i < length; i++) {
@@ -1763,12 +1763,12 @@ LAS_DLL char* LASGuid_AsString(LASGuidH hId) {
 
 
 LAS_DLL LASColorH LASColor_Create(void) {
-    return (LASColorH) new LASColor();
+    return (LASColorH) new liblas::Color();
 }
 
 LAS_DLL void LASColor_Destroy(LASColorH hColor){
     VALIDATE_LAS_POINTER0(hColor, "LASColor_Destroy");
-    delete (LASColor*)hColor;
+    delete (liblas::Color*)hColor;
     hColor = NULL;
 }
 
@@ -1777,7 +1777,7 @@ LAS_DLL LASErrorEnum LASColor_SetRed(LASColorH hColor, liblas::uint16_t value) {
     VALIDATE_LAS_POINTER1(hColor, "LASColor_SetRed", LE_Failure);
 
     try {
-        LASColor* color = ((LASColor*) hColor);
+        liblas::Color* color = ((liblas::Color*) hColor);
         color->SetRed(value);
     }
     catch (std::exception const& e) {
@@ -1792,7 +1792,7 @@ LAS_DLL liblas::uint16_t LASColor_GetRed(LASColorH hColor) {
     
     VALIDATE_LAS_POINTER1(hColor, "LASColor_GetRed", 0);
     
-    liblas::uint16_t value = ((LASColor*) hColor)->GetRed();
+    liblas::uint16_t value = ((liblas::Color*) hColor)->GetRed();
     return value;
 }
 
@@ -1801,7 +1801,7 @@ LAS_DLL LASErrorEnum LASColor_SetBlue(LASColorH hColor, liblas::uint16_t value) 
     VALIDATE_LAS_POINTER1(hColor, "LASColor_SetBlue", LE_Failure);
 
     try {
-        LASColor* color = ((LASColor*) hColor);
+        liblas::Color* color = ((liblas::Color*) hColor);
         color->SetBlue(value);
     }
     catch (std::exception const& e) {
@@ -1816,7 +1816,7 @@ LAS_DLL liblas::uint16_t LASColor_GetBlue(LASColorH hColor) {
     
     VALIDATE_LAS_POINTER1(hColor, "LASColor_GetBlue", 0);
     
-    liblas::uint16_t value = ((LASColor*) hColor)->GetBlue();
+    liblas::uint16_t value = ((liblas::Color*) hColor)->GetBlue();
     return value;
 }
 
@@ -1825,7 +1825,7 @@ LAS_DLL LASErrorEnum LASColor_SetGreen(LASColorH hColor, liblas::uint16_t value)
     VALIDATE_LAS_POINTER1(hColor, "LASColor_SetGreen", LE_Failure);
 
     try {
-        LASColor* color = ((LASColor*) hColor);
+        liblas::Color* color = ((liblas::Color*) hColor);
         color->SetGreen(value);
     }
     catch (std::exception const& e) {
@@ -1840,15 +1840,15 @@ LAS_DLL liblas::uint16_t LASColor_GetGreen(LASColorH hColor) {
     
     VALIDATE_LAS_POINTER1(hColor, "LASColor_GetGreen", 0);
     
-    liblas::uint16_t value = ((LASColor*) hColor)->GetGreen();
+    liblas::uint16_t value = ((liblas::Color*) hColor)->GetGreen();
     return value;
 }
 
 LAS_DLL LASColorH LASPoint_GetColor(const LASPointH hPoint) {
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetColor", 0);
     
-    LASColor color = ((LASPoint*) hPoint)->GetColor();
-    return (LASColorH) new LASColor(color);
+    liblas::Color color = ((liblas::Point*) hPoint)->GetColor();
+    return (LASColorH) new liblas::Color(color);
 }
 
 LAS_DLL LASErrorEnum LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor) {
@@ -1857,7 +1857,7 @@ LAS_DLL LASErrorEnum LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor)
     VALIDATE_LAS_POINTER1(hColor, "LASPoint_SetColor", LE_Failure);
 
     try {
-        ((LASPoint*) hPoint)->SetColor(*((LASColor*)hColor));
+        ((liblas::Point*) hPoint)->SetColor(*((liblas::Color*)hColor));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetColor");
@@ -1868,12 +1868,12 @@ LAS_DLL LASErrorEnum LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor)
 }
 
 LAS_DLL LASSRSH LASSRS_Create(void) {
-    return (LASSRSH) new LASSpatialReference();
+    return (LASSRSH) new liblas::SpatialReference();
 }
 
 LAS_DLL void LASSRS_Destroy(LASSRSH hSRS){
     VALIDATE_LAS_POINTER0(hSRS, "LASSRS_Destroy");
-    delete (LASSpatialReference*)hSRS;
+    delete (liblas::SpatialReference*)hSRS;
     hSRS = NULL;
 }
 
@@ -1881,7 +1881,7 @@ LAS_DLL const GTIF* LASSRS_GetGTIF(LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetGTIF", 0);
     
     try {
-        return ((LASSpatialReference*) hSRS)->GetGTIF();
+        return ((liblas::SpatialReference*) hSRS)->GetGTIF();
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_GetGTIF");
@@ -1895,7 +1895,7 @@ LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const GTIF* pgtiff, const ST_T
     VALIDATE_LAS_POINTER1(pgtiff, "LASSRS_SetGTIF", LE_Failure);
     VALIDATE_LAS_POINTER1(ptiff, "LASSRS_SetGTIF", LE_Failure);
     try {
-        ((LASSpatialReference*) hSRS)->SetGTIF(pgtiff, ptiff);
+        ((liblas::SpatialReference*) hSRS)->SetGTIF(pgtiff, ptiff);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetGTIF");
@@ -1907,7 +1907,7 @@ LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const GTIF* pgtiff, const ST_T
 LAS_DLL char* LASSRS_GetProj4(LASSRSH hSRS) 
 {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetProj4", NULL);
-    LASSpatialReference* srs = (LASSpatialReference*)hSRS;
+    liblas::SpatialReference* srs = (liblas::SpatialReference*)hSRS;
 
     return strdup((srs)->GetProj4().c_str());
     
@@ -1919,7 +1919,7 @@ LAS_DLL LASErrorEnum LASSRS_SetProj4(LASSRSH hSRS, const char* value)
     VALIDATE_LAS_POINTER1(value, "LASSRS_SetProj4", LE_Failure);
 
     try {
-         ((LASSpatialReference*) hSRS)->SetProj4(value);
+         ((liblas::SpatialReference*) hSRS)->SetProj4(value);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetProj4");
@@ -1932,18 +1932,18 @@ LAS_DLL LASErrorEnum LASSRS_SetProj4(LASSRSH hSRS, const char* value)
 LAS_DLL char* LASSRS_GetWKT(LASSRSH hSRS) 
 {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetWKT", NULL);
-    LASSpatialReference* srs = (LASSpatialReference*)hSRS;
+    liblas::SpatialReference* srs = (liblas::SpatialReference*)hSRS;
 
-    return strdup((srs)->GetWKT(LASSpatialReference::eHorizontalOnly).c_str());
+    return strdup((srs)->GetWKT(liblas::SpatialReference::eHorizontalOnly).c_str());
     
 }
 
 LAS_DLL char* LASSRS_GetWKT_CompoundOK(LASSRSH hSRS) 
 {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetWKT_CompoundOK", NULL);
-    LASSpatialReference* srs = (LASSpatialReference*)hSRS;
+    liblas::SpatialReference* srs = (liblas::SpatialReference*)hSRS;
 
-    return strdup((srs)->GetWKT(LASSpatialReference::eCompoundOK).c_str());
+    return strdup((srs)->GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
     
 }
 
@@ -1953,7 +1953,7 @@ LAS_DLL LASErrorEnum LASSRS_SetWKT(LASSRSH hSRS, const char* value)
     VALIDATE_LAS_POINTER1(value, "LASSRS_SetWKT", LE_Failure);
 
     try {
-         ((LASSpatialReference*) hSRS)->SetWKT(value);
+         ((liblas::SpatialReference*) hSRS)->SetWKT(value);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetWKT");
@@ -1972,7 +1972,7 @@ LAS_DLL LASErrorEnum LASSRS_SetVerticalCS(LASSRSH hSRS,
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_SetVerticalCS", LE_Failure);
 
     try {
-        ((LASSpatialReference*) hSRS)->SetVerticalCS( verticalCSType, citation,
+        ((liblas::SpatialReference*) hSRS)->SetVerticalCS( verticalCSType, citation,
                                                       verticalDatum, 
                                                       verticalUnits);
     }
@@ -1990,7 +1990,7 @@ LAS_DLL LASErrorEnum LASSRS_SetFromUserInput(LASSRSH hSRS, const char* value)
     VALIDATE_LAS_POINTER1(value, "LASSRS_SetFromUserInput", LE_Failure);
 
     try {
-         ((LASSpatialReference*) hSRS)->SetFromUserInput(value);
+         ((liblas::SpatialReference*) hSRS)->SetFromUserInput(value);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetFromUserInput");
@@ -2006,7 +2006,7 @@ LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASSRS_AddVLR", LE_Failure);
 
     try {
-        ((LASSpatialReference*) hSRS)->AddVLR(*((LASVariableRecord*)hVLR));
+        ((liblas::SpatialReference*) hSRS)->AddVLR(*((liblas::VariableRecord*)hVLR));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_AddVLR");
@@ -2019,15 +2019,15 @@ LAS_DLL LASErrorEnum LASSRS_AddVLR(LASSRSH hSRS, const LASVLRH hVLR) {
 LAS_DLL LASVLRH LASSRS_GetVLR(const LASSRSH hSRS, liblas::uint32_t i) {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetVLR", 0);
     
-    LASVariableRecord vlr = ((LASSpatialReference*) hSRS)->GetVLRs()[i];
-    return (LASVLRH) new LASVariableRecord(vlr);
+    liblas::VariableRecord vlr = ((liblas::SpatialReference*) hSRS)->GetVLRs()[i];
+    return (LASVLRH) new liblas::VariableRecord(vlr);
 }
 
 LAS_DLL liblas::uint32_t LASSRS_GetVLRCount(const LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetVLR", 0);
     
     using liblas::uint32_t;
-    uint32_t size = static_cast<uint32_t>(((LASSpatialReference*) hSRS)->GetVLRs().size());
+    uint32_t size = static_cast<uint32_t>(((liblas::SpatialReference*) hSRS)->GetVLRs().size());
     return size;
 }
 
@@ -2037,7 +2037,7 @@ LAS_DLL LASErrorEnum LASHeader_SetSRS(LASHeaderH hHeader, const LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASHeader_SetSRS", LE_Failure);
 
     try {
-        ((LASHeader*) hHeader)->SetSRS(*((LASSpatialReference*)hSRS));
+        ((liblas::Header*) hHeader)->SetSRS(*((liblas::SpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetSRS");
@@ -2051,8 +2051,8 @@ LAS_DLL LASErrorEnum LASHeader_SetSRS(LASHeaderH hHeader, const LASSRSH hSRS) {
 LAS_DLL LASSRSH LASHeader_GetSRS(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetSRS", 0);
     
-    LASSpatialReference srs = ((LASHeader*) hHeader)->GetSRS();
-    return (LASSRSH) new LASSpatialReference(srs);
+    liblas::SpatialReference srs = ((liblas::Header*) hHeader)->GetSRS();
+    return (LASSRSH) new liblas::SpatialReference(srs);
 }
 
 
@@ -2067,7 +2067,7 @@ LAS_DLL LASPointFormatH LASPointFormat_Create(  liblas::uint8_t version_major,
                                                 liblas::uint32_t size,
                                                 liblas::uint8_t bHasColor,
                                                 liblas::uint8_t bHasTime) {
-    LASPointFormat* format = new LASPointFormat(version_minor, 
+    liblas::PointFormat* format = new liblas::PointFormat(version_minor, 
                                                 version_major, 
                                                 size, 
                                                 (bool)bHasColor, 
@@ -2079,7 +2079,7 @@ LAS_DLL liblas::uint8_t LASPointFormat_GetVersionMinor( LASPointFormatH hFormat)
 {
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_GetVersionMinor", 0);
     
-    return ((LASPointFormat*) hFormat)->GetVersionMinor();    
+    return ((liblas::PointFormat*) hFormat)->GetVersionMinor();    
 }
 
 LAS_DLL LASErrorEnum LASPointFormat_SetVersionMinor( LASPointFormatH hFormat, liblas::uint8_t nMinor)
@@ -2088,7 +2088,7 @@ LAS_DLL LASErrorEnum LASPointFormat_SetVersionMinor( LASPointFormatH hFormat, li
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_SetVersionMinor", LE_Failure);
 
     try {
-        LASPointFormat* format = ((LASPointFormat*) hFormat);
+        liblas::PointFormat* format = ((liblas::PointFormat*) hFormat);
         format->SetVersionMinor(nMinor);
     }
     catch (std::exception const& e) {
@@ -2103,7 +2103,7 @@ LAS_DLL liblas::uint8_t LASPointFormat_GetVersionMajor( LASPointFormatH hFormat)
 {
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_GetVersionMajor", 0);
     
-    return ((LASPointFormat*) hFormat)->GetVersionMajor();    
+    return ((liblas::PointFormat*) hFormat)->GetVersionMajor();    
 }
 
 LAS_DLL LASErrorEnum LASPointFormat_SetVersionMajor( LASPointFormatH hFormat, liblas::uint8_t nMajor)
@@ -2111,7 +2111,7 @@ LAS_DLL LASErrorEnum LASPointFormat_SetVersionMajor( LASPointFormatH hFormat, li
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_SetVersionMajor", LE_Failure);
 
     try {
-        LASPointFormat* format = ((LASPointFormat*) hFormat);
+        liblas::PointFormat* format = ((liblas::PointFormat*) hFormat);
         format->SetVersionMajor(nMajor);
     }
     catch (std::exception const& e) {
@@ -2126,7 +2126,7 @@ LAS_DLL liblas::uint8_t LASPointFormat_HasColor( LASPointFormatH hFormat)
 {
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_HasColor", 0);
     
-    return static_cast<int>(((LASPointFormat*) hFormat)->HasColor());    
+    return static_cast<int>(((liblas::PointFormat*) hFormat)->HasColor());    
 }
 
 LAS_DLL LASErrorEnum LASPointFormat_SetColor( LASPointFormatH hFormat, liblas::uint8_t bColor)
@@ -2134,7 +2134,7 @@ LAS_DLL LASErrorEnum LASPointFormat_SetColor( LASPointFormatH hFormat, liblas::u
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_SetColor", LE_Failure);
 
     try {
-        LASPointFormat* format = ((LASPointFormat*) hFormat);
+        liblas::PointFormat* format = ((liblas::PointFormat*) hFormat);
         format->Color(static_cast<bool>(bColor));
     }
     catch (std::exception const& e) {
@@ -2149,7 +2149,7 @@ LAS_DLL liblas::uint8_t LASPointFormat_HasTime( LASPointFormatH hFormat)
 {
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_HasTime", 0);
     
-    return static_cast<int>(((LASPointFormat*) hFormat)->HasTime());    
+    return static_cast<int>(((liblas::PointFormat*) hFormat)->HasTime());    
 }
 
 LAS_DLL LASErrorEnum LASPointFormat_SetTime( LASPointFormatH hFormat, liblas::uint8_t bTime)
@@ -2158,7 +2158,7 @@ LAS_DLL LASErrorEnum LASPointFormat_SetTime( LASPointFormatH hFormat, liblas::ui
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_SetTime", LE_Failure);
 
     try {
-        LASPointFormat* format = ((LASPointFormat*) hFormat);
+        liblas::PointFormat* format = ((liblas::PointFormat*) hFormat);
         format->Time(static_cast<bool>(bTime));
     }
     catch (std::exception const& e) {
@@ -2174,7 +2174,7 @@ LAS_DLL liblas::uint32_t LASPointFormat_GetByteSize( LASPointFormatH hFormat)
 {
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_GetByteSize", 0);
     
-    LASPointFormat* format = ((LASPointFormat*) hFormat);
+    liblas::PointFormat* format = ((liblas::PointFormat*) hFormat);
     return static_cast<liblas::uint32_t>(format->GetByteSize());    
 }
 
@@ -2183,7 +2183,7 @@ LAS_DLL LASErrorEnum LASPointFormat_SetByteSize( LASPointFormatH hFormat, liblas
     VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_SetByteSize", LE_Failure);
 
     try {
-        LASPointFormat* format = ((LASPointFormat*) hFormat);
+        liblas::PointFormat* format = ((liblas::PointFormat*) hFormat);
         format->SetByteSize(size);
     }
     catch (std::exception const& e) {
@@ -2197,7 +2197,7 @@ LAS_DLL LASErrorEnum LASPointFormat_SetByteSize( LASPointFormatH hFormat, liblas
 
 LAS_DLL void LASPointFormat_Destroy(LASPointFormatH hFormat) {
     VALIDATE_LAS_POINTER0(hFormat, "LASPointFormat_Destroy");
-    delete (LASPointFormat*) hFormat;
+    delete (liblas::PointFormat*) hFormat;
     hFormat = NULL;    
 }
 
@@ -2205,8 +2205,8 @@ LAS_DLL LASPointFormatH LASHeader_GetPointFormat( LASHeaderH hHeader )
 {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetPointFormat", 0);
     
-    LASPointFormat format = ((LASHeader*) hHeader)->GetPointFormat();
-    return (LASPointFormatH) new LASPointFormat(format);
+    liblas::PointFormat format = ((liblas::Header*) hHeader)->GetPointFormat();
+    return (LASPointFormatH) new liblas::PointFormat(format);
 
 }
 
@@ -2216,7 +2216,7 @@ LAS_DLL LASErrorEnum LASHeader_SetPointFormat( LASHeaderH hHeader, const LASPoin
     VALIDATE_LAS_POINTER1(hFormat, "LASHeader_SetPointFormat", LE_Failure);
     
     try {
-        ((LASHeader*) hHeader)->SetPointFormat(*((LASPointFormat*)hFormat));
+        ((liblas::Header*) hHeader)->SetPointFormat(*((liblas::PointFormat*)hFormat));
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetPointFormat");

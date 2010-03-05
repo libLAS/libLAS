@@ -49,7 +49,7 @@
 
 namespace liblas {
 
-LASPoint::LASPoint() :
+Point::Point() :
     m_gpsTime(0),
     m_intensity(0),
     m_pointSourceId(0),
@@ -60,7 +60,7 @@ LASPoint::LASPoint() :
     std::memset(m_coords, 0, sizeof(m_coords));
 }
 
-LASPoint::LASPoint(LASPoint const& other) :
+Point::Point(Point const& other) :
     m_gpsTime(other.m_gpsTime),
     m_color(other.m_color),
     m_cls(other.m_cls),
@@ -74,7 +74,7 @@ LASPoint::LASPoint(LASPoint const& other) :
     std::vector<uint8_t>(other.m_extra_data).swap(m_extra_data);
 }
 
-LASPoint& LASPoint::operator=(LASPoint const& rhs)
+Point& Point::operator=(Point const& rhs)
 {
     if (&rhs != this)
     {
@@ -94,7 +94,7 @@ LASPoint& LASPoint::operator=(LASPoint const& rhs)
     return *this;
 }
 
-void LASPoint::SetCoordinates(LASHeader const& header, double x, double y, double z)
+void Point::SetCoordinates(Header const& header, double x, double y, double z)
 {
     double const cx = (x * header.GetScaleX()) + header.GetOffsetX();
     double const cy = (y * header.GetScaleY()) + header.GetOffsetY();
@@ -103,7 +103,7 @@ void LASPoint::SetCoordinates(LASHeader const& header, double x, double y, doubl
     SetCoordinates(cx, cy, cz);
 }
 
-void LASPoint::SetReturnNumber(uint16_t const& num)
+void Point::SetReturnNumber(uint16_t const& num)
 {
     // Store value in bits 0,1,2
     uint8_t mask = 0x7 << 0; // 0b00000111
@@ -112,7 +112,7 @@ void LASPoint::SetReturnNumber(uint16_t const& num)
 
 }
 
-void LASPoint::SetNumberOfReturns(uint16_t const& num)
+void Point::SetNumberOfReturns(uint16_t const& num)
 {
     // Store value in bits 3,4,5
     uint8_t mask = 0x7 << 3; // 0b00111000
@@ -120,7 +120,7 @@ void LASPoint::SetNumberOfReturns(uint16_t const& num)
     m_flags |= mask & (static_cast<uint8_t>(num) << 3);
 }
 
-void LASPoint::SetScanDirection(uint16_t const& dir)
+void Point::SetScanDirection(uint16_t const& dir)
 {
     // Store value in bit 6
     uint8_t mask = 0x1 << 6; // 0b01000000
@@ -128,44 +128,44 @@ void LASPoint::SetScanDirection(uint16_t const& dir)
     m_flags |= mask & (static_cast<uint8_t>(dir) << 6);
 }
 
-void LASPoint::SetFlightLineEdge(uint16_t const& edge)
+void Point::SetFlightLineEdge(uint16_t const& edge)
 {
     // Store value in bit 7
     uint8_t mask = 0x1 << 7; // 0b10000000
     m_flags &= ~mask;
     m_flags |= mask & (static_cast<uint8_t>(edge) << 7);}
 
-void LASPoint::SetScanAngleRank(int8_t const& rank)
+void Point::SetScanAngleRank(int8_t const& rank)
 {
     m_angleRank = rank;
 }
 
-void LASPoint::SetUserData(uint8_t const& data)
+void Point::SetUserData(uint8_t const& data)
 {
     m_userData = data;
 }
 
-LASClassification const& LASPoint::GetClassification() const
+Classification const& Point::GetClassification() const
 {
     return m_cls;
 }
 
-void LASPoint::SetClassification(LASClassification const& cls)
+void Point::SetClassification(Classification const& cls)
 {
     m_cls = cls;
 }
 
-void LASPoint::SetClassification(LASClassification::bitset_type const& flags)
+void Point::SetClassification(Classification::bitset_type const& flags)
 {
-    m_cls = LASClassification(flags);
+    m_cls = Classification(flags);
 }
 
-void LASPoint::SetClassification(liblas::uint8_t const& flags)
+void Point::SetClassification(liblas::uint8_t const& flags)
 {
-    m_cls = LASClassification(flags);
+    m_cls = Classification(flags);
 }
 
-bool LASPoint::equal(LASPoint const& other) const
+bool Point::equal(Point const& other) const
 {
     // TODO - mloskot: Default epsilon is too small.
     //                 Is 0.00001 good as tolerance or too wide?
@@ -197,7 +197,7 @@ bool LASPoint::equal(LASPoint const& other) const
     return false;
 }
 
-bool LASPoint::Validate() const
+bool Point::Validate() const
 {
     unsigned int flags = 0;
 
@@ -228,7 +228,7 @@ bool LASPoint::Validate() const
 }
 
 
-bool LASPoint::IsValid() const
+bool Point::IsValid() const
 {
     
     if( eScanAngleRankMin > this->GetScanAngleRank() 
