@@ -1,6 +1,7 @@
 lasdir = $(includedir)
 
 nobase_las_HEADERS = \
+    liblas/compatibility.hpp \
     liblas/cstdint.hpp \
     liblas/exception.hpp \
     liblas/guid.hpp \

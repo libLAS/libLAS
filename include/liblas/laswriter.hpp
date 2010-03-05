@@ -109,8 +109,6 @@ private:
 
 };
 
-// typedef liblas::Writer LASWriter ;
-
 } // namespace liblas
 
 #endif // ndef LIBLAS_LASWRITER_HPP_INCLUDED

@@ -155,8 +155,6 @@ inline bool operator!=(VariableRecord const& lhs, VariableRecord const& rhs)
     return (!(lhs == rhs));
 }
 
-// typedef liblas::VariableRecord LASVariableRecord ;
-
 } // namespace liblas
 
 #endif // LIBLAS_LASVARIABLERECORD_HPP_INCLUDED

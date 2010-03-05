@@ -153,7 +153,6 @@ inline void PointFormat::Time(bool const& value)
     updatesize();
 }
 
-typedef liblas::PointFormat LASPointFormat ;
 } // namespace liblas
 
 #endif // LIBLAS_FORMAT_HPP_INCLUDED

@@ -201,7 +201,6 @@ private:
     void ResetVLRs();
 };
 
-// typedef liblas::SpatialReference LASSpatialReference;
 } // namespace liblas
 
 #ifdef HAVE_GDAL

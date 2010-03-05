@@ -378,7 +378,6 @@ private:
     SpatialReference m_srs;
 };
 
-// typedef liblas::Header LASHeader ;
 } // namespace liblas
 
 #endif // LIBLAS_LASHEADER_HPP_INCLUDED

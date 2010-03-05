@@ -156,7 +156,6 @@ private:
 };
 
 
-// typedef liblas::Reader LASReader;
 
 } // namespace liblas
 

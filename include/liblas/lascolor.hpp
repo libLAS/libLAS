@@ -166,8 +166,6 @@ inline uint16_t const& Color::operator[](std::size_t const& n) const
     throw_out_of_range();
 }
 
-// typedef liblas::Color LASColor;
-
 } // namespace liblas
 
 #endif // LIBLAS_LASCOLOR_HPP_INCLUDED

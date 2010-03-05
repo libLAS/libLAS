@@ -267,9 +267,6 @@ inline std::ostream& operator<<(std::ostream& os, Classification const& cls)
     return (os << flags);
 }
 
-// typedef liblas::Classification LASClassification ;
-
-
 } // namespace liblas
 
 #endif // LIBLAS_LASCLASSIFICATION_HPP_INCLUDED

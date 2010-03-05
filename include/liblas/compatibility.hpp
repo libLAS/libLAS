@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Forward declarations for C++ libLAS 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  LAS compatibility header
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Howard Butler
  *
  * All rights reserved.
  * 
@@ -39,30 +39,26 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_DETAIL_FWD_HPP_INCLUDED
-#define LIBLAS_DETAIL_FWD_HPP_INCLUDED
 
-// Forward declarations
-namespace liblas {
+#ifndef LIBLAS_COMPATIBILITY_HPP_INCLUDED
+#define LIBLAS_COMPATIBILITY_HPP_INCLUDED
 
-class Header;
-class Point;
-class Reader;
-class Writer;
-class Color;
-class SpatialReference;
-class PointFormat;
-class Classification;
-class VariableRecord;
+#include <liblas/detail/fwd.hpp>
 
-namespace detail {
+namespace liblas
+{
 
-class ReaderImpl;
-class WriterImpl;
-struct PointRecord;
-struct Color;
+typedef liblas::Writer LASWriter;
+typedef liblas::Reader LASReader;
+typedef liblas::Point LASPoint;
+typedef liblas::SpatialReference LASSpatialReference;
+typedef liblas::VariableRecord LASVariableRecord;
+typedef liblas::Header LASHeader;
+typedef liblas::Classification LASClassification;
+typedef liblas::Color LASColor;
+typedef liblas::Point LASPoint;
 
 
-}} // namespace liblas::detail
+} // namespace liblas
 
-#endif // LIBLAS_DETAIL_FWD_HPP_INCLUDED
+#endif // LIBLAS_HPP_INCLUDED

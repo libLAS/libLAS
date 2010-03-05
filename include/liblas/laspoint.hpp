@@ -360,8 +360,6 @@ inline double const& Point::operator[](std::size_t const& n) const
     return m_coords[n];
 }
 
-// typedef liblas::Point LASPoint;
-
 } // namespace liblas
 
 #endif // LIBLAS_LASPOINT_HPP_INCLUDED
