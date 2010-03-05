@@ -1087,8 +1087,12 @@ int main(int argc, char *argv[])
             p = LASReader_GetNextPoint(reader);
             continue;
         }
-        LASWriter_WritePoint(writer,p);
-
+        ret = LASWriter_WritePoint(writer,p);
+        
+        if (ret == LE_Warning) {
+            LASError_Print("Unable to write invalid point.  Use --skip_invalid to avoid this problem (you will loose data in the translation)");
+            exit(1);
+        }
         p  = LASReader_GetNextPoint(reader);
         i++;
     }
