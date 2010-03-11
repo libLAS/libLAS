@@ -211,18 +211,59 @@ void Header::read()
 
     // We're going to check the two bytes off the end of the header to 
     // see if they're pad bytes anyway.  Some softwares, notably older QTModeler, 
-    // write 1.0-style pad bytes off the end of their files but state that the
+    // write 1.0-style pad bytes off the end of their header but state that the
     // offset is actually 2 bytes back.  We need to set the dataoffset 
     // appropriately in those cases anyway. 
     m_ifs.seekg(m_header.GetDataOffset());
-    bool has_pad = HasLAS10PadSignature();
-    if (has_pad) {
+
+    if (HasLAS10PadSignature()) {
         std::streamsize const current_pos = m_ifs.tellg();
         m_ifs.seekg(current_pos + 2);
         m_header.SetDataOffset(m_header.GetDataOffset() + 2);
     }
+     
+    // only go read VLRs if we have them.
+    if (m_header.GetRecordsCount() > 0)
+        readvlrs();
+
+    // Check that the point count actually describes the number of points 
+    // in the file.  If it doesn't, we're going to throw an error telling 
+    // the user why.  It may also be a problem that the dataoffset is 
+    // really what is wrong, but there's no real way to know that unless 
+    // you go start mucking around in the bytes with hexdump or od
+
+    // Seek to the beginning
+    m_ifs.seekg(0, std::ios::beg);
+    std::ios::pos_type beginning = m_ifs.tellg();
+
+    // Seek to the end
+    m_ifs.seekg(0, std::ios::end);
+    std::ios::pos_type end = m_ifs.tellg();
+    std::ios::off_type size = end - beginning;
     
-    readvlrs();
+    // Figure out how many points we have 
+    std::ios::off_type count = (end - static_cast<std::ios::off_type>(m_header.GetDataOffset())) / 
+                                 static_cast<std::ios::off_type>(m_header.GetDataRecordLength());
+    
+    if ( m_header.GetPointRecordsCount() != static_cast<uint32_t>(count)) {
+        std::ostringstream msg; 
+        msg <<  "The number of points in the header that was set "
+                "by the software '" << m_header.GetSoftwareId() <<
+                "' does not match the actual number of points in the file "
+                "as determined by subtracting the data offset (" 
+                <<m_header.GetDataOffset() << ") from the file length (" 
+                << size <<  ") and dividing by the point record length(" 
+                << m_header.GetDataRecordLength() << "). "
+                " Actual number of points: " << count << 
+                " Header-specified number of points: " 
+                << m_header.GetPointRecordsCount() ;
+        throw std::runtime_error(msg.str());
+        
+    }
+    
+    // Seek to the data offset so we can start reading points
+    m_ifs.seekg(m_header.GetDataOffset());
+
 }
 
 bool Header::HasLAS10PadSignature() 
@@ -234,7 +275,8 @@ bool Header::HasLAS10PadSignature()
 
     std::streamsize const current_pos = m_ifs.tellg();
     
-    // If our little test reads off the end, we'll try to put the 
+    // If our little test reads off the end of the file (in the case 
+    // of a file with just a header and no points), we'll try to put the 
     // borken dishes back up in the cabinet
     try
     {
@@ -258,10 +300,10 @@ bool Header::HasLAS10PadSignature()
     
     // Put the stream back where we found it
     m_ifs.seekg(current_pos, std::ios::beg);
-
-    // FIXME: we have to worry about swapping issues
-    // but some people write the pad bytes backwards 
-    // anyway.  Let's check both ways.
+    
+    // Let's check both ways in case people were 
+    // careless with their swapping.  This will do no good 
+    // when we go to read point data though.
     bool found = false;
     if (sgn1 == pad2 && sgn2 == pad1) found = true;
     if (sgn1 == pad1 && sgn2 == pad2) found = true;
