@@ -351,7 +351,7 @@ inline void check_stream_state(std::basic_ios<C, T>& srtm)
     //       builds to increase performance.
 #if defined(DEBUG) || defined(_DEBUG)
     // Test stream state bits
-    if (srtm.eof())
+    if (srtm.eof()) 
         throw std::out_of_range("end of file encountered");
     else if (srtm.fail())
         throw std::runtime_error("non-fatal I/O error occured");
@@ -372,7 +372,7 @@ inline void read_n(T& dest, std::istream& src, std::streamsize const& num)
 {
     // TODO: Review and redesign errors handling logic if necessary
     if (!src)
-        throw std::runtime_error("detail::liblas::read_n input stream is not readable");
+        throw std::runtime_error("detail::liblas::read_n<T> input stream is not readable");
 
     src.read(detail::as_buffer(dest), num);
 
@@ -387,7 +387,7 @@ inline void read_n<PointRecord>(PointRecord& dest, std::istream& src, std::strea
 {
     // TODO: Review and redesign errors handling logic if necessary
     if (!src)
-        throw std::runtime_error("detail::liblas::read_n input stream is not readable");
+        throw std::runtime_error("detail::liblas::read_n<PointRecord> input stream is not readable");
 
     src.read(detail::as_buffer(dest), num);
     check_stream_state(src);
@@ -409,7 +409,7 @@ inline void read_n<VLRHeader>(VLRHeader& dest, std::istream& src, std::streamsiz
 {
     // TODO: Review and redesign errors handling logic if necessary
     if (!src)
-        throw std::runtime_error("detail::liblas::read_n input stream is not readable");
+        throw std::runtime_error("detail::liblas::read_n<VLRHeader> input stream is not readable");
 
     src.read(detail::as_buffer(dest), num);
     check_stream_state(src);
@@ -427,7 +427,7 @@ inline void read_n<std::string>(std::string& dest, std::istream& src, std::strea
 
     // TODO: Review and redesign errors handling logic if necessary
     if (!src)
-        throw std::runtime_error("detail::liblas::read_n input stream is not readable");
+        throw std::runtime_error("detail::liblas::read_n<std::string> input stream is not readable");
 
     // Read bytes into temporary buffer then assign as string
     std::size_t const bufsize = static_cast<std::size_t>(num);
@@ -444,7 +444,7 @@ template <typename T>
 inline void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
 {
     if (!dest)
-        throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
+        throw std::runtime_error("detail::liblas::write_n<T>: output stream is not writable");
 
     // Fix little-endian
     T& tmp = const_cast<T&>(src);
@@ -458,7 +458,7 @@ template <>
 inline void write_n<PointRecord>(std::ostream& dest, PointRecord const& src, std::streamsize const& num)
 {
     if (!dest)
-        throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
+        throw std::runtime_error("detail::liblas::write_n<PointRecord>: output stream is not writable");
 
     // Fix little-endian
     PointRecord& tmp = const_cast<PointRecord&>(src);
@@ -480,7 +480,7 @@ template <>
 inline void write_n<VLRHeader>(std::ostream& dest, VLRHeader const& src, std::streamsize const& num)
 {
     if (!dest)
-        throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
+        throw std::runtime_error("detail::liblas::write_n<VLRHeader>: output stream is not writable");
 
     // Fix little-endian
     VLRHeader& tmp = const_cast<VLRHeader&>(src);
@@ -496,7 +496,7 @@ template <>
 inline void write_n<std::string>(std::ostream& dest, std::string const& src, std::streamsize const& num)
 {
     if (!dest)
-        throw std::runtime_error("detail::liblas::write_n: output stream is not writable");
+        throw std::runtime_error("detail::liblas::write_n<std::string>: output stream is not writable");
 
     dest.write(src.c_str(), num);
     check_stream_state(dest);
