@@ -150,6 +150,14 @@ if(WITH_GEOTIFF)
             add_definitions(-DHAVE_LIBGEOTIFF=1)
         endif()
     endif()
+
+    # Determine libTIFF availability, required
+    if (GEOTIFF_FOUND)
+        find_package(TIFF)
+        if (TIFF_FOUND)
+            include_directories(${TIFF_INCLUDE_DIR})
+        endif()
+    endif()
 endif()
 
 # GDAL/OGR support - optional, default=OFF

@@ -47,7 +47,7 @@ if(MSVC)
         set(USER_FILE ${utility}.vcproj.$ENV{USERDOMAIN}.$ENV{USERNAME}.user)
         set(OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${USER_FILE})
         message(STATUS "Generating ${CMAKE_GENERATOR} user-specific settings in ${USER_FILE}")
-        configure_file(${CMAKE_SOURCE_DIR}/build/cmake/libLAS.vcproj.user.template ${OUTPUT_PATH} @ONLY)
+        configure_file(${CMAKE_SOURCE_DIR}/cmake/libLAS.vcproj.user.template ${OUTPUT_PATH} @ONLY)
     endforeach()
 endif()
 
@@ -57,6 +57,7 @@ endif()
 set(APPS_CPP_DEPENDENCIES
     ${LIBLAS_LIB_NAME}
     ${ZLIB_LIBRARY}
+    ${TIFF_LIBRARY}
     ${GEOTIFF_LIBRARY}
     ${GDAL_LIBRARY}
     ${SPATIALINDEX_LIBRARY}
