@@ -77,6 +77,36 @@ typedef struct LASPointFormatHS *LASPointFormatH;
 
 using namespace liblas;
 
+
+#ifdef _WIN32
+#define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
+#else
+#define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
+#endif
+
+std::istream* OpenInput(std::string filename) 
+{
+    std::ios::openmode const mode = std::ios::in | std::ios::binary;
+    std::istream* istrm = 0;
+    if (compare_no_case(filename.c_str(),"STDIN",5) == 0)
+    {
+        istrm = &std::cin;
+    }
+    else 
+    {
+        istrm = new std::ifstream(filename.c_str(), mode);
+    }
+    
+    if (!istrm->good())
+    {
+        delete istrm;
+        throw std::runtime_error("Reading stream was not able to be created");
+    }
+    return istrm;
+}
+
+
+
 LAS_C_START
 
 #ifndef _WIN32
@@ -88,11 +118,6 @@ LAS_C_START
 #include <spatialindex/Version.h>
 #endif
 
-#ifdef _WIN32
-#define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
-#else
-#define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
-#endif
 
 // Error stuff
 
@@ -191,26 +216,7 @@ LAS_DLL int LASError_GetErrorCount(void) {
     return static_cast<int>(errors.size());
 }
 
-std::istream* OpenInput(std::string filename) 
-{
-    std::ios::openmode const mode = std::ios::in | std::ios::binary;
-    std::istream* istrm = 0;
-    if (compare_no_case(filename.c_str(),"STDIN",5) == 0)
-    {
-        istrm = &std::cin;
-    }
-    else 
-    {
-        istrm = new std::ifstream(filename.c_str(), mode);
-    }
-    
-    if (!istrm->good())
-    {
-        delete istrm;
-        throw std::runtime_error("Reading stream was not able to be created");
-    }
-    return istrm;
-}
+
 
 LAS_DLL LASReaderH LASReader_Create(const char* filename) 
 
@@ -2070,8 +2076,8 @@ LAS_DLL LASPointFormatH LASPointFormat_Create(  liblas::uint8_t version_major,
     liblas::PointFormat* format = new liblas::PointFormat(version_minor, 
                                                 version_major, 
                                                 size, 
-                                                (bool)bHasColor, 
-                                                (bool)bHasTime  );
+                                                bHasColor != 0, 
+                                                bHasTime != 0 );
     return (LASPointFormatH) format;
 }
 
@@ -2135,7 +2141,7 @@ LAS_DLL LASErrorEnum LASPointFormat_SetColor( LASPointFormatH hFormat, liblas::u
 
     try {
         liblas::PointFormat* format = ((liblas::PointFormat*) hFormat);
-        format->Color(static_cast<bool>(bColor));
+        format->Color(bColor != 0);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASPointFormat_SetColor");
@@ -2159,7 +2165,7 @@ LAS_DLL LASErrorEnum LASPointFormat_SetTime( LASPointFormatH hFormat, liblas::ui
 
     try {
         liblas::PointFormat* format = ((liblas::PointFormat*) hFormat);
-        format->Time(static_cast<bool>(bTime));
+        format->Time(bTime != 0);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASPointFormat_SetTime");
