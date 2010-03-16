@@ -190,7 +190,7 @@ void WriterImpl::CreateTransform()
 
 
 
-WriterImpl* WriterFactory::Create(std::ostream& ofs, liblas::Header const& header)
+WriterImpl* WriterFactory::Create(std::ostream& ofs)
 {
     if (!ofs)
     {

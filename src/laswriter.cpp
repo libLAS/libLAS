@@ -54,7 +54,7 @@ namespace liblas
 {
 
 Writer::Writer(std::ostream& ofs, Header const& header) :
-    m_pimpl(detail::WriterFactory::Create(ofs, header)), m_header(header),
+    m_pimpl(detail::WriterFactory::Create(ofs)), m_header(header),
     m_ofs(ofs)
 {
     m_pimpl->WriteHeader(m_header);

@@ -95,7 +95,7 @@ class WriterFactory
 {
 public:
 
-    static WriterImpl* Create(std::ostream& ofs, liblas::Header const& header);
+    static WriterImpl* Create(std::ostream& ofs);
     static void Destroy(WriterImpl* p);
 };
 
