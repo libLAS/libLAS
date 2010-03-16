@@ -7,24 +7,22 @@ LAS_ROOT	=	..
 LAS_OBJS = \
     lasclassification.obj \
     lascolor.obj \
+    lasformat.obj \
     laswriter.obj \
     lasreader.obj \
     laserror.obj \
     las_c_api.obj \
     laspoint.obj \
     lasheader.obj \
-    lasfile.obj \
     lasspatialreference.obj \
     lasvariablerecord.obj \
-    detail\reader.obj \
-    detail\reader10.obj \
-    detail\reader11.obj \
-    detail\reader12.obj \
-    detail\writer.obj \
-    detail\writer10.obj \
-    detail\writer11.obj \
-    detail\writer12.obj \
-    detail\file.obj
+    detail\reader\reader.obj \
+    detail\reader\point.obj \
+    detail\reader\header.obj \
+    detail\writer\base.obj \
+    detail\writer\header.obj \
+    detail\writer\point.obj \
+    detail\writer\writer.obj 
 
 !IF "$(SPATIALINDEX_HOME)" != "" && EXIST("$(SPATIALINDEX_HOME)")
 LAS_OBJS = $(LAS_OBJS) index\index.obj \
