@@ -40,7 +40,6 @@ std::istream* OpenInput(std::string filename)
     {
         delete istrm;
         throw std::runtime_error("Reading stream was not able to be created");
-        exit(1);
     }
     return istrm;
 }
@@ -63,6 +62,8 @@ void LoadIndex (LASIndex* index, liblas::Reader* reader, long dimension)
         const liblas::Point& p = reader->GetPoint();
         index->insert(const_cast<liblas::Point&>(p), id);
     }
+
+	detail::ignore_unused_variable_warning(dimension);
 }
 int main(int argc, char* argv[])
 {

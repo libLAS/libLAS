@@ -749,7 +749,7 @@ LAS_DLL LASErrorEnum LASPoint_GetExtraData(const LASPointH hPoint, liblas::uint8
     try {
         liblas::Point* p = ((liblas::Point*) hPoint);
         std::vector<liblas::uint8_t> d = p->GetExtraData();
-        *length = d.size();
+		*length = static_cast<liblas::uint16_t>(d.size());
         *data = (liblas::uint8_t*) malloc (*length * sizeof(liblas::uint8_t));
         for (liblas::uint16_t i=0; i < *length; i++) {
             (*data)[i] = d[i];
