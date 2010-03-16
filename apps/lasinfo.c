@@ -213,8 +213,8 @@ int main(int argc, char *argv[])
         else
         {
             usage();
-            exit(1);
             fprintf(stderr, "ERROR: unknown argument '%s'\n",argv[i]);
+            exit(1);
         }
     }
 
