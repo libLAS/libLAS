@@ -44,6 +44,11 @@
 
 CPL_CVSID("$Id: gt_wkt_srs.cpp 18562 2010-01-16 04:56:05Z warmerdam $")
 
+#if defined(WIN32) 
+#  define EQUALN(a,b,n)           (_strnicmp(a,b,n)==0)
+#  define EQUAL(a,b)              (_stricmp(a,b)==0)
+#endif
+
 CPL_C_START
 void GTiffOneTimeInit();
 int CPL_DLL VSIFCloseL( FILE * );

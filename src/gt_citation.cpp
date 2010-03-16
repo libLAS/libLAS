@@ -36,6 +36,11 @@
 #include "ogr_spatialref.h"
 
 
+#if defined(WIN32) 
+#  define EQUALN(a,b,n)           (_strnicmp(a,b,n)==0)
+#  define EQUAL(a,b)              (_stricmp(a,b)==0)
+#endif
+
 #define nCitationNameTypes 9
 typedef enum 
 {
