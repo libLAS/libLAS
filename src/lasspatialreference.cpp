@@ -371,6 +371,7 @@ const GTIF* SpatialReference::GetGTIF()
 std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const 
 {
 #ifndef HAVE_GDAL
+	detail::ignore_unused_variable_warning(mode_flag);
     return std::string();
 #else
     GTIFDefn sGTIFDefn;
@@ -403,8 +404,11 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const
             
             delete poSRS;
         }
+#else
+		detail::ignore_unused_variable_warning(mode_flag);
 #endif
-        
+
+
         if (pszWKT)
         {
             std::string tmp(pszWKT);
@@ -548,8 +552,12 @@ std::string SpatialReference::GetProj4() const
 #endif
 #endif
 
+#ifndef HAVE_LIBGEOTIFF
+#ifndef HAVE_GDAL
     // If we have neither GDAL nor proj.4, we can't do squat
     return std::string();
+#endif
+#endif
 }
 
 void SpatialReference::SetProj4(std::string const& v)
