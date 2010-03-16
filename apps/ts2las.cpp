@@ -115,7 +115,7 @@ bool ReadHeader(ScanHdr* hdr, std::istream* istrm)
         if (( version > 20020715) && (version < 20051231)) return true;
         return false;
     }
-    catch (std::exception const& e)
+    catch (std::exception const)
     {
         return false;
     }    
@@ -212,13 +212,13 @@ bool WritePoints(liblas::Writer* writer, std::istream* strm, ScanHdr* hdr)
 
                 try {
                     writer->WritePoint(p);
-                } catch (std::exception const& e) 
+                } catch (std::exception) 
                 {
                     std::cout << "Point writing failed!" << std::endl; 
                 }
              
             }
-            catch (std::out_of_range const& e) // we reached the end of the file
+            catch (std::out_of_range) // we reached the end of the file
             {
                 std::cout << "catching out of range error!" ;
                 return true;
