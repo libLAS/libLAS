@@ -101,7 +101,7 @@ bool Reader::ReadNextPoint()
     try {
         m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
         return true;
-    } catch (std::out_of_range& e) {
+    } catch (std::out_of_range) {
         m_point = 0;
         return false;
     }
@@ -113,7 +113,7 @@ bool Reader::ReadPointAt(std::size_t n)
     try {
         m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
         return true;
-    } catch (std::out_of_range& e) {
+    } catch (std::out_of_range) {
         m_point = 0;
         return false;
     }
