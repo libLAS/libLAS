@@ -85,6 +85,10 @@ private:
 
     void CreateTransform();
     liblas::uint32_t m_pointCount;
+
+    // block copying operations
+    WriterImpl(WriterImpl const& other);
+    WriterImpl& operator=(WriterImpl const& other);
 };
 
 class WriterFactory
