@@ -90,7 +90,7 @@ public:
   
 protected:
     
-    liblas::uint16_t m_size;
+    liblas::uint32_t m_size;
     liblas::uint8_t m_versionminor;
     liblas::uint8_t m_versionmajor;
 
