@@ -709,18 +709,23 @@ void Header::SetPointFormat(const PointFormat& format)
     // byte size or the pointformat's specified size according to whether 
     // or not it has color or time (FIXME: or waveform packets once we get to 1.3 )
     // The extra space that is available can be used to store LASPoint::GetExtraData.
+    // We trim the format size to uint16_t because that's what the header stores 
     if (format.HasColor() && format.HasTime()) {
         SetDataFormatId(liblas::ePointFormat3);
-        SetDataRecordLength(std::max(static_cast<uint32_t>(ePointSize3),format.GetByteSize()));
+        SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize3),
+                                        static_cast<uint16_t>(format.GetByteSize())));
     } else if (format.HasColor()  && !format.HasTime()) {
         SetDataFormatId(liblas::ePointFormat2);
-        SetDataRecordLength(std::max(static_cast<uint32_t>(ePointSize2),format.GetByteSize()));
+        SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize2),
+                                        static_cast<uint16_t>(format.GetByteSize())));
     } else if (!format.HasColor()  && format.HasTime()) {
         SetDataFormatId(liblas::ePointFormat1);
-        SetDataRecordLength(std::max(static_cast<uint32_t>(ePointSize1),format.GetByteSize()));
+        SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize1),
+                                        static_cast<uint16_t>(format.GetByteSize())));
     } else 
         SetDataFormatId(liblas::ePointFormat0);
-        SetDataRecordLength(std::max(static_cast<uint32_t>(ePointSize0),format.GetByteSize()));
+        SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize0),
+                                        static_cast<uint16_t>(format.GetByteSize())));
     } 
     
 } // namespace liblas
