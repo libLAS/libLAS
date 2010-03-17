@@ -190,7 +190,6 @@ void Header::write()
     detail::write_n(GetStream(), n4, sizeof(n4));
 
     // 15. Number of variable length records
-    // TODO: This value must be updated after new variable length record is added.
     n4 = m_header.GetRecordsCount();
     detail::write_n(GetStream(), n4, sizeof(n4));
 
@@ -255,8 +254,6 @@ void Header::write()
         detail::write_n(GetStream(), m_header.GetDataOffset() , sizeof(m_header.GetDataOffset()));
         GetStream().seekp(current_pos, std::ios::beg);      
     }
-
- 
 
     // Write the 1.0 pad signature if we need to.
     WriteLAS10PadSignature(); 

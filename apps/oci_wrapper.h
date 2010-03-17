@@ -295,8 +295,10 @@ public:
 
     void                Define( int* pnData );
     void                Bind( int* pnData );
+    void                Bind( int** pnData, int nArraySize );
     void                Define( long* pnData );
     void                Bind( long* pnData );
+    void                Bind( long* pnData, int array_size );
     void                Bind( double* pnData );
     void                Bind( char* pData, long nData);
     void                Bind( OCIArray** pphData, OCIType* type );

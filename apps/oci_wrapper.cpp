@@ -578,7 +578,7 @@ void OWStatement::Define( int* pnData )
         (ub4) OCI_DEFAULT ), hError );
 }
 
-void OWStatement::Bind( int* pnData )
+void OWStatement::Bind( int* pnData)
 {
     OCIBind* hBind = NULL;
 
@@ -601,6 +601,28 @@ void OWStatement::Bind( int* pnData )
         hError );
 }
 
+void OWStatement::Bind( int** pnData, int nArraySize)
+{
+    OCIBind* hBind = NULL;
+
+    nNextBnd++;
+
+    CheckError( OCIBindByPos(
+        hStmt,
+        &hBind,
+        hError,
+        (ub4) nNextBnd,
+        (dvoid*) pnData,
+        (sb4) (pnData != NULL) ? (sb4)sizeof(int) : 0,
+        (ub2) SQLT_INT,
+        (void*) NULL,
+        (ub2*) NULL,
+        (ub2*) NULL,
+        (ub4) NULL,
+        (ub4) NULL,
+        (ub4) OCI_DEFAULT ),
+        hError );
+}
 void OWStatement::Define( long* pnData )
 {
     OCIDefine* hDefine = NULL;

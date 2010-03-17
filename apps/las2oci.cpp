@@ -44,12 +44,16 @@ typedef struct
     long* pc_ids;
     long* block_ids;
     long* num_points;
+    OCILobLocator** locators; // =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
+
     std::vector<liblas::uint8_t>** blobs;
 
     long* srids;
     long* gtypes;
     OCIArray** element_arrays;
     OCIArray** coordinate_arrays;
+    
+    long size;
         
 } blocks;
 
@@ -504,6 +508,7 @@ blocks* CreateBlock(int size)
     b->block_ids = (long*) malloc ( size * sizeof(long));
     b->num_points = (long*) malloc ( size * sizeof(long));
     b->blobs = (std::vector<liblas::uint8_t>**) malloc ( size * sizeof(std::vector<liblas::uint8_t>*));
+    b->locators =(OCILobLocator**) malloc( sizeof(OCILobLocator*) * size );
 
     b->srids = (long*) malloc ( size * sizeof(long));
     b->gtypes = (long*) malloc ( size * sizeof(long));
@@ -511,10 +516,13 @@ blocks* CreateBlock(int size)
     b->element_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
 
     b->coordinate_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
+
+    b->size = size;
+    
     return b;
 }
 
-bool FillBlock( OWConnection* connection, 
+bool FillBlocks( OWConnection* connection, 
                 OWStatement* statement,
                 const LASQueryResult& result, 
                 liblas::Reader* reader,
@@ -532,40 +540,39 @@ bool FillBlock( OWConnection* connection,
 
     list<SpatialIndex::id_type> const& ids = result.GetIDs();
     
-    // TODO: This probably is a memory leak if the gotdata == false --mloskot
+    
+    b->pc_ids[index] = pc_id;
+    b->srids[index] = (long)srid;
+    b->block_ids[index] = result.GetID();
+    b->num_points[index] = (long)ids.size();
+    
     std::vector<liblas::uint8_t>* blob = new std::vector<liblas::uint8_t>;
     
-    // b->pc_ids[index] = pc_id;
-    printf("Index: %d\n", index);
-    b->srids[index] = (long)srid;
-    // b->block_ids[index] = result.GetID();
-    // b->num_points[index] = (long)ids.size();
+    bool gotdata = GetResultData(result, reader, *blob, nDimensions);
+    if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
     
-    // std::vector<liblas::uint8_t>* blob = new std::vector<liblas::uint8_t>;
-    
-    // bool gotdata = GetResultData(result, reader, *blob, nDimensions);
-    // if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
-    // b->blobs[index] = blob;
+    b->blobs[index] = blob;
     // // FIXME: null srids not supported 
-    // b->srids[index] = srid;
-    // b->gtypes[index] = gtype;
+    b->srids[index] = srid;
+    b->gtypes[index] = gtype;
     // 
-    // OCIArray* sdo_elem_info=0;
-    // connection->CreateType(&sdo_elem_info, connection->GetElemInfoType());
-    // SetElements(statement, sdo_elem_info, bUseSolidGeometry);
+    OCIArray* sdo_elem_info=0;
+    connection->CreateType(&sdo_elem_info, connection->GetElemInfoType());
+    SetElements(statement, sdo_elem_info, bUseSolidGeometry);
     // 
-    // b->element_arrays[index] = sdo_elem_info;
-    // 
-    // OCIArray* sdo_ordinates=0;
-    // connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
-    // 
-    // 
-    // 
-    // extent* e = GetExtent(result.GetBounds(), bUse3d);
-    // SetOrdinates(statement, sdo_ordinates, e);
-    // 
-    // b->coordinate_arrays[index] = sdo_ordinates;
+    b->element_arrays[index] = sdo_elem_info;
     
+    OCIArray* sdo_ordinates=0;
+    connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
+    // 
+    // 
+    // 
+    extent* e = GetExtent(result.GetBounds(), bUse3d);
+    SetOrdinates(statement, sdo_ordinates, e);
+    
+    b->coordinate_arrays[index] = sdo_ordinates;
+    
+
     return true;
 }
 
@@ -591,7 +598,7 @@ long GetGType(  bool bUse3d,
     return gtype;   
 }
 
-bool BindBlock(OWStatement* statement, blocks* b, OCILobLocator** locator, long commit_interval)
+bool BindBlock(OWStatement* statement, blocks* b, long index)
 {
     // oss << "INSERT INTO "<< table_name << 
     //         "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS,   "
@@ -609,10 +616,10 @@ bool BindBlock(OWStatement* statement, blocks* b, OCILobLocator** locator, long 
     statement->Bind( b->num_points);
        
     // :4
-    statement->Define( locator, (int)commit_interval ); 
+    statement->Define( b->locators, (int)b->size ); 
     
     long max_size = 0;
-    for (int i = 0; i < commit_interval; i++) {
+    for (int i = 0; i < b->size; i++) {
         max_size = std::max(max_size, (long)b->blobs[i]->size());
     }
 
@@ -790,42 +797,70 @@ bool InsertBlocks(
     statement = con->CreateStatement(oss.str().c_str());
     long j = 0;
     bool inserted = false;
-
     
-    for (int t = 0; t < commit_interval; t++) {
-        FillBlock( con, 
-                        statement,
-                        *i, 
-                        reader2,
-                        b,
-                        t,
-                        srid, 
-                         pc_id,
-                         GetGType(bUse3d, bUseSolidGeometry),
-                         bUseSolidGeometry,
-                         bUse3d,
-                         nDimensions
-                         );
-        
+    std::vector<LASQueryResult> results_vec = std::vector<LASQueryResult>();
+    for (i = results.begin(); i != results.end(); i++) {
+        results_vec.push_back(*i);
     }
+    
+    long total_blocks = results.size();
+    long blocks_written = 0;
+    long blocks_left= 0;
+    long to_fill = 0;
+    
+    
+    for (j = 0; j < total_blocks; j+=commit_interval) {
+        blocks_left = total_blocks - blocks_written;
+        if (blocks_left < commit_interval) {
+            // only fill to this level
+            to_fill = blocks_left;
+        } else {
+            to_fill = commit_interval;
+        }
         
+        
+        for (int t = 0; t< to_fill; t++) {
+            FillBlocks( con, 
+                            statement,
+                            results_vec[t], 
+                            reader2,
+                            b,
+                            t,
+                            srid, 
+                             pc_id,
+                             GetGType(bUse3d, bUseSolidGeometry),
+                             bUseSolidGeometry,
+                             bUse3d,
+                             nDimensions
+                             );
 
 
-    for (i=results.begin(); i!=results.end(); i++)
-    {        
-        inserted = InsertBlock(con, 
-                                    *i,
-                                    b,
-                                    j, 
-                                    srid, 
-                                    reader2, 
-                                    table_name.c_str(), 
-                                    precision, 
-                                    pc_id, 
-                                    bUseSolidGeometry, 
-                                    bUse3d);
-        j++;
+            t++;
+        
+        
+        }
+        
+        
+        
+        blocks_written = blocks_written + to_fill;
     }
+
+
+    // for (i=results.begin(); i!=results.end(); i++)
+    // {        
+    //     inserted = InsertBlock(con, 
+    //                                 *i,
+    //                                 b,
+    //                                 j, 
+    //                                 srid, 
+    //                                 reader2, 
+    //                                 table_name.c_str(), 
+    //                                 precision, 
+    //                                 pc_id, 
+    //                                 bUseSolidGeometry, 
+    //                                 bUse3d);
+    //     j++;
+    // }
     return inserted;
 }
 
