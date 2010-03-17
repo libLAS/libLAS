@@ -217,55 +217,6 @@ uint32_t VariableRecord::GetTotalSize() const
     return static_cast<uint32_t>(sum);
 }
 
-std::ostream& operator << ( std::ostream& out, VariableRecord const& d)
-{
-    // std::vector<uint8_t> data = d.GetData();
-    std::streampos const begin = out.tellp();
-    std::cout << "begin: " << begin << std::endl;
-    std::cout << "Dumping " << d.GetRecordLength() 
-        <<" bytes out for VLR" << "Size is : " << d.GetData().size() <<std::endl;
-    for (std::size_t i = 0; i < d.GetData().size(); ++i)
-    {
-        //        out << d.GetData()[i];
-    }
-    out << &(d.GetData()[0]);
-    std::streampos const end = out.tellp();
-    std::cout << "end: " << end << std::endl;
-
-    return out;
-}
-
-std::istream& operator >> ( std::istream& in, VariableRecord& d)
-{
-    std::streampos const input_pos = in.tellg();
-    in.seekg(0, std::ios::end);
-    std::streampos const length = in.tellg();
-    in.seekg(input_pos, std::ios::beg);
-    std::cout << "Stream length: " << length << std::endl;
-    
-    // FIXME: If read_n throws, buffer will leak.
-    //        Replace with std::vector or any other RAII --mloskot
-    std::size_t const buffersize = static_cast<std::size_t>(length);
-    uint8_t* buffer = new uint8_t[buffersize];
-
-    liblas::detail::read_n(buffer, in, length);
-    
-    // FIXME:  This has probably already been properly swapped?  
-    //         but I'm worried about the case where we have a 
-    //         stream that is really some sort of zlib or bzip stream
-    //         and we don't know the orientation of the bytes - hobu
-    LIBLAS_SWAP_BYTES_N(buffer, length);
-    
-    std::vector<uint8_t> data;
-    for (std::size_t i = 0; i < buffersize; ++i)
-    {
-        data.push_back(buffer[i]);
-    }
-    delete buffer;
-    
-    d.SetData(data);
-    return in;
-}
 
 } // namespace liblas
 
