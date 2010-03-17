@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:las="http://liblas.org/schemas/LAS/example" attributeFormDefault="qualified" targetNamespace="http://liblas.org/schemas/LAS/example" version="1.0">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:las="http://liblas.org/schemas/LAS/example" 
+    elementFormDefault="qualified" 
+    attributeFormDefault="unqualified" 
+    targetNamespace="http://liblas.org/schemas/LAS/example" version="1.0">
 
     <xs:simpleType name="sizeType">
         <xs:annotation><xs:documentation>
@@ -41,10 +45,10 @@
         <xs:attribute name="value" type="xs:decimal"></xs:attribute>
     </xs:complexType>
     
-    <xs:complexType name="dimesionType">
+    <xs:complexType name="dimensionType">
         <xs:sequence>
             <xs:element name="name" type="xs:string"  />
-            <xs:element name="description" type="xs:string" nillable="true"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
             
             <xs:element name="position" type="xs:nonNegativeInteger" >
                 <xs:annotation><xs:documentation>
