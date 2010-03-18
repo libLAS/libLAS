@@ -25,6 +25,8 @@ syntax: glob
 *.suo
 *.swp
 *.user
+*.vcproj
+*.sln
 .deps
 .DS_Store
 .libs
