@@ -59,7 +59,7 @@ void PointFormat::updatesize() {
 
 PointFormat::PointFormat( liblas::uint8_t major, 
                 liblas::uint8_t minor, 
-                liblas::uint32_t size) :
+                liblas::uint16_t size) :
     m_size(size),
     m_versionminor(minor), 
     m_versionmajor(major),
@@ -72,7 +72,7 @@ PointFormat::PointFormat( liblas::uint8_t major,
 
 PointFormat::PointFormat( liblas::uint8_t major, 
                 liblas::uint8_t minor, 
-                liblas::uint32_t size,
+                liblas::uint16_t size,
                 bool bColor,
                 bool bTime) :
     m_size(size),

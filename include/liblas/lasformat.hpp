@@ -58,11 +58,11 @@ public:
 
     PointFormat( liblas::uint8_t major, 
                     liblas::uint8_t minor, 
-                    liblas::uint32_t size);
+                    liblas::uint16_t size);
 
     PointFormat( liblas::uint8_t major, 
                     liblas::uint8_t minor, 
-                    liblas::uint32_t size,
+                    liblas::uint16_t size,
                     bool bColor,
                     bool bTime);
     PointFormat& operator=(PointFormat const& rhs);
@@ -71,10 +71,10 @@ public:
     ~PointFormat() {};
 
     /// Fetch byte size
-    uint32_t GetByteSize() const;
+    uint16_t GetByteSize() const;
 
     /// Set value of the red image channel 
-    void SetByteSize(uint32_t const& value);
+    void SetByteSize(uint16_t const& value);
 
     
     uint8_t GetVersionMajor() const; 
@@ -90,7 +90,7 @@ public:
   
 protected:
     
-    liblas::uint32_t m_size;
+    liblas::uint16_t m_size;
     liblas::uint8_t m_versionminor;
     liblas::uint8_t m_versionmajor;
 
@@ -101,12 +101,12 @@ private:
     void updatesize();
 };
 
-inline uint32_t PointFormat::GetByteSize() const
+inline uint16_t PointFormat::GetByteSize() const
 {
     return m_size;
 }
 
-inline void PointFormat::SetByteSize(uint32_t const& value)
+inline void PointFormat::SetByteSize(uint16_t const& value)
 {
     m_size = value;
 }
