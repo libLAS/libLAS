@@ -12,6 +12,11 @@
 # libLAS general settings
 project(libLAS)
 
+# Version information
+SET(CPACK_PACKAGE_VERSION_MAJOR "1")
+SET(CPACK_PACKAGE_VERSION_MINOR "3")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+
 # Name of C++ library
 set(LIBLAS_LIB_NAME las)
 
@@ -32,7 +37,7 @@ set(ENABLE_CTEST FALSE CACHE BOOL
 
 ###############################################################################
 # CMake settings
-cmake_minimum_required(VERSION 2.6.0)
+cmake_minimum_required(VERSION 2.8.0)
 
 set(CMAKE_COLOR_MAKEFILE ON)
 
@@ -153,6 +158,7 @@ if(WITH_GEOTIFF)
 
     # Determine libTIFF availability, required
     if (GEOTIFF_FOUND)
+        mark_as_advanced(CLEAR TIFF)
         find_package(TIFF)
         if (TIFF_FOUND)
             include_directories(${TIFF_INCLUDE_DIR})
@@ -291,3 +297,10 @@ else()
         message(WARNING "CTest support requested but WITH_TESTS option not specified to build of libLAS unit tests")
     endif()
 endif()
+
+
+SET(CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "README.txt")
+SET(CPACK_RESOURCE_FILE_README "README.txt")
+SET(CPACK_SOURCE_PACKAGE_FILE_NAME "libLAS-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+INCLUDE(CPack)

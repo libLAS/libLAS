@@ -47,6 +47,8 @@ cmake_install.cmake
 CMakeCache.txt
 CMakeFiles
 CTestTestfile.cmake
+install_manifest.txt
+_CPack_Packages/
 src/CMakeFiles
 config.guess
 config.log
