@@ -1177,8 +1177,8 @@ LAS_DLL uint8_t LASPointFormat_HasColor( LASPointFormatH hFormat);
 LAS_DLL LASError LASPointFormat_SetColor( LASPointFormatH hFormat, uint8_t bColor);
 LAS_DLL uint8_t LASPointFormat_HasTime( LASPointFormatH hFormat);
 LAS_DLL LASError LASPointFormat_SetTime( LASPointFormatH hFormat, uint8_t bTime);
-LAS_DLL uint32_t LASPointFormat_GetByteSize( LASPointFormatH hFormat);
-LAS_DLL LASError LASPointFormat_SetByteSize( LASPointFormatH hFormat, uint32_t size);
+LAS_DLL uint16_t LASPointFormat_GetByteSize( LASPointFormatH hFormat);
+LAS_DLL LASError LASPointFormat_SetByteSize( LASPointFormatH hFormat, uint16_t size);
 
 LAS_DLL LASPointFormatH LASHeader_GetPointFormat( LASHeaderH hHeader );
 LAS_DLL LASError LASHeader_SetPointFormat( LASHeaderH hHeader, LASPointFormatH hFormat);

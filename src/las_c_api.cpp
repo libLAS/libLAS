@@ -2070,7 +2070,7 @@ LAS_DLL void LASString_Free(char* string) {
 
 LAS_DLL LASPointFormatH LASPointFormat_Create(  liblas::uint8_t version_major,
                                                 liblas::uint8_t version_minor,
-                                                liblas::uint32_t size,
+                                                liblas::uint16_t size,
                                                 liblas::uint8_t bHasColor,
                                                 liblas::uint8_t bHasTime) {
     liblas::PointFormat* format = new liblas::PointFormat(version_minor, 
