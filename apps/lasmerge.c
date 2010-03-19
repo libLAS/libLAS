@@ -27,7 +27,7 @@ void usage()
 {
 
     fprintf(stderr,"----------------------------------------------------------\n");
-    fprintf(stderr,"    lasmerge (version %s) usage:\n", LAS_GetVersion());
+    fprintf(stderr,"    lasmerge (version %s) usage:\n", LAS_GetFullVersion());
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr,"\n");
 

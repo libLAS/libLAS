@@ -34,7 +34,7 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
 
 void usage()
 {
-    char* version = LAS_GetVersion();
+    char* version = LAS_GetFullVersion();
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr,"    lasinfo (version %s) usage:\n", version);
     fprintf(stderr,"----------------------------------------------------------\n");

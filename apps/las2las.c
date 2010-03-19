@@ -88,7 +88,7 @@ void do_bulk_copy(const char* infile, size_t in_start_point, const char* outfile
 void usage()
 {
     fprintf(stderr,"----------------------------------------------------------\n");
-    fprintf(stderr,"    las2las (version %s) usage:\n", LAS_GetVersion());
+    fprintf(stderr,"    las2las (version %s) usage:\n", LAS_GetFullVersion());
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr,"\n");
 
