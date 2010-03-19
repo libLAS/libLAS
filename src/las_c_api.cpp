@@ -1572,7 +1572,7 @@ LAS_DLL char* LAS_GetFullVersion(void) {
     {
         os << " with" << info;
     }
-    os << std::endl;
+
 
     return strdup(os.str().c_str());
 }
