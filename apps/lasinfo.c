@@ -406,7 +406,9 @@ int main(int argc, char *argv[])
 
 #ifdef HAVE_GDAL
     /* Various GDAL related cleanups */
+#ifdef OSRCleanup
     OSRCleanup();
+#endif
     CPLFinderClean();
     CPLFreeConfig();
     CPLCleanupTLS();
