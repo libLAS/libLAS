@@ -100,7 +100,6 @@ private:
     OGRCoordinateTransformationH m_transform;
     
     PointRecord m_record;
-    const liblas::PointFormat& m_format;
     
     void project();
     void setup();

@@ -50,6 +50,7 @@
 #include <liblas/liblas.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
+#include <liblas/lasformat.hpp>
 #include <liblas/guid.hpp>
 
 //std
@@ -376,6 +377,7 @@ private:
     PointExtents m_extents;
     std::vector<VariableRecord> m_vlrs;
     SpatialReference m_srs;
+    PointFormat m_format;
 };
 
 } // namespace liblas

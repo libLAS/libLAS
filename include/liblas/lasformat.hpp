@@ -67,6 +67,7 @@ public:
                     bool bTime);
     PointFormat& operator=(PointFormat const& rhs);
     PointFormat(PointFormat const& other);
+    PointFormat();
     
     ~PointFormat() {};
 

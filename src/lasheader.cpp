@@ -90,7 +90,8 @@ Header::Header(Header const& other) :
     m_scales(other.m_scales),
     m_offsets(other.m_offsets),
     m_extents(other.m_extents),
-    m_srs(other.m_srs)
+    m_srs(other.m_srs),
+    m_format(other.m_format)
 {
     void* p = 0;
 
@@ -147,6 +148,7 @@ Header& Header::operator=(Header const& rhs)
         m_offsets = rhs.m_offsets;
         m_extents = rhs.m_extents;
         m_srs = rhs.m_srs;
+        m_format = rhs.m_format;
     }
     return *this;
 }
@@ -586,6 +588,8 @@ void Header::Init()
 
     // Zero scale value is useless, so we need to use a small value.
     SetScale(0.01, 0.01, 0.01);
+
+    SetPointFormat(m_format);
 }
 
 void Header::ClearGeoKeyVLRs()
@@ -667,6 +671,7 @@ SpatialReference Header::GetSRS() const
 {
     return m_srs;
 }
+
 void Header::SetSRS(SpatialReference& srs)
 {
     m_srs = srs;
@@ -674,26 +679,27 @@ void Header::SetSRS(SpatialReference& srs)
 
 PointFormat Header::GetPointFormat() const
 {
-    bool bHasColor(false);
-    bool bHasTime(false);
-
-    if (GetDataFormatId() == liblas::ePointFormat3) {
-        bHasColor = true;
-        bHasTime = true;
-    } else if (GetDataFormatId() == liblas::ePointFormat2) {
-        bHasColor = true;
-        bHasTime = false;
-    } else if (GetDataFormatId() == liblas::ePointFormat1) {
-        bHasColor = false;
-        bHasTime = true;
-    } 
+    // bool bHasColor(false);
+    // bool bHasTime(false);
+    // 
+    // if (GetDataFormatId() == liblas::ePointFormat3) {
+    //     bHasColor = true;
+    //     bHasTime = true;
+    // } else if (GetDataFormatId() == liblas::ePointFormat2) {
+    //     bHasColor = true;
+    //     bHasTime = false;
+    // } else if (GetDataFormatId() == liblas::ePointFormat1) {
+    //     bHasColor = false;
+    //     bHasTime = true;
+    // } 
         
-    return PointFormat(  GetVersionMajor(), 
-                            GetVersionMinor(), 
-                            GetDataRecordLength(), 
-                            bHasColor, 
-                            bHasTime);
-    
+    return m_format;
+    // return PointFormat(  GetVersionMajor(), 
+    //                         GetVersionMinor(), 
+    //                         GetDataRecordLength(), 
+    //                         bHasColor, 
+    //                         bHasTime);
+    // 
 }
 
 void Header::SetPointFormat(const PointFormat& format)
@@ -722,10 +728,15 @@ void Header::SetPointFormat(const PointFormat& format)
         SetDataFormatId(liblas::ePointFormat1);
         SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize1),
                                         static_cast<uint16_t>(format.GetByteSize())));
-    } else 
+    } else {
         SetDataFormatId(liblas::ePointFormat0);
         SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize0),
                                         static_cast<uint16_t>(format.GetByteSize())));
-    } 
+    }
+
+    m_format = format;
+
+} 
+    
     
 } // namespace liblas

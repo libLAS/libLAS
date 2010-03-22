@@ -84,6 +84,17 @@ PointFormat::PointFormat( liblas::uint8_t major,
     updatesize();
 }
 
+PointFormat::PointFormat( ) :
+    m_size(0),
+    m_versionminor(2), 
+    m_versionmajor(1),
+    m_hasColor(false),
+    m_hasTime(false)
+{
+    updatesize();
+}
+
+
 // copy constructor
 PointFormat::PointFormat(PointFormat const& other) :
     m_size(other.m_size),
