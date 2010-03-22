@@ -92,6 +92,8 @@ void Point::read()
     // TODO: Replace with compile-time assert
     assert(liblas::ePointSize0 == sizeof(record));
 
+    const PointFormat& format = m_header.GetPointFormat();
+    
     try
     {
         detail::read_n(record, m_ifs, sizeof(PointRecord));
@@ -106,14 +108,14 @@ void Point::read()
     // Reader::FillPoint(record, m_point, m_header);
     m_point.SetCoordinates(m_header, m_point.GetX(), m_point.GetY(), m_point.GetZ());
 
-    if (m_header.GetPointFormat().HasTime()) 
+    if (format.HasTime()) 
     {
 
         detail::read_n(gpst, m_ifs, sizeof(double));
         m_point.SetTime(gpst);
         bytesread += sizeof(double);
         
-        if (m_header.GetPointFormat().HasColor()) 
+        if (format.HasColor()) 
         {
             detail::read_n(red, m_ifs, sizeof(uint16_t));
             detail::read_n(green, m_ifs, sizeof(uint16_t));
@@ -125,7 +127,7 @@ void Point::read()
             bytesread += 3 * sizeof(uint16_t);
         }
     } else {
-        if (m_header.GetPointFormat().HasColor()) 
+        if (format.HasColor()) 
         {
             detail::read_n(red, m_ifs, sizeof(uint16_t));
             detail::read_n(green, m_ifs, sizeof(uint16_t));
@@ -138,16 +140,16 @@ void Point::read()
         }        
     }
     
-    if (bytesread != m_header.GetPointFormat().GetByteSize()) {
+    if (bytesread != format.GetByteSize()) {
         std::ostringstream msg; 
         msg <<  "The number of bytes that were read ("<< bytesread <<") does not " 
                 "match the number of bytes the point's format "
                 "says it should have (" << 
-                m_header.GetPointFormat().GetByteSize() << ")";
+                format.GetByteSize() << ")";
         throw std::runtime_error(msg.str());
         
     }
-    if (m_header.GetPointFormat().GetByteSize() != m_header.GetDataRecordLength())
+    if (format.GetByteSize() != m_header.GetDataRecordLength())
     {
         std::size_t bytesleft = m_header.GetDataRecordLength() - bytesread;
 
