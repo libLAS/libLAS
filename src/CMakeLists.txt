@@ -128,9 +128,21 @@ include_directories(../include)
 # Static libLAS C++ library
 add_library(${LIBLAS_LIB_NAME} STATIC ${LIBLAS_SOURCES})
 
+
+
 # Shared libLAS C library
 add_library(${LIBLAS_C_LIB_NAME} SHARED ${LIBLAS_C_SOURCES})
 
+if (APPLE)
+    set_target_properties(
+    ${LIBLAS_C_LIB_NAME}
+    PROPERTIES
+    INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib"
+    
+    )
+endif(APPLE)
+
+########
 target_link_libraries(${LIBLAS_C_LIB_NAME}
   ${LIBLAS_LIB_NAME}
   ${ZLIB_LIBRARIES}
