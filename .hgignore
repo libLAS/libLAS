@@ -72,3 +72,6 @@ src/liblas.a
 test/data/*.dat
 test/data/*.idx
 .dirstamp
+CMakeScripts
+libLAS.xcodeproj
+build/libLAS.build

@@ -70,6 +70,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIBLAS_BUILD_OUTPUT_DIRECTORY})
 # Output directory in which to build ARCHIVE target files.
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIBLAS_BUILD_OUTPUT_DIRECTORY}) 
 
+file(COPY README DESTINATION README.txt)
+
 ###############################################################################
 # Platform and compiler specific settings
 
