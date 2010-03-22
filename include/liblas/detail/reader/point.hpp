@@ -93,6 +93,7 @@ private:
     const liblas::Header& m_header;
     liblas::Point m_point;
     OGRCoordinateTransformationH m_transform;
+    const liblas::PointFormat& m_format;
     
     
     void project();

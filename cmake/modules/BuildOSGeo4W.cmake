@@ -2,21 +2,6 @@
 #
 # OSGeo4W packaging
 #
-# On success, the macro sets the following variables:
-# GEOTIFF_FOUND       = if the library found
-# GEOTIFF_LIBRARIES   = full path to the library
-# GEOTIFF_INCLUDE_DIR = where to find the library headers also defined,
-#                       but not for general use are
-# GEOTIFF_LIBRARY     = where to find the PROJ.4 library.
-# GEOTIFF_VERSION     = version of library which was found, e.g. "1.2.5"
-#
-# Copyright (c) 2009 Mateusz Loskot <mateusz@loskot.net>
-#
-# Module source: http://github.com/mloskot/workshop/tree/master/cmake/
-#
-# Redistribution and use is allowed according to the terms of the BSD license.
-# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
-#
 ###############################################################################
 
 if(WIN32)

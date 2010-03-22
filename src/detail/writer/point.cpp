@@ -62,7 +62,8 @@ Point::Point(   std::ostream& ofs,
     m_ofs(ofs), 
     m_header(header), 
     m_point(liblas::Point()), 
-    m_transform(0)
+    m_transform(0),
+    m_format(header.GetPointFormat())
 {
     setup();
 }
@@ -71,7 +72,7 @@ Point::Point(   std::ostream& ofs,
                 liblas::uint32_t& count,
                 const liblas::Header& header, 
                 OGRCoordinateTransformationH transform) : Base(ofs, count),
-    m_ofs(ofs), m_header(header), m_point(liblas::Point()), m_transform(transform)
+    m_ofs(ofs), m_header(header), m_point(liblas::Point()), m_transform(transform), m_format(header.GetPointFormat())
 
 {
     setup();
@@ -141,7 +142,7 @@ void Point::write(const liblas::Point& point)
 
     // write in our extra data that the user set on the 
     // point up to the header's specified DataRecordLength
-    if (m_header.GetPointFormat().GetByteSize() != m_header.GetDataRecordLength()) {
+    if (m_format.GetByteSize() != m_header.GetDataRecordLength()) {
 
         std::vector<uint8_t> const& data = point.GetExtraData();
         std::streamsize const size = static_cast<std::streamsize>(m_header.GetDataRecordLength() - data.size());

@@ -46,6 +46,7 @@
 #include <liblas/detail/fwd.hpp>
 
 #include <liblas/laspoint.hpp>
+#include <liblas/lasformat.hpp>
 
 #include <liblas/detail/utility.hpp>
 
@@ -99,6 +100,7 @@ private:
     OGRCoordinateTransformationH m_transform;
     
     PointRecord m_record;
+    const liblas::PointFormat& m_format;
     
     void project();
     void setup();
