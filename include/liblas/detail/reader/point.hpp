@@ -87,8 +87,6 @@ private:
     Point(Point const& other);
     Point& operator=(Point const& rhs);
     
-    
-
     std::istream& m_ifs;
     const liblas::Header& m_header;
     liblas::Point m_point;
