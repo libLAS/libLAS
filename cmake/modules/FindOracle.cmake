@@ -42,8 +42,8 @@ find_path(ORACLE_INCLUDE_DIR
   PATHS
   ${ORACLE_HOME}/rdbms/public
   ${ORACLE_HOME}/include
-  ${ORACLE_HOME}/sdk/include # Oracle SDK
-  ${ORACLE_HOME}/OCI/include # Oracle XE on Windows)
+  ${ORACLE_HOME}/sdk/include
+  ${ORACLE_HOME}/OCI/include )
 
 set(ORACLE_OCI_NAMES clntsh libclntsh oci)
 set(ORACLE_NNZ_NAMES nnz10 libnnz10 nnz11 libnnz11 ociw32)
@@ -51,7 +51,7 @@ set(ORACLE_OCCI_NAMES libocci occi oraocci10 oraocci11)
 
 set(ORACLE_LIB_DIR 
   ${ORACLE_HOME}/lib
-  ${ORACLE_HOME}/OCI/lib/MSVC # Oracle XE on Windows)
+  ${ORACLE_HOME}/OCI/lib/MSVC)
 
 find_library(ORACLE_OCI_LIBRARY  NAMES ${ORACLE_OCI_NAMES} PATHS ${ORACLE_LIB_DIR})
 find_library(ORACLE_OCCI_LIBRARY NAMES ${ORACLE_OCCI_NAMES} PATHS ${ORACLE_LIB_DIR})
