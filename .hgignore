@@ -75,3 +75,14 @@ test/data/*.idx
 CMakeScripts
 libLAS.xcodeproj
 build/libLAS.build
+buildout/source
+buildout/share
+buildout/lib
+buildout/include
+buildout/bin
+buildout/eggs
+buildout/parts
+buildout/develop-eggs
+buildout/doc
+buildout/man
+*.mshark
