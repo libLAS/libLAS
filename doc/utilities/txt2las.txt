@@ -1,4 +1,9 @@
-.. _txt2las
+.. raw:: pdf
+
+    PageBreak
+    
+.. _txt2las:
+    
 ****************************************************************
   txt2las
 ****************************************************************
@@ -8,9 +13,6 @@
 :Revision: $Revision$
 :Date: $Date$
 
-.. contents::
-    :depth: 3
-    :backlinks: top
     
 txt2las converts LIDAR data from a standard ASCII format into the more 
 efficient binary LAS representation.

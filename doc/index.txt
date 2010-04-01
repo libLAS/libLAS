@@ -11,13 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 1
    
-   lasinfo
-   las2las
-   las2txt
-   lasmerge
-   lasdiff
-   las2ogr
-   txt2las
+   utilities/index
+   python/index
    
 
 Indices and tables

@@ -1,3 +1,9 @@
+.. raw:: pdf
+
+    PageBreak
+    
+_lasmerge:
+    
 ****************************************************************
   lasmerge: merge multiple LAS files into a single file
 ****************************************************************
@@ -7,9 +13,6 @@
 :Revision: $Revision$
 :Date: $Date$
 
-.. contents::
-    :depth: 3
-    :backlinks: top
     
 lasmerge reads multiple LIDAR data files in the LAS format and merges them 
 into a single file. The filenames can either be provided one by one or in 

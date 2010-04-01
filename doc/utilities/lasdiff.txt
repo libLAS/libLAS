@@ -1,3 +1,9 @@
+.. raw:: pdf
+
+    PageBreak
+    
+.. _lasdiff:
+
 ****************************************************************
   lasdiff
 ****************************************************************
@@ -7,9 +13,6 @@
 :Revision: $Revision$
 :Date: $Date$
 
-.. contents::
-    :depth: 3
-    :backlinks: top
 
 lasdiff compares two LAS files and reports whether they are identical 
 or whether they are different.

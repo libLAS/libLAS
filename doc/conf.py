@@ -16,13 +16,13 @@ import sys, os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.append(os.path.abspath('.'))
+sys.path.append(os.path.abspath('../python'))
 
 # -- General configuration -----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo', 'sphinx.ext.ifconfig']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo', 'sphinx.ext.ifconfig', 'rst2pdf.pdfbuilder', 'breathe']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
@@ -38,7 +38,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'libLAS'
-copyright = u'2009, Howard Butler'
+copyright = u'2010, Howard Butler'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -161,38 +161,19 @@ html_static_path = ['static']
 htmlhelp_basename = 'libLASdoc'
 
 
-# -- Options for LaTeX output --------------------------------------------------
+breathe_projects = {
+    "class":"./api/xml"
+    }
 
-# The paper size ('letter' or 'a4').
-#latex_paper_size = 'letter'
+breathe_default_project = "class"
 
-# The font size ('10pt', '11pt' or '12pt').
-#latex_font_size = '10pt'
 
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [
-  ('index', 'libLAS.tex', u'libLAS Documentation',
-   u'Howard Butler', 'manual'),
+pdf_documents = [
+    ('index', u'libLAS', u'libLAS Documentation', u'The libLAS Team'),
 ]
 
-# The name of an image file (relative to this directory) to place at the top of
-# the title page.
-#latex_logo = None
-
-# For "manual" documents, if this is true, then toplevel headings are parts,
-# not chapters.
-#latex_use_parts = False
-
-# Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
-
-# Documents to append as an appendix to all manuals.
-#latex_appendices = []
-
-# If false, no module index is generated.
-#latex_use_modindex = True
-
+# A comma-separated list of custom stylesheets. Example:
+pdf_stylesheets = ['sphinx','kerning','a4']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}

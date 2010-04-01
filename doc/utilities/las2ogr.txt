@@ -1,5 +1,10 @@
-.. _las2ogr:
 
+.. raw:: pdf
+
+    PageBreak
+    
+.. _las2ogr:
+    
 ****************************************************************
   las2ogr
 ****************************************************************
@@ -8,10 +13,6 @@
 :Contact: mateusz@loskot.net
 :Revision: $Revision$
 :Date: $Date$
-
-.. contents::
-    :depth: 3
-    :backlinks: top
 
 lasdiff compares two LAS files and reports whether they are identical 
 or whether they are different.

@@ -1,0 +1,12 @@
+.. _class_documentation:
+
+****************************************************************
+  libLAS Python Class Documentation
+****************************************************************
+
+.. autoclass:: liblas.point.Point
+    :members: x, y, z, time, scan_angle, scan_direction, scan_flags, flightline_edge, number_of_returns, return_number
+    
+# .. doxygenclass:: liblas::Color
+#    :project: class
+

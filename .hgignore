@@ -85,4 +85,7 @@ buildout/parts
 buildout/develop-eggs
 buildout/doc
 buildout/man
+doc/build
+doc/api/xml
+doc/api/html
 *.mshark

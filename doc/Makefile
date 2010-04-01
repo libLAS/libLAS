@@ -49,6 +49,11 @@ json:
 	@echo
 	@echo "Build finished; now you can process the JSON files."
 
+pdf:
+	$(SPHINXBUILD) -b pdf $(ALLSPHINXOPTS) build/pdf
+	@echo
+	@echo "Build finished; now you can process the PDF files."
+
 htmlhelp:
 	$(SPHINXBUILD) -b htmlhelp $(ALLSPHINXOPTS) build/htmlhelp
 	@echo
