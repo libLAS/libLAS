@@ -23,7 +23,7 @@ endif
 
 AM_CPPFLAGS = -I../include/liblas/capi -I../include $(GEOTIFF_CPPFLAGS) $(GDAL_CPPFLAGS) $(SPATIALINDEX_CPPFLAGS) $(OCI_CPPFLAGS) $(BOOST_FLAGS)
 
-lib_LTLIBRARIES = liblas.la
+lib_LTLIBRARIES = liblas.la liblas_c.la
 
 liblas_la_SOURCES = \
 	lasclassification.cpp \
@@ -34,7 +34,6 @@ liblas_la_SOURCES = \
 	lasvariablerecord.cpp \
 	lasreader.cpp \
 	laswriter.cpp \
-	las_c_api.cpp \
 	lasspatialreference.cpp \
 	lasformat.cpp \
 	detail/reader/reader.cpp \
@@ -55,8 +54,9 @@ liblas_la_SOURCES +=	index/index.cpp \
 						index/visitor.cpp \
 						index/query.cpp \
 						index/storage.cpp
-
-
 endif
 
+liblas_c_la_SOURCES = las_c_api.cpp
+liblas_c_la_LDFLAGS = -version-info 1:0:0 -lstdc++
+liblas_c_la_LIBADD = liblas.la
 liblas_la_LDFLAGS = -version-info 1:0:0

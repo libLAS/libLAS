@@ -28,7 +28,9 @@ lasmerge_SOURCES = lasmerge.c lascommon.c
 las2txt_SOURCES = las2txt.c lascommon.c
 txt2las_SOURCES = txt2las.c
 ts2las_SOURCES = ts2las.cpp
+ts2las_LDADD = ../src/liblas.la
 lasindex_SOURCES = lasindex.cpp
+lasindex_LDADD = ../src/liblas.la
 
 bin_PROGRAMS = lasinfo las2las lasmerge las2txt txt2las ts2las 
 
@@ -41,6 +43,7 @@ if GDAL_IS_CONFIG
 if SPATIALINDEX_IS_CONFIG
 AM_CPPFLAGS += -Igeoraster
 las2oci_SOURCES = las2oci.cpp oci_wrapper.cpp
+las2oci_LDADD = ../src/liblas.la
 bin_PROGRAMS += las2oci
 endif
 endif
@@ -50,7 +53,8 @@ bin_SCRIPTS = liblas-config
 
 if GDAL_IS_CONFIG
 las2ogr_SOURCES = las2ogr.cpp
+las2ogr_LDADD = ../src/liblas.la
 bin_PROGRAMS += las2ogr
 endif
 
-LDADD = ../src/liblas.la
+LDADD = ../src/liblas_c.la

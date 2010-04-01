@@ -132,10 +132,10 @@ if os.name == 'nt':
 elif os.name == 'posix':
     platform = os.uname()[0]
     if platform == 'Darwin':
-        lib_name = 'liblas.dylib'
+        lib_name = 'liblas_c.dylib'
         free = ctypes.CDLL(find_library('libc')).free
     else:
-        lib_name = 'liblas.so'
+        lib_name = 'liblas_c.so'
         free = ctypes.CDLL(find_library('libc.so.6')).free
     las = ctypes.CDLL(lib_name)
 else:
