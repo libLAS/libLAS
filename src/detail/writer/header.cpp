@@ -174,6 +174,7 @@ void Header::write()
         else if (difference == 0) 
         {
             n4 = m_header.GetDataOffset() + 2;
+            m_header.SetDataOffset(n4);
         } 
         else if (difference < 0) 
         {
@@ -181,7 +182,8 @@ void Header::write()
         } 
         else 
         {
-            n4 = m_header.GetDataOffset() + 2;            
+            n4 = m_header.GetDataOffset() + 2;
+            m_header.SetDataOffset(n4);
         }
         // n4 = m_header.GetDataOffset() + 2;
     } else {
@@ -261,7 +263,8 @@ void Header::write()
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
     if (GetPointCount() != 0)
-        GetStream().seekp(0, std::ios::end);    
+        GetStream().seekp(0, std::ios::end);
+    
 }
 
 int32_t Header::WriteVLRs() 
@@ -309,6 +312,7 @@ int32_t Header::WriteVLRs()
     if (difference > 0) {
         detail::write_n(GetStream(), "\0", difference);
     }
+
     return 0;
 }
 
@@ -321,6 +325,11 @@ void Header::WriteLAS10PadSignature()
     if (m_header.GetVersionMinor() > 0) {
         return;
     }
+    
+    // step back two bytes to write the pad bytes.  We should have already
+    // determined by this point if a) they will fit b) they won't overwrite 
+    // exiting real data 
+    GetStream().seekp(m_header.GetDataOffset() - 2, std::ios::beg);
     
     // Write the pad bytes.
     uint8_t const sgn1 = 0xCC;

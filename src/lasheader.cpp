@@ -397,6 +397,8 @@ void Header::SetDataFormatId(liblas::PointFormatName v)
         SetDataRecordLength(ePointSize3);
     else
         SetDataRecordLength(ePointSize3);
+
+    UpdatePointFormat();
 }
 
 uint16_t Header::GetDataRecordLength() const
@@ -652,6 +654,19 @@ void Header::ClearGeoKeyVLRs()
     m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
 }
 
+void Header::UpdatePointFormat()
+{
+    if (GetDataFormatId() == liblas::ePointFormat3) {
+        m_format.Color(true);
+        m_format.Time(true);
+    } else if (GetDataFormatId() == liblas::ePointFormat2) {
+        m_format.Color(true);
+        m_format.Time(false);
+    } else if (GetDataFormatId() == liblas::ePointFormat1) {
+        m_format.Color(false);
+        m_format.Time(true);
+    }     
+}
 void Header::SetGeoreference() 
 {    
     std::vector<VariableRecord> vlrs = m_srs.GetVLRs();
@@ -679,27 +694,8 @@ void Header::SetSRS(SpatialReference& srs)
 
 PointFormat Header::GetPointFormat() const
 {
-    // bool bHasColor(false);
-    // bool bHasTime(false);
-    // 
-    // if (GetDataFormatId() == liblas::ePointFormat3) {
-    //     bHasColor = true;
-    //     bHasTime = true;
-    // } else if (GetDataFormatId() == liblas::ePointFormat2) {
-    //     bHasColor = true;
-    //     bHasTime = false;
-    // } else if (GetDataFormatId() == liblas::ePointFormat1) {
-    //     bHasColor = false;
-    //     bHasTime = true;
-    // } 
-        
+    
     return m_format;
-    // return PointFormat(  GetVersionMajor(), 
-    //                         GetVersionMinor(), 
-    //                         GetDataRecordLength(), 
-    //                         bHasColor, 
-    //                         bHasTime);
-    // 
 }
 
 void Header::SetPointFormat(const PointFormat& format)

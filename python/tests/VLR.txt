@@ -112,6 +112,7 @@
   >>> f3.header.records_count
   3L
   >>> f3.header.data_offset
-  761L
+  759L
   >>> import os
   >>> os.remove('junk_srs.las')
+

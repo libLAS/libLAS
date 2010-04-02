@@ -12,13 +12,13 @@
   (1, 2)
   
   >>> f.size
-  20L
+  28L
   
   >>> f.color
   False
   
   >>> f.time
-  False
+  True
   
   >>> h = header.Header()
   >>> f = h.format
@@ -29,7 +29,9 @@
 
   >>> f.major
   1
-  
+
+  >>> f.time
+  False  
     
   >>> f.minor = 2
  

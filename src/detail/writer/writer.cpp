@@ -81,7 +81,6 @@ void WriterImpl::UpdateHeader(liblas::Header const& header)
         // Skip to first byte of number of point records data member
         std::streamsize const dataPos = 107; 
         m_ofs.seekp(dataPos, std::ios::beg);
-
         detail::write_n(m_ofs, m_pointCount , sizeof(m_pointCount));
     }
 }

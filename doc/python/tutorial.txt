@@ -1,7 +1,7 @@
 .. _python_tutorial:
 
 *********************************************
-libLAS Python Tutorial
+Python Tutorial
 *********************************************
 
 This basic tutorial explains how to use libLAS to read and write 

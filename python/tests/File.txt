@@ -7,7 +7,7 @@
   >>> f.header.point_records_count
   8L
   
-  >>> header = f.header
+  >>> h = f.header
   >>> p = f.read(0)
   >>> p.x, p.y, p.z
   (630262.30000000005, 4834500.0, 51.530000000000001)
@@ -35,6 +35,13 @@
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
+
+  >>> f[0]
+  <liblas.point.Point object at ...>
+
+  >>> out = f[0:3]
+  >>> len(out)
+  3
 
   >>> len(points)
   8
@@ -69,10 +76,10 @@
 
   >>> del f
   
-  >>> f = file.File('junk.las', mode="w", header=header)
-  >>> sum(header.offset)
+  >>> f = file.File('junk.las', mode="w", header=h)
+  >>> sum(h.offset)
   0.0
-  >>> header.min
+  >>> h.min
   [630262.30000000005, 4834500.0, 50.899999999999999]
 
   >>> for i in points:
@@ -87,7 +94,7 @@
   >>> f.header
 
   >>> del f
-  >>> f = file.File('junk.las', mode='w+', header=header)
+  >>> f = file.File('junk.las', mode='w+', header=h)
   
   >>> for i in points:
   ...    f.write(i)
@@ -118,12 +125,11 @@
 
   >>> del f3
  
-The header's offset will change +=2 because of the 1.0
-requirement to write pad bytes at the end of the header
+
   
   >>> f = file.File('junk2.las')
   >>> f.header.data_offset
-  1026L
+  1024L
   
   >>> points = []
   >>> for i in f:
@@ -193,13 +199,63 @@ the data_offset *doesn't* change at all
   630323.57
   630320.95
   630280.89
+
+
+The header's offset will change +=2 if there isn't enough room in the 
+header after you subtract the VLRs
+
+  >>> from liblas import header
+  >>> h2 = header.Header()
+  >>> h2.data_offset = 227
+  >>> h2.minor_version = 0
+  >>> f4 = file.File('junk4.las',mode='w',header=h2)
+
+  >>> f4.header.data_offset
+  227L
+
+  >>> for i in points:
+  ...    f4.write(i)
+    
+  >>> f4.close()
+
+  >>> del f4
+
+
+  >>> f = file.File('junk4.las')
+  >>> f.header.data_offset
+  229L
+  
+  >>> points = []
+  >>> for i in f:
+  ...   points.append(i)
+  ...   print i # doctest: +ELLIPSIS
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+  <liblas.point.Point object at ...>
+
+  >>> for g in points:
+  ...   print round(g.x, 6)
+  630262.3
+  630282.45
+  630300.07
+  630346.82
+  630327.57
+  630323.57
+  630320.95
+  630280.89
     
   >>> import os
   >>> os.remove('junk.las')
   >>> os.remove('junk2.las')
   >>> os.remove('junk3.las')
-
-  >>> f = file.File('junk.las', mode="w", header=header)
+  >>> os.remove('junk4.las')
+     
+  >>> f = file.File('junk.las', mode="w", header=h)
   >>> import liblas.core
   >>> liblas.core.las.LASWriter_Destroy(f.handle)
   >>> print 'destroyed once'

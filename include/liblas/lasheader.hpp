@@ -348,6 +348,7 @@ private:
     //
     void Init();
     void ClearGeoKeyVLRs();
+    void UpdatePointFormat();
 
     //
     // Private data members
