@@ -52,7 +52,21 @@ import sys
 
 class File(object):
     def __init__(self, filename, header=None, mode='r', in_srs = None, out_srs = None):
-
+        """Instantiate a file object to represent an LAS file.  Valid modes are \
+           "r" for read, "w" for write, and "w+" for append.  Setting in_srs will override \
+           the file's header SRS, and setting an out_srs will allow the points to be \
+           reprojected on-the-fly to the out_srs coordinate system as they are read/written. 
+        
+        To open a file in write mode, you must provide a liblas.header.Header instance
+        which will be immediately written to the file.  If you provide a header instance 
+        in read mode, the values of that header will be used in place of those in the 
+        actual file.
+        
+        >>> from liblas import file
+        >>> f = file.File('file.las',mode='r')
+        >>> for p in f:
+        ...     print 'X,Y,Z: ', p.x, p.y, p.z
+        """
         self.filename = os.path.abspath(filename)
         self._header = header
         self.handle = None
@@ -74,6 +88,8 @@ class File(object):
         self.open()
         
     def open(self):
+        """Open the file for processing, called by __init__
+        """
         if self._mode == 'r' or self._mode =='rb':
             
             if not self._header:
@@ -121,6 +137,8 @@ class File(object):
         self.close()
 
     def close(self):
+        """Closes the LAS file
+        """
         if self.mode == 0 :
             core.las.LASReader_Destroy(self.handle)
             files['read'].remove(self.filename)
@@ -164,7 +182,8 @@ class File(object):
         """Returns the liblas.header.Header for the file"""
         return self._header
     def set_header(self, header):
-        
+        """Sets the liblas.header.Header for the file.  If the file is in \
+        append mode, the header will be overwritten in the file."""
         # append mode
         if mode == 2:
             core.las.LASWriter_Destroy(self.handle)
@@ -172,13 +191,24 @@ class File(object):
             self._header = header
             return True
         raise core.LASException("The header can only be set after file creation for files in append mode")
-    header = property(get_header)
+    doc = """Get or set the file's liblas.header.Header  If the file is in \
+             append mode, the header will be overwritten in the file."""
+    header = property(get_header, set_header, None, doc)
 
-    def read(self, location):
+    def read(self, index):
+        """Reads the point at the given index"""
         if self.mode == 0:
-            return point.Point(handle=core.las.LASReader_GetPointAt(self.handle, location), copy=True)
+            return point.Point(handle=core.las.LASReader_GetPointAt(self.handle, index), copy=True)
 
     def __iter__(self):
+        """Iterator support (read mode only) 
+        
+          >>> points = []
+          >>> for i in f:
+          ...   points.append(i)
+          ...   print i # doctest: +ELLIPSIS
+          <liblas.point.Point object at ...>
+        """
         if self.mode == 0:
             self.at_end = False
             p = core.las.LASReader_GetNextPoint(self.handle)
@@ -191,10 +221,28 @@ class File(object):
                 self.close()
                 self.open()
     
+    def __getitem__(self, index):
+        """Index and slicing support (implemented using read())"""
+        try:
+            index.stop
+        except AttributeError:
+            return self.read(index)
+        
+        output = []
+        if index.step:
+            step = index.step
+        else:
+            step = 1
+        for i in range(index.start, index.stop, step):
+            output.append(self.read(i))
+        
+        return output
     def __len__(self):
+        """Returns the number of points in the file according to the header"""
         return self.header.point_records_count
     
     def write(self, pt):
+        """Writes the point to the file if it is append or write mode."""
         if not isinstance(pt, point.Point):
             raise core.LASException('cannot write %s, it must be of type liblas.point.Point' % pt)
         if self.mode == 1 or self.mode == 2:
