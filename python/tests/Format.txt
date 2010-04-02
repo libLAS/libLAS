@@ -9,16 +9,16 @@
   >>> f = h.format
   
   >>> f.major, f.minor
-  (1, 0)
+  (1, 2)
   
   >>> f.size
-  28L
+  20L
   
   >>> f.color
   False
   
   >>> f.time
-  True
+  False
   
   >>> h = header.Header()
   >>> f = h.format
