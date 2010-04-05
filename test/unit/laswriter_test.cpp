@@ -56,7 +56,7 @@ namespace tut
         // Create new LAS file using default header block
         {
             std::ofstream ofs;
-            ofs.open("writefail.las", std::ios::out | std::ios::binary);
+            ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
 
             // LAS 1.2, Point Format 0
             liblas::Header header;
@@ -71,7 +71,7 @@ namespace tut
         // Read previously created LAS file and check its header block
         {
             std::ifstream ifs;
-            ifs.open("writefail.las", std::ios::in | std::ios::binary);
+            ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
             ensure(ifs.is_open());
 
             liblas::Reader reader(ifs);
