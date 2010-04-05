@@ -46,7 +46,7 @@ namespace tut
     typedef test_group<laswriter_data> tg;
     typedef tg::object to;
 
-    tg test_group_laswriter("liblas::LASWriter");
+    tg test_group_laswriter("liblas::Writer");
 
     // Test user-declared constructor
     template<>
@@ -56,29 +56,29 @@ namespace tut
         // Create new LAS file using default header block
         {
             std::ofstream ofs;
-            ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
+            ofs.open("writefail.las", std::ios::out | std::ios::binary);
 
             // LAS 1.2, Point Format 0
-            liblas::LASHeader header;
-            liblas::LASWriter writer(ofs, header);
+            liblas::Header header;
+            liblas::Writer writer(ofs, header);
 
             ensure_equals(writer.GetHeader().GetVersionMinor(), 2);
 
-            liblas::LASHeader const& hdr_default = writer.GetHeader();
+            liblas::Header const& hdr_default = writer.GetHeader();
             test_default_header(hdr_default);
         }
 
         // Read previously created LAS file and check its header block
         {
             std::ifstream ifs;
-            ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
+            ifs.open("writefail.las", std::ios::in | std::ios::binary);
             ensure(ifs.is_open());
 
-            liblas::LASReader reader(ifs);
+            liblas::Reader reader(ifs);
 
             ensure_equals(reader.GetHeader().GetVersionMinor(), 2);
             
-            liblas::LASHeader const& hdr_default = reader.GetHeader();
+            liblas::Header const& hdr_default = reader.GetHeader();
             test_default_header(hdr_default);
         }
     }
@@ -93,10 +93,10 @@ namespace tut
             ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
 
             // LAS 1.1, Point Format 0
-            liblas::LASHeader header;
-            liblas::LASWriter writer(ofs, header);
+            liblas::Header header;
+            liblas::Writer writer(ofs, header);
 
-            liblas::LASPoint point;
+            liblas::Point point;
 
             // Write 1st point
             point.SetCoordinates(10, 20, 30);
@@ -128,9 +128,9 @@ namespace tut
             std::ifstream ifs;
             ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
             ensure(ifs.is_open());
-            liblas::LASReader reader(ifs);
+            liblas::Reader reader(ifs);
 
-            liblas::LASPoint point; // reusable cache
+            liblas::Point point; // reusable cache
 
             // read 1st point
             reader.ReadNextPoint();
@@ -147,7 +147,7 @@ namespace tut
             ensure_equals(point.GetUserData(), 0);
             ensure_equals(point.GetPointSourceID(), 1);
 
-            typedef liblas::LASClassification::bitset_type bitset_type;
+            typedef liblas::Classification::bitset_type bitset_type;
             ensure_equals(bitset_type(point.GetClassification()), bitset_type(7));
 
             // read 2nd point
@@ -180,7 +180,7 @@ namespace tut
             ensure_equals(point.GetUserData(), 0);
             ensure_equals(point.GetPointSourceID(), 3);
 
-            typedef liblas::LASClassification::bitset_type bitset_type;
+            typedef liblas::Classification::bitset_type bitset_type;
             ensure_equals(bitset_type(point.GetClassification()), bitset_type(7));
         }
     }
@@ -195,11 +195,11 @@ namespace tut
             std::ofstream ofs;
             ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
 
-            liblas::LASHeader header;
-            liblas::LASWriter writer(ofs, header);
+            liblas::Header header;
+            liblas::Writer writer(ofs, header);
 
             // test initially written header
-            liblas::LASHeader const& hdr_default = writer.GetHeader();
+            liblas::Header const& hdr_default = writer.GetHeader();
             test_default_header(hdr_default);
 
             // update some header data and overwrite header block
@@ -219,9 +219,9 @@ namespace tut
             std::ifstream ifs;
             ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
             ensure(ifs.is_open());
-            liblas::LASReader reader(ifs);
+            liblas::Reader reader(ifs);
 
-            liblas::LASHeader const& header = reader.GetHeader();
+            liblas::Header const& header = reader.GetHeader();
             ensure_equals(header.GetFileSourceId(), 65535);
             ensure_equals(header.GetSystemId(), std::string("Unit Test libLAS System"));
             ensure_equals(header.GetSoftwareId(), std::string("Unit Test libLAS Software"));
@@ -244,8 +244,8 @@ namespace tut
         std::ofstream ofs;
         ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
 
-        liblas::LASHeader header;
-        liblas::LASWriter writer(ofs, header);
+        liblas::Header header;
+        liblas::Writer writer(ofs, header);
 
         std::ostream& os = writer.GetStream();
 

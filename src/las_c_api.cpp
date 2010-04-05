@@ -132,7 +132,7 @@ typedef enum
 } LASErrorEnum;
 
 
-static std::stack<LASError > errors;
+static std::stack<liblas::Error > errors;
 
 #ifdef _MSC_VER
 # pragma warning(disable: 4127) // warning C4127: conditional expression is constant
@@ -184,7 +184,7 @@ LAS_DLL int LASError_GetLastErrorNum(void){
     if (errors.empty())
         return 0;
     else {
-        LASError err = errors.top();
+        liblas::Error err = errors.top();
         return err.GetCode();
     }
 }
@@ -193,7 +193,7 @@ LAS_DLL char* LASError_GetLastErrorMsg(void){
     if (errors.empty()) 
         return NULL;
     else {
-        LASError err = errors.top();
+        liblas::Error err = errors.top();
         return strdup(err.GetMessage().c_str());
     }
 }
@@ -202,13 +202,13 @@ LAS_DLL char* LASError_GetLastErrorMethod(void){
     if (errors.empty()) 
         return NULL;
     else {
-        LASError err = errors.top();
+        liblas::Error err = errors.top();
         return strdup(err.GetMethod().c_str());
     }
 }
 
 LAS_DLL void LASError_PushError(int code, const char *message, const char *method) {
-    LASError err = LASError(code, std::string(message), std::string(method));
+    liblas::Error err = liblas::Error(code, std::string(message), std::string(method));
     errors.push(err);
 }
 

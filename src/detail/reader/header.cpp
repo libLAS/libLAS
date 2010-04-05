@@ -215,6 +215,7 @@ void Header::read()
     // offset is actually 2 bytes back.  We need to set the dataoffset 
     // appropriately in those cases anyway. 
     m_ifs.seekg(m_header.GetDataOffset());
+    
 
     if (HasLAS10PadSignature()) {
         std::streamsize const current_pos = m_ifs.tellg();
@@ -232,6 +233,10 @@ void Header::read()
     // really what is wrong, but there's no real way to know that unless 
     // you go start mucking around in the bytes with hexdump or od
 
+    // If we're eof, we need to reset the state
+    if (m_ifs.eof())
+        m_ifs.clear();
+        
     // Seek to the beginning
     m_ifs.seekg(0, std::ios::beg);
     std::ios::pos_type beginning = m_ifs.tellg();
@@ -240,7 +245,7 @@ void Header::read()
     m_ifs.seekg(0, std::ios::end);
     std::ios::pos_type end = m_ifs.tellg();
     std::ios::off_type size = end - beginning;
-    
+     
     // Figure out how many points we have 
     std::ios::off_type count = (end - static_cast<std::ios::off_type>(m_header.GetDataOffset())) / 
                                  static_cast<std::ios::off_type>(m_header.GetDataRecordLength());

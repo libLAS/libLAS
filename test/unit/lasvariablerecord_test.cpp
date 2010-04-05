@@ -14,9 +14,9 @@ namespace tut
 { 
     struct lasvariablerecord_data
     {
-        liblas::LASVariableRecord m_default;
+        liblas::VariableRecord m_default;
 
-        void test_default(liblas::LASVariableRecord const& h)
+        void test_default(liblas::VariableRecord const& h)
         {
             ensure_equals("wrong default reserved bytes",
                 h.GetReserved(), liblas::uint16_t());
@@ -38,7 +38,7 @@ namespace tut
     typedef test_group<lasvariablerecord_data> tg;
     typedef tg::object to;
 
-    tg test_group_lasvariablerecord("liblas::LASVariableRecord");
+    tg test_group_lasvariablerecord("liblas::VariableRecord");
 
     // Test default constructor
     template<>
@@ -53,7 +53,7 @@ namespace tut
     template<>
     void to::test<2>()
     {
-        liblas::LASVariableRecord hdr_copy(m_default);
+        liblas::VariableRecord hdr_copy(m_default);
         test_default(hdr_copy);
     }
 
@@ -62,7 +62,7 @@ namespace tut
     template<>
     void to::test<3>()
     {
-        liblas::LASVariableRecord hdr_copy;
+        liblas::VariableRecord hdr_copy;
         test_default(hdr_copy);
 
         hdr_copy = m_default;
@@ -74,10 +74,10 @@ namespace tut
     template<>
     void to::test<4>()
     {
-        liblas::LASVariableRecord hdr;
+        liblas::VariableRecord hdr;
         ensure("two default headers not equal", m_default.equal(hdr));
 
-        liblas::LASVariableRecord hdr_copy(m_default);
+        liblas::VariableRecord hdr_copy(m_default);
         ensure("copy of default header not equal", hdr.equal(m_default));
     }
 
@@ -86,10 +86,10 @@ namespace tut
     template<>
     void to::test<5>()
     {
-        liblas::LASVariableRecord hdr;
+        liblas::VariableRecord hdr;
         ensure("two default headers not equal", m_default == hdr);
 
-        liblas::LASVariableRecord hdr_copy(m_default);
+        liblas::VariableRecord hdr_copy(m_default);
         ensure("copy of default header not equal", hdr == m_default);
     }
 
@@ -98,10 +98,10 @@ namespace tut
     template<>
     void to::test<6>()
     {
-        liblas::LASVariableRecord hdr;
+        liblas::VariableRecord hdr;
         ensure_not("two default headers not equal", m_default != hdr);
 
-        liblas::LASVariableRecord hdr_copy(m_default);
+        liblas::VariableRecord hdr_copy(m_default);
         ensure_not("copy of default header not equal", hdr != m_default);
     }
 }

@@ -72,7 +72,7 @@ public:
 
     /// Initializes iterator pointing to beginning of LAS file sequence.
     /// No ownership transfer of reader object occurs.
-    reader_iterator(liblas::LASReader& reader)
+    reader_iterator(liblas::Reader& reader)
         : m_reader(&reader)
     {
         assert(0 != m_reader);
@@ -129,7 +129,7 @@ private:
         }
     }
 
-    liblas::LASReader* m_reader;
+    liblas::Reader* m_reader;
 };
 
 /// Equality operator implemented in terms of reader_iterator::equal
@@ -164,7 +164,7 @@ public:
     /// Initialize iterator with given writer.
     /// The writer position is not changed.
     /// No ownership transfer of writer object occurs.
-    writer_iterator(liblas::LASWriter& writer)
+    writer_iterator(liblas::Writer& writer)
         : m_writer(&writer)
     {
         assert(0 != m_writer);
@@ -205,16 +205,16 @@ public:
 
 private:
 
-    liblas::LASWriter* m_writer;
+    liblas::Writer* m_writer;
 };
 
 // Declare specializations for user's convenience
 
 /// Public specialization of LASReader input iterator for liblas::LASPoint type.
-typedef reader_iterator<LASPoint> lasreader_iterator;
+typedef reader_iterator<Point> lasreader_iterator;
 
 /// Public specialization of LASWriter output iterator for liblas::LASPoint type.
-typedef writer_iterator<LASPoint> laswriter_iterator;
+typedef writer_iterator<Point> laswriter_iterator;
 
 } // namespace liblas
 
