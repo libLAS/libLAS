@@ -96,7 +96,9 @@ protected:
     liblas::uint8_t m_versionmajor;
 
     bool m_hasColor;
-    bool m_hasTime;    
+    bool m_hasTime;
+    
+    liblas::uint16_t m_base_size;
 
 private:
     void updatesize();

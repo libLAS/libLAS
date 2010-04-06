@@ -2073,8 +2073,8 @@ LAS_DLL LASPointFormatH LASPointFormat_Create(  liblas::uint8_t version_major,
                                                 liblas::uint16_t size,
                                                 liblas::uint8_t bHasColor,
                                                 liblas::uint8_t bHasTime) {
-    liblas::PointFormat* format = new liblas::PointFormat(version_minor, 
-                                                version_major, 
+    liblas::PointFormat* format = new liblas::PointFormat(version_major, 
+                                                version_minor, 
                                                 size, 
                                                 bHasColor != 0, 
                                                 bHasTime != 0 );

@@ -43,7 +43,33 @@
 import core
 
 class Format(object):
-    def __init__(self, major=1, minor=0, time=False, color = False, size=0, handle=None):
+    def __init__(self, major=1, minor=2, time=False, color = False, size=0, handle=None):
+        """ 
+        :keyword major: Major version value (practically always 1 for libLAS)
+        :type major: integer
+        :keyword minor: Minor version value (no validation done)
+        :type minor: integer
+        :keyword time: flag to denote whether or not the format has time values
+        :type time: boolean
+        :keyword color: flag to denote whether or not the format has color values
+        :type owned: boolean
+        :keyword size: The size to set for the format.  If this value is set to \
+        something that is smaller than can represent the given parameters, an \
+        exception will be thrown.
+        :keyword size: integer
+        :keyword handle: raw ctypes object
+        
+        >>> f = format.Format()
+        >>> f.size
+        20L
+        >>> f.color
+        False
+        >>> f.time
+        False
+        >>> f.major, f.minor
+        (1, 2)
+
+        """
         self.handle = None
 
         if handle:

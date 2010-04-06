@@ -5,6 +5,24 @@
   >>> f2 = file.File('../test/data/TO_core_last_clip.las')
 
 
+  >>> f = format.Format()
+  >>> f.size
+  20L
+  >>> f.color
+  False
+  >>> f.time
+  False
+  >>> f.major, f.minor
+  (1, 2)
+  
+  >>> f.size = 40
+  >>> f.size
+  40L
+  
+  >>> f.color = True
+  >>> f.size
+  46L
+
   >>> h = f2.header
   >>> f = h.format
   

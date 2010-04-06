@@ -46,14 +46,37 @@ namespace liblas {
 
 
 void PointFormat::updatesize() {
-    m_size = sizeof(detail::PointRecord);
+    liblas::uint16_t new_base_size = sizeof(detail::PointRecord);
     
     if (HasColor()) {
-        m_size += 3 * sizeof(liblas::uint16_t);
+        new_base_size += 3 * sizeof(liblas::uint16_t);
     }
     
     if (HasTime()) {
-        m_size += sizeof(double);
+        new_base_size += sizeof(double);
+    }
+    
+    // Set to the base if we haven't set it at all yet
+    if (m_size == 0) {
+        m_size = new_base_size;
+        m_base_size = new_base_size;
+    }
+    
+    // Expand or contract the size based on our old difference
+    else {
+        
+        long base_difference = m_base_size - new_base_size;
+        
+        if (base_difference > 0) {
+            // Expand m_size to include new_base_size
+            m_size = m_size + base_difference;
+            m_base_size = new_base_size;
+        }
+        else {            
+            m_size = m_size - base_difference;
+            m_base_size = new_base_size;
+        }
+        
     }
 }
 
@@ -64,7 +87,8 @@ PointFormat::PointFormat( liblas::uint8_t major,
     m_versionminor(minor), 
     m_versionmajor(major),
     m_hasColor(false),
-    m_hasTime(false)
+    m_hasTime(false),
+    m_base_size(0)
 {
     updatesize();
 }
@@ -79,7 +103,8 @@ PointFormat::PointFormat( liblas::uint8_t major,
     m_versionminor(minor), 
     m_versionmajor(major),
     m_hasColor(bColor),
-    m_hasTime(bTime)
+    m_hasTime(bTime),
+    m_base_size(0)
 {
     updatesize();
 }
@@ -89,7 +114,8 @@ PointFormat::PointFormat( ) :
     m_versionminor(2), 
     m_versionmajor(1),
     m_hasColor(false),
-    m_hasTime(false)
+    m_hasTime(false),
+    m_base_size(0)
 {
     updatesize();
 }
@@ -101,7 +127,8 @@ PointFormat::PointFormat(PointFormat const& other) :
     m_versionminor(other.m_versionminor),
     m_versionmajor(other.m_versionmajor),
     m_hasColor(other.m_hasColor),
-    m_hasTime(other.m_hasTime)
+    m_hasTime(other.m_hasTime),
+    m_base_size(other.m_base_size)
 {
     updatesize();
 }
@@ -116,6 +143,7 @@ PointFormat& PointFormat::operator=(PointFormat const& rhs)
         m_versionmajor = rhs.m_versionmajor;
         m_hasColor = rhs.m_hasColor;
         m_hasTime = rhs.m_hasTime;
+        m_base_size = rhs.m_base_size;
 
     }
     return *this;
