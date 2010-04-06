@@ -25,8 +25,24 @@
                 descale,
                 scale
 
+.. autoclass:: liblas.color.Color
+    :members:   __init__, 
+                red,
+                green,
+                blue,
+                __iter__
+
 .. autoclass:: liblas.file.File
-    :members: __init__, close, header, read, write, __iter__, __getitem__
+    :members:   __init__, 
+                close, 
+                header, 
+                read, 
+                write,
+                output_srs,
+                input_srs,
+                __iter__, 
+                __getitem__,
+                __len__
     
 
 .. _specification: http://liblas.org/raw-attachment/wiki/WikiStart/asprs_las_format_v13.pdf

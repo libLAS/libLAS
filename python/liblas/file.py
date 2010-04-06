@@ -52,25 +52,42 @@ import sys
 
 class File(object):
     def __init__(self, filename, header=None, mode='r', in_srs = None, out_srs = None):
-        """Instantiate a file object to represent an LAS file.  Valid modes are \
-           "r" for read, "w" for write, and "w+" for append.  Setting in_srs will override \
-           the file's header SRS, and setting an out_srs will allow the points to be \
-           reprojected on-the-fly to the out_srs coordinate system as they are read/written. 
+        """Instantiate a file object to represent an LAS file.  
         
-        To open a file in write mode, you must provide a liblas.header.Header instance
-        which will be immediately written to the file.  If you provide a header instance 
-        in read mode, the values of that header will be used in place of those in the 
-        actual file.
+        :arg filename: The filename to open
+        :keyword header: A header open the file with
+        :type header: an :obj:`liblas.header.header.Header` instance
+        :keyword mode: "r" for read, "w" for write, and "w+" for append
+        :type mode: string
+        :keyword in_srs: Input SRS to override the existing file's SRS with
+        :type in_srs: an :obj:`liblas.srs.SRS` instance
+        :keyword out_srs: Output SRS to reproject points on-the-fly to as they are read/written.
+        :type out_srs: an :obj:`liblas.srs.SRS` instance        
+        
+        .. note::
+            To open a file in write mode, you must provide a liblas.header.Header instance
+            which will be immediately written to the file.  If you provide a header instance 
+            in read mode, the values of that header will be used in place of those in the 
+            actual file.
+        
+        .. note::
+            If a file is open for write, it cannot be opened for read and vice versa.
         
         >>> from liblas import file
         >>> f = file.File('file.las',mode='r')
         >>> for p in f:
         ...     print 'X,Y,Z: ', p.x, p.y, p.z
+        
+        >>> h = f.header
+        >>> f2 = file.File('file2.las', header=h)
+        >>> for p in f:
+        ...     f2.write(p)
+        >>> f2.close()
         """
         self.filename = os.path.abspath(filename)
         self._header = header
         self.handle = None
-        self._mode = mode
+        self._mode = mode.lower()
         self.in_srs = in_srs
         self.out_srs = out_srs
 
@@ -81,9 +98,11 @@ class File(object):
                     raise core.LASException("File %s is already open for write.  "
                                             "Close the file or delete the reference to it" % filename)
         else:
-            for f in files['read']:
+            # we're in some kind of write mode, and if we already have the 
+            # file open, complain to the user.
+            for f in files['read'] + files['append'] + files['write']:
                 if f == self.filename:
-                    raise core.LASException("File %s is already open for read. "
+                    raise core.LASException("File %s is already open. "
                                             "Close the file or delete the reference to it" % filename)
         self.open()
         
@@ -165,7 +184,13 @@ class File(object):
     def get_output_srs(self):
         return self.out_srs
     
-    output_srs = property(get_output_srs, set_output_srs)
+    doc = """The output :obj:`liblas.srs.SRS` for the file.  Data will be 
+    reprojected to this SRS according to either the :obj:`input_srs` if it 
+    was set or default to the :obj:`liblas.header.Header.SRS` if it was 
+    not set.  The header's SRS must be valid and exist for reprojection 
+    to occur. GDAL support must also be enabled for the library for 
+    reprojection to happen."""
+    output_srs = property(get_output_srs, set_output_srs, None, doc)
   
     def set_input_srs(self, value):
         if self.mode == 0 :
@@ -175,8 +200,10 @@ class File(object):
      
     def get_input_srs(self):
         return self.in_srs
-    
-    input_srs = property(get_input_srs, set_input_srs)
+    doc = """The input :obj:`liblas.srs.SRS` for the file.  This overrides the 
+    obj:`liblas.header.Header.SRS`.  It is useful in cases where the header's 
+    SRS is not valid or does not exist."""    
+    input_srs = property(get_input_srs, set_input_srs, None, doc)
   
     def get_header(self):
         """Returns the liblas.header.Header for the file"""
@@ -191,8 +218,15 @@ class File(object):
             self._header = header
             return True
         raise core.LASException("The header can only be set after file creation for files in append mode")
-    doc = """Get or set the file's liblas.header.Header  If the file is in \
-             append mode, the header will be overwritten in the file."""
+    doc = """The file's :obj:`liblas.header.Header`  
+    
+    .. note::
+        If the file is in append mode, the header will be overwritten in the file. 
+        Setting the header for the file when it is in read mode has no effect.  
+        If you wish to override existing header information with your own at 
+        read time, you must instantiate a new :obj:`liblas.file.File` instance.
+    
+    """
     header = property(get_header, set_header, None, doc)
 
     def read(self, index):
@@ -222,7 +256,11 @@ class File(object):
                 self.open()
     
     def __getitem__(self, index):
-        """Index and slicing support (implemented using read())"""
+        """Index and slicing support 
+        
+          >>> out = f[0:3]
+          [<liblas.point.Point object at ...>, <liblas.point.Point object at ...>, <liblas.point.Point object at ...>]
+        """
         try:
             index.stop
         except AttributeError:
@@ -237,12 +275,25 @@ class File(object):
             output.append(self.read(i))
         
         return output
+        
     def __len__(self):
         """Returns the number of points in the file according to the header"""
         return self.header.point_records_count
     
     def write(self, pt):
-        """Writes the point to the file if it is append or write mode."""
+        """Writes the point to the file if it is append or write mode. LAS files 
+        are written sequentially starting from the first point (in pure write mode) or 
+        from the last point that exists (in append mode).  
+        
+        :param pt: The point to write.
+        :type pt: :obj:`liblas.point.Point` instance to write
+                
+        .. note::
+            At this time, it is not possible to duck-type point objects and have 
+            them be written into the LAS file (from say numpy or something).  You 
+            have to take care of this adaptation yourself.  
+
+        """
         if not isinstance(pt, point.Point):
             raise core.LASException('cannot write %s, it must be of type liblas.point.Point' % pt)
         if self.mode == 1 or self.mode == 2:

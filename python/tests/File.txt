@@ -40,6 +40,8 @@
   <liblas.point.Point object at ...>
 
   >>> out = f[0:3]
+  >>> out
+  [<liblas.point.Point object at ...>, <liblas.point.Point object at ...>, <liblas.point.Point object at ...>]
   >>> len(out)
   3
 
