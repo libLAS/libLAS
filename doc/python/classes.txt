@@ -68,8 +68,34 @@ liblas.format.Format
 =============================================
 
 .. autoclass:: liblas.format.Format
-    :members:   __init__
+    :members:   __init__,
+                major,
+                minor,
+                color,
+                time,
+                size
 
+=============================================
+liblas.guid.GUID
+=============================================
+
+.. autoclass:: liblas.guid.GUID
+    :members:   __init__,
+                __str__,
+                __eq__
+
+=============================================
+liblas.vlr.VLR
+=============================================
+
+.. autoclass:: liblas.vlr.VLR
+    :members:   __init__,
+                userid,
+                description,
+                recordlength,
+                recordid,
+                reserved,
+                data
 .. _specification: http://liblas.org/raw-attachment/wiki/WikiStart/asprs_las_format_v13.pdf
 
 # .. doxygenclass:: liblas::Color

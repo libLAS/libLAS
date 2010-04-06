@@ -44,6 +44,34 @@ import core
 
 class GUID(object):
     def __init__(self, key=None, handle=None):
+        """ 
+        :keyword key: GUID string to create with
+        :type key: string
+        :keyword handle: raw ctypes object
+        
+        >>> from liblas import guid
+        >>> from liblas import header
+
+        >>> g2 = guid.GUID(key='8388f1b8-aa1b-4108-bca3-6bc68e7b062e')
+        >>> g2
+        8388f1b8-aa1b-4108-bca3-6bc68e7b062e
+
+        >>> header = header.Header()
+        >>> header.guid = g2
+        >>> header.guid
+        8388f1b8-aa1b-4108-bca3-6bc68e7b062e
+        >>> header.project_id
+        '8388f1b8-aa1b-4108-bca3-6bc68e7b062e'
+
+        >>> g3 = guid.GUID(key='8388f1b8-aa1b-4108-bca3-6bc68e7b062e')
+        >>> g2 == g3
+        True
+        
+        .. note::
+            In Python 2.5+, you can use the :mod:`uuid` module to control the
+            creation of UUIDs in alternative ways. Otherwise, the GUID() 
+            constructor will create them for you, but rather simply.
+        """
         self.handle = None
         if handle:
             self.handle = handle
@@ -57,9 +85,14 @@ class GUID(object):
             core.las.LASGuid_Destroy(self.handle)
     
     def __str__(self):
+        """String representation of the GUID"""
         return core.las.LASGuid_AsString(self.handle)
     
     def __eq__(self, other):
+        """Test GUID for equality against another :obj:`liblas.guid.GUID` instance
+        
+        :param other: The :obj:`liblas.guid.GUID` instance to test against
+        """
         if isinstance(other, GUID):
             return bool(core.las.LASGuid_Equals(self.handle, other.handle))
         raise core.LASException("GUID can only be compared to other GUIDs, not %s" % type(other))

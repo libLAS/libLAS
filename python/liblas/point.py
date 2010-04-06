@@ -337,7 +337,7 @@ class Point(object):
         t = float(t) + ms * 0.000001
         core.las.LASPoint_SetTime(self.handle,t)
 
-    doc = """Interpeted (datetime.datetime instance) time value for the point.
+    doc = """Interpeted (:class:`datetime.datetime` instance) time value for the point.
     
         Example:
         

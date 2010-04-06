@@ -113,15 +113,16 @@ class Format(object):
     
     def set_color(self, value):
         return core.las.LASPointFormat_SetColor(self.handle, bool(value))
-        
-    color = property(get_color, set_color)
+    
+    doc = """Does this format have color information"""
+    color = property(get_color, set_color, None, doc)
 
     def get_time(self):
         return bool(core.las.LASPointFormat_HasTime(self.handle))
     
     def set_time(self, value):
         return core.las.LASPointFormat_SetTime(self.handle, bool(value))
-        
-    time = property(get_time, set_time)  
+    doc = """Does this format have time information"""
+    time = property(get_time, set_time, None, doc)  
     
     

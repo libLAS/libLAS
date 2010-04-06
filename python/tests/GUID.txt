@@ -16,3 +16,5 @@
   >>> g2 == g3
   True
   
+  >>> import uuid
+  >>> g4 = guid.GUID(key=str(uuid.uuid1()))
