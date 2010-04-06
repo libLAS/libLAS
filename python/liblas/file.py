@@ -201,7 +201,7 @@ class File(object):
     def get_input_srs(self):
         return self.in_srs
     doc = """The input :obj:`liblas.srs.SRS` for the file.  This overrides the 
-    obj:`liblas.header.Header.SRS`.  It is useful in cases where the header's 
+    :obj:`liblas.header.Header.SRS`.  It is useful in cases where the header's 
     SRS is not valid or does not exist."""    
     input_srs = property(get_input_srs, set_input_srs, None, doc)
   

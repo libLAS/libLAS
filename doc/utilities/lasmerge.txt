@@ -2,7 +2,7 @@
 
     PageBreak
     
-_lasmerge:
+.. _lasmerge:
     
 ****************************************************************
   lasmerge: merge multiple LAS files into a single file

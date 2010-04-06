@@ -1,8 +1,18 @@
+.. raw:: pdf
+
+    PageBreak
+    
 .. _class_documentation:
 
 ****************************************************************
   Python Class Documentation
 ****************************************************************
+
+
+
+=============================================
+liblas.point.Point
+=============================================
 
 .. autoclass:: liblas.point.Point
     :members:   __init__, 
@@ -25,12 +35,9 @@
                 descale,
                 scale
 
-.. autoclass:: liblas.color.Color
-    :members:   __init__, 
-                red,
-                green,
-                blue,
-                __iter__
+=============================================
+liblas.file.File
+=============================================
 
 .. autoclass:: liblas.file.File
     :members:   __init__, 
@@ -43,7 +50,25 @@
                 __iter__, 
                 __getitem__,
                 __len__
-    
+
+=============================================
+liblas.color.Color
+=============================================
+
+.. autoclass:: liblas.color.Color
+    :members:   __init__, 
+                red,
+                green,
+                blue,
+                __iter__
+
+
+=============================================
+liblas.format.Format
+=============================================
+
+.. autoclass:: liblas.format.Format
+    :members:   __init__
 
 .. _specification: http://liblas.org/raw-attachment/wiki/WikiStart/asprs_las_format_v13.pdf
 
