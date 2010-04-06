@@ -87,22 +87,25 @@ class Format(object):
     def set_major(self, value):
         return core.las.LASPointFormat_SetVersionMajor(self.handle, int(value))
         
-    major = property(get_major, set_major)
+    doc = """Major version for the format.  Always 1 for libLAS."""
+    major = property(get_major, set_major, None, doc)
     
     def get_minor(self):
         return core.las.LASPointFormat_GetVersionMinor(self.handle)
     
     def set_minor(self, value):
         return core.las.LASPointFormat_SetVersionMinor(self.handle, int(value))
-        
-    minor = property(get_minor, set_minor)
+    
+    doc = """Minor version for the format.  Can be 0, 1, 2, 3.  No validation"""
+    minor = property(get_minor, set_minor, None, doc)
 
     def get_size(self):
         return core.las.LASPointFormat_GetByteSize(self.handle)
     
     def set_size(self, value):
         return core.las.LASPointFormat_SetByteSize(self.handle, int(value))
-        
+    
+    doc = """Size in bytes of the format.  """
     size = property(get_size, set_size)
 
     def get_color(self):

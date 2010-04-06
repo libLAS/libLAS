@@ -25,7 +25,7 @@
   
   >>> f.size = 14
   >>> f.size
-  28L
+  26L
 
   >>> h = f2.header
   >>> f = h.format

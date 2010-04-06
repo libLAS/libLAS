@@ -102,6 +102,8 @@ protected:
 
 private:
     void updatesize();
+    void updatesize(liblas::uint16_t new_size);
+    liblas::uint16_t calculate_base_size();
 };
 
 inline uint16_t PointFormat::GetByteSize() const
@@ -111,7 +113,7 @@ inline uint16_t PointFormat::GetByteSize() const
 
 inline void PointFormat::SetByteSize(uint16_t const& value)
 {
-    m_size = value;
+    updatesize(value);
 }
 
 inline uint8_t PointFormat::GetVersionMajor() const

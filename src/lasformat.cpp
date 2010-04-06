@@ -44,8 +44,29 @@
 
 namespace liblas { 
 
+void PointFormat::updatesize(liblas::uint16_t new_size) {
 
-void PointFormat::updatesize() {
+
+        long base_difference = new_size - m_size;
+        
+        // printf("updatesize() %d\n", base_difference);
+        if (base_difference == 0) {
+            return;
+        }
+        else if (base_difference > 0) {
+            // Expand m_size to include new_base_size
+            // printf("we're now here! %d %d %d %d\n", m_size, base_difference, new_size, m_base_size);            
+
+            m_size = new_size;
+        }
+        else {
+            // printf("we're here! %d %d %d\n", m_size, base_difference, m_base_size);            
+            m_size = std::max(new_size, m_base_size);
+        }
+        
+}
+
+liblas::uint16_t PointFormat::calculate_base_size() {
     liblas::uint16_t new_base_size = sizeof(detail::PointRecord);
     
     if (HasColor()) {
@@ -55,6 +76,11 @@ void PointFormat::updatesize() {
     if (HasTime()) {
         new_base_size += sizeof(double);
     }
+    return new_base_size;
+    
+}
+void PointFormat::updatesize() {
+    liblas::uint16_t new_base_size = calculate_base_size();
     
     // Set to the base if we haven't set it at all yet
     if (m_size == 0) {
@@ -67,13 +93,15 @@ void PointFormat::updatesize() {
         
         long base_difference = m_base_size - new_base_size;
         
-        if (base_difference > 0) {
+        if (base_difference == 0) {
+            return;
+        }
+        else if (base_difference > 0) {
             // Expand m_size to include new_base_size
             m_size = m_size + base_difference;
             m_base_size = new_base_size;
         }
         else {
-            printf("we're here! %d %d %d %d\n", m_size, base_difference, m_base_size, new_base_size);            
             m_size = m_size - base_difference;
             m_base_size = new_base_size;
         }
