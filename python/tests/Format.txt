@@ -22,6 +22,10 @@
   >>> f.color = True
   >>> f.size
   46L
+  
+  >>> f.size = 14
+  >>> f.size
+  28L
 
   >>> h = f2.header
   >>> f = h.format

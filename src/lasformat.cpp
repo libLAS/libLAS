@@ -72,7 +72,8 @@ void PointFormat::updatesize() {
             m_size = m_size + base_difference;
             m_base_size = new_base_size;
         }
-        else {            
+        else {
+            printf("we're here! %d %d %d %d\n", m_size, base_difference, m_base_size, new_base_size);            
             m_size = m_size - base_difference;
             m_base_size = new_base_size;
         }
