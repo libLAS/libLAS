@@ -49,9 +49,9 @@
   
   >>> p.user_data
   0
-  >>> p.user_data = 163446
+  >>> p.user_data = 163
   >>> p.user_data
-  118
+  163
   
   >>> p.scan_angle
   0

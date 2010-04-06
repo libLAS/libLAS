@@ -5,10 +5,32 @@
 ****************************************************************
 
 .. autoclass:: liblas.point.Point
-    :members: x, y, z, time, scan_angle, scan_direction, scan_flags, flightline_edge, number_of_returns, return_number
+    :members:   __init__, 
+                x, 
+                y, 
+                z, 
+                time, 
+                raw_time, 
+                scan_angle, 
+                scan_direction, 
+                scan_flags, 
+                flightline_edge, 
+                number_of_returns, 
+                return_number,
+                classification,
+                user_data,
+                point_source_id,
+                color,
+                data,
+                descale,
+                scale
 
 .. autoclass:: liblas.file.File
     :members: __init__, close, header, read, write, __iter__, __getitem__
+    
+
+.. _specification: http://liblas.org/raw-attachment/wiki/WikiStart/asprs_las_format_v13.pdf
+
 # .. doxygenclass:: liblas::Color
 #    :project: class
 

@@ -80,10 +80,23 @@ class Header(object):
     
     def get_filesourceid(self):
         return core.las.LASHeader_GetFileSourceId(self.handle)
-    filesource_id = property(get_filesourceid)
+    
+    def set_filesourceid(self, value):
+        return core.las.LASHeader_SetFileSourceId(self.handle, value)
+    doc = """"""
+    filesource_id = property(get_filesourceid, set_filesourceid, None, doc)
 
+    def get_global_encoding(self):
+        return core.las.LASHeader_GetReserved(self.handle)
+    
+    def set_global_encoding(self, value):
+        return core.las.LASHeader_SetReserved(self.handle, value)
+    doc = """"""
+    global_encoding= property(get_global_encoding, set_global_encoding, None, doc)
+    
     def get_projectid(self):
-        """Returns the ProjectID/GUID for the file.  libLAS does not currently support setting this value from Python"""
+        """Returns the ProjectID/GUID for the file.  \
+        libLAS does not currently support setting this value from Python"""
         return core.las.LASHeader_GetProjectId(self.handle)
     project_id = property(get_projectid)
     

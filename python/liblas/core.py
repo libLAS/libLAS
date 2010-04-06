@@ -285,6 +285,14 @@ las.LASPoint_SetUserData.restype = ctypes.c_int
 las.LASPoint_SetUserData.argtypes = [ctypes.c_void_p, ctypes.c_ubyte]
 las.LASPoint_SetUserData.errcheck = check_return
 
+las.LASPoint_SetPointSourceId.restype = ctypes.c_short
+las.LASPoint_SetPointSourceId.argtypes = [ctypes.c_void_p]
+las.LASPoint_SetPointSourceId.errcheck = check_value
+las.LASPoint_GetPointSourceId.restype = ctypes.c_short
+las.LASPoint_GetPointSourceId.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetPointSourceId.errcheck = check_value
+
+
 las.LASPoint_GetExtraData.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_ubyte)), ctypes.POINTER(ctypes.c_int)]
 las.LASPoint_GetExtraData.errcheck = check_value
 las.LASPoint_GetExtraData.restype = ctypes.c_int
@@ -323,6 +331,17 @@ las.LASHeader_GetFileSourceId.restype = ctypes.c_ushort
 las.LASHeader_GetFileSourceId.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetFileSourceId.errcheck = check_value
 
+las.LASHeader_SetFileSourceId.restype = ctypes.c_short
+las.LASHeader_SetFileSourceId.argtypes = [ctypes.c_void_p]
+las.LASHeader_SetFileSourceId.errcheck = check_value
+
+las.LASHeader_SetReserved.restype = ctypes.c_short
+las.LASHeader_SetReserved.argtypes = [ctypes.c_void_p]
+las.LASHeader_SetReserved.errcheck = check_value
+las.LASHeader_GetReserved.restype = ctypes.c_short
+las.LASHeader_GetReserved.argtypes = [ctypes.c_void_p]
+las.LASHeader_GetReserved.errcheck = check_value
+
 las.LASHeader_GetProjectId.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetProjectId.errcheck = check_value_free
 las.LASHeader_GetProjectId.restype = ctypes.c_char_p
@@ -354,10 +373,6 @@ las.LASHeader_GetSoftwareId.restype = ctypes.c_char_p
 las.LASHeader_SetSoftwareId.restype = ctypes.c_int
 las.LASHeader_SetSoftwareId.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 las.LASHeader_SetSoftwareId.errcheck = check_return
-
-las.LASHeader_GetReserved.restype = ctypes.c_short
-las.LASHeader_GetReserved.argtypes = [ctypes.c_void_p]
-las.LASHeader_GetReserved.errcheck = check_value
 
 las.LASHeader_GetCreationDOY.restype = ctypes.c_ushort
 las.LASHeader_GetCreationDOY.argtypes = [ctypes.c_void_p]
