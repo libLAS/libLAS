@@ -495,6 +495,7 @@ las.LASHeader_DeleteVLR.errcheck = check_return
 
 las.LASHeader_AddVLR.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASHeader_AddVLR.errcheck = check_return
+las.LASHeader_AddVLR.restype = None
 
 las.LASWriter_Create.restype = ctypes.c_void_p
 las.LASWriter_Create.argtypes = [ctypes.c_char_p, ctypes.c_void_p, ctypes.c_int]
@@ -700,11 +701,11 @@ las.LASPointFormat_Create.argtypes = [ctypes.c_uint8, ctypes.c_uint8, ctypes.c_u
 las.LASPointFormat_Create.errcheck = check_void
 las.LASPointFormat_Create.restype = ctypes.c_void_p
 
-las.LASPointFormat_GetByteSize.restype = ctypes.c_uint32
+las.LASPointFormat_GetByteSize.restype = ctypes.c_ushort
 las.LASPointFormat_GetByteSize.argtypes = [ctypes.c_void_p]
 las.LASPointFormat_GetByteSize.errcheck = check_value
 las.LASPointFormat_SetByteSize.restype = ctypes.c_int
-las.LASPointFormat_SetByteSize.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+las.LASPointFormat_SetByteSize.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
 las.LASPointFormat_SetByteSize.errcheck = check_return
 
 las.LASPointFormat_HasColor.restype = ctypes.c_uint8
