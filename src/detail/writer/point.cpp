@@ -62,7 +62,8 @@ Point::Point(   std::ostream& ofs,
     m_ofs(ofs), 
     m_header(header), 
     m_point(liblas::Point()), 
-    m_transform(0)
+    m_transform(0),
+    m_format(header.GetPointFormat())
 {
     setup();
 }
@@ -70,8 +71,13 @@ Point::Point(   std::ostream& ofs,
 Point::Point(   std::ostream& ofs, 
                 liblas::uint32_t& count,
                 const liblas::Header& header, 
-                OGRCoordinateTransformationH transform) : Base(ofs, count),
-    m_ofs(ofs), m_header(header), m_point(liblas::Point()), m_transform(transform)
+                OGRCoordinateTransformationH transform) : 
+            Base(ofs, count),
+            m_ofs(ofs), 
+            m_header(header), 
+            m_point(liblas::Point()), 
+            m_transform(transform),
+            m_format(header.GetPointFormat())
 
 {
     setup();
@@ -91,49 +97,47 @@ void Point::write(const liblas::Point& point)
     uint16_t green = 0;
     liblas::Color color;
     
-    // std::size_t byteswritten(0);
+    std::size_t byteswritten(0);
     
     m_point = point;
     fill();
     
     detail::write_n(m_ofs, m_record, sizeof(m_record));
-    // byteswritten += sizeof(PointRecord);
+    byteswritten += sizeof(PointRecord);
 
-    if (m_header.GetDataFormatId() == liblas::ePointFormat1)
+    if (m_format.HasTime()) 
     {
+
         t = point.GetTime();
         detail::write_n(m_ofs, t, sizeof(double));
+        byteswritten += sizeof(double);
+        
+        if (m_format.HasColor()) 
+        {
+            color = point.GetColor();
+            red = color.GetRed();
+            green = color.GetGreen();
+            blue = color.GetBlue();
+            detail::write_n(m_ofs, red, sizeof(uint16_t));
+            detail::write_n(m_ofs, green, sizeof(uint16_t));
+            detail::write_n(m_ofs, blue, sizeof(uint16_t));
+            byteswritten += 3 * sizeof(uint16_t);
+            
+        }
+    } else {
+        if (m_format.HasColor()) 
+        {
+            color = point.GetColor();
+            red = color.GetRed();
+            green = color.GetGreen();
+            blue = color.GetBlue();
+            detail::write_n(m_ofs, red, sizeof(uint16_t));
+            detail::write_n(m_ofs, green, sizeof(uint16_t));
+            detail::write_n(m_ofs, blue, sizeof(uint16_t));
+            byteswritten += 3 * sizeof(uint16_t);
+        }        
+    }
 
-        // byteswritten += sizeof(double);
-    }
-    else if (m_header.GetDataFormatId() == liblas::ePointFormat2)
-    {
-        color = point.GetColor();
-        red = color.GetRed();
-        green = color.GetGreen();
-        blue = color.GetBlue();
-        detail::write_n(m_ofs, red, sizeof(uint16_t));
-        detail::write_n(m_ofs, green, sizeof(uint16_t));
-        detail::write_n(m_ofs, blue, sizeof(uint16_t));
-        
-        // byteswritten += 3 * sizeof(uint16_t);
-    }
-    else if (m_header.GetDataFormatId() == liblas::ePointFormat3)
-    {
-        t = point.GetTime();
-        detail::write_n(m_ofs, t, sizeof(double));
-        // byteswritten += sizeof(double);
-        
-        color = point.GetColor();
-        red = color.GetRed();
-        green = color.GetGreen();
-        blue = color.GetBlue();
-        detail::write_n(m_ofs, red, sizeof(uint16_t));
-        detail::write_n(m_ofs, green, sizeof(uint16_t));
-        detail::write_n(m_ofs, blue, sizeof(uint16_t));
-        
-        // byteswritten += 3 * sizeof(uint16_t);
-    }
 
     liblas::uint32_t& count = GetPointCount();
     count++;
@@ -141,7 +145,7 @@ void Point::write(const liblas::Point& point)
 
     // write in our extra data that the user set on the 
     // point up to the header's specified DataRecordLength
-    if (m_header.GetPointFormat().GetByteSize() != m_header.GetDataRecordLength()) {
+    if (m_format.GetByteSize() != m_header.GetDataRecordLength()) {
         std::vector<uint8_t> const& data = point.GetExtraData();
         std::streamsize const size = static_cast<std::streamsize>(m_header.GetDataRecordLength() - data.size());
         detail::write_n(GetStream(), data.front(), size);

@@ -101,6 +101,7 @@ private:
     
     PointRecord m_record;
     
+    PointFormat m_format;
     void project();
     void setup();
     void fill();
