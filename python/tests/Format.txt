@@ -7,7 +7,7 @@
 
   >>> f = format.Format()
   >>> f.size
-  20L
+  20
   >>> f.color
   False
   >>> f.time
@@ -17,24 +17,24 @@
   
   >>> f.size = 40
   >>> f.size
-  40L
+  40
   
   >>> f.color = True
   >>> f.size
-  46L
+  46
   
   >>> f.size = 14
   >>> f.size
-  26L
+  26
 
   >>> h = f2.header
   >>> f = h.format
   
   >>> f.major, f.minor
-  (1, 2)
+  (1, 0)
   
   >>> f.size
-  28L
+  28
   
   >>> f.color
   False
@@ -47,7 +47,7 @@
 
   
   >>> f.size
-  20L
+  20
 
   >>> f.major
   1

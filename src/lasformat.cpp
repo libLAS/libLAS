@@ -45,24 +45,16 @@
 namespace liblas { 
 
 void PointFormat::updatesize(liblas::uint16_t new_size) {
-
-
-        long base_difference = new_size - m_size;
         
-        // printf("updatesize() %d\n", base_difference);
-        if (base_difference == 0) {
+        // if the difference between the new size we're given 
+        // and our existing size is 0, do nothing.
+        if ((new_size - m_size) == 0) {
             return;
         }
-        else if (base_difference > 0) {
-            // Expand m_size to include new_base_size
-            // printf("we're now here! %d %d %d %d\n", m_size, base_difference, new_size, m_base_size);            
-
-            m_size = new_size;
-        }
-        else {
-            // printf("we're here! %d %d %d\n", m_size, base_difference, m_base_size);            
-            m_size = std::max(new_size, m_base_size);
-        }
+        
+        // Use the larger of either our base size (accounting for 
+        // color, time, etc) and the size we were given.
+        m_size = std::max(new_size, m_base_size);
         
 }
 
@@ -100,13 +92,10 @@ void PointFormat::updatesize() {
             // Expand m_size to include new_base_size
             m_size = m_size + base_difference;
             m_base_size = new_base_size;
-            printf("base difference > 0: %d %d %d %d\n", m_size, base_difference, m_base_size, new_base_size);
         }
         else {
-            printf("base difference < 0: %d %d %d %d\n", m_size, base_difference, m_base_size, new_base_size);
-            m_size = m_size + base_difference;
+            m_size = m_size - base_difference;
             m_base_size = new_base_size;
-            printf("new: %d %d %d %d\n", m_size, base_difference, m_base_size, new_base_size);
         }
         
     }

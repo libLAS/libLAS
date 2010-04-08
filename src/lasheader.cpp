@@ -390,6 +390,8 @@ void Header::SetDataFormatId(liblas::PointFormatName v)
 {
     m_dataFormatId = static_cast<uint8_t>(v);
 
+    UpdatePointFormat();
+    
     if (ePointFormat0 == m_dataFormatId)
         SetDataRecordLength(ePointSize0);
     else if (ePointFormat1 == m_dataFormatId) 
@@ -401,7 +403,7 @@ void Header::SetDataFormatId(liblas::PointFormatName v)
     else
         SetDataRecordLength(ePointSize3);
 
-    UpdatePointFormat();
+
 }
 
 uint16_t Header::GetDataRecordLength() const
