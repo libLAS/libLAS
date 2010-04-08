@@ -39,6 +39,11 @@ dirhtml:
 	@echo
 	@echo "Build finished. The HTML pages are in build/dirhtml."
 
+doxygen:
+	cd api; doxygen doxygen.conf; cd ..
+	@echo
+	@echo "Doxygen built"
+    	
 pickle:
 	$(SPHINXBUILD) -b pickle $(ALLSPHINXOPTS) build/pickle
 	@echo
