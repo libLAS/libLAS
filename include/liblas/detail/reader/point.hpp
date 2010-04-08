@@ -92,6 +92,7 @@ private:
     liblas::Point m_point;
     OGRCoordinateTransformationH m_transform;
     
+    PointFormat m_format;
     
     void project();
     void setup();

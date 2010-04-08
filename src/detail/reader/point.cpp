@@ -54,7 +54,7 @@ void Point::setup()
 }
 
 Point::Point(std::istream& ifs, const liblas::Header& header) :
-    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_transform(0)
+    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_transform(0),m_format(header.GetPointFormat())
 {
     setup();
 }
@@ -62,7 +62,7 @@ Point::Point(std::istream& ifs, const liblas::Header& header) :
 Point::Point(   std::istream& ifs, 
                 const liblas::Header& header, 
                 OGRCoordinateTransformationH transform) :
-    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_transform(transform)
+    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_transform(transform), m_format(header.GetPointFormat())
 {
     setup();
 }
@@ -92,7 +92,7 @@ void Point::read()
     // TODO: Replace with compile-time assert
     assert(liblas::ePointSize0 == sizeof(record));
 
-    const PointFormat& format = m_header.GetPointFormat();
+    // const PointFormat& format = m_header.GetPointFormat();
     
     try
     {
@@ -108,14 +108,14 @@ void Point::read()
     // Reader::FillPoint(record, m_point, m_header);
     m_point.SetCoordinates(m_header, m_point.GetX(), m_point.GetY(), m_point.GetZ());
 
-    if (format.HasTime()) 
+    if (m_format.HasTime()) 
     {
 
         detail::read_n(gpst, m_ifs, sizeof(double));
         m_point.SetTime(gpst);
         bytesread += sizeof(double);
         
-        if (format.HasColor()) 
+        if (m_format.HasColor()) 
         {
             detail::read_n(red, m_ifs, sizeof(uint16_t));
             detail::read_n(green, m_ifs, sizeof(uint16_t));
@@ -127,7 +127,7 @@ void Point::read()
             bytesread += 3 * sizeof(uint16_t);
         }
     } else {
-        if (format.HasColor()) 
+        if (m_format.HasColor()) 
         {
             detail::read_n(red, m_ifs, sizeof(uint16_t));
             detail::read_n(green, m_ifs, sizeof(uint16_t));
@@ -140,16 +140,16 @@ void Point::read()
         }        
     }
     
-    if (bytesread != format.GetByteSize()) {
+    if (bytesread != m_format.GetByteSize()) {
         std::ostringstream msg; 
         msg <<  "The number of bytes that were read ("<< bytesread <<") does not " 
                 "match the number of bytes the point's format "
                 "says it should have (" << 
-                format.GetByteSize() << ")";
+                m_format.GetByteSize() << ")";
         throw std::runtime_error(msg.str());
         
     }
-    if (format.GetByteSize() != m_header.GetDataRecordLength())
+    if (m_format.GetByteSize() != m_header.GetDataRecordLength())
     {
         std::size_t bytesleft = m_header.GetDataRecordLength() - bytesread;
 
