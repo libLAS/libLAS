@@ -67,7 +67,6 @@ public:
                     bool bTime);
     PointFormat& operator=(PointFormat const& rhs);
     PointFormat(PointFormat const& other);
-    PointFormat();
     
     ~PointFormat() {};
 
@@ -106,57 +105,7 @@ private:
     liblas::uint16_t calculate_base_size();
 };
 
-inline uint16_t PointFormat::GetByteSize() const
-{
-    return m_size;
-}
 
-inline void PointFormat::SetByteSize(uint16_t const& value)
-{
-    updatesize(value);
-}
-
-inline uint8_t PointFormat::GetVersionMajor() const
-{
-    return m_versionmajor;
-}
-
-inline void PointFormat::SetVersionMajor(uint8_t const& value)
-{
-    m_versionmajor = value;
-}
-
-inline uint8_t PointFormat::GetVersionMinor() const
-{
-    return m_versionminor;
-}
-
-inline void PointFormat::SetVersionMinor(uint8_t const& value)
-{
-    m_versionminor = value;
-}
-
-inline bool PointFormat::HasColor() const
-{
-    return m_hasColor;
-}
-
-inline void PointFormat::Color(bool const& value)
-{
-    m_hasColor = value;
-    updatesize();
-}
-
-inline bool PointFormat::HasTime() const
-{
-    return m_hasTime;
-}
-
-inline void PointFormat::Time(bool const& value)
-{
-    m_hasTime = value;
-    updatesize();
-}
 
 } // namespace liblas
 

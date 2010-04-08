@@ -100,10 +100,13 @@ void PointFormat::updatesize() {
             // Expand m_size to include new_base_size
             m_size = m_size + base_difference;
             m_base_size = new_base_size;
+            printf("base difference > 0: %d %d %d %d\n", m_size, base_difference, m_base_size, new_base_size);
         }
         else {
-            m_size = m_size - base_difference;
+            printf("base difference < 0: %d %d %d %d\n", m_size, base_difference, m_base_size, new_base_size);
+            m_size = m_size + base_difference;
             m_base_size = new_base_size;
+            printf("new: %d %d %d %d\n", m_size, base_difference, m_base_size, new_base_size);
         }
         
     }
@@ -138,18 +141,6 @@ PointFormat::PointFormat( liblas::uint8_t major,
     updatesize();
 }
 
-PointFormat::PointFormat( ) :
-    m_size(0),
-    m_versionminor(2), 
-    m_versionmajor(1),
-    m_hasColor(false),
-    m_hasTime(false),
-    m_base_size(0)
-{
-    updatesize();
-}
-
-
 // copy constructor
 PointFormat::PointFormat(PointFormat const& other) :
     m_size(other.m_size),
@@ -175,8 +166,61 @@ PointFormat& PointFormat::operator=(PointFormat const& rhs)
         m_base_size = rhs.m_base_size;
 
     }
+    
     return *this;
 }
 
+uint16_t PointFormat::GetByteSize() const
+{
+    return m_size;
+}
+
+void PointFormat::SetByteSize(uint16_t const& value)
+{
+    updatesize(value);
+}
+
+uint8_t PointFormat::GetVersionMajor() const
+{
+    return m_versionmajor;
+}
+
+void PointFormat::SetVersionMajor(uint8_t const& value)
+{
+    m_versionmajor = value;
+
+}
+
+uint8_t PointFormat::GetVersionMinor() const
+{
+    return m_versionminor;
+}
+
+void PointFormat::SetVersionMinor(uint8_t const& value)
+{
+    m_versionminor = value;
+}
+
+bool PointFormat::HasColor() const
+{
+    return m_hasColor;
+}
+
+void PointFormat::Color(bool const& value)
+{
+    m_hasColor = value;
+    updatesize();
+}
+
+bool PointFormat::HasTime() const
+{
+    return m_hasTime;
+}
+
+void PointFormat::Time(bool const& value)
+{
+    m_hasTime = value;
+    updatesize();
+}
 
 } // namespace liblas

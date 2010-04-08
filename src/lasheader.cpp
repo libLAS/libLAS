@@ -66,7 +66,7 @@ char const* const Header::FileSignature = "LASF";
 char const* const Header::SystemIdentifier = "libLAS";
 char const* const Header::SoftwareIdentifier = "libLAS 1.2";
 
-Header::Header()
+Header::Header() : m_format(1,2,0, false, false)
 {
     Init();
 }
@@ -149,6 +149,7 @@ Header& Header::operator=(Header const& rhs)
         m_extents = rhs.m_extents;
         m_srs = rhs.m_srs;
         m_format = rhs.m_format;
+
     }
     return *this;
 }
@@ -234,7 +235,7 @@ void Header::SetProjectId(guid const& v)
 
 uint8_t Header::GetVersionMajor() const
 {
-    return m_versionMajor;
+    return m_format.GetVersionMajor();
 }
 
 void Header::SetVersionMajor(uint8_t v)
@@ -242,12 +243,12 @@ void Header::SetVersionMajor(uint8_t v)
     if (eVersionMajorMin > v || v > eVersionMajorMax)
         throw std::out_of_range("version major out of range");
 
-    m_versionMajor = v;
+    m_format.SetVersionMajor(v);
 }
 
 uint8_t Header::GetVersionMinor() const
 {
-    return m_versionMinor;
+    return m_format.GetVersionMinor();
 }
 
 void Header::SetVersionMinor(uint8_t v)
@@ -255,7 +256,9 @@ void Header::SetVersionMinor(uint8_t v)
     if (v > eVersionMinorMax)
         throw std::out_of_range("version minor out of range");
     
-    m_versionMinor = v;
+    m_format.SetVersionMinor(v);
+
+
 }
 
 std::string Header::GetSystemId(bool pad /*= false*/) const
@@ -403,12 +406,12 @@ void Header::SetDataFormatId(liblas::PointFormatName v)
 
 uint16_t Header::GetDataRecordLength() const
 {
-    return m_dataRecordLen;
+    return m_format.GetByteSize();
 }
 
 void Header::SetDataRecordLength( uint16_t v )
 {
-    m_dataRecordLen = v;
+    m_format.SetByteSize(v);
 }
 uint32_t Header::GetPointRecordsCount() const
 {
@@ -555,7 +558,9 @@ void Header::Init()
     m_versionMinor = 2;
     m_dataFormatId = ePointFormat0;
     m_dataRecordLen = ePointSize0;
+    
 
+    
     std::time_t now;
     std::time(&now);
     std::tm* ptm = std::gmtime(&now);
@@ -591,7 +596,7 @@ void Header::Init()
     // Zero scale value is useless, so we need to use a small value.
     SetScale(0.01, 0.01, 0.01);
 
-    SetPointFormat(m_format);
+    
 }
 
 void Header::ClearGeoKeyVLRs()
@@ -654,19 +659,7 @@ void Header::ClearGeoKeyVLRs()
     m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
 }
 
-void Header::UpdatePointFormat()
-{
-    if (GetDataFormatId() == liblas::ePointFormat3) {
-        m_format.Color(true);
-        m_format.Time(true);
-    } else if (GetDataFormatId() == liblas::ePointFormat2) {
-        m_format.Color(true);
-        m_format.Time(false);
-    } else if (GetDataFormatId() == liblas::ePointFormat1) {
-        m_format.Color(false);
-        m_format.Time(true);
-    }     
-}
+
 void Header::SetGeoreference() 
 {    
     std::vector<VariableRecord> vlrs = m_srs.GetVLRs();
@@ -698,20 +691,34 @@ PointFormat Header::GetPointFormat() const
     return m_format;
 }
 
+void Header::UpdatePointFormat()
+{
+    if (GetDataFormatId() == liblas::ePointFormat3) {
+        m_format.Color(true);
+        m_format.Time(true);
+    } else if (GetDataFormatId() == liblas::ePointFormat2) {
+        m_format.Color(true);
+        m_format.Time(false);
+    } else if (GetDataFormatId() == liblas::ePointFormat1) {
+        m_format.Color(false);
+        m_format.Time(true);
+    }
+}
+
 void Header::SetPointFormat(const PointFormat& format)
 {
 
-    // A user can use the set the header's version information and 
-    // format information and sizes by using a PointFormat instance
-    // in addition to setting all the settings individually by hand
-    SetVersionMinor(format.GetVersionMinor());
-    SetVersionMajor(format.GetVersionMajor());
-    
-    // The DataRecordLength will be set to the max of either the format's 
-    // byte size or the pointformat's specified size according to whether 
-    // or not it has color or time (FIXME: or waveform packets once we get to 1.3 )
-    // The extra space that is available can be used to store LASPoint::GetExtraData.
-    // We trim the format size to uint16_t because that's what the header stores 
+    // // A user can use the set the header's version information and 
+    // // format information and sizes by using a PointFormat instance
+    // // in addition to setting all the settings individually by hand
+    // SetVersionMinor(format.GetVersionMinor());
+    // SetVersionMajor(format.GetVersionMajor());
+    // 
+    // // The DataRecordLength will be set to the max of either the format's 
+    // // byte size or the pointformat's specified size according to whether 
+    // // or not it has color or time (FIXME: or waveform packets once we get to 1.3 )
+    // // The extra space that is available can be used to store LASPoint::GetExtraData.
+    // // We trim the format size to uint16_t because that's what the header stores 
     if (format.HasColor() && format.HasTime()) {
         SetDataFormatId(liblas::ePointFormat3);
         SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize3),
