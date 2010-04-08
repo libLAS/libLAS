@@ -43,9 +43,12 @@
 import core
 
 class Format(object):
+    """:class:`liblas.format.Format` is an object that keeps track of the point 
+    format sizes and what data elements the point formats have (color, time, etc), 
+    as well as accounting for their size in bytes.  """
     def __init__(self, major=1, minor=2, time=False, color = False, size=0, handle=None):
         """ 
-        :keyword major: Major version value (practically always 1 for libLAS)
+        :keyword major: Major version value (always 1 for libLAS)
         :type major: integer
         :keyword minor: Minor version value (no validation done)
         :type minor: integer
