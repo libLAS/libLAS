@@ -6,7 +6,7 @@ Some text goes here
    
    utilities/index
    python/index
-   
+   base/index
 
 * :ref:`genindex`
 * :ref:`modindex`

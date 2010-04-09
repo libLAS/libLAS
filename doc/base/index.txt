@@ -1,0 +1,16 @@
+.. raw:: pdf
+
+    PageBreak
+    
+.. _python: 
+
+****************************************************************
+  C++ Library Reference
+****************************************************************
+
+.. class:: foo
+This is some text
+
+.. doxygenclass:: liblas::Color
+    :project: class
+   
