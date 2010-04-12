@@ -2201,6 +2201,15 @@ LAS_DLL LASErrorEnum LASPointFormat_SetByteSize( LASPointFormatH hFormat, liblas
 
 }
 
+LAS_DLL liblas::uint16_t LASPointFormat_GetBaseByteSize( LASPointFormatH hFormat)
+{
+    VALIDATE_LAS_POINTER1(hFormat, "LASPointFormat_GetBaseByteSize", 0);
+    
+    liblas::PointFormat* format = ((liblas::PointFormat*) hFormat);
+    return format->GetBaseByteSize();    
+}
+
+
 LAS_DLL void LASPointFormat_Destroy(LASPointFormatH hFormat) {
     VALIDATE_LAS_POINTER0(hFormat, "LASPointFormat_Destroy");
     delete (liblas::PointFormat*) hFormat;

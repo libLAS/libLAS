@@ -708,6 +708,10 @@ las.LASPointFormat_SetByteSize.restype = ctypes.c_int
 las.LASPointFormat_SetByteSize.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
 las.LASPointFormat_SetByteSize.errcheck = check_return
 
+las.LASPointFormat_GetBaseByteSize.restype = ctypes.c_ushort
+las.LASPointFormat_GetBaseByteSize.argtypes = [ctypes.c_void_p]
+las.LASPointFormat_GetBaseByteSize.errcheck = check_value
+
 las.LASPointFormat_HasColor.restype = ctypes.c_uint8
 las.LASPointFormat_HasColor.argtypes = [ctypes.c_void_p]
 las.LASPointFormat_HasColor.errcheck = check_value

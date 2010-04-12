@@ -109,8 +109,14 @@ class Format(object):
         return core.las.LASPointFormat_SetByteSize(self.handle, int(value))
     
     doc = """Size in bytes of the format.  """
-    size = property(get_size, set_size)
+    size = property(get_size, set_size, None, doc)
 
+    def get_base_size(self):
+        return core.las.LASPointFormat_GetBaseByteSize(self.handle)
+    
+    doc = """Base size in bytes of the format.  (only accounting for time, color, etc.)"""
+    base_size = property(get_base_size, None, None, doc)
+    
     def get_color(self):
         return bool(core.las.LASPointFormat_HasColor(self.handle))
     

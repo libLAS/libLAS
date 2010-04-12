@@ -140,16 +140,8 @@ void Point::read()
         }        
     }
     
-    if (bytesread != m_format.GetByteSize()) {
-        std::ostringstream msg; 
-        msg <<  "The number of bytes that were read ("<< bytesread <<") does not " 
-                "match the number of bytes the point's format "
-                "says it should have (" << 
-                m_format.GetByteSize() << ")";
-        throw std::runtime_error(msg.str());
-        
-    }
-    if (m_format.GetByteSize() != m_header.GetDataRecordLength())
+
+    if (m_format.GetBaseByteSize() != m_format.GetByteSize())
     {
         std::size_t bytesleft = m_header.GetDataRecordLength() - bytesread;
 
@@ -160,8 +152,18 @@ void Point::read()
         
         m_point.SetExtraData(data); 
         
-        // off_type const pos(static_cast<off_type>(m_header.GetDataRecordLength() - bytesread));
-        // m_ifs.seekg(pos, std::ios::cur);
+        bytesread = bytesread + bytesleft;
+
+    }
+    
+    if (bytesread != m_format.GetByteSize()) {
+        std::ostringstream msg; 
+        msg <<  "The number of bytes that were read ("<< bytesread <<") does not " 
+                "match the number of bytes the point's format "
+                "says it should have (" << 
+                m_format.GetByteSize() << ")";
+        throw std::runtime_error(msg.str());
+        
     }
 }
 

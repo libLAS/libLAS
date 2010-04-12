@@ -76,6 +76,8 @@ public:
     /// Set value of the red image channel 
     void SetByteSize(uint16_t const& value);
 
+    /// Get the base size (only accounting for Time, Color, etc )
+    uint16_t GetBaseByteSize() const;
     
     uint8_t GetVersionMajor() const; 
     void SetVersionMajor(uint8_t const& value);

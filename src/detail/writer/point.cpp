@@ -145,10 +145,34 @@ void Point::write(const liblas::Point& point)
 
     // write in our extra data that the user set on the 
     // point up to the header's specified DataRecordLength
-    if (m_format.GetByteSize() != m_header.GetDataRecordLength()) {
+    if (m_format.GetByteSize() != m_format.GetBaseByteSize()) {
         std::vector<uint8_t> const& data = point.GetExtraData();
-        std::streamsize const size = static_cast<std::streamsize>(m_header.GetDataRecordLength() - data.size());
-        detail::write_n(GetStream(), data.front(), size);
+
+        uint16_t size = m_format.GetByteSize() - m_format.GetBaseByteSize();
+        
+        if (data.size()  == 0) {
+            char* blanks = new char[size];
+            for (int i=0; i < size; ++i) {
+                blanks[i] = '\0';
+            }
+            detail::write_n(GetStream(), blanks, static_cast<std::streamsize>(size));
+            delete [] blanks; 
+        } else if (data.size() != size){ 
+            int16_t difference = size - data.size();
+            if (difference < 0) {
+                throw std::runtime_error("Format's base size is larger than it's size.  This should not happen!");
+            }
+            char* blanks = new char[difference];
+            for (int i=0; i < size; ++i) {
+                blanks[i] = '\0';
+            }
+            detail::write_n(GetStream(), data.front(), data.size());
+            detail::write_n(GetStream(), blanks, static_cast<std::streamsize>(difference));
+            delete [] blanks;
+
+        } else {
+            detail::write_n(GetStream(), data.front(), static_cast<std::streamsize>(size));
+        }
     }
 }
 

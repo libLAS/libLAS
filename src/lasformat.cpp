@@ -212,4 +212,9 @@ void PointFormat::Time(bool const& value)
     updatesize();
 }
 
+uint16_t PointFormat::GetBaseByteSize() const
+{
+    return m_base_size;
+}
+
 } // namespace liblas

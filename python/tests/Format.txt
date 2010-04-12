@@ -63,3 +63,6 @@
   
   >>> h.data_record_length
   40
+  
+  >>> f.base_size 
+  20
