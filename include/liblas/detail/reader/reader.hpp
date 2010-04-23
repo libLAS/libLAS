@@ -77,6 +77,9 @@ public:
     void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
 
 protected:
+    void CreateTransform();
+    
+
 
     typedef std::istream::off_type off_type;
     typedef std::istream::pos_type pos_type;
@@ -90,15 +93,41 @@ protected:
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
 
+    detail::reader::Point* m_point_reader;
+    detail::reader::Header* m_header_reader;
+
 private:
 
     // Blocked copying operations, declared but not defined.
     ReaderImpl(ReaderImpl const& other);
     ReaderImpl& operator=(ReaderImpl const& rhs);
-    void CreateTransform();
+
+};
+
+class CachedReaderImpl : public ReaderImpl
+{
+public:
+
+    CachedReaderImpl(std::istream& ifs, liblas::uint64_t cache_size);
+    // ~CachedReaderImpl();
+
+    liblas::Header const& ReadHeader();
+    liblas::Point const& ReadNextPoint(const liblas::Header& header);
+    liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
+
+
+protected:
+
+private:
+
+    // Blocked copying operations, declared but not defined.
+    CachedReaderImpl(ReaderImpl const& other);
+    CachedReaderImpl& operator=(ReaderImpl const& rhs);
     
-    detail::reader::Point* m_point_reader;
-    detail::reader::Header* m_header_reader;
+    liblas::uint64_t m_cache_size;
+    std::vector<bool> m_mask;
+    
+    liblas::uint64_t m_cache_position;
 
 };
 

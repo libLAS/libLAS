@@ -241,6 +241,45 @@ liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n, const liblas::Header
     return point;
 }
 
+CachedReaderImpl::CachedReaderImpl(std::istream& ifs , liblas::uint64_t size) :
+    ReaderImpl(ifs), m_cache_size(size), m_cache_position(0)
+{
+}
+
+liblas::Header const& CachedReaderImpl::ReadHeader()
+{
+    ReaderImpl::ReadHeader();
+    m_header_reader->read();
+    const liblas::Header& header = m_header_reader->GetHeader();
+    
+    Reset(header);
+    
+    if (m_cache_size == 0) {
+        m_cache_size = header.GetPointRecordsCount();
+        m_mask.resize(header.GetPointRecordsCount());
+    }
+    // keep a copy on the reader in case we're going to reproject data 
+    // on the way out.
+    m_in_srs = header.GetSRS();
+    
+    return header;
+}
+
+liblas::Point const& CachedReaderImpl::ReadNextPoint(const liblas::Header& header)
+{
+    return ReaderImpl::ReadNextPoint(header);
+}
+
+liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, const liblas::Header& header)
+{
+    
+    return ReaderImpl::ReadPointAt(n, header);
+}
+
+// CachedReaderImpl::~CachedReaderImpl()
+// {
+//     ~ReaderImpl();
+// }
 
 ReaderImpl* ReaderFactory::Create(std::istream& ifs)
 {
