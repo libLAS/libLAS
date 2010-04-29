@@ -58,6 +58,7 @@ Point::Point() :
     m_angleRank(0)
 {
     std::memset(m_coords, 0, sizeof(m_coords));
+    m_extra_data.resize(0);
 }
 
 Point::Point(Point const& other) :
