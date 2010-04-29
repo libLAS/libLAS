@@ -121,13 +121,16 @@ protected:
 private:
 
     // Blocked copying operations, declared but not defined.
-    CachedReaderImpl(ReaderImpl const& other);
-    CachedReaderImpl& operator=(ReaderImpl const& rhs);
-    
+    CachedReaderImpl(CachedReaderImpl const& other);
+    CachedReaderImpl& operator=(CachedReaderImpl const& rhs);
+    liblas::Point const& GetPoint(liblas::uint32_t position, const liblas::Header& header);
+        
     liblas::uint64_t m_cache_size;
     std::vector<bool> m_mask;
     
-    liblas::uint64_t m_cache_position;
+    liblas::uint64_t m_cache_start_position;
+    liblas::uint64_t m_cache_read_position;
+    std::vector<liblas::Point> m_cache;
 
 };
 
