@@ -267,7 +267,7 @@ set(LIBLAS_DATA_DIR ${LIBLAS_DATA_SUBDIR})
 ###############################################################################
 # Installation commands
 
-install(FILES AUTHORS ChangeLog COPYING INSTALL LICENSE.txt README
+install(FILES AUTHORS ChangeLog COPYING INSTALL LICENSE.txt README.txt
     DESTINATION ${LIBLAS_DATA_DIR}/doc)
 
 ###############################################################################
