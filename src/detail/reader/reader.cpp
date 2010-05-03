@@ -381,9 +381,9 @@ liblas::Point const& CachedReaderImpl::ReadNextPoint(const liblas::Header& heade
      
     // ++m_cache_read_position;
     liblas::Point const& point = GetPoint(m_cache_read_position, header);
-    if (point.GetX() == 0 || point.GetY() == 0.0 || point.GetReturnNumber() == 0) {
-        printf("X is zero for position %d\n", m_cache_read_position);
-    }
+    // if (point.GetX() == 0 || point.GetY() == 0.0 || point.GetReturnNumber() == 0) {
+    //     printf("X is zero for position %d\n", m_cache_read_position);
+    // }
     return point;
     
     // if (m_mask[m_cache_read_position] == true) {
