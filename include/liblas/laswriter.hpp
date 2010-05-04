@@ -105,7 +105,7 @@ private:
 
     Header m_header;
     detail::PointRecord m_record;
-    std::ostream& m_ofs;
+    // std::ostream& m_ofs;
 
 };
 

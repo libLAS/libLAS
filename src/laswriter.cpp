@@ -54,8 +54,7 @@ namespace liblas
 {
 
 Writer::Writer(std::ostream& ofs, Header const& header) :
-    m_pimpl(detail::WriterFactory::Create(ofs)), m_header(header),
-    m_ofs(ofs)
+    m_pimpl(detail::WriterFactory::Create(ofs)), m_header(header)
 {
     m_pimpl->WriteHeader(m_header);
 }
@@ -86,7 +85,8 @@ bool Writer::WritePoint(Point const& point)
 
 std::ostream& Writer::GetStream() const
 {
-    return m_ofs;
+    return m_pimpl->GetStream();
+    // return m_ofs;
 }
 
 void Writer::WriteHeader(Header& header)

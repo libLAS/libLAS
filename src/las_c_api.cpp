@@ -1453,7 +1453,9 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
     
         if (static_cast<std::ofstream&>(*ostrm))
             static_cast<std::ofstream&>(*ostrm).close();
-        delete ostrm;
+        
+        if (ostrm != NULL)
+            delete ostrm;
         ostrm = NULL;
   
         }  catch (std::runtime_error const& e/* e */) 

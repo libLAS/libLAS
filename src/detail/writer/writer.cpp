@@ -188,7 +188,6 @@ void WriterImpl::CreateTransform()
 }
 
 
-
 WriterImpl* WriterFactory::Create(std::ostream& ofs)
 {
     if (!ofs)
