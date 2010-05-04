@@ -71,6 +71,7 @@ public:
     liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
 
     std::istream& GetStream() const;
+    
     void Reset(liblas::Header const& header);
     void SetSRS(const SpatialReference& srs, const liblas::Header& header);
     void SetInputSRS(const SpatialReference& srs);
@@ -123,7 +124,7 @@ private:
     // Blocked copying operations, declared but not defined.
     CachedReaderImpl(CachedReaderImpl const& other);
     CachedReaderImpl& operator=(CachedReaderImpl const& rhs);
-    liblas::Point const& GetPoint(liblas::uint32_t position, const liblas::Header& header);
+    liblas::Point const& ReadCachedPoint(liblas::uint32_t position, const liblas::Header& header);
         
     liblas::uint64_t m_cache_size;
     std::vector<bool> m_mask;
@@ -134,14 +135,14 @@ private:
 
 };
 
-class ReaderFactory
-{
-public:
-
-    // TODO: prototypes
-    static ReaderImpl* Create(std::istream& ifs);
-    static void Destroy(ReaderImpl* p);
-};
+// class ReaderFactory
+// {
+// public:
+// 
+//     // TODO: prototypes
+//     static ReaderImpl* Create(std::istream& ifs);
+//     static void Destroy(ReaderImpl* p);
+// };
 
 
 }} // namespace liblas::detail

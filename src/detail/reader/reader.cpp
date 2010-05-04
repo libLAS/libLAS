@@ -270,7 +270,7 @@ liblas::Header const& CachedReaderImpl::ReadHeader()
     return header;
 }
 
-liblas::Point const& CachedReaderImpl::GetPoint(liblas::uint32_t position, const liblas::Header& header) {
+liblas::Point const& CachedReaderImpl::ReadCachedPoint(liblas::uint32_t position, const liblas::Header& header) {
     
     int32_t cache_position = position - m_cache_start_position ;
 
@@ -367,97 +367,29 @@ liblas::Point const& CachedReaderImpl::GetPoint(liblas::uint32_t position, const
 
 liblas::Point const& CachedReaderImpl::ReadNextPoint(const liblas::Header& header)
 {
-    // uint32_t pos = m_current;
-    // std::cout   << "m_mask[m_cache_read_position]: " << m_mask[m_cache_read_position] 
-    //             << " m_current: " << m_current
-    //             << " m_size: " << m_size 
-    //             << " m_cache_read_position: " << m_cache_read_position 
-    //             << " m_cache_start_position: " << m_cache_start_position 
-    // //             <<std::endl;
     if (m_cache_read_position == m_size ){
         throw std::out_of_range("file has no more points to read, end of file reached");
     }
     
-     
-    // ++m_cache_read_position;
-    liblas::Point const& point = GetPoint(m_cache_read_position, header);
-    // if (point.GetX() == 0 || point.GetY() == 0.0 || point.GetReturnNumber() == 0) {
-    //     printf("X is zero for position %d\n", m_cache_read_position);
-    // }
+    liblas::Point const& point = ReadCachedPoint(m_cache_read_position, header);
     return point;
-    
-    // if (m_mask[m_cache_read_position] == true) {
-    //     // printf("have cached point at %d giving %d as the cached point\n", m_cache_read_position, m_cache_read_position - m_cache_start_position);
-    //     ++m_cache_read_position;
-    //     
-    //     uint32_t position = m_cache_read_position - m_cache_start_position - 1;
-    //     
-    //     // // If we're reading the very first point, we have already incremented 
-    //     // // the m_cache_read_position
-    //     // if (m_cache_read_position == 0 && m_cache_start_position == 0) {
-    //     //     position = position + 1;
-    //     // }
-    //     return m_cache[position];
-    // } else {
-    //     
-    // 
-    //     
-    //     uint32_t left_to_cache = std::min(m_cache_size, header.GetPointRecordsCount() - m_cache_start_position);
-    //     // printf("number of points left to cache: %d\n", left_to_cache);
-    //     // printf("old cache position %d\n", m_cache_start_position);
-    //     
-    //     // std::cout << "MASK: ";
-    //     // std::vector<bool>::iterator it;
-    //     // for (it = m_mask.begin(); it != m_mask.end(); ++it) {
-    //     //     std::cout << *it << ",";
-    //     // }
-    //     // std::cout << std::endl;
-    //     
-    //     // Mark old points as uncached
-    //     uint32_t to_mark = std::max(m_cache_size, static_cast<liblas::uint64_t>(left_to_cache));
-    //     for (uint32_t i = 0; i < to_mark; ++i) {
-    //         // printf ("Marking %d position false\n", m_cache_start_position + i);
-    //         m_mask[m_cache_start_position + i] = false;
-    //     }
-    //     // printf("number of points to mark: %d\n", to_mark);
-    //     
-    //     m_cache_start_position =  m_cache_read_position;
-    // 
-    //     for (uint32_t i = 0; i < left_to_cache; ++i) {
-    //         
-    //         try {
-    //             m_mask[m_current] = true;
-    //             m_cache[i] = ReaderImpl::ReadNextPoint(header);
-    //         } catch (std::out_of_range&) {
-    //             // cached to the end
-    //             break;
-    //         }
-    //         // printf("cached %d points at position %d with m_current: %d\n", i, m_cache_start_position, m_current);
-    // 
-    //     }
-    //     // 
-    //     // std::cout << "MASK: ";
-    //     // for (it = m_mask.begin(); it != m_mask.end(); ++it) {
-    //     //     std::cout << *it << ",";
-    //     // }
-    //     // std::cout << std::endl;
-    //     // printf("new m_cache_start_position: %d m_cache_read_position: %d\n", m_cache_start_position, m_cache_read_position);
-    //     ++m_cache_read_position;
-    //     
-    //     uint32_t position = m_cache_read_position - m_cache_start_position - 1;
-    //     // if (m_cache_read_position == 0 && m_cache_start_position == 0) {
-    //     //     position = position + 1;
-    //     // }
-    //     // printf("returning cache position %d\n", position);
-    //     return m_cache[position];
-    // }
-    // return ReaderImpl::ReadNextPoint(header);
 }
 
 liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, const liblas::Header& header)
 {
+
+    if (n >= m_size ){
+        throw std::out_of_range("file has no more points to read, end of file reached");
     
+    } else if (m_size < n) {
+        std::ostringstream output;
+        output << "ReadPointAt:: Inputted value: " << n << " is greater than the number of points: " << m_size;
+        std::string out(output.str());
+        throw std::runtime_error(out);
+    }
     return ReaderImpl::ReadPointAt(n, header);
+    // return ReadCachedPoint(n, header);
+
 }
 
 // CachedReaderImpl::~CachedReaderImpl()
@@ -465,50 +397,51 @@ liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, const liblas::
 //     ~ReaderImpl();
 // }
 
-ReaderImpl* ReaderFactory::Create(std::istream& ifs)
-{
-    if (!ifs)
-    {
-        throw std::runtime_error("input stream state is invalid");
-    }
+// ReaderImpl* ReaderFactory::Create(std::istream& ifs)
+// {
+//     if (!ifs)
+//     {
+//         throw std::runtime_error("input stream state is invalid");
+//     }
+// 
+//     // Determine version of given LAS file and
+//     // instantiate appropriate reader.
+//     // uint8_t verMajor = 0;
+//     // uint8_t verMinor = 0;
+//     // ifs.seekg(24, std::ios::beg);
+//     // detail::read_n(verMajor, ifs, 1);
+//     // detail::read_n(verMinor, ifs, 1);
+//     
+//     return new ReaderImpl(ifs);
+//     // return new CachedReaderImpl(ifs, 3);
+//     
+//     // if (1 == verMajor && 0 == verMinor)
+//     // {
+//     // 
+//     //     return new ReaderImpl(ifs);
+//     // }
+//     // else if (1 == verMajor && 1 == verMinor)
+//     // {
+//     //     return new v11::ReaderImpl(ifs);
+//     // }
+//     // else if (1 == verMajor && 2 == verMinor)
+//     // {
+//     //     return new v12::ReaderImpl(ifs);
+//     // }
+//     // else if (2 == verMajor && 0 == verMinor )
+//     // {
+//     //     // TODO: LAS 2.0 read/write support
+//     //     throw std::runtime_error("LAS 2.0+ file detected but unsupported");
+//     // }
+// 
+//     // throw std::runtime_error("LAS file of unknown version");
+// }
 
-    // Determine version of given LAS file and
-    // instantiate appropriate reader.
-    // uint8_t verMajor = 0;
-    // uint8_t verMinor = 0;
-    // ifs.seekg(24, std::ios::beg);
-    // detail::read_n(verMajor, ifs, 1);
-    // detail::read_n(verMinor, ifs, 1);
 
-    return new CachedReaderImpl(ifs, 3);
-    
-    // if (1 == verMajor && 0 == verMinor)
-    // {
-    // 
-    //     return new ReaderImpl(ifs);
-    // }
-    // else if (1 == verMajor && 1 == verMinor)
-    // {
-    //     return new v11::ReaderImpl(ifs);
-    // }
-    // else if (1 == verMajor && 2 == verMinor)
-    // {
-    //     return new v12::ReaderImpl(ifs);
-    // }
-    // else if (2 == verMajor && 0 == verMinor )
-    // {
-    //     // TODO: LAS 2.0 read/write support
-    //     throw std::runtime_error("LAS 2.0+ file detected but unsupported");
-    // }
-
-    // throw std::runtime_error("LAS file of unknown version");
-}
-
-
-void ReaderFactory::Destroy(ReaderImpl* p) 
-{
-    delete p;
-    p = 0;
-}
+// void ReaderFactory::Destroy(ReaderImpl* p) 
+// {
+//     delete p;
+//     p = 0;
+// }
 }} // namespace liblas::detail
 

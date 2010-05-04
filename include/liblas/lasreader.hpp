@@ -151,7 +151,7 @@ private:
     // read from the istream
     bool bCustomHeader;
 
-    std::istream& m_ifs;
+    // std::istream& m_ifs;
     
 };
 

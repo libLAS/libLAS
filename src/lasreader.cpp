@@ -57,22 +57,28 @@ namespace liblas
 {
 
 Reader::Reader(std::istream& ifs) :
-    m_pimpl(detail::ReaderFactory::Create(ifs)),
+    m_pimpl(new detail::CachedReaderImpl(ifs,3)),
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(false),
-    m_ifs(ifs)
+    bCustomHeader(false)
+{
+    Init();
+}
+
+Reader::Reader(ReaderI* reader) :
+    m_pimpl(reader),
+    m_point(0),
+    m_empty_point(new Point()),
+    bCustomHeader(false)
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, Header& header) :
-    m_pimpl(detail::ReaderFactory::Create(ifs)),
+    m_pimpl(new detail::CachedReaderImpl(ifs,3)),
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(false),
-    m_ifs(ifs)
-
+    bCustomHeader(false)
 {
     m_header = header;
     bCustomHeader = true;
@@ -165,7 +171,8 @@ void Reader::Init()
 
 std::istream& Reader::GetStream() const
 {
-    return m_ifs;
+    return m_pimpl->GetStream();
+    // return m_ifs;
 }
 
 void Reader::Reset() 
@@ -175,7 +182,7 @@ void Reader::Reset()
 
 bool Reader::IsEOF() const
 {
-    return GetStream().eof();
+    return m_pimpl->GetStream().eof();
 }
 
 bool Reader::SetSRS(const SpatialReference& srs)

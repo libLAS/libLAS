@@ -159,7 +159,9 @@ public:
     virtual void Reset(const Header& header) = 0;
     virtual void SetInputSRS(const SpatialReference& srs) = 0;
     virtual void SetOutputSRS(const SpatialReference& srs, const Header& header) = 0;
-
+    
+    virtual std::istream& GetStream() const = 0;
+    
     virtual ~ReaderI() {};    
 };
 
@@ -173,6 +175,8 @@ public:
 
     virtual void SetInputSRS(const SpatialReference& srs) = 0;
     virtual void SetOutputSRS(const SpatialReference& srs, const Header& header) = 0;
+
+    virtual std::ostream& GetStream() const = 0;
 
     virtual ~WriterI() {};    
 
