@@ -156,19 +156,20 @@ void Point::write(const liblas::Point& point)
                 blanks[i] = '\0';
             }
             detail::write_n(GetStream(), blanks, static_cast<std::streamsize>(size));
-            delete [] blanks; 
+            delete[] blanks; 
         } else if (data.size() != size){ 
             int16_t difference = size - data.size();
             if (difference < 0) {
                 throw std::runtime_error("Format's base size is larger than it's size.  This should not happen!");
             }
+
             char* blanks = new char[difference];
-            for (int i=0; i < size; ++i) {
+            for (int i=0; i < difference; ++i) {
                 blanks[i] = '\0';
             }
             detail::write_n(GetStream(), data.front(), data.size());
             detail::write_n(GetStream(), blanks, static_cast<std::streamsize>(difference));
-            delete [] blanks;
+            delete[] blanks;
 
         } else {
             detail::write_n(GetStream(), data.front(), static_cast<std::streamsize>(size));
