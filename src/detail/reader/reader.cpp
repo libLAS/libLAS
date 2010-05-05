@@ -392,6 +392,28 @@ liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, const liblas::
 
 }
 
+void CachedReaderImpl::Reset(liblas::Header const& header)
+{
+    
+    if (m_mask.size() > 0) {
+
+        uint32_t left_to_cache = std::min(m_cache_size, header.GetPointRecordsCount() - m_cache_start_position);
+
+        // Mark old points as uncached
+        uint32_t to_mark = std::max(m_cache_size, static_cast<liblas::uint64_t>(left_to_cache));
+        for (uint32_t i = 0; i < to_mark; ++i) {
+
+            m_mask[m_cache_start_position + i] = false;
+        }
+
+        m_cache_start_position = 0;
+        m_cache_read_position = 0;
+    
+    }
+    
+    ReaderImpl::Reset(header);
+
+}
 // CachedReaderImpl::~CachedReaderImpl()
 // {
 //     ~ReaderImpl();
