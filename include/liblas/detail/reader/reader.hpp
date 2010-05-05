@@ -116,6 +116,7 @@ public:
     liblas::Point const& ReadNextPoint(const liblas::Header& header);
     liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
 
+    void Reset(liblas::Header const& header);
 
 protected:
 
