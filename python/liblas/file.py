@@ -113,7 +113,7 @@ class File(object):
             
             if self._header == None:
                 self.handle = core.las.LASReader_Create(self.filename)
-                self._header = lasheader.Header(handle = core.las.LASReader_GetHeader(self.handle))
+                self._header = lasheader.Header(handle = core.las.LASReader_GetHeader(self.handle), owned=True, copy=True)
             else:
                 self.handle = core.las.LASReader_CreateWithHeader(self.filename, self._header.handle)
 
@@ -128,7 +128,7 @@ class File(object):
         if self._mode == 'w' and '+' not in self._mode:
 
             if self._header == None:
-                self._header = lasheader.Header(handle = core.las.LASHeader_Create())
+                self._header = lasheader.Header(handle = core.las.LASHeader_Create(), owned=True, copy=True)
             self.handle = core.las.LASWriter_Create(self.filename, self._header.handle, 1)
             self.mode = 1
             files['write'].append(self.filename)
@@ -141,7 +141,7 @@ class File(object):
         if '+' in self._mode and 'r' not in self._mode:
             if self._header == None:
                 reader = core.las.LASReader_Create(self.filename)
-                self._header = lasheader.Header(handle = core.las.LASReader_GetHeader(reader))
+                self._header = lasheader.Header(handle = core.las.LASReader_GetHeader(reader), owned=True, copy=True)
                 core.las.LASReader_Destroy(reader)
             self.handle = core.las.LASWriter_Create(self.filename, self._header.handle, 2)
             self.mode = 2
