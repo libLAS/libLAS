@@ -176,12 +176,12 @@ void Point::write(const liblas::Point& point)
         
         if (data.size() == 0) {
 
-            detail::write_n(GetStream(), m_blanks, static_cast<std::streamsize>(size));
+            detail::write_n(GetStream(), *m_blanks, static_cast<std::streamsize>(size));
             
         } else if (data.size() < size){ 
             int16_t difference = size - data.size();
             detail::write_n(GetStream(), data.front(), data.size());
-            detail::write_n(GetStream(), m_blanks, static_cast<std::streamsize>(difference));
+            detail::write_n(GetStream(), *m_blanks, static_cast<std::streamsize>(difference));
 
         } else {
             detail::write_n(GetStream(), data.front(), static_cast<std::streamsize>(size));
