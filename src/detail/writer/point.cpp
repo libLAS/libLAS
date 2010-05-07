@@ -178,7 +178,8 @@ void Point::write(const liblas::Point& point)
 
             detail::write_n(GetStream(), *m_blanks, static_cast<std::streamsize>(size));
             
-        } else if (data.size() < size){ 
+        } else if (data.size() < static_cast<uint32_t>(size)){ 
+            // size can be casted now that we have already checked if it is less than 0
             int16_t difference = size - data.size();
             detail::write_n(GetStream(), data.front(), data.size());
             detail::write_n(GetStream(), *m_blanks, static_cast<std::streamsize>(difference));
