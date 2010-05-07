@@ -52,7 +52,24 @@ namespace liblas { namespace detail { namespace writer {
 
 void Point::setup()
 {
-
+    // If we have extra data on each point by virtue of the 
+    // base size of the format being smaller than the total byte 
+    // size of the format, we should make a buffer of blank data 
+    // that we can write into the file as necessary.  We make it 
+    // here instead of at each ::write() invocation to save the 
+    // allocation and writing of the array
+    if (m_format.GetByteSize() != m_format.GetBaseByteSize()) {
+        int16_t size = m_format.GetByteSize() - m_format.GetBaseByteSize();
+        
+        if (size < 0) {
+            throw std::runtime_error("ByteSize of format was less than BaseByteSize, this cannot happen!");
+        }
+        
+        m_blanks = new liblas::uint8_t[size];
+        for (int i=0; i < size; ++i) {
+            m_blanks[i] = 0;
+        }
+    }
 }
 
 Point::Point(   std::ostream& ofs, 
@@ -63,7 +80,8 @@ Point::Point(   std::ostream& ofs,
     m_header(header), 
     m_point(liblas::Point()), 
     m_transform(0),
-    m_format(header.GetPointFormat())
+    m_format(header.GetPointFormat()),
+    m_blanks(0)
 {
     setup();
 }
@@ -77,7 +95,8 @@ Point::Point(   std::ostream& ofs,
             m_header(header), 
             m_point(liblas::Point()), 
             m_transform(transform),
-            m_format(header.GetPointFormat())
+            m_format(header.GetPointFormat()),
+            m_blanks(0)
 
 {
     setup();
@@ -85,7 +104,8 @@ Point::Point(   std::ostream& ofs,
 
 Point::~Point()
 {
-
+    if (m_blanks != 0) 
+        delete[] m_blanks; 
 }
 
 
@@ -148,28 +168,20 @@ void Point::write(const liblas::Point& point)
     if (m_format.GetByteSize() != m_format.GetBaseByteSize()) {
         std::vector<uint8_t> const& data = point.GetExtraData();
 
-        uint16_t size = m_format.GetByteSize() - m_format.GetBaseByteSize();
+        int16_t size = m_format.GetByteSize() - m_format.GetBaseByteSize();
         
-        if (data.size()  == 0) {
-            char* blanks = new char[size];
-            for (int i=0; i < size; ++i) {
-                blanks[i] = '\0';
-            }
-            detail::write_n(GetStream(), blanks, static_cast<std::streamsize>(size));
-            delete[] blanks; 
-        } else if (data.size() != size){ 
-            int16_t difference = size - data.size();
-            if (difference < 0) {
-                throw std::runtime_error("Format's base size is larger than it's size.  This should not happen!");
-            }
+        if (size < 0) {
+            throw std::runtime_error("ByteSize of format was less than BaseByteSize, this cannot happen!");
+        }
+        
+        if (data.size() == 0) {
 
-            char* blanks = new char[difference];
-            for (int i=0; i < difference; ++i) {
-                blanks[i] = '\0';
-            }
+            detail::write_n(GetStream(), m_blanks, static_cast<std::streamsize>(size));
+            
+        } else if (data.size() < size){ 
+            int16_t difference = size - data.size();
             detail::write_n(GetStream(), data.front(), data.size());
-            detail::write_n(GetStream(), blanks, static_cast<std::streamsize>(difference));
-            delete[] blanks;
+            detail::write_n(GetStream(), m_blanks, static_cast<std::streamsize>(difference));
 
         } else {
             detail::write_n(GetStream(), data.front(), static_cast<std::streamsize>(size));

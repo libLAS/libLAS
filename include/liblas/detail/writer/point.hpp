@@ -102,6 +102,9 @@ private:
     PointRecord m_record;
     
     PointFormat m_format;
+    
+    liblas::uint8_t* m_blanks;
+    
     void project();
     void setup();
     void fill();
