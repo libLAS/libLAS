@@ -48,7 +48,7 @@ import point
 import os
 import types
 
-files = {'append': [], 'write': [], 'read': []}
+files = {'append': [], 'write': [], 'read': {}}
 import sys
 
 
@@ -110,7 +110,7 @@ class File(object):
         else:
             # we're in some kind of write mode, and if we already have the
             # file open, complain to the user.
-            for f in files['read'] + files['append'] + files['write']:
+            for f in files['read'].keys() + files['append'] + files['write']:
                 if f == self.filename:
                     raise core.LASException("File %s is already open. "
                                             "Close the file or delete the "
@@ -131,7 +131,10 @@ class File(object):
                                                         self._header.handle)
 
             self.mode = 0
-            files['read'].append(self.filename)
+            try:
+                files['read'][self.filename] += 1
+            except KeyError:
+                files['read'][self.filename] = 1
 
             if self.in_srs:
                 core.las.las.LASReader_SetInputSRS(self.handle,
@@ -183,6 +186,12 @@ class File(object):
         """
         if self.mode == 0:
             core.las.LASReader_Destroy(self.handle)
+            try:
+                files['read'][self.filename] -= 1
+                if files['read'][self.filename] == 0:
+                    files['read'].pop(self.filename)
+            except KeyError:
+                raise core.LASException("File %s was not found in accounting dictionary!" % self.filename)
             files['read'].remove(self.filename)
         else:
             try:
