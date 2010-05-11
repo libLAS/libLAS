@@ -7,44 +7,49 @@
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Howard Butler
+ * Copyright (c) 2009, Howard Butler
  *
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following 
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
  * conditions are met:
- * 
- *     * Redistributions of source code must retain the above copyright 
+ *
+ *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright 
- *       notice, this list of conditions and the following disclaimer in 
- *       the documentation and/or other materials provided 
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in
+ *       the documentation and/or other materials provided
  *       with the distribution.
- *     * Neither the name of the Martin Isenburg or Iowa Department 
- *       of Natural Resources nor the names of its contributors may be 
- *       used to endorse or promote products derived from this software 
+ *     * Neither the name of the Martin Isenburg or Iowa Department
+ *       of Natural Resources nor the names of its contributors may be
+ *       used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
- * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
  ****************************************************************************/
  """
-import atexit, os, re, sys
+
+import atexit
+import os
+import re
+import sys
 import ctypes
 from ctypes.util import find_library
 
 from ctypes import PyDLL
+
 
 class LASException(Exception):
     "libLAS exception, indicates a libLAS-related error."
@@ -54,47 +59,57 @@ class LASException(Exception):
 def check_return(result, func, cargs):
     "Error checking for LASError calls"
     if result != 0:
-        msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
+        msg = 'LASError in "%s": %s' % (func.__name__,
+                                        las.LASError_GetLastErrorMsg())
         las.LASError_Reset()
         raise LASException(msg)
     return True
 
+
 def check_void(result, func, cargs):
     "Error checking for void* returns"
     if not bool(result):
-        msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
+        msg = 'LASError in "%s": %s' % (func.__name__,
+                                        las.LASError_GetLastErrorMsg())
         las.LASError_Reset()
         raise LASException(msg)
     return result
 
+
 def check_void_done(result, func, cargs):
     "Error checking for void* returns that might be empty with no error"
     if las.LASError_GetErrorCount():
-        msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
+        msg = 'LASError in "%s": %s' % (func.__name__,
+                                        las.LASError_GetLastErrorMsg())
         las.LASError_Reset()
         raise LASException(msg)
-        
+
     return result
+
 
 def check_value(result, func, cargs):
     "Error checking proper value returns"
     count = las.LASError_GetErrorCount()
     if count != 0:
-        msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
+        msg = 'LASError in "%s": %s' % (func.__name__,
+                                        las.LASError_GetLastErrorMsg())
         las.LASError_Reset()
         raise LASException(msg)
     return result
+
 
 def check_value_free(result, func, cargs):
     "Error checking proper value returns"
     count = las.LASError_GetErrorCount()
     if count != 0:
-        msg = 'LASError in "%s": %s' % (func.__name__, las.LASError_GetLastErrorMsg() )
+        msg = 'LASError in "%s": %s' % (func.__name__,
+                                        las.LASError_GetLastErrorMsg())
         las.LASError_Reset()
         raise LASException(msg)
-    
+
     retval = ctypes.string_at(result)[:]
     return retval
+
 
 def free_returned_char_p(result, func, cargs):
 
@@ -102,8 +117,7 @@ def free_returned_char_p(result, func, cargs):
     retvalue = ctypes.string_at(result)
     free(result)
     return retvalue
-    
-    
+
 
 try:
     from numpy import array, ndarray
@@ -112,14 +126,15 @@ except ImportError:
     HAS_NUMPY = False
 
 if os.name == 'nt':
-    # stolen from Shapely
-    # http://trac.gispython.org/projects/PCL/browser/Shapely/trunk/shapely/geos.py
+# stolen from Shapely
+# http://trac.gispython.org/projects/PCL/browser/Shapely/trunk/shapely/geos.py
     lib_name = 'liblas1.dll'
     try:
         local_dlls = os.path.abspath(os.__file__ + "../../../DLLs")
         original_path = os.environ['PATH']
         os.environ['PATH'] = "%s;%s" % (local_dlls, original_path)
         las = ctypes.CDLL(lib_name)
+
         def free(m):
             try:
                 free = ctypes.cdll.msvcrt.free(m)
@@ -142,10 +157,9 @@ else:
     raise LASException('Unsupported OS "%s"' % os.name)
 
 
-
 def get_version():
     return las.LAS_GetVersion()
-    
+
 version = get_version()
 
 las.LAS_IsGDALEnabled.restype = ctypes.c_int
@@ -163,7 +177,7 @@ las.LASError_GetLastErrorMsg.errcheck = free_returned_char_p
 las.LASError_GetLastErrorMethod.restype = ctypes.POINTER(ctypes.c_char)
 las.LASError_GetLastErrorMethod.errcheck = free_returned_char_p
 
-las.LASError_GetErrorCount.restype=ctypes.c_int
+las.LASError_GetErrorCount.restype = ctypes.c_int
 
 las.LASReader_Create.argtypes = [ctypes.c_char_p]
 las.LASReader_Create.restype = ctypes.c_void_p
@@ -173,7 +187,7 @@ las.LASReader_CreateWithHeader.argtypes = [ctypes.c_char_p, ctypes.c_void_p]
 las.LASReader_CreateWithHeader.restype = ctypes.c_void_p
 las.LASReader_CreateWithHeader.errcheck = check_void
 
-las.LASReader_GetNextPoint.restype=ctypes.c_void_p
+las.LASReader_GetNextPoint.restype = ctypes.c_void_p
 las.LASReader_GetNextPoint.argtypes = [ctypes.c_void_p]
 las.LASReader_GetNextPoint.errcheck = check_void_done
 
@@ -292,12 +306,15 @@ las.LASPoint_GetPointSourceId.restype = ctypes.c_short
 las.LASPoint_GetPointSourceId.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetPointSourceId.errcheck = check_value
 
-
-las.LASPoint_GetExtraData.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_ubyte)), ctypes.POINTER(ctypes.c_int)]
+las.LASPoint_GetExtraData.argtypes = [ctypes.c_void_p,
+                            ctypes.POINTER(ctypes.POINTER(ctypes.c_ubyte)),
+                            ctypes.POINTER(ctypes.c_int)]
 las.LASPoint_GetExtraData.errcheck = check_value
 las.LASPoint_GetExtraData.restype = ctypes.c_int
 
-las.LASPoint_SetExtraData.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ubyte), ctypes.c_int]
+las.LASPoint_SetExtraData.argtypes = [ctypes.c_void_p,
+                                        ctypes.POINTER(ctypes.c_ubyte),
+                                        ctypes.c_int]
 las.LASPoint_SetExtraData.errcheck = check_value
 las.LASPoint_SetExtraData.restype = ctypes.c_int
 
@@ -428,10 +445,13 @@ las.LASHeader_SetPointRecordsCount.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
 las.LASHeader_SetPointRecordsCount.errcheck = check_return
 
 las.LASHeader_GetPointRecordsByReturnCount.restype = ctypes.c_ulong
-las.LASHeader_GetPointRecordsByReturnCount.argtypes = [ctypes.c_void_p, ctypes.c_int]
+las.LASHeader_GetPointRecordsByReturnCount.argtypes = [ctypes.c_void_p,
+                                                        ctypes.c_int]
 las.LASHeader_GetPointRecordsByReturnCount.errcheck = check_value
 las.LASHeader_SetPointRecordsByReturnCount.restype = ctypes.c_int
-las.LASHeader_SetPointRecordsByReturnCount.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_ulong]
+las.LASHeader_SetPointRecordsByReturnCount.argtypes = [ctypes.c_void_p,
+                                                        ctypes.c_int,
+                                                        ctypes.c_ulong]
 las.LASHeader_SetPointRecordsByReturnCount.errcheck = check_return
 
 las.LASHeader_GetScaleX.restype = ctypes.c_double
@@ -444,7 +464,10 @@ las.LASHeader_GetScaleZ.restype = ctypes.c_double
 las.LASHeader_GetScaleZ.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetScaleZ.errcheck = check_value
 las.LASHeader_SetScale.restype = ctypes.c_int
-las.LASHeader_SetScale.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double, ctypes.c_double]
+las.LASHeader_SetScale.argtypes = [ctypes.c_void_p,
+                                    ctypes.c_double,
+                                    ctypes.c_double,
+                                    ctypes.c_double]
 las.LASHeader_SetScale.errcheck = check_return
 
 las.LASHeader_GetOffsetX.restype = ctypes.c_double
@@ -457,7 +480,10 @@ las.LASHeader_GetOffsetZ.restype = ctypes.c_double
 las.LASHeader_GetOffsetZ.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetOffsetZ.errcheck = check_value
 las.LASHeader_SetOffset.restype = ctypes.c_int
-las.LASHeader_SetOffset.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double, ctypes.c_double]
+las.LASHeader_SetOffset.argtypes = [ctypes.c_void_p,
+                                    ctypes.c_double,
+                                    ctypes.c_double,
+                                    ctypes.c_double]
 las.LASHeader_SetOffset.errcheck = check_return
 
 las.LASHeader_GetMinX.restype = ctypes.c_double
@@ -470,7 +496,10 @@ las.LASHeader_GetMinZ.restype = ctypes.c_double
 las.LASHeader_GetMinZ.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetMinZ.errcheck = check_value
 las.LASHeader_SetMin.restype = ctypes.c_int
-las.LASHeader_SetMin.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double, ctypes.c_double]
+las.LASHeader_SetMin.argtypes = [ctypes.c_void_p,
+                                    ctypes.c_double,
+                                    ctypes.c_double,
+                                    ctypes.c_double]
 las.LASHeader_SetMin.errcheck = check_return
 
 las.LASHeader_GetMaxX.restype = ctypes.c_double
@@ -483,7 +512,10 @@ las.LASHeader_GetMaxZ.restype = ctypes.c_double
 las.LASHeader_GetMaxZ.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetMaxZ.errcheck = check_value
 las.LASHeader_SetMax.restype = ctypes.c_int
-las.LASHeader_SetMax.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double, ctypes.c_double]
+las.LASHeader_SetMax.argtypes = [ctypes.c_void_p,
+                                ctypes.c_double,
+                                ctypes.c_double,
+                                ctypes.c_double]
 las.LASHeader_SetMax.errcheck = check_return
 
 las.LASHeader_GetVLR.argtypes = [ctypes.c_void_p, ctypes.c_int]
@@ -498,15 +530,19 @@ las.LASHeader_AddVLR.errcheck = check_return
 las.LASHeader_AddVLR.restype = None
 
 las.LASWriter_Create.restype = ctypes.c_void_p
-las.LASWriter_Create.argtypes = [ctypes.c_char_p, ctypes.c_void_p, ctypes.c_int]
+las.LASWriter_Create.argtypes = [ctypes.c_char_p,
+                                    ctypes.c_void_p,
+                                    ctypes.c_int]
 las.LASWriter_Create.errcheck = check_void
 
 las.LASWriter_WritePoint.restype = ctypes.c_int
-las.LASWriter_WritePoint.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASWriter_WritePoint.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_void_p]
 las.LASWriter_WritePoint.errcheck = check_return
 
 las.LASWriter_WriteHeader.restype = ctypes.c_int
-las.LASWriter_WriteHeader.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASWriter_WriteHeader.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_void_p]
 las.LASWriter_WriteHeader.errcheck = check_return
 
 las.LASWriter_SetSRS.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
@@ -534,7 +570,7 @@ las.LASGuid_Equals.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASGuid_Equals.restype = ctypes.c_int
 las.LASGuid_Equals.errcheck = check_value
 
-las.LASGuid_CreateFromString.argtypes =[ctypes.c_char_p]
+las.LASGuid_CreateFromString.argtypes = [ctypes.c_char_p]
 las.LASGuid_CreateFromString.errcheck = check_void
 las.LASGuid_CreateFromString.restype = ctypes.c_void_p
 
@@ -594,7 +630,9 @@ las.LASVLR_GetData.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ubyte)]
 las.LASVLR_GetData.errcheck = check_value
 las.LASVLR_GetData.restype = ctypes.c_int
 
-las.LASVLR_SetData.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ubyte), ctypes.c_int]
+las.LASVLR_SetData.argtypes = [ctypes.c_void_p,
+                                ctypes.POINTER(ctypes.c_ubyte),
+                                ctypes.c_int]
 las.LASVLR_SetData.errcheck = check_value
 las.LASVLR_SetData.restype = ctypes.c_int
 
@@ -697,7 +735,11 @@ las.LASHeader_SetPointFormat.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASHeader_SetPointFormat.errcheck = check_return
 las.LASHeader_SetPointFormat.restype = ctypes.c_int
 
-las.LASPointFormat_Create.argtypes = [ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint32, ctypes.c_uint8, ctypes.c_uint8]
+las.LASPointFormat_Create.argtypes = [ctypes.c_uint8,
+                                        ctypes.c_uint8,
+                                        ctypes.c_uint32,
+                                        ctypes.c_uint8,
+                                        ctypes.c_uint8]
 las.LASPointFormat_Create.errcheck = check_void
 las.LASPointFormat_Create.restype = ctypes.c_void_p
 

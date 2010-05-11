@@ -4,53 +4,55 @@
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
  * Purpose:  Python VLR implementation
- * Author:   Howard Butler, hobu.inc@gmail.com
+  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Howard Butler
+ * Copyright (c) 2009, Howard Butler
  *
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following 
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
  * conditions are met:
- * 
- *     * Redistributions of source code must retain the above copyright 
+ *
+ *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright 
- *       notice, this list of conditions and the following disclaimer in 
- *       the documentation and/or other materials provided 
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in
+ *       the documentation and/or other materials provided
  *       with the distribution.
- *     * Neither the name of the Martin Isenburg or Iowa Department 
- *       of Natural Resources nor the names of its contributors may be 
- *       used to endorse or promote products derived from this software 
+ *     * Neither the name of the Martin Isenburg or Iowa Department
+ *       of Natural Resources nor the names of its contributors may be
+ *       used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
- * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
  ****************************************************************************/
  """
+
 import core
 import ctypes
 
+
 class VLR(object):
     def __init__(self, owned=True, handle=None):
-        """ 
+        """
         :keyword owned: flag to denote whether or not the VLR owns itself
         :keyword handle: raw ctypes object
-        
+
         From the specification_:
-        
+
             The Public Header Block is followed by one or more Variable Length
             Records (There is one mandatory Variable Length Record,
             GeoKeyDirectoryTag). The number of Variable Length Records is
@@ -88,17 +90,19 @@ class VLR(object):
         else:
             self.handle = core.las.LASVLR_Create()
         self.owned = owned
+
     def __del__(self):
         if self.owned:
             if self.handle and core:
                 core.las.LASVLR_Destroy(self.handle)
-    
+
     def get_userid(self):
         return core.las.LASVLR_GetUserId(self.handle)
+
     def set_userid(self, value):
         return core.las.LASVLR_SetUserId(self.handle, value)
     doc = """User ID key for this VLR (clipped to 16 bytes long)
-    
+
     From the specification_:
         The User ID field is ASCII character data that identifies the user
         which created the variable length record. It is possible to have many
@@ -116,10 +120,11 @@ class VLR(object):
 
     def get_description(self):
         return core.las.LASVLR_GetDescription(self.handle)
+
     def set_description(self, value):
         return core.las.LASVLR_SetDescription(self.handle, value)
     doc = """Description of this VLR instance (clipped to 32 bytes long)
-    
+
     From the specification_:
         Optional, null terminated text description of the data. Any remaining
         characters not used must be null.
@@ -128,6 +133,7 @@ class VLR(object):
 
     def get_recordlength(self):
         return core.las.LASVLR_GetRecordLength(self.handle)
+
     def set_recordlength(self, value):
         return core.las.LASVLR_SetRecordLength(self.handle, value)
     doc = """The number of bytes long the VLR is"""
@@ -135,10 +141,11 @@ class VLR(object):
 
     def get_recordid(self):
         return core.las.LASVLR_GetRecordId(self.handle)
+
     def set_recordid(self, value):
         return core.las.LASVLR_SetRecordId(self.handle, value)
     doc = """Record ID for the VLR
-    
+
     From the specification_:
         The Record ID is dependent upon the User ID. There can be 0 to 65535
         Record IDs for every User ID. The LAS specification manages its own
@@ -153,11 +160,12 @@ class VLR(object):
 
     def get_reserved(self):
         return core.las.LASVLR_GetReserved(self.handle)
+
     def set_reserved(self, value):
         return core.las.LASVLR_SetReserved(self.handle, value)
     doc = """Reserved value for the VLR.  Currently unused."""
     reserved = property(get_reserved, set_reserved, None, doc)
-    
+
     def get_data(self):
         length = self.recordlength
         data = (ctypes.c_ubyte * length)()
@@ -169,4 +177,3 @@ class VLR(object):
         core.las.LASVLR_SetData(self.handle, pdata, self.recordlength)
     doc = """Raw data (in the form of :data:`ctypes.c_ubyte`)"""
     data = property(get_data, set_data, None, doc)
-
