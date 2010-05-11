@@ -192,7 +192,7 @@ class File(object):
                     files['read'].pop(self.filename)
             except KeyError:
                 raise core.LASException("File %s was not found in accounting dictionary!" % self.filename)
-            files['read'].remove(self.filename)
+
         else:
             try:
                 files['append'].remove(self.filename)
@@ -200,6 +200,7 @@ class File(object):
                 files['write'].remove(self.filename)
             core.las.LASWriter_Destroy(self.handle)
 
+        core.las.LASHeader_Destroy(self._header)
         self._header = None
         self.handle = None
 
