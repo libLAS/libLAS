@@ -67,8 +67,8 @@ class File(object):
         :type mode: string
         :keyword in_srs: Input SRS to override the existing file's SRS with
         :type in_srs: an :obj:`liblas.srs.SRS` instance
-        :keyword out_srs: Output SRS to reproject points on-the-fly to as they
-        are read/written.
+        :keyword out_srs: Output SRS to reproject points on-the-fly to as \
+        they are read/written.
         :type out_srs: an :obj:`liblas.srs.SRS` instance
 
         .. note::

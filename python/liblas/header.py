@@ -250,7 +250,7 @@ class Header(object):
     doc = """The system identifier. The value is truncated to 31 characters and
             defaults to 'libLAS'
 
-        :arg value: a string that will automatically be truncated to 31
+        :arg value: a string that will automatically be truncated to 31 \
         characters
         :type value: string
 
@@ -289,7 +289,7 @@ class Header(object):
     and defaults to 'libLAS 1.LASVERSION' (ie, libLAS 1.6 for the 1.6
     release)
 
-        :arg value: a string that will automatically be truncated to 31
+        :arg value: a string that will automatically be truncated to 31 \
         characters
         :type value: string
 
@@ -340,7 +340,7 @@ class Header(object):
 
     doc = """The header's date from a :class`datetime.datetime` instance.
 
-        :arg value: :class:`datetime.datetime` instance or none to use the
+        :arg value: :class:`datetime.datetime` instance or none to use the \
         current time
 
 

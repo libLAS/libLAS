@@ -83,10 +83,10 @@ class SRS(object):
         normally in the range 5600 to 5799, or -1 if one is not available.
         :keyword citation: a textual description of the vertical coordinate \
         system or an empty string if nothing is available.
-        :keyword verticalDatum: the EPSG vertical datum code, often in the
-        range 5100 to 5299 - implied by verticalCSType if that is provided,
+        :keyword verticalDatum: the EPSG vertical datum code, often in the \
+        range 5100 to 5299 - implied by verticalCSType if that is provided, \
         or -1 if no value is available.
-        :keyword verticalUnits: the EPSG vertical units code, often 9001 for
+        :keyword verticalUnits: the EPSG vertical units code, often 9001 for \
         Metre.
         """
         return core.las.LASSRS_SetVerticalCS(self.handle, verticalCSType,

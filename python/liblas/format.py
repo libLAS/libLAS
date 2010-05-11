@@ -60,15 +60,15 @@ class Format(object):
         :type major: integer
         :keyword minor: Minor version value (no validation done)
         :type minor: integer
-        :keyword time: flag to denote whether or not the format has time
+        :keyword time: flag to denote whether or not the format has time \
         values
         :type time: boolean
-        :keyword color: flag to denote whether or not the format has color
+        :keyword color: flag to denote whether or not the format has color \
         values
         :type owned: boolean
-        :keyword size: The size to set for the format. If this value is set to
-        something that is smaller than can represent the given parameters,
-        an exception will be thrown.
+        :keyword size: The size to set for the format. If this value is set \
+        to something that is smaller than can represent the given \
+        parameters, an exception will be thrown.
         :keyword size: integer
         :keyword handle: raw ctypes object
 
