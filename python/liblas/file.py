@@ -124,10 +124,7 @@ class File(object):
 
             if self._header == None:
                 self.handle = core.las.LASReader_Create(self.filename)
-                self._header = lasheader.Header(
-                handle=core.las.LASReader_GetHeader(self.handle),
-                                                owned=True,
-                                                copy=True)
+                self._header = core.las.LASReader_GetHeader(self.handle)
             else:
                 self.handle = \
                 core.las.LASReader_CreateWithHeader(self.filename,
@@ -146,10 +143,7 @@ class File(object):
         if self._mode == 'w' and '+' not in self._mode:
 
             if self._header == None:
-                self._header = lasheader.Header(
-                            handle=core.las.LASHeader_Create(),
-                            owned=True,
-                            copy=True)
+                self._header = core.las.LASHeader_Create()
             self.handle = core.las.LASWriter_Create(self.filename,
                                                     self._header.handle,
                                                     1)
@@ -165,10 +159,7 @@ class File(object):
         if '+' in self._mode and 'r' not in self._mode:
             if self._header == None:
                 reader = core.las.LASReader_Create(self.filename)
-                self._header = lasheader.Header(
-                        handle=core.las.LASReader_GetHeader(reader),
-                        owned=True,
-                        copy=True)
+                self._header = core.las.LASReader_GetHeader(reader)
                 core.las.LASReader_Destroy(reader)
             self.handle = core.las.LASWriter_Create(self.filename,
                                                     self._header.handle,
@@ -239,7 +230,7 @@ class File(object):
 
     def get_header(self):
         """Returns the liblas.header.Header for the file"""
-        return self._header
+        return lasheader.Header(handle=self._header.handle, copy=True)
 
     def set_header(self, header):
         """Sets the liblas.header.Header for the file.  If the file is in \
