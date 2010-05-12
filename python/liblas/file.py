@@ -94,7 +94,9 @@ class File(object):
         >>> f2.close()
         """
         self.filename = os.path.abspath(filename)
-        self._header = header
+        self._header = None
+        if header:
+            self._header = core.las.LASHeader_Copy(header.handle)
         self.handle = None
         self._mode = mode.lower()
         self.in_srs = in_srs
@@ -148,7 +150,7 @@ class File(object):
             if self._header == None:
                 self._header = core.las.LASHeader_Create()
             self.handle = core.las.LASWriter_Create(self.filename,
-                                                    self._header.handle,
+                                                    self._header,
                                                     1)
             self.mode = 1
             files['write'].append(self.filename)
@@ -165,7 +167,7 @@ class File(object):
                 self._header = core.las.LASReader_GetHeader(reader)
                 core.las.LASReader_Destroy(reader)
             self.handle = core.las.LASWriter_Create(self.filename,
-                                                    self._header.handle,
+                                                    self._header,
                                                     2)
             self.mode = 2
             files['append'].append(self.filename)
@@ -177,6 +179,10 @@ class File(object):
                                                 self.out_srs.handle)
 
     def __del__(self):
+        try:
+            self.handle
+        except AttributeError:
+            return
         if not self.handle or not core:
             return
         self.close()
@@ -185,14 +191,14 @@ class File(object):
         """Closes the LAS file
         """
         if self.mode == 0:
-            core.las.LASReader_Destroy(self.handle)
-            try:
+            try: 
                 files['read'][self.filename] -= 1
                 if files['read'][self.filename] == 0:
                     files['read'].pop(self.filename)
             except KeyError:
                 raise core.LASException("File %s was not found in accounting dictionary!" % self.filename)
 
+            core.las.LASReader_Destroy(self.handle)
         else:
             try:
                 files['append'].remove(self.filename)
@@ -240,8 +246,9 @@ class File(object):
 
     def get_header(self):
         """Returns the liblas.header.Header for the file"""
-        return lasheader.Header(handle=self._header.handle, copy=True)
-
+        if self._header:
+            return lasheader.Header(handle=self._header, copy=True)
+        return None
     def set_header(self, header):
         """Sets the liblas.header.Header for the file.  If the file is in \
         append mode, the header will be overwritten in the file."""
@@ -249,7 +256,7 @@ class File(object):
         if mode == 2:
             core.las.LASWriter_Destroy(self.handle)
             self.handle = core.las.LASWriter_Create(self.handle, header, 2)
-            self._header = header
+            self._header = core.las.LASHeader_Copy(header.handle)
             return True
         raise core.LASException("The header can only be set "
                                 "after file creation for files in append mode")
