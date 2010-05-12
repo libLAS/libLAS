@@ -95,12 +95,19 @@ class File(object):
         """
         self.filename = os.path.abspath(filename)
         self._header = None
-        if header:
-            self._header = core.las.LASHeader_Copy(header.handle)
+        self.ownheader = True
+
+        # import pdb;pdb.set_trace()
+        if header != None:
+            
+            self.ownheader = False
+            self._header = header.handle
+        
         self.handle = None
         self._mode = mode.lower()
         self.in_srs = in_srs
         self.out_srs = out_srs
+
 
         #check in the registry if we already have the file open
         if mode == 'r':
@@ -122,6 +129,7 @@ class File(object):
     def open(self):
         """Open the file for processing, called by __init__
         """
+        
         if self._mode == 'r' or self._mode == 'rb':
 
             if self._header == None:
@@ -130,7 +138,7 @@ class File(object):
             else:
                 self.handle = \
                 core.las.LASReader_CreateWithHeader(self.filename,
-                                                        self._header.handle)
+                                                        self._header)
 
             self.mode = 0
             try:
@@ -149,6 +157,7 @@ class File(object):
 
             if self._header == None:
                 self._header = core.las.LASHeader_Create()
+
             self.handle = core.las.LASWriter_Create(self.filename,
                                                     self._header,
                                                     1)
@@ -205,8 +214,10 @@ class File(object):
             except:
                 files['write'].remove(self.filename)
             core.las.LASWriter_Destroy(self.handle)
-
-        core.las.LASHeader_Destroy(self._header)
+        
+        if self.ownheader:
+            core.las.LASHeader_Destroy(self._header)
+            
         self._header = None
         self.handle = None
 
@@ -246,9 +257,16 @@ class File(object):
 
     def get_header(self):
         """Returns the liblas.header.Header for the file"""
-        if self._header:
-            return lasheader.Header(handle=self._header, copy=True)
+        if not self.handle:
+            return None
+        
+        if self.mode == 0:
+            return lasheader.Header(handle=core.las.LASReader_GetHeader(self.handle))
+        else:
+            return lasheader.Header(handle=core.las.LASWriter_GetHeader(self.handle))
+
         return None
+
     def set_header(self, header):
         """Sets the liblas.header.Header for the file.  If the file is in \
         append mode, the header will be overwritten in the file."""
