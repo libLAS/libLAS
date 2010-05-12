@@ -898,6 +898,13 @@ LAS_DLL LASError LASWriter_WriteHeader(const LASWriterH hWriter, const LASHeader
 */
 LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);
 
+/** Returns a LASHeaderH representing the header for the file
+ *  @param hWriter the LASWriterH instance
+ *  @return a LASHeaderH representing the header for the file.  NULL is returned 
+ *  in the event of an error.  Use the LASError_GetLastError* methods to check
+ *  in the event of a NULL return.
+*/
+LAS_DLL LASHeaderH LASWriter_GetHeader(const LASWriterH hWriter);
 
 LAS_DLL LASError LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS);
 LAS_DLL LASError LASWriter_SetInputSRS(LASWriterH hWriter, const LASSRSH hSRS);

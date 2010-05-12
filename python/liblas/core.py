@@ -554,6 +554,10 @@ las.LASWriter_SetInputSRS.errcheck = check_return
 las.LASWriter_SetOutputSRS.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASWriter_SetOutputSRS.errcheck = check_return
 
+las.LASWriter_GetHeader.restype = ctypes.c_void_p
+las.LASWriter_GetHeader.argtypes = [ctypes.c_void_p]
+las.LASWriter_GetHeader.errcheck = check_void
+
 las.LASWriter_Destroy.argtypes = [ctypes.c_void_p]
 las.LASWriter_Destroy.errcheck = check_void_done
 las.LASWriter_Destroy.restype = None

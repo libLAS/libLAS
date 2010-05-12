@@ -1513,6 +1513,15 @@ LAS_DLL LASErrorEnum LASWriter_SetOutputSRS(LASWriterH hWriter, const LASSRSH hS
 
     return LE_None;
 }
+
+LAS_DLL LASHeaderH LASWriter_GetHeader(const LASWriterH hWriter)
+{
+    VALIDATE_LAS_POINTER1(hWriter, "LASWriter_GetHeader", NULL);
+
+    liblas::Header header = ((liblas::Writer*) hWriter)->GetHeader();
+    return (LASHeaderH) new liblas::Header( header );
+}
+
 LAS_DLL void LASError_Print(const char* message) {
 
     char* errmsg= NULL;
