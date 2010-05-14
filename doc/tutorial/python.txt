@@ -175,10 +175,10 @@ can set and get:
 Writing
 =============================================
 
-To write a new LAS file, you are first required to have a header.  The header 
-will have a number of default values, but it is important to set the dataformat_id and 
-version_minor if you wish to have 1.1 files or records that also include time 
-values.
+To write a new LAS file, you are first required to have a header. The header
+will have a number of default values, but it is important to set the
+dataformat_id and version_minor if you wish to have 1.1 files or records that
+also include time values.
 
 .. code-block:: python
 
@@ -202,7 +202,7 @@ the following will fail:
   Traceback (most recent call last):
   ...
   LASException: ('File %s is already open.  Close the file or delete the reference to it', 'junk.las')
- 
+
 
 Writing to a LAS file is as simple as opening the file for write mode 
 with the header you want to write and issuing the write() command with some 

@@ -13,8 +13,6 @@
 :Contact: isenburg@cs.unc.edu
 :Author: Howard Butler
 :Contact: hobu.inc@gmail.com
-:Revision: $Revision$
-:Date: $Date$
 
 
 Description

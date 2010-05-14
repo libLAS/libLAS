@@ -10,8 +10,6 @@
 
 :Author: Martin Isenburg
 :Contact: isenburg@cs.unc.edu
-:Revision: $Revision$
-:Date: $Date$
 
 
 lasdiff compares two LAS files and reports whether they are identical 

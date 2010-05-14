@@ -11,8 +11,6 @@
 
 :Author: Mateusz Loskot
 :Contact: mateusz@loskot.net
-:Revision: $Revision$
-:Date: $Date$
 
 lasdiff compares two LAS files and reports whether they are identical 
 or whether they are different.

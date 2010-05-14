@@ -10,8 +10,6 @@
 
 :Author: Martin Isenburg
 :Contact: isenburg@cs.unc.edu
-:Revision: $Revision$
-:Date: $Date$
 
     
 txt2las converts LIDAR data from a standard ASCII format into the more 

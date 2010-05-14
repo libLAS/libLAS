@@ -1,0 +1,25 @@
+.. _buildbot:
+
+******************************************************************************
+Continuous Integration
+******************************************************************************
+
+
+The libLAS project uses `Buildbot <http://buildbot.net/trac>`__ to perform
+automated builds and continuous integration. Thanks to the
+`OSGeo Foundation`_, a dedicated Buildbot instance is hosted on the `OSGeo Buildbot`_.
+
+
+The libLAS Buildbot status is rendered on the `libLAS buildbot waterfall`_
+which can be used to trigger new builds on request.
+
+There is also #bbliblas bot present on `IRC`_ #liblas] IRC channel:
+
+::
+
+<mloskot> bbliblas: force build telascience-full "Routine check"
+
+.. _`IRC`: http://irc.freenode.net/
+.. _`OSGeo Buildbot`: http://buildbot.osgeo.org/
+.. _`libLAS buildbot waterfall`: http://buildbot.osgeo.org:8507/waterfall
+.. _`OSGeo Foundation`: http://osgeo.org/

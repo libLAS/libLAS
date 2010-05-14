@@ -1,0 +1,21 @@
+.. _specifications:
+
+******************************************************************************
+ASPRS Specifications
+******************************************************************************
+
+The LAS format standard is maintained by the `ASPRS Standards Committee`_.  
+LAS format standard documents are available from liblas.org for convenience 
+and archival purposes.  Please check the APSRS website for the authoritative 
+source on the standards documents.
+
+* `ASPRS LAS 1.3`_
+* `ASPRS LAS 1.2`_
+* `ASPRS LAS 1.1`_
+* `ASPRS LAS 1.0`_
+
+.. _`ASPRS LAS 1.3`: http://liblas.org/_static/specifications/asprs_las_format_v13.pdf
+.. _`ASPRS LAS 1.2`: http://liblas.org/_static/specifications/asprs_las_format_v12.pdf
+.. _`ASPRS LAS 1.1`: http://liblas.org/_static/specifications/asprs_las_format_v11.pdf
+.. _`ASPRS LAS 1.0`: http://liblas.org/_static/specifications/asprs_las_format_v10.pdf
+.. _`ASPRS Standards Committee`: http://www.asprs.org/society/committees/standards/lidar_exchange_format.html

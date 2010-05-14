@@ -10,8 +10,6 @@
 
 :Author: Martin Isenburg
 :Contact: isenburg@cs.unc.edu
-:Revision: $Revision$
-:Date: $Date$
 
     
 lasmerge reads multiple LIDAR data files in the LAS format and merges them 
