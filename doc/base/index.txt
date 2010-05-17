@@ -8,9 +8,14 @@
   C++ Library Reference
 ****************************************************************
 
-.. class:: foo
-This is some text
+some text 
+
+.. doxygenindex::
+   :project: liblas
+   :path: /Users/hobu/hg/liblas-cmake/doc/api/xml/index.xml
 
 .. doxygenclass:: liblas::Color
-    :project: class
-   
+    :project: liblas
+
+
+some more text 

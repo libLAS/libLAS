@@ -12,7 +12,7 @@ libLAS Documentation
    faq
    development/index
    utilities/index
+   C++ Class API <http://test.liblas.org/doxygen/annotated.html>
+   C API <http://test.liblas.org/doxygen/liblas_8h.html>
    python/index
-   cpp
-   base/index
    lastools
