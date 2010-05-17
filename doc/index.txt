@@ -34,6 +34,9 @@ data.
 libLAS' initial development was supported in 2007-2008 by the `IGSB`_ of the
 Iowa DNR for use in its state-wide `LIDAR`_ project.
 
+.. seealso::
+    :ref:`lastools_liblas` provides a comparison and description of the 
+    relationship of libLAS to LAStools.
 
 
 
@@ -43,46 +46,6 @@ Iowa DNR for use in its state-wide `LIDAR`_ project.
 
 
 
-Documentation
-------------------------------------------------------------------------------
-
-`LAStools`_ / libLAS Command-line Utilities
-..............................................................................
-
-* :ref:`lasinfo`
-* :ref:`lasmerge`
-* :ref:`las2las`
-* :ref:`las2txt`
-* :ref:`txt2las`
-* :ref:`las2ogr`
-
-Software Development with libLAS
-..............................................................................
-
-* `FOSS4G 2008`_ presentation that provides a basic overview of the design and philosophy of libLAS
-* `ASPRS Workshop Demo`_ by Jason Woolard of NOAA describing how to use libLAS with Python
-* `Tutorials`_ - tutorials on using libLAS from C++, Python and .NET/Mono languages
-* `LAS C API`_- doxygen docs that describe the libLAS C API
-* `dotnetLibLAS API`_ - docs for the .NET API
-* `LAS Doxygen Docs`_ - doxygen docs of the entire C/C++ API
-* `LAS Format Elements`_ - comparison of elements of LAS Format 1.0 and 1.1  
-* `Software`_ - a list of geospatial software with reading and writing capabilities of LAS Format
-* `Resources`_ - a list of general LiDAR/LAS resources
-
-LAS Format Specifications
-..............................................................................
-
-The LAS Format Standard is maintained by `ASPRS Standards Committee`_. LAS 
-format standard documents are available in PDF format:
-
-* `LAS 1.2 Format Standard`_ (2008-09-02)
-* `LAS 1.1 Format Standard`_ (2005-05-07)
-* `LAS 1.0 Format Standard`_ (2003-05-09)
-* `LAS permutation matrix`_
-
-Installing liblas Python bindings using setuptools
-..............................................................................
-A quick `Python howto`_ for installing Python bindings and the Win32 liblas package
 
 License
 ------------------------------------------------------------------------------
@@ -90,10 +53,6 @@ License
 libLAS is available under the terms of the `BSD License`_. 
 See `License`_ for a copy.
 
-FAQ
-------------------------------------------------------------------------------
-
-The FAQ is available from http://liblas.org/wiki/FAQ
 
 Features of libLAS
 ------------------------------------------------------------------------------
@@ -108,7 +67,7 @@ license.  See `License`_ for more detail.
 Multiple APIs
 ..............................................................................
 
-libLAS has C, C++, .NET, and Python APIs.   
+libLAS has C, C++, .NET, Ruby, and Python APIs.   
 
 Spatial Reference System Support
 ..............................................................................
@@ -159,14 +118,7 @@ Special thanks to `Martin Isenburg and Jonathan Shewchuk`_ for their
 `LAStools`_ pioneering implementation of the ASPRS LAS standard that made 
 development of the libLAS library possible.
 
-Mercurial Repository Tree
-..............................................................................
 
-The Mercurial repository for libLAS is located at http://hg.liblas.org/main
-
-You can obtain a copy of the active source code by issuing the following::
-
-    hg clone http://hg.liblas.org/main
 
 
 

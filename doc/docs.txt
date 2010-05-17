@@ -9,6 +9,7 @@ libLAS Documentation
    
    faq
    tutorial/index
+   compilation
    development/index
    utilities/index
    python/index

@@ -9,6 +9,7 @@ Tutorials
    
    python
    cpp
+   qhull
    csharp
    boo
    ironpython

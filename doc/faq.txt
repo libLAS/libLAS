@@ -8,12 +8,19 @@ This page is dedicated to `Frequently Asked Questions
 <http://en.wikipedia.org/wiki/FAQ>`_ about libLAS library and ASPRS LAS Format
 Standard.
 
+What software is using libLAS?
+--------------------------------------------------------------------------------
+
+A number of commercial and open source softwares utilize libLAS for their 
+LAS reading and writing support.  Additionally, a number of organizations 
+also use libLAS for a variety of tasks.  See `here <http://trac.liblas.org/wiki/WhoUsesLibLAS>`__ 
+for more details.
 
 What software supports ASPRS LAS Format?
 --------------------------------------------------------------------------------
 
 There is a number of geospatial software packages that support read/write of
-ASPRS LAS Format. Popular software is listed on the :ref:`Software` Wiki
+ASPRS LAS Format. Popular software is listed on the `Software <http://trac.liblas.org/wiki/Software>`__ Wiki
 page.
 
 

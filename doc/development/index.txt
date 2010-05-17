@@ -8,8 +8,9 @@ Development
 .. toctree::
    :maxdepth: 0
    
-   compilation
    buildbot
    specifications
+   source
+   format_elements
 
 
