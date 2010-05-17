@@ -7,9 +7,9 @@ libLAS Documentation
 .. toctree::
    :maxdepth: 1
    
-   faq
-   tutorial/index
    compilation
+   tutorial/index
+   faq
    development/index
    utilities/index
    python/index

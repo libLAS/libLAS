@@ -30,3 +30,24 @@
 {# put the sidebar before the body #}
 {% block sidebar1 %}{% endblock %}
 {% block sidebar2 %}{{ sidebar() }}{% endblock %}
+
+{% block footer %}
+<div class="footer">
+    {%- if show_copyright %}
+      {%- if hasdoc('copyright') %}
+        {% trans path=pathto('copyright'), copyright=copyright|e %}&copy; <a href="{{ path }}">Copyright</a> {{ copyright }}.{% endtrans %}
+      {%- else %}
+        {% trans copyright=copyright|e %}&copy; Copyright {{ copyright }}.{% endtrans %}
+      {%- endif %}
+
+    {%- endif %}
+    {%- if last_updated %}
+      {% trans last_updated=last_updated|e %}Website was last updated on {{ last_updated }} {% endtrans %}
+    {%- endif %}
+    {%- if show_sphinx %}
+      {% trans sphinx_version=sphinx_version|e %}and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.{% endtrans %}
+    {%- endif %}
+
+
+</div>
+{% endblock %}

@@ -188,8 +188,12 @@ LAS_DLL LASReaderH LASReader_Create(const char * filename);
 /** Creates a LASReaderH object that can be used to read LASHeaderH and 
  *  LASPointH objects with.  The LASReaderH must not be created with a 
  *  filename that is opened for read or write by any other API functions.
+ *  This function allows you to optionally override the file's header 
+ *  information with your own.  
  *  @return opaque pointer to a LASReaderH instance.
  *  @param filename Filename to open for read 
+ *  @param hHeader a LASHeaderH instance to override the file's header with.
+ *  
 */
 LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char * filename, 
                                                 LASHeaderH hHeader);
@@ -477,7 +481,7 @@ LAS_DLL LASPointH LASPoint_Create(void);
  *  @return new LASPointH instance.  If the value is NULL use the 
  *  LASError_GetLastError* methods to determine the problem
 */
-LAS_DLL LASPointH LASPoint_Copy(const LASPointH);
+LAS_DLL LASPointH LASPoint_Copy(const LASPointH hPoint);
 
 /** Destroys/deletes a LASPointH instance
 */
@@ -1047,6 +1051,7 @@ LAS_DLL LASError LASVLR_GetData(const LASVLRH hVLR, uint8_t* data);
  *  the VLR structure.
  *  @param hVLR the LASVLRH instance
  *  @param data a pointer to your array.  It must be LASVLR_GetRecordLength in size
+ *  @param length length of the data to set on the VLR
  *  @return LASErrorEnum
 */
 LAS_DLL LASError LASVLR_SetData(const LASVLRH hVLR, uint8_t* data, uint16_t length);

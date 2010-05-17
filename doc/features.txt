@@ -1,0 +1,47 @@
+.. _features:
+
+******************************************************************************
+Features
+******************************************************************************
+
+Open Source
+..............................................................................
+
+libLAS is open source software.  You can embed it in your own applications 
+(and even resell it) as long as you follow the crediting restriction of the BSD 
+license.  See :ref:`license` for more detail. 
+
+Multiple APIs
+..............................................................................
+
+libLAS has C, C++, .NET, Ruby, and Python APIs.   
+
+Spatial Reference System Support
+..............................................................................
+
+Linked against a 1.2.5+ version of `libgeotiff`_, you can set and get the spatial reference 
+systems of LAS files using simple `proj.4`_ coordinate system definitions.  
+Alternatively, with libLAS 1.2, you can link against `GDAL`_ to be able to 
+manipulate spatial references using WKT.  The current development version of 
+libLAS can be used in combination with `GDAL`_ 1.7 to support `vertical coordinate systems`_ 
+as well.
+
+Simple Variable Length Record Abstraction
+..............................................................................
+
+libLAS provides a sensible abstraction for working with variable length records (VLR) 
+in LAS files, and it transparently manages the VLRs related to spatial referencing 
+systems for you.  
+
+Command-line Utilities
+..............................................................................
+
+libLAS provides ports of the `LAStools`_ utilities by Martin Isenburg for doing 
+things like translating from one version of the LAS format to another, inspecting 
+header information, and translating LAS data to and from text.
+
+Cross-platform operation
+..............................................................................
+
+libLAS is known to work on all editions of Microsoft Visual C++ 7.1+ (Windows) and 
+GCC 4.1+ (Mac OS X and Linux) platforms on both big- and little-endian architectures.

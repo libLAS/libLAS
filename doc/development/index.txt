@@ -5,6 +5,9 @@ Development
 ******************************************************************************
 
 
+Topics
+..............................................................................
+
 .. toctree::
    :maxdepth: 0
    
@@ -13,4 +16,26 @@ Development
    source
    format_elements
 
+
+Authors
+..............................................................................
+
+The libLAS development team are:
+
+ * `Howard Butler`_
+ * `Mateusz Loskot`_
+ * `Phil Vachon`_
+ * Martin Vales
+ * `Frank Warmerdam`_
+
+Special thanks to `Martin Isenburg and Jonathan Shewchuk`_ for their
+:ref:`lastools_liblas` pioneering implementation of the ASPRS LAS standard that made 
+development of the libLAS library possible.
+
+
+.. _`Howard Butler`: http://hobu.biz
+.. _`Mateusz Loskot`: http://mateusz.loskot.net
+.. _`Phil Vachon`: http://www.geoscan.info
+.. _`Frank Warmerdam`: http://home.gdal.org/warmerda/
+.. _`Martin Isenburg and Jonathan Shewchuk`: http://www.cs.unc.edu/~isenburg/lastools/
 

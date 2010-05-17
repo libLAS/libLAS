@@ -38,7 +38,7 @@ master_doc = 'docs'
 
 # General information about the project.
 project = u'libLAS'
-copyright = u'2010, Howard Butler'
+copyright = u'2010, Howard Butler, Mateusz Loskot and others'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -97,17 +97,17 @@ html_style = 'sphinx.css'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+#html_theme_options = {'rightsidebar':True}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+html_title = 'liblas.org'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+html_short_title = 'Documentation'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -132,7 +132,9 @@ html_last_updated_fmt = '%b %d, %Y'
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-html_sidebars = {"index":"indexsidebar.html"}
+html_sidebars = {
+    '**': ['globaltoc.html', 'sourcelink.html', 'searchbox.html'],
+"index":["indexsidebar.html",'searchbox.html']}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -177,6 +179,6 @@ pdf_documents = [
 pdf_stylesheets = ['liblas']
 pdf_language = "en_US"
 pdf_fit_mode = "overflow"
-
+pdf_appendices = ''
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
