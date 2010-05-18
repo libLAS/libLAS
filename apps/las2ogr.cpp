@@ -151,7 +151,7 @@ void create_layer_def(OGRLayerH lyr)
     err = OGR_L_CreateField(lyr, fld, 0);
     if (OGRERR_NONE != err)
     {
-        throw std::runtime_error("angle field cration failed");
+        throw std::runtime_error("angle field creation failed");
     }
     
     OGR_Fld_Destroy(fld);
@@ -160,7 +160,7 @@ void create_layer_def(OGRLayerH lyr)
     err = OGR_L_CreateField(lyr, fld, 0);
     if (OGRERR_NONE != err)
     {
-        throw std::runtime_error("intensity field cration failed");
+        throw std::runtime_error("intensity field creation failed");
     }
     
     OGR_Fld_Destroy(fld);
@@ -187,7 +187,7 @@ void create_layer_def(OGRLayerH lyr)
     err = OGR_L_CreateField(lyr, fld, 0);
     if (OGRERR_NONE != err)
     {
-        throw std::runtime_error("gpstime field cration failed");
+        throw std::runtime_error("gpstime field creation failed");
     }
     
     OGR_Fld_Destroy(fld);
