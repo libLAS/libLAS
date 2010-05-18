@@ -14,5 +14,6 @@ libLAS Documentation
    utilities/index
    C++ Class API <http://test.liblas.org/doxygen/annotated.html>
    C API <http://test.liblas.org/doxygen/liblas_8h.html>
+   base/index
    python/index
    lastools
