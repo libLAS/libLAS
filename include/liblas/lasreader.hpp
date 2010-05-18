@@ -73,6 +73,7 @@ public:
 
     Reader(ReaderI* reader);
     
+    
     /// User-defined consructor initializes reader with input stream and
     /// a header to override the values in the file
     /// @excepion std::runtime_error - on failure state of the input stream.
@@ -133,6 +134,12 @@ public:
     /// and is not const-qualified because it updates file stream position.
     /// @excepion may throw std::exception
     Point const& operator[](std::size_t n);
+    
+    /// Sets filters that are used to determine wither or not to 
+    /// keep a point that was read from the file.  Filters have *no* 
+    /// effect for reading data at specific locations in the file.  
+    /// They only affect reading ReadNextPoint-style operations
+    void SetFilters(std::vector<liblas::FilterI*>& filters) {std::cout << "setting filters to " << m_filters.size() << std::endl; m_filters = filters;}
 
 private:
 
@@ -150,6 +157,8 @@ private:
     // Set if the user provides a header to override the header as 
     // read from the istream
     bool bCustomHeader;
+    
+    std::vector<liblas::FilterI*> m_filters;
 
     // std::istream& m_ifs;
     

@@ -46,6 +46,7 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/lasclassification.hpp
   ${LIBLAS_HEADERS_DIR}/lascolor.hpp
   ${LIBLAS_HEADERS_DIR}/laserror.hpp
+  ${LIBLAS_HEADERS_DIR}/lasfilter.hpp    
   ${LIBLAS_HEADERS_DIR}/lasformat.hpp    
   ${LIBLAS_HEADERS_DIR}/lasheader.hpp
   ${LIBLAS_HEADERS_DIR}/laspoint.hpp
@@ -76,6 +77,7 @@ set(LIBLAS_CPP
   lasclassification.cpp
   lascolor.cpp
   laserror.cpp
+  lasfilter.cpp
   lasformat.cpp
   lasheader.cpp
   laspoint.cpp

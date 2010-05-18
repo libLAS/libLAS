@@ -182,6 +182,17 @@ public:
 
 };
 
+/// Defines public interface to LAS filter implementation.
+class FilterI
+{
+public:
+    
+    virtual bool filter(const Point& point) = 0;
+    virtual void SetKeep(bool bKeep) = 0;
+    virtual ~FilterI() {};
+
+};
+
 
 
 } // namespace liblas

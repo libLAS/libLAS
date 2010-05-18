@@ -104,8 +104,31 @@ Point const& Reader::GetPoint() const
 
 bool Reader::ReadNextPoint()
 {
+    std::vector<liblas::FilterI*>::const_iterator i;
+
     try {
         m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
+        if (m_filters.size() != 0) {
+            // We have filters, filter this point.  All filters must 
+            // return true for us to keep it.
+            bool keep = false;
+            for (i = m_filters.begin(); i != m_filters.end(); ++i) {
+                liblas::FilterI* filter = *i;
+                if (filter->filter(*m_point)){
+                    // if ->filter() is true, we keep the point
+                    keep = true;
+                } else {
+                    keep = false;
+                    break;
+                }
+                
+            }
+            if (!keep) {
+                return ReadNextPoint();
+            } else {
+                return true;
+            }
+        }
         return true;
     } catch (std::out_of_range) {
         m_point = 0;
@@ -167,6 +190,7 @@ void Reader::Init()
     // keep it around until the reader closes down and then deletes.  
     // 
     m_point = m_empty_point;
+    m_filters.resize(0);
 }
 
 std::istream& Reader::GetStream() const

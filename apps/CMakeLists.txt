@@ -19,7 +19,7 @@ set(LASMERGE lasmerge)
 set(LAS2LAS las2las)
 set(LAS2TXT las2txt)
 set(TXT2LAS txt2las)
-
+set(LAS2LAS2 las2las2 )
 # Utilities depending on 3rd-pary libraries
 if(GDAL_FOUND)
     set(LAS2OGR las2ogr)
@@ -35,7 +35,7 @@ endif()
 
 set(LIBLAS_UTILITIES
     ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
-    ${LAS2OGR} ${LASINDEX} ${LAS2OCI})
+    ${LAS2OGR} ${LASINDEX} ${LAS2OCI} ${LAS2LAS2})
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -75,6 +75,11 @@ if(LAS2LAS)
     set(LAS2LAS_SRC lascommon.c ${LAS2LAS}.c)
     add_executable(${LAS2LAS} ${LAS2LAS_SRC})
     target_link_libraries(${LAS2LAS} ${LIBLAS_C_LIB_NAME})
+endif()
+
+if(LAS2LAS2)
+    add_executable(${LAS2LAS2} las2las2.cpp)
+    target_link_libraries(${LAS2LAS2} ${APPS_CPP_DEPENDENCIES})
 endif()
 
 # Build las2txt
