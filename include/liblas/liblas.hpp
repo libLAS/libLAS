@@ -193,7 +193,15 @@ public:
 
 };
 
+/// Defines public interface to LAS transform implementation.
+class TransformI
+{
+public:
+    
+    virtual bool transform(Point& point) = 0;
+    virtual ~TransformI() {};
 
+};
 
 } // namespace liblas
 
