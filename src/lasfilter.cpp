@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS PointFormat implementation for C++ libLAS 
+ * Purpose:  LAS filter implementation for C++ libLAS 
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
