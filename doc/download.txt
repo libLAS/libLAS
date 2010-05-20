@@ -8,8 +8,6 @@ Download
 Source
 ------------------------------------------------------------------------------
 
-.. seealso::
-    :ref:`source`
 
 Current Release(s)
 ..............................................................................
@@ -26,6 +24,9 @@ Current Release(s)
 
 .. _`liblas-src-1.2.1.tar.gz`: http://trac.liblas.org/raw-attachment/wiki/1.2.1/liblas-src-1.2.1.tar.gz
 
+.. seealso::
+    :ref:`source`
+    
 Development Releases
 ..............................................................................
 
