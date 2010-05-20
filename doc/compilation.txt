@@ -8,38 +8,136 @@ Compilation
     :depth: 3
     :backlinks: top
 
-   
-   
-   
-CMake
-------------------------------------------------------------------------------
+
 
 :Author: Mateusz Loskot
 :Contact: mateusz at loskot dot net
+:Author: Howard Butler
+:Contact: hobu.inc at gmail dot com
 
-This article describes how to use `CMake`_ tool to build and install libLAS as
-well as run unit tests.
+As of libLAS 1.6, `CMake`_ 2.8.1+ is the prescribed tool for building 
+libLAS from source as well as running unit tests. `CMake`_ is a cross-platform 
+build system that provides a number of benefits, and its usage ensures a 
+single, up-to-date build system for all libLAS-supported operating systems 
+and compiler platforms.  
 
-The CMake build configuration is available from the libLAS repository, in
-branch `main`.
+Like a combination of autoconf/autotools, except that it actually works on
+Windows (and works without eye-stabbing pain in general), `CMake`_ is somewhat
+of a meta-building tool. It can be used to generate MSVC project files, GNU
+Makefiles, NMake files for MSVC, XCode projects on Mac OS X, and Eclipse
+projects (as well as many others).  This functionality allows the libLAS project 
+to avoid maintaining these build options by hand and target a single configuration
+and build platform.
 
-Building libLAS using CMake on Unix
+This tutorial will describe how to build libLAS using CMake on both a 
+Unix platform and a Windows platform.  
+
+
+* Get the source code.  See :ref:`source` for how to obtain the latest 
+  development version or visit :ref:`download` to get the latest released 
+  version.
+
+* Prepare a build directory.  CMake allows you to generate different builders
+  for a project, and in this example, we are going to generate both "Unix Makefiles" 
+  and "Xcode" builders for libLAS on Mac OS X.
+
+::
+    
+    $ cd liblas
+    $ mkdir makefiles
+    
+
+CMake with "Unix Makefiles"
 ..............................................................................
 
-* Check out source code
+* Configure the basic core library for the "Unix Makefiles" target:
 
 ::
 
-    $ hg clone http://hg.liblas.org/main/
+    $ cmake -G "Unix Makefiles" ../
+    -- The C compiler identification is GNU
+    -- The CXX compiler identification is GNU
+    -- Checking whether C compiler has -isysroot
+    -- Checking whether C compiler has -isysroot - yes
+    -- Check for working C compiler: /usr/bin/gcc
+    -- Check for working C compiler: /usr/bin/gcc -- works
+    -- Detecting C compiler ABI info
+    -- Detecting C compiler ABI info - done
+    -- Checking whether CXX compiler has -isysroot
+    -- Checking whether CXX compiler has -isysroot - yes
+    -- Check for working CXX compiler: /usr/bin/c++
+    -- Check for working CXX compiler: /usr/bin/c++ -- works
+    -- Detecting CXX compiler ABI info
+    -- Detecting CXX compiler ABI info - done
+    -- Enable libLAS utilities to build - done
+    -- Configuring done
+    -- Generating done
+    -- Build files have been written to: /Users/hobu/hg/liblas-cmake/makefiles
 
-* Prepare build directory, possibly out of source tree
+* Run `make`
 
 ::
 
-    $ mkdir build
-    $ cd build
+    $ make
+    -- Enable libLAS utilities to build - done
+    -- Configuring done
+    -- Generating done
+    -- Build files have been written to: /Users/hobu/hg/liblas-cmake/makefiles
+    Scanning dependencies of target las
+    [  3%] Building CXX object src/CMakeFiles/las.dir/lasclassification.cpp.o
+    ...
+    [ 60%] Building CXX object src/CMakeFiles/las.dir/detail/writer/writer.cpp.o
+    Linking CXX static library ../bin/Debug/liblas.a
+    [ 60%] Built target las
+    Scanning dependencies of target las_c
+    [ 63%] Building CXX object src/CMakeFiles/las_c.dir/las_c_api.cpp.o
+    Linking CXX shared library ../bin/Debug/liblas_c.dylib
+    [ 63%] Built target las_c
+    Scanning dependencies of target las2las
+    ...
+    [100%] Built target txt2las
 
-* Configure basic core library only
+* Run 'ccmake ../' for the `Curses`_ interface or 'cmake-gui ../' for a 
+  GUI version.  
+
+  
+.. figure:: ./images/ccmake-osx-start.png
+    :alt: Running CCMake in OS X
+
+.. figure:: ./images/cmake-gui-osx-start.png
+    :alt: Running cmake-gui in OS X
+
+CMake using XCode
+..............................................................................
+
+::
+    $ cd liblas
+    $ mkdir xcode
+    $ cd xcode/
+
+::
+
+    $ cmake -G "Xcode" ..
+    -- The C compiler identification is GNU
+    -- The CXX compiler identification is GNU
+    -- Checking whether C compiler has -isysroot
+    -- Checking whether C compiler has -isysroot - yes
+    -- Check for working C compiler: /usr/bin/gcc
+    -- Check for working C compiler: /usr/bin/gcc -- works
+    -- Detecting C compiler ABI info
+    -- Detecting C compiler ABI info - done
+    -- Checking whether CXX compiler has -isysroot
+    -- Checking whether CXX compiler has -isysroot - yes
+    -- Check for working CXX compiler: /usr/bin/g++
+    -- Check for working CXX compiler: /usr/bin/g++ -- works
+    -- Detecting CXX compiler ABI info
+    -- Detecting CXX compiler ABI info - done
+    -- Enable libLAS utilities to build - done
+    -- Configuring done
+    -- Generating done
+    -- Build files have been written to: /Users/hobu/hg/liblas-cmake/xcode
+
+
 
 ::
 
@@ -89,143 +187,7 @@ Building libLAS using CMake on Unix
 
     $ make
 
-Building libLAS and running unit tests using CMake on Unix
-..............................................................................
 
-Users are encourage to run libLAS unit tests and submit test results to
-dedicated `CDash`_ - utility dashboard hosted by the http://cdash.org website:
-
-* `libLAS CDash`_
-
-The CDash is another tool liblAS uses to perform `continuous integration`_
-during development process.
-
-.. note::
-    In order to enable `CTest`_ support it is required to use `CMake 2.8.0+`_
-    version (it is Beta currently).
-
-* Configure libLAS core library with unit tests and CTest enabled
-
-::
-
-    $ cmake ../main -DWITH_TESTS=ON -DENABLE_CTEST=ON
-    -- The C compiler identification is GNU
-    -- The CXX compiler identification is GNU
-    -- Check for working C compiler: /usr/bin/gcc
-    -- Check for working C compiler: /usr/bin/gcc -- works
-    -- Detecting C compiler ABI info
-    -- Detecting C compiler ABI info - done
-    -- Check for working CXX compiler: /usr/bin/c++
-    -- Check for working CXX compiler: /usr/bin/c++ -- works
-    -- Detecting CXX compiler ABI info
-    -- Detecting CXX compiler ABI info - done
-    -- Enable libLAS utilities to build - done
-    -- Enable libLAS unit tests to build - done
-    -- Enable CTest to support submissions of results to CDash at http://cdash.org
-    -- Enable CTest to support submissions of results to CDash at http://cdash.org - done
-    -- Configuring done
-    -- Generating done
-    -- Build files have been written to: /home/mloskot/dev/liblas/_hg/build
-
-
-
-* Inspect available targets
-
-::
-
-    $ make help
-    The following are some of the valid targets for this Makefile:
-    ... all (the default if no target is provided)
-    ... clean
-    ... depend
-    ... Continuous
-    ... ContinuousBuild
-    ... ContinuousConfigure
-    ... ContinuousCoverage
-    ... ContinuousMemCheck
-    ... ContinuousStart
-    ... ContinuousSubmit
-    ... ContinuousTest
-    ... ContinuousUpdate
-    ... Experimental
-    ... ExperimentalBuild
-    ... ExperimentalConfigure
-    ... ExperimentalCoverage
-    ... ExperimentalMemCheck
-    ... ExperimentalStart
-    ... ExperimentalSubmit
-    ... ExperimentalTest
-    ... ExperimentalUpdate
-    ... Nightly
-    ... NightlyBuild
-    ... NightlyConfigure
-    ... NightlyCoverage
-    ... NightlyMemCheck
-    ... NightlyMemoryCheck
-    ... NightlyStart
-    ... NightlySubmit
-    ... NightlyTest
-    ... NightlyUpdate
-    ... edit_cache
-    ... install
-    ... install/local
-    ... install/strip
-    ... list_install_components
-    ... rebuild_cache
-    ... test
-    ... las
-    ... las_c
-    ... las2las
-    ... las2txt
-    ... lasinfo
-    ... lasmerge
-    ... txt2las
-    ... liblas_test
-
-
-* Run `Continuous` target
-
-::
-
-    mloskot@dog:~/dev/liblas/_hg/build$ make Continuous
-       Site: dog
-       Build name: Linux-c++
-    Create new tag: 20091025-0003 - Continuous
-    Updating the repository
-       Updating the repository: /home/mloskot/dev/liblas/_hg/main
-       Use HG repository type
-       Old revision of repository is: aa303d670d1a
-       New revision of repository is: 690df0a6df0b
-       Gathering version information (one . per revision):
-        .
-       Found 1 updated files
-    Configure project
-       Each . represents 1024 bytes of output
-        . Size of output: 0K
-    Build project
-       Each symbol represents 1024 bytes of output.
-       '!' represents an error and '*' a warning.
-        ......****.* Size of output: 11K
-       0 Compiler errors
-       7 Compiler warnings
-    Test project /home/mloskot/dev/liblas/_hg/build
-        Start 1: liblas_test
-    1/1 Test #1: liblas_test ......................   Passed    0.02 sec
-
-    100% tests passed, 0 tests failed out of 1
-
-    Total Test time (real) =   0.03 sec
-    Performing coverage
-     Cannot find any coverage files. Ignoring Coverage request.
-    Submit files (using http)
-       Using HTTP submit method
-       Drop site:http://my.cdash.org/submit.php?project=libLAS
-       Uploaded: /home/mloskot/dev/liblas/_hg/build/Testing/20091025-0003/Build.xml
-       Uploaded: /home/mloskot/dev/liblas/_hg/build/Testing/20091025-0003/Configure.xml
-       Uploaded: /home/mloskot/dev/liblas/_hg/build/Testing/20091025-0003/Test.xml
-       Uploaded: /home/mloskot/dev/liblas/_hg/build/Testing/20091025-0003/Update.xml
-       Submission successful
-    Built target Continuous
 
 
 .. _`CMake`: http://www.cmake.org/
@@ -234,3 +196,4 @@ during development process.
 .. _`CDash`: http://www.cdash.org/
 .. _`continuous integration`: http://en.wikipedia.org/wiki/Continuous_integration
 .. _`libLAS CDash`: http://my.cdash.org/index.php?project=libLAS
+.. _`Curses`: http://en.wikipedia.org/wiki/Curses_%28programming_library%29
