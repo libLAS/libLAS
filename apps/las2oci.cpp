@@ -486,7 +486,7 @@ bool ArrayInsert( OWConnection* connection,
         int* panObjId,
         int* panBlockId,
         int* panNumPoints,
-        double** ppfdBuffer,
+        double* padfBuffer,
         int nArrayCols,
         int nRowsToInsert)
 {
@@ -495,7 +495,7 @@ bool ArrayInsert( OWConnection* connection,
     statement->Bind( panObjId );
     statement->Bind( panBlockId );
     statement->Bind( panNumPoints );
-    statement->BindArray( ppfdBuffer, nArrayCols );
+    statement->BindArray( padfBuffer, nArrayCols );
 
     if (statement->Execute(nRowsToInsert) == false) {
         delete statement;
@@ -656,40 +656,32 @@ bool InsertBlocks(OWConnection* connection,
      *  Allocate fixed width buffer dimensions
      */
 
-    double** ppfdBuffer = NULL;
-
     int nPoints = num_points;
     int nFizedRows = nPoints / MAX_POINTS_PER_ROW;
     int nFixedCols = min(nPoints, MAX_POINTS_PER_ROW) * nDims;
 
-    ppfdBuffer = (double**) malloc( sizeof(double*) * nFizedRows );
+    double* padfBuffer = (double*) malloc( sizeof(double) * nFizedRows * nFixedCols );
 
-    if( ppfdBuffer == NULL )
-        throw std::runtime_error("unable to allocate memory");
-
-    for( int i = 0; i < nFizedRows; i++ )
+    if( padfBuffer == NULL )
     {
-        ppfdBuffer[i] = (double*) malloc( sizeof(double) * nFixedCols );
-        
-        if( ppfdBuffer[i] == NULL )
-            throw std::runtime_error("unable to allocate memory");
+        throw std::runtime_error("unable to allocate memory");
     }
 
     /*
      *  Allocate buffer for extra row
      *
      *  That row could be the last row, or the only row. In both
-     *  case it should be also smaller than MAX_POINTS_PER_ROW.
+     *  case it should be smaller than MAX_POINTS_PER_ROW.
      */
 
     int nExtraPoints = num_points - (nFizedRows * MAX_POINTS_PER_ROW);
     int nExtraCols = nExtraPoints * nDims;
 
-    double* ppfdExtra[1];
+    double* padfExtra = NULL;
     
     if( nExtraPoints > 0 )
     {
-        ppfdExtra[0] = (double*) malloc( sizeof(double) * nExtraCols );
+        padfExtra = (double*) malloc( sizeof(double) * nExtraCols );
     }
 
     /*
@@ -698,24 +690,27 @@ bool InsertBlocks(OWConnection* connection,
 
     int index = 0;
 
-    for( int i = 0; i < nFizedRows; i++)
+    if( nFizedRows > 0 )
     {
-        for( int j = 0; j < nFixedCols; j++)
+        for( int i = 0; i < nFizedRows; i++)
         {
-            ppfdBuffer[i][j] = data.at(index++);
+            for( int j = 0; j < nFixedCols; j++)
+            {
+                padfBuffer[(i * nFixedCols) + j] = data.at(index++);
+            }
         }
 
-        GDALSwapWords( ppfdBuffer[i], sizeof(double), nFixedCols, sizeof(double) );
+        GDALSwapWords( padfBuffer, sizeof(double), nFizedRows * nFixedCols, sizeof(double) );
     }
-
+    
     if( nExtraPoints > 0 )
     {
         for( int i = 0; i < nExtraCols; i++)
         {
-            ppfdExtra[0][i] = data.at(index++);
+            padfExtra[i] = data.at(index++);
         }
         
-        GDALSwapWords( ppfdExtra[0], sizeof(double), nExtraCols, sizeof(double) );
+        GDALSwapWords( padfExtra, sizeof(double), nExtraCols, sizeof(double) );
     }
 
     /*
@@ -746,7 +741,7 @@ bool InsertBlocks(OWConnection* connection,
                 panObjId,
                 panBlockId,
                 panNumPoints,
-                ppfdBuffer,
+                padfBuffer,
                 nFixedCols,
                 nFizedRows ) == false )
         {
@@ -767,7 +762,7 @@ bool InsertBlocks(OWConnection* connection,
                 panObjId,
                 panBlockId,
                 panNumPoints,
-                ppfdExtra,
+                padfExtra,
                 nExtraCols, 1 ) == false )
         {
             throw std::runtime_error("error writing single block.");
@@ -779,14 +774,13 @@ bool InsertBlocks(OWConnection* connection,
     free( panObjId );
     free( panBlockId );
     free( panNumPoints );
-    for( int i = 0; i < nFizedRows; i++ )
+    if( padfBuffer != NULL )
     {
-        free( ppfdBuffer[i] );
+        free( padfBuffer );
     }
-    free( ppfdBuffer );
-    if( ppfdExtra[0] != NULL)
+    if( padfExtra != NULL)
     {
-        free( ppfdExtra[0] );
+        free( padfExtra );
     }
     return true;
 }
