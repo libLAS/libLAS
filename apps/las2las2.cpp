@@ -203,7 +203,7 @@ int main(int argc, char* argv[])
         }
         liblas::Reader reader(ifs);
         
-        reader.SetFilters(filters);
+        reader.SetFilters(&filters);
     
         std::ofstream ofs;
         if (!liblas::Create(ofs, out_file.c_str()))

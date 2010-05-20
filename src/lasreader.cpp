@@ -60,7 +60,8 @@ Reader::Reader(std::istream& ifs) :
     m_pimpl(new detail::CachedReaderImpl(ifs,3)),
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(false)
+    bCustomHeader(false),
+    m_filters(0)
 {
     Init();
 }
@@ -69,7 +70,8 @@ Reader::Reader(ReaderI* reader) :
     m_pimpl(reader),
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(false)
+    bCustomHeader(false),
+    m_filters(0)
 {
     Init();
 }
@@ -78,7 +80,8 @@ Reader::Reader(std::istream& ifs, Header& header) :
     m_pimpl(new detail::CachedReaderImpl(ifs,3)),
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(false)
+    bCustomHeader(false),
+    m_filters(0)
 {
     m_header = header;
     bCustomHeader = true;
@@ -108,11 +111,12 @@ bool Reader::ReadNextPoint()
 
     try {
         m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-        if (m_filters.size() != 0) {
+        if (m_filters != 0 ) {
+        if (m_filters->size() != 0) {
             // We have filters, filter this point.  All filters must 
             // return true for us to keep it.
             bool keep = false;
-            for (i = m_filters.begin(); i != m_filters.end(); ++i) {
+            for (i = m_filters->begin(); i != m_filters->end(); ++i) {
                 liblas::FilterI* filter = *i;
                 if (filter->filter(*m_point)){
                     // if ->filter() is true, we keep the point
@@ -128,6 +132,7 @@ bool Reader::ReadNextPoint()
             } else {
                 return true;
             }
+        }
         }
         return true;
     } catch (std::out_of_range) {
@@ -190,7 +195,6 @@ void Reader::Init()
     // keep it around until the reader closes down and then deletes.  
     // 
     m_point = m_empty_point;
-    m_filters.resize(0);
 }
 
 std::istream& Reader::GetStream() const

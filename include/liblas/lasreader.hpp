@@ -139,7 +139,7 @@ public:
     /// keep a point that was read from the file.  Filters have *no* 
     /// effect for reading data at specific locations in the file.  
     /// They only affect reading ReadNextPoint-style operations
-    void SetFilters(std::vector<liblas::FilterI*>& filters) {std::cout << "setting filters to " << m_filters.size() << std::endl; m_filters = filters;}
+    void SetFilters(std::vector<liblas::FilterI*>* filters) {m_filters = filters;}
 
 private:
 
@@ -158,7 +158,7 @@ private:
     // read from the istream
     bool bCustomHeader;
     
-    std::vector<liblas::FilterI*> m_filters;
+    std::vector<liblas::FilterI*>* m_filters;
 
     // std::istream& m_ifs;
     
