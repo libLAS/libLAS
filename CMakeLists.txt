@@ -28,7 +28,7 @@ set(LIBLAS_UNIT_TEST liblas_test)
 
 # Choose package components
 set(WITH_UTILITIES TRUE CACHE BOOL "Choose if libLAS utilities should be built")
-set(WITH_TESTS FALSE CACHE BOOL "Choose if libLAS unit tests should be built")
+set(WITH_TESTS TRUE CACHE BOOL "Choose if libLAS unit tests should be built")
 
 # Enable CTest and submissions to libLAS dashboard at CDash
 # http://my.cdash.org/index.php?project=libLAS
