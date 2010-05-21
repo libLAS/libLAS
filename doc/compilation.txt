@@ -66,7 +66,7 @@ libLAS can be used to load LAS data into `Oracle Point Cloud`_ -enabled
 Oracle tables.  
 
 Building these libraries is beyond the scope of this document, but all except
-'OCI`_ can be built from source and installed at your leisure.  
+`OCI`_ can be built from source and installed at your leisure.  
 
 `GDAL`_
 ------------------------------------------------------------------------------
@@ -92,6 +92,31 @@ Obtain `libgeotiff`_ from the same place you got `GDAL`_.
     those using that platform to link and build libLAS themselves, do 
     not need to worry about this issue.
 
+`libspatialindex`_
+------------------------------------------------------------------------------
+
+Obtain `libspatialindex`_ and install using a typical ``./configure; make; make install`` 
+installation procedure.  It does not have any dependent libraries.  It is also 
+available via `DebianGIS`_ and `OSGeo4W`_ as a binary.
+
+`OCI`_
+------------------------------------------------------------------------------
+
+Obtain the `Oracle Instant Client`_ and install in a location on your system.
+Be sure to install both the "Basic" and the "SDK" modules. Set your
+``ORACLE_HOME`` environment variable system- or user-wide to point to this
+location so the CMake configuration can find your install.
+
+.. warning::
+    `OCI`_'s libraries are inconsistently named.  You may need to create 
+    symbolic links for some library names in order for the `CMake`_ to find 
+    them::
+        
+        cd $ORACLE_HOME
+        ln -s libocci.so.10.1 libocci.so
+        ln -s libclntsh.so.10.1 libclntsh.so
+        ln -s libociei.so.10.1 libociei.so
+
 .. _`libgeotiff`: http://www.remotesensing.org/geotiff/geotiff.html
 .. _`7/28/2008`: http://lists.maptools.org/pipermail/geotiff/2008-July/000501.html
 .. _`proj.4`: http://proj.maptools.org/
@@ -110,7 +135,7 @@ Obtain `libgeotiff`_ from the same place you got `GDAL`_.
 
 
 
-Using "Unix Makefiles"
+Using "Unix Makefiles" on Linux
 ..............................................................................
 
 Get the source code
@@ -336,7 +361,7 @@ software.  The main pieces that will be installed are:
 
     make install
 
-CMake using XCode
+Using "XCode" on OS X
 ..............................................................................
 
 
