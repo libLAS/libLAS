@@ -14,6 +14,13 @@ source on the standards documents.
 * `ASPRS LAS 1.1`_
 * `ASPRS LAS 1.0`_
 
+VLR Key
+----------------
+
+libLAS' VLR key is ``1209`` with keyname ``liblas``
+
+http://www.asprs.org/society/committees/lidar/lidar_format_keylist.html
+
 .. _`ASPRS LAS 1.3`: http://liblas.org/_static/specifications/asprs_las_format_v13.pdf
 .. _`ASPRS LAS 1.2`: http://liblas.org/_static/specifications/asprs_las_format_v12.pdf
 .. _`ASPRS LAS 1.1`: http://liblas.org/_static/specifications/asprs_las_format_v11.pdf
