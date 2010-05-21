@@ -6,6 +6,7 @@ Compilation
 
 .. contents::
     :depth: 3
+    :backlinks: none
 
 
 :Author: Mateusz Loskot
@@ -287,32 +288,48 @@ substituting accordingly, to values that match your system layout.
     "","ORACLE_OCI_LIBRARY","/home/oracle/libclntsh.so"
   
 
- 
-.. note:: 
-    While `CMake`_ can be run from the command-line, and this is the preferred
-    way for many individuals, it can be much easier to run CMake from a GUI.
-    Now that we have a basic library building, we will use CMake's GUIs to
-    help us configure the rest of the optional components of the library. Run
-    ``ccmake ../`` for the `Curses`_ interface or ``cmake-gui ../`` for a GUI
-    version.
+
+CCMake and cmake-gui
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+While `CMake`_ can be run from the command-line, and this is the preferred
+way for many individuals, it can be much easier to run CMake from a GUI.
+Now that we have a basic library building, we will use CMake's GUIs to
+help us configure the rest of the optional components of the library. Run
+``ccmake ../`` for the `Curses`_ interface or ``cmake-gui ../`` for a GUI
+version.
 
   
-    .. figure:: ./images/ccmake-osx-start.png
-        :alt: Running CCMake in OS X
-    
-        Running the `Curses`_ `CMake`_ interface.  This interface is available to 
-        all unix-like operating systems. 
-    
-        .. note::
-            If your arrow keys are not working with in CCMake, use CTRL-N and 
-            CTRL-P to move back and forth between the options.
+.. figure:: ./images/ccmake-osx-start.png
+    :alt: Running CCMake in OS X
 
-    .. figure:: ./images/cmake-gui-osx-start.png
-        :alt: Running cmake-gui in OS X
+    Running the `Curses`_ `CMake`_ interface.  This interface is available to 
+    all unix-like operating systems. 
     
-        Running the cmake-gui `CMake`_ interface.  This interface is available 
-        on Linux, Windows, and Mac OS X.
+.. note::
+    If your arrow keys are not working with in CCMake, use CTRL-N and 
+    CTRL-P to move back and forth between the options.
 
+.. figure:: ./images/cmake-gui-osx-start.png
+    :alt: Running cmake-gui in OS X
+
+    Running the cmake-gui `CMake`_ interface.  This interface is available 
+    on Linux, Windows, and Mac OS X.
+
+Build and install 
+------------------------------------------------------------------------------
+
+Once you have configured your additional libraries, you can install the 
+software.  The main pieces that will be installed are:
+
+* libLAS headers (typically in a location ./include/liblas/...)
+* libLAS C++ (liblas.a or liblas.so) library
+* libLAS C (liblas_c.a or liblas_c.so) library
+* :ref:`Utility <utilities>` programs
+
+::
+
+    make install
 
 CMake using XCode
 ..............................................................................
