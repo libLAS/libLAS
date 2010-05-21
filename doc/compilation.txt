@@ -50,6 +50,8 @@ following compilers are known to work:
 * GCC 4.2
 * LLVM 4.2
 
+.. _optional_libraries:
+
 Optional libraries
 ..............................................................................
 
@@ -121,7 +123,7 @@ Prepare a build directory
 ------------------------------------------------------------------------------
 
 CMake allows you to generate different builders for a project, and in this
-example, we are going to generate both "Unix Makefiles" and "Xcode" builders
+example, we are going to generate a "Unix Makefiles" builder
 for libLAS on Mac OS X.
 
 ::
@@ -182,6 +184,8 @@ configured.
     Scanning dependencies of target las2las
     ...
     [100%] Built target txt2las
+
+.. _make_install:
 
 Run ``make install`` and test your installation with a :ref:`lasinfo` command
 ------------------------------------------------------------------------------
@@ -264,6 +268,7 @@ you can run lasinfo.
           213093 Unclassified (1)
 
 
+.. _configure_optional_libraries:
 
 Configure your `Optional Libraries`_.
 ------------------------------------------------------------------------------
@@ -334,11 +339,33 @@ software.  The main pieces that will be installed are:
 CMake using XCode
 ..............................................................................
 
+
+Get the source code
+------------------------------------------------------------------------------
+
+See :ref:`source` for how to obtain the latest development version or visit
+:ref:`download` to get the latest released version.
+
+Prepare a build directory
+------------------------------------------------------------------------------
+
+CMake allows you to generate different builders for a project, and in this
+example, we are going to generate an "Xcode" builder for libLAS on Mac OS X.
+Additionally, we're going to use an alternative compiler -- `LLVM`_ -- which 
+under certain situations can produce much faster code on Mac OS X.
+
 ::
 
+    $ export CC=/usr/bin/llvm-gcc
+    $ export CXX=/usr/bin/llvm-g++
     $ cd liblas
     $ mkdir xcode
     $ cd xcode/
+
+Configure base library
+------------------------------------------------------------------------------
+
+Configure the basic core library for the Xcode build:
 
 ::
 
@@ -347,21 +374,73 @@ CMake using XCode
     -- The CXX compiler identification is GNU
     -- Checking whether C compiler has -isysroot
     -- Checking whether C compiler has -isysroot - yes
-    -- Check for working C compiler: /usr/bin/gcc
-    -- Check for working C compiler: /usr/bin/gcc -- works
+    -- Check for working C compiler: /usr/bin/llvm-gcc
+    -- Check for working C compiler: /usr/bin/llvm-gcc -- works
     -- Detecting C compiler ABI info
     -- Detecting C compiler ABI info - done
     -- Checking whether CXX compiler has -isysroot
     -- Checking whether CXX compiler has -isysroot - yes
-    -- Check for working CXX compiler: /usr/bin/g++
-    -- Check for working CXX compiler: /usr/bin/g++ -- works
+    -- Check for working CXX compiler: /usr/bin/llvm-g++
+    -- Check for working CXX compiler: /usr/bin/llvm-g++ -- works
     -- Detecting CXX compiler ABI info
     -- Detecting CXX compiler ABI info - done
     -- Enable libLAS utilities to build - done
+    -- Enable libLAS unit tests to build - done
     -- Configuring done
     -- Generating done
     -- Build files have been written to: /Users/hobu/hg/liblas-cmake/xcode
 
+:: 
+    
+    $ open libLAS.xcodeproj/
+
+.. figure:: ./images/xcode-start.png
+    :alt: Building libLAS using the XCode project
+
+Set default command for XCode
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Set the default executable for the project to be ``lasinfo`` by opening the 
+"Executables" tree, choosing "lasinfo," and clicking the bubble next to 
+the "Executable name" in the right-hand panel.  
+
+.. figure:: ./images/xcode-set-default-executable.png
+    :alt: Setting the default executable
+
+Set arguments for :ref:`lasinfo`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Set the arguments for :ref:`lasinfo` so it can be run from within XCode. We
+use the ${PROJECT_DIR} environment variable to be able to tell lasinfo the
+location of our test file. This is similar to the :ref:`same command
+<make_install>` above in the "Unix Makefiles" section.
+
+.. figure:: ./images/xcode-lasinfo-arguments.png
+    :alt: Setting the arguments for lasinfo
+
+Build and run the :ref:`lasinfo` command
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Open the console by pressing CMD-SHIFT-R or by navigating to the Run-Console 
+menu and press the `Build and Run` button.
+
+
+.. figure:: ./images/xcode-lasinfo-output.png
+    :alt: lasinfo output in XCode
+
+
+Configure `Optional Libraries`_
+------------------------------------------------------------------------------
+
+As :ref:`before <configure_optional_libraries>`, use ``ccmake ../`` or ``cmake-gui ../`` to 
+configure your :ref:`optional_libraries`.
+
+
+.. figure:: ./images/cmake-gui-osx-configured.png
+    :alt: Configuring optional libraries with CMake GUI
+    
+    Configuring `Optional Libraries`_ with CMake GUI
+    
 
 
 ::
@@ -423,3 +502,4 @@ CMake using XCode
 .. _`libLAS CDash`: http://my.cdash.org/index.php?project=libLAS
 .. _`Curses`: http://en.wikipedia.org/wiki/Curses_%28programming_library%29
 .. _`Autoconf`: http://www.gnu.org/software/autoconf/
+.. _`LLVM`: http://llvm.org/
