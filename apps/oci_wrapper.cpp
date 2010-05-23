@@ -1409,7 +1409,7 @@ void OWStatement::BindName( const char* pszName, OCILobLocator** pphLocator )
         hError );
 }
 
-void OWStatement::BindArray( double* pdfData, long nSize )
+void OWStatement::BindArray( void* pData, long nSize )
 {
     OCIBind* hBind = NULL;
 
@@ -1420,7 +1420,7 @@ void OWStatement::BindArray( double* pdfData, long nSize )
         &hBind,
         hError,
         (ub4) nNextBnd,
-        (dvoid*) pdfData,
+        (dvoid*) pData,
         (sb4) nSize * sizeof(double),
         (ub2) SQLT_BIN,
         (void*) NULL,
@@ -1434,66 +1434,6 @@ void OWStatement::BindArray( double* pdfData, long nSize )
         hBind,
         hError,
         (ub4) nSize * sizeof(double),
-        (ub4) 0,
-        (ub4) 0,
-        (ub4) 0), hError );
-}
-
-void OWStatement::BindArray( long* pplnData, long nSize )
-{
-    OCIBind* hBind = NULL;
-
-    nNextBnd++;
-
-    CheckError( OCIBindByPos(
-        hStmt,
-        &hBind,
-        hError,
-        (ub4) nNextBnd,
-        (dvoid*) pplnData,
-        (sb4) nSize * sizeof(long),
-        (ub2) SQLT_BIN,
-        (void*) NULL,
-        (ub2*) NULL,
-        (ub2*) NULL,
-        (ub4) NULL,
-        (ub4) NULL,
-        (ub4) OCI_DEFAULT ), hError );
-
-    CheckError( OCIBindArrayOfStruct(
-        hBind,
-        hError,
-        (ub4) nSize * sizeof(long),
-        (ub4) 0,
-        (ub4) 0,
-        (ub4) 0), hError );
-}
-
-void OWStatement::BindArray( int* ppnData, long nSize )
-{
-    OCIBind* hBind = NULL;
-
-    nNextBnd++;
-
-    CheckError( OCIBindByPos(
-        hStmt,
-        &hBind,
-        hError,
-        (ub4) nNextBnd,
-        (dvoid*) ppnData,
-        (sb4) nSize * sizeof(int),
-        (ub2) SQLT_BIN,
-        (void*) NULL,
-        (ub2*) NULL,
-        (ub2*) NULL,
-        (ub4) NULL,
-        (ub4) NULL,
-        (ub4) OCI_DEFAULT ), hError );
-
-    CheckError( OCIBindArrayOfStruct(
-        hBind,
-        hError,
-        (ub4) nSize * sizeof(int),
         (ub4) 0,
         (ub4) 0,
         (ub4) 0), hError );

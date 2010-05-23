@@ -395,9 +395,7 @@ public:
                             int nSize = OWNAME );
     void                BindName( const char* pszName,
                             OCILobLocator** pphLocator );
-    void                BindArray( double* ppfdData, long nSize = 1);
-    void                BindArray( long* plnData, long nSize = 1);
-    void                BindArray( int* ppnData, long nSize = 1);
+    void                BindArray( void* pData, long nSize = 1);
     static void         Free( OCILobLocator** ppphLocator,
                             int nCount );
     unsigned long       ReadBlob( OCILobLocator* phLocator,
