@@ -295,7 +295,7 @@ LAS_DLL const LASPointH LASReader_GetNextPoint(const LASReaderH hReader)
     try {
         liblas::Reader *reader = ((liblas::Reader*) hReader);
         if (reader->ReadNextPoint()) 
-            // return (LASPointH) new LASPoint(reader->GetPoint());
+            // return (LASPointH) new Point(reader->GetPoint());
             return (LASPointH) &(reader->GetPoint());
         else 
             return NULL;
@@ -316,7 +316,7 @@ LAS_DLL const LASPointH LASReader_GetPointAt(const LASReaderH hReader, liblas::u
     try {
         liblas::Reader *reader = ((liblas::Reader*) hReader);
         if (reader->ReadPointAt((std::size_t) position)) 
-            // return (LASPointH) new LASPoint(reader->GetPoint());
+            // return (LASPointH) new Point(reader->GetPoint());
             return (LASPointH) &(reader->GetPoint());
         else 
             return NULL;

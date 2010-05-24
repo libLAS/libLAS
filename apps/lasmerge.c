@@ -266,13 +266,13 @@ int main(int argc, char *argv[])
     {
         reader = LASReader_Create(file_names_in[i]);
         if (!reader) { 
-                LASError_Print("Could not get LASReader "); 
+                LASError_Print("Could not get Reader "); 
                 exit(1);
             } 
       
             header = LASReader_GetHeader(reader);
             if (!header) { 
-                LASError_Print("Could not get LASHeader "); 
+                LASError_Print("Could not get Header "); 
                 exit(1);
             } 
 
@@ -413,7 +413,7 @@ int main(int argc, char *argv[])
 
     writer = LASWriter_Create(file_name_out, merged_header, LAS_MODE_WRITE);
     if (!writer) { 
-        LASError_Print("Could not create LASWriter "); 
+        LASError_Print("Could not create Writer "); 
         exit(1);
     } 
 
@@ -424,12 +424,12 @@ int main(int argc, char *argv[])
     {
         reader = LASReader_Create(file_names_in[i]);
         if (!reader) { 
-            LASError_Print("Could not get LASReader ");
+            LASError_Print("Could not get Reader ");
             exit(1);
         } 
         header = LASReader_GetHeader(reader);
         if (!header) { 
-            LASError_Print("Could not get LASHeader ");
+            LASError_Print("Could not get Header ");
             exit(1);
         } 
 
@@ -484,7 +484,7 @@ int main(int argc, char *argv[])
       
         header = LASReader_GetHeader(reader);
         if (!header) { 
-            LASError_Print("Could not get LASHeader ");
+            LASError_Print("Could not get Header ");
             exit(1);
         } 
 

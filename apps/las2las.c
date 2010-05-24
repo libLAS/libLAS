@@ -538,7 +538,7 @@ int main(int argc, char *argv[])
 
     if (!p) {
         if (LASError_GetLastErrorNum()) 
-            LASError_Print("Not able to fetch a point.  LASReader is invalid");
+            LASError_Print("Not able to fetch a point.  Reader is invalid");
         else
             LASError_Print("File does not contain any points to read.");
         exit(1);
@@ -1023,7 +1023,7 @@ int main(int argc, char *argv[])
     p = LASReader_GetNextPoint(reader);
     if (!p) {
         if (LASError_GetLastErrorNum()) 
-            LASError_Print("Not able to fetch a point.  LASReader is invalid");
+            LASError_Print("Not able to fetch a point.  Reader is invalid");
         else
             LASError_Print("File does not contain any points to read.");
         exit(1);

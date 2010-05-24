@@ -497,7 +497,7 @@ LAS_DLL LASHeaderH LASHeader_Copy(const LASHeaderH hHeader);
 */
 LAS_DLL LASHeaderH LASHeader_Create(void);
 
-/** Destroys/deletes a LASHeader instance
+/** Destroys/deletes a Header instance
 */
 LAS_DLL void LASHeader_Destroy(LASHeaderH hHeader);
 

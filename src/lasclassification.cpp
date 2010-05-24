@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Implementation of LASClassification type.
+ * Purpose:  Implementation of Classification type.
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************

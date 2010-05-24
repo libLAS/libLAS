@@ -708,7 +708,7 @@ void Header::SetPointFormat(const PointFormat& format)
     // The DataRecordLength will be set to the max of either the format's 
     // byte size or the pointformat's specified size according to whether 
     // or not it has color or time (FIXME: or waveform packets once we get to 1.3 )
-    // The extra space that is available can be used to store LASPoint::GetExtraData.
+    // The extra space that is available can be used to store Point::GetExtraData.
     // We trim the format size to uint16_t because that's what the header stores 
     if (format.HasColor() && format.HasTime()) {
         SetDataFormatId(liblas::ePointFormat3);

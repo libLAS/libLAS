@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
 
     header = LASReader_GetHeader(reader);
     if (!header) { 
-        LASError_Print("Could not get LASHeader ");
+        LASError_Print("Could not get Header ");
         exit(1);
     } 
 
@@ -291,7 +291,7 @@ int main(int argc, char *argv[])
         if (! header) {
             header = LASReader_GetHeader(reader);
             if (!header) { 
-                LASError_Print("Could not get LASHeader ");
+                LASError_Print("Could not get Header ");
                 exit(1);
             } 
         } 
@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
             if (! header) {
                 header = LASReader_GetHeader(reader);
                 if (!header) { 
-                    LASError_Print("Could not get LASHeader ");
+                    LASError_Print("Could not get Header ");
                     exit(1);
                 }
             } 

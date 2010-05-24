@@ -133,7 +133,7 @@ void Header::read()
     read_n(n4, m_ifs, sizeof(n4));
     if (n4 < m_header.GetHeaderSize())
     {
-        // TODO: Move this test to LASHeader::Validate()
+        // TODO: Move this test to Header::Validate()
         throw std::domain_error("offset to point data smaller than header size");
     }
     m_header.SetDataOffset(n4);
