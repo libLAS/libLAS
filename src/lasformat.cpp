@@ -90,11 +90,11 @@ void PointFormat::updatesize() {
         }
         else if (base_difference > 0) {
             // Expand m_size to include new_base_size
-            m_size = m_size + base_difference;
+			m_size = m_size + static_cast<liblas::uint16_t>(base_difference);
             m_base_size = new_base_size;
         }
         else {
-            m_size = m_size - base_difference;
+            m_size = m_size - static_cast<liblas::uint16_t>(base_difference);
             m_base_size = new_base_size;
         }
         
