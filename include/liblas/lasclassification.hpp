@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Definition of LASClassification type.
+ * Purpose:  Definition of Classification type.
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
@@ -145,8 +145,13 @@ public:
     /// Returns index of ASPRS classification as defined in the lookup table.
     uint8_t GetClass() const
     {
+#if (defined(_MSC_VER) && _MSC_VER >=1600)
+        typedef unsigned long long bitset_uint_type;
+#else
+        typedef unsigned long bitset_uint_type;
+#endif
+        bitset_type const mask(static_cast<bitset_uint_type>(class_table_size - 1));
         bitset_type bits(m_flags);
-        bitset_type const mask(static_cast<unsigned long>(class_table_size) - 1);
         bits &= mask;
 
         uint8_t const index = static_cast<uint8_t>(bits.to_ulong());
