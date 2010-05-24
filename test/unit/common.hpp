@@ -13,7 +13,7 @@
 namespace tut
 {
 
-// Predicate testing LASPoint against given XY coordinates
+// Predicate testing Point against given XY coordinates
 // and tolerance.
 struct is_xy
 {
@@ -21,7 +21,7 @@ struct is_xy
         : x(x), y(y), t(tolerance)
     {}
 
-    bool operator()(liblas::LASPoint const& p)
+    bool operator()(liblas::Point const& p)
     {
         double const dx = x - p.GetX();
         double const dy = y - p.GetY();
@@ -42,7 +42,7 @@ struct bbox_calculator
         : empty(true), bbox(bbox)
     {}
 
-    void operator()(liblas::LASPoint const& p)
+    void operator()(liblas::Point const& p)
     {
         // Box initialization during first iteration only
         if (empty)
@@ -63,26 +63,26 @@ struct bbox_calculator
     }
 
     bool empty;
-    liblas::detail::Extents<double>& bbox;
+    liblas::detail::Extents<double> bbox;
 };
 
 // Common test procedure for default constructed point data.
-void test_default_point(liblas::LASPoint const& p);
+void test_default_point(liblas::Point const& p);
 
 // Common test procedure for default constructed header data.
-void test_default_header(liblas::LASHeader const& h);
+void test_default_header(liblas::Header const& h);
 
 // Test of header data in trunk/test/data/TO_core_last_clip.las file
-void test_file10_header(liblas::LASHeader const& h);
+void test_file10_header(liblas::Header const& h);
 
 // Test of 1st point record in trunk/test/data/TO_core_last_clip.las file
-void test_file10_point1(liblas::LASPoint const& p);
+void test_file10_point1(liblas::Point const& p);
 
 // Test of 2nd point record in trunk/test/data/TO_core_last_clip.las file
-void test_file10_point2(liblas::LASPoint const& p);
+void test_file10_point2(liblas::Point const& p);
 
 // Test of 4th point record in trunk/test/data/TO_core_last_clip.las file
-void test_file10_point4(liblas::LASPoint const& p);
+void test_file10_point4(liblas::Point const& p);
 
 } // namespace tut
 

@@ -14,12 +14,12 @@
 namespace tut
 {
 
-void test_default_header(liblas::LASHeader const& h)
+void test_default_header(liblas::Header const& h)
 {
-    using liblas::LASHeader;
+    using liblas::Header;
 
     ensure_equals("wrong default file signature",
-        h.GetFileSignature(), LASHeader::FileSignature);
+        h.GetFileSignature(), Header::FileSignature);
 
     ensure_equals("wrong default file source id",
         h.GetFileSourceId(), 0);
@@ -36,9 +36,9 @@ void test_default_header(liblas::LASHeader const& h)
         h.GetVersionMinor(), 2);
 
     ensure_equals("wrong default system id",
-        h.GetSystemId(), LASHeader::SystemIdentifier);
+        h.GetSystemId(), Header::SystemIdentifier);
     ensure_equals("wrong default software id",
-        h.GetSoftwareId(), LASHeader::SoftwareIdentifier);
+        h.GetSoftwareId(), Header::SoftwareIdentifier);
 
     // TODO: Fix me to use todays day # and year
     // ensure_equals("wrong default creation day-of-year",
@@ -81,7 +81,7 @@ void test_default_header(liblas::LASHeader const& h)
     ensure_equals("wrong default max Z", h.GetMaxZ(), double(0));
 }
 
-void test_default_point(liblas::LASPoint const& p)
+void test_default_point(liblas::Point const& p)
 {
     ensure_equals("wrong default X coordinate",
         p.GetX(), double(0));
@@ -100,7 +100,7 @@ void test_default_point(liblas::LASPoint const& p)
     ensure_equals("wrong defualt edge of flight line",
         p.GetFlightLineEdge(), 0);
     ensure_equals("wrong defualt classification",
-        p.GetClassification(), liblas::LASClassification::bitset_type());
+        p.GetClassification(), liblas::Classification::bitset_type());
     ensure_equals("wrong defualt scan angle rank",
         p.GetScanAngleRank(), 0);
     ensure_equals("wrong defualt file marker/user data value",
@@ -120,9 +120,9 @@ void test_default_point(liblas::LASPoint const& p)
     ensure("invalid defualt point record", p.IsValid());
 }
 
-void test_file10_header(liblas::LASHeader const& h)
+void test_file10_header(liblas::Header const& h)
 {
-    ensure_equals(h.GetFileSignature(), liblas::LASHeader::FileSignature);
+    ensure_equals(h.GetFileSignature(), liblas::Header::FileSignature);
     ensure_equals(h.GetFileSourceId(), 0);
     ensure_equals(h.GetReserved(), 0);
 
@@ -156,13 +156,13 @@ void test_file10_header(liblas::LASHeader const& h)
     ensure_equals(h.GetMaxZ(), double(55.26));
 }
 
-void test_file10_point1(liblas::LASPoint const& p)
+void test_file10_point1(liblas::Point const& p)
 {
     ensure_distance(p.GetX(), double(630262.30), 0.0001);
     ensure_distance(p.GetY(), double(4834500), 0.0001);
     ensure_distance(p.GetZ(), double(51.53), 0.0001);
     ensure_equals(p.GetIntensity(), 670);
-    ensure_equals(p.GetClassification(), liblas::LASClassification::bitset_type(1));
+    ensure_equals(p.GetClassification(), liblas::Classification::bitset_type(1));
     ensure_equals(p.GetScanAngleRank(), 0);
     ensure_equals(p.GetUserData(), 3);
     ensure_equals(p.GetPointSourceID(), 0);
@@ -170,13 +170,13 @@ void test_file10_point1(liblas::LASPoint const& p)
     ensure_distance(p.GetTime(), double(413665.23360000004), 0.0001);
 }
 
-void test_file10_point2(liblas::LASPoint const& p)
+void test_file10_point2(liblas::Point const& p)
 {
     ensure_distance(p.GetX(), double(630282.45), 0.0001);
     ensure_distance(p.GetY(), double(4834500), 0.0001);
     ensure_distance(p.GetZ(), double(51.63), 0.0001);
     ensure_equals(p.GetIntensity(), 350);
-    ensure_equals(p.GetClassification(), liblas::LASClassification::bitset_type(1));
+    ensure_equals(p.GetClassification(), liblas::Classification::bitset_type(1));
     ensure_equals(p.GetScanAngleRank(), 0);
     ensure_equals(p.GetUserData(), 3);
     ensure_equals(p.GetPointSourceID(), 0);
@@ -184,13 +184,13 @@ void test_file10_point2(liblas::LASPoint const& p)
     ensure_distance(p.GetTime(), double(413665.52880000003), 0.0001);
 }
 
-void test_file10_point4(liblas::LASPoint const& p)
+void test_file10_point4(liblas::Point const& p)
 {
     ensure_distance(p.GetX(), double(630346.83), 0.0001);
     ensure_distance(p.GetY(), double(4834500), 0.0001);
     ensure_distance(p.GetZ(), double(50.90), 0.0001);
     ensure_equals(p.GetIntensity(), 150);
-    ensure_equals(p.GetClassification(), liblas::LASClassification::bitset_type(1));
+    ensure_equals(p.GetClassification(), liblas::Classification::bitset_type(1));
     ensure_equals(p.GetScanAngleRank(), 0);
     ensure_equals(p.GetUserData(), 4);
     ensure_equals(p.GetPointSourceID(), 0);
