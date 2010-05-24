@@ -510,6 +510,11 @@ void SpatialReference::SetVerticalCS( int verticalCSType,
     }
 
     ResetVLRs();
+#else
+    detail::ignore_unused_variable_warning(citation);
+    detail::ignore_unused_variable_warning(verticalUnits);
+    detail::ignore_unused_variable_warning(verticalDatum);
+    detail::ignore_unused_variable_warning(verticalCSType);
 #endif /* def HAVE_LIBGEOTIFF */
 }
                                          
