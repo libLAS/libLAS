@@ -471,25 +471,78 @@ configure your :ref:`optional_libraries`.
 Using "Visual Studio 9 2008" on Windows
 ..............................................................................
 
+
+.. _msvc_prerequisites:
     
 Prerequisites
 ------------------------------------------------------------------------------
 
 * Ensure that you have `CMake 2.8.0+`_ installed on your system.
-
-* Make sure you run `CMake`_ from a "Visual Studio 2008 Command Prompt"
   
-  .. note::
-        This can be found by navigating through the start bar to 
-        "Start" -- "Microsoft Visual Studio 2008" -- "Visual Studio Tools " --
-        "Visual Studio 2008 Command Prompt".  This command prompt sets 
-        a number of environment variables necessary for Visual Studio to 
-        run, and `CMake`_ must have these variables set in order for it to 
+
+* Install `OSGeo4W`_ on your system to get `Optional Libraries`_ in 
+  pre-compiled form.  You can build these from source yourself, but it is 
+  much more convenient to get them from OSGeo4W.  
+  
+  * gdal-dev
+  * libspatialindex 
+  * libspatialindex-devel
+  * libtiff
+  * libgeotiff
+  
+  .. figure:: ./images/windows-osgeo4w-advanced-install.png
+            :alt: OSGeo4W installation
+  
+            Choose the "Advanced install" to be able to pick the libraries 
+            and their headers that you need.
+
+  .. figure:: ./images/windows-osgeo4w-choosing-packages.png
+            :alt: Choosing libraries
+  
+            Open up the "Libs" tree and choose the libraries you need
+
+
+
+Run ``cmake-gui.exe``
+------------------------------------------------------------------------------
+
+* Run ``cmake-gui.exe`` from a "Visual Studio 2008 Command Prompt"
+
+::
+
+    cd d:\liblas
+    cmake-gui .
+
+.. figure:: ./images/windows-cmake-start.png
+    :alt: Starting CMake
+    
+    Upon opening cmake-gui, nothing will be configured.
+              
+    .. note::
+        The Visual Studio Prompt can be found by navigating through the start
+        bar to "Start" -- "Microsoft Visual Studio 2008" -- "Visual Studio
+        Tools " -- "Visual Studio 2008 Command Prompt". This command prompt
+        sets a number of environment variables necessary for Visual Studio to
+        run, and `CMake`_ must have these variables set in order for it to
         work properly.
+        
+        .. figure:: ./images/windows-command-prompt.png
+            :alt: Visual Studio Command prompt
 
-  .. figure:: ./images/windows-command-prompt.png
-    :alt: Visual Studio Command prompt
+.. figure:: ./images/windows-cmake-generator-visual-studio-9.png
+    :alt: Generating a project
+  
+* Click "Configure" and a window will pop up asking what type of build to
+  generate. Choose "Visual Studio 9 2008."
 
+* Click "Generate" and a "libLAS.sln" file will be in ``d:\liblas``
+
+* Open and build the project
+
+.. image:: ./images/windows-msvc-build.png
+
+
+------------------------------------------------------------------------------
 
 .. _`CMake`: http://www.cmake.org/
 .. _`CTest`: http://cmake.org/cmake/help/ctest-2-8-docs.html
@@ -500,3 +553,4 @@ Prerequisites
 .. _`Curses`: http://en.wikipedia.org/wiki/Curses_%28programming_library%29
 .. _`Autoconf`: http://www.gnu.org/software/autoconf/
 .. _`LLVM`: http://llvm.org/
+.. _`OSGeo4W`: http://trac.osgeo.org/osgeo4w/
