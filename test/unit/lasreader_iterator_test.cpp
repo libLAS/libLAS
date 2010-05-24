@@ -25,7 +25,7 @@ namespace tut
     {
         std::string file10_;
         std::ifstream ifs_;
-        LASReader reader_;
+        Reader reader_;
 
         lasreader_iterator_data() :
             file10_(g_test_data_path + "//TO_core_last_clip.las"),
@@ -128,7 +128,7 @@ namespace tut
         ensure_equals(it->GetScanFlags(), 9);
         ensure_distance(it->GetTime(), double(413665.23360000004), 0.0001);
 
-        liblas::LASClassification c(1);
+        liblas::Classification c(1);
         ensure_equals(it->GetClassification(), c);
     }
 
@@ -205,7 +205,7 @@ namespace tut
         lasreader_iterator end;
 
         lasreader_iterator::difference_type const d = std::distance(it, end);
-        ensure_equals(d, cnt);
+        ensure_equals(static_cast<liblas::uint32_t>(d), cnt);
     }
 
     // Test std::distance operation
@@ -247,7 +247,7 @@ namespace tut
         lasreader_iterator it(reader_);
         lasreader_iterator end;
 
-        typedef std::list<LASPoint> list_t;
+        typedef std::list<Point> list_t;
         typedef std::back_insert_iterator<list_t> inserter_t;
         list_t cache;
 
@@ -269,7 +269,7 @@ namespace tut
     void to::test<18>()
     {
         // Construct copy of 2nd point record from tested file
-        LASPoint pt;
+        Point pt;
         pt.SetCoordinates(630282.45, 4834500, 51.63);
         pt.SetIntensity(350);
         pt.SetClassification(1);
@@ -295,10 +295,10 @@ namespace tut
     void to::test<19>()
     {
         std::ifstream ifs(file10_.c_str(), std::ios::in | std::ios::binary);
-        LASReader reader(ifs);
+        Reader reader(ifs);
 
         // Copy LAS records to std::list based cache
-        typedef std::list<LASPoint> list_t;
+        typedef std::list<Point> list_t;
         typedef std::back_insert_iterator<list_t> inserter_t;
         list_t cache;
         {
@@ -330,7 +330,7 @@ namespace tut
     void to::test<20>()
     {
         // Construct copy of 2nd point record from tested file
-        LASPoint pt;
+        Point pt;
         pt.SetCoordinates(630282.45, 4834500, 51.63);
         pt.SetIntensity(350);
         pt.SetClassification(1);
@@ -377,7 +377,7 @@ namespace tut
         typedef liblas::detail::Point<double> point_t;
         typedef liblas::detail::Extents<double> bbox_t;
 
-        LASHeader const& h = reader_.GetHeader();
+        Header const& h = reader_.GetHeader();
         bbox_t lasbbox(point_t(h.GetMinX(), h.GetMinY(), h.GetMinZ()),
                        point_t(h.GetMaxX(), h.GetMaxY(), h.GetMaxZ()));
 

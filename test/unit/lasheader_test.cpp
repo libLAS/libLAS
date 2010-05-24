@@ -18,13 +18,13 @@ namespace tut
 { 
     struct lasheader_data
     {
-        liblas::LASHeader m_default;
+        liblas::Header m_default;
     };
 
     typedef test_group<lasheader_data> tg;
     typedef tg::object to;
 
-    tg test_group_lasheader("liblas::LASHeader");
+    tg test_group_lasheader("liblas::Header");
 
     // Test default constructor
     template<>
@@ -39,25 +39,25 @@ namespace tut
     template<>
     void to::test<2>()
     {
-        using liblas::LASHeader;
+        using liblas::Header;
         
-        LASHeader copy_of_default(m_default);
+        Header copy_of_default(m_default);
         test_default_header(copy_of_default);
 
         std::string sig("LASF and garbage");
 
-        LASHeader h1;
+        Header h1;
         
         h1.SetFileSignature(sig);
         ensure_not(h1.GetFileSignature() == sig);
         ensure_equals(h1.GetFileSignature().size(), std::string::size_type(4));
-        ensure_equals(h1.GetFileSignature(), LASHeader::FileSignature);
+        ensure_equals(h1.GetFileSignature(), Header::FileSignature);
 
-        LASHeader h2(h1);
+        Header h2(h1);
 
         ensure_not(h2.GetFileSignature() == sig);
         ensure_equals(h2.GetFileSignature().size(), std::string::size_type(4));
-        ensure_equals(h2.GetFileSignature(), LASHeader::FileSignature);
+        ensure_equals(h2.GetFileSignature(), Header::FileSignature);
     }
 
 
@@ -66,9 +66,9 @@ namespace tut
     template<>
     void to::test<3>()
     {
-        using liblas::LASHeader;
+        using liblas::Header;
         
-        LASHeader copy_of_default;
+        Header copy_of_default;
         copy_of_default = m_default;
         test_default_header(copy_of_default);
 
@@ -79,23 +79,23 @@ namespace tut
     template<>
     void to::test<4>()
     {
-        using liblas::LASHeader;
+        using liblas::Header;
 
         std::string sig("LASF and garbage");
 
-        LASHeader h1;
+        Header h1;
         h1.SetFileSignature(sig);
 
         ensure_not(h1.GetFileSignature() == sig);
         ensure_equals(h1.GetFileSignature().size(), std::string::size_type(4));
-        ensure_equals(h1.GetFileSignature(), LASHeader::FileSignature);
+        ensure_equals(h1.GetFileSignature(), Header::FileSignature);
 
-        LASHeader h2;
+        Header h2;
         h2 = h1;
 
         ensure_not(h2.GetFileSignature() == sig);
         ensure_equals(h2.GetFileSignature().size(), std::string::size_type(4));
-        ensure_equals(h2.GetFileSignature(), LASHeader::FileSignature);
+        ensure_equals(h2.GetFileSignature(), Header::FileSignature);
     }
 
     // Test Get/SetFileSourceId
@@ -103,14 +103,14 @@ namespace tut
     template<>
     void to::test<5>()
     {
-        using liblas::LASHeader;
+        using liblas::Header;
         using liblas::uint16_t;
 
         uint16_t const id1 = 1;
         uint16_t const id2 = 65535;
         uint16_t const overflowed = 0;
 
-        LASHeader h1;
+        Header h1;
         h1.SetFileSourceId(id1);
         ensure_equals(h1.GetFileSourceId(), id1);
         h1.SetFileSourceId(id2);
@@ -136,7 +136,7 @@ namespace tut
     template<>
     void to::test<6>()
     {
-        liblas::LASHeader h;
+        liblas::Header h;
         ensure_equals(h.GetReserved(), 0);
     }
 
@@ -148,7 +148,7 @@ namespace tut
         std::string strid("030B4A82-1B7C-11CF-9D53-00AA003C9CB6");
         liblas::guid id(strid.c_str());
 
-        liblas::LASHeader h;
+        liblas::Header h;
         h.SetProjectId(id);
         
         ensure_not(h.GetProjectId().is_null());
@@ -160,7 +160,7 @@ namespace tut
     template<>
     void to::test<8>()
     {
-        liblas::LASHeader h;
+        liblas::Header h;
 
         h.SetVersionMajor(1);
         h.SetVersionMinor(0);
@@ -198,14 +198,14 @@ namespace tut
     template<>
     void to::test<9>()
     {
-        using liblas::LASHeader;
+        using liblas::Header;
 
         std::string sysid1("Short Sys Id"); // 12 bytes
         std::string::size_type const len1 = sysid1.size();
         std::string sysid2("Long System Identifier - XXX YYY"); // 32 bytes
         std::string::size_type const len2 = sysid2.size();
 
-        LASHeader h;
+        Header h;
 
         h.SetSystemId(sysid1);
         ensure_equals(h.GetSystemId(), sysid1);
@@ -223,14 +223,14 @@ namespace tut
     template<>
     void to::test<10>()
     {
-        using liblas::LASHeader;
+        using liblas::Header;
 
         std::string softid1("Short Soft Id"); // 13 bytes
         std::string::size_type const len1 = softid1.size();
         std::string softid2("Long Software Identifier - XX YY"); // 32 bytes
         std::string::size_type const len2 = softid2.size();
 
-        LASHeader h;
+        Header h;
         h.SetSoftwareId(softid1);
         ensure_equals(h.GetSoftwareId(), softid1);
         ensure_equals(h.GetSoftwareId().size(), len1);
@@ -247,10 +247,10 @@ namespace tut
     template<>
     void to::test<11>()
     {
-        typedef ::liblas::LASHeader::RecordsByReturnArray::size_type size_type;
+        typedef ::liblas::Header::RecordsByReturnArray::size_type size_type;
         typedef ::liblas::uint32_t count_type;
 
-        liblas::LASHeader h;
+        liblas::Header h;
         ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
 
         h.SetPointRecordsByReturnCount(0, 100);
@@ -290,8 +290,8 @@ namespace tut
     template<>
     void to::test<12>()
     {
-        liblas::LASHeader h;
-        liblas::LASSpatialReference srs = h.GetSRS();
+        liblas::Header h;
+        liblas::SpatialReference srs = h.GetSRS();
 
         ensure_equals(srs.GetProj4(), "");
         ensure_equals(srs.GetWKT(), "");

@@ -20,13 +20,13 @@ namespace tut
 { 
     struct laspoint_data
     {
-        liblas::LASPoint m_default;
+        liblas::Point m_default;
     };
 
     typedef test_group<laspoint_data> tg;
     typedef tg::object to;
 
-    tg test_group_laspoint("liblas::LASPoint");
+    tg test_group_laspoint("liblas::Point");
 
     // Test default construction
     template<>
@@ -41,7 +41,7 @@ namespace tut
     template<>
     void to::test<2>()
     {
-        liblas::LASPoint p(m_default);
+        liblas::Point p(m_default);
 
         test_default_point(p);
     }
@@ -51,7 +51,7 @@ namespace tut
     template<>
     void to::test<3>()
     {
-        liblas::LASPoint p;
+        liblas::Point p;
         p = m_default;
 
         test_default_point(p);
@@ -62,7 +62,7 @@ namespace tut
     template<>
     void to::test<4>()
     {
-        liblas::LASPoint p;
+        liblas::Point p;
         
         ensure("points are not equal", m_default == p);
     }
@@ -72,7 +72,7 @@ namespace tut
     template<>
     void to::test<5>()
     {
-        liblas::LASPoint p;
+        liblas::Point p;
         p.SetCoordinates(1.123, 2.456, 3.789);
         
         ensure("points are equal", m_default != p);
@@ -108,8 +108,8 @@ namespace tut
         }
         catch (liblas::invalid_point_data const& e)
         {
-            ensure_equals(e.who(), liblas::LASPoint::eReturnNumber,
-                liblas::LASPoint::eReturnNumber);
+            ensure_equals(e.who(), liblas::Point::eReturnNumber,
+                liblas::Point::eReturnNumber);
         }
     }
 
@@ -143,8 +143,8 @@ namespace tut
         }
         catch (liblas::invalid_point_data const& e)
         {
-            ensure_equals(e.who(), liblas::LASPoint::eNumberOfReturns,
-                liblas::LASPoint::eNumberOfReturns);
+            ensure_equals(e.who(), liblas::Point::eNumberOfReturns,
+                liblas::Point::eNumberOfReturns);
         }
     }
 
@@ -178,8 +178,8 @@ namespace tut
         }
         catch (liblas::invalid_point_data const& e)
         {
-            ensure_equals(e.who(), liblas::LASPoint::eScanDirection,
-                liblas::LASPoint::eScanDirection);
+            ensure_equals(e.who(), liblas::Point::eScanDirection,
+                liblas::Point::eScanDirection);
         }
     }
 
@@ -213,8 +213,8 @@ namespace tut
         }
         catch (liblas::invalid_point_data const& e)
         {
-            ensure_equals(e.who(), liblas::LASPoint::eFlightLineEdge,
-                liblas::LASPoint::eFlightLineEdge);
+            ensure_equals(e.who(), liblas::Point::eFlightLineEdge,
+                liblas::Point::eFlightLineEdge);
         }
     }
 
@@ -238,7 +238,7 @@ namespace tut
         
         ensure_equals("invalid scan flags pattern", bits, expected);
 
-        liblas::LASPoint copy(m_default);
+        liblas::Point copy(m_default);
         bits = copy.GetScanFlags();
         
         ensure_equals("invalid copy of scan flags pattern", bits, expected);
@@ -250,9 +250,9 @@ namespace tut
     void to::test<11>()
     {
         ensure_equals("invalid default classification",
-            m_default.GetClassification(), liblas::LASClassification::bitset_type());
+            m_default.GetClassification(), liblas::Classification::bitset_type());
 
-        liblas::LASClassification c;
+        liblas::Classification c;
         
         liblas::uint8_t const begclass = 0;
         c.SetClass(begclass);
@@ -296,8 +296,8 @@ namespace tut
         }
         catch (liblas::invalid_point_data const& e)
         {
-            ensure_equals(e.who(), liblas::LASPoint::eScanAngleRank,
-                liblas::LASPoint::eScanAngleRank);
+            ensure_equals(e.who(), liblas::Point::eScanAngleRank,
+                liblas::Point::eScanAngleRank);
         }
     }
 
@@ -337,7 +337,7 @@ namespace tut
     void to::test<15>()
     {
         {
-            liblas::LASPoint p;
+            liblas::Point p;
             liblas::uint16_t const outofrange = 8;
             p.SetReturnNumber(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
@@ -345,7 +345,7 @@ namespace tut
         }
 
         {
-            liblas::LASPoint p;
+            liblas::Point p;
             liblas::uint16_t const outofrange = 8;
             p.SetNumberOfReturns(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
@@ -353,7 +353,7 @@ namespace tut
         }
 
         {
-            liblas::LASPoint p;
+            liblas::Point p;
             liblas::uint16_t const outofrange = 2;
             p.SetScanDirection(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
@@ -361,7 +361,7 @@ namespace tut
         }
 
         {
-            liblas::LASPoint p;
+            liblas::Point p;
             liblas::uint16_t const outofrange = 2;
             p.SetFlightLineEdge(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
@@ -369,7 +369,7 @@ namespace tut
         }
 
         {
-            liblas::LASPoint p;
+            liblas::Point p;
             liblas::int8_t const outofrange = 91;
             p.SetScanAngleRank(outofrange);
             ensure_not(p.IsValid());
@@ -390,7 +390,7 @@ namespace tut
         ensure_equals("invalid default blue color",
             m_default.GetColor().GetBlue(), 0);
                         
-        liblas::LASColor color;
+        liblas::Color color;
         color.SetRed(211);
         color.SetGreen(211);
         color.SetBlue(211);
@@ -406,7 +406,7 @@ namespace tut
         ensure_equals("invalid set blue color",
             m_default.GetColor().GetBlue(), 211);
         
-        liblas::LASPoint p = m_default;
+        liblas::Point p = m_default;
 
         ensure_equals("invalid copied red color",
             p.GetColor().GetRed(), 211);
@@ -424,26 +424,22 @@ namespace tut
     template<>
     void to::test<17>()
     {
-        std::vector<liblas::uint8_t> data;
-        
+        typedef std::vector<liblas::uint8_t> data_t;
+        data_t data;
         data.push_back(254);
         data.push_back(254);
         data.push_back(1);
-        
-        ensure_equals("invalid default extra data",
-            m_default.GetExtraData().size(), 0);
 
+        ensure_equals("invalid default extra data",
+            m_default.GetExtraData().size(), data_t::size_type(0));
 
         m_default.SetExtraData(data);
 
         ensure_equals("invalid set red color",
-            m_default.GetExtraData().size(), 3);
+            m_default.GetExtraData().size(), data_t::size_type(3));
 
         ensure_equals("invalid set green color",
-            m_default.GetExtraData()[1], 254);
-
-              
-        
+            m_default.GetExtraData()[1], 254);        
     }
 }
 
