@@ -10,7 +10,7 @@ LAS Format Elements
 On this page, elements and attributes of LAS Format 1.0 and 1.1 are compared.
 
 .. seealso::
-    The `LAS 1.0-1.3 Permuation matrix <http://liblas.org/_static/LAS-1.0-1.3-feature-matrix.pdf>`__
+    The `LAS 1.0-1.3 Permuation matrix`_
     contains a detailed description of LAS header and point discrepancies 
     between versions in addition to this (older) document.
     
@@ -159,3 +159,5 @@ it does not include what's specified *Point Data Record 1*.
 (1) FileMarker from 1.0 has been renamed to User Data in 1.1 and is available for any use.
  
 (2) User Bit Field from 1.0 has been renamed to Point Source ID in 1.1 and marked as required.
+
+.. _`LAS 1.0-1.3 Permuation matrix`: ../_static/LAS-1.0-1.3-feature-matrix.pdf

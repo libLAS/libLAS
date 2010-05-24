@@ -20,7 +20,7 @@ Current Release(s)
   - `liblas-1.2.1-win32 <http://trac.liblas.org/raw-attachment/wiki/1.2.1/liblas-1.2.1-win32.zip>`_ 
     `(md5) <http://trac.liblas.org/raw-attachment/wiki/1.2.1/liblas-1.2.1-win32.zip.md5>`__
 
-  - `Release Notes <http://trac.liblas.org/wiki/1.2.1>`_
+  - `Release Notes <http://trac.liblas.org/wiki/1.2.1>`__
 
 .. _`liblas-src-1.2.1.tar.gz`: http://trac.liblas.org/raw-attachment/wiki/1.2.1/liblas-src-1.2.1.tar.gz
 
@@ -43,7 +43,7 @@ Past Releases
   - `liblas-1.2.0-win32 <http://trac.liblas.org/raw-attachment/wiki/1.2.0/liblas-1.2.0-win32.zip>`_ 
     `(md5) <http://trac.liblas.org/raw-attachment/wiki/1.2.0/liblas-1.2.0-win32.zip.md5>`__
 
-  - `Release Notes <http://trac.liblas.org/wiki/1.2.0>`_
+  - `Release Notes <http://trac.liblas.org/wiki/1.2.0>`__
 
 .. _`liblas-src-1.2.0.tar.gz`: http://trac.liblas.org/raw-attachment/wiki/1.2.0/liblas-src-1.2.0.tar.gz
 

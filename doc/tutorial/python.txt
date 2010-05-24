@@ -215,8 +215,3 @@ liblas.point.Point instances:
     >>> f.write(pt)
     >>> f.close()
 
-===========
-Examples
-===========
-
-* Extracting specific classes from a file `PyExtractClass`:trac:

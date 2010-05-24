@@ -247,3 +247,4 @@ int main(int argc, char* argv[])
     return rc;
 }
 
+//las2las2 -i lt_srs_rt.las  -o foo.las -c 1,2 -b 2483590,366208,2484000,366612

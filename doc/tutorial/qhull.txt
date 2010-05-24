@@ -37,51 +37,51 @@ them together in required format:
 
 ::
 
-$ las2txt --stdout --parse xyz cloud.las > points.txt
-$ cat points.txt | wc -l > count.txt
-$ echo "3" > dimension.txt
-$ cat dimension.txt count.txt points.txt > qhull_input.txt 
-$ head -n4 qhull_input.txt
-3
-213093
-630499.95 4834749.17 62.15
-630499.83 4834748.88 62.68
+    $ las2txt --stdout --parse xyz cloud.las > points.txt
+    $ cat points.txt | wc -l > count.txt
+    $ echo "3" > dimension.txt
+    $ cat dimension.txt count.txt points.txt > qhull_input.txt 
+    $ head -n4 qhull_input.txt
+    3
+    213093
+    630499.95 4834749.17 62.15
+    630499.83 4834748.88 62.68
 
 Now, file 'qhull_input.txt' is ready to use with 'qhull' program:
 
 ::
 
-$ qhull s < qhull_input.txt 
+    $ qhull s < qhull_input.txt 
 
-Convex hull of 213093 points in 3-d:
+    Convex hull of 213093 points in 3-d:
 
-  Number of vertices: 149
-  Number of facets: 282
-  Number of non-simplicial facets: 4
+      Number of vertices: 149
+      Number of facets: 282
+      Number of non-simplicial facets: 4
 
-Statistics for:  | qhull s
+    Statistics for:  | qhull s
 
-  Number of points processed: 172
-  Number of hyperplanes created: 795
-  Number of distance tests for qhull: 2430368
-  Number of distance tests for merging: 3484
-  Number of distance tests for checking: 3890
-  Number of merged facets: 12
-  CPU seconds to compute hull (after input): 0.07
+      Number of points processed: 172
+      Number of hyperplanes created: 795
+      Number of distance tests for qhull: 2430368
+      Number of distance tests for merging: 3484
+      Number of distance tests for checking: 3890
+      Number of merged facets: 12
+      CPU seconds to compute hull (after input): 0.07
 
 
 and output calculated actual convex hull geometry:
 
 ::
 
-$ qhull s n TO qhull.txt < qhull_input.txt
+    $ qhull s n TO qhull.txt < qhull_input.txt
 
 Outputting data for qhull programs with C++
 ------------------------------------------------------------------------------
 
 Alternatively, one may need to output LAS file to qhull input format using
 Python script or C++ program. Here is example of how to do program it in C++
-using libLAS :ref:`reader and iterator <cpp_tutorial>:
+using libLAS :ref:`reader and iterator <cpptutorial>`:
 
 .. code-block:: cpp
 
