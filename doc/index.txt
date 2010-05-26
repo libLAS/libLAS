@@ -30,7 +30,7 @@ processing when working with ASPRS LAS data.
 For more information, :ref:`this document <lastools_liblas>` provides a
 comparison and description of the relationship of libLAS to LAStools.
 
-. seealso::
+.. seealso::
     http://trac.liblas.org contains the previous incarnation of the libLAS 
     website.  If you can't find something here, it should still be there.
 
