@@ -14,3 +14,4 @@
    lasdiff
    las2ogr
    txt2las
+   las2oci

@@ -1,0 +1,26 @@
+
+.. raw:: pdf
+
+    PageBreak
+    
+.. _las2oci:
+    
+******************************************************************************
+  las2oci
+******************************************************************************
+
+:Author: Howard Butler
+:Contact: hobu.inc@gmail.com
+
+
+Description
+==============================================================================
+
+:ref:`las2oci` allows a user to load LAS 1.0-1.2 data into `Oracle Point Cloud`_ 
+tables within Oracle 11gR2+.  All optional components are necessary to be 
+compiled with libLAS for this code to work, as spatial indexing and GDAL are 
+required.  See :ref:`optional_libraries` for details on obtaining the 
+necessary components if you are building for yourself.
+
+.. _`Oracle Point Cloud`: http://download.oracle.com/docs/cd/B28359_01/appdev.111/b28400/sdo_pc_pkg_ref.htm
+

@@ -11,6 +11,11 @@ store data from LiDAR sensors and by LiDAR processing software for data
 interchange and archival.  See :ref:`features` for more details on what 
 libLAS can provide a LiDAR software developer.
 
+libLAS' initial development was supported in 2007-2008 by the `IGSB`_ of the
+Iowa DNR for use in its state-wide `LIDAR`_ project.  Ongoing support for 
+libLAS is provided by a number of organizations including the 
+`U.S. Army Cold Regions Research and Engineering Laboratory`_.
+
 libLAS builds upon by `Martin Isenburg and Jonathan Shewchuk`_ of LLNL/UC
 Berkeley in their `LAStools`_ project to do a number of things. First, the
 libLAS focuses almost completely on providing an easy-to-program-with library
@@ -22,14 +27,13 @@ solely on the specification -- not LiDAR data processing in general. libLAS a
 building block for developers to use to implement their own LiDAR data
 processing when working with ASPRS LAS data.
 
-.. seealso::
-    :ref:`libLAS and LAStools<lastools_liblas>` provides a comparison and description of the 
-    relationship of libLAS to LAStools.
-    
-libLAS' initial development was supported in 2007-2008 by the `IGSB`_ of the
-Iowa DNR for use in its state-wide `LIDAR`_ project.  Ongoing support for 
-libLAS is provided by a number of organizations including the 
-`U.S. Army Cold Regions Research and Engineering Laboratory`_.
+For more information, :ref:`this document <lastools_liblas>` provides a
+comparison and description of the relationship of libLAS to LAStools.
+
+. seealso::
+    http://trac.liblas.org contains the previous incarnation of the libLAS 
+    website.  If you can't find something here, it should still be there.
+
 
 .. _`U.S. Army Cold Regions Research and Engineering Laboratory` : http://www.crrel.usace.army.mil/
 

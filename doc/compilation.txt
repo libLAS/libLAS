@@ -75,11 +75,15 @@ Obtain `GDAL`_ via whatever method is convenient.  Linux platforms such as
 `Debian`_ have `DebianGIS`_, Mac OS X has the `KyngChaos`_ software frameworks, 
 and Windows has the `OSGeo4W`_ platform.  
 
+* GDAL 1.7+ is required.
+
 
 `libgeotiff`_
 ------------------------------------------------------------------------------
 
 Obtain `libgeotiff`_ from the same place you got `GDAL`_.
+
+* libgeotiff 1.3.0+ is required
 
 .. note::
     `GDAL` surreptitiously embeds a copy of `libgeotiff`_ in its library build 
@@ -99,6 +103,8 @@ Obtain `libspatialindex`_ and install using a typical ``./configure; make; make 
 installation procedure.  It does not have any dependent libraries.  It is also 
 available via `DebianGIS`_ and `OSGeo4W`_ as a binary.
 
+* libspatialindex 1.5.0+ is required
+
 `OCI`_
 ------------------------------------------------------------------------------
 
@@ -117,6 +123,8 @@ location so the CMake configuration can find your install.
         ln -s libclntsh.so.10.1 libclntsh.so
         ln -s libociei.so.10.1 libociei.so
 
+* Oracle 11g is recommended, but OCI for 10g will work.
+
 .. _`libgeotiff`: http://www.remotesensing.org/geotiff/geotiff.html
 .. _`7/28/2008`: http://lists.maptools.org/pipermail/geotiff/2008-July/000501.html
 .. _`proj.4`: http://proj.maptools.org/
@@ -130,8 +138,7 @@ location so the CMake configuration can find your install.
 .. _`Debian`: http://www.debian.org
 .. _`KyngChaos`: http://www.kyngchaos.com/software/unixport
 .. _`OSGeo4W`: http://trac.osgeo.org/osgeo4w/
-
-
+.. _`libtiff`: http://remotesensing.org/libtiff/
 
 
 
@@ -471,6 +478,11 @@ configure your :ref:`optional_libraries`.
 Using "Visual Studio 9 2008" on Windows
 ..............................................................................
 
+Get the source code
+------------------------------------------------------------------------------
+
+See :ref:`source` for how to obtain the latest development version or visit
+:ref:`download` to get the latest released version.
 
 .. _msvc_prerequisites:
     
@@ -510,7 +522,7 @@ Run ``cmake-gui.exe``
 
 ::
 
-    cd d:\liblas
+    cd d:\\liblas
     cmake-gui .
 
 .. figure:: ./images/windows-cmake-start.png
@@ -535,13 +547,40 @@ Run ``cmake-gui.exe``
 * Click "Configure" and a window will pop up asking what type of build to
   generate. Choose "Visual Studio 9 2008."
 
-* Click "Generate" and a "libLAS.sln" file will be in ``d:\liblas``
+* Click "Generate" and a "libLAS.sln" file will be in ``d:\\liblas``
 
 * Open and build the project
 
 .. image:: ./images/windows-msvc-build.png
 
 
+Configure your `Optional Libraries`_.
+------------------------------------------------------------------------------
+
+By checking the "on" button for each, CMake may find your installations of
+these libraries, but in case it does not, set the following variables,
+substituting accordingly, to values that match your system layout.
+
+.. note::
+    If you are building using `OSGeo4W`_ libraries, you must use the "gdal-dev" 
+    version, not the base `GDAL`_ build.  libLAS requires GDDAL 1.7+ to 
+    operate, and this is provided by the "gdal-dev" `OSGeo4W`_ version.
+
+.. note::
+    You will need to choose "Advanced View" and select the location of the 
+    libTIFF library explicitly.
+    
+.. csv-table::
+
+    "`GDAL`_","GDAL_INCLUDE_DIR", "c:\\osgeo4w\\apps\\gdal-dev\\include"
+    "","GDAL_LIBRARY", "c:\\osgeo4w\\apps\\gdal-dev\\lib\\gdal_i.lib"
+    "`libgeotiff`_","GEOTIFF_INCLUDE_DIR","c:\\osgeo4w\\include"
+    "","GEOTIFF_LIBRARY","c:\\osgeo4w\\lib\\geotiff_i.lib"
+    "`libtiff`_","TIFF_INCLUDE_DIR","c:\\osgeo4w\\include"
+    "","TIFF_LIBRARY","c:\\osgeo4w\\lib\\libtiff_i.lib"
+    "`libspatialindex`_","SPATIALINDEX_INCLUDE_DIR","C:\\osgeo4w\\include\\spatialindex"
+    "","SPATIALINDEX_LIBRARY","C:\\osgeo4w\\lib\\spatialindex_i.lib"
+    
 ------------------------------------------------------------------------------
 
 .. _`CMake`: http://www.cmake.org/
