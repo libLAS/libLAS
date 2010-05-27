@@ -102,7 +102,13 @@ class VLR(object):
     def set_userid(self, value):
         return core.las.LASVLR_SetUserId(self.handle, value)
     doc = """User ID key for this VLR (clipped to 16 bytes long)
-
+    
+    The User ID key for libLAS is ``1209``, and that number will be used 
+    for all extra VLRs that libLAS can interpret itself.  
+    
+    .. seealso::
+        :ref:`liblas_vlr_key` has more detail on the key and name.
+        
     From the specification_:
         The User ID field is ASCII character data that identifies the user
         which created the variable length record. It is possible to have many
@@ -115,6 +121,7 @@ class VLR(object):
         records (LASF_Spec), and another for projection types
         (LASF_Projection). Keys may be requested at
         http://www.asprs.org/lasform/keyform.html
+        
     """
     userid = property(get_userid, set_userid, None, doc)
 

@@ -14,6 +14,8 @@ source on the standards documents.
 * `ASPRS LAS 1.1`_
 * `ASPRS LAS 1.0`_
 
+.. _liblas_vlr_key:
+
 VLR Key
 ----------------
 
