@@ -48,7 +48,9 @@ import ctypes
 class VLR(object):
     def __init__(self, owned=True, handle=None):
         """
-        :keyword owned: flag to denote whether or not the VLR owns itself
+        :keyword owned: flag to denote whether or not the VLR owns itself.  \
+                        If it is owned, the underlying C object will be \
+                        destroyed once it goes out of scope.
         :keyword handle: raw ctypes object
 
         From the specification_:
@@ -182,5 +184,5 @@ class VLR(object):
     def set_data(self, data):
         pdata = ctypes.cast(data, ctypes.POINTER(ctypes.c_ubyte))
         core.las.LASVLR_SetData(self.handle, pdata, self.recordlength)
-    doc = """Raw data (in the form of :data:`ctypes.c_ubyte`)"""
+    doc = """Raw data (in the form of an array of :class:`ctypes.c_ubyte`)"""
     data = property(get_data, set_data, None, doc)

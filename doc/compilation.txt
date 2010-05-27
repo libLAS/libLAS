@@ -14,6 +14,12 @@ Compilation
 :Author: Howard Butler
 :Contact: hobu.inc at gmail dot com
 
+.. warning::
+    This document is only for the un-released 1.6 libLAS release.  Unfortunately,
+    there is no documentation for building libLAS 1.2.1 at this time, though 
+    it is a straightforward `Autoconf`_ setup for unix and nmake files for 
+    windows.
+    
 As of libLAS 1.6, `CMake`_ 2.8.1+ is the prescribed tool for building 
 libLAS from source as well as running unit tests. `CMake`_ is a cross-platform 
 build system that provides a number of benefits, and its usage ensures a 

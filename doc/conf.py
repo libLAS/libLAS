@@ -141,7 +141,7 @@ html_last_updated_fmt = '%b %d, %Y'
 html_sidebars = {
     '**': ['globaltoc.html', 'sourcelink.html', 'searchbox.html'],
 "index":["indexsidebar.html",'searchbox.html'],
-"docs":["indexsidebar.html",'searchbox.html']}
+"docs":['globaltoc.html',"indexsidebar.html",'searchbox.html']}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.

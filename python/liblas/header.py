@@ -338,7 +338,7 @@ class Header(object):
             core.las.LASHeader_SetCreationDOY(self.handle, delta.days + 1)
         core.las.LASHeader_SetCreationYear(self.handle, value.year)
 
-    doc = """The header's date from a :class`datetime.datetime` instance.
+    doc = """The header's date from a :class:`datetime.datetime` instance.
 
         :arg value: :class:`datetime.datetime` instance or none to use the \
         current time
