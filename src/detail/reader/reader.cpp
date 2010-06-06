@@ -407,6 +407,8 @@ liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, const liblas::
         std::string out(output.str());
         throw std::runtime_error(out);
     }
+
+    // This cached reader does nothing for seeking at this time.
     return ReaderImpl::ReadPointAt(n, header);
     // return ReadCachedPoint(n, header);
 
