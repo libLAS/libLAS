@@ -15,10 +15,10 @@
  * modification, are permitted provided that the following
  * conditions are met:
  *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in
+*     * Redistributions of source code must retain the above copyright
+*       notice, this list of conditions and the following disclaimer.
+*     * Redistributions in binary form must reproduce the above copyright
+*       notice, this list of conditions and the following disclaimer in
  *       the documentation and/or other materials provided
  *       with the distribution.
  *     * Neither the name of the Martin Isenburg or Iowa Department
@@ -296,6 +296,12 @@ class File(object):
             return point.Point(
             handle=core.las.LASReader_GetPointAt(self.handle, index),
             copy=True)
+
+    def seek(self, index):
+        """Seeks to the point at the given index.  Subsequent calls \
+	   to :meth:`next` will then start at that point."""
+        if self.mode == 0:
+            return core.las.LASReader_Seek(self.handle, index)
 
     def __iter__(self):
         """Iterator support (read mode only)

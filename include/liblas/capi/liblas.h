@@ -242,6 +242,14 @@ LAS_DLL LASError LASReader_SetSRS(LASReaderH hReader, const LASSRSH hSRS);
 LAS_DLL LASError LASReader_SetInputSRS(LASReaderH hReader, const LASSRSH hSRS);
 LAS_DLL LASError LASReader_SetOutputSRS(LASReaderH hReader, const LASSRSH hSRS);
 
+/** Seeks to the specified point for the next LASReader_GetNextPoint
+ *  operation to start from.  If an error is returned, the seek failed
+ *  for some reason.
+ *  @param hReader the LASReaderH instance
+ *  @return a LASError defaulting to LE_None upon success.  
+*/
+LAS_DLL LASError LASReader_Seek(LASReaderH hReader, uint32_t position);
+
 
 /****************************************************************************/
 /* Point operations                                                         */

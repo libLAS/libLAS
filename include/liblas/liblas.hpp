@@ -155,7 +155,8 @@ public:
     virtual Header const& ReadHeader() = 0;
     virtual Point const& ReadNextPoint(const Header& header) = 0;
     virtual Point const& ReadPointAt(std::size_t n, const Header& header) = 0;
-
+    virtual void Seek(std::size_t n, const Header& header) = 0;
+    
     virtual void Reset(const Header& header) = 0;
     virtual void SetInputSRS(const SpatialReference& srs) = 0;
     virtual void SetOutputSRS(const SpatialReference& srs, const Header& header) = 0;

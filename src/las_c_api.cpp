@@ -330,6 +330,28 @@ LAS_DLL const LASPointH LASReader_GetPointAt(const LASReaderH hReader, liblas::u
     return NULL;
 
 }
+
+LAS_DLL LASErrorEnum LASReader_Seek(LASReaderH hReader, liblas::uint32_t position)
+{
+    VALIDATE_LAS_POINTER1(hReader, "LASReader_Seek", LE_None);
+
+    try {
+        liblas::Reader *reader = ((liblas::Reader*) hReader);
+        if (reader->seek((std::size_t) position)) 
+            return LE_None;
+        else 
+            return LE_Failure;
+    } catch (invalid_point_data const& e /*e */) {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_Seek Invalid location");
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_Seek");
+    }
+ 
+    return LE_None;
+
+}
+
 LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader)
 {
     VALIDATE_LAS_POINTER1(hReader, "LASReader_GetHeader", NULL);

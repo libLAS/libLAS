@@ -154,6 +154,17 @@ bool Reader::ReadPointAt(std::size_t n)
 
 }
 
+bool Reader::seek(std::size_t n)
+{
+    try {
+        m_pimpl->Seek(n, m_header);
+        return true;
+    } catch (std::out_of_range) {
+        m_point = 0;
+        return false;
+    }
+
+}
 Point const& Reader::operator[](std::size_t n)
 {
     if (m_header.GetPointRecordsCount() <= n)

@@ -69,7 +69,8 @@ public:
     liblas::Header const& ReadHeader();
     liblas::Point const& ReadNextPoint(const liblas::Header& header);
     liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
-
+    void Seek(std::size_t n, const liblas::Header& header);
+    
     std::istream& GetStream() const;
     
     void Reset(liblas::Header const& header);
@@ -116,6 +117,7 @@ public:
     liblas::Point const& ReadNextPoint(const liblas::Header& header);
     liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
 
+    void Seek(std::size_t n, const liblas::Header& header);
     void Reset(liblas::Header const& header);
 
 protected:

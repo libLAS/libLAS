@@ -114,6 +114,11 @@ public:
     /// @excepion may throw std::exception
     void Reset();
 
+    /// Move to the specified point to start 
+    /// ReadNextPoint operations
+    /// @excepion may throw std::exception
+    bool seek(std::size_t n);
+    
     /// Reproject data as they are written if the Reader's reference is
     /// different than the Header's.
     /// @excepion may throw std::exception

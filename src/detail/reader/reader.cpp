@@ -219,7 +219,6 @@ liblas::Point const& ReaderImpl::ReadNextPoint(const liblas::Header& header)
 
 liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n, const liblas::Header& header)
 {
-    // FIXME: Throw in this case.
     if (m_size == n) {
         throw std::out_of_range("file has no more points to read, end of file reached");
     } else if (m_size < n) {
@@ -238,6 +237,27 @@ liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n, const liblas::Header
     const liblas::Point& point = m_point_reader->GetPoint();
     
     return point;
+}
+
+void ReaderImpl::Seek(std::size_t n, const liblas::Header& header)
+{
+    if (m_size == n) {
+        throw std::out_of_range("file has no more points to read, end of file reached");
+    } else if (m_size < n) {
+        std::ostringstream output;
+        output << "Seek:: Inputted value: " << n << " is greater than the number of points: " << m_size;
+        std::string out(output.str());
+        throw std::runtime_error(out);
+    } 
+
+    std::streamsize pos = (static_cast<std::streamsize>(n) * header.GetDataRecordLength()) + header.GetDataOffset();    
+
+    m_ifs.clear();
+    m_ifs.seekg(pos, std::ios::beg);
+    // m_point_reader->read();
+    // const liblas::Point& point = m_point_reader->GetPoint();
+    
+    m_current = n+1;
 }
 
 CachedReaderImpl::CachedReaderImpl(std::istream& ifs , liblas::uint64_t size) :
@@ -414,10 +434,17 @@ void CachedReaderImpl::Reset(liblas::Header const& header)
     ReaderImpl::Reset(header);
 
 }
-// CachedReaderImpl::~CachedReaderImpl()
-// {
-//     ~ReaderImpl();
-// }
+
+void CachedReaderImpl::Seek(std::size_t n, const liblas::Header& header)
+{
+
+   if (n < 1 ) {
+       CachedReaderImpl::Reset(header);
+       // ReadCachedPoint(n,header);
+   }
+
+    ReaderImpl::Seek(n,header);
+}
 
 // ReaderImpl* ReaderFactory::Create(std::istream& ifs)
 // {
