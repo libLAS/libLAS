@@ -116,6 +116,7 @@ public:
     liblas::Header const& ReadHeader();
     liblas::Point const& ReadNextPoint(const liblas::Header& header);
     liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
+    void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
 
     void Seek(std::size_t n, const liblas::Header& header);
     void Reset(liblas::Header const& header);
@@ -128,6 +129,8 @@ private:
     CachedReaderImpl(CachedReaderImpl const& other);
     CachedReaderImpl& operator=(CachedReaderImpl const& rhs);
     liblas::Point const& ReadCachedPoint(liblas::uint32_t position, const liblas::Header& header);
+    
+    void CacheData(liblas::uint32_t position, const liblas::Header& header);
         
     liblas::uint64_t m_cache_size;
     std::vector<bool> m_mask;
