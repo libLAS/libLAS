@@ -17,14 +17,26 @@ SET(CPACK_PACKAGE_VERSION_MAJOR "1")
 SET(CPACK_PACKAGE_VERSION_MINOR "3")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
 
-# Name of C++ library
-set(LIBLAS_LIB_NAME las)
+if(WIN32)
+    # Name of C++ library
+    set(LIBLAS_LIB_NAME liblas)
 
-# Name of C library
-set(LIBLAS_C_LIB_NAME las_c)
+    # Name of C library
+    set(LIBLAS_C_LIB_NAME liblas_c)
+else()
+    # Name of C++ library
+    set(LIBLAS_LIB_NAME las)
+
+    # Name of C library
+    set(LIBLAS_C_LIB_NAME las_c)
+
+endif()
+
 
 # Name of test suite runner
 set(LIBLAS_UNIT_TEST liblas_test)
+
+set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 
 # Choose package components
 set(WITH_UTILITIES TRUE CACHE BOOL "Choose if libLAS utilities should be built")
