@@ -110,7 +110,7 @@ class CachedReaderImpl : public ReaderImpl
 {
 public:
 
-    CachedReaderImpl(std::istream& ifs, liblas::uint64_t cache_size);
+    CachedReaderImpl(std::istream& ifs, std::size_t cache_size);
     // ~CachedReaderImpl();
 
     liblas::Header const& ReadHeader();
@@ -132,12 +132,13 @@ private:
     
     void CacheData(liblas::uint32_t position, const liblas::Header& header);
         
-    liblas::uint64_t m_cache_size;
-    std::vector<bool> m_mask;
+    std::vector<uint8_t>::size_type  m_cache_size;
+    std::vector<uint8_t> m_mask;
     
-    liblas::uint64_t m_cache_start_position;
-    liblas::uint64_t m_cache_read_position;
+    std::vector<uint8_t>::size_type m_cache_start_position;
+    std::vector<uint8_t>::size_type m_cache_read_position;
     std::vector<liblas::Point> m_cache;
+
 
 };
 
