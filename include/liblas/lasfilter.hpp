@@ -61,7 +61,7 @@ public:
     BoundsFilter(double minx, double miny, double maxx, double maxy);
     BoundsFilter(double minx, double miny, double maxx, double maxy, double minz, double maxz);
     bool filter(const Point& point);
-    void SetKeep(bool bKeep) {return;}
+    void SetKeep(bool bKeep) {detail::ignore_unused_variable_warning(bKeep); return;}
 private:
     double mins[3];
     double maxs[3];
