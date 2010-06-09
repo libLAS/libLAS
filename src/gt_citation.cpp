@@ -38,12 +38,12 @@
 // Ignore warning about redifinition.  We need to use 
 // the new windows functions for this.  We'll only 
 // warn on MSVC with /W4
-#pragma warning( 4: 4005)
 #if defined(WIN32) 
+#pragma warning( 4: 4005)
 #  define EQUALN(a,b,n)           (_strnicmp(a,b,n)==0)
 #  define EQUAL(a,b)              (_stricmp(a,b)==0)
-#endif
 #pragma warning( default: 4005)
+#endif
     
 #define nCitationNameTypes 9
 typedef enum 
