@@ -312,3 +312,4 @@ else()
     endif()
 endif()
 
+include(BuildOSGeo4W)
