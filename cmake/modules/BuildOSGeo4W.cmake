@@ -4,7 +4,7 @@
 #
 ###############################################################################
 
-MESSAGE(STATUS "   Building osgeo4w binaries")
+MESSAGE(STATUS "Building osgeo4w binaries")
 set(OSGEO4W_DIR osgeo4w)
 set(OSGEO4W_LIB_DIR ${OSGEO4W_DIR}/lib)
 set(OSGEO4W_LIB_BIN_DIR ${OSGEO4W_DIR}/lib/bin)
@@ -12,8 +12,10 @@ set(OSGEO4W_DEVEL_DIR ${OSGEO4W_DIR}/devel)
 set(OSGEO4W_DEVEL_INCLUDE_DIR ${OSGEO4W_DEVEL_DIR}/include)
 set(OSGEO4W_DEVEL_INCLUDE_LIBLAS_DIR ${OSGEO4W_DEVEL_INCLUDE_DIR}/liblas)
 set(OSGEO4W_DEVEL_LIB_DIR ${OSGEO4W_DEVEL_DIR}/lib)
-set(OSGEO4W_PYTHON_DIR ${OSGEO4W_DIR}/apps/python25/lib/site-packages/liblas)
+set(OSGEO4W_DEVEL_BIN_DIR ${OSGEO4W_DEVEL_DIR}/bin)
 
+set(OSGEO4W_PYTHON_DIR ${OSGEO4W_DIR}/apps/python25/lib/site-packages/liblas)
+set(OSGEO4W_PACKAGES ${OSGEO4W_DIR}/packages)
 
 
 set(OSGEO4W_DIRECTORIES
@@ -24,62 +26,100 @@ set(OSGEO4W_DIRECTORIES
     ${OSGEO4W_DEVEL_INCLUDE_DIR}
     ${OSGEO4W_DEVEL_INCLUDE_LIBLAS_DIR}
     ${OSGEO4W_DEVEL_LIB_DIR}
-    ${OSGEO4W_PYTHON_DIR})
+    ${OSGEO4W_PYTHON_DIR}
+    ${OSGEO4W_DEVEL_BIN_DIR}
+    ${OSGEO4W_PACKAGES})
 
 
 
-add_custom_target(BuildOSGeo4WDirectories
+add_custom_target(make_osgeo4w_directories
   COMMAND ${CMAKE_COMMAND} -E echo "Building OSGeo4W install directories")
 
-macro (MAKE_OSGEO4W_DIRECTORIES)
-
+macro (make_directories)
+    add_custom_command(
+      TARGET make_osgeo4w_directories
+      COMMAND ${CMAKE_COMMAND} -E  remove_directory  ${libLAS_SOURCE_DIR}/osgeo4w DEPENDS osgeo4w
+      )
    foreach(directory ${OSGEO4W_DIRECTORIES})
 
     STRING(REGEX REPLACE "/" "_" target "${directory}" )
 
-    add_custom_target(${target}
-      COMMAND ${CMAKE_COMMAND} -E make_directory ${directory} )
+    add_custom_command(
+      TARGET make_osgeo4w_directories
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${directory}
+      )
 
-      add_dependencies( BuildOSGeo4WDirectories ${target} )
    endforeach()
 
-
-endmacro(MAKE_OSGEO4W_DIRECTORIES)
-
-if (APPLE)
-    set(SO_EXT dylib)
-elseif(WIN32)
-    set(SO_EXT dll)
-else()
-    set(SO_EXT so)
-endif(APPLE)
-
-set(OSGEO4W_FILES
-    ${LIBLAS_BUILD_OUTPUT_DIRECTORY};${OSGEO4W_LIB_BIN_DIR}
-    ${libLAS_SOURCE_DIR};${OSGEO4W_DEVEL_INCLUDE_LIBLAS_DIR}
-    )
-
-add_custom_target(CopyOSGeo4WFiles
-  COMMAND ${CMAKE_COMMAND} -E echo "Copying OSGeo4W files...")
-
-add_dependencies( CopyOSGeo4WFiles BuildOSGeo4WDirectories   )
-
-macro (COPY_OSGEO4W_DIRECTORIES source destination)
-
-   message(STATUS "Copying ${source} to ${destination}...")
-   
-    STRING(REGEX REPLACE "/" "_" target "${destination}" )
-
-    add_custom_target(copy_${target}
-      COMMAND ${CMAKE_COMMAND} -E copy_directory ${source} ${destination})
-
-      add_dependencies( CopyOSGeo4WFiles copy_${target} )
+endmacro(make_directories)
 
 
-endmacro(COPY_OSGEO4W_DIRECTORIES source destination)    
 
-MAKE_OSGEO4W_DIRECTORIES()
-COPY_OSGEO4W_DIRECTORIES(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/ ${OSGEO4W_LIB_BIN_DIR}/)
-COPY_OSGEO4W_DIRECTORIES(${libLAS_SOURCE_DIR}/include/liblas ${OSGEO4W_DEVEL_INCLUDE_LIBLAS_DIR}/)
-COPY_OSGEO4W_DIRECTORIES(${libLAS_SOURCE_DIR}/python/liblas/*.py ${OSGEO4W_PYTHON_DIR}/)
+# add_custom_target(CopyOSGeo4WFiles
+#   COMMAND ${CMAKE_COMMAND} -E echo "Copying OSGeo4W files...")
+
+
+add_custom_target(copy ALL COMMENT "Copying OSGeo4W files")
+add_dependencies( copy make_osgeo4w_directories   )
+
+
+macro(copy_files GLOBPAT DESTINATION  )
+    
+    MESSAGE(STATUS "   Copying ${GLOBPAT} to ${DESTINATION}")
+    file(GLOB_RECURSE COPY_FILES
+         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        ${GLOBPAT})
+#    MESSAGE(STATUS "   files to copy ${COPY_FILES}  ${DESTINATION}")
+  foreach(FILENAME ${COPY_FILES})
+    set(SRC "${FILENAME}")
+        set(DST "${DESTINATION}")
+
+    
+    add_custom_command(
+      TARGET copy
+      COMMAND ${CMAKE_COMMAND} -E copy ${SRC} ${DST}
+      )
+  endforeach(FILENAME)
+endmacro(copy_files)
+
+
+add_custom_target(tar
+  COMMAND ${CMAKE_COMMAND} -E echo "Tarring OSGeo4W install")
+add_dependencies( tar copy   )
+
+macro (tar_directories source destination base_path)
+
+    MESSAGE(STATUS "   Tarring ${source} to ${destination}")
+    add_custom_command(
+      TARGET tar
+      COMMAND ${CMAKE_COMMAND} -E chdir ${source} cmake -E tar czf  ${destination} ${base_path}/
+      )
+
+
+endmacro(tar_directories)
+
+make_directories()
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las* ${OSGEO4W_DEVEL_BIN_DIR}/  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/*[.${SO_EXT}] ${OSGEO4W_DEVEL_BIN_DIR}/  )
+
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/*.lib ${OSGEO4W_DEVEL_LIB_DIR}/  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/*.a ${OSGEO4W_DEVEL_LIB_DIR}/  )
+
+copy_files(./include/liblas/* ${OSGEO4W_DEVEL_INCLUDE_LIBLAS_DIR}/  )
+copy_files(./python/liblas/*.py ${OSGEO4W_PYTHON_DIR}/  )
+
+tar_directories(${OSGEO4W_DEVEL_DIR} ${libLAS_SOURCE_DIR}/${OSGEO4W_PACKAGES}/liblas-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}.tar.gz bin)
+tar_directories(${OSGEO4W_DIR} ${libLAS_SOURCE_DIR}/${OSGEO4W_PACKAGES}/liblas-python-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}.tar.gz apps)
+tar_directories(${OSGEO4W_DIR} ${libLAS_SOURCE_DIR}/${OSGEO4W_PACKAGES}/liblas-devel-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}.tar.gz devel)
+
+
+add_custom_target(osgeo4w
+  COMMAND ${CMAKE_COMMAND} -E echo "Making OSGeo4W build")
+add_custom_command(
+  TARGET osgeo4w
+  COMMAND ${CMAKE_COMMAND} -E echo "Making OSGeo4W build"
+  )
+add_dependencies( osgeo4w tar   )
+
+
 
