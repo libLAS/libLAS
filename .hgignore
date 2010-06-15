@@ -89,3 +89,5 @@ doc/build
 doc/api/xml
 doc/api/html
 *.mshark
+Testing/
+README.txt
