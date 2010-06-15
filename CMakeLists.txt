@@ -320,4 +320,6 @@ else()
     endif()
 endif()
 
-include(BuildOSGeo4W)
+if (WIN32)
+    include(BuildOSGeo4W)
+endif(WIN32)
