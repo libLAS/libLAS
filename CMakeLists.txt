@@ -14,7 +14,7 @@ project(libLAS)
 
 # Version information
 SET(CPACK_PACKAGE_VERSION_MAJOR "1")
-SET(CPACK_PACKAGE_VERSION_MINOR "3")
+SET(CPACK_PACKAGE_VERSION_MINOR "6")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
 
 if(WIN32)
@@ -120,6 +120,14 @@ else()
         endif()
     endif()
 endif(WIN32)
+
+if (APPLE)
+    set(SO_EXT dylib)
+elseif(WIN32)
+    set(SO_EXT dll)
+else()
+    set(SO_EXT so)
+endif(APPLE)
 
 ###############################################################################
 # Search for dependencies
