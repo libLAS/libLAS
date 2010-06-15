@@ -350,7 +350,8 @@ f.size - f.base_size will be 16 bytes of space (h6.data_record_length - 34 bytes
   >>> os.remove('junk2.las')
   >>> os.remove('junk3.las')
   >>> os.remove('junk4.las')
-     
+  >>> os.remove('junk5.las')
+       
   >>> f = file.File('junk.las', mode="w", header=h)
   >>> import liblas.core
   >>> liblas.core.las.LASWriter_Destroy(f.handle)
