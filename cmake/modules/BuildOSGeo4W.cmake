@@ -39,26 +39,22 @@ add_dependencies(  make_osgeo4w_directories las2oci2  )
 
 macro (make_directories)
     add_custom_command(
-      TARGET make_osgeo4w_directories
-      COMMAND ${CMAKE_COMMAND} -E  remove_directory  ${libLAS_SOURCE_DIR}/osgeo4w DEPENDS osgeo4w
-      )
-   foreach(directory ${OSGEO4W_DIRECTORIES})
+        TARGET make_osgeo4w_directories
+        COMMAND ${CMAKE_COMMAND} -E  remove_directory  ${libLAS_SOURCE_DIR}/osgeo4w DEPENDS osgeo4w
+    )
+    foreach(directory ${OSGEO4W_DIRECTORIES})
 
     STRING(REGEX REPLACE "/" "_" target "${directory}" )
 
     add_custom_command(
-      TARGET make_osgeo4w_directories
-      COMMAND ${CMAKE_COMMAND} -E make_directory ${directory}
-      )
+        TARGET make_osgeo4w_directories
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${directory}
+    )
 
-   endforeach()
+    endforeach()
 
 endmacro(make_directories)
 
-
-
-# add_custom_target(CopyOSGeo4WFiles
-#   COMMAND ${CMAKE_COMMAND} -E echo "Copying OSGeo4W files...")
 
 
 add_custom_target(copy ALL COMMENT "Copying OSGeo4W files")
@@ -71,17 +67,14 @@ macro(copy_files GLOBPAT DESTINATION  )
     file(GLOB_RECURSE COPY_FILES
          RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLOBPAT})
-#    MESSAGE(STATUS "   files to copy ${COPY_FILES}  ${DESTINATION}")
-  foreach(FILENAME ${COPY_FILES})
-    set(SRC "${FILENAME}")
+    foreach(FILENAME ${COPY_FILES})
+        set(SRC "${FILENAME}")
         set(DST "${DESTINATION}")
-
-    
-    add_custom_command(
-      TARGET copy
-      COMMAND ${CMAKE_COMMAND} -E copy ${SRC} ${DST}
-      )
-  endforeach(FILENAME)
+        add_custom_command(
+            TARGET copy
+            COMMAND ${CMAKE_COMMAND} -E copy ${SRC} ${DST}
+        )
+    endforeach(FILENAME)
 endmacro(copy_files)
 
 
@@ -93,9 +86,9 @@ macro (tar_directories source destination base_path)
 
     MESSAGE(STATUS "   Tarring ${source} to ${destination}")
     add_custom_command(
-      TARGET tar
-      COMMAND ${CMAKE_COMMAND} -E chdir ${source} cmake -E tar czf  ${destination} ${base_path}/
-      )
+        TARGET tar
+        COMMAND ${CMAKE_COMMAND} -E chdir ${source} cmake -E tar czf  ${destination} ${base_path}/
+    )
 
 
 endmacro(tar_directories)
@@ -116,11 +109,11 @@ tar_directories(${OSGEO4W_DIR} ${libLAS_SOURCE_DIR}/${OSGEO4W_PACKAGES}/liblas-d
 
 
 add_custom_target(osgeo4w
-  COMMAND ${CMAKE_COMMAND} -E echo "Making OSGeo4W build")
+    COMMAND ${CMAKE_COMMAND} -E echo "Making OSGeo4W build")
 add_custom_command(
-  TARGET osgeo4w
-  COMMAND ${CMAKE_COMMAND} -E echo "Making OSGeo4W build"
-  )
+    TARGET osgeo4w
+    COMMAND ${CMAKE_COMMAND} -E echo "Making OSGeo4W build"
+    )
 add_dependencies( osgeo4w tar   )
 
 add_dependencies( las2las2 osgeo4w   )
