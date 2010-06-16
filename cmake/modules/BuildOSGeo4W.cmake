@@ -123,5 +123,8 @@ add_custom_command(
   )
 add_dependencies( osgeo4w tar   )
 
+add_dependencies( las2las2 osgeo4w   )
+
+
 
 
