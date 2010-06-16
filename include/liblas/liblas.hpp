@@ -188,10 +188,29 @@ class FilterI
 {
 public:
     
+    /// Determines whether or not the filter keeps or rejects points that meet 
+    /// filtering criteria
+    enum FilterType
+    {
+        eExclusion = 0, ///< Filter removes point that meet the criteria of filter(const Point& point)
+        eInclusion = 1 ///< Filter keeps point that meet the criteria of filter(const Point& point)
+    };
+    
     virtual bool filter(const Point& point) = 0;
-    virtual void SetKeep(bool bKeep) = 0;
+    void SetType(FilterType t) {m_type = t;}
+    FilterType GetType() const {return m_type; }
     virtual ~FilterI() {};
 
+    FilterI(FilterType t) {m_type = t;}
+    
+    private:
+
+        FilterI(FilterI const& other);
+        FilterI& operator=(FilterI const& rhs);
+
+        FilterType m_type;
+
+    
 };
 
 /// Defines public interface to LAS transform implementation.

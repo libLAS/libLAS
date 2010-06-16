@@ -53,6 +53,19 @@
 namespace liblas
 {
 
+// class FilterI:
+// {
+// public:
+// 
+//     void SetType(FilterType t) {m_type = t;}
+//     FilterType GetType() const {return m_type;}
+// private:
+// 
+//     FilterI(FilterI const& other);
+//     FilterI& operator=(FilterI const& rhs);
+//     
+//     FilterType m_type;
+// };
 
 class BoundsFilter: public FilterI
 {
@@ -61,7 +74,7 @@ public:
     BoundsFilter(double minx, double miny, double maxx, double maxy);
     BoundsFilter(double minx, double miny, double maxx, double maxy, double minz, double maxz);
     bool filter(const Point& point);
-    void SetKeep(bool bKeep) {detail::ignore_unused_variable_warning(bKeep); return;}
+    // void SetKeep(bool bKeep) {detail::ignore_unused_variable_warning(bKeep); return;}
 private:
     double mins[3];
     double maxs[3];
@@ -80,11 +93,10 @@ public:
     
     ClassificationFilter(std::vector<liblas::uint8_t> classes);
     bool filter(const Point& point);
-    void SetKeep(bool bKeep) {m_keep = bKeep;}
+
     
 private:
     std::vector<liblas::uint8_t> m_classes;
-    bool m_keep;
 
     ClassificationFilter(ClassificationFilter const& other);
     ClassificationFilter& operator=(ClassificationFilter const& rhs);

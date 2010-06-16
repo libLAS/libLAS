@@ -45,10 +45,8 @@
 namespace liblas { 
 
 
-
 ClassificationFilter::ClassificationFilter( std::vector<liblas::uint8_t> classes ) : 
-m_classes(classes), 
-m_keep(true)
+ FilterI(eInclusion), m_classes(classes) 
 {
 }
 
@@ -66,7 +64,7 @@ bool ClassificationFilter::filter(const Point& p)
     for (i = m_classes.begin(); i != m_classes.end(); ++i) {
         
         if (cls == *i) {
-            if (m_keep == true) {
+            if (GetType() == eInclusion) {
                 output = true;
             } else {
                 output = false;
@@ -80,7 +78,7 @@ bool ClassificationFilter::filter(const Point& p)
 }
 
 
-BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy ) 
+BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy ) : FilterI(eInclusion)
 {
     mins[0] = minx;
     mins[1] = miny;
@@ -91,7 +89,7 @@ BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy )
     m_2d = true;
 }
 
-BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy, double minz, double maxz ) 
+BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy, double minz, double maxz ) : FilterI(eInclusion)
 {
     mins[0] = minx;
     mins[1] = miny;

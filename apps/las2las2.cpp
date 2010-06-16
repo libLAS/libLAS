@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
 
     
         liblas::ClassificationFilter* class_filter = new ClassificationFilter(classes);
-        class_filter->SetKeep(true);
+        class_filter->SetType(liblas::FilterI::eInclusion);
         filters.push_back(class_filter);
         
         liblas::BoundsFilter* bounds_filter = 0;
