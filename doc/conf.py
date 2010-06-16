@@ -179,13 +179,14 @@ breathe_default_project = "liblas"
 
 
 pdf_documents = [
-    ('index', u'libLAS', u'libLAS Documentation', u'The libLAS Team'),
+    ('docs', u'libLAS', u'libLAS Documentation', u'The libLAS Team'),
 ]
 
 # A comma-separated list of custom stylesheets. Example:
 pdf_stylesheets = ['liblas']
 pdf_language = "en_US"
 pdf_fit_mode = "overflow"
-pdf_appendices = ''
+pdf_use_toc = True
+
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
