@@ -133,8 +133,17 @@ void Header::read()
     read_n(n4, m_ifs, sizeof(n4));
     if (n4 < m_header.GetHeaderSize())
     {
-        // TODO: Move this test to LASHeader::Validate()
-        throw std::domain_error("offset to point data smaller than header size");
+        std::ostringstream msg; 
+        msg <<  "The offset to the start of point data, "
+            << n4 << ", is smaller than the header size, "
+            << m_header.GetHeaderSize() << ".  This is "
+            "an invalid condition and incorrectly written "
+            "file.  We cannot ignore this error because we "
+            "do not know where to begin seeking to read the "
+            "file.  Please report whomever's software who "
+            "wrote this file to the proper authorities.  They "
+            "will be dealt with swiftly and humanely.";
+        throw std::runtime_error(msg.str());
     }
     m_header.SetDataOffset(n4);
 
