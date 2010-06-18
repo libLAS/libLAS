@@ -343,10 +343,7 @@ void Header::readvlrs()
         read_n(vlrh, m_ifs, sizeof(VLRHeader));
 
         uint16_t length = vlrh.recordLengthAfterHeader;
-        if (length < 1)
-        {
-            throw std::domain_error("VLR record length must be at least 1 byte long");
-        } 
+
         std::vector<uint8_t> data;
         data.resize(length);
 
