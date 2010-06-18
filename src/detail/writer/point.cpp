@@ -222,15 +222,18 @@ void Point::fill()
     if (m_transform) {
         
         project();
-        m_record.x = static_cast<int32_t>((p.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX());
-        m_record.y = static_cast<int32_t>((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
-        m_record.z = static_cast<int32_t>((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ());
-    } else {
-        m_record.x = static_cast<int32_t>((p.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX());
-        m_record.y = static_cast<int32_t>((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
-        m_record.z = static_cast<int32_t>((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ());
-    }
 
+        // m_record.y = static_cast<int32_t>((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
+        // m_record.z = static_cast<int32_t>((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ());
+    } // else {
+    //         m_record.x = static_cast<int32_t>((p.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX());
+    //         m_record.y = static_cast<int32_t>((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
+    //         m_record.z = static_cast<int32_t>((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ());
+    //     }
+    m_record.x = static_cast<int32_t>(round(((p.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX())));
+    m_record.y = static_cast<int32_t>(round(((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY())));
+    m_record.z = static_cast<int32_t>(round(((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ())));
+        
     Classification::bitset_type clsflags(p.GetClassification());
     m_record.classification = static_cast<uint8_t>(clsflags.to_ulong());
 
