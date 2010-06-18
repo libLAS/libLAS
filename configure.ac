@@ -277,13 +277,6 @@ if test "${HAVE_ORACLE_OCI}" != "no" ; then
 fi
 
 
-dnl #########################################################################
-dnl Determine Zlib Support
-dnl #########################################################################
-
-dnl CHECK_ZLIB()
-dnl AM_CONDITIONAL([ZLIB_IS_CONFIG], [test ! x$HAVE_LIBZ = xno])
-
 
 dnl #########################################################################
 dnl Determine Boost support
@@ -385,13 +378,6 @@ if test "${HAVE_ORACLE_OCI}" != "no" ; then
     fi
 fi
 
-LOC_MSG([  zlib support.............: ${HAVE_LIBZ}])
-if test "${HAVE_LIBZ}" != "no" ; then
-    LOC_MSG([   - lz....................: ${HAVE_LIBZ}])
-    if test -n "${ZLIB_INC}" ; then
-        LOC_MSG([   - INCLUDE directories...: ${ZLIB_INC}])
-    fi
-fi
 
 LOC_MSG([  Boost support............: ${HAVE_BOOST}])
 if test "${HAVE_BOOST}" != "no" ; then
