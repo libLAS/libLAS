@@ -48,6 +48,12 @@
 
 #include <sstream> 
 
+// From http://stackoverflow.com/questions/485525/round-for-float-in-c
+double round(double r) {
+    return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5);
+}
+
+
 namespace liblas { namespace detail { namespace writer {
 
 void Point::setup()

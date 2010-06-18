@@ -92,7 +92,7 @@ void Header::write()
     // std::ios::in *and* std::ios::out, otherwise it should return false 
     // and we won't adjust the point count.
     
-    if ((beginning != end) && (end != 0)) {
+    if ((beginning != end) && (end != static_cast<std::ios::pos_type>(0))) {
         liblas::uint32_t& cnt =  GetPointCount();
         cnt = static_cast<liblas::uint32_t>(count);
         SetPointCount(cnt);
