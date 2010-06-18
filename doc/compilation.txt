@@ -569,7 +569,7 @@ substituting accordingly, to values that match your system layout.
 
 .. note::
     If you are building using `OSGeo4W`_ libraries, you must use the "gdal-dev" 
-    version, not the base `GDAL`_ build.  libLAS requires GDDAL 1.7+ to 
+    version, not the base `GDAL`_ build.  libLAS requires GDAL 1.7+ to 
     operate, and this is provided by the "gdal-dev" `OSGeo4W`_ version.
 
 .. note::
