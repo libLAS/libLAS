@@ -74,6 +74,8 @@ void Header::write()
     // Rewrite the georeference VLR entries if they exist
     m_header.SetGeoreference();
     
+    // Figure out how many points we already have.  
+
     // Seek to the beginning
     GetStream().seekp(0, std::ios::beg);
     std::ios::pos_type beginning = GetStream().tellp();
@@ -81,18 +83,19 @@ void Header::write()
     // Seek to the end
     GetStream().seekp(0, std::ios::end);
     std::ios::pos_type end = GetStream().tellp();
-    
-    // Figure out how many points we already have.  Each point record 
-    // should be 20 bytes long, and header.GetDataOffset tells
-    // us the location to start counting points from.  
+    // std::ios::off_type size = end - beginning;
+     
+    std::ios::off_type count = (end - static_cast<std::ios::off_type>(m_header.GetDataOffset())) / 
+                                 static_cast<std::ios::off_type>(m_header.GetDataRecordLength());
     
     // This test should only be true if we were opened in both 
     // std::ios::in *and* std::ios::out, otherwise it should return false 
     // and we won't adjust the point count.
     
-    if ((beginning != end) && ((uint32_t)end != 0)) {
-        uint32_t count = ((uint32_t) end - m_header.GetDataOffset())/m_header.GetDataRecordLength();
-        SetPointCount(count);
+    if ((beginning != end) && (end != 0)) {
+        liblas::uint32_t& cnt =  GetPointCount();
+        cnt = static_cast<liblas::uint32_t>(count);
+        SetPointCount(cnt);
 
         // Position to the beginning of the file to start writing the header
         GetStream().seekp(0, std::ios::beg);
