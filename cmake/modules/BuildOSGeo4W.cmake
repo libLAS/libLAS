@@ -58,7 +58,7 @@ endmacro(make_directories)
 
 
 add_custom_target(copy ALL COMMENT "Copying OSGeo4W files")
-add_dependencies( copy las2las2  )
+add_dependencies( copy make_osgeo4w_directories  )
 
 
 macro(copy_files GLOBPAT DESTINATION  )
@@ -80,7 +80,7 @@ endmacro(copy_files)
 
 add_custom_target(tar
   COMMAND ${CMAKE_COMMAND} -E echo "Tarring OSGeo4W install")
-add_dependencies( tar las2las2  )
+add_dependencies( tar copy  )
 
 macro (tar_directories source destination base_path)
 
@@ -116,8 +116,10 @@ add_custom_command(
     )
 add_dependencies( osgeo4w tar   )
 
-add_dependencies(  osgeo4w  las2las2 )
 
+foreach(utility ${LIBLAS_UTILITIES})
+    add_dependencies(  osgeo4w  ${utility} )
 
+endforeach()
 
 
