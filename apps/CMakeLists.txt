@@ -20,6 +20,12 @@ set(LAS2LAS las2las)
 set(LAS2TXT las2txt)
 set(TXT2LAS txt2las)
 set(LAS2LAS2 las2las2 )
+
+string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE_UPPER)
+if (CMAKE_BUILD_TYPE EQUAL ${BUILD_TYPE_UPPER})
+set(BIGFILE_TEST bigfile_test)
+endif()
+
 # Utilities depending on 3rd-pary libraries
 if(GDAL_FOUND)
     set(LAS2OGR las2ogr)
@@ -35,7 +41,7 @@ endif()
 
 set(LIBLAS_UTILITIES
     ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
-    ${LAS2OGR} ${LASINDEX} ${LAS2OCI} ${LAS2LAS2})
+    ${LAS2OGR} ${LASINDEX} ${LAS2OCI} ${LAS2LAS2} ${BIGFILE_TEST})
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -119,6 +125,11 @@ endif()
 if(LAS2OCI)
     add_executable(${LAS2OCI} las2oci.cpp oci_wrapper.cpp)
     target_link_libraries(${LAS2OCI} ${APPS_CPP_DEPENDENCIES})
+endif()
+
+if (BIGFILE_TEST)
+    add_executable(${BIGFILE_TEST} bigtest.cpp)
+    target_link_libraries(${BIGFILE_TEST} ${LIBLAS_C_LIB_NAME})
 endif()
 
 ###############################################################################
