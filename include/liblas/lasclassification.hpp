@@ -153,12 +153,10 @@ public:
         // there is only std::bitset<_Bits>::bitset(_ULonglong) and 
         // std::bitset<_Bits>::bitset(int) here.  As an aside, I see no reason
         // to have a mask any larger than std::bitset<_Bits>::bitset(int)
-#ifdef WIN32
-#if (_MSC_VER >= 1600)
+#ifdef WIN32 && if (_MSC_VER >= 1600)
         bitset_type const mask(static_cast<unsigned long long>(class_table_size) - 1);
 #else
         bitset_type const mask(static_cast<unsigned long>(class_table_size) - 1);
-#endif
 #endif
         bits &= mask;
 
