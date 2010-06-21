@@ -116,8 +116,10 @@ add_custom_command(
     )
 add_dependencies( osgeo4w tar   )
 
-add_dependencies(  osgeo4w  tar )
 
+foreach(utility ${LIBLAS_UTILITIES})
+    add_dependencies(  osgeo4w  ${utility} )
 
+endforeach()
 
 
