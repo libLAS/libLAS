@@ -131,12 +131,8 @@ field of the header.
 Example data
 ------------
 
-try these sources for sample lidar data in LAS format:
+Visit the libLAS sample library for LiDAR data in LAS format:
 
-http://www.geoict.net/LidarData/Data/OptechSampleLAS.zip
-
-http://www.qcoherent.com/data/LP360_Sample_Data.rar
-
-http://www.appliedimagery.com/Serpent%20Mound%20Model%20LAS%20Data.las
+http://liblas.org/samples/
 
 .. _`LAStools`: http://www.cs.unc.edu/~isenburg/lastools/

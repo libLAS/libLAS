@@ -26,6 +26,10 @@ Current Release(s)
 
 .. seealso::
     :ref:`source`
+
+.. seealso::
+    A `sample library <http://liblas.org/samples>`__ is also available to provide 
+    data to test your tools.
     
 Development Releases
 ..............................................................................
