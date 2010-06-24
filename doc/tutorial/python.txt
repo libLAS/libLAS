@@ -169,7 +169,49 @@ can set and get:
     255
     >>> c.green
     255
-    
+
+=============================================
+VLRs
+=============================================
+
+Variable Length Records (VLR) are frequently used by applications to store 
+anything they wish in the file as a "blob" written into the header of the 
+file.  libLAS supports writing and creating your own VLRs in addition to 
+taking on the work of interpreting and using VLR records related to 
+spatial reference systems if GDAL and proj.4 are linked into the library.  
+
+The following code demonstrates how to write your own VLR by opening an 
+XML file and inserting it into a new file.
+
+.. code-block:: python
+
+    from liblas import file as lasfile
+    from liblas import vlr
+    from liblas import header as lasheader
+
+    f = lasfile.File('test/data/srs_utm17.las',None,'rb')
+    h = f.header
+
+    v = vlr.VLR()
+
+    text =  open('schemas/las.xml','rb').read()
+
+    import ctypes
+
+    data = ctypes.create_string_buffer(text)
+
+    v.userid='hobu'
+    v.recordid = 12345
+    v.recordlength = len(text)
+    v.data = data
+
+    h.add_vlr(v)
+
+    f2 = lasfile.File('junk.las',header=h,mode='w')
+    for p in f:
+        f2.write(p)
+    f2.close()
+
     
 =============================================
 Writing
