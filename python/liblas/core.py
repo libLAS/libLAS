@@ -530,7 +530,7 @@ las.LASHeader_DeleteVLR.errcheck = check_return
 
 las.LASHeader_AddVLR.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASHeader_AddVLR.errcheck = check_return
-las.LASHeader_AddVLR.restype = None
+las.LASHeader_AddVLR.restype = ctypes.c_int
 
 las.LASWriter_Create.restype = ctypes.c_void_p
 las.LASWriter_Create.argtypes = [ctypes.c_char_p,
