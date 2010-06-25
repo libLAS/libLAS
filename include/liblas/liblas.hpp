@@ -124,7 +124,7 @@ enum FormatVersion
     eVersionMajorMin = 1, ///< Minimum of major component
     eVersionMajorMax = 1, ///< Maximum of major component
     eVersionMinorMin = 0, ///< Minimum of minor component
-    eVersionMinorMax = 2 ///< Maximum of minor component
+    eVersionMinorMax = 3 ///< Maximum of minor component
 };
 
 /// Versions of point record format.
@@ -134,6 +134,8 @@ enum PointFormatName
     ePointFormat1 = 1, ///< Point Data Format \e 1
     ePointFormat2 = 2, ///< Point Data Format \e 2
     ePointFormat3 = 3,  ///< Point Data Format \e 3
+    ePointFormat4 = 4,  ///< Point Data Format \e 3
+    ePointFormat5 = 5,  ///< Point Data Format \e 3
     ePointFormatUnknown = -99 ///< Point Data Format is unknown
 };
 
