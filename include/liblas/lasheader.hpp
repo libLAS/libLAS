@@ -206,6 +206,10 @@ public:
     /// Get number of bytes of generic verion of public header block storage.
     /// Standard version of the public header block is 227 bytes long.
     uint16_t GetHeaderSize() const;
+
+    /// Sets the header size.  Note that this is not the same as the offset to 
+    /// point data. 
+    void SetHeaderSize(uint16_t v);
     
     /// Get number of bytes from the beginning to the first point record.
     uint32_t GetDataOffset() const;
@@ -336,7 +340,7 @@ private:
         eProjectId4Size = 8,
         eSystemIdSize = 32,
         eSoftwareIdSize = 32,
-        eHeaderSize = 227,
+        eHeaderSize = 227, 
         eFileSourceIdMax = 65535
     };
 
