@@ -105,8 +105,8 @@ class VLR(object):
         return core.las.LASVLR_SetUserId(self.handle, value)
     doc = """User ID key for this VLR (clipped to 16 bytes long)
     
-    The User ID key for libLAS is ``1209``, and that number will be used 
-    for all extra VLRs that libLAS can interpret itself.  
+    The User ID for libLAS is ``liblas``, and it will be used 
+    for all extra VLRs that libLAS itself can interpret.  
     
     .. seealso::
         :ref:`liblas_vlr_key` has more detail on the key and name.
@@ -126,6 +126,7 @@ class VLR(object):
         
     """
     userid = property(get_userid, set_userid, None, doc)
+    user = userid
 
     def get_description(self):
         return core.las.LASVLR_GetDescription(self.handle)
@@ -147,7 +148,10 @@ class VLR(object):
         return core.las.LASVLR_SetRecordLength(self.handle, value)
     doc = """The number of bytes long the VLR is"""
     recordlength = property(get_recordlength, set_recordlength, None, doc)
-
+    
+    def __len__(self):
+        return self.recordlength
+        
     def get_recordid(self):
         return core.las.LASVLR_GetRecordId(self.handle)
 
