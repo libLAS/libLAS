@@ -340,7 +340,13 @@ void Header::SetCreationYear(uint16_t v)
 
 uint16_t Header::GetHeaderSize() const
 {
-    return eHeaderSize;
+    return m_headerSize;
+}
+
+void Header::SetHeaderSize(uint16_t v)
+{
+
+    m_headerSize = v;
 }
 
 uint32_t Header::GetDataOffset() const
