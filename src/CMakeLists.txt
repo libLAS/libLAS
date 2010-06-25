@@ -147,11 +147,11 @@ endif(APPLE)
 ########
 target_link_libraries(${LIBLAS_C_LIB_NAME}
   ${LIBLAS_LIB_NAME}
-  ${ZLIB_LIBRARIES}
   ${TIFF_LIBRARY}
   ${GEOTIFF_LIBRARY}
   ${GDAL_LIBRARY}
-  ${SPATIALINDEX_LIBRARY})
+  ${SPATIALINDEX_LIBRARY}
+  ${LIBXML2_LIBRARIES})
 
 ###############################################################################
 # Targets installation

@@ -132,6 +132,23 @@ endif(APPLE)
 ###############################################################################
 # Search for dependencies
 
+# libxml2 support - required, default=ON
+set(WITH_LIBXML2 TRUE CACHE BOOL "Choose if libxml2 support should be built (required)")
+
+if(WITH_LIBXML2)
+    find_package(LibXml2 REQUIRED)
+    mark_as_advanced(CLEAR LIBXML2_FOUND)
+    mark_as_advanced(CLEAR LIBXML2_INCLUDE_DIR)
+    mark_as_advanced(CLEAR LIBXML2_LIBRARIES) 
+    mark_as_advanced(CLEAR LIBXML2_DEFINITIONS)
+    if(LIBXML2_FOUND)
+        include_directories(${LIBXML2_INCLUDE_DIR})
+        add_definitions(-DHAVE_LIBXML2=1)
+    endif()
+endif()
+
+
+
 # Boost C++ Libraries support - optional, default=OFF
 set(WITH_BOOST FALSE CACHE BOOL "Choose if Boost C++ Libraries support should be built")
 
@@ -144,17 +161,7 @@ if(WITH_BOOST)
     endif()
 endif()
 
-# zlib support - optional, default=OFF
-set(WITH_ZLIB FALSE CACHE BOOL "Choose if zlib support should be built")
 
-if(WITH_ZLIB)
-    find_package(ZLIB)
-
-    if(ZLIB_FOUND)
-        include_directories(${ZLIB_INCLUDE_DIR})
-        add_definitions(-DHAVE_ZLIB=1)
-    endif()
-endif()
 
 # GeoTIFF support - optional, default=OFF
 set(WITH_GEOTIFF FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
@@ -180,8 +187,10 @@ if(WITH_GEOTIFF)
 
     # Determine libTIFF availability, required
     if (GEOTIFF_FOUND)
-        mark_as_advanced(CLEAR TIFF)
-        find_package(TIFF)
+
+        find_package(TIFF) 
+        mark_as_advanced(CLEAR TIFF_INCLUDE_DIR) 
+        mark_as_advanced(CLEAR TIFF_LIBRARIES) 
         if (TIFF_FOUND)
             include_directories(${TIFF_INCLUDE_DIR})
         endif()
