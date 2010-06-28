@@ -109,7 +109,7 @@
         <interpretation>unknown</interpretation>
         <minimum ns1:units="uint8_t" ns1:value="0"/>
         <maximum ns1:units="uint8_t" ns1:value="1"/>
-    
+    </ns1:dimension>    
     <ns1:dimension>
         <name>Flight Line Edge</name>
         <description>
@@ -124,7 +124,7 @@
         <interpretation>unknown</interpretation>
         <minimum ns1:units="int8_t" ns1:value="0"/>
         <maximum ns1:units="int8_t" ns1:value="1"/>
-    
+    </ns1:dimension>    
     <ns1:dimension>
         <name>Classification</name>
         <description>
@@ -144,7 +144,7 @@
         <interpretation>uint8_t</interpretation>
         <minimum/>
         <maximum/>
-    
+    </ns1:dimension>    
     <ns1:dimension>
         <name>Scan Angle</name>
         <description>
