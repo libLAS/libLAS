@@ -128,9 +128,11 @@ void Header::read()
     // 14. Header Size
     // NOTE: Size of the stanard header block must always be 227 bytes
     read_n(n2, m_ifs, sizeof(n2));
+    m_header.SetHeaderSize(n2);
 
     // 15. Offset to data
     read_n(n4, m_ifs, sizeof(n4));
+    
     if (n4 < m_header.GetHeaderSize())
     {
         std::ostringstream msg; 
@@ -168,6 +170,14 @@ void Header::read()
     else if (n1 == liblas::ePointFormat3)
     {
         m_header.SetDataFormatId(liblas::ePointFormat3);
+    }
+    else if (n1 == liblas::ePointFormat4)
+    {
+        m_header.SetDataFormatId(liblas::ePointFormat4);
+    }
+    else if (n1 == liblas::ePointFormat5)
+    {
+        m_header.SetDataFormatId(liblas::ePointFormat5);
     }
     else
     {
@@ -217,6 +227,8 @@ void Header::read()
 
     m_header.SetMax(x1, y1, z1);
     m_header.SetMin(x2, y2, z2);
+    
+    
 
     // We're going to check the two bytes off the end of the header to 
     // see if they're pad bytes anyway.  Some softwares, notably older QTModeler, 
@@ -245,35 +257,41 @@ void Header::read()
     // If we're eof, we need to reset the state
     if (m_ifs.eof())
         m_ifs.clear();
-        
-    // Seek to the beginning
-    m_ifs.seekg(0, std::ios::beg);
-    std::ios::pos_type beginning = m_ifs.tellg();
-
-    // Seek to the end
-    m_ifs.seekg(0, std::ios::end);
-    std::ios::pos_type end = m_ifs.tellg();
-    std::ios::off_type size = end - beginning;
-     
-    // Figure out how many points we have 
-    std::ios::off_type count = (end - static_cast<std::ios::off_type>(m_header.GetDataOffset())) / 
-                                 static_cast<std::ios::off_type>(m_header.GetDataRecordLength());
     
-    if ( m_header.GetPointRecordsCount() != static_cast<uint32_t>(count)) {
-        std::ostringstream msg; 
-        msg <<  "The number of points in the header that was set "
-                "by the software '" << m_header.GetSoftwareId() <<
-                "' does not match the actual number of points in the file "
-                "as determined by subtracting the data offset (" 
-                <<m_header.GetDataOffset() << ") from the file length (" 
-                << size <<  ") and dividing by the point record length(" 
-                << m_header.GetDataRecordLength() << "). "
-                " Actual number of points: " << count << 
-                " Header-specified number of points: " 
-                << m_header.GetPointRecordsCount() ;
-        throw std::runtime_error(msg.str());
-        
-    }
+    // NOTE: This section is commented out because we now have to believe 
+    // the header's GetPointRecordsCount due to the fact that the LAS 1.3 
+    // specification no longer mandates that the end of the file is the end
+    // of the points.  See http://trac.liblas.org/ticket/147 for more 
+    // details on this issue and why the seek is a problem in the windows 
+    // case.
+    // // Seek to the beginning
+    // m_ifs.seekg(0, std::ios::beg);
+    // std::ios::pos_type beginning = m_ifs.tellg();
+    // 
+    // // Seek to the end
+    // m_ifs.seekg(0, std::ios::end);
+    // std::ios::pos_type end = m_ifs.tellg();
+    // std::ios::off_type size = end - beginning;
+    //  
+    // // Figure out how many points we have 
+    // std::ios::off_type count = (end - static_cast<std::ios::off_type>(m_header.GetDataOffset())) / 
+    //                              static_cast<std::ios::off_type>(m_header.GetDataRecordLength());
+    // 
+    // if ( m_header.GetPointRecordsCount() != static_cast<uint32_t>(count)) {
+    //     std::ostringstream msg; 
+    //     msg <<  "The number of points in the header that was set "
+    //             "by the software '" << m_header.GetSoftwareId() <<
+    //             "' does not match the actual number of points in the file "
+    //             "as determined by subtracting the data offset (" 
+    //             <<m_header.GetDataOffset() << ") from the file length (" 
+    //             << size <<  ") and dividing by the point record length(" 
+    //             << m_header.GetDataRecordLength() << "). "
+    //             " Actual number of points: " << count << 
+    //             " Header-specified number of points: " 
+    //             << m_header.GetPointRecordsCount() ;
+    //     throw std::runtime_error(msg.str());
+    //     
+    // }
     
     // Seek to the data offset so we can start reading points
     m_ifs.seekg(m_header.GetDataOffset());

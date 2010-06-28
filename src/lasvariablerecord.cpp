@@ -132,9 +132,13 @@ std::string VariableRecord::GetUserId(bool pad /*= false*/) const
 
 void VariableRecord::SetUserId(std::string const& v)
 {
-    if (v.size() > eUIDSize)
-        throw std::invalid_argument("user id too long");
-    
+    if (v.size() > eUIDSize) {
+        std::ostringstream output;
+        output << "User ID for VLR is too long: " << v.size() ;
+        std::string out(output.str());
+        throw std::invalid_argument(out);        
+    }
+
 
     std::fill(m_userId, m_userId + eUIDSize, 0);
     std::strncpy(m_userId, v.c_str(), eUIDSize);

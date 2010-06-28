@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ns1:LASSchema xmlns:ns1="http://liblas.org/schemas/LAS/example" 
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-                xsi:schemaLocation="http://liblas.org/schemas/LAS/1.0 file:/Users/hobu/hg/liblas/schemas/LAS.xsd">
+                xsi:schemaLocation="http://liblas.org/schemas/LAS-example.dtd">
     <ns1:dimension>
         <name>X</name>
         <description>
