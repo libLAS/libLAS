@@ -186,6 +186,7 @@ class VLR(object):
         return data
 
     def set_data(self, data):
+        self.recordlength = len(data)
         pdata = ctypes.cast(data, ctypes.POINTER(ctypes.c_ubyte))
         core.las.LASVLR_SetData(self.handle, pdata, self.recordlength)
     doc = """Raw data (in the form of an array of :class:`ctypes.c_ubyte`)"""

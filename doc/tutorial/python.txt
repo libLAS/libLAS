@@ -202,7 +202,6 @@ XML file and inserting it into a new file.
 
     v.userid='hobu'
     v.recordid = 12345
-    v.recordlength = len(text)
     v.data = data
 
     h.add_vlr(v)
