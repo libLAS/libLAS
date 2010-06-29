@@ -199,11 +199,13 @@ public:
     };
     
     virtual bool filter(const Point& point) = 0;
+    
     void SetType(FilterType t) {m_type = t;}
     FilterType GetType() const {return m_type; }
+
     virtual ~FilterI() {};
 
-    FilterI(FilterType t) {m_type = t;}
+    FilterI(FilterType t) : m_type(t) {}
     
     private:
 
