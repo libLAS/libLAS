@@ -52,6 +52,7 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/laspoint.hpp
   ${LIBLAS_HEADERS_DIR}/lasreader.hpp
   ${LIBLAS_HEADERS_DIR}/lasspatialreference.hpp
+  ${LIBLAS_HEADERS_DIR}/lastransform.hpp  
   ${LIBLAS_HEADERS_DIR}/lasvariablerecord.hpp
   ${LIBLAS_HEADERS_DIR}/lasversion.hpp
   ${LIBLAS_HEADERS_DIR}/laswriter.hpp
@@ -83,6 +84,7 @@ set(LIBLAS_CPP
   laspoint.cpp
   lasreader.cpp
   lasspatialreference.cpp
+  lastransform.cpp
   lasvariablerecord.cpp
   laswriter.cpp)
 
