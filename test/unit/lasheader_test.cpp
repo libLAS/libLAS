@@ -175,7 +175,7 @@ namespace tut
         try
         {
             h.SetVersionMajor(2);
-            ensure("std::out_of_range not thrown", false);
+            ensure("std::out_of_range was not thrown", false);
         }
         catch (std::out_of_range const& e)
         {
@@ -184,8 +184,8 @@ namespace tut
 
         try
         {
-            h.SetVersionMinor(3);
-            ensure("std::out_of_range not thrown", false);
+            h.SetVersionMinor(4);
+            ensure("std::out_of_range was not thrown", false);
         }
         catch (std::out_of_range const& e)
         {
