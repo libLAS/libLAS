@@ -86,26 +86,9 @@ Point::Point(   std::ostream& ofs,
     Base(ofs, count), 
     m_ofs(ofs), 
     m_header(header), 
-    m_point(liblas::Point()), 
-    m_transform(0),
+    m_point(liblas::Point()),
     m_format(header.GetPointFormat()),
     m_blanks(0)
-{
-    setup();
-}
-
-Point::Point(   std::ostream& ofs, 
-                liblas::uint32_t& count,
-                const liblas::Header& header, 
-                OGRCoordinateTransformationH transform) : 
-            Base(ofs, count),
-            m_ofs(ofs), 
-            m_header(header), 
-            m_point(liblas::Point()), 
-            m_transform(transform),
-            m_format(header.GetPointFormat()),
-            m_blanks(0)
-
 {
     setup();
 }
@@ -198,46 +181,11 @@ void Point::write(const liblas::Point& point)
     }
 }
 
-void Point::project()
-{
-#ifdef HAVE_GDAL
-    
-    int ret = 0;
-    liblas::Point& p = m_point;
-    
-    double x = p.GetX();
-    double y = p.GetY();
-    double z = p.GetZ();
-    
-    ret = OCTTransform(m_transform, 1, &x, &y, &z);
-    
-    if (!ret) {
-        std::ostringstream msg; 
-        msg << "Could not project point for Writer::" << CPLGetLastErrorMsg() << ret;
-        std::string message(msg.str());
-        throw std::runtime_error(message);
-    }
-    
-    p.SetX(x);
-    p.SetY(y);
-    p.SetZ(z);
-#endif
-}
 
 void Point::fill() 
 {
     liblas::Point& p = m_point;
-    if (m_transform) {
-        
-        project();
 
-        // m_record.y = static_cast<int32_t>((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
-        // m_record.z = static_cast<int32_t>((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ());
-    } // else {
-    //         m_record.x = static_cast<int32_t>((p.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX());
-    //         m_record.y = static_cast<int32_t>((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
-    //         m_record.z = static_cast<int32_t>((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ());
-    //     }
     m_record.x = static_cast<int32_t>(sround(((p.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX())));
     m_record.y = static_cast<int32_t>(sround(((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY())));
     m_record.z = static_cast<int32_t>(sround(((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ())));

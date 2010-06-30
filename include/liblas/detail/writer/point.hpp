@@ -42,22 +42,13 @@
 #ifndef LIBLAS_DETAIL_WRITER_POINT_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_POINT_HPP_INCLUDED
 
-#include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>
 
 #include <liblas/laspoint.hpp>
 #include <liblas/lasformat.hpp>
-
-#include <liblas/detail/utility.hpp>
-
 #include <liblas/lasheader.hpp>
-
+#include <liblas/detail/utility.hpp>
 #include <liblas/detail/writer/base.hpp>
-
-#ifndef HAVE_GDAL
-    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
-    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
-#endif
 
 // std
 #include <iosfwd>
@@ -71,10 +62,6 @@ public:
     typedef WriterBase Base;
     
     Point(std::ostream& ofs, liblas::uint32_t& count, liblas::Header const& header);
-    Point(  std::ostream& ofs, 
-            liblas::uint32_t& count, 
-            liblas::Header const& header,
-            OGRCoordinateTransformationH transform);
     virtual ~Point();
 
     const liblas::Point& GetPoint() const { return m_point; }
@@ -92,20 +79,16 @@ private:
     Point(Point const& other);
     Point& operator=(Point const& rhs);
     
-    
-
     std::ostream& m_ofs;
     const liblas::Header& m_header;
     liblas::Point m_point;
-    OGRCoordinateTransformationH m_transform;
-    
+        
     PointRecord m_record;
     
     PointFormat m_format;
     
     liblas::uint8_t* m_blanks;
     
-    void project();
     void setup();
     void fill();
 };
