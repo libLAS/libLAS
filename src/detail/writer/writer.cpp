@@ -66,7 +66,12 @@ WriterImpl::WriterImpl(std::ostream& ofs) :
 
 liblas::Header const&  WriterImpl::WriteHeader(liblas::Header const& header)
 {
-    m_header_writer = new detail::writer::Header(m_ofs,m_pointCount, header );
+    if (m_header_writer == 0) {
+        m_header_writer = new detail::writer::Header(m_ofs,m_pointCount, header );
+    } else {
+        delete m_header_writer;
+        m_header_writer = new detail::writer::Header(m_ofs,m_pointCount, header );
+    }
     m_header_writer->write();
     return m_header_writer->GetHeader();
 }
