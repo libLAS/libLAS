@@ -43,6 +43,100 @@
 
 namespace liblas { 
 
+ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS) : 
+ m_transform(0), m_in_ref(0), m_out_ref(0)
+{
+
+#ifdef HAVE_GDAL
+    
+    if (m_transform)
+    {
+        OCTDestroyCoordinateTransformation(m_transform);
+    }
+    if (m_in_ref)
+    {
+        OSRDestroySpatialReference(m_in_ref);
+    }
+    if (m_out_ref)
+    {
+        OSRDestroySpatialReference(m_out_ref);
+    }
+    
+    m_in_ref = OSRNewSpatialReference(0);
+    m_out_ref = OSRNewSpatialReference(0);
+    
+    int result = OSRSetFromUserInput(m_in_ref, inSRS.GetWKT().c_str());
+    if (result != OGRERR_NONE) 
+    {
+        std::ostringstream msg; 
+        msg << "Could not import input spatial reference for ReprojectionTransform:: " 
+            << CPLGetLastErrorMsg() << " code: " << result 
+            << "wkt: '" << inSRS.GetWKT() << "'";
+        std::string message(msg.str());
+        throw std::runtime_error(message);
+    }
+    
+    result = OSRSetFromUserInput(m_out_ref, outSRS.GetWKT().c_str());
+    if (result != OGRERR_NONE) 
+    {
+        std::ostringstream msg; 
+        msg << "Could not import output spatial reference for ReprojectionTransform:: " 
+            << CPLGetLastErrorMsg() << " code: " << result 
+            << "wkt: '" << outSRS.GetWKT() << "'";
+        std::string message(msg.str());
+        throw std::runtime_error(message);
+    }
+
+    m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
+    
+#endif
+}
+
+ReprojectionTransform::~ReprojectionTransform()
+{
+#ifdef HAVE_GDAL
+    if (m_transform)
+    {
+        OCTDestroyCoordinateTransformation(m_transform);
+    }
+    if (m_in_ref)
+    {
+        OSRDestroySpatialReference(m_in_ref);
+    }
+    if (m_out_ref)
+    {
+        OSRDestroySpatialReference(m_out_ref);
+    }
+
+#endif
+}
 
 
+bool ReprojectionTransform::transform(Point& point)
+{
+#ifdef HAVE_GDAL
+    
+    int ret = 0;
+    double x = point.GetX();
+    double y = point.GetY();
+    double z = point.GetZ();
+    
+    ret = OCTTransform(m_transform, 1, &x, &y, &z);    
+    if (!ret)
+    {
+        std::ostringstream msg; 
+        msg << "Could not project point for ReprojectionTransform::" << CPLGetLastErrorMsg() << ret;
+        std::string message(msg.str());
+        throw std::runtime_error(message);
+    }
+
+    point.SetX(x);
+    point.SetY(y);
+    point.SetZ(z);
+    
+    return true;
+#else
+    detail::ignore_unused_variable_warning(point);
+#endif
+}
 } // namespace liblas

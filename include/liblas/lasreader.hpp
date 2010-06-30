@@ -50,6 +50,8 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
+#include <liblas/lastransform.hpp>
+
 
 
 // std
@@ -144,7 +146,18 @@ public:
     /// keep a point that was read from the file.  Filters have *no* 
     /// effect for reading data at specific locations in the file.  
     /// They only affect reading ReadNextPoint-style operations
+    /// Filters are applied *before* transforms.
     void SetFilters(std::vector<liblas::FilterI*>* filters) {m_filters = filters;}
+
+    /// Sets transforms to apply to points.  Points are transformed in 
+    /// place *in the order* of the transform list.
+    /// Filters are applied *before* transforms.  If an input/output SRS 
+    /// is set on the reader, the reprojection transform will happen *first* 
+    /// before any other transforms are applied.  This transform is a 
+    /// special case.  You can define your own reprojection transforms and add 
+    /// it to the list, but be sure to not issue a SetOutputSRS to trigger 
+    /// the internal transform creation
+    void SetTransforms(std::vector<liblas::TransformI*>* transforms) {m_transforms = transforms;}
 
 private:
 
@@ -164,8 +177,12 @@ private:
     bool bCustomHeader;
     
     std::vector<liblas::FilterI*>* m_filters;
+    std::vector<liblas::TransformI*>* m_transforms;
 
-    // std::istream& m_ifs;
+    liblas::TransformI* m_reprojection_transform;
+
+    SpatialReference m_out_srs;
+    SpatialReference m_in_srs;
     
 };
 

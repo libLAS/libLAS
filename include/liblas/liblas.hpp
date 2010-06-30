@@ -160,8 +160,6 @@ public:
     virtual void Seek(std::size_t n, const Header& header) = 0;
     
     virtual void Reset(const Header& header) = 0;
-    virtual void SetInputSRS(const SpatialReference& srs) = 0;
-    virtual void SetOutputSRS(const SpatialReference& srs, const Header& header) = 0;
     
     virtual std::istream& GetStream() const = 0;
     
@@ -175,9 +173,6 @@ public:
     virtual Header const& WriteHeader(const Header& header) = 0;
     virtual void UpdateHeader(const Header& header) = 0;
     virtual void WritePoint(const Point& point, const Header& header) = 0;
-
-    virtual void SetInputSRS(const SpatialReference& srs) = 0;
-    virtual void SetOutputSRS(const SpatialReference& srs, const Header& header) = 0;
 
     virtual std::ostream& GetStream() const = 0;
 
@@ -207,12 +202,12 @@ public:
 
     FilterI(FilterType t) : m_type(t) {}
     
-    private:
+private:
 
-        FilterI(FilterI const& other);
-        FilterI& operator=(FilterI const& rhs);
+    FilterI(FilterI const& other);
+    FilterI& operator=(FilterI const& rhs);
 
-        FilterType m_type;
+    FilterType m_type;
 
     
 };

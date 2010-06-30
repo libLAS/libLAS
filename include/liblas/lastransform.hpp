@@ -47,13 +47,47 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/liblas.hpp>
+#include <liblas/lasspatialreference.hpp>
 
 #include <vector>
 
 namespace liblas
 {
 
+// class TransformI
+// {
+// public:
+//     
+//     virtual bool transform(Point& point) = 0;
+//     virtual ~TransformI() {};
+// 
+// };
 
+#ifndef HAVE_GDAL
+    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
+    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
+#endif
+
+class ReprojectionTransform: public TransformI
+{
+public:
+    
+    ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS);
+    bool transform(Point& point);
+    
+    ~ReprojectionTransform();
+
+private:
+
+    OGRCoordinateTransformationH m_transform;
+    OGRSpatialReferenceH m_in_ref;
+    OGRSpatialReferenceH m_out_ref;
+
+
+
+    ReprojectionTransform(ReprojectionTransform const& other);
+    ReprojectionTransform& operator=(ReprojectionTransform const& rhs);
+};
 
 } // namespace liblas
 

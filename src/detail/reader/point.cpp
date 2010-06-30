@@ -54,18 +54,11 @@ void Point::setup()
 }
 
 Point::Point(std::istream& ifs, const liblas::Header& header) :
-    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_transform(0),m_format(header.GetPointFormat())
+    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_format(header.GetPointFormat())
 {
     setup();
 }
 
-Point::Point(   std::istream& ifs, 
-                const liblas::Header& header, 
-                OGRCoordinateTransformationH transform) :
-    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_transform(transform), m_format(header.GetPointFormat())
-{
-    setup();
-}
 
 Point::~Point()
 {
@@ -167,51 +160,13 @@ void Point::read()
     }
 }
 
-void Point::project()
-{
-#ifdef HAVE_GDAL
-    
-    int ret = 0;
-    double x = m_point.GetX();
-    double y = m_point.GetY();
-    double z = m_point.GetZ();
-    
-    ret = OCTTransform(m_transform, 1, &x, &y, &z);    
-    if (!ret)
-    {
-        std::ostringstream msg; 
-        msg << "Could not project point for Reader::" << CPLGetLastErrorMsg() << ret;
-        std::string message(msg.str());
-        throw std::runtime_error(message);
-    }
-
-    m_point.SetX(x);
-    m_point.SetY(y);
-    m_point.SetZ(z);
-#else
-    detail::ignore_unused_variable_warning(m_point);
-#endif
-}
 
 void Point::fill(PointRecord& record) 
 {
 
-    if (m_transform) {
-        m_point.SetCoordinates(m_header, record.x, record.y, record.z);
-        project();
-        
-        int32_t x = static_cast<int32_t>((m_point.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX());
-        int32_t y = static_cast<int32_t>((m_point.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY());
-        int32_t z = static_cast<int32_t>((m_point.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ());
-        m_point.SetX(x);
-        m_point.SetY(y);
-        m_point.SetZ(z);
-        
-    } else {
-        m_point.SetX(record.x);
-        m_point.SetY(record.y);
-        m_point.SetZ(record.z);
-    }
+    m_point.SetX(record.x);
+    m_point.SetY(record.y);
+    m_point.SetZ(record.z);
 
     m_point.SetIntensity(record.intensity);
     m_point.SetScanFlags(record.flags);

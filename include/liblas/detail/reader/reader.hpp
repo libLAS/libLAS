@@ -51,12 +51,6 @@
 #include <iosfwd>
 
 
-#ifndef HAVE_GDAL
-    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
-    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
-#endif
-
-
 namespace liblas { namespace detail { 
 
 class ReaderImpl : public ReaderI
@@ -74,9 +68,9 @@ public:
     std::istream& GetStream() const;
     
     void Reset(liblas::Header const& header);
-    void SetSRS(const SpatialReference& srs, const liblas::Header& header);
-    void SetInputSRS(const SpatialReference& srs);
-    void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
+    // void SetSRS(const SpatialReference& srs, const liblas::Header& header);
+    // void SetInputSRS(const SpatialReference& srs);
+    // void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
 
 protected:
     void CreateTransform();
@@ -89,11 +83,11 @@ protected:
     std::istream& m_ifs;
     uint32_t m_size;
     uint32_t m_current;
-    SpatialReference m_out_srs;
-    SpatialReference m_in_srs;    
-    OGRCoordinateTransformationH m_transform;
-    OGRSpatialReferenceH m_in_ref;
-    OGRSpatialReferenceH m_out_ref;
+    // SpatialReference m_out_srs;
+    // SpatialReference m_in_srs;    
+    // OGRCoordinateTransformationH m_transform;
+    // OGRSpatialReferenceH m_in_ref;
+    // OGRSpatialReferenceH m_out_ref;
 
     detail::reader::Point* m_point_reader;
     detail::reader::Header* m_header_reader;
@@ -116,7 +110,7 @@ public:
     liblas::Header const& ReadHeader();
     liblas::Point const& ReadNextPoint(const liblas::Header& header);
     liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
-    void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
+    // void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
 
     void Seek(std::size_t n, const liblas::Header& header);
     void Reset(liblas::Header const& header);

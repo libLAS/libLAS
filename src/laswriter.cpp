@@ -54,9 +54,16 @@ namespace liblas
 {
 
 Writer::Writer(std::ostream& ofs, Header const& header) :
-    m_pimpl(detail::WriterFactory::Create(ofs)), m_header(header)
+    m_pimpl(detail::WriterFactory::Create(ofs)), m_header(header), 
+    m_filters(0),
+    m_transforms(0),
+    m_reprojection_transform(0)
 {
     m_pimpl->WriteHeader(m_header);
+
+    // Copy our input SRS.  If the user issues SetInputSRS, it will 
+    // be overwritten
+    m_in_srs = m_header.GetSRS();
 }
 
 Writer::~Writer()
@@ -78,8 +85,65 @@ bool Writer::WritePoint(Point const& point)
         return false;
     }
 
-    m_pimpl->WritePoint(point, m_header);
+    std::vector<liblas::FilterI*>::const_iterator fi;
+    std::vector<liblas::TransformI*>::const_iterator ti;
+    bool bHaveTransforms = false;
+    bool bHaveFilters = false;
+    
+    if (m_transforms != 0 ) {
+        bHaveTransforms = true;
+    }
+    
+    if (m_filters != 0 ) {
+        bHaveFilters = true;
+    }
+    
 
+    if (bHaveFilters) {
+    if (m_filters->size() != 0) {
+        // We have filters, filter this point.  All filters must 
+        // return true for us to keep it.
+        bool keep = false;
+        for (fi = m_filters->begin(); fi != m_filters->end(); ++fi) {
+            liblas::FilterI* filter = *fi;
+            if (filter->filter(point)){
+                // if ->filter() is true, we keep the point
+                keep = true;
+            } else {
+                keep = false;
+                break;
+            }
+            
+        }
+        if (!keep) {
+            return false;
+        } 
+    }
+    }
+    
+    if (bHaveTransforms) {
+    if (m_transforms->size() != 0) {
+        // Apply the transforms to each point
+        Point* pt = new Point(point);
+        for (ti = m_transforms->begin(); ti != m_transforms->end(); ++ti) {
+            liblas::TransformI* transform = *ti;
+            transform->transform(*pt);
+
+        }
+        
+        // We have to write a copy of our point, because we're applying 
+        // transformations that change the point.
+        m_pimpl->WritePoint(*pt, m_header);
+        delete pt;
+        return true;
+        
+    }
+    }
+        
+
+    // if we haven't returned because of the filter and we don't have any 
+    // transforms, just write the point
+    m_pimpl->WritePoint(point, m_header);
     return true;
 }
 
@@ -98,19 +162,55 @@ void Writer::WriteHeader(Header& header)
 
 bool Writer::SetSRS(const SpatialReference& srs)
 {
-    m_pimpl->SetOutputSRS(srs, m_header);
+    SetOutputSRS(srs);
     return true;
 }
 
 bool Writer::SetInputSRS(const SpatialReference& srs)
 {
-    m_pimpl->SetInputSRS(srs);
+    m_in_srs = srs;
     return true;
 }
 
 bool Writer::SetOutputSRS(const SpatialReference& srs)
 {
-    m_pimpl->SetOutputSRS(srs, m_header);
+    m_out_srs = srs;
+
+
+    TransformI* possible_reprojection_transform = 0;
+    
+    if (m_transforms != 0) {
+        if (m_transforms->size() > 0) {
+            possible_reprojection_transform = m_transforms->at(0);
+        }
+    }
+    
+    if (m_reprojection_transform == possible_reprojection_transform && m_reprojection_transform != 0) {
+        // remove it from the transforms list
+        std::vector<TransformI*>::iterator i = m_transforms->begin();
+        m_transforms->erase(i);
+    }
+    
+    if (m_reprojection_transform != 0)
+    {
+        delete m_reprojection_transform;
+    }
+
+    m_reprojection_transform = new ReprojectionTransform(m_in_srs, m_out_srs);
+    
+    if (m_transforms != 0) {
+        if (m_transforms->size() > 0) {
+            m_transforms->insert(m_transforms->begin(), m_reprojection_transform);
+            
+        } else {
+            m_transforms->push_back(m_reprojection_transform);
+        }
+    } else {
+        m_transforms = new std::vector<liblas::TransformI*>;
+        m_transforms->push_back(m_reprojection_transform);
+    }
+
+
     return true;
 }
 } // namespace liblas

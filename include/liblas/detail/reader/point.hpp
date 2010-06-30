@@ -51,11 +51,6 @@
 #include <liblas/lasformat.hpp>
 
 
-#ifndef HAVE_GDAL
-    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
-    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
-#endif
-
 // std
 #include <iosfwd>
 
@@ -66,9 +61,6 @@ class Point
 public:
 
     Point(std::istream& ifs, const liblas::Header& header);
-    Point(  std::istream& ifs, 
-            const liblas::Header& header, 
-            OGRCoordinateTransformationH transform);
     virtual ~Point();
 
     std::istream& GetStream() const;
@@ -90,11 +82,9 @@ private:
     std::istream& m_ifs;
     const liblas::Header& m_header;
     liblas::Point m_point;
-    OGRCoordinateTransformationH m_transform;
     
     PointFormat m_format;
     
-    void project();
     void setup();
     void fill(PointRecord& record);
 };

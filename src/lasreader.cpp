@@ -61,7 +61,9 @@ Reader::Reader(std::istream& ifs) :
     m_point(0),
     m_empty_point(new Point()),
     bCustomHeader(false),
-    m_filters(0)
+    m_filters(0),
+    m_transforms(0),
+    m_reprojection_transform(0)
 {
     Init();
 }
@@ -71,7 +73,9 @@ Reader::Reader(ReaderI* reader) :
     m_point(0),
     m_empty_point(new Point()),
     bCustomHeader(false),
-    m_filters(0)
+    m_filters(0),
+    m_transforms(0),
+    m_reprojection_transform(0)
 {
     Init();
 }
@@ -81,7 +85,9 @@ Reader::Reader(std::istream& ifs, Header& header) :
     m_point(0),
     m_empty_point(new Point()),
     bCustomHeader(false),
-    m_filters(0)
+    m_filters(0),
+    m_transforms(0),
+    m_reprojection_transform(0)
 {
     m_header = header;
     bCustomHeader = true;
@@ -93,6 +99,9 @@ Reader::~Reader()
     // empty, but required so we can implement PIMPL using
     // std::auto_ptr with incomplete type (Reader).
     delete m_empty_point;
+    
+    if (m_reprojection_transform != 0)
+        delete m_reprojection_transform;
 }
 
 Header const& Reader::GetHeader() const
@@ -107,17 +116,28 @@ Point const& Reader::GetPoint() const
 
 bool Reader::ReadNextPoint()
 {
-    std::vector<liblas::FilterI*>::const_iterator i;
-
+    std::vector<liblas::FilterI*>::const_iterator fi;
+    std::vector<liblas::TransformI*>::const_iterator ti;
+    bool bHaveTransforms = false;
+    bool bHaveFilters = false;
+    
+    if (m_transforms != 0 ) {
+        bHaveTransforms = true;
+    }
+    
+    if (m_filters != 0 ) {
+        bHaveFilters = true;
+    }
+    
     try {
         m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-        if (m_filters != 0 ) {
+        if (bHaveFilters) {
         if (m_filters->size() != 0) {
             // We have filters, filter this point.  All filters must 
             // return true for us to keep it.
             bool keep = false;
-            for (i = m_filters->begin(); i != m_filters->end(); ++i) {
-                liblas::FilterI* filter = *i;
+            for (fi = m_filters->begin(); fi != m_filters->end(); ++fi) {
+                liblas::FilterI* filter = *fi;
                 if (filter->filter(*m_point)){
                     // if ->filter() is true, we keep the point
                     keep = true;
@@ -129,9 +149,22 @@ bool Reader::ReadNextPoint()
             }
             if (!keep) {
                 return ReadNextPoint();
-            } else {
-                return true;
             }
+             // else {
+            //      return true;
+            //  }
+        }
+        }
+        
+        if (bHaveTransforms) {
+        if (m_transforms->size() != 0) {
+            // Apply the transforms to each point
+
+            for (ti = m_transforms->begin(); ti != m_transforms->end(); ++ti) {
+                liblas::TransformI* transform = *ti;
+                transform->transform(*m_point);
+
+            }            
         }
         }
         return true;
@@ -144,8 +177,30 @@ bool Reader::ReadNextPoint()
 
 bool Reader::ReadPointAt(std::size_t n)
 {
+    std::vector<liblas::TransformI*>::const_iterator ti;
+    bool bHaveTransforms = false;
+
+    if (m_header.GetPointRecordsCount() <= n)
+    {
+        throw std::out_of_range("point subscript out of range");
+    }
+        
+    if (m_transforms != 0 ) {
+        bHaveTransforms = true;
+    }
+    
     try {
         m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
+        if (bHaveTransforms) {
+        if (m_transforms->size() != 0) {
+
+            for (ti = m_transforms->begin(); ti != m_transforms->end(); ++ti) {
+                liblas::TransformI* transform = *ti;
+                transform->transform(*m_point);
+
+            }            
+        }
+        }
         return true;
     } catch (std::out_of_range) {
         m_point = 0;
@@ -171,8 +226,9 @@ Point const& Reader::operator[](std::size_t n)
     {
         throw std::out_of_range("point subscript out of range");
     }
+    
+    ReadPointAt(n);
 
-    m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
     if (m_point == 0) 
     {
         throw std::out_of_range("no point record at given position");
@@ -206,12 +262,15 @@ void Reader::Init()
     // keep it around until the reader closes down and then deletes.  
     // 
     m_point = m_empty_point;
+    
+    // Copy our input SRS.  If the user issues SetInputSRS, it will 
+    // be overwritten
+    m_in_srs = m_header.GetSRS();
 }
 
 std::istream& Reader::GetStream() const
 {
     return m_pimpl->GetStream();
-    // return m_ifs;
 }
 
 void Reader::Reset() 
@@ -226,19 +285,52 @@ bool Reader::IsEOF() const
 
 bool Reader::SetSRS(const SpatialReference& srs)
 {
-    m_pimpl->SetOutputSRS(srs, m_header);
-    return true;
+    return SetOutputSRS(srs);
 }
 
 bool Reader::SetInputSRS(const SpatialReference& srs)
 {
-    m_pimpl->SetInputSRS(srs);
+    m_in_srs = srs;
     return true;
 }
 
 bool Reader::SetOutputSRS(const SpatialReference& srs)
 {
-    m_pimpl->SetOutputSRS(srs, m_header);
+    m_out_srs = srs;
+    m_pimpl->Reset(m_header);
+
+    TransformI* possible_reprojection_transform = 0;
+    
+    if (m_transforms != 0) {
+        if (m_transforms->size() > 0) {
+            possible_reprojection_transform = m_transforms->at(0);
+        }
+    }
+    
+    if (m_reprojection_transform == possible_reprojection_transform && m_reprojection_transform != 0) {
+        // remove it from the transforms list
+        std::vector<TransformI*>::iterator i = m_transforms->begin();
+        m_transforms->erase(i);
+    }
+    
+    if (m_reprojection_transform != 0)
+    {
+        delete m_reprojection_transform;
+    }
+
+    m_reprojection_transform = new ReprojectionTransform(m_in_srs, m_out_srs);
+    
+    if (m_transforms != 0) {
+        if (m_transforms->size() > 0) {
+            m_transforms->insert(m_transforms->begin(), m_reprojection_transform);
+            
+        } else {
+            m_transforms->push_back(m_reprojection_transform);
+        }
+    } else {
+        m_transforms = new std::vector<liblas::TransformI*>;
+        m_transforms->push_back(m_reprojection_transform);
+    }
     return true;
 }
 

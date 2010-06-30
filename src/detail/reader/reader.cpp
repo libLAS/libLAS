@@ -59,7 +59,7 @@ namespace liblas { namespace detail {
 
 ReaderImpl::ReaderImpl(std::istream& ifs) :
     m_ifs(ifs), m_size(0), m_current(0),
-    m_transform(0), m_in_ref(0), m_out_ref(0), m_point_reader(0),     
+    m_point_reader(0),     
     m_header_reader(new reader::Header(m_ifs))
 
 {
@@ -67,21 +67,6 @@ ReaderImpl::ReaderImpl(std::istream& ifs) :
 
 ReaderImpl::~ReaderImpl()
 {
-#ifdef HAVE_GDAL
-    if (m_transform)
-    {
-        OCTDestroyCoordinateTransformation(m_transform);
-    }
-    if (m_in_ref)
-    {
-        OSRDestroySpatialReference(m_in_ref);
-    }
-    if (m_out_ref)
-    {
-        OSRDestroySpatialReference(m_out_ref);
-    }
-
-#endif
 
     delete m_point_reader;
     delete m_header_reader;
@@ -104,80 +89,9 @@ void ReaderImpl::Reset(liblas::Header const& header)
     // If we reset the reader, we're ready to start reading points, so 
     // we'll create a point reader at this point.
     if (m_point_reader == 0) {
-        if (m_transform != 0) {
-            m_point_reader = new reader::Point(m_ifs, header, m_transform);
-        } else {
-            m_point_reader = new reader::Point(m_ifs, header);
-        }
+        m_point_reader = new reader::Point(m_ifs, header);
     } 
 }
-
-void ReaderImpl::SetOutputSRS(const SpatialReference& srs, const liblas::Header& header)
-{
-    m_out_srs = srs;
-    CreateTransform();
-    
-    // reset the point reader to include our new transform
-    if (m_point_reader != 0) {
-        delete m_point_reader;
-        m_point_reader = 0;
-        m_point_reader = new reader::Point(m_ifs, header, m_transform);
-    }
-}
-
-void ReaderImpl::SetSRS(const SpatialReference& srs, const liblas::Header& header)
-{
-    SetOutputSRS(srs, header);
-}
-
-void ReaderImpl::SetInputSRS(const SpatialReference& srs)
-{
-    m_in_srs = srs;
-}
-
-
-void ReaderImpl::CreateTransform(){
-#ifdef HAVE_GDAL
-    
-    if (m_transform)
-    {
-        OCTDestroyCoordinateTransformation(m_transform);
-    }
-    if (m_in_ref)
-    {
-        OSRDestroySpatialReference(m_in_ref);
-    }
-    if (m_out_ref)
-    {
-        OSRDestroySpatialReference(m_out_ref);
-    }
-    
-    m_in_ref = OSRNewSpatialReference(0);
-    m_out_ref = OSRNewSpatialReference(0);
-
-    int result = OSRSetFromUserInput(m_in_ref, m_in_srs.GetWKT().c_str());
-    if (result != OGRERR_NONE) 
-    {
-        std::ostringstream msg; 
-        msg << "Could not import input spatial reference for Reader::" << CPLGetLastErrorMsg() << result;
-        std::string message(msg.str());
-        throw std::runtime_error(message);
-    }
-    
-    result = OSRSetFromUserInput(m_out_ref, m_out_srs.GetWKT().c_str());
-    if (result != OGRERR_NONE) 
-    {
-        std::ostringstream msg; 
-        msg << "Could not import output spatial reference for Reader::" << CPLGetLastErrorMsg() << result;
-        std::string message(msg.str());
-        throw std::runtime_error(message);
-    }
-
-    m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
-    
-#endif
-}
-
 
 liblas::Header const& ReaderImpl::ReadHeader()
 {
@@ -185,10 +99,6 @@ liblas::Header const& ReaderImpl::ReadHeader()
     const liblas::Header& header = m_header_reader->GetHeader();
     
     Reset(header);
-    
-    // keep a copy on the reader in case we're going to reproject data 
-    // on the way out.
-    m_in_srs = header.GetSRS();
     
     return header;
 }
@@ -433,27 +343,27 @@ void CachedReaderImpl::Reset(liblas::Header const& header)
 void CachedReaderImpl::Seek(std::size_t n, const liblas::Header& header)
 {
 
-   if (n < 1 ) {
+   if (n < 1) {
        CachedReaderImpl::Reset(header);
    }
    
    m_cache_read_position = n;
    ReaderImpl::Seek(n,header);
 }
-
-void CachedReaderImpl::SetOutputSRS(const SpatialReference& srs, const liblas::Header& header)
-{
-    // We need to wipe out the cache if we've set the output srs.
-    std::vector<uint8_t>::size_type header_size = static_cast<std::vector<uint8_t>::size_type>(header.GetPointRecordsCount());
-    std::vector<uint8_t>::size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
-
-    std::vector<uint8_t>::size_type to_mark = std::max(m_cache_size, left_to_cache);
-    for (uint32_t i = 0; i < to_mark; ++i) {
-        m_mask[m_cache_start_position + i] = 0;
-    }
-    
-    ReaderImpl::SetOutputSRS(srs, header);
-}
+// 
+// void CachedReaderImpl::SetOutputSRS(const SpatialReference& srs, const liblas::Header& header)
+// {
+//     // We need to wipe out the cache if we've set the output srs.
+//     std::vector<uint8_t>::size_type header_size = static_cast<std::vector<uint8_t>::size_type>(header.GetPointRecordsCount());
+//     std::vector<uint8_t>::size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
+// 
+//     std::vector<uint8_t>::size_type to_mark = std::max(m_cache_size, left_to_cache);
+//     for (uint32_t i = 0; i < to_mark; ++i) {
+//         m_mask[m_cache_start_position + i] = 0;
+//     }
+//     
+//     ReaderImpl::SetOutputSRS(srs, header);
+// }
 
 // ReaderImpl* ReaderFactory::Create(std::istream& ifs)
 // {

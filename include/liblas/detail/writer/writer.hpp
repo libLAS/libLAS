@@ -64,26 +64,17 @@ public:
 
     std::ostream& GetStream() const;
 
-    void SetInputSRS(const SpatialReference& srs);
-    void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
-
 protected:
     PointRecord m_record;
     std::ostream& m_ofs;
      
-    SpatialReference m_out_srs;
-    SpatialReference m_in_srs;
-    
-    OGRCoordinateTransformationH m_transform;
-    OGRSpatialReferenceH m_in_ref;
-    OGRSpatialReferenceH m_out_ref;
-    
+
     writer::Point* m_point_writer;
     writer::Header* m_header_writer;
     
 private:
 
-    void CreateTransform();
+    // void CreateTransform();
     liblas::uint32_t m_pointCount;
 
     // block copying operations

@@ -57,9 +57,6 @@ namespace liblas { namespace detail {
 
 WriterImpl::WriterImpl(std::ostream& ofs) :
     m_ofs(ofs), 
-    m_transform(0),  
-    m_in_ref(0), 
-    m_out_ref(0), 
     m_point_writer(0), 
     m_header_writer(0), 
     m_pointCount(0)
@@ -88,11 +85,7 @@ void WriterImpl::UpdateHeader(liblas::Header const& header)
 void WriterImpl::WritePoint(liblas::Point const& point, const liblas::Header& header)
 {
     if (m_point_writer == 0) {
-        if (m_transform != 0) {
-            m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header, m_transform);
-        } else {
-            m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header);
-        }
+        m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header);
     } 
     m_point_writer->write(point);
 
@@ -100,18 +93,6 @@ void WriterImpl::WritePoint(liblas::Point const& point, const liblas::Header& he
 
 WriterImpl::~WriterImpl()
 {
-        
-#ifdef HAVE_GDAL
-    if (m_transform) {
-        OCTDestroyCoordinateTransformation(m_transform);
-    }
-    if (m_in_ref) {
-        OSRDestroySpatialReference(m_in_ref);
-    }
-    if (m_out_ref) {
-        OSRDestroySpatialReference(m_out_ref);
-    }
-#endif
 
     if (m_point_writer != 0)
         delete m_point_writer;
@@ -124,67 +105,6 @@ WriterImpl::~WriterImpl()
 std::ostream& WriterImpl::GetStream() const
 {
     return m_ofs;
-}
-
-
-void WriterImpl::SetOutputSRS(const liblas::SpatialReference& srs, const liblas::Header& header )
-{
-    m_out_srs = srs;
-    CreateTransform();
-
-    // reset the point writer to include our new transform
-    if (m_point_writer != 0) {
-        delete m_point_writer;
-        m_point_writer = 0;
-        m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header, m_transform);
-    }
-}
-
-
-void WriterImpl::SetInputSRS(const liblas::SpatialReference& srs )
-{
-    m_in_srs = srs;
-}
-
-void WriterImpl::CreateTransform()
-{
-#ifdef HAVE_GDAL
-    if (m_transform)
-    {
-        OCTDestroyCoordinateTransformation(m_transform);
-    }
-    if (m_in_ref)
-    {
-        OSRDestroySpatialReference(m_in_ref);
-    }
-    if (m_out_ref)
-    {
-        OSRDestroySpatialReference(m_out_ref);
-    }
-    
-    m_in_ref = OSRNewSpatialReference(0);
-    m_out_ref = OSRNewSpatialReference(0);
-
-    int result = OSRSetFromUserInput(m_in_ref, m_in_srs.GetWKT().c_str());
-    if (result != OGRERR_NONE) 
-    {
-        std::ostringstream msg; 
-        msg << "Could not import input spatial reference for Writer::" << CPLGetLastErrorMsg() << result;
-        std::string message(msg.str());
-        throw std::runtime_error(message);
-    }
-    
-    result = OSRSetFromUserInput(m_out_ref, m_out_srs.GetWKT().c_str());
-    if (result != OGRERR_NONE) 
-    {
-        std::ostringstream msg; 
-        msg << "Could not import output spatial reference for Writer::" << CPLGetLastErrorMsg() << result;
-        std::string message(msg.str());
-        throw std::runtime_error(message);
-    }
-
-    m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
-#endif
 }
 
 

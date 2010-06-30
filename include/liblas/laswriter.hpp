@@ -45,6 +45,8 @@
 #include <liblas/lasversion.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/lastransform.hpp>
+#include <liblas/lasfilter.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/liblas.hpp>
 
@@ -94,6 +96,21 @@ public:
     bool SetSRS(const SpatialReference& ref);
     bool SetInputSRS(const SpatialReference& ref);
     bool SetOutputSRS(const SpatialReference& ref);
+
+    /// Sets filters that are used to determine wither or not to 
+    /// keep a point that before we write it
+    /// Filters are applied *before* transforms.
+    void SetFilters(std::vector<liblas::FilterI*>* filters) {m_filters = filters;}
+
+    /// Sets transforms to apply to points.  Points are transformed in 
+    /// place *in the order* of the transform list.
+    /// Filters are applied *before* transforms.  If an input/output SRS 
+    /// is set on the writer, the reprojection transform will happen *first* 
+    /// before any other transforms are applied.  This transform is a 
+    /// special case.  You can define your own reprojection transforms and add 
+    /// it to the list, but be sure to not issue a SetOutputSRS to trigger 
+    /// the internal transform creation
+    void SetTransforms(std::vector<liblas::TransformI*>* transforms) {m_transforms = transforms;}
     
 private:
     
@@ -105,8 +122,15 @@ private:
 
     Header m_header;
     detail::PointRecord m_record;
-    // std::ostream& m_ofs;
 
+    std::vector<liblas::FilterI*>* m_filters;
+    std::vector<liblas::TransformI*>* m_transforms;
+
+    liblas::TransformI* m_reprojection_transform;
+
+    SpatialReference m_out_srs;
+    SpatialReference m_in_srs;
+    
 };
 
 } // namespace liblas
