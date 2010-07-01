@@ -264,7 +264,9 @@ function.
         {
             liblas::Point const& p = reader.GetPoint(); 
             writer.WritePoint(p);  
-        }    
+        }
+        
+        delete class_filter;
     }
 
 .. _`unit tests package`: http://liblas.org/browser/trunk/test/unit
