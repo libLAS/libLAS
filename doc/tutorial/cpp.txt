@@ -203,4 +203,66 @@ Template Library <http://en.wikipedia.org/wiki/C%2B%2B_standard_library>`_:_
     }
  }
 
+------------------------------------------------------------------------------
+Applying filters to a reader to extract specified classes
+------------------------------------------------------------------------------
+
+The following example demonstrates how to use the built-in ClassificationFilter 
+to filter for classes that match the specified values.  You can also provide 
+your own filters by subclassing liblas::FilterI and providing a filter() 
+function.  
+
+
+.. note::
+    Filters are applied in the order they are read from the vector that is
+    given to the Reader/Writer in the SetFilters call.
+ 
+.. code-block:: cpp
+
+    #include <liblas/liblas.hpp>
+    #include <liblas/laspoint.hpp>
+    #include <liblas/lasreader.hpp>
+    #include <liblas/laswriter.hpp>
+    #include <liblas/lasfilter.hpp>
+    #include <vector>
+
+    int main(int argc, char* argv[])
+    {
+        std::ifstream ifs;
+        std::string in_file("input.las");
+        std::string out_file("output.las");
+        if (!liblas::Open(ifs, in_file.c_str()))
+        {
+            throw std::runtime_error(std::string("Can not open \'") + in_file + "\'");
+        }
+        std::vector<liblas::uint8_t> classes;
+        classes.push_back(2); // ground
+        classes.push_back(9); // water
+        classes.push_back(6); // building
+    
+        std::vector<liblas::FilterI*> filters;
+        liblas::ClassificationFilter* class_filter = new liblas::ClassificationFilter(classes);
+    
+        // eInclusion means to keep the classes that match.  eExclusion would 
+        // throw out those that matched
+        class_filter->SetType(liblas::FilterI::eInclusion);
+        filters.push_back(class_filter);    
+
+        liblas::Reader reader(ifs);
+        reader.SetFilters(&filters);
+
+        std::ofstream ofs;
+        if (!liblas::Create(ofs, out_file.c_str()))
+        {
+            throw std::runtime_error(std::string("Can not create \'") + in_file + "\'");
+        }        
+        liblas::Writer writer(ofs, reader.GetHeader());
+
+        while (reader.ReadNextPoint())
+        {
+            liblas::Point const& p = reader.GetPoint(); 
+            writer.WritePoint(p);  
+        }    
+    }
+
 .. _`unit tests package`: http://liblas.org/browser/trunk/test/unit
