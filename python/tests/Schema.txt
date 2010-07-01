@@ -1,11 +1,11 @@
-  >>> from liblas import format
+  >>> from liblas import schema
   >>> from liblas import header
   >>> from liblas import file
   
   >>> f2 = file.File('../test/data/TO_core_last_clip.las')
 
 
-  >>> f = format.Format()
+  >>> f = schema.Schema()
   >>> f.size
   20
   >>> f.color
@@ -28,7 +28,7 @@
   26
 
   >>> h = f2.header
-  >>> f = h.format
+  >>> f = h.schema
   
   >>> f.major, f.minor
   (1, 0)
@@ -43,7 +43,7 @@
   True
   
   >>> h = header.Header()
-  >>> f = h.format
+  >>> f = h.schema
 
   
   >>> f.size
@@ -59,7 +59,7 @@
  
   >>> f.size = 40
 
-  >>> h.format = f
+  >>> h.schema = f
   
   >>> h.data_record_length
   40

@@ -85,7 +85,7 @@ private:
         
     PointRecord m_record;
     
-    PointFormat m_format;
+    Schema m_format;
     
     liblas::uint8_t* m_blanks;
     

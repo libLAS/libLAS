@@ -46,11 +46,11 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/lasclassification.hpp
   ${LIBLAS_HEADERS_DIR}/lascolor.hpp
   ${LIBLAS_HEADERS_DIR}/laserror.hpp
-  ${LIBLAS_HEADERS_DIR}/lasfilter.hpp    
-  ${LIBLAS_HEADERS_DIR}/lasformat.hpp    
+  ${LIBLAS_HEADERS_DIR}/lasfilter.hpp
   ${LIBLAS_HEADERS_DIR}/lasheader.hpp
   ${LIBLAS_HEADERS_DIR}/laspoint.hpp
   ${LIBLAS_HEADERS_DIR}/lasreader.hpp
+  ${LIBLAS_HEADERS_DIR}/lasschema.hpp
   ${LIBLAS_HEADERS_DIR}/lasspatialreference.hpp
   ${LIBLAS_HEADERS_DIR}/lastransform.hpp  
   ${LIBLAS_HEADERS_DIR}/lasvariablerecord.hpp
@@ -79,11 +79,11 @@ set(LIBLAS_CPP
   lascolor.cpp
   laserror.cpp
   lasfilter.cpp
-  lasformat.cpp
   lasheader.cpp
   laspoint.cpp
   lasreader.cpp
   lasspatialreference.cpp
+  lasschema.cpp
   lastransform.cpp
   lasvariablerecord.cpp
   laswriter.cpp)

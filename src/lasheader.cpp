@@ -46,7 +46,7 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/guid.hpp>
 #include <liblas/lasspatialreference.hpp>
-#include <liblas/lasformat.hpp>
+#include <liblas/lasschema.hpp>
 
 //std
 #include <algorithm>
@@ -396,7 +396,7 @@ void Header::SetDataFormatId(liblas::PointFormatName v)
 {
     m_dataFormatId = static_cast<uint8_t>(v);
 
-    UpdatePointFormat();
+    UpdateSchema();
     
     if (ePointFormat0 == m_dataFormatId)
         SetDataRecordLength(ePointSize0);
@@ -693,13 +693,13 @@ void Header::SetSRS(SpatialReference& srs)
     m_srs = srs;
 }
 
-PointFormat Header::GetPointFormat() const
+Schema Header::GetSchema() const
 {
     
     return m_format;
 }
 
-void Header::UpdatePointFormat()
+void Header::UpdateSchema()
 {
     if (GetDataFormatId() == liblas::ePointFormat3) {
         m_format.Color(true);
@@ -713,7 +713,7 @@ void Header::UpdatePointFormat()
     }
 }
 
-void Header::SetPointFormat(const PointFormat& format)
+void Header::SetSchema(const Schema& format)
 {
 
     // // A user can use the set the header's version information and 

@@ -297,11 +297,11 @@ the base point format, allowing you to store extra data.
   (630320.95999999996, 4834500.0, 55.009999999999998)
 
   >>> h6 = f6.header
-  >>> f = h6.format
+  >>> f = h6.schema
   >>> f.time = True
   >>> f.color = True
   >>> f.size = 52
-  >>> h6.format = f
+  >>> h6.schema = f
   >>> h6.data_record_length
   52
 

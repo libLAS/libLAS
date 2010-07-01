@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS PointFormat implementation for C++ libLAS 
+ * Purpose:  LAS Schema implementation for C++ libLAS 
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
@@ -39,12 +39,12 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasformat.hpp>
+#include <liblas/lasschema.hpp>
 #include <liblas/detail/utility.hpp>
 
 namespace liblas { 
 
-void PointFormat::updatesize(liblas::uint16_t new_size) {
+void Schema::updatesize(liblas::uint16_t new_size) {
         
         // if the difference between the new size we're given 
         // and our existing size is 0, do nothing.
@@ -58,7 +58,7 @@ void PointFormat::updatesize(liblas::uint16_t new_size) {
         
 }
 
-liblas::uint16_t PointFormat::calculate_base_size() {
+liblas::uint16_t Schema::calculate_base_size() {
     liblas::uint16_t new_base_size = sizeof(detail::PointRecord);
     
     if (HasColor()) {
@@ -71,7 +71,7 @@ liblas::uint16_t PointFormat::calculate_base_size() {
     return new_base_size;
     
 }
-void PointFormat::updatesize() {
+void Schema::updatesize() {
     liblas::uint16_t new_base_size = calculate_base_size();
     
     // Set to the base if we haven't set it at all yet
@@ -101,7 +101,7 @@ void PointFormat::updatesize() {
     }
 }
 
-PointFormat::PointFormat( liblas::uint8_t major, 
+Schema::Schema( liblas::uint8_t major, 
                 liblas::uint8_t minor, 
                 liblas::uint16_t size) :
     m_size(size),
@@ -115,7 +115,7 @@ PointFormat::PointFormat( liblas::uint8_t major,
 }
 
 
-PointFormat::PointFormat( liblas::uint8_t major, 
+Schema::Schema( liblas::uint8_t major, 
                 liblas::uint8_t minor, 
                 liblas::uint16_t size,
                 bool bColor,
@@ -131,7 +131,7 @@ PointFormat::PointFormat( liblas::uint8_t major,
 }
 
 // copy constructor
-PointFormat::PointFormat(PointFormat const& other) :
+Schema::Schema(Schema const& other) :
     m_size(other.m_size),
     m_versionminor(other.m_versionminor),
     m_versionmajor(other.m_versionmajor),
@@ -143,7 +143,7 @@ PointFormat::PointFormat(PointFormat const& other) :
 }
 
 // assignment constructor
-PointFormat& PointFormat::operator=(PointFormat const& rhs)
+Schema& Schema::operator=(Schema const& rhs)
 {
     if (&rhs != this)
     {
@@ -159,60 +159,60 @@ PointFormat& PointFormat::operator=(PointFormat const& rhs)
     return *this;
 }
 
-uint16_t PointFormat::GetByteSize() const
+uint16_t Schema::GetByteSize() const
 {
     return m_size;
 }
 
-void PointFormat::SetByteSize(uint16_t const& value)
+void Schema::SetByteSize(uint16_t const& value)
 {
     updatesize(value);
 }
 
-uint8_t PointFormat::GetVersionMajor() const
+uint8_t Schema::GetVersionMajor() const
 {
     return m_versionmajor;
 }
 
-void PointFormat::SetVersionMajor(uint8_t const& value)
+void Schema::SetVersionMajor(uint8_t const& value)
 {
     m_versionmajor = value;
 
 }
 
-uint8_t PointFormat::GetVersionMinor() const
+uint8_t Schema::GetVersionMinor() const
 {
     return m_versionminor;
 }
 
-void PointFormat::SetVersionMinor(uint8_t const& value)
+void Schema::SetVersionMinor(uint8_t const& value)
 {
     m_versionminor = value;
 }
 
-bool PointFormat::HasColor() const
+bool Schema::HasColor() const
 {
     return m_hasColor;
 }
 
-void PointFormat::Color(bool const& value)
+void Schema::Color(bool const& value)
 {
     m_hasColor = value;
     updatesize();
 }
 
-bool PointFormat::HasTime() const
+bool Schema::HasTime() const
 {
     return m_hasTime;
 }
 
-void PointFormat::Time(bool const& value)
+void Schema::Time(bool const& value)
 {
     m_hasTime = value;
     updatesize();
 }
 
-uint16_t PointFormat::GetBaseByteSize() const
+uint16_t Schema::GetBaseByteSize() const
 {
     return m_base_size;
 }

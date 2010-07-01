@@ -44,7 +44,7 @@
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/lasvariablerecord.hpp>
-#include <liblas/lasformat.hpp>
+#include <liblas/lasschema.hpp>
 
 #include <sstream> 
 
@@ -87,7 +87,7 @@ Point::Point(   std::ostream& ofs,
     m_ofs(ofs), 
     m_header(header), 
     m_point(liblas::Point()),
-    m_format(header.GetPointFormat()),
+    m_format(header.GetSchema()),
     m_blanks(0)
 {
     setup();

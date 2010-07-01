@@ -734,64 +734,64 @@ las.LASHeader_GetSRS.restype = ctypes.c_void_p
 las.LASHeader_SetSRS.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASHeader_SetSRS.errcheck = check_return
 
-las.LASHeader_GetPointFormat.argtypes = [ctypes.c_void_p]
-las.LASHeader_GetPointFormat.errcheck = check_void
-las.LASHeader_GetPointFormat.restype = ctypes.c_void_p
+las.LASHeader_GetSchema.argtypes = [ctypes.c_void_p]
+las.LASHeader_GetSchema.errcheck = check_void
+las.LASHeader_GetSchema.restype = ctypes.c_void_p
 
-las.LASHeader_SetPointFormat.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
-las.LASHeader_SetPointFormat.errcheck = check_return
-las.LASHeader_SetPointFormat.restype = ctypes.c_int
+las.LASHeader_SetSchema.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+las.LASHeader_SetSchema.errcheck = check_return
+las.LASHeader_SetSchema.restype = ctypes.c_int
 
-las.LASPointFormat_Create.argtypes = [ctypes.c_uint8,
+las.LASSchema_Create.argtypes = [ctypes.c_uint8,
                                         ctypes.c_uint8,
                                         ctypes.c_uint32,
                                         ctypes.c_uint8,
                                         ctypes.c_uint8]
-las.LASPointFormat_Create.errcheck = check_void
-las.LASPointFormat_Create.restype = ctypes.c_void_p
+las.LASSchema_Create.errcheck = check_void
+las.LASSchema_Create.restype = ctypes.c_void_p
 
-las.LASPointFormat_GetByteSize.restype = ctypes.c_ushort
-las.LASPointFormat_GetByteSize.argtypes = [ctypes.c_void_p]
-las.LASPointFormat_GetByteSize.errcheck = check_value
-las.LASPointFormat_SetByteSize.restype = ctypes.c_int
-las.LASPointFormat_SetByteSize.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
-las.LASPointFormat_SetByteSize.errcheck = check_return
+las.LASSchema_GetByteSize.restype = ctypes.c_ushort
+las.LASSchema_GetByteSize.argtypes = [ctypes.c_void_p]
+las.LASSchema_GetByteSize.errcheck = check_value
+las.LASSchema_SetByteSize.restype = ctypes.c_int
+las.LASSchema_SetByteSize.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
+las.LASSchema_SetByteSize.errcheck = check_return
 
-las.LASPointFormat_GetBaseByteSize.restype = ctypes.c_ushort
-las.LASPointFormat_GetBaseByteSize.argtypes = [ctypes.c_void_p]
-las.LASPointFormat_GetBaseByteSize.errcheck = check_value
+las.LASSchema_GetBaseByteSize.restype = ctypes.c_ushort
+las.LASSchema_GetBaseByteSize.argtypes = [ctypes.c_void_p]
+las.LASSchema_GetBaseByteSize.errcheck = check_value
 
-las.LASPointFormat_HasColor.restype = ctypes.c_uint8
-las.LASPointFormat_HasColor.argtypes = [ctypes.c_void_p]
-las.LASPointFormat_HasColor.errcheck = check_value
-las.LASPointFormat_SetColor.restype = ctypes.c_int
-las.LASPointFormat_SetColor.argtypes = [ctypes.c_void_p, ctypes.c_uint8]
-las.LASPointFormat_SetColor.errcheck = check_return
+las.LASSchema_HasColor.restype = ctypes.c_uint8
+las.LASSchema_HasColor.argtypes = [ctypes.c_void_p]
+las.LASSchema_HasColor.errcheck = check_value
+las.LASSchema_SetColor.restype = ctypes.c_int
+las.LASSchema_SetColor.argtypes = [ctypes.c_void_p, ctypes.c_uint8]
+las.LASSchema_SetColor.errcheck = check_return
 
-las.LASPointFormat_HasTime.restype = ctypes.c_uint8
-las.LASPointFormat_HasTime.argtypes = [ctypes.c_void_p]
-las.LASPointFormat_HasTime.errcheck = check_value
-las.LASPointFormat_SetTime.restype = ctypes.c_int
-las.LASPointFormat_SetTime.argtypes = [ctypes.c_void_p, ctypes.c_uint8]
-las.LASPointFormat_SetTime.errcheck = check_return
+las.LASSchema_HasTime.restype = ctypes.c_uint8
+las.LASSchema_HasTime.argtypes = [ctypes.c_void_p]
+las.LASSchema_HasTime.errcheck = check_value
+las.LASSchema_SetTime.restype = ctypes.c_int
+las.LASSchema_SetTime.argtypes = [ctypes.c_void_p, ctypes.c_uint8]
+las.LASSchema_SetTime.errcheck = check_return
 
-las.LASPointFormat_GetVersionMinor.restype = ctypes.c_uint8
-las.LASPointFormat_GetVersionMinor.argtypes = [ctypes.c_void_p]
-las.LASPointFormat_GetVersionMinor.errcheck = check_value
-las.LASPointFormat_SetVersionMinor.restype = ctypes.c_int
-las.LASPointFormat_SetVersionMinor.argtypes = [ctypes.c_void_p, ctypes.c_uint8]
-las.LASPointFormat_SetVersionMinor.errcheck = check_return
+las.LASSchema_GetVersionMinor.restype = ctypes.c_uint8
+las.LASSchema_GetVersionMinor.argtypes = [ctypes.c_void_p]
+las.LASSchema_GetVersionMinor.errcheck = check_value
+las.LASSchema_SetVersionMinor.restype = ctypes.c_int
+las.LASSchema_SetVersionMinor.argtypes = [ctypes.c_void_p, ctypes.c_uint8]
+las.LASSchema_SetVersionMinor.errcheck = check_return
 
-las.LASPointFormat_GetVersionMajor.restype = ctypes.c_uint8
-las.LASPointFormat_GetVersionMajor.argtypes = [ctypes.c_void_p]
-las.LASPointFormat_GetVersionMajor.errcheck = check_value
-las.LASPointFormat_SetVersionMajor.restype = ctypes.c_int
-las.LASPointFormat_SetVersionMajor.argtypes = [ctypes.c_void_p, ctypes.c_uint8]
-las.LASPointFormat_SetVersionMajor.errcheck = check_return
+las.LASSchema_GetVersionMajor.restype = ctypes.c_uint8
+las.LASSchema_GetVersionMajor.argtypes = [ctypes.c_void_p]
+las.LASSchema_GetVersionMajor.errcheck = check_value
+las.LASSchema_SetVersionMajor.restype = ctypes.c_int
+las.LASSchema_SetVersionMajor.argtypes = [ctypes.c_void_p, ctypes.c_uint8]
+las.LASSchema_SetVersionMajor.errcheck = check_return
 
-las.LASPointFormat_Destroy.argtypes = [ctypes.c_void_p]
-las.LASPointFormat_Destroy.errcheck = check_void_done
-las.LASPointFormat_Destroy.restype = None
+las.LASSchema_Destroy.argtypes = [ctypes.c_void_p]
+las.LASSchema_Destroy.errcheck = check_void_done
+las.LASSchema_Destroy.restype = None
 
 las.LASString_Free.argtypes = [ctypes.POINTER(ctypes.c_char_p)]
 las.LASString_Free.restype = None

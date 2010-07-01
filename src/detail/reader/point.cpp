@@ -44,6 +44,7 @@
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 
+#include <boost/array.hpp>
 #include <sstream> 
 
 namespace liblas { namespace detail { namespace reader {
@@ -54,7 +55,7 @@ void Point::setup()
 }
 
 Point::Point(std::istream& ifs, const liblas::Header& header) :
-    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_format(header.GetPointFormat())
+    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_format(header.GetSchema())
 {
     setup();
 }

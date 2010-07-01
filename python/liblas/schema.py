@@ -3,7 +3,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Python LASPointFormat implementation
+ * Purpose:  Python LASSchema implementation
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
@@ -44,7 +44,7 @@
 import core
 
 
-class Format(object):
+class Schema(object):
     """:class:`liblas.format.Format` is an object that keeps track of the
     point format sizes and what data elements the point formats have (color,
     time, etc), as well as accounting for their size in bytes. """
@@ -72,7 +72,7 @@ class Format(object):
         :keyword size: integer
         :keyword handle: raw ctypes object
 
-        >>> f = format.Format()
+        >>> f = schema.Schema()
         >>> f.size
         20L
         >>> f.color
@@ -88,7 +88,7 @@ class Format(object):
         if handle:
             self.handle = handle
         else:
-            self.handle = core.las.LASPointFormat_Create(major,
+            self.handle = core.las.LASSchema_Create(major,
                                                          minor,
                                                          size,
                                                          time,
@@ -96,55 +96,55 @@ class Format(object):
 
     def __del__(self):
         if self.handle and core:
-            core.las.LASPointFormat_Destroy(self.handle)
+            core.las.LASSchema_Destroy(self.handle)
 
     def get_major(self):
-        return core.las.LASPointFormat_GetVersionMajor(self.handle)
+        return core.las.LASSchema_GetVersionMajor(self.handle)
 
     def set_major(self, value):
-        return core.las.LASPointFormat_SetVersionMajor(self.handle, int(value))
+        return core.las.LASSchema_SetVersionMajor(self.handle, int(value))
 
     doc = """Major version for the format.  Always 1 for libLAS."""
     major = property(get_major, set_major, None, doc)
 
     def get_minor(self):
-        return core.las.LASPointFormat_GetVersionMinor(self.handle)
+        return core.las.LASSchema_GetVersionMinor(self.handle)
 
     def set_minor(self, value):
-        return core.las.LASPointFormat_SetVersionMinor(self.handle, int(value))
+        return core.las.LASSchema_SetVersionMinor(self.handle, int(value))
 
     doc = """Minor version for the format. Can be 0, 1, 2, 3. No validation"""
     minor = property(get_minor, set_minor, None, doc)
 
     def get_size(self):
-        return core.las.LASPointFormat_GetByteSize(self.handle)
+        return core.las.LASSchema_GetByteSize(self.handle)
 
     def set_size(self, value):
-        return core.las.LASPointFormat_SetByteSize(self.handle, int(value))
+        return core.las.LASSchema_SetByteSize(self.handle, int(value))
 
     doc = """Size in bytes of the format.  """
     size = property(get_size, set_size, None, doc)
 
     def get_base_size(self):
-        return core.las.LASPointFormat_GetBaseByteSize(self.handle)
+        return core.las.LASSchema_GetBaseByteSize(self.handle)
 
     doc = """Base size in bytes of the format. (only accounting for time,
     color, etc.)"""
     base_size = property(get_base_size, None, None, doc)
 
     def get_color(self):
-        return bool(core.las.LASPointFormat_HasColor(self.handle))
+        return bool(core.las.LASSchema_HasColor(self.handle))
 
     def set_color(self, value):
-        return core.las.LASPointFormat_SetColor(self.handle, bool(value))
+        return core.las.LASSchema_SetColor(self.handle, bool(value))
 
     doc = """Does this format have color information"""
     color = property(get_color, set_color, None, doc)
 
     def get_time(self):
-        return bool(core.las.LASPointFormat_HasTime(self.handle))
+        return bool(core.las.LASSchema_HasTime(self.handle))
 
     def set_time(self, value):
-        return core.las.LASPointFormat_SetTime(self.handle, bool(value))
+        return core.las.LASSchema_SetTime(self.handle, bool(value))
     doc = """Does this format have time information"""
     time = property(get_time, set_time, None, doc)

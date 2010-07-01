@@ -47,7 +47,7 @@ import datetime
 import guid
 import vlr
 import srs
-import format
+import schema
 
 
 def leap_year(year):
@@ -196,14 +196,14 @@ class Header(object):
     def get_majorversion(self):
         """Returns the major version for the file. Expect this value to always
         be 1"""
-        return self.format.major
+        return self.schema.major
 
     def set_majorversion(self, value):
         """Sets the major version for the file. Only the value 1 is accepted
         at this time"""
-        f = self.format
+        f = self.schema
         f.major = value
-        self.format = f
+        self.schema = f
     doc = """Major version number for the file.  For all practical purposes, \
     this is always '1'"""
     major_version = property(get_majorversion, set_majorversion, None, doc)
@@ -213,14 +213,14 @@ class Header(object):
     def get_minorversion(self):
         """Returns the minor version of the file. Expect this value to always
         be 0, 1, or 2"""
-        return self.format.minor
+        return self.schema.minor
 
     def set_minorversion(self, value):
         """Sets the minor version of the file. The value should be 0 for 1.0
         LAS files, 1 for 1.1 LAS files ..."""
-        f = self.format
+        f = self.schema
         f.minor = value
-        self.format = f
+        self.schema = f
     doc = """Minor version for the file. [0, 1, 2] are currently supported."""
     minor_version = property(get_minorversion, set_minorversion, None, doc)
     version_minor = minor_version
@@ -417,8 +417,8 @@ class Header(object):
         It can be 3, 2, 1, or 0.
 
         .. note::
-            Use :obj:`liblas.format.Format` and set the
-            :obj:`liblas.header.Header.format` object instead of using the
+            Use :obj:`liblas.schema.Schema` and set the
+            :obj:`liblas.header.Header.schema` object instead of using the
             dataformat_id directly. Otherwise, you will have to account for
             the :obj:`liblas.header.Header.data_record_length`.
         """
@@ -433,52 +433,52 @@ class Header(object):
         """
         return core.las.LASHeader_SetDataRecordLength(self.handle, value)
     doc = """The length in bytes of the point format. Use
-    :class:`liblas.format.Format` and \ the :obj:`liblas.header.Header.format`
+    :class:`liblas.schema.Schema` and \ the :obj:`liblas.header.Header.schema`
     instead of manipulating this directly"""
     data_record_length = property(get_datarecordlength,
                                   set_datarecordlength,
                                   None,
                                   doc)
 
-    def get_format(self):
-        return format.Format(handle=core.las.LASHeader_GetPointFormat(
+    def get_schema(self):
+        return schema.Schema(handle=core.las.LASHeader_GetSchema(
         self.handle))
 
-    def set_format(self, value):
-        return core.las.LASHeader_SetPointFormat(self.handle, value.handle)
-    doc = """The :class:`liblas.format.Format` for this file
+    def set_schema(self, value):
+        return core.las.LASHeader_SetSchema(self.handle, value.handle)
+    doc = """The :class:`liblas.schmea.Schema` for this file
 
-    Use the format to set whether or not color or time should be stored
+    Use the schema to set whether or not color or time should be stored
     on the points:
 
     >>> h = liblas.header.Header()
-    >>> f = liblas.format.Format()
+    >>> f = liblas.schema.Schema()
     >>> f.time = True
     >>> f.color = True
-    >>> h.format = f
-    >>> h.format.color
+    >>> h.schema = f
+    >>> h.schema.color
     True
-    >>> h.format.time
+    >>> h.schema.time
     True
-    >>> h.format.size
+    >>> h.schema.size
     34
     >>> h.data_record_length
     34
 
-    The following example demonstrates how to make a point format that does
+    The following example demonstrates how to make a point schema that does
     not store color or time, but also provides 22 extra bytes to store
     :obj:`liblas.point.Point.data`
 
     >>> h = liblas.header.Header()
-    >>> h.format
-    <liblas.format.Format object at 0x100779f90>
-    >>> h.format.time
+    >>> h.schema
+    <liblas.schema.Schema object at 0x100779f90>
+    >>> h.schema.time
     False
-    >>> h.format.color
+    >>> h.schema.color
     False
-    >>> h.format.size
+    >>> h.schema.size
     20
-    >>> f = h.format
+    >>> f = h.schema
     >>> f.size = 42
     >>> f.size
     42
@@ -486,11 +486,11 @@ class Header(object):
     False
     >>> f.time
     False
-    >>> h.format = f
-    >>> h.format.size
+    >>> h.schema = f
+    >>> h.schema.size
     42
     """
-    format = property(get_format, set_format, None, doc)
+    schema = property(get_schema, set_schema, None, doc)
 
     def get_pointrecordscount(self):
         """Returns the expected number of point records in the file.

@@ -50,7 +50,7 @@
 #include <liblas/liblas.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
-#include <liblas/lasformat.hpp>
+#include <liblas/lasschema.hpp>
 #include <liblas/guid.hpp>
 
 //std
@@ -323,8 +323,8 @@ public:
     /// Set the georeference
     void SetSRS(SpatialReference& srs);
 
-    PointFormat GetPointFormat() const;
-    void SetPointFormat(const PointFormat& format);
+    Schema GetSchema() const;
+    void SetSchema(const Schema& format);
     
 private:
     
@@ -352,7 +352,7 @@ private:
     //
     void Init();
     void ClearGeoKeyVLRs();
-    void UpdatePointFormat();
+    void UpdateSchema();
 
     //
     // Private data members
@@ -382,7 +382,7 @@ private:
     PointExtents m_extents;
     std::vector<VariableRecord> m_vlrs;
     SpatialReference m_srs;
-    PointFormat m_format;
+    Schema m_format;
 };
 
 } // namespace liblas

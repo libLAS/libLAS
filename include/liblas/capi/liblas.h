@@ -61,7 +61,7 @@ typedef struct LASGuidHS *LASGuidH;
 typedef struct LASVLRHS *LASVLRH;
 typedef struct LASColorHS *LASColorH;
 typedef struct LASSRSHS *LASSRSH;
-typedef struct LASPointFormatHS *LASPointFormatH;
+typedef struct LASSchemaHS *LASSchemaH;
 
 
 /* Fake out the compiler if we don't have libgeotiff */
@@ -1128,7 +1128,7 @@ LAS_DLL LASColorH LASPoint_GetColor(const LASPointH hPoint);
 LAS_DLL LASError LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor);
 
 /** Gets the extra data stream for the LASPointH as an array of bytes.  The length of this 
- *  array should be the difference between the LASPointFormat_GetByteSize() and the 
+ *  array should be the difference between the LASSchema_GetByteSize() and the 
  *  a LASHeader_GetDataRecordLength().  Points with data larger than this (fixed) size 
  *  will be clipped upong being written into the file. You must allocate it on 
  *  the heap and you are responsible for its destruction.
@@ -1139,7 +1139,7 @@ LAS_DLL LASError LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor);
 LAS_DLL LASError LASPoint_GetExtraData(const LASPointH hPoint, uint8_t** data, uint16_t* length);
 
 /** Sets the extra data stream for the LASPointH as an array of bytes.  The length of this 
- *  array should be the difference between the LASPointFormat_GetByteSize() and the 
+ *  array should be the difference between the LASSchema_GetByteSize() and the 
  *  a LASHeader_GetDataRecordLength().  Points with data larger than this (fixed) size 
  *  will be clipped upong being written into the file. 
  *  the VLR structure.
@@ -1183,30 +1183,30 @@ LAS_DLL uint32_t LASSRS_GetVLRCount(const LASSRSH hSRS);
 */
 LAS_DLL void LASString_Free(char* string);
 
-LAS_DLL LASPointFormatH LASPointFormat_Create(  uint8_t version_major,
+LAS_DLL LASSchemaH LASSchema_Create(  uint8_t version_major,
                                                 uint8_t version_minor,
                                                 uint32_t size,
                                                 uint8_t bHasColor,
                                                 uint8_t bHasTime);
 
-LAS_DLL uint8_t LASPointFormat_GetVersionMinor( LASPointFormatH hFormat);
-LAS_DLL LASError LASPointFormat_SetVersionMinor( LASPointFormatH hFormat, uint8_t nMinor);
-LAS_DLL uint8_t LASPointFormat_GetMajorVersion( LASPointFormatH hFormat);
-LAS_DLL LASError LASPointFormat_SetVersionMinor( LASPointFormatH hFormat, uint8_t nMajor);
-LAS_DLL uint8_t LASPointFormat_HasColor( LASPointFormatH hFormat);
-LAS_DLL LASError LASPointFormat_SetColor( LASPointFormatH hFormat, uint8_t bColor);
-LAS_DLL uint8_t LASPointFormat_HasTime( LASPointFormatH hFormat);
-LAS_DLL LASError LASPointFormat_SetTime( LASPointFormatH hFormat, uint8_t bTime);
-LAS_DLL uint16_t LASPointFormat_GetByteSize( LASPointFormatH hFormat);
-LAS_DLL LASError LASPointFormat_SetByteSize( LASPointFormatH hFormat, uint16_t size);
-LAS_DLL uint16_t LASPointFormat_GetBaseByteSize( LASPointFormatH hFormat);
-LAS_DLL LASError LASPointFormat_SetBaseByteSize( LASPointFormatH hFormat, uint16_t size);
+LAS_DLL uint8_t LASSchema_GetVersionMinor( LASSchemaH hFormat);
+LAS_DLL LASError LASSchema_SetVersionMinor( LASSchemaH hFormat, uint8_t nMinor);
+LAS_DLL uint8_t LASSchema_GetMajorVersion( LASSchemaH hFormat);
+LAS_DLL LASError LASSchema_SetVersionMinor( LASSchemaH hFormat, uint8_t nMajor);
+LAS_DLL uint8_t LASSchema_HasColor( LASSchemaH hFormat);
+LAS_DLL LASError LASSchema_SetColor( LASSchemaH hFormat, uint8_t bColor);
+LAS_DLL uint8_t LASSchema_HasTime( LASSchemaH hFormat);
+LAS_DLL LASError LASSchema_SetTime( LASSchemaH hFormat, uint8_t bTime);
+LAS_DLL uint16_t LASSchema_GetByteSize( LASSchemaH hFormat);
+LAS_DLL LASError LASSchema_SetByteSize( LASSchemaH hFormat, uint16_t size);
+LAS_DLL uint16_t LASSchema_GetBaseByteSize( LASSchemaH hFormat);
+LAS_DLL LASError LASSchema_SetBaseByteSize( LASSchemaH hFormat, uint16_t size);
 
 
-LAS_DLL LASPointFormatH LASHeader_GetPointFormat( LASHeaderH hHeader );
-LAS_DLL LASError LASHeader_SetPointFormat( LASHeaderH hHeader, LASPointFormatH hFormat);
+LAS_DLL LASSchemaH LASHeader_GetSchema( LASHeaderH hHeader );
+LAS_DLL LASError LASHeader_SetSchema( LASHeaderH hHeader, LASSchemaH hFormat);
 
-LAS_DLL void LASPointFormat_Destroy(LASPointFormatH hFormat);
+LAS_DLL void LASSchema_Destroy(LASSchemaH hFormat);
 
 
 LAS_C_END

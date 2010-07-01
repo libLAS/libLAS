@@ -83,7 +83,7 @@ private:
     const liblas::Header& m_header;
     liblas::Point m_point;
     
-    PointFormat m_format;
+    Schema m_format;
     
     void setup();
     void fill(PointRecord& record);

@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS PointFormat implementation for C++ libLAS 
+ * Purpose:  LAS Schema implementation for C++ libLAS 
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
@@ -39,8 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_FORMAT_HPP_INCLUDED
-#define LIBLAS_FORMAT_HPP_INCLUDED
+#ifndef LIBLAS_SCHEMA_HPP_INCLUDED
+#define LIBLAS_SCHEMA_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/cstdint.hpp>
@@ -52,23 +52,23 @@ namespace liblas {
 
 
 
-class PointFormat
+class Schema
 {
 public:
 
-    PointFormat( liblas::uint8_t major, 
+    Schema( liblas::uint8_t major, 
                     liblas::uint8_t minor, 
                     liblas::uint16_t size);
 
-    PointFormat( liblas::uint8_t major, 
+    Schema( liblas::uint8_t major, 
                     liblas::uint8_t minor, 
                     liblas::uint16_t size,
                     bool bColor,
                     bool bTime);
-    PointFormat& operator=(PointFormat const& rhs);
-    PointFormat(PointFormat const& other);
+    Schema& operator=(Schema const& rhs);
+    Schema(Schema const& other);
     
-    ~PointFormat() {};
+    ~Schema() {};
 
     /// Fetch byte size
     uint16_t GetByteSize() const;
@@ -111,4 +111,4 @@ private:
 
 } // namespace liblas
 
-#endif // LIBLAS_FORMAT_HPP_INCLUDED
+#endif // LIBLAS_SCHEMA_HPP_INCLUDED
