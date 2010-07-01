@@ -94,7 +94,9 @@ Writing
  header.SetDataFormatId(LASHeader::ePointFormat1);
  // fill other header members
 
-..note:: 
+
+
+.. note:: 
     The default constructed header object can be used as perfectly valid
     header. It will define LAS file according to LAS 1.2 and Point Data Format
     0.
