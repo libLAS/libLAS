@@ -229,6 +229,48 @@ function.
     #include <vector>
     #include <iostream>
 
+
+    class LastReturnFilter: public liblas::FilterI
+    {
+    public:
+    
+        LastReturnFilter();
+        bool filter(const liblas::Point& point);
+
+    
+    private:
+
+        LastReturnFilter(LastReturnFilter const& other);
+        LastReturnFilter& operator=(LastReturnFilter const& rhs);
+    };
+
+
+    LastReturnFilter::LastReturnFilter(  ) : 
+     liblas::FilterI(eInclusion)
+    {
+    }
+
+
+
+    bool LastReturnFilter::filter(const liblas::Point& p)
+    {
+    
+        // If the GetReturnNumber equals the GetNumberOfReturns,
+        // we're a last return
+        bool output = false; 
+        if (p.GetReturnNumber() == p.GetNumberOfReturns()) {
+            output = true;
+        } 
+
+        // If the type is switched to eExclusion, we'll throw out all last returns.
+        if (GetType() == eInclusion) {
+            output = true;
+        } else {
+            output = false;
+        }
+        return output;
+    }
+
     int main(int argc, char* argv[])
     {
         std::ifstream ifs;
@@ -256,6 +298,9 @@ function.
         // throw out those that matched
         class_filter->SetType(liblas::FilterI::eInclusion);
         filters.push_back(class_filter);    
+    
+        LastReturnFilter* return_filter = new LastReturnFilter();
+        filters.push_back(return_filter);
 
         liblas::Reader reader(ifs);
         reader.SetFilters(&filters);
@@ -275,6 +320,7 @@ function.
         }
     
         delete class_filter;
+        delete return_filter;
     }
 
 .. _`unit tests package`: http://liblas.org/browser/trunk/test/unit
