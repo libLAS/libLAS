@@ -133,10 +133,10 @@ endif(APPLE)
 # Search for dependencies
 
 # libxml2 support - required, default=ON
-set(WITH_LIBXML2 TRUE CACHE BOOL "Choose if libxml2 support should be built (required)")
+set(WITH_LIBXML2 FALSE CACHE BOOL "Choose if libxml2 support should be built ")
 
 if(WITH_LIBXML2)
-    find_package(LibXml2 REQUIRED)
+    find_package(LibXml2)
     mark_as_advanced(CLEAR LIBXML2_FOUND)
     mark_as_advanced(CLEAR LIBXML2_INCLUDE_DIR)
     mark_as_advanced(CLEAR LIBXML2_LIBRARIES) 
