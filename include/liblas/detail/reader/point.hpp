@@ -48,7 +48,7 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/lasformat.hpp>
+#include <liblas/lasschema.hpp>
 
 
 // std
