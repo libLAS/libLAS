@@ -63,8 +63,9 @@ set(CMAKE_MODULE_PATH ${libLAS_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 # General build settings
 
 # Default to release mode 
-set(CMAKE_BUILD_TYPE Release CACHE STRING
+set(CMAKE_BUILD_TYPE Release CACHE STRING 
     "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel"
+    FORCE
     )
 
 set(BUILD_PEDANTIC TRUE CACHE BOOL "Choose compilation in pedantic or relaxed mode")
@@ -123,6 +124,7 @@ endif(WIN32)
 
 if (APPLE)
     set(SO_EXT dylib)
+    set(CMAKE_FIND_FRAMEWORK "LAST")
 elseif(WIN32)
     set(SO_EXT dll)
 else()
