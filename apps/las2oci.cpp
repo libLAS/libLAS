@@ -10,6 +10,7 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/lasheader.hpp>
+#include <liblas/lasbounds.hpp>
 #include <liblas/index/index.hpp>
 
 #include <string>
@@ -38,6 +39,101 @@ using namespace liblas;
 #else
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
 #endif
+
+#include <boost/array.hpp>
+#include <boost/shared_ptr.hpp>
+
+typedef std::vector<liblas::uint32_t> IDVector;
+typedef boost::shared_ptr< IDVector > IDVectorPtr;
+
+class IndexResult 
+{
+public:
+    IndexResult(uint32_t id) : bounds(), m_id(id) {}
+    // 
+    // /// Copy constructor.
+    // IndexResult(IndexResult const& other);
+
+    // /// Assignment operator.
+    // IndexResult& operator=(IndexResult const& rhs);
+        
+    IDVector const& GetIDs() const { return ids; }
+    void SetIDs(IDVector& v) {ids = v;}
+    const liblas::Bounds GetBounds() const { return bounds; }
+    void SetBounds(const liblas::Bounds b) {bounds = b;}
+    uint32_t GetID() const {return m_id;}
+    void SetID(uint32_t v) {m_id = v;}
+
+private:
+    IDVector ids;
+    liblas::Bounds bounds;
+    liblas::uint32_t m_id;
+
+};
+
+typedef std::vector<IndexResult> ResultsVector;
+class KDXIndexSummary
+{
+public:
+    KDXIndexSummary(std::istream& input);    
+    boost::shared_ptr<liblas::Bounds> bounds;
+    ResultsVector& GetResults() { return m_results; }
+private:
+    ResultsVector m_results;
+    bool m_first;    
+};
+
+KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
+{
+    long id_count = 0;
+    long id = 0;
+    long i = 0;
+
+    
+    double low[2];
+    double high[2];
+    
+    double mins[2];
+    double maxs[2];
+    
+    bool first = true;
+    
+    while(input) {
+        input >> id >> id_count >> low[0] >> low[1] >> high[0] >> high[1];
+        // printf("count:%d %.2f %.2f %.2f %.2f\n", id_count, low[0], low[1], high[0], high[1]);
+        
+        if (first) {
+            mins[0] = low[0];
+            mins[1] = low[1];
+            maxs[0] = high[0];
+            maxs[1] = high[1];
+            first = false;
+        }
+        
+        mins[0] = std::min(mins[0], low[0]);
+        mins[1] = std::min(mins[1], low[1]);
+        
+        maxs[0] = std::max(maxs[0], high[0]);
+        maxs[1] = std::max(maxs[1], high[1]);
+        // if (!input.good()) continue;
+        
+        IDVector ids;
+        for (int j=0; j<id_count; j++) {
+            input >> i;
+            ids.push_back(i);
+        }
+        liblas::Bounds b(low[0], low[1], high[0],high[1]);
+        // SpatialIndex::Region* pr = new SpatialIndex::Region(low, high, 2);
+        // printf("Ids size: %d %.3f\n", ids.size(), pr->getLow(0));
+        IndexResult result(static_cast<uint32_t>(id));
+        result.SetIDs(ids);
+        result.SetBounds(b);
+        m_results.push_back(result);
+    }
+
+    liblas::Bounds b2(mins[0], mins[1], maxs[0], maxs[1]);
+    (*bounds) = b2;
+}
 
 typedef struct
 {
@@ -369,12 +465,12 @@ bool GetPointData(  liblas::Point const& p,
 
     return true;
 }
-bool GetResultData( const LASQueryResult& result, 
+bool GetResultData( const IndexResult& result, 
                     liblas::Reader* reader, 
                     std::vector<liblas::uint8_t>& data, 
                     int nDimension)
 {
-    list<SpatialIndex::id_type> const& ids = result.GetIDs();
+    IDVector const& ids = result.GetIDs();
 
 
     // d 8-byte IEEE  big-endian doubles, where d is the PC_TOT_DIMENSIONS value
@@ -389,7 +485,7 @@ bool GetResultData( const LASQueryResult& result,
     
     data.clear();
     
-    list<SpatialIndex::id_type>::const_iterator i;
+    IDVector::const_iterator i;
     vector<liblas::uint8_t>::iterator pi;
     
     liblas::uint32_t block_id = result.GetID();
@@ -398,7 +494,7 @@ bool GetResultData( const LASQueryResult& result,
     
     for (i=ids.begin(); i!=ids.end(); ++i) 
     {
-        SpatialIndex::id_type id = *i;
+        liblas::uint32_t id = *i;
 
         bool doRead = reader->ReadPointAt(id);
         if (doRead) {
@@ -470,23 +566,23 @@ void SetOrdinates(   OWStatement* statement,
 
 }
 
-extent* GetExtent(  const SpatialIndex::Region* b,
+extent* GetExtent(  const liblas::Bounds b,
                     bool bUse3d
                  )
 {
     double x0, x1, y0, y1, z0, z1;
     // const SpatialIndex::Region* b = result.GetBounds();
 
-    x0 = b->getLow(0); 
-    x1 = b->getHigh(0); 
-    y0 = b->getLow(1); 
-    y1 = b->getHigh(1);
+    x0 = b.min(0); 
+    x1 = b.max(0); 
+    y0 = b.min(1); 
+    y1 = b.max(1);
     z0 = 0;
     z1 = 20000;
     if (bUse3d) {
         try {
-            z0 = b->getLow(2);
-            z1 = b->getHigh(2);
+            z0 = b.min(2);
+            z1 = b.max(2);
         } catch (Tools::IndexOutOfBoundsException& e) {
             
         }
@@ -524,7 +620,7 @@ blocks* CreateBlock(int size)
 
 bool FillBlocks( OWConnection* connection, 
                 OWStatement* statement,
-                const LASQueryResult& result, 
+                const IndexResult& result, 
                 liblas::Reader* reader,
                 blocks* b,
                 long index,
@@ -537,8 +633,8 @@ bool FillBlocks( OWConnection* connection,
               )
 {
 
-
-    list<SpatialIndex::id_type> const& ids = result.GetIDs();
+    IDVector ids = result.GetIDs();
+    // list<SpatialIndex::id_type> const& ids = result.GetIDs();
     
     
     b->pc_ids[index] = pc_id;
@@ -651,7 +747,7 @@ bool BindBlock(OWStatement* statement, blocks* b, long index)
     return true;
 }
 bool InsertBlock(OWConnection* connection, 
-                const LASQueryResult& result, 
+                const IndexResult& result, 
                 blocks* block,
                 long block_index,
                 int srid, 
@@ -664,7 +760,7 @@ bool InsertBlock(OWConnection* connection,
 {
     ostringstream oss;
 
-    list<SpatialIndex::id_type> const& ids = result.GetIDs();
+    IDVector const& ids = result.GetIDs();
     // const SpatialIndex::Region* b = result.GetBounds();
     liblas::uint32_t num_points = ids.size();
 
@@ -767,7 +863,7 @@ bool InsertBlock(OWConnection* connection,
 
 bool InsertBlocks(
                 OWConnection* con, 
-                const std::list<LASQueryResult>& results,
+                const ResultsVector& results,
                 long nCommitInterval, 
                 int srid, 
                 liblas::Reader* reader2, 
@@ -779,7 +875,7 @@ bool InsertBlocks(
                 long nDimensions
                 )
 {
-    std::list<LASQueryResult>::const_iterator i;
+    IDVector::const_iterator i;
 
     long commit_interval = 1000;
     blocks* b = CreateBlock(commit_interval);
@@ -798,11 +894,11 @@ bool InsertBlocks(
     long j = 0;
     bool inserted = false;
     
-    std::vector<LASQueryResult> results_vec = std::vector<LASQueryResult>();
-    for (i = results.begin(); i != results.end(); i++) {
-        results_vec.push_back(*i);
-    }
-    
+    // IDVector results_vec; //= std::vector<LASQueryResult>();
+    // for (i = results.begin(); i != results.end(); i++) {
+    //     results_vec.push_back(*i);
+    // }
+    // 
     long total_blocks = results.size();
     long blocks_written = 0;
     long blocks_left= 0;
@@ -822,7 +918,7 @@ bool InsertBlocks(
         for (int t = 0; t< to_fill; t++) {
             FillBlocks( con, 
                             statement,
-                            results_vec[t], 
+                            results[t], 
                             reader2,
                             b,
                             t,
@@ -866,7 +962,7 @@ bool InsertBlocks(
 
 bool CreateSDOEntry(    OWConnection* connection, 
                         const char* tableName, 
-                        LASQuery* query, 
+                        KDXIndexSummary* query, 
                         long srid, 
                         long precision,
                         bool bUseSolidGeometry,
@@ -899,7 +995,7 @@ bool CreateSDOEntry(    OWConnection* connection,
     }
 
     double tolerance = 0.05;
-    extent* e = GetExtent(  &(query->bounds), bUse3d );
+    extent* e = GetExtent(  *(query->bounds.get()), bUse3d );
 
     if (IsGeographic(connection, srid)) {
         e->x0 = -180.0; e->x1 = 180.0;
@@ -1008,7 +1104,7 @@ bool BlockTableExists(OWConnection* connection, const char* tableName)
 
 
 long CreatePCEntry( OWConnection* connection, 
-                    LASQuery* query, 
+                    KDXIndexSummary* query, 
                     const char* blkTableName, 
                     const char* pcTableName, 
                     const char* cloudColumnName,
@@ -1107,7 +1203,7 @@ long CreatePCEntry( OWConnection* connection,
     }
     
 
-    extent* e = GetExtent(  &(query->bounds), bUse3d );
+    extent* e = GetExtent( *(query->bounds.get()), bUse3d );
 
 
     s_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
@@ -1568,32 +1664,34 @@ int main(int argc, char* argv[])
     }
 
     liblas::Reader* reader = new liblas::Reader(*istrm);
-    LASQuery* query = 0;
+    KDXIndexSummary* query = 0;
     if (!KDTreeIndexExists(input)) {
-
-        LASIndexDataStream* idxstrm = new LASIndexDataStream(reader, idx_dimension);
-
-        LASIndex* idx = new LASIndex(input);
-        idx->SetType(LASIndex::eExternalIndex);
-        idx->SetLeafCapacity(nCapacity);
-        idx->SetFillFactor(dFillFactor);
-        idx->Initialize(*idxstrm);
-        query = new LASQuery;
-        idx->Query(*query);
-        if (idx != 0) delete idx;
-        if (reader != 0) delete reader;
-        if (istrm != 0 ) delete istrm;
-            
+        std::cout << "KDTree .kdx file does not exist for file, unable to proceed" << std::endl;
+        exit(1);
+    // 
+    //     LASIndexDataStream* idxstrm = new LASIndexDataStream(reader, idx_dimension);
+    // 
+    //     LASIndex* idx = new LASIndex(input);
+    //     idx->SetType(LASIndex::eExternalIndex);
+    //     idx->SetLeafCapacity(nCapacity);
+    //     idx->SetFillFactor(dFillFactor);
+    //     idx->Initialize(*idxstrm);
+    //     query = new LASQuery;
+    //     idx->Query(*query);
+    //     if (idx != 0) delete idx;
+    //     if (reader != 0) delete reader;
+    //     if (istrm != 0 ) delete istrm;
+    //         
     } else {
         std::cout << "Using kdtree ... " << std::endl;
         std::ostringstream os;
         os << input << ".kdx" ;
         
         std::istream* kdx = OpenInput(os.str(), false);
-        query = new LASQuery(*kdx);
+        query = new KDXIndexSummary(*kdx);
     }
 
-    std::list<LASQueryResult>& results = query->GetResults();
+    ResultsVector& results = query->GetResults();
     
     std::list<LASQueryResult>::const_iterator i;
     
