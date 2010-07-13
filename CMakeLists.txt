@@ -65,7 +65,7 @@ set(CMAKE_MODULE_PATH ${libLAS_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 # Default to release mode 
 set(CMAKE_BUILD_TYPE Release CACHE STRING 
     "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel"
-    FORCE
+    
     )
 
 set(BUILD_PEDANTIC TRUE CACHE BOOL "Choose compilation in pedantic or relaxed mode")
@@ -139,10 +139,8 @@ set(WITH_LIBXML2 FALSE CACHE BOOL "Choose if libxml2 support should be built ")
 
 if(WITH_LIBXML2)
     find_package(LibXml2)
-    mark_as_advanced(CLEAR LIBXML2_FOUND)
     mark_as_advanced(CLEAR LIBXML2_INCLUDE_DIR)
     mark_as_advanced(CLEAR LIBXML2_LIBRARIES) 
-    mark_as_advanced(CLEAR LIBXML2_DEFINITIONS)
     if(LIBXML2_FOUND)
         include_directories(${LIBXML2_INCLUDE_DIR})
         add_definitions(-DHAVE_LIBXML2=1)
