@@ -78,8 +78,8 @@ public:
     Bounds(Bounds const& other);
     Bounds& operator=(Bounds const& rhs);
     
-    double min(liblas::uint32_t i) { return (*mins)[i]; }
-    double max(liblas::uint32_t i) { return (*maxs)[i]; }
+    double min(liblas::uint32_t i) const { return (*mins)[i]; }
+    double max(liblas::uint32_t i) const { return (*maxs)[i]; }
     
 private:
     ArrayPtr mins;
