@@ -21,6 +21,13 @@ set(LAS2TXT las2txt)
 set(TXT2LAS txt2las)
 set(LAS2LAS2 las2las2 )
 
+
+# Set the build type to release if it is not explicitly set by the user and 
+# isn't in the cache yet
+if (NOT CMAKE_BUILD_TYPE )
+set(CMAKE_BUILD_TYPE "Release")
+endif()
+
 string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE_UPPER)
 if (BUILD_TYPE_UPPER EQUAL "DEBUG")
 set(BIGFILE_TEST bigfile_test)
