@@ -71,6 +71,7 @@ Bounds::Bounds( double minx,
     (*maxs)[0] = maxx;
     (*maxs)[1] = maxy;
     (*maxs)[2] = maxz;
+    
 #ifdef DEBUG
     verify();
 #endif
@@ -89,6 +90,7 @@ Bounds::Bounds( double minx,
     (*maxs)[0] = maxx;
     (*maxs)[1] = maxy;
     (*maxs)[2] = 0;
+    
 #ifdef DEBUG
     verify();
 #endif
