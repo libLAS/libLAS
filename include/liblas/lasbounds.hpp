@@ -39,8 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_LASFILTER_HPP_INCLUDED
-#define LIBLAS_LASFILTER_HPP_INCLUDED
+#ifndef LIBLAS_LASBOUNDS_HPP_INCLUDED
+#define LIBLAS_LASBOUNDS_HPP_INCLUDED
 
 #include <liblas/lasversion.hpp>
 #include <liblas/lasheader.hpp>
@@ -93,4 +93,4 @@ private:
 
 } // namespace liblas
 
-#endif // ndef LIBLAS_LASFILTER_HPP_INCLUDED
+#endif // ndef LIBLAS_LASBOUNDS_HPP_INCLUDED
