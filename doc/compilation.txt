@@ -61,15 +61,13 @@ following compilers are known to work:
 Optional libraries
 ..............................................................................
 
-The base libLAS library can work without optional libraries to read and 
-write LAS files, but linking in libraries like `GDAL`_, `libgeotiff`_, and 
-`libspatialindex`_ will provide a boost in functionality to libLAS.  
-libLAS linkage of GDAL and libgeotiff enhances spatial coordinate system 
-description and provides data reprojection support.  libLAS linkage of 
-libspatialindex allows libLAS to use an `R-tree`_ for bounds queries and 
-filtering operations.  By linking `OCI`_ with the `Oracle Instant Client`_, 
-libLAS can be used to load LAS data into `Oracle Point Cloud`_ -enabled 
-Oracle tables.  
+The base libLAS library can work without optional libraries to read and write
+LAS files, but linking in libraries like `GDAL`_, and `libgeotiff`_ will
+provide a boost in functionality to libLAS. libLAS linkage of GDAL and
+libgeotiff enhances spatial coordinate system description and provides data
+reprojection support. By linking `OCI`_ with the `Oracle Instant Client`_,
+libLAS can be used to load LAS data into `Oracle Point Cloud`_ -enabled Oracle
+tables.
 
 Building these libraries is beyond the scope of this document, but all except
 `OCI`_ can be built from source and installed at your leisure.  
@@ -102,15 +100,6 @@ Obtain `libgeotiff`_ from the same place you got `GDAL`_.
     those using that platform to link and build libLAS themselves, do 
     not need to worry about this issue.
 
-`libspatialindex`_
-------------------------------------------------------------------------------
-
-Obtain `libspatialindex`_ and install using a typical ``./configure; make; make install`` 
-installation procedure.  It does not have any dependent libraries.  It is also 
-available via `DebianGIS`_ and `OSGeo4W`_ as a binary.
-
-* libspatialindex 1.5.0+ is required
-
 `OCI`_
 ------------------------------------------------------------------------------
 
@@ -135,7 +124,6 @@ location so the CMake configuration can find your install.
 .. _`7/28/2008`: http://lists.maptools.org/pipermail/geotiff/2008-July/000501.html
 .. _`proj.4`: http://proj.maptools.org/
 .. _`GDAL`: http://www.gdal.org
-.. _`libspatialindex`: http://trac.gispython.org/spatialindex/wiki
 .. _`Oracle Instant Client`: http://www.oracle.com/technology/tech/oci/instantclient/index.html
 .. _`OCI`: http://www.oracle.com/technology/tech/oci/index.html
 .. _`R-tree`: http://en.wikipedia.org/wiki/R-tree
@@ -322,8 +310,6 @@ substituting accordingly, to values that match your system layout.
     "","GDAL_LIBRARY", "/usr/local/lib/libgdal.so"
     "`libgeotiff`_","GEOTIFF_INCLUDE_DIR","/usr/local/include"
     "","GEOTIFF_LIBRARY","/usr/local/lib/libgeotiff.so"
-    "`libspatialindex`_","SPATIALINDEX_INCLUDE_DIR","/usr/local/include"
-    "","SPATIALINDEX_LIBRARY","/usr/local/lib/libspatialindex_c.so"
     "`OCI`_","ORACLE_INCLUDE_DIR","/home/oracle/sdk/include"
     "","ORACLE_NNZ_LIBRARY","/home/oracle/libnnz10.so"
     "","ORACLE_OCCI_LIBRARY","/home/oracle/libocci.so"
@@ -503,8 +489,6 @@ Prerequisites
   much more convenient to get them from OSGeo4W.  
   
   * gdal-dev
-  * libspatialindex 
-  * libspatialindex-devel
   * libtiff
   * libgeotiff
   
@@ -584,8 +568,7 @@ substituting accordingly, to values that match your system layout.
     "","GEOTIFF_LIBRARY","c:\\osgeo4w\\lib\\geotiff_i.lib"
     "`libtiff`_","TIFF_INCLUDE_DIR","c:\\osgeo4w\\include"
     "","TIFF_LIBRARY","c:\\osgeo4w\\lib\\libtiff_i.lib"
-    "`libspatialindex`_","SPATIALINDEX_INCLUDE_DIR","C:\\osgeo4w\\include\\spatialindex"
-    "","SPATIALINDEX_LIBRARY","C:\\osgeo4w\\lib\\spatialindex_i.lib"
+
     
 ------------------------------------------------------------------------------
 

@@ -38,9 +38,6 @@ if(GDAL_FOUND)
     set(LAS2OGR las2ogr)
 endif()
 
-if(SPATIALINDEX_FOUND)
-    set(LASINDEX lasindex)
-endif()
 
 if(ORACLE_FOUND AND GDAL_FOUND)
     set(LAS2OCI las2oci)
@@ -48,7 +45,7 @@ endif()
 
 set(LIBLAS_UTILITIES
     ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
-    ${LAS2OGR} ${LASINDEX} ${LAS2OCI} ${LAS2LAS2} ${BIGFILE_TEST})
+    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS2} ${BIGFILE_TEST})
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -116,11 +113,6 @@ if(LASMERGE)
     target_link_libraries(${LASMERGE} ${LIBLAS_C_LIB_NAME})
 endif()
 
-# Build lasindex
-if(LASINDEX)
-    add_executable(${LASINDEX} lasindex.cpp)
-    target_link_libraries(${LASINDEX} ${APPS_CPP_DEPENDENCIES})
-endif()
 
 # Build las2ogr
 if(LAS2OGR)

@@ -14,29 +14,11 @@ if(GDAL_FOUND)
     tifvsi.cpp)
 endif()
 
-if(SPATIALINDEX_FOUND)
-  set(LIBLAS_INDEX_CPP
-    index/datastream.cpp
-    index/index.cpp
-    index/query.cpp
-    index/storage.cpp
-    index/visitor.cpp)
-endif()
-
 ###############################################################################
 # Source files specification
 
 set(LIBLAS_HEADERS_DIR ../include/liblas)
 
-
-if(SPATIALINDEX_FOUND)
-  set(LIBLAS_INDEX_HPP
-    ${LIBLAS_HEADERS_DIR}/index/datastream.hpp
-    ${LIBLAS_HEADERS_DIR}/index/index.hpp
-    ${LIBLAS_HEADERS_DIR}/index/query.hpp
-    ${LIBLAS_HEADERS_DIR}/index/storage.hpp
-    ${LIBLAS_HEADERS_DIR}/index/visitor.hpp)
-endif()
 
 set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/cstdint.hpp
@@ -105,7 +87,6 @@ set(LIBLAS_SOURCES
   ${LIBLAS_INDEX_HPP}
   ${LIBLAS_CPP}
   ${LIBLAS_DETAIL_CPP}
-  ${LIBLAS_INDEX_CPP}
   ${LIBLAS_GDAL_CPP})
 
 set(LIBLAS_C_SOURCES

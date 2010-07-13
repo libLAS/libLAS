@@ -11,7 +11,6 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/lasbounds.hpp>
-#include <liblas/index/index.hpp>
 
 #include <string>
 #include <sstream>
@@ -24,10 +23,6 @@
 #include <cmath>
 
 #include <sys/stat.h>
-
-#ifdef HAVE_SPATIALINDEX
-#include <spatialindex/SpatialIndex.h>
-#endif
 
 #include <oci.h>
 
@@ -580,12 +575,8 @@ extent* GetExtent(  const liblas::Bounds b,
     z0 = 0;
     z1 = 20000;
     if (bUse3d) {
-        try {
-            z0 = b.min(2);
-            z1 = b.max(2);
-        } catch (Tools::IndexOutOfBoundsException& e) {
-            
-        }
+        z0 = b.min(2);
+        z1 = b.max(2);
     }
     extent* e = (extent*) malloc (sizeof(extent));
     e->x0 = x0; e->x1 = x1;
@@ -1693,7 +1684,7 @@ int main(int argc, char* argv[])
 
     ResultsVector& results = query->GetResults();
     
-    std::list<LASQueryResult>::const_iterator i;
+    ResultsVector::const_iterator i;
     
     std::istream* istrm2;
     istrm2 = OpenInput(input, false);
