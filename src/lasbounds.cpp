@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS transform class 
+ * Purpose:  LAS bounds for C++ libLAS 
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
@@ -39,49 +39,98 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_LASTRANSFORM_HPP_INCLUDED
-#define LIBLAS_LASTRANSFORM_HPP_INCLUDED
+#include <liblas/lasbounds.hpp>
+#include <cmath>
+#include <limits>
+#include <string>
+#include <sstream>
 
-#include <liblas/lasversion.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/detail/fwd.hpp>
-#include <liblas/liblas.hpp>
-#include <liblas/lasspatialreference.hpp>
+namespace liblas { 
 
-#include <vector>
 
-namespace liblas
+Bounds::Bounds()
+    : mins(ArrayPtr()), maxs(ArrayPtr())
 {
+    for (int i = 0; i < 3; ++i) {
+        (*mins)[i] = 0;
+        (*maxs)[i] = 0;
+    }
+}
 
-
-
-#ifndef HAVE_GDAL
-    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
-    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
+Bounds::Bounds( double minx, 
+                double miny, 
+                double maxx, 
+                double maxy, 
+                double minz, 
+                double maxz)
+    : mins(ArrayPtr()), maxs(ArrayPtr())
+{
+    (*mins)[0] = minx;
+    (*mins)[1] = miny;
+    (*mins)[2] = minz;
+    (*maxs)[0] = maxx;
+    (*maxs)[1] = maxy;
+    (*maxs)[2] = maxz;
+#ifdef DEBUG
+    verify();
 #endif
 
-class ReprojectionTransform: public TransformI
+}
+
+Bounds::Bounds( double minx, 
+                double miny, 
+                double maxx, 
+                double maxy)
+    : mins(ArrayPtr()), maxs(ArrayPtr())
 {
-public:
+    (*mins)[0] = minx;
+    (*mins)[1] = miny;
+    (*mins)[2] = 0;
+    (*maxs)[0] = maxx;
+    (*maxs)[1] = maxy;
+    (*maxs)[2] = 0;
+#ifdef DEBUG
+    verify();
+#endif
+
+}
+
+Bounds::Bounds(Bounds const& other)
+: mins(other.mins), maxs(other.maxs)
+{
     
-    ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS);
-    bool transform(Point& point);
-    
-    ~ReprojectionTransform();
+}
 
-private:
+Bounds& Bounds::operator=(Bounds const& rhs) 
+{
+    if (&rhs != this)
+    {
+        mins = rhs.mins;
+        maxs = rhs.maxs;
+    }
+    return *this;
+}
 
-    OGRCoordinateTransformationH m_transform;
-    OGRSpatialReferenceH m_in_ref;
-    OGRSpatialReferenceH m_out_ref;
+void Bounds::verify()
+{
 
+    for (uint32_t d = 0; d < 3; ++d)
+    {
+        if ((*mins)[d] > (*maxs)[d])
+        {
+            // check for infinitive region
+            if (!((*mins)[d] == std::numeric_limits<double>::max() ||
+                 (*maxs)[d] == -std::numeric_limits<double>::max() ))
+            {
+                std::ostringstream msg; 
+                msg << "liblas::Bounds::verify: Minimum point at dimension " << d << 
+                "is greater than maximum point.  Neither point is infinity.";
+                std::string message(msg.str());
+                throw std::runtime_error(message);
+            }
+        }
+    }
 
-
-    ReprojectionTransform(ReprojectionTransform const& other);
-    ReprojectionTransform& operator=(ReprojectionTransform const& rhs);
-};
+}
 
 } // namespace liblas
-
-#endif // ndef LIBLAS_LASTRANSFORM_HPP_INCLUDED

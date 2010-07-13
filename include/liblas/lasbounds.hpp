@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS transform class 
+ * Purpose:  LAS bounds class 
  * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
@@ -39,49 +39,58 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_LASTRANSFORM_HPP_INCLUDED
-#define LIBLAS_LASTRANSFORM_HPP_INCLUDED
+#ifndef LIBLAS_LASFILTER_HPP_INCLUDED
+#define LIBLAS_LASFILTER_HPP_INCLUDED
 
 #include <liblas/lasversion.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/liblas.hpp>
-#include <liblas/lasspatialreference.hpp>
 
 #include <vector>
+
+#include <boost/array.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace liblas
 {
 
+typedef boost::array <double, 3>  Array;
+typedef boost::shared_ptr< Array > ArrayPtr;
 
-
-#ifndef HAVE_GDAL
-    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
-    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
-#endif
-
-class ReprojectionTransform: public TransformI
+class Bounds
 {
 public:
     
-    ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS);
-    bool transform(Point& point);
+    Bounds();
+    Bounds( double minx, 
+            double miny, 
+            double maxx, 
+            double maxy, 
+            double minz, 
+            double maxz);
+
+    Bounds( double minx, 
+            double miny, 
+            double maxx, 
+            double maxy);
+    Bounds(Bounds const& other);
+    Bounds& operator=(Bounds const& rhs);
     
-    ~ReprojectionTransform();
-
+    double min(liblas::uint32_t i) { return (*mins)[i]; }
+    double max(liblas::uint32_t i) { return (*maxs)[i]; }
+    
 private:
-
-    OGRCoordinateTransformationH m_transform;
-    OGRSpatialReferenceH m_in_ref;
-    OGRSpatialReferenceH m_out_ref;
-
-
-
-    ReprojectionTransform(ReprojectionTransform const& other);
-    ReprojectionTransform& operator=(ReprojectionTransform const& rhs);
+    ArrayPtr mins;
+    ArrayPtr maxs;
+    
+    void verify();
+    
 };
+
+
 
 } // namespace liblas
 
-#endif // ndef LIBLAS_LASTRANSFORM_HPP_INCLUDED
+#endif // ndef LIBLAS_LASFILTER_HPP_INCLUDED

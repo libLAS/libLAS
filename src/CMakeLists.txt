@@ -43,6 +43,7 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/exception.hpp
   ${LIBLAS_HEADERS_DIR}/guid.hpp
   ${LIBLAS_HEADERS_DIR}/iterator.hpp
+  ${LIBLAS_HEADERS_DIR}/lasbounds.hpp
   ${LIBLAS_HEADERS_DIR}/lasclassification.hpp
   ${LIBLAS_HEADERS_DIR}/lascolor.hpp
   ${LIBLAS_HEADERS_DIR}/laserror.hpp
@@ -75,6 +76,7 @@ set(LIBLAS_DETAIL_HPP
   )
 
 set(LIBLAS_CPP
+  lasbounds.cpp
   lasclassification.cpp
   lascolor.cpp
   laserror.cpp
