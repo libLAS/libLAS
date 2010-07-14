@@ -56,9 +56,13 @@
 #include <memory>
 #include <cstdlib> // std::size_t
 
+#include <boost/shared_ptr.hpp>
+
 namespace liblas
 {
 
+
+typedef boost::shared_ptr< liblas::TransformI > TransformPtr;
 
 
 /// Defines public interface to LAS writer implementation.
@@ -125,8 +129,9 @@ private:
 
     std::vector<liblas::FilterI*>* m_filters;
     std::vector<liblas::TransformI*>* m_transforms;
-
-    liblas::TransformI* m_reprojection_transform;
+    
+    TransformPtr m_reprojection_transform;
+    // liblas::TransformI* m_reprojection_transform;
 
     SpatialReference m_out_srs;
     SpatialReference m_in_srs;
