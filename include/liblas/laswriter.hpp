@@ -131,8 +131,7 @@ private:
     std::vector<liblas::TransformI*>* m_transforms;
     
     TransformPtr m_reprojection_transform;
-    // liblas::TransformI* m_reprojection_transform;
-
+    
     SpatialReference m_out_srs;
     SpatialReference m_in_srs;
     

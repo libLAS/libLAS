@@ -52,8 +52,6 @@
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lastransform.hpp>
 
-
-
 // std
 #include <iosfwd>
 #include <string>
@@ -61,7 +59,12 @@
 #include <vector>
 #include <cstddef>
 
+#include <boost/shared_ptr.hpp>
+
 namespace liblas {
+
+typedef boost::shared_ptr< liblas::TransformI > TransformPtr;
+
 
 /// Defines public interface to LAS reader implementation.
 class Reader
@@ -179,7 +182,7 @@ private:
     std::vector<liblas::FilterI*>* m_filters;
     std::vector<liblas::TransformI*>* m_transforms;
 
-    liblas::TransformI* m_reprojection_transform;
+    TransformPtr m_reprojection_transform;
 
     SpatialReference m_out_srs;
     SpatialReference m_in_srs;

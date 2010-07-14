@@ -63,7 +63,7 @@ Reader::Reader(std::istream& ifs) :
     bCustomHeader(false),
     m_filters(0),
     m_transforms(0),
-    m_reprojection_transform(0)
+    m_reprojection_transform(TransformPtr())
 {
     Init();
 }
@@ -75,7 +75,7 @@ Reader::Reader(ReaderI* reader) :
     bCustomHeader(false),
     m_filters(0),
     m_transforms(0),
-    m_reprojection_transform(0)
+    m_reprojection_transform(TransformPtr())
 {
     Init();
 }
@@ -87,7 +87,7 @@ Reader::Reader(std::istream& ifs, Header& header) :
     bCustomHeader(false),
     m_filters(0),
     m_transforms(0),
-    m_reprojection_transform(0)
+    m_reprojection_transform(TransformPtr())
 {
     m_header = header;
     bCustomHeader = true;
@@ -100,8 +100,6 @@ Reader::~Reader()
     // std::auto_ptr with incomplete type (Reader).
     delete m_empty_point;
     
-    if (m_reprojection_transform != 0)
-        delete m_reprojection_transform;
 }
 
 Header const& Reader::GetHeader() const
@@ -299,6 +297,13 @@ bool Reader::SetOutputSRS(const SpatialReference& srs)
     m_out_srs = srs;
     m_pimpl->Reset(m_header);
 
+    // Check the very first transform and see if it is 
+    // the reprojection transform.  If it is, we're going to 
+    // nuke it and replace it with a new one
+    
+    // If there was nothing there, we're going to make a new reprojection
+    // transform and put in on the transforms list (or make a new transforms
+    // list if *that* isn't there).
     TransformI* possible_reprojection_transform = 0;
     
     if (m_transforms != 0) {
@@ -307,29 +312,30 @@ bool Reader::SetOutputSRS(const SpatialReference& srs)
         }
     }
     
-    if (m_reprojection_transform == possible_reprojection_transform && m_reprojection_transform != 0) {
+    if (m_reprojection_transform.get() == possible_reprojection_transform && m_reprojection_transform.get() != 0) {
         // remove it from the transforms list
         std::vector<TransformI*>::iterator i = m_transforms->begin();
         m_transforms->erase(i);
     }
     
-    if (m_reprojection_transform != 0)
-    {
-        delete m_reprojection_transform;
-    }
-
-    m_reprojection_transform = new ReprojectionTransform(m_in_srs, m_out_srs);
+    // overwrite our reprojection transform
+    m_reprojection_transform = TransformPtr(new ReprojectionTransform(m_in_srs, m_out_srs));
     
     if (m_transforms != 0) {
         if (m_transforms->size() > 0) {
-            m_transforms->insert(m_transforms->begin(), m_reprojection_transform);
+            // Insert the new reprojection transform to the beginning of the 
+            // vector there are already transforms there.
+            m_transforms->insert(m_transforms->begin(), m_reprojection_transform.get());
             
         } else {
-            m_transforms->push_back(m_reprojection_transform);
+            // List exists, but its size is 0
+            m_transforms->push_back(m_reprojection_transform.get());
         }
     } else {
+        // transforms don't exist yet, make a new one and put our 
+        // reprojection transform on it.
         m_transforms = new std::vector<liblas::TransformI*>;
-        m_transforms->push_back(m_reprojection_transform);
+        m_transforms->push_back(m_reprojection_transform.get());
     }
     return true;
 }
