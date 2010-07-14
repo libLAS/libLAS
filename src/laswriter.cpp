@@ -124,17 +124,16 @@ bool Writer::WritePoint(Point const& point)
     if (bHaveTransforms) {
     if (m_transforms->size() != 0) {
         // Apply the transforms to each point
-        Point* pt = new Point(point);
+        Point p(point);
         for (ti = m_transforms->begin(); ti != m_transforms->end(); ++ti) {
             liblas::TransformI* transform = *ti;
-            transform->transform(*pt);
+            transform->transform(p);
 
         }
         
         // We have to write a copy of our point, because we're applying 
         // transformations that change the point.
-        m_pimpl->WritePoint(*pt, m_header);
-        delete pt;
+        m_pimpl->WritePoint(p, m_header);
         return true;
         
     }
