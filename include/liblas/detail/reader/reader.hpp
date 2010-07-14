@@ -49,9 +49,12 @@
 
 // std
 #include <iosfwd>
-
+#include <boost/shared_ptr.hpp>
 
 namespace liblas { namespace detail { 
+
+typedef boost::shared_ptr< reader::Point > PointReaderPtr;
+typedef boost::shared_ptr< reader::Header > HeaderReaderPtr;
 
 class ReaderImpl : public ReaderI
 {
@@ -68,9 +71,6 @@ public:
     std::istream& GetStream() const;
     
     void Reset(liblas::Header const& header);
-    // void SetSRS(const SpatialReference& srs, const liblas::Header& header);
-    // void SetInputSRS(const SpatialReference& srs);
-    // void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
 
 protected:
     void CreateTransform();
@@ -83,14 +83,9 @@ protected:
     std::istream& m_ifs;
     uint32_t m_size;
     uint32_t m_current;
-    // SpatialReference m_out_srs;
-    // SpatialReference m_in_srs;    
-    // OGRCoordinateTransformationH m_transform;
-    // OGRSpatialReferenceH m_in_ref;
-    // OGRSpatialReferenceH m_out_ref;
-
-    detail::reader::Point* m_point_reader;
-    detail::reader::Header* m_header_reader;
+    
+    PointReaderPtr m_point_reader;
+    HeaderReaderPtr m_header_reader;
 
 private:
 

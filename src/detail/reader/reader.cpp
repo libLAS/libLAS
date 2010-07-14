@@ -59,17 +59,14 @@ namespace liblas { namespace detail {
 
 ReaderImpl::ReaderImpl(std::istream& ifs) :
     m_ifs(ifs), m_size(0), m_current(0),
-    m_point_reader(0),     
-    m_header_reader(new reader::Header(m_ifs))
+    m_point_reader(PointReaderPtr()),     
+    m_header_reader(HeaderReaderPtr(new reader::Header(m_ifs)))
 
 {
 }
 
 ReaderImpl::~ReaderImpl()
 {
-
-    delete m_point_reader;
-    delete m_header_reader;
 }
 
 std::istream& ReaderImpl::GetStream() const
@@ -89,7 +86,7 @@ void ReaderImpl::Reset(liblas::Header const& header)
     // If we reset the reader, we're ready to start reading points, so 
     // we'll create a point reader at this point.
     if (m_point_reader == 0) {
-        m_point_reader = new reader::Point(m_ifs, header);
+        m_point_reader = PointReaderPtr(new reader::Point(m_ifs, header));
     } 
 }
 

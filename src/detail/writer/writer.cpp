@@ -46,6 +46,7 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/liblas.hpp>
+
 // std
 #include <vector>
 #include <fstream>
@@ -57,8 +58,8 @@ namespace liblas { namespace detail {
 
 WriterImpl::WriterImpl(std::ostream& ofs) :
     m_ofs(ofs), 
-    m_point_writer(0), 
-    m_header_writer(0), 
+    m_point_writer(PointWriterPtr( )), 
+    m_header_writer(HeaderWriterPtr()), 
     m_pointCount(0)
 {
 }
@@ -66,11 +67,12 @@ WriterImpl::WriterImpl(std::ostream& ofs) :
 
 liblas::Header const&  WriterImpl::WriteHeader(liblas::Header const& header)
 {
+    m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs,m_pointCount, header) );
+    
     if (m_header_writer == 0) {
-        m_header_writer = new detail::writer::Header(m_ofs,m_pointCount, header );
+        m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs,m_pointCount, header) );
     } else {
-        delete m_header_writer;
-        m_header_writer = new detail::writer::Header(m_ofs,m_pointCount, header );
+        m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs,m_pointCount, header) );
     }
     m_header_writer->write();
     return m_header_writer->GetHeader();
@@ -90,7 +92,7 @@ void WriterImpl::UpdateHeader(liblas::Header const& header)
 void WriterImpl::WritePoint(liblas::Point const& point, const liblas::Header& header)
 {
     if (m_point_writer == 0) {
-        m_point_writer = new detail::writer::Point(m_ofs, m_pointCount, header);
+        m_point_writer = PointWriterPtr(new writer::Point(m_ofs, m_pointCount, header));
     } 
     m_point_writer->write(point);
 
@@ -98,12 +100,6 @@ void WriterImpl::WritePoint(liblas::Point const& point, const liblas::Header& he
 
 WriterImpl::~WriterImpl()
 {
-
-    if (m_point_writer != 0)
-        delete m_point_writer;
-
-    if (m_header_writer != 0)
-        delete m_header_writer;
 
 }
 

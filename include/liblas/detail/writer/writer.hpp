@@ -47,8 +47,15 @@
 #include <liblas/detail/writer/point.hpp>
 #include <liblas/detail/writer/header.hpp>
 
+#include <boost/shared_ptr.hpp>
+
+
 
 namespace liblas { namespace detail { 
+
+
+typedef boost::shared_ptr< writer::Point > PointWriterPtr;
+typedef boost::shared_ptr< writer::Header > HeaderWriterPtr;
 
 class WriterImpl : public WriterI
 {
@@ -68,13 +75,11 @@ protected:
     PointRecord m_record;
     std::ostream& m_ofs;
      
-
-    writer::Point* m_point_writer;
-    writer::Header* m_header_writer;
+    PointWriterPtr m_point_writer;
+    HeaderWriterPtr m_header_writer;
     
 private:
 
-    // void CreateTransform();
     liblas::uint32_t m_pointCount;
 
     // block copying operations
