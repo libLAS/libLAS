@@ -197,13 +197,13 @@ liblas::Header const& CachedReaderImpl::ReadHeader()
 
 void CachedReaderImpl::CacheData(liblas::uint32_t position, const liblas::Header& header) 
 {
-        int32_t old_cache_start_position = m_cache_start_position;
+        std::vector<uint8_t>::size_type old_cache_start_position = m_cache_start_position;
         m_cache_start_position = position;
 
     std::vector<uint8_t>::size_type header_size = static_cast<std::vector<uint8_t>::size_type>(header.GetPointRecordsCount());
     std::vector<uint8_t>::size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
 
-    std::vector<uint8_t>::size_type to_mark = std::max(m_cache_size, left_to_cache);
+    std::vector<uint8_t>::size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position);
         for (uint32_t i = 0; i < to_mark; ++i) {
             m_mask[old_cache_start_position + i] = 0;
         }
