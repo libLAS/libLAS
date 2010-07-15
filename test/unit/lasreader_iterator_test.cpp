@@ -204,8 +204,9 @@ namespace tut
         lasreader_iterator it(reader_); // move to 1st point
         lasreader_iterator end;
 
-        lasreader_iterator::difference_type const d = std::distance(it, end);
-        ensure_equals(d, cnt);
+        typedef lasreader_iterator::difference_type difference_type;
+        difference_type const d = std::distance(it, end);
+        ensure_equals(d, static_cast<difference_type>(cnt));
     }
 
     // Test std::distance operation
@@ -213,13 +214,15 @@ namespace tut
     template<>
     void to::test<15>()
     {
-        std::size_t a = std::distance(lasreader_iterator(reader_), lasreader_iterator());
+        typedef lasreader_iterator::difference_type difference_type;
+        
+        difference_type a = std::distance(lasreader_iterator(reader_), lasreader_iterator());
 
         // Reader state is set to "past-the-end-of-file"
         // So, reset is needed
         reader_.Reset();
 
-        std::size_t b = std::distance(lasreader_iterator(reader_), lasreader_iterator());
+        difference_type b = std::distance(lasreader_iterator(reader_), lasreader_iterator());
 
         ensure_equals(a, b);
     }
@@ -284,8 +287,9 @@ namespace tut
         lasreader_iterator end;
 
         // Count records equal to given point object
-        lasreader_iterator::difference_type const expected = 1;
-        lasreader_iterator::difference_type n = std::count(it, end, pt);
+        typedef lasreader_iterator::difference_type difference_type;
+        difference_type const expected = 1;
+        difference_type n = std::count(it, end, pt);
         ensure_equals(n, expected);
     }
 
@@ -382,9 +386,9 @@ namespace tut
                        point_t(h.GetMaxX(), h.GetMaxY(), h.GetMaxZ()));
 
         // Accumulate points extents to common bounding box
-        bbox_t bbox;
-        std::for_each(it, end, bbox_calculator(bbox));
+        bbox_calculator calculator;
+        std::for_each(it, end, calculator);
 
-        ensure(lasbbox == bbox);
+        ensure(lasbbox == calculator.get_result());
     }
 }
