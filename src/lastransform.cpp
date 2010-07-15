@@ -137,6 +137,7 @@ bool ReprojectionTransform::transform(Point& point)
     return true;
 #else
     detail::ignore_unused_variable_warning(point);
+    return true;
 #endif
 }
 } // namespace liblas
