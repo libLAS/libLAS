@@ -156,7 +156,7 @@ set(WITH_BOOST TRUE CACHE BOOL "Choose if Boost C++ Libraries support should be 
 if(WITH_BOOST)
     message(STATUS "Searching for Boost 1.38+ - done")
 
-    find_package(Boost 1.38 REQUIRED iostreams)
+    find_package(Boost 1.38 REQUIRED)
 
     if(Boost_FOUND AND Boost_iostreams_FOUND)
       include_directories(${Boost_INCLUDE_DIRS})
