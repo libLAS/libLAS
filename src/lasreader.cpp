@@ -148,9 +148,6 @@ bool Reader::ReadNextPoint()
             if (!keep) {
                 return ReadNextPoint();
             }
-             // else {
-            //      return true;
-            //  }
         }
         }
         
