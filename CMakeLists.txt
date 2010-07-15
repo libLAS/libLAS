@@ -158,7 +158,7 @@ if(WITH_BOOST)
 
     find_package(Boost 1.38 REQUIRED)
 
-    if(Boost_FOUND AND Boost_iostreams_FOUND)
+    if(Boost_FOUND)
       include_directories(${Boost_INCLUDE_DIRS})
     endif()
 endif()
