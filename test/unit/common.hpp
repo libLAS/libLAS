@@ -37,10 +37,11 @@ struct is_xy
 // Functor to calculate bounding box of a set of points
 struct bbox_calculator
 {
-    // bbox object will store operation result
-    bbox_calculator(liblas::detail::Extents<double>& bbox)
-        : empty(true), bbox(bbox)
-    {}
+    typedef liblas::detail::Extents<double> result_type;
+
+    bbox_calculator() : empty(true) {}
+
+    result_type get_result() const { return bbox; }    
 
     void operator()(liblas::Point const& p)
     {
@@ -62,8 +63,9 @@ struct bbox_calculator
         bbox.max.z = std::max(bbox.max.z, p.GetZ());
     }
 
+
     bool empty;
-    liblas::detail::Extents<double>& bbox;
+    liblas::detail::Extents<double> bbox;
 };
 
 // Common test procedure for default constructed point data.
