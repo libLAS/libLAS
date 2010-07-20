@@ -1,8 +1,19 @@
+// $Id$
+//
+// lasblock generates block output for las2oci to store lidar data in OPC tables
+//
+//
+// (C) Copyright Howard Butler 2010, hobu.inc@gmail.com
+//
+// Distributed under the BSD License
+// (See accompanying file LICENSE.txt or copy at
+// http://www.opensource.org/licenses/bsd-license.php)
+//
+
 
 #include <liblas/lasreader.hpp>
 #include <liblas/lasbounds.hpp>
 #include "chipper.hpp"
-
 
 
 #include <fstream>
@@ -112,7 +123,6 @@ int main(int argc, char* argv[])
 
     std::cout << "Blocking " << input<< " to " << output <<std::endl;
 
-    // The following is a simple test of the results.
     liblas::uint32_t num_blocks = c.GetBlockCount();
     
     std::cout << "Block count: " << num_blocks << std::endl;
@@ -131,10 +141,8 @@ int main(int argc, char* argv[])
         for ( liblas::uint32_t pi = 0; pi < ids.size(); ++pi )
         {
             out << ids[pi] << " ";
-
         }
 
-        // Test this rectangle against all of the other rectangles.
         liblas::Bounds bds(b.GetXmin(), b.GetYmin(), b.GetXmax(), b.GetYmax());
 
         out << std::endl;
