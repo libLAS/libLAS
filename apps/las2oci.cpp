@@ -44,7 +44,7 @@ typedef boost::shared_ptr< IDVector > IDVectorPtr;
 class IndexResult 
 {
 public:
-    IndexResult(uint32_t id) : bounds(), m_id(id) {}
+    IndexResult(liblas::uint32_t id) : bounds(), m_id(id) {}
     // 
     // /// Copy constructor.
     // IndexResult(IndexResult const& other);
