@@ -218,7 +218,7 @@ if(WITH_GDAL)
         if(NOT HAVE_OSRSETEQUIRECTANGULAR2)
             # Reset to NOT found for GDAL/OGR
             set(GDAL_FOUND)
-            message(FATAL_ERROR "GDAL support requires GDAL 1.6.0 or newer")
+            message(FATAL_ERROR "Unable to find OSRSetEquirectangular2 within GDAL library at ${GDAL_INCLUDE_DIR} ${GDAL_LIBRARY}")
         else()
             include_directories(${GDAL_INCLUDE_DIR})
             add_definitions(-DHAVE_GDAL=1)
