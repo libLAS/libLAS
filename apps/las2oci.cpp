@@ -56,8 +56,8 @@ public:
     void SetIDs(IDVector& v) {ids = v;}
     const liblas::Bounds GetBounds() const { return bounds; }
     void SetBounds(const liblas::Bounds b) {bounds = b;}
-    uint32_t GetID() const {return m_id;}
-    void SetID(uint32_t v) {m_id = v;}
+    liblas::uint32_t GetID() const {return m_id;}
+    void SetID(liblas::uint32_t v) {m_id = v;}
 
 private:
     IDVector ids;
@@ -120,7 +120,7 @@ KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
         liblas::Bounds b(low[0], low[1], high[0],high[1]);
         // SpatialIndex::Region* pr = new SpatialIndex::Region(low, high, 2);
         // printf("Ids size: %d %.3f\n", ids.size(), pr->getLow(0));
-        IndexResult result(static_cast<uint32_t>(id));
+        IndexResult result(static_cast<liblas::uint32_t>(id));
         result.SetIDs(ids);
         result.SetBounds(b);
         m_results.push_back(result);
