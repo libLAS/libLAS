@@ -82,7 +82,7 @@ Bounds::Bounds( double minx,
                 double miny, 
                 double maxx, 
                 double maxy)
-    : mins(ArrayPtr()), maxs(ArrayPtr())
+    : mins(ArrayPtr(new Array())), maxs(ArrayPtr(new Array()))
 {
     (*mins)[0] = minx;
     (*mins)[1] = miny;
