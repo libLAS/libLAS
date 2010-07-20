@@ -20,7 +20,7 @@ set(LAS2LAS las2las)
 set(LAS2TXT las2txt)
 set(TXT2LAS txt2las)
 set(LAS2LAS2 las2las2 )
-
+set(LASBLOCK lasblock )
 
 # Set the build type to release if it is not explicitly set by the user and 
 # isn't in the cache yet
@@ -45,7 +45,7 @@ endif()
 
 set(LIBLAS_UTILITIES
     ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
-    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS2} ${BIGFILE_TEST})
+    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS2} ${LASBLOCK} ${BIGFILE_TEST})
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -113,6 +113,12 @@ if(LASMERGE)
     target_link_libraries(${LASMERGE} ${LIBLAS_C_LIB_NAME})
 endif()
 
+# Build lasblock
+if(LASBLOCK)
+    set(LASBLOCK_SRC lasblock.cpp chipper.cpp chipper.hpp)
+    add_executable(${LASBLOCK} ${LASBLOCK_SRC})
+    target_link_libraries(${LASBLOCK} ${APPS_CPP_DEPENDENCIES})
+endif()
 
 # Build las2ogr
 if(LAS2OGR)
