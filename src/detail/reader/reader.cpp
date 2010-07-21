@@ -317,26 +317,25 @@ liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, const liblas::
 void CachedReaderImpl::Reset(liblas::Header const& header)
 {
     
-    if (!m_mask.empty()) {
+    if (m_mask.empty()) return;
 
-        typedef std::vector<uint8_t>::size_type size_type;
-        size_type header_size = static_cast<std::vector<uint8_t>::size_type>(header.GetPointRecordsCount());
-        size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
-        size_type to_mark = std::max(m_cache_size, left_to_cache);
+    typedef std::vector<uint8_t>::size_type size_type;
+    size_type old_cache_start_position = m_cache_start_position;
+    size_type header_size = static_cast<size_type>(header.GetPointRecordsCount());
+    size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
 
-        for (uint32_t i = 0; i < to_mark; ++i) {
+    size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position); 
+    for (uint32_t i = 0; i < to_mark; ++i) {
 
-            size_type const mark_pos = m_cache_start_position + i;
-            assert(mark_pos < m_mask.size());
+        size_type const mark_pos = m_cache_start_position + i;
+        assert(mark_pos < m_mask.size());
 
-            m_mask[mark_pos] = 0;
-        }
-
-        m_cache_start_position = 0;
-        m_cache_read_position = 0;
-    
+        m_mask[mark_pos] = 0;
     }
-    
+
+    m_cache_start_position = 0;
+    m_cache_read_position = 0;
+
     ReaderImpl::Reset(header);
 
 }
