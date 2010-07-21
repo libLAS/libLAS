@@ -21,9 +21,11 @@ cloud of points collected by LiDAR sensors to vectors for easier
 data exchange and processing.
 
 In order to build las2ogr utility, one has to link libLAS against GDAL library.
-For Unix, use ./configure script option --with-gdal.
-For Windows, edit nmake.opt file and set GDAL_HOME variable.
-Windows users can instal GDAL binaries using friendly installer from OSGeo4W package.
+See :ref:`compilation` for details on how to link against GDAL.
+
+.. note::
+    Windows users can install GDAL binaries using friendly installer from OSGeo4W package.
+
 
 Usage
 -----
