@@ -55,7 +55,7 @@ These files are called ``.kdx`` files for :ref:`las2oci` to be able to
 consume, but there's nothing preventing you from giving them your own name.
 
 ::
-
+    id count minx miny maxx maxy {id1 id2 ... idx}
     0 9686 630250 4834500 630305.47 4834543.1 41357 ...
     1 9686 630250.01 4834543.1 630305.47 4834617.4 210093 ...
 
