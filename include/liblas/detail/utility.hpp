@@ -163,46 +163,6 @@ struct VLRHeader
   char description[32];
 };
 
-
-struct GeoKeysHeader
-{
-    uint16_t keyDirectoryVersion;
-    uint16_t keyRevision;
-    uint16_t minorRevision;
-    uint16_t numberOfKeys;
-};
-
-struct GeoKeyEntry
-{
-  uint16_t keyId;
-  uint16_t tiffTagLocation;
-  uint16_t count;
-  uint16_t valueOffset;
-};
-
-class VariableLengthRecord
-{
-    VariableLengthRecord()
-        : reserved(0), record_id(0), record_length_after_header(0)
-    {
-        std::memset(user_id, 0, eUserIdSize);
-        std::memset(description, 0, eDescriptionSize);
-    }
- 
-    enum
-    {
-        eUserIdSize = 16,
-        eDescriptionSize = 32
-    };
-
-    uint16_t reserved;
-    int8_t user_id[eUserIdSize]; 
-    uint16_t record_id;
-    uint16_t record_length_after_header;
-    int8_t description[eDescriptionSize];
-    uint8_t data;
-};
-
 struct PointRecord
 {
     PointRecord() :
