@@ -58,6 +58,7 @@ namespace liblas
 
 Reader::Reader(std::istream& ifs) :
     m_pimpl(new detail::CachedReaderImpl(ifs,3)),
+    m_header(0),
     m_point(0),
     m_empty_point(new Point()),
     bCustomHeader(false),
@@ -70,6 +71,7 @@ Reader::Reader(std::istream& ifs) :
 
 Reader::Reader(ReaderI* reader) :
     m_pimpl(reader),
+    m_header(0),
     m_point(0),
     m_empty_point(new Point()),
     bCustomHeader(false),
@@ -82,15 +84,17 @@ Reader::Reader(ReaderI* reader) :
 
 Reader::Reader(std::istream& ifs, Header& header) :
     m_pimpl(new detail::CachedReaderImpl(ifs,3)),
+    m_header(new Header()),    
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(false),
+    bCustomHeader(true),
     m_filters(0),
     m_transforms(0),
     m_reprojection_transform(TransformPtr())
 {
-    m_header = header;
-    bCustomHeader = true;
+    // if we have a custom header, create a slot for it and then copy 
+    // the header we were given
+    *m_header = header;
     Init();
 }
 
@@ -100,11 +104,14 @@ Reader::~Reader()
     // std::auto_ptr with incomplete type (Reader).
     delete m_empty_point;
     
+    if (m_header != 0) {
+        delete m_header;
+    }
 }
 
 Header const& Reader::GetHeader() const
 {
-    return m_header;
+    return *m_header;
 }
 
 Point const& Reader::GetPoint() const
@@ -128,7 +135,7 @@ bool Reader::ReadNextPoint()
     }
     
     try {
-        m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
+        m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(*m_header)));
         if (bHaveFilters) {
         if (m_filters->size() != 0) {
             // We have filters, filter this point.  All filters must 
@@ -175,7 +182,7 @@ bool Reader::ReadPointAt(std::size_t n)
     std::vector<liblas::TransformI*>::const_iterator ti;
     bool bHaveTransforms = false;
 
-    if (m_header.GetPointRecordsCount() <= n)
+    if (m_header->GetPointRecordsCount() <= n)
     {
         throw std::out_of_range("point subscript out of range");
     }
@@ -185,7 +192,7 @@ bool Reader::ReadPointAt(std::size_t n)
     }
     
     try {
-        m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
+        m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, *m_header)));
         if (bHaveTransforms) {
         if (m_transforms->size() != 0) {
 
@@ -207,7 +214,7 @@ bool Reader::ReadPointAt(std::size_t n)
 bool Reader::seek(std::size_t n)
 {
     try {
-        m_pimpl->Seek(n, m_header);
+        m_pimpl->Seek(n, *m_header);
         return true;
     } catch (std::out_of_range) {
         m_point = 0;
@@ -217,7 +224,7 @@ bool Reader::seek(std::size_t n)
 }
 Point const& Reader::operator[](std::size_t n)
 {
-    if (m_header.GetPointRecordsCount() <= n)
+    if (m_header->GetPointRecordsCount() <= n)
     {
         throw std::out_of_range("point subscript out of range");
     }
@@ -237,17 +244,22 @@ void Reader::Init()
     // Copy our existing header in case we have already set a custom 
     // one.  We will use this instead of the one from the stream if 
     // the constructor with the header was used.
-    Header custom_header(m_header);
+    
+    Header custom_header;
+    if (m_header != 0) 
+    {
+        custom_header = *m_header;
+    }
 
-    m_header = m_pimpl->ReadHeader();
+    m_header = new Header(m_pimpl->ReadHeader());
 
         // throw std::runtime_error("public header block reading failure");
 
-    m_pimpl->Reset(m_header);
+    m_pimpl->Reset(*m_header);
     
     if (bCustomHeader) {
-        custom_header.SetDataOffset(m_header.GetDataOffset());
-        m_header = custom_header;
+        custom_header.SetDataOffset(m_header->GetDataOffset());
+        *m_header = custom_header;
     }
     
     // This is yucky, but we need to ensure that we have a reference 
@@ -260,7 +272,7 @@ void Reader::Init()
     
     // Copy our input SRS.  If the user issues SetInputSRS, it will 
     // be overwritten
-    m_in_srs = m_header.GetSRS();
+    m_in_srs = m_header->GetSRS();
 }
 
 std::istream& Reader::GetStream() const
@@ -292,7 +304,7 @@ bool Reader::SetInputSRS(const SpatialReference& srs)
 bool Reader::SetOutputSRS(const SpatialReference& srs)
 {
     m_out_srs = srs;
-    m_pimpl->Reset(m_header);
+    m_pimpl->Reset(*m_header);
 
     // Check the very first transform and see if it is 
     // the reprojection transform.  If it is, we're going to 

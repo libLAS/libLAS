@@ -55,10 +55,12 @@ Point::Point() :
     m_pointSourceId(0),
     m_flags(0),
     m_userData(0),
-    m_angleRank(0)
+    m_angleRank(0),
+    m_hdr(0)
 {
     std::memset(m_coords, 0, sizeof(m_coords));
     m_extra_data.resize(0);
+    m_format_data.resize(0);
 }
 
 Point::Point(Point const& other) :
@@ -69,10 +71,13 @@ Point::Point(Point const& other) :
     m_pointSourceId(other.m_pointSourceId),
     m_flags(other.m_flags),
     m_userData(other.m_userData),
-    m_angleRank(other.m_angleRank)
+    m_angleRank(other.m_angleRank),
+    m_hdr(other.m_hdr)
 {
     std::memcpy(m_coords, other.m_coords, sizeof(m_coords));
     std::vector<uint8_t>(other.m_extra_data).swap(m_extra_data);
+    std::vector<uint8_t>(other.m_format_data).swap(m_format_data);
+    
 }
 
 Point& Point::operator=(Point const& rhs)
@@ -91,6 +96,8 @@ Point& Point::operator=(Point const& rhs)
         m_gpsTime = rhs.m_gpsTime;
         m_color = rhs.m_color;
         std::vector<uint8_t>(rhs.m_extra_data).swap(m_extra_data);
+        std::vector<uint8_t>(rhs.m_format_data).swap(m_format_data);
+        m_hdr = rhs.m_hdr;
     }
     return *this;
 }

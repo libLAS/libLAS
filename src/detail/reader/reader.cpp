@@ -197,35 +197,36 @@ liblas::Header const& CachedReaderImpl::ReadHeader()
 
 void CachedReaderImpl::CacheData(liblas::uint32_t position, const liblas::Header& header) 
 {
-        std::vector<uint8_t>::size_type old_cache_start_position = m_cache_start_position;
-        m_cache_start_position = position;
+    std::vector<uint8_t>::size_type old_cache_start_position = m_cache_start_position;
+    m_cache_start_position = position;
 
     std::vector<uint8_t>::size_type header_size = static_cast<std::vector<uint8_t>::size_type>(header.GetPointRecordsCount());
     std::vector<uint8_t>::size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
 
     std::vector<uint8_t>::size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position);
-        for (uint32_t i = 0; i < to_mark; ++i) {
-            m_mask[old_cache_start_position + i] = 0;
-        }
 
-        // if these aren't equal, we've hopped around with ReadPointAt
-        // and we need to seek to the proper position.
-        if (m_current != position) {
-            CachedReaderImpl::Seek(position, header);
-            m_current = position;
-        }
-        m_cache_read_position =  position;
+    for (uint32_t i = 0; i < to_mark; ++i) {
+        m_mask[old_cache_start_position + i] = 0;
+    }
 
-        for (uint32_t i = 0; i < left_to_cache; ++i) 
-        {
-            try {
-                m_mask[m_current] = 1;
-                m_cache[i] = ReaderImpl::ReadNextPoint(header);
-            } catch (std::out_of_range&) {
-                // cached to the end
-                break;
-            }
+    // if these aren't equal, we've hopped around with ReadPointAt
+    // and we need to seek to the proper position.
+    if (m_current != position) {
+        CachedReaderImpl::Seek(position, header);
+        m_current = position;
+    }
+    m_cache_read_position =  position;
+
+    for (uint32_t i = 0; i < left_to_cache; ++i) 
+    {
+        try {
+            m_mask[m_current] = 1;
+            m_cache[i] = ReaderImpl::ReadNextPoint(header);
+        } catch (std::out_of_range&) {
+            // cached to the end
+            break;
         }
+    }
 
 }
 
@@ -304,7 +305,9 @@ liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, const liblas::
     
     } else if (m_size < n) {
         std::ostringstream output;
-        output << "ReadPointAt:: Inputted value: " << n << " is greater than the number of points: " << m_size;
+        output << "ReadPointAt:: Inputted value: " 
+               << n << " is greater than the number of points: " 
+               << m_size;
         std::string out(output.str());
         throw std::runtime_error(out);
     }
@@ -336,6 +339,7 @@ void CachedReaderImpl::Reset(liblas::Header const& header)
     m_cache_start_position = 0;
     m_cache_read_position = 0;
 
+
     ReaderImpl::Reset(header);
 
 }
@@ -350,20 +354,8 @@ void CachedReaderImpl::Seek(std::size_t n, const liblas::Header& header)
    m_cache_read_position = n;
    ReaderImpl::Seek(n,header);
 }
-// 
-// void CachedReaderImpl::SetOutputSRS(const SpatialReference& srs, const liblas::Header& header)
-// {
-//     // We need to wipe out the cache if we've set the output srs.
-//     std::vector<uint8_t>::size_type header_size = static_cast<std::vector<uint8_t>::size_type>(header.GetPointRecordsCount());
-//     std::vector<uint8_t>::size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
-// 
-//     std::vector<uint8_t>::size_type to_mark = std::max(m_cache_size, left_to_cache);
-//     for (uint32_t i = 0; i < to_mark; ++i) {
-//         m_mask[m_cache_start_position + i] = 0;
-//     }
-//     
-//     ReaderImpl::SetOutputSRS(srs, header);
-// }
+
+
 
 // ReaderImpl* ReaderFactory::Create(std::istream& ifs)
 // {

@@ -81,12 +81,17 @@ void Point::read()
     liblas::uint16_t red(0);
     liblas::uint16_t blue(0);
     liblas::uint16_t green(0);
+
+    // raw byte data necessary to fill out the point format    
+    std::vector<uint8_t> format_data; 
+    
+    format_data.resize(m_format.GetBaseByteSize());
     
     detail::PointRecord record;
     // TODO: Replace with compile-time assert
+
     assert(liblas::ePointSize0 == sizeof(record));
 
-    // const PointFormat& format = m_header.GetPointFormat();
     
     try
     {
@@ -159,6 +164,8 @@ void Point::read()
         throw std::runtime_error(msg.str());
         
     }
+    
+    m_point.SetHeader(m_header);
 }
 
 

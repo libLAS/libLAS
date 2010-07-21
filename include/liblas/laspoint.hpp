@@ -46,6 +46,7 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasclassification.hpp>
+#include <liblas/lasheader.hpp>
 #include <liblas/lascolor.hpp>
 
 // std
@@ -53,10 +54,17 @@
 #include <cstdlib> // std::size_t
 #include <vector> // std::vector
 
+#include <boost/shared_ptr.hpp>
+
+
+
 namespace liblas {
+
 
 /// Point data record composed with X, Y, Z coordinates and attributes.
 class Point
+
+
 {
 public:
 
@@ -187,6 +195,11 @@ public:
     std::vector<liblas::uint8_t> const& GetExtraData() const {return m_extra_data; }
     void SetExtraData(std::vector<uint8_t> const& v) { m_extra_data = v;}
 
+    std::vector<liblas::uint8_t> const& GetData() const {return m_format_data; }
+    void SetData(std::vector<uint8_t> const& v) { m_format_data = v;}
+    
+    void SetHeader(const liblas::Header& header);
+    const liblas::Header* GetHeader () { return m_hdr; }
 private:
 
     static std::size_t const coords_size = 3;
@@ -203,6 +216,9 @@ private:
     int8_t m_angleRank;
 
     std::vector<uint8_t> m_extra_data;
+    std::vector<uint8_t> m_format_data;
+    
+    const liblas::Header* m_hdr;
     
     void throw_out_of_range() const
     {
@@ -358,6 +374,11 @@ inline double const& Point::operator[](std::size_t const& n) const
         throw_out_of_range();
 
     return m_coords[n];
+}
+
+inline void Point::SetHeader(const liblas::Header& header) 
+{
+    m_hdr = &header;
 }
 
 } // namespace liblas

@@ -171,9 +171,11 @@ private:
     void Init(); // throws on error
 
     const std::auto_ptr<ReaderI> m_pimpl;
-    Header m_header;
+
+    Header* m_header;
     Point* m_point;
     Point* m_empty_point;
+    
     
     // Set if the user provides a header to override the header as 
     // read from the istream
