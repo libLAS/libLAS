@@ -44,6 +44,20 @@ Usage
 
 .. figure:: ../images/lasblock_big.png
     :alt: lasblock output
-  
+
+
+Format
+------------------------------------------------------------------------------
+
+lasblock's format is quite simple.  It contains an id, a point count, a 2d block, and 
+a list of all the point ids that exist within that block in a simple text file.
+These files are called ``.kdx`` files for :ref:`las2oci` to be able to 
+consume, but there's nothing preventing you from giving them your own name.
+
+::
+
+    0 9686 630250 4834500 630305.47 4834543.1 41357 ...
+    1 9686 630250.01 4834543.1 630305.47 4834617.4 210093 ...
+
 .. _`Oracle Point Cloud`: http://download.oracle.com/docs/cd/B28359_01/appdev.111/b28400/sdo_pc_pkg_ref.htm
 
