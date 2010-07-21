@@ -115,6 +115,13 @@ Vertical datum description support
 libLAS, in combination with a very recent GDAL/proj.4, can be used to preserve 
 and describe the vertical datum GeoTIFF keys that are present in LAS files.
 
+:ref:`lasblock`
+..............................................................................
+
+:ref:`lasblock` is a command-line utility for generating chips of LAS data 
+that are as full as possible, square as possible, and made in a reasonable 
+amount of time (chips at a rate of ~1 million points per second).
+
 Release Schedule
 ------------------------------------------------------------------------------
 
