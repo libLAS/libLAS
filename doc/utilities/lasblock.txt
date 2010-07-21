@@ -39,10 +39,10 @@ Usage
     but you can override the output name with a ``-o`` command-line switch.
 
 
-.. figure:: ./images/lasblock_small.png
+.. figure:: ../images/lasblock_small.png
     :alt: lasblock output
 
-.. figure:: ./images/lasblock_big.png
+.. figure:: ../images/lasblock_big.png
     :alt: lasblock output
   
 .. _`Oracle Point Cloud`: http://download.oracle.com/docs/cd/B28359_01/appdev.111/b28400/sdo_pc_pkg_ref.htm
