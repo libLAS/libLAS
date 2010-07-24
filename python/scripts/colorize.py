@@ -67,9 +67,7 @@ class Colorizer(object):
         from optparse import OptionParser, OptionGroup
         usage = "usage: %prog [options] arg"
         parser = OptionParser(usage)
-        g = OptionGroup(parser, "Base options", "Basic Translation Options")
-        g.add_option("-c", "--connection", dest="connection",
-                          help="OCI connection string", metavar="CONNECTION")
+        g = OptionGroup(parser, "Base options", "Basic Colorization Options")
         g.add_option("-o", "--output", dest='output',
                           help="LAS file to write", metavar="OUTPUT")
         g.add_option("-i", "--input", dest='input',
