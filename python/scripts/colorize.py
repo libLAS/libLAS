@@ -77,8 +77,9 @@ class Colorizer(object):
         g.add_option("-b", "--bands", dest='bands',
                           help="Comma-separated list of bands numbers to use for R,G,B ", metavar="BANDS")
 
-        g.add_option("-s", "--scale", dest='scale',
-                          help="Scale the color values to 16 bit by multiplying by 256 ", metavar="SCALE")
+        g.add_option("-s", "--scale",
+                          action="store_true", dest="scale", 
+                          help="Scale the color values to 16 bit by multiplying by 256")
                           
         g.add_option("-t", "--target-srs", dest='target_srs',
                           help="Output SRS for LAS file", metavar="TARGET_SRS")
@@ -202,7 +203,7 @@ class Colorizer(object):
         
         red_band = self.options.image.GetRasterBand(self.options.bands[0]) # 1-based index
         green_band = self.options.image.GetRasterBand(self.options.bands[1])
-        blue_band = self.options.image.GetRasterBand(self.options.bands[1])
+        blue_band = self.options.image.GetRasterBand(self.options.bands[2])
         
         for p in self.options.las:
 
