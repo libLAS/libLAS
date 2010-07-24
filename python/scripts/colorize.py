@@ -57,6 +57,10 @@ from liblas import srs
 from osgeo import gdal
 gdal.UseExceptions()
 
+# usage
+# go fetch http://liblas.org/samples/Autzen_Stadium.zip
+
+# ./colorize.py Autzen_Stadium/LAS/44123A1305_ALL.las Autzen_Stadium/naip_1_1_1n_s_or039_2005_1_C2.img --bands 1,2,3 -w -a EPSG:26910 -t EPSG:4269
 class Colorizer(object):
 
     def construct_parser(self):
@@ -202,7 +206,7 @@ class Colorizer(object):
         green_band = self.options.image.GetRasterBand(self.options.bands[1])
         blue_band = self.options.image.GetRasterBand(self.options.bands[1])
         
-        for p in self.options.las[0:400]:
+        for p in self.options.las:
 
             # compute pixel offset
             xOffset = int((p.x - xOrigin) / pixelWidth)
@@ -232,92 +236,4 @@ def main():
 if __name__=='__main__':
     main()
 
-# #############################################
-# import os, sys
-# from liblas import file
-# from liblas import header
-# from liblas import color
-# from liblas import *
-# 
-# try:
-#   from osgeo import ogr, gdal
-#   from osgeo.gdalconst import *
-#   os.chdir('C:\\crap\\county\\Crook')
-# except ImportError:
-#   import ogr, gdal
-#   from gdalconst import *
-#   os.chdir(r'C:\\crap\\county\\Crook')
-# print "loaded"
-# 
-# lassy = 'D:\\aaron_working\\DESCHUTTES\\Decluttered_no_birds\\DES_04593.las'
-# 
-# gdal.UseExceptions()
-# 
-# # open the image
-# img = gdal.Open('naip_1_1_1n_s_or013_2005_1_C4593.img', GA_ReadOnly)
-# if img is None:
-#   print 'Could not open aster.img'
-#   sys.exit(1)
-# print "loaded img"
-# # get image size
-# rows = img.RasterYSize
-# cols = img.RasterXSize
-# bands = img.RasterCount
-# 
-# # get georeference info
-# transform = img.GetGeoTransform()
-# xOrigin = transform[0]
-# yOrigin = transform[3]
-# pixelWidth = transform[1]
-# pixelHeight = transform[5]
-# 
-# data=file.File(lassy, mode='r')
-# 
-# print "creating .LAS file"
-# h = header.Header()
-# 
-# h.dataformat_id = 1
-# 
-# h.minor_version = 2
-# newdata=file.File('D:\\aaron_working\\DESCHUTTES\\Decluttered_no_birds\\DES_04593aaaab.las', mode='w', header=h)
-# 
-# for p in data:
-#     pt = point.Point() 
-#     xL = p.x
-#     yL = p.y
-#     pt.x = p.x
-#     pt.y = p.y
-#     pt.z = p.z
-#     pt.intensity = p.intensity
-#     pt.flightline_edge = p.flightline_edge
-#     pt.scan_flags = p.scan_flags
-#     pt.number_of_returns = p.number_of_returns
-#     pt.classification = p.classification
-#     pt.scan_angle = p.scan_angle
-#     pt.user_data = p.user_data
-#     
-#     # compute pixel offset
-#     xOffset = int((xL - xOrigin) / pixelWidth)
-#     yOffset = int((yL - yOrigin) / pixelHeight)
-#     # loop through the bands
-#     for j in range(bands):
-#         band1 = img.GetRasterBand(1) # 1-based index
-#         # read data and add the value to the string
-#         RED = band1.ReadAsArray(xOffset, yOffset, 1, 1)
-# 
-#         band2 = img.GetRasterBand(2)
-#         GREEN = band1.ReadAsArray(xOffset, yOffset, 1, 1)
-# 
-#         band3 = img.GetRasterBand(3)
-#         BLUE = band1.ReadAsArray(xOffset, yOffset, 1, 1)
-#         r16RED = int(RED)* 256
-#         r16GREEN = int(GREEN) * 256
-#         r16BLUE = int(BLUE) * 256
-#         
-#         #print r16RED, r16GREEN, r16BLUE
-#   
-#     pt.color = color.Color(r16RED, r16GREEN, r16BLUE)
-#     newdata.write(pt)
-#     
-# newdata.close()
-# data.close()
+
