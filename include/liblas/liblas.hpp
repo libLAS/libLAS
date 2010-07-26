@@ -47,8 +47,13 @@
 
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
+
 #include <fstream>
 #include <string>
+
+#include <boost/shared_ptr.hpp>
+
+typedef boost::shared_ptr< liblas::Header > HeaderPtr;
 
 /// Namespace grouping all elements of libLAS public interface.
 /// \note
@@ -154,7 +159,7 @@ class ReaderI
 {
 public:
 
-    virtual Header const& ReadHeader() = 0;
+    virtual HeaderPtr ReadHeader() = 0;
     virtual Point const& ReadNextPoint(const Header& header) = 0;
     virtual Point const& ReadPointAt(std::size_t n, const Header& header) = 0;
     virtual void Seek(std::size_t n, const Header& header) = 0;

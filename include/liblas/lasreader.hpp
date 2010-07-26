@@ -172,7 +172,7 @@ private:
 
     const std::auto_ptr<ReaderI> m_pimpl;
 
-    Header* m_header;
+    HeaderPtr m_header;
     Point* m_point;
     Point* m_empty_point;
     

@@ -90,14 +90,14 @@ void ReaderImpl::Reset(liblas::Header const& header)
     } 
 }
 
-liblas::Header const& ReaderImpl::ReadHeader()
+HeaderPtr ReaderImpl::ReadHeader()
 {
     m_header_reader->read();
-    const liblas::Header& header = m_header_reader->GetHeader();
+    HeaderPtr h = HeaderPtr( new Header(m_header_reader->GetHeader()));
     
-    Reset(header);
+    Reset(*(h.get()));
     
-    return header;
+    return h;
 }
 
 liblas::Point const& ReaderImpl::ReadNextPoint(const liblas::Header& header)
@@ -171,28 +171,28 @@ CachedReaderImpl::CachedReaderImpl(std::istream& ifs , std::size_t size) :
 }
 
 
-liblas::Header const& CachedReaderImpl::ReadHeader()
+HeaderPtr CachedReaderImpl::ReadHeader()
 {
-    const liblas::Header& header = ReaderImpl::ReadHeader();
+    HeaderPtr hptr = ReaderImpl::ReadHeader();
     
     // If we were given no cache size, try to cache the whole thing
     if (m_cache_size == 0) {
-        m_cache_size = header.GetPointRecordsCount();
+        m_cache_size = hptr->GetPointRecordsCount();
     }
 
-    if (m_cache_size > header.GetPointRecordsCount()) {
-        m_cache_size = header.GetPointRecordsCount();
+    if (m_cache_size > hptr->GetPointRecordsCount()) {
+        m_cache_size = hptr->GetPointRecordsCount();
     }
     m_cache.resize(m_cache_size);
     
     // Mark all positions as uncached and build up the mask
     // to the size of the number of points in the file
-    for (uint32_t i = 0; i < header.GetPointRecordsCount(); ++i) {
+    for (uint32_t i = 0; i < hptr->GetPointRecordsCount(); ++i) {
         m_mask.push_back(0);
     }
 
     
-    return header;
+    return hptr;
 }
 
 void CachedReaderImpl::CacheData(liblas::uint32_t position, const liblas::Header& header) 

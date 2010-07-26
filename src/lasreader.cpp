@@ -58,7 +58,7 @@ namespace liblas
 
 Reader::Reader(std::istream& ifs) :
     m_pimpl(new detail::CachedReaderImpl(ifs,3)),
-    m_header(0),
+    m_header(HeaderPtr()),
     m_point(0),
     m_empty_point(new Point()),
     bCustomHeader(false),
@@ -71,7 +71,7 @@ Reader::Reader(std::istream& ifs) :
 
 Reader::Reader(ReaderI* reader) :
     m_pimpl(reader),
-    m_header(0),
+    m_header(HeaderPtr()),
     m_point(0),
     m_empty_point(new Point()),
     bCustomHeader(false),
@@ -84,7 +84,7 @@ Reader::Reader(ReaderI* reader) :
 
 Reader::Reader(std::istream& ifs, Header& header) :
     m_pimpl(new detail::CachedReaderImpl(ifs,3)),
-    m_header(new Header()),    
+    m_header(HeaderPtr( )),    
     m_point(0),
     m_empty_point(new Point()),
     bCustomHeader(true),
@@ -94,7 +94,7 @@ Reader::Reader(std::istream& ifs, Header& header) :
 {
     // if we have a custom header, create a slot for it and then copy 
     // the header we were given
-    *m_header = header;
+    m_header = HeaderPtr(new Header(header));
     Init();
 }
 
@@ -104,9 +104,9 @@ Reader::~Reader()
     // std::auto_ptr with incomplete type (Reader).
     delete m_empty_point;
     
-    if (m_header != 0) {
-        delete m_header;
-    }
+    // if (m_header != 0) {
+    //     delete m_header;
+    // }
 }
 
 Header const& Reader::GetHeader() const
@@ -251,7 +251,7 @@ void Reader::Init()
         custom_header = *m_header;
     }
 
-    m_header = new Header(m_pimpl->ReadHeader());
+    m_header = HeaderPtr(m_pimpl->ReadHeader());
 
         // throw std::runtime_error("public header block reading failure");
 

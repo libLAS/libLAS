@@ -63,7 +63,7 @@ public:
     ReaderImpl(std::istream& ifs);
     ~ReaderImpl();
 
-    liblas::Header const& ReadHeader();
+    HeaderPtr ReadHeader();
     liblas::Point const& ReadNextPoint(const liblas::Header& header);
     liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
     void Seek(std::size_t n, const liblas::Header& header);
@@ -102,7 +102,7 @@ public:
     CachedReaderImpl(std::istream& ifs, std::size_t cache_size);
     // ~CachedReaderImpl();
 
-    liblas::Header const& ReadHeader();
+    HeaderPtr ReadHeader();
     liblas::Point const& ReadNextPoint(const liblas::Header& header);
     liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
     // void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
