@@ -53,6 +53,9 @@
 #include <limits>
 #include <sstream>
 #include <stdexcept>
+#include <cmath>
+
+
 // boost
 #ifdef HAVE_BOOST
 #include <boost/concept_check.hpp>
@@ -77,6 +80,10 @@ using boost::ignore_unused_variable_warning;
 
 #endif // HAVE_BOOST
 
+// From http://stackoverflow.com/questions/485525/round-for-float-in-c
+inline double sround(double r) {
+    return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5);
+}
 
 
 /// Compile-time calculation size of array defined statically.
@@ -224,34 +231,34 @@ bool operator!=(Point<T> const& lhs, Point<T> const& rhs)
     return (!lhs.equal(rhs));
 }
 
-template <typename T>
-struct Extents
-{
-    Extents() {}
-    Extents(detail::Point<T> const& min, detail::Point<T> const& max)
-        : min(min), max(max)
-    {}
-
-    bool equal(Extents<T> const& other) const
-    {
-        return (min == other.min && max == other.max);
-    }
-
-    typename detail::Point<T> min;
-    typename detail::Point<T> max;
-};
-
-template <typename T>
-bool operator==(Extents<T> const& lhs, Extents<T> const& rhs)
-{
-    return lhs.equal(rhs);
-}
-
-template <typename T>
-bool operator!=(Extents<T> const& lhs, Extents<T> const& rhs)
-{
-    return (!lhs.equal(rhs));
-}
+// template <typename T>
+// struct Extents
+// {
+//     Extents() {}
+//     Extents(detail::Point<T> const& min, detail::Point<T> const& max)
+//         : min(min), max(max)
+//     {}
+// 
+//     bool equal(Extents<T> const& other) const
+//     {
+//         return (min == other.min && max == other.max);
+//     }
+// 
+//     typename detail::Point<T> min;
+//     typename detail::Point<T> max;
+// };
+// 
+// template <typename T>
+// bool operator==(Extents<T> const& lhs, Extents<T> const& rhs)
+// {
+//     return lhs.equal(rhs);
+// }
+// 
+// template <typename T>
+// bool operator!=(Extents<T> const& lhs, Extents<T> const& rhs)
+// {
+//     return (!lhs.equal(rhs));
+// }
 
 template <typename T>
 inline T generate_random_byte()

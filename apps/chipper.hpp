@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <liblas/lasreader.hpp>
+#include <liblas/detail/utility.hpp>
 
 namespace liblas
 {

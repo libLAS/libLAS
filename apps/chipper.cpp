@@ -148,7 +148,7 @@ void Chipper::Partition(uint32_t size)
     m_partitions.push_back(0);
     for (uint32_t i = 0; i < num_partitions; ++i) {
         total += partition_size;
-        m_partitions.push_back((uint32_t)round(total));
+        m_partitions.push_back((uint32_t)detail::sround(total));
     }
 }
 
