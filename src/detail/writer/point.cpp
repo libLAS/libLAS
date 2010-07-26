@@ -50,11 +50,6 @@
 
 #include <cmath>
 
-// From http://stackoverflow.com/questions/485525/round-for-float-in-c
-double sround(double r) {
-    return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5);
-}
-
 
 namespace liblas { namespace detail { namespace writer {
 
@@ -186,9 +181,9 @@ void Point::fill()
 {
     liblas::Point& p = m_point;
 
-    m_record.x = static_cast<int32_t>(sround(((p.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX())));
-    m_record.y = static_cast<int32_t>(sround(((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY())));
-    m_record.z = static_cast<int32_t>(sround(((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ())));
+    m_record.x = static_cast<int32_t>(detail::sround(((p.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX())));
+    m_record.y = static_cast<int32_t>(detail::sround(((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY())));
+    m_record.z = static_cast<int32_t>(detail::sround(((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ())));
         
     Classification::bitset_type clsflags(p.GetClassification());
     m_record.classification = static_cast<uint8_t>(clsflags.to_ulong());

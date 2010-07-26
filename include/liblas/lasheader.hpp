@@ -45,6 +45,7 @@
 
 #include <liblas/cstdint.hpp>
 #include <liblas/detail/utility.hpp>
+#include <liblas/lasbounds.hpp>
 #include <liblas/detail/fwd.hpp>
 
 #include <liblas/liblas.hpp>
@@ -325,12 +326,13 @@ public:
 
     Schema GetSchema() const;
     void SetSchema(const Schema& format);
-    
+
+    void SetExtent(Bounds& b);
+    const Bounds& GetExtent() const {return m_extent; } 
 private:
     
     typedef detail::Point<double> PointScales;
     typedef detail::Point<double> PointOffsets;
-    typedef detail::Extents<double> PointExtents;
 
     enum
     {
@@ -379,7 +381,7 @@ private:
     RecordsByReturnArray m_pointRecordsByReturn;
     PointScales m_scales;
     PointOffsets m_offsets;
-    PointExtents m_extents;
+    Bounds m_extent;
     std::vector<VariableRecord> m_vlrs;
     SpatialReference m_srs;
     Schema m_format;

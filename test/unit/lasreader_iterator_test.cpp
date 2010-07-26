@@ -379,11 +379,12 @@ namespace tut
         lasreader_iterator end;
 
         typedef liblas::detail::Point<double> point_t;
-        typedef liblas::detail::Extents<double> bbox_t;
+        typedef liblas::Bounds bbox_t;
 
         Header const& h = reader_.GetHeader();
-        bbox_t lasbbox(point_t(h.GetMinX(), h.GetMinY(), h.GetMinZ()),
-                       point_t(h.GetMaxX(), h.GetMaxY(), h.GetMaxZ()));
+        bbox_t lasbbox = h.GetExtent();
+        // bbox_t lasbbox(point_t(h.GetMinX(), h.GetMinY(), h.GetMinZ()),
+        //                point_t(h.GetMaxX(), h.GetMaxY(), h.GetMaxZ()));
 
 
         // I don't know why this is failing -- hobu

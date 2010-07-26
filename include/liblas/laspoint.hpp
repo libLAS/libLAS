@@ -46,7 +46,6 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasclassification.hpp>
-#include <liblas/lasheader.hpp>
 #include <liblas/lascolor.hpp>
 
 // std
@@ -60,6 +59,7 @@
 
 namespace liblas {
 
+    class Header; // forward declaration
 
 /// Point data record composed with X, Y, Z coordinates and attributes.
 class Point

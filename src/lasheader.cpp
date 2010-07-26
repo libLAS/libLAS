@@ -89,7 +89,7 @@ Header::Header(Header const& other) :
     m_pointRecordsCount(other.m_pointRecordsCount),
     m_scales(other.m_scales),
     m_offsets(other.m_offsets),
-    m_extents(other.m_extents),
+    m_extent(other.m_extent),
     m_srs(other.m_srs),
     m_format(other.m_format)
 {
@@ -146,7 +146,7 @@ Header& Header::operator=(Header const& rhs)
         std::vector<VariableRecord>(rhs.m_vlrs).swap(m_vlrs);
         m_scales = rhs.m_scales;
         m_offsets = rhs.m_offsets;
-        m_extents = rhs.m_extents;
+        m_extent = rhs.m_extent;
         m_srs = rhs.m_srs;
         m_format = rhs.m_format;
 
@@ -180,7 +180,7 @@ bool Header::operator==(Header const& other) const
     if (m_pointRecordsByReturn != other.m_pointRecordsByReturn) return false;
     if (m_scales != other.m_scales) return false;
     if (m_offsets != other.m_offsets) return false;
-    if (m_extents != other.m_extents) return false;
+    if (m_extent != other.m_extent) return false;
     
     return true;
 }
@@ -490,42 +490,47 @@ void Header::SetOffset(double x, double y, double z)
 
 double Header::GetMaxX() const
 {
-    return m_extents.max.x;
+    return m_extent.max(0);
 }
 
 double Header::GetMinX() const
 {
-    return m_extents.min.x;
+    return m_extent.min(0);
 }
 
 double Header::GetMaxY() const
 {
-    return m_extents.max.y;
+    return m_extent.max(1);
 }
 
 double Header::GetMinY() const
 {
-    return m_extents.min.y;
+    return m_extent.min(1);
 }
 
 double Header::GetMaxZ() const
 {
-    return m_extents.max.z;
+    return m_extent.max(2);
 }
 
 double Header::GetMinZ() const
 {
-    return m_extents.min.z;
+    return m_extent.min(2);
 }
 
 void Header::SetMax(double x, double y, double z)
 {
-    m_extents.max = detail::Point<double>(x, y, z);
+    // m_extent = Bounds(m_extent.min(0), m_extent.min(1), m_extent.max(0), m_extent.max(1), m_extent.min(2), m_extent.max(2));
+    m_extent = Bounds(m_extent.min(0), m_extent.min(1), x, y, m_extent.min(2), z);
 }
 
 void Header::SetMin(double x, double y, double z)
 {
-    m_extents.min = detail::Point<double>(x, y, z);
+    m_extent = Bounds(x, y, m_extent.max(0), m_extent.max(1), z, m_extent.max(2));
+}
+
+void Header::SetExtent(Bounds& b) {
+    m_extent = b;
 }
 
 void Header::AddVLR(VariableRecord const& v) 

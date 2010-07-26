@@ -54,6 +54,7 @@ class SpatialReference;
 class PointFormat;
 class Classification;
 class VariableRecord;
+class Bounds;
 
 namespace detail {
 

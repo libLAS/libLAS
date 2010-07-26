@@ -43,9 +43,8 @@
 #define LIBLAS_LASBOUNDS_HPP_INCLUDED
 
 #include <liblas/lasversion.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
 #include <liblas/detail/fwd.hpp>
+#include <liblas/laspoint.hpp>
 #include <liblas/liblas.hpp>
 
 #include <vector>
@@ -79,12 +78,24 @@ public:
     Bounds& operator=(Bounds const& rhs);
     
     double min(liblas::uint32_t i) const { return mins[i]; }
+    void min(liblas::uint32_t i, double v) { mins[i] = v; }
     double max(liblas::uint32_t i) const { return maxs[i]; }
+    void max(liblas::uint32_t i, double v) { maxs[i] = v; }
 
     bool equal(Bounds const& other) const;
     bool intersects2d(Bounds const& other) const;
     bool intersects3d(Bounds const& other) const;
-    
+
+    bool operator==(Bounds const& rhs)
+    {
+        return equal(rhs);
+    }
+
+    bool operator!=(Bounds const& rhs)
+    {
+        return (!equal(rhs));
+    }
+        
 private:
     Array mins;
     Array maxs;
@@ -93,14 +104,12 @@ private:
     
 };
 
-template <typename T>
-bool operator==(Bounds const& lhs, Bounds const& rhs)
+inline bool operator==(Bounds const& lhs, Bounds const& rhs)
 {
     return lhs.equal(rhs);
 }
 
-template <typename T>
-bool operator!=(Bounds const& lhs, Bounds const& rhs)
+inline bool operator!=(Bounds const& lhs, Bounds const& rhs)
 {
     return (!lhs.equal(rhs));
 }

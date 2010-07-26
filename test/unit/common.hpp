@@ -37,7 +37,7 @@ struct is_xy
 // Functor to calculate bounding box of a set of points
 struct bbox_calculator
 {
-    typedef liblas::detail::Extents<double> result_type;
+    typedef liblas::Bounds result_type;
 
     bbox_calculator() : empty(true) {}
 
@@ -48,24 +48,27 @@ struct bbox_calculator
         // Box initialization during first iteration only
         if (empty)
         {
-            bbox.min.x = bbox.max.x = p.GetX();
-            bbox.min.y = bbox.max.y = p.GetY();
-            bbox.min.z = bbox.max.z = p.GetZ();
+            bbox.min(0, p.GetX());
+            bbox.max(0, p.GetX());
+            bbox.min(1, p.GetY());
+            bbox.max(1, p.GetY());
+            bbox.min(2, p.GetZ());
+            bbox.max(2, p.GetZ());
             empty = false;
         }
 
         // Expand bounding box to include given point
-        bbox.min.x = std::min(bbox.min.x, p.GetX());
-        bbox.min.y = std::min(bbox.min.y, p.GetY());
-        bbox.min.z = std::min(bbox.min.z, p.GetZ());
-        bbox.max.x = std::max(bbox.max.x, p.GetX());
-        bbox.max.y = std::max(bbox.max.y, p.GetY());
-        bbox.max.z = std::max(bbox.max.z, p.GetZ());
+        bbox.min(0, std::min(bbox.min(0), p.GetX()));
+        bbox.min(1, std::min(bbox.min(1), p.GetY()));
+        bbox.min(2, std::min(bbox.min(2), p.GetZ()));
+        bbox.max(0, std::max(bbox.max(0), p.GetX()));
+        bbox.max(1, std::max(bbox.max(1), p.GetY()));
+        bbox.max(2, std::max(bbox.max(2), p.GetZ()));
     }
 
 
     bool empty;
-    liblas::detail::Extents<double> bbox;
+    liblas::Bounds bbox;
 };
 
 // Common test procedure for default constructed point data.

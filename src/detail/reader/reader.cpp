@@ -325,9 +325,8 @@ void CachedReaderImpl::Reset(liblas::Header const& header)
     typedef std::vector<uint8_t>::size_type size_type;
     size_type old_cache_start_position = m_cache_start_position;
     size_type header_size = static_cast<size_type>(header.GetPointRecordsCount());
-    size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
-
     size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position); 
+
     for (uint32_t i = 0; i < to_mark; ++i) {
 
         size_type const mark_pos = m_cache_start_position + i;
