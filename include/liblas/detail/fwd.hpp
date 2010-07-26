@@ -55,6 +55,10 @@ class PointFormat;
 class Classification;
 class VariableRecord;
 class Bounds;
+class TransformI;
+class FilterI;
+class ReaderI;
+class WriterI;
 
 namespace detail {
 
