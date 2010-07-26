@@ -51,7 +51,6 @@
 #include <vector>
 
 #include <boost/array.hpp>
-#include <boost/shared_ptr.hpp>
 
 namespace liblas
 {
@@ -70,6 +69,8 @@ public:
             double maxy, 
             double minz, 
             double maxz);
+    
+    Bounds( const Point& min, const Point& max);
 
     Bounds( double minx, 
             double miny, 
@@ -78,16 +79,32 @@ public:
     Bounds(Bounds const& other);
     Bounds& operator=(Bounds const& rhs);
     
-    double min(liblas::uint32_t i) const { return (*mins)[i]; }
-    double max(liblas::uint32_t i) const { return (*maxs)[i]; }
+    double min(liblas::uint32_t i) const { return mins[i]; }
+    double max(liblas::uint32_t i) const { return maxs[i]; }
+
+    bool equal(Bounds const& other) const;
+    bool intersects2d(Bounds const& other) const;
+    bool intersects3d(Bounds const& other) const;
     
 private:
-    ArrayPtr mins;
-    ArrayPtr maxs;
+    Array mins;
+    Array maxs;
     
     void verify();
     
 };
+
+template <typename T>
+bool operator==(Bounds const& lhs, Bounds const& rhs)
+{
+    return lhs.equal(rhs);
+}
+
+template <typename T>
+bool operator!=(Bounds const& lhs, Bounds const& rhs)
+{
+    return (!lhs.equal(rhs));
+}
 
 
 

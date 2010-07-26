@@ -49,11 +49,10 @@ namespace liblas {
 
 
 Bounds::Bounds()
-    : mins(ArrayPtr()), maxs(ArrayPtr())
 {
     for (int i = 0; i < 3; ++i) {
-        (*mins)[i] = 0;
-        (*maxs)[i] = 0;
+        mins[i] = 0;
+        maxs[i] = 0;
     }
 }
 
@@ -63,14 +62,27 @@ Bounds::Bounds( double minx,
                 double maxy, 
                 double minz, 
                 double maxz)
-    : mins(ArrayPtr()), maxs(ArrayPtr())
 {
-    (*mins)[0] = minx;
-    (*mins)[1] = miny;
-    (*mins)[2] = minz;
-    (*maxs)[0] = maxx;
-    (*maxs)[1] = maxy;
-    (*maxs)[2] = maxz;
+    mins[0] = minx;
+    mins[1] = miny;
+    mins[2] = minz;
+    maxs[0] = maxx;
+    maxs[1] = maxy;
+    maxs[2] = maxz;
+    
+#ifdef DEBUG
+    verify();
+#endif
+
+}
+Bounds::Bounds( const Point& min, const Point& max)
+{
+    mins[0] = min.GetX();
+    mins[1] = min.GetY();
+    mins[2] = min.GetZ();
+    maxs[0] = max.GetX();
+    maxs[1] = max.GetY();
+    maxs[2] = max.GetZ();
     
 #ifdef DEBUG
     verify();
@@ -82,14 +94,13 @@ Bounds::Bounds( double minx,
                 double miny, 
                 double maxx, 
                 double maxy)
-    : mins(ArrayPtr(new Array())), maxs(ArrayPtr(new Array()))
 {
-    (*mins)[0] = minx;
-    (*mins)[1] = miny;
-    (*mins)[2] = 0;
-    (*maxs)[0] = maxx;
-    (*maxs)[1] = maxy;
-    (*maxs)[2] = 0;
+    mins[0] = minx;
+    mins[1] = miny;
+    mins[2] = 0;
+    maxs[0] = maxx;
+    maxs[1] = maxy;
+    maxs[2] = 0;
     
 #ifdef DEBUG
     verify();
@@ -118,11 +129,11 @@ void Bounds::verify()
 
     for (uint32_t d = 0; d < 3; ++d)
     {
-        if ((*mins)[d] > (*maxs)[d])
+        if (min(d) > max(d) )
         {
             // check for infinitive region
-            if (!((*mins)[d] == std::numeric_limits<double>::max() ||
-                 (*maxs)[d] == -std::numeric_limits<double>::max() ))
+            if (!(min(d) == std::numeric_limits<double>::max() ||
+                 max(d) == -std::numeric_limits<double>::max() ))
             {
                 std::ostringstream msg; 
                 msg << "liblas::Bounds::verify: Minimum point at dimension " << d << 
@@ -135,4 +146,36 @@ void Bounds::verify()
 
 }
 
+
+bool Bounds::equal(Bounds const& other) const
+{
+    for (uint32_t i = 0; i < 3; i++) {
+        if (!(min(i) == other.min(i)) && !(max(i) == other.max(i))) 
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Bounds::intersects2d(Bounds const& other) const
+{
+
+    return ( ( other.min(0) < max(0) && other.min(0) > min(0) &&
+        other.min(1) < max(1) && other.min(1) > max(1) ) ||
+        ( other.max(0) < max(0) && other.max(0) > min(0) &&
+          other.min(1) < max(1) && other.min(1) > max(1) ) ||
+        ( other.min(0) < max(0) && other.min(0) > min(0) &&
+          other.max(1) < max(1) && other.max(1) > max(1) ) ||
+        ( other.max(0) < max(0) && other.max(0) > min(0) &&
+          other.max(1) < max(1) && other.max(1) > max(1) ) );
+
+}
+
+bool Bounds::intersects3d(Bounds const& other) const
+{
+    // not implemented
+    throw    std::runtime_error("not implemented");
+
+}
 } // namespace liblas
