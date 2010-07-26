@@ -134,7 +134,15 @@ endif(APPLE)
 ###############################################################################
 # Search for dependencies
 
-# libxml2 support - required, default=ON
+# Boost C++ Libraries support - required
+message(STATUS "Searching for Boost 1.38+ - done")
+find_package(Boost 1.38 REQUIRED)
+
+if(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+endif()
+
+# libxml2 support - optional, default=ON
 set(WITH_LIBXML2 FALSE CACHE BOOL "Choose if libxml2 support should be built ")
 
 if(WITH_LIBXML2)
@@ -146,24 +154,6 @@ if(WITH_LIBXML2)
         add_definitions(-DHAVE_LIBXML2=1)
     endif()
 endif()
-
-
-
-# Boost C++ Libraries support - optional, default=ON
-set(WITH_BOOST TRUE CACHE BOOL "Choose if Boost C++ Libraries support should be built (required)")
-
-# TODO: Decide minimum required version of Boost. Is 1.38 OK? --mloskot
-if(WITH_BOOST)
-    message(STATUS "Searching for Boost 1.38+ - done")
-
-    find_package(Boost 1.38 REQUIRED)
-
-    if(Boost_FOUND)
-      include_directories(${Boost_INCLUDE_DIRS})
-    endif()
-endif()
-
-
 
 # GeoTIFF support - optional, default=OFF
 set(WITH_GEOTIFF FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
@@ -334,3 +324,4 @@ endif()
 if (WIN32)
     include(BuildOSGeo4W)
 endif(WIN32)
+
