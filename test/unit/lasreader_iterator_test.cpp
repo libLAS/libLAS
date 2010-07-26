@@ -383,9 +383,6 @@ namespace tut
 
         Header const& h = reader_.GetHeader();
         bbox_t lasbbox = h.GetExtent();
-        // bbox_t lasbbox(point_t(h.GetMinX(), h.GetMinY(), h.GetMinZ()),
-        //                point_t(h.GetMaxX(), h.GetMaxY(), h.GetMaxZ()));
-
 
         // I don't know why this is failing -- hobu
 
