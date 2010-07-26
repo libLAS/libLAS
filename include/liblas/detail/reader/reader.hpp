@@ -64,13 +64,13 @@ public:
     ~ReaderImpl();
 
     HeaderPtr ReadHeader();
-    liblas::Point const& ReadNextPoint(const liblas::Header& header);
-    liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
-    void Seek(std::size_t n, const liblas::Header& header);
+    liblas::Point const& ReadNextPoint(HeaderPtr header);
+    liblas::Point const& ReadPointAt(std::size_t n, HeaderPtr header);
+    void Seek(std::size_t n, HeaderPtr header);
     
     std::istream& GetStream() const;
     
-    void Reset(liblas::Header const& header);
+    void Reset(HeaderPtr header);
 
 protected:
     void CreateTransform();
@@ -103,12 +103,12 @@ public:
     // ~CachedReaderImpl();
 
     HeaderPtr ReadHeader();
-    liblas::Point const& ReadNextPoint(const liblas::Header& header);
-    liblas::Point const& ReadPointAt(std::size_t n, const liblas::Header& header);
+    liblas::Point const& ReadNextPoint(HeaderPtr header);
+    liblas::Point const& ReadPointAt(std::size_t n, HeaderPtr header);
     // void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
 
-    void Seek(std::size_t n, const liblas::Header& header);
-    void Reset(liblas::Header const& header);
+    void Seek(std::size_t n, HeaderPtr header);
+    void Reset(HeaderPtr header);
 
 protected:
 
@@ -117,9 +117,9 @@ private:
     // Blocked copying operations, declared but not defined.
     CachedReaderImpl(CachedReaderImpl const& other);
     CachedReaderImpl& operator=(CachedReaderImpl const& rhs);
-    liblas::Point const& ReadCachedPoint(liblas::uint32_t position, const liblas::Header& header);
+    liblas::Point const& ReadCachedPoint(liblas::uint32_t position, HeaderPtr header);
     
-    void CacheData(liblas::uint32_t position, const liblas::Header& header);
+    void CacheData(liblas::uint32_t position, HeaderPtr header);
         
     std::vector<uint8_t>::size_type  m_cache_size;
     std::vector<uint8_t> m_mask;

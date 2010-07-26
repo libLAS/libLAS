@@ -48,7 +48,7 @@
 namespace liblas { namespace detail { namespace reader {
 
 Header::Header(std::istream& ifs) :
-    m_ifs(ifs)
+    m_ifs(ifs), m_header(HeaderPtr(new liblas::Header()))
 {
 }
 
@@ -79,11 +79,11 @@ void Header::read()
 
     // 1. File Signature
     read_n(fsig, m_ifs, 4);
-    m_header.SetFileSignature(fsig);
+    m_header->SetFileSignature(fsig);
 
     // 2. File Source ID
     read_n(n2, m_ifs, sizeof(n2));
-    m_header.SetFileSourceId(n2);
+    m_header->SetFileSourceId(n2);
 
     // 3. Reserved
     // This data must always contain Zeros.
@@ -99,46 +99,46 @@ void Header::read()
     read_n(d3, m_ifs, sizeof(d3));
     read_n(d4, m_ifs, sizeof(d4));
     liblas::guid g(d1, d2, d3, d4);
-    m_header.SetProjectId(g);
+    m_header->SetProjectId(g);
 
     // 8. Version major
     read_n(n1, m_ifs, sizeof(n1));
-    m_header.SetVersionMajor(n1);
+    m_header->SetVersionMajor(n1);
 
     // 9. Version minor
     read_n(n1, m_ifs, sizeof(n1));
-    m_header.SetVersionMinor(n1);
+    m_header->SetVersionMinor(n1);
 
     // 10. System ID
     read_n(buf, m_ifs, 32);
-    m_header.SetSystemId(buf);
+    m_header->SetSystemId(buf);
 
     // 11. Generating Software ID
     read_n(buf, m_ifs, 32);
-    m_header.SetSoftwareId(buf);
+    m_header->SetSoftwareId(buf);
 
     // 12. File Creation Day of Year
     read_n(n2, m_ifs, sizeof(n2));
-    m_header.SetCreationDOY(n2);
+    m_header->SetCreationDOY(n2);
 
     // 13. File Creation Year
     read_n(n2, m_ifs, sizeof(n2));
-    m_header.SetCreationYear(n2);
+    m_header->SetCreationYear(n2);
 
     // 14. Header Size
     // NOTE: Size of the stanard header block must always be 227 bytes
     read_n(n2, m_ifs, sizeof(n2));
-    m_header.SetHeaderSize(n2);
+    m_header->SetHeaderSize(n2);
 
     // 15. Offset to data
     read_n(n4, m_ifs, sizeof(n4));
     
-    if (n4 < m_header.GetHeaderSize())
+    if (n4 < m_header->GetHeaderSize())
     {
         std::ostringstream msg; 
         msg <<  "The offset to the start of point data, "
             << n4 << ", is smaller than the header size, "
-            << m_header.GetHeaderSize() << ".  This is "
+            << m_header->GetHeaderSize() << ".  This is "
             "an invalid condition and incorrectly written "
             "file.  We cannot ignore this error because we "
             "do not know where to begin seeking to read the "
@@ -147,37 +147,37 @@ void Header::read()
             "will be dealt with swiftly and humanely.";
         throw std::runtime_error(msg.str());
     }
-    m_header.SetDataOffset(n4);
+    m_header->SetDataOffset(n4);
 
     // 16. Number of variable length records
     read_n(n4, m_ifs, sizeof(n4));
-    m_header.SetRecordsCount(n4);
+    m_header->SetRecordsCount(n4);
 
     // 17. Point Data Format ID
     read_n(n1, m_ifs, sizeof(n1));
     if (n1 == liblas::ePointFormat0)
     {
-        m_header.SetDataFormatId(liblas::ePointFormat0);
+        m_header->SetDataFormatId(liblas::ePointFormat0);
     } 
     else if (n1 == liblas::ePointFormat1)
     {
-        m_header.SetDataFormatId(liblas::ePointFormat1);
+        m_header->SetDataFormatId(liblas::ePointFormat1);
     }
     else if (n1 == liblas::ePointFormat2)
     {
-        m_header.SetDataFormatId(liblas::ePointFormat2);
+        m_header->SetDataFormatId(liblas::ePointFormat2);
     }
     else if (n1 == liblas::ePointFormat3)
     {
-        m_header.SetDataFormatId(liblas::ePointFormat3);
+        m_header->SetDataFormatId(liblas::ePointFormat3);
     }
     else if (n1 == liblas::ePointFormat4)
     {
-        m_header.SetDataFormatId(liblas::ePointFormat4);
+        m_header->SetDataFormatId(liblas::ePointFormat4);
     }
     else if (n1 == liblas::ePointFormat5)
     {
-        m_header.SetDataFormatId(liblas::ePointFormat5);
+        m_header->SetDataFormatId(liblas::ePointFormat5);
     }
     else
     {
@@ -186,11 +186,11 @@ void Header::read()
     
     // 18. Point Data Record Length
     read_n(n2, m_ifs, sizeof(n2));
-    m_header.SetDataRecordLength(n2);
+    m_header->SetDataRecordLength(n2);
 
     // 19. Number of point records
     read_n(n4, m_ifs, sizeof(n4));
-    m_header.SetPointRecordsCount(n4);
+    m_header->SetPointRecordsCount(n4);
 
     // 20. Number of points by return
     std::vector<uint32_t>::size_type const srbyr = 5;
@@ -198,20 +198,20 @@ void Header::read()
     read_n(rbyr, m_ifs, sizeof(rbyr));
     for (std::size_t i = 0; i < srbyr; ++i)
     {
-        m_header.SetPointRecordsByReturnCount(i, rbyr[i]);
+        m_header->SetPointRecordsByReturnCount(i, rbyr[i]);
     }
 
     // 21-23. Scale factors
     read_n(x1, m_ifs, sizeof(x1));
     read_n(y1, m_ifs, sizeof(y1));
     read_n(z1, m_ifs, sizeof(z1));
-    m_header.SetScale(x1, y1, z1);
+    m_header->SetScale(x1, y1, z1);
 
     // 24-26. Offsets
     read_n(x1, m_ifs, sizeof(x1));
     read_n(y1, m_ifs, sizeof(y1));
     read_n(z1, m_ifs, sizeof(z1));
-    m_header.SetOffset(x1, y1, z1);
+    m_header->SetOffset(x1, y1, z1);
 
     // 27-28. Max/Min X
     read_n(x1, m_ifs, sizeof(x1));
@@ -225,8 +225,8 @@ void Header::read()
     read_n(z1, m_ifs, sizeof(z1));
     read_n(z2, m_ifs, sizeof(z2));
 
-    m_header.SetMax(x1, y1, z1);
-    m_header.SetMin(x2, y2, z2);
+    m_header->SetMax(x1, y1, z1);
+    m_header->SetMin(x2, y2, z2);
     
     
 
@@ -235,17 +235,17 @@ void Header::read()
     // write 1.0-style pad bytes off the end of their header but state that the
     // offset is actually 2 bytes back.  We need to set the dataoffset 
     // appropriately in those cases anyway. 
-    m_ifs.seekg(m_header.GetDataOffset());
+    m_ifs.seekg(m_header->GetDataOffset());
     
 
     if (HasLAS10PadSignature()) {
         std::streamsize const current_pos = m_ifs.tellg();
         m_ifs.seekg(current_pos + 2);
-        m_header.SetDataOffset(m_header.GetDataOffset() + 2);
+        m_header->SetDataOffset(m_header->GetDataOffset() + 2);
     }
      
     // only go read VLRs if we have them.
-    if (m_header.GetRecordsCount() > 0)
+    if (m_header->GetRecordsCount() > 0)
         readvlrs();
 
     // Check that the point count actually describes the number of points 
@@ -274,27 +274,27 @@ void Header::read()
     // std::ios::off_type size = end - beginning;
     //  
     // // Figure out how many points we have 
-    // std::ios::off_type count = (end - static_cast<std::ios::off_type>(m_header.GetDataOffset())) / 
-    //                              static_cast<std::ios::off_type>(m_header.GetDataRecordLength());
+    // std::ios::off_type count = (end - static_cast<std::ios::off_type>(m_header->GetDataOffset())) / 
+    //                              static_cast<std::ios::off_type>(m_header->GetDataRecordLength());
     // 
-    // if ( m_header.GetPointRecordsCount() != static_cast<uint32_t>(count)) {
+    // if ( m_header->GetPointRecordsCount() != static_cast<uint32_t>(count)) {
     //     std::ostringstream msg; 
     //     msg <<  "The number of points in the header that was set "
-    //             "by the software '" << m_header.GetSoftwareId() <<
+    //             "by the software '" << m_header->GetSoftwareId() <<
     //             "' does not match the actual number of points in the file "
     //             "as determined by subtracting the data offset (" 
-    //             <<m_header.GetDataOffset() << ") from the file length (" 
+    //             <<m_header->GetDataOffset() << ") from the file length (" 
     //             << size <<  ") and dividing by the point record length(" 
-    //             << m_header.GetDataRecordLength() << "). "
+    //             << m_header->GetDataRecordLength() << "). "
     //             " Actual number of points: " << count << 
     //             " Header-specified number of points: " 
-    //             << m_header.GetPointRecordsCount() ;
+    //             << m_header->GetPointRecordsCount() ;
     //     throw std::runtime_error(msg.str());
     //     
     // }
     
     // Seek to the data offset so we can start reading points
-    m_ifs.seekg(m_header.GetDataOffset());
+    m_ifs.seekg(m_header->GetDataOffset());
 
 }
 
@@ -348,14 +348,14 @@ void Header::readvlrs()
     VLRHeader vlrh = { 0 };
 
     // seek to the start of the VLRs
-    m_ifs.seekg(m_header.GetHeaderSize(), std::ios::beg);
+    m_ifs.seekg(m_header->GetHeaderSize(), std::ios::beg);
 
-    uint32_t count = m_header.GetRecordsCount();
+    uint32_t count = m_header->GetRecordsCount();
     
     // We set the VLR records count to 0 because AddVLR 
     // will ++ it each time we add a VLR instance to the 
     // header.
-    m_header.SetRecordsCount(0);
+    m_header->SetRecordsCount(0);
     for (uint32_t i = 0; i < count; ++i)
     {
         read_n(vlrh, m_ifs, sizeof(VLRHeader));
@@ -375,11 +375,11 @@ void Header::readvlrs()
         vlr.SetRecordId(vlrh.recordId);
         vlr.SetData(data);
 
-        m_header.AddVLR(vlr);
+        m_header->AddVLR(vlr);
     }
 
-    liblas::SpatialReference srs(m_header.GetVLRs());    
-    m_header.SetSRS(srs);
+    liblas::SpatialReference srs(m_header->GetVLRs());    
+    m_header->SetSRS(srs);
 
 }
 

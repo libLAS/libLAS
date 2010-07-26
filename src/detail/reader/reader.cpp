@@ -74,38 +74,38 @@ std::istream& ReaderImpl::GetStream() const
     return m_ifs;
 }
 
-void ReaderImpl::Reset(liblas::Header const& header)
+void ReaderImpl::Reset(HeaderPtr header)
 {
     m_ifs.clear();
     m_ifs.seekg(0);
 
     // Reset sizes and set internal cursor to the beginning of file.
     m_current = 0;
-    m_size = header.GetPointRecordsCount();
+    m_size = header->GetPointRecordsCount();
     
     // If we reset the reader, we're ready to start reading points, so 
     // we'll create a point reader at this point.
     if (m_point_reader == 0) {
-        m_point_reader = PointReaderPtr(new reader::Point(m_ifs, header));
+        m_point_reader = PointReaderPtr(new reader::Point(m_ifs, *(header.get())));
     } 
 }
 
 HeaderPtr ReaderImpl::ReadHeader()
 {
     m_header_reader->read();
-    HeaderPtr h = HeaderPtr( new Header(m_header_reader->GetHeader()));
+    HeaderPtr h = m_header_reader->GetHeader();
     
-    Reset(*(h.get()));
+    Reset(h);
     
     return h;
 }
 
-liblas::Point const& ReaderImpl::ReadNextPoint(const liblas::Header& header)
+liblas::Point const& ReaderImpl::ReadNextPoint(HeaderPtr header)
 {
     if (0 == m_current)
     {
         m_ifs.clear();
-        m_ifs.seekg(header.GetDataOffset(), std::ios::beg);
+        m_ifs.seekg(header->GetDataOffset(), std::ios::beg);
 
     }
 
@@ -124,7 +124,7 @@ liblas::Point const& ReaderImpl::ReadNextPoint(const liblas::Header& header)
 
 }
 
-liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n, const liblas::Header& header)
+liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n, HeaderPtr header)
 {
     if (m_size == n) {
         throw std::out_of_range("file has no more points to read, end of file reached");
@@ -135,7 +135,7 @@ liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n, const liblas::Header
         throw std::runtime_error(out);
     } 
 
-    std::streamsize pos = (static_cast<std::streamsize>(n) * header.GetDataRecordLength()) + header.GetDataOffset();    
+    std::streamsize pos = (static_cast<std::streamsize>(n) * header->GetDataRecordLength()) + header->GetDataOffset();    
 
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
@@ -146,7 +146,7 @@ liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n, const liblas::Header
     return point;
 }
 
-void ReaderImpl::Seek(std::size_t n, const liblas::Header& header)
+void ReaderImpl::Seek(std::size_t n, HeaderPtr header)
 {
     if (m_size == n) {
         throw std::out_of_range("file has no more points to read, end of file reached");
@@ -157,7 +157,7 @@ void ReaderImpl::Seek(std::size_t n, const liblas::Header& header)
         throw std::runtime_error(out);
     } 
 
-    std::streamsize pos = (static_cast<std::streamsize>(n) * header.GetDataRecordLength()) + header.GetDataOffset();    
+    std::streamsize pos = (static_cast<std::streamsize>(n) * header->GetDataRecordLength()) + header->GetDataOffset();    
 
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
@@ -195,12 +195,12 @@ HeaderPtr CachedReaderImpl::ReadHeader()
     return hptr;
 }
 
-void CachedReaderImpl::CacheData(liblas::uint32_t position, const liblas::Header& header) 
+void CachedReaderImpl::CacheData(liblas::uint32_t position, HeaderPtr header) 
 {
     std::vector<uint8_t>::size_type old_cache_start_position = m_cache_start_position;
     m_cache_start_position = position;
 
-    std::vector<uint8_t>::size_type header_size = static_cast<std::vector<uint8_t>::size_type>(header.GetPointRecordsCount());
+    std::vector<uint8_t>::size_type header_size = static_cast<std::vector<uint8_t>::size_type>(header->GetPointRecordsCount());
     std::vector<uint8_t>::size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
 
     std::vector<uint8_t>::size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position);
@@ -230,7 +230,7 @@ void CachedReaderImpl::CacheData(liblas::uint32_t position, const liblas::Header
 
 }
 
-liblas::Point const& CachedReaderImpl::ReadCachedPoint(liblas::uint32_t position, const liblas::Header& header) {
+liblas::Point const& CachedReaderImpl::ReadCachedPoint(liblas::uint32_t position, HeaderPtr header) {
     
     int32_t cache_position = position - m_cache_start_position ;
 
@@ -286,7 +286,7 @@ liblas::Point const& CachedReaderImpl::ReadCachedPoint(liblas::uint32_t position
     
 }
 
-liblas::Point const& CachedReaderImpl::ReadNextPoint(const liblas::Header& header)
+liblas::Point const& CachedReaderImpl::ReadNextPoint(HeaderPtr header)
 {
     if (m_cache_read_position == m_size ){
         throw std::out_of_range("file has no more points to read, end of file reached");
@@ -297,7 +297,7 @@ liblas::Point const& CachedReaderImpl::ReadNextPoint(const liblas::Header& heade
     return point;
 }
 
-liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, const liblas::Header& header)
+liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, HeaderPtr header)
 {
 
     if (n >= m_size ){
@@ -317,14 +317,14 @@ liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, const liblas::
     return point;
 }
 
-void CachedReaderImpl::Reset(liblas::Header const& header)
+void CachedReaderImpl::Reset(HeaderPtr header)
 {
     
     if (m_mask.empty()) return;
 
     typedef std::vector<uint8_t>::size_type size_type;
     size_type old_cache_start_position = m_cache_start_position;
-    size_type header_size = static_cast<size_type>(header.GetPointRecordsCount());
+    size_type header_size = static_cast<size_type>(header->GetPointRecordsCount());
     size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position); 
 
     for (uint32_t i = 0; i < to_mark; ++i) {
@@ -343,7 +343,7 @@ void CachedReaderImpl::Reset(liblas::Header const& header)
 
 }
 
-void CachedReaderImpl::Seek(std::size_t n, const liblas::Header& header)
+void CachedReaderImpl::Seek(std::size_t n, HeaderPtr header)
 {
 
    if (n < 1) {

@@ -59,11 +59,7 @@
 #include <vector>
 #include <cstddef>
 
-#include <boost/shared_ptr.hpp>
-
 namespace liblas {
-
-typedef boost::shared_ptr< liblas::TransformI > TransformPtr;
 
 
 /// Defines public interface to LAS reader implementation.
@@ -174,7 +170,7 @@ private:
 
     HeaderPtr m_header;
     Point* m_point;
-    Point* m_empty_point;
+    PointPtr m_empty_point;
     
     
     // Set if the user provides a header to override the header as 

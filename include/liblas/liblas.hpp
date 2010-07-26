@@ -54,6 +54,8 @@
 #include <boost/shared_ptr.hpp>
 
 typedef boost::shared_ptr< liblas::Header > HeaderPtr;
+typedef boost::shared_ptr< liblas::Point > PointPtr;
+typedef boost::shared_ptr< liblas::TransformI > TransformPtr;
 
 /// Namespace grouping all elements of libLAS public interface.
 /// \note
@@ -160,11 +162,11 @@ class ReaderI
 public:
 
     virtual HeaderPtr ReadHeader() = 0;
-    virtual Point const& ReadNextPoint(const Header& header) = 0;
-    virtual Point const& ReadPointAt(std::size_t n, const Header& header) = 0;
-    virtual void Seek(std::size_t n, const Header& header) = 0;
+    virtual Point const& ReadNextPoint(HeaderPtr header) = 0;
+    virtual Point const& ReadPointAt(std::size_t n, HeaderPtr header) = 0;
+    virtual void Seek(std::size_t n, HeaderPtr header) = 0;
     
-    virtual void Reset(const Header& header) = 0;
+    virtual void Reset(HeaderPtr header) = 0;
     
     virtual std::istream& GetStream() const = 0;
     

@@ -60,7 +60,7 @@ Reader::Reader(std::istream& ifs) :
     m_pimpl(new detail::CachedReaderImpl(ifs,3)),
     m_header(HeaderPtr()),
     m_point(0),
-    m_empty_point(new Point()),
+    m_empty_point(PointPtr(new Point())),
     bCustomHeader(false),
     m_filters(0),
     m_transforms(0),
@@ -73,7 +73,7 @@ Reader::Reader(ReaderI* reader) :
     m_pimpl(reader),
     m_header(HeaderPtr()),
     m_point(0),
-    m_empty_point(new Point()),
+    m_empty_point(PointPtr(new Point())),
     bCustomHeader(false),
     m_filters(0),
     m_transforms(0),
@@ -86,7 +86,7 @@ Reader::Reader(std::istream& ifs, Header& header) :
     m_pimpl(new detail::CachedReaderImpl(ifs,3)),
     m_header(HeaderPtr( )),    
     m_point(0),
-    m_empty_point(new Point()),
+    m_empty_point(PointPtr(new Point())),
     bCustomHeader(true),
     m_filters(0),
     m_transforms(0),
@@ -102,7 +102,7 @@ Reader::~Reader()
 {
     // empty, but required so we can implement PIMPL using
     // std::auto_ptr with incomplete type (Reader).
-    delete m_empty_point;
+    // delete m_empty_point;
     
     // if (m_header != 0) {
     //     delete m_header;
@@ -135,7 +135,7 @@ bool Reader::ReadNextPoint()
     }
     
     try {
-        m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(*m_header)));
+        m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
         if (bHaveFilters) {
         if (m_filters->size() != 0) {
             // We have filters, filter this point.  All filters must 
@@ -192,7 +192,7 @@ bool Reader::ReadPointAt(std::size_t n)
     }
     
     try {
-        m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, *m_header)));
+        m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
         if (bHaveTransforms) {
         if (m_transforms->size() != 0) {
 
@@ -214,7 +214,7 @@ bool Reader::ReadPointAt(std::size_t n)
 bool Reader::seek(std::size_t n)
 {
     try {
-        m_pimpl->Seek(n, *m_header);
+        m_pimpl->Seek(n, m_header);
         return true;
     } catch (std::out_of_range) {
         m_point = 0;
@@ -255,7 +255,7 @@ void Reader::Init()
 
         // throw std::runtime_error("public header block reading failure");
 
-    m_pimpl->Reset(*m_header);
+    m_pimpl->Reset(m_header);
     
     if (bCustomHeader) {
         custom_header.SetDataOffset(m_header->GetDataOffset());
@@ -268,7 +268,7 @@ void Reader::Init()
     // a point, and it will ensure they get something valid.  We just 
     // keep it around until the reader closes down and then deletes.  
     // 
-    m_point = m_empty_point;
+    m_point = m_empty_point.get();
     
     // Copy our input SRS.  If the user issues SetInputSRS, it will 
     // be overwritten
@@ -304,7 +304,7 @@ bool Reader::SetInputSRS(const SpatialReference& srs)
 bool Reader::SetOutputSRS(const SpatialReference& srs)
 {
     m_out_srs = srs;
-    m_pimpl->Reset(*m_header);
+    m_pimpl->Reset(m_header);
 
     // Check the very first transform and see if it is 
     // the reprojection transform.  If it is, we're going to 
