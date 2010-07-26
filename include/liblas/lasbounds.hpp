@@ -56,7 +56,6 @@ namespace liblas
 {
 
 typedef boost::array <double, 3>  Array;
-typedef boost::shared_ptr< Array > ArrayPtr;
 
 class Bounds
 {
