@@ -216,21 +216,6 @@ if(WITH_GDAL)
     endif()
 endif()
 
-# Spatial Index support - optional, default=OFF
-set(WITH_SPATIALINDEX FALSE CACHE BOOL "Choose if SpatialIndex support should be built")
-
-if(WITH_SPATIALINDEX)
-    find_package(SpatialIndex 1.4.0)
-
-    if(SPATIALINDEX_FOUND)
-        include_directories(${SPATIALINDEX_INCLUDE_DIR})
-        if (IS_DIRECTORY ${SPATIALINDEX_INCLUDE_DIR}/spatialindex)
-            include_directories(${SPATIALINDEX_INCLUDE_DIR}/spatialindex)
-        endif()
-        add_definitions(-DHAVE_SPATIALINDEX=1)
-    endif()
-endif()
-
 # Oracle support - optional, default=OFF
 set(WITH_ORACLE FALSE CACHE BOOL "Choose if Oracle support should be built")
 
