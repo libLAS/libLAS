@@ -55,7 +55,7 @@ void Point::setup()
 }
 
 Point::Point(std::istream& ifs, const liblas::Header& header) :
-    m_ifs(ifs), m_header(header), m_point(PointPtr(new liblas::Point())), m_format(header.GetSchema())
+    m_ifs(ifs), m_header(header), m_point(new liblas::Point()), m_format(header.GetSchema())
 {
     setup();
 }
