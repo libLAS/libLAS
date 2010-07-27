@@ -92,3 +92,5 @@ doc/api/html
 Testing/
 README.txt
 osgeo4w/
+test/data/Autzen_Stadium/
+DartConfiguration.tcl
