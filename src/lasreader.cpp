@@ -135,7 +135,7 @@ bool Reader::ReadNextPoint()
     }
     
     try {
-        m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
+        m_point = m_pimpl->ReadNextPoint(m_header).get();
         if (bHaveFilters) {
         if (m_filters->size() != 0) {
             // We have filters, filter this point.  All filters must 

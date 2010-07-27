@@ -162,7 +162,7 @@ class ReaderI
 public:
 
     virtual HeaderPtr ReadHeader() = 0;
-    virtual Point const& ReadNextPoint(HeaderPtr header) = 0;
+    virtual PointPtr ReadNextPoint(HeaderPtr header) = 0;
     virtual Point const& ReadPointAt(std::size_t n, HeaderPtr header) = 0;
     virtual void Seek(std::size_t n, HeaderPtr header) = 0;
     

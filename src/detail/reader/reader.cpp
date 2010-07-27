@@ -100,7 +100,7 @@ HeaderPtr ReaderImpl::ReadHeader()
     return h;
 }
 
-liblas::Point const& ReaderImpl::ReadNextPoint(HeaderPtr header)
+PointPtr ReaderImpl::ReadNextPoint(HeaderPtr header)
 {
     if (0 == m_current)
     {
@@ -112,9 +112,9 @@ liblas::Point const& ReaderImpl::ReadNextPoint(HeaderPtr header)
     if (m_current < m_size)
     {
         m_point_reader->read();
-        const liblas::Point& point = m_point_reader->GetPoint();
+        PointPtr ptr(new liblas::Point(m_point_reader->GetPoint()));
         ++m_current;
-        return point;
+        return ptr;
 
     } else if (m_current == m_size ){
         throw std::out_of_range("file has no more points to read, end of file reached");
@@ -230,7 +230,7 @@ void CachedReaderImpl::CacheData(liblas::uint32_t position, HeaderPtr header)
 
 }
 
-liblas::Point const& CachedReaderImpl::ReadCachedPoint(liblas::uint32_t position, HeaderPtr header) {
+PointPtr CachedReaderImpl::ReadCachedPoint(liblas::uint32_t position, HeaderPtr header) {
     
     int32_t cache_position = position - m_cache_start_position ;
 
@@ -286,15 +286,15 @@ liblas::Point const& CachedReaderImpl::ReadCachedPoint(liblas::uint32_t position
     
 }
 
-liblas::Point const& CachedReaderImpl::ReadNextPoint(HeaderPtr header)
+PointPtr CachedReaderImpl::ReadNextPoint(HeaderPtr header)
 {
     if (m_cache_read_position == m_size ){
         throw std::out_of_range("file has no more points to read, end of file reached");
     }
     
-    liblas::Point const& point = ReadCachedPoint(m_cache_read_position, header);
+    PointPtr ptr = ReadCachedPoint(m_cache_read_position, header);
     ++m_cache_read_position;
-    return point;
+    return ptr;
 }
 
 liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, HeaderPtr header)
@@ -312,9 +312,9 @@ liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, HeaderPtr head
         throw std::runtime_error(out);
     }
 
-    liblas::Point const& point = ReadCachedPoint(n, header);
+    PointPtr ptr = ReadCachedPoint(n, header);
     m_cache_read_position = n;
-    return point;
+    return *ptr;
 }
 
 void CachedReaderImpl::Reset(HeaderPtr header)
