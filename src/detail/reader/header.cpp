@@ -192,13 +192,25 @@ void Header::read()
     m_header->SetPointRecordsCount(n4);
 
     // 20. Number of points by return
-    std::vector<uint32_t>::size_type const srbyr = 5;
-    uint32_t rbyr[srbyr] = { 0 };
-    read_n(rbyr, m_ifs, sizeof(rbyr));
-    for (std::size_t i = 0; i < srbyr; ++i)
-    {
-        m_header->SetPointRecordsByReturnCount(i, rbyr[i]);
+    // The committee in its infinite stupidity decided to increase the 
+    // size of this array at 1.3.  Yay for complex code.
+    std::vector<uint32_t>::size_type  return_count_length;
+    if (m_header->GetVersionMinor() > 2) {
+        return_count_length = 7;
+    } else {
+        return_count_length = 5;
     }
+
+    uint32_t* point_counts = new uint32_t[return_count_length];
+    for (uint32_t i = 0; i < return_count_length; ++i) {
+        point_counts[i] = 0;
+    }
+    read_n(point_counts, m_ifs, return_count_length*sizeof(uint32_t));
+    for (std::size_t i = 0; i < return_count_length; ++i)
+    {
+        m_header->SetPointRecordsByReturnCount(i, point_counts[i]);
+    }  
+    delete point_counts;
 
     // 21-23. Scale factors
     read_n(x1, m_ifs, sizeof(x1));

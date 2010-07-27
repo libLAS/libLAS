@@ -338,7 +338,7 @@ private:
     {
         eDataSignatureSize = 2,
         eFileSignatureSize = 4,
-        ePointsByReturnSize = 5,
+        ePointsByReturnSize = 7,
         eProjectId4Size = 8,
         eSystemIdSize = 32,
         eSoftwareIdSize = 32,
