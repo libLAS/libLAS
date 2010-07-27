@@ -55,7 +55,7 @@ void Point::setup()
 }
 
 Point::Point(std::istream& ifs, const liblas::Header& header) :
-    m_ifs(ifs), m_header(header), m_point(liblas::Point()), m_format(header.GetSchema())
+    m_ifs(ifs), m_header(header), m_point(PointPtr(new liblas::Point())), m_format(header.GetSchema())
 {
     setup();
 }
@@ -105,13 +105,13 @@ void Point::read()
 
     fill(record);
     // Reader::FillPoint(record, m_point, m_header);
-    m_point.SetCoordinates(m_header, m_point.GetX(), m_point.GetY(), m_point.GetZ());
+    m_point->SetCoordinates(m_header, m_point->GetX(), m_point->GetY(), m_point->GetZ());
 
     if (m_format.HasTime()) 
     {
 
         detail::read_n(gpst, m_ifs, sizeof(double));
-        m_point.SetTime(gpst);
+        m_point->SetTime(gpst);
         bytesread += sizeof(double);
         
         if (m_format.HasColor()) 
@@ -121,7 +121,7 @@ void Point::read()
             detail::read_n(blue, m_ifs, sizeof(uint16_t));
 
             liblas::Color color(red, green, blue);
-            m_point.SetColor(color);
+            m_point->SetColor(color);
             
             bytesread += 3 * sizeof(uint16_t);
         }
@@ -133,7 +133,7 @@ void Point::read()
             detail::read_n(blue, m_ifs, sizeof(uint16_t));
 
             liblas::Color color(red, green, blue);
-            m_point.SetColor(color);
+            m_point->SetColor(color);
             
             bytesread += 3 * sizeof(uint16_t);
         }        
@@ -149,7 +149,7 @@ void Point::read()
 
         detail::read_n(data.front(), m_ifs, bytesleft);
         
-        m_point.SetExtraData(data); 
+        m_point->SetExtraData(data); 
         
         bytesread = bytesread + bytesleft;
 
@@ -165,22 +165,22 @@ void Point::read()
         
     }
     
-    m_point.SetHeader(m_header);
+    m_point->SetHeader(m_header);
 }
 
 
 void Point::fill(PointRecord& record) 
 {
 
-    m_point.SetX(record.x);
-    m_point.SetY(record.y);
-    m_point.SetZ(record.z);
+    m_point->SetX(record.x);
+    m_point->SetY(record.y);
+    m_point->SetZ(record.z);
 
-    m_point.SetIntensity(record.intensity);
-    m_point.SetScanFlags(record.flags);
-    m_point.SetClassification((record.classification));
-    m_point.SetScanAngleRank(record.scan_angle_rank);
-    m_point.SetUserData(record.user_data);
-    m_point.SetPointSourceID(record.point_source_id);
+    m_point->SetIntensity(record.intensity);
+    m_point->SetScanFlags(record.flags);
+    m_point->SetClassification((record.classification));
+    m_point->SetScanAngleRank(record.scan_angle_rank);
+    m_point->SetUserData(record.user_data);
+    m_point->SetPointSourceID(record.point_source_id);
 }
 }}} // namespace liblas::detail::reader
