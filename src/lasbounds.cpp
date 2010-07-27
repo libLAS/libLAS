@@ -174,6 +174,7 @@ bool Bounds::intersects2d(Bounds const& other) const
 
 bool Bounds::intersects3d(Bounds const& other) const
 {
+    detail::ignore_unused_variable_warning(other);
     // not implemented
     throw    std::runtime_error("not implemented");
 

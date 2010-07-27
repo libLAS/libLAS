@@ -48,13 +48,12 @@
 namespace liblas { namespace detail { namespace reader {
 
 Header::Header(std::istream& ifs) :
-    m_ifs(ifs), m_header(HeaderPtr(new liblas::Header()))
+    m_ifs(ifs), m_header(new liblas::Header())
 {
 }
 
 Header::~Header()
 {
-
 }
 
 
