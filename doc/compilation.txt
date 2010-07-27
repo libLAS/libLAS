@@ -56,6 +56,13 @@ following compilers are known to work:
 * GCC 4.2
 * LLVM 4.2
 
+`Boost`_
+------------------------------------------------------------------------------
+
+`Boost`_ is required to build libLAS 1.6.  Set ``BOOST_INCLUDEDIR`` if 
+cmake cannot find it in a default location.
+
+
 .. _optional_libraries:
 
 Optional libraries
@@ -582,3 +589,4 @@ substituting accordingly, to values that match your system layout.
 .. _`Autoconf`: http://www.gnu.org/software/autoconf/
 .. _`LLVM`: http://llvm.org/
 .. _`OSGeo4W`: http://trac.osgeo.org/osgeo4w/
+.. _`Boost`: http://www.boost.org/

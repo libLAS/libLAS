@@ -16,3 +16,4 @@
    txt2las
    las2oci
    lasblock
+   ts2las
