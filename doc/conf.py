@@ -28,7 +28,7 @@ extensions = [  'sphinx.ext.autodoc',
                 'sphinx.ext.todo', 
                 'sphinx.ext.ifconfig', 
                 'rst2pdf.pdfbuilder', 
-                'breathe']
+                ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
