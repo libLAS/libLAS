@@ -102,14 +102,30 @@ Point& Point::operator=(Point const& rhs)
     return *this;
 }
 
-void Point::SetCoordinates(Header const& header, double x, double y, double z)
-{
-    double const cx = (x * header.GetScaleX()) + header.GetOffsetX();
-    double const cy = (y * header.GetScaleY()) + header.GetOffsetY();
-    double const cz = (z * header.GetScaleZ()) + header.GetOffsetZ();
+// void Point::SetCoordinates(Header const& header, double x, double y, double z)
+// {
+//     double const cx = (x * header.GetScaleX()) + header.GetOffsetX();
+//     double const cy = (y * header.GetScaleY()) + header.GetOffsetY();
+//     double const cz = (z * header.GetScaleZ()) + header.GetOffsetZ();
+// 
+//     SetCoordinates(cx, cy, cz);
+// }
 
-    SetCoordinates(cx, cy, cz);
+void Point::SetCoordinates(double const& x, double const& y, double const& z)
+{
+    if (m_hdr.get() != 0 ) {
+        m_coords[0] = (x * m_hdr->GetScaleX()) + m_hdr->GetOffsetX();
+        m_coords[1] = (y * m_hdr->GetScaleY()) + m_hdr->GetOffsetY();
+        m_coords[2] = (z * m_hdr->GetScaleZ()) + m_hdr->GetOffsetZ();
+        
+    } else {
+        m_coords[0] = x;
+        m_coords[1] = y;
+        m_coords[2] = z;
+    }
+
 }
+
 
 void Point::SetReturnNumber(uint16_t const& num)
 {

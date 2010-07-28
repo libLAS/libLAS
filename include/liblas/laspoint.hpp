@@ -113,7 +113,7 @@ public:
     double GetY() const;
     double GetZ() const;
     void SetCoordinates(double const& x, double const& y, double const& z);
-    void SetCoordinates(Header const& header, double x, double y, double z);
+    // void SetCoordinates(Header const& header, double x, double y, double z);
     
     void SetX(double const& value);
     void SetY(double const& value);
@@ -193,7 +193,7 @@ public:
     bool Validate() const;
     bool IsValid() const;
     
-    std::vector<liblas::uint8_t> const& GetExtraData() const {return m_extra_data; }
+    std::vector<liblas::uint8_t> const& GetExtraData() const { return m_extra_data; }
     void SetExtraData(std::vector<uint8_t> const& v) { m_extra_data = v;}
 
     std::vector<liblas::uint8_t> const& GetData() const {return m_format_data; }
@@ -239,12 +239,12 @@ inline bool operator!=(Point const& lhs, Point const& rhs)
     return (!(lhs == rhs));
 }
 
-inline void Point::SetCoordinates(double const& x, double const& y, double const& z)
-{
-    m_coords[0] = x;
-    m_coords[1] = y;
-    m_coords[2] = z;
-}
+// inline void Point::SetCoordinates(double const& x, double const& y, double const& z)
+// {
+//     m_coords[0] = x;
+//     m_coords[1] = y;
+//     m_coords[2] = z;
+// }
 
 inline double Point::GetX() const
 {
@@ -359,7 +359,6 @@ inline void Point::SetColor(Color const& value)
 {
     m_color = value;
 }
-
 
 inline double& Point::operator[](std::size_t const& n)
 {

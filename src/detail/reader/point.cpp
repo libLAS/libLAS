@@ -55,7 +55,7 @@ void Point::setup()
 }
 
 Point::Point(std::istream& ifs, HeaderPtr header) :
-    m_ifs(ifs), m_header(header), m_point(new liblas::Point()), m_format(header->GetSchema())
+    m_ifs(ifs), m_header(header), m_point(new liblas::Point())
 {
     setup();
 }
@@ -85,14 +85,18 @@ void Point::read()
     // raw byte data necessary to fill out the point format    
     std::vector<uint8_t> format_data; 
     
-    format_data.resize(m_format.GetBaseByteSize());
+    format_data.resize(m_header->GetSchema().GetBaseByteSize());
     
     detail::PointRecord record;
     // TODO: Replace with compile-time assert
 
     assert(liblas::ePointSize0 == sizeof(record));
 
-    
+    // Set the header for the point early because 
+    // SetCoordinates will use it later to scale the 
+    // point
+    m_point->SetHeader(m_header);
+        
     try
     {
         detail::read_n(record, m_ifs, sizeof(PointRecord));
@@ -105,16 +109,16 @@ void Point::read()
 
     fill(record);
     // Reader::FillPoint(record, m_point, m_header);
-    m_point->SetCoordinates(*m_header, m_point->GetX(), m_point->GetY(), m_point->GetZ());
+    m_point->SetCoordinates(m_point->GetX(), m_point->GetY(), m_point->GetZ());
 
-    if (m_format.HasTime()) 
+    if (m_header->GetSchema().HasTime()) 
     {
 
         detail::read_n(gpst, m_ifs, sizeof(double));
         m_point->SetTime(gpst);
         bytesread += sizeof(double);
         
-        if (m_format.HasColor()) 
+        if (m_header->GetSchema().HasColor()) 
         {
             detail::read_n(red, m_ifs, sizeof(uint16_t));
             detail::read_n(green, m_ifs, sizeof(uint16_t));
@@ -126,7 +130,7 @@ void Point::read()
             bytesread += 3 * sizeof(uint16_t);
         }
     } else {
-        if (m_format.HasColor()) 
+        if (m_header->GetSchema().HasColor()) 
         {
             detail::read_n(red, m_ifs, sizeof(uint16_t));
             detail::read_n(green, m_ifs, sizeof(uint16_t));
@@ -140,7 +144,7 @@ void Point::read()
     }
     
 
-    if (m_format.GetBaseByteSize() != m_format.GetByteSize())
+    if (m_header->GetSchema().GetBaseByteSize() != m_header->GetSchema().GetByteSize())
     {
         std::size_t bytesleft = m_header->GetDataRecordLength() - bytesread;
 
@@ -155,17 +159,17 @@ void Point::read()
 
     }
     
-    if (bytesread != m_format.GetByteSize()) {
+    if (bytesread != m_header->GetSchema().GetByteSize()) {
         std::ostringstream msg; 
         msg <<  "The number of bytes that were read ("<< bytesread <<") does not " 
                 "match the number of bytes the point's format "
                 "says it should have (" << 
-                m_format.GetByteSize() << ")";
+                m_header->GetSchema().GetByteSize() << ")";
         throw std::runtime_error(msg.str());
         
     }
     
-    m_point->SetHeader(m_header);
+
 }
 
 
