@@ -49,10 +49,19 @@
   >>> f.close()
   >>> f.open()
 
+
+Test Reading different locations and proper internal overwriting of the file
+
   >>> f2 = file.File('../test/data/TO_core_last_clip.las')
   >>> p2 = f2.read(6)
   >>> p2.x, p2.y, p2.z
   (630320.95999999996, 4834500.0, 55.009999999999998)
+
+  >>> p2 == f2.read(3)
+  False
+  >>> p2.x == f2.read(6).x
+  True
+
 
   >>> f2.close()
   >>> del f2
@@ -305,7 +314,7 @@ the base point format, allowing you to store extra data.
   >>> h6.data_record_length
   52
 
-
+  
 f.size - f.base_size will be 16 bytes of space (h6.data_record_length - 34 bytes for point format 3)
 
 >>> import ctypes
