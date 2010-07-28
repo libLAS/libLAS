@@ -86,7 +86,7 @@ void ReaderImpl::Reset(HeaderPtr header)
     // If we reset the reader, we're ready to start reading points, so 
     // we'll create a point reader at this point.
     if (m_point_reader == 0) {
-        m_point_reader = PointReaderPtr(new reader::Point(m_ifs, *(header.get())));
+        m_point_reader = PointReaderPtr(new reader::Point(m_ifs, header));
     } 
 }
 

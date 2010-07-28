@@ -60,7 +60,7 @@ class Point
 {
 public:
 
-    Point(std::istream& ifs, const liblas::Header& header);
+    Point(std::istream& ifs, HeaderPtr header);
     virtual ~Point();
 
     std::istream& GetStream() const;
@@ -80,7 +80,7 @@ private:
     Point& operator=(Point const& rhs);
     
     std::istream& m_ifs;
-    const liblas::Header& m_header;
+    HeaderPtr m_header;
     PointPtr m_point;
     
     Schema m_format;

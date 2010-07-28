@@ -54,8 +54,8 @@ void Point::setup()
 
 }
 
-Point::Point(std::istream& ifs, const liblas::Header& header) :
-    m_ifs(ifs), m_header(header), m_point(new liblas::Point()), m_format(header.GetSchema())
+Point::Point(std::istream& ifs, HeaderPtr header) :
+    m_ifs(ifs), m_header(header), m_point(new liblas::Point()), m_format(header->GetSchema())
 {
     setup();
 }
@@ -105,7 +105,7 @@ void Point::read()
 
     fill(record);
     // Reader::FillPoint(record, m_point, m_header);
-    m_point->SetCoordinates(m_header, m_point->GetX(), m_point->GetY(), m_point->GetZ());
+    m_point->SetCoordinates(*m_header, m_point->GetX(), m_point->GetY(), m_point->GetZ());
 
     if (m_format.HasTime()) 
     {
@@ -142,7 +142,7 @@ void Point::read()
 
     if (m_format.GetBaseByteSize() != m_format.GetByteSize())
     {
-        std::size_t bytesleft = m_header.GetDataRecordLength() - bytesread;
+        std::size_t bytesleft = m_header->GetDataRecordLength() - bytesread;
 
         std::vector<uint8_t> data;
         data.resize(bytesleft);

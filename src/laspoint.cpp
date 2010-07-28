@@ -56,7 +56,7 @@ Point::Point() :
     m_flags(0),
     m_userData(0),
     m_angleRank(0),
-    m_hdr(0)
+    m_hdr(HeaderPtr())
 {
     std::memset(m_coords, 0, sizeof(m_coords));
     m_extra_data.resize(0);

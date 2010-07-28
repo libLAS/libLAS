@@ -47,6 +47,7 @@
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasclassification.hpp>
 #include <liblas/lascolor.hpp>
+#include <liblas/liblas.hpp>
 
 // std
 #include <stdexcept> // std::out_of_range
@@ -198,8 +199,8 @@ public:
     std::vector<liblas::uint8_t> const& GetData() const {return m_format_data; }
     void SetData(std::vector<uint8_t> const& v) { m_format_data = v;}
     
-    void SetHeader(const liblas::Header& header);
-    const liblas::Header* GetHeader () { return m_hdr; }
+    void SetHeader(HeaderPtr header);
+    HeaderPtr GetHeaderPtr () { return m_hdr; }
 private:
 
     static std::size_t const coords_size = 3;
@@ -218,7 +219,7 @@ private:
     std::vector<uint8_t> m_extra_data;
     std::vector<uint8_t> m_format_data;
     
-    const liblas::Header* m_hdr;
+    HeaderPtr m_hdr;
     
     void throw_out_of_range() const
     {
@@ -376,9 +377,9 @@ inline double const& Point::operator[](std::size_t const& n) const
     return m_coords[n];
 }
 
-inline void Point::SetHeader(const liblas::Header& header) 
+inline void Point::SetHeader(HeaderPtr header) 
 {
-    m_hdr = &header;
+    m_hdr = header;
 }
 
 } // namespace liblas
