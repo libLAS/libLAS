@@ -383,30 +383,11 @@ namespace tut
 
         Header const& h = reader_.GetHeader();
         bbox_t lasbbox = h.GetExtent();
-
-        // I don't know why this is failing -- hobu
-
-       // std::cout << std::endl;
-       //  std::cout << "minx: " << h.GetMinX()
-       //            << " miny: " << h.GetMinY()
-       //            << " minz: " << h.GetMinZ()
-       //            << " maxx: " << h.GetMaxX()
-       //            << " maxy: " << h.GetMaxY()
-       //            << " maxz: " << h.GetMaxZ();
                   
         // Accumulate points extents to common bounding box
-        bbox_calculator calculator;
-        std::for_each(it, end, calculator);
+        bbox_t accumulated;
+        std::for_each(it, end, bbox_calculator(accumulated));
         
-        // std::cout << std::endl;
-        // bbox_t b = calculator.get_result();
-        // std::cout << "minx: " << b.min.x
-        //           << " miny: " << b.min.y
-        //           << " minz: " << b.min.z
-        //           << " maxx: " << b.max.x
-        //           << " maxy: " << b.max.y
-        //           << " maxz: " << b.max.z;
-
-        ensure(lasbbox == calculator.get_result());
+        ensure(lasbbox == accumulated);
     }
 }

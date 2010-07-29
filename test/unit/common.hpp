@@ -9,6 +9,7 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lasheader.hpp>
 
+#include <iostream>
 
 namespace tut
 {
@@ -37,38 +38,36 @@ struct is_xy
 // Functor to calculate bounding box of a set of points
 struct bbox_calculator
 {
-    typedef liblas::Bounds result_type;
-
-    bbox_calculator() : empty(true) {}
-
-    result_type get_result() const { return bbox; }    
+    bbox_calculator(liblas::Bounds& bbox) : bbox(&bbox), empty(true) {}
 
     void operator()(liblas::Point const& p)
     {
+        assert(0 != bbox);
+
         // Box initialization during first iteration only
         if (empty)
         {
-            bbox.min(0, p.GetX());
-            bbox.max(0, p.GetX());
-            bbox.min(1, p.GetY());
-            bbox.max(1, p.GetY());
-            bbox.min(2, p.GetZ());
-            bbox.max(2, p.GetZ());
+            bbox->min(0, p.GetX());
+            bbox->max(0, p.GetX());
+            bbox->min(1, p.GetY());
+            bbox->max(1, p.GetY());
+            bbox->min(2, p.GetZ());
+            bbox->max(2, p.GetZ());
             empty = false;
         }
 
         // Expand bounding box to include given point
-        bbox.min(0, std::min(bbox.min(0), p.GetX()));
-        bbox.min(1, std::min(bbox.min(1), p.GetY()));
-        bbox.min(2, std::min(bbox.min(2), p.GetZ()));
-        bbox.max(0, std::max(bbox.max(0), p.GetX()));
-        bbox.max(1, std::max(bbox.max(1), p.GetY()));
-        bbox.max(2, std::max(bbox.max(2), p.GetZ()));
+        bbox->min(0, std::min(bbox->min(0), p.GetX()));
+        bbox->min(1, std::min(bbox->min(1), p.GetY()));
+        bbox->min(2, std::min(bbox->min(2), p.GetZ()));
+        bbox->max(0, std::max(bbox->max(0), p.GetX()));
+        bbox->max(1, std::max(bbox->max(1), p.GetY()));
+        bbox->max(2, std::max(bbox->max(2), p.GetZ()));
     }
 
-
+private:
+    liblas::Bounds* bbox;
     bool empty;
-    liblas::Bounds bbox;
 };
 
 // Common test procedure for default constructed point data.
