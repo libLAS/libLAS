@@ -149,6 +149,7 @@ void Bounds::verify()
 
 bool Bounds::equal(Bounds const& other) const
 {
+    // FIXME: direct comparison of float-point values may give wrong result --mloskot
     for (uint32_t i = 0; i < 3; i++) {
         if (!(min(i) == other.min(i)) && !(max(i) == other.max(i))) 
         {
