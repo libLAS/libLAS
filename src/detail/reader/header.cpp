@@ -210,7 +210,7 @@ void Header::read()
     {
         m_header->SetPointRecordsByReturnCount(i, point_counts[i]);
     }  
-    delete point_counts;
+    delete[] point_counts;
 
     // 21-23. Scale factors
     read_n(x1, m_ifs, sizeof(x1));
