@@ -251,32 +251,39 @@ namespace tut
         typedef ::liblas::uint32_t count_type;
 
         liblas::Header h;
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        // NOTE: The committee in its infinite stupidity decided to increase the size of this array to 7 at 1.3.
+        ensure(h.GetPointRecordsByReturnCount().size() >= 5);
+        ensure(h.GetPointRecordsByReturnCount().size() <= 7);
 
         h.SetPointRecordsByReturnCount(0, 100);
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        ensure(h.GetPointRecordsByReturnCount().size() >= 5);
+        ensure(h.GetPointRecordsByReturnCount().size() <= 7);
         ensure_equals(h.GetPointRecordsByReturnCount().at(0), count_type(100));
 
         h.SetPointRecordsByReturnCount(1, 101);
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        ensure(h.GetPointRecordsByReturnCount().size() >= 5);
+        ensure(h.GetPointRecordsByReturnCount().size() <= 7);
         ensure_equals(h.GetPointRecordsByReturnCount().at(1), count_type(101));
 
         h.SetPointRecordsByReturnCount(2, 102);
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        ensure(h.GetPointRecordsByReturnCount().size() >= 5);
+        ensure(h.GetPointRecordsByReturnCount().size() <= 7);
         ensure_equals(h.GetPointRecordsByReturnCount().at(2), count_type(102));
 
         h.SetPointRecordsByReturnCount(3, 103);
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        ensure(h.GetPointRecordsByReturnCount().size() >= 5);
+        ensure(h.GetPointRecordsByReturnCount().size() <= 7);
         ensure_equals(h.GetPointRecordsByReturnCount().at(3), count_type(103));
 
         h.SetPointRecordsByReturnCount(4, 104);
-        ensure_equals(h.GetPointRecordsByReturnCount().size(), size_type(5));
+        ensure(h.GetPointRecordsByReturnCount().size() >= 5);
+        ensure(h.GetPointRecordsByReturnCount().size() <= 7);
         ensure_equals(h.GetPointRecordsByReturnCount().at(4), count_type(104));
 
         try
         {
-            // 5 is out of range
-            h.SetPointRecordsByReturnCount(5, 500);
+            // 8 is out of range
+            h.SetPointRecordsByReturnCount(8, 500);
             ensure("std::out_of_range not thrown", false);
         }
         catch (std::out_of_range const& e)
