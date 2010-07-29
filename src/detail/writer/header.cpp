@@ -218,7 +218,7 @@ void Header::write()
     // TODO: fix this for 1.3, which has srbyr = 7;  See detail/reader/header.cpp for more details
     // assert(vpbr.size() <= srbyr);
     uint32_t pbr[srbyr] = { 0 };
-    std::copy_n(vpbr.begin(), srbyr, pbr); // FIXME: currently, copies only 5 records, to be improved
+    std::copy(vpbr.begin(), vpbr.begin() + srbyr, pbr); // FIXME: currently, copies only 5 records, to be improved
     detail::write_n(GetStream(), pbr, sizeof(pbr));
 
     // 20-22. Scale factors
