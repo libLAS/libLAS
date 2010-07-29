@@ -85,16 +85,6 @@ public:
     bool equal(Bounds const& other) const;
     bool intersects2d(Bounds const& other) const;
     bool intersects3d(Bounds const& other) const;
-
-    bool operator==(Bounds const& rhs)
-    {
-        return equal(rhs);
-    }
-
-    bool operator!=(Bounds const& rhs)
-    {
-        return (!equal(rhs));
-    }
         
 private:
     Array mins;
