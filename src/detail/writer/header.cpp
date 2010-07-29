@@ -47,6 +47,7 @@
 
 #include <cassert>
 #include <cstdlib> // std::size_t
+#include <algorithm>
 #include <fstream>
 #include <iosfwd>
 #include <ostream>
