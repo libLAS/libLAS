@@ -424,20 +424,21 @@ namespace tut
     template<>
     void to::test<17>()
     {
-        std::vector<liblas::uint8_t> data;
+        typedef std::vector<liblas::uint8_t> data_t;
         
+        data_t data;
         data.push_back(254);
         data.push_back(254);
         data.push_back(1);
         
         ensure_equals("invalid default extra data",
-            m_default.GetExtraData().size(), 0);
+            m_default.GetExtraData().size(), 0u);
 
 
         m_default.SetExtraData(data);
 
         ensure_equals("invalid set red color",
-            m_default.GetExtraData().size(), 3);
+            m_default.GetExtraData().size(), 3u);
 
         ensure_equals("invalid set green color",
             m_default.GetExtraData()[1], 254);
