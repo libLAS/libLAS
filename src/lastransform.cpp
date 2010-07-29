@@ -88,7 +88,10 @@ ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, cons
     }
 
     m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
-    
+#else
+
+    detail::ignore_unused_variable_warning(inSRS);
+    detail::ignore_unused_variable_warning(outSRS);
 #endif
 }
 

@@ -90,6 +90,7 @@ inline double sround(double r) {
 template <typename T, std::size_t N>
 inline std::size_t static_array_size(T (&t)[N])
 {
+    detail::ignore_unused_variable_warning(t);
     return (sizeof(t) / sizeof(t[0]));
 }
 
