@@ -84,7 +84,7 @@ namespace liblas {
 /// Definition of Globally Unique Identifier type.
 /// The GUID is a 16-byte (128-bit) number.
 /// This class is used to represent value stored as Project Identifier
-/// in public header block (see LASHeader) of a LAS file.
+/// in public header block (see Header) of a LAS file.
 /// All files in a unique project should have the same value of
 /// the Project Identifier. It is used together with File Source ID to
 /// uniquely identify every LAS, globally.
