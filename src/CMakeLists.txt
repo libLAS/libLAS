@@ -19,7 +19,6 @@ endif()
 
 set(LIBLAS_HEADERS_DIR ../include/liblas)
 
-
 set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/cstdint.hpp
   ${LIBLAS_HEADERS_DIR}/exception.hpp
@@ -44,17 +43,20 @@ set(LIBLAS_HPP
 set(LIBLAS_DETAIL_HPP
   ${LIBLAS_HEADERS_DIR}/detail/endian.hpp
   ${LIBLAS_HEADERS_DIR}/detail/fwd.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/reader/reader.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/reader/header.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/reader/point.hpp
   ${LIBLAS_HEADERS_DIR}/detail/sha1.hpp
   ${LIBLAS_HEADERS_DIR}/detail/timer.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/utility.hpp
+  ${LIBLAS_HEADERS_DIR}/detail/utility.hpp)
+
+set(LIBLAS_DETAIL_READER_HPP
+  ${LIBLAS_HEADERS_DIR}/detail/reader/reader.hpp
+  ${LIBLAS_HEADERS_DIR}/detail/reader/header.hpp
+  ${LIBLAS_HEADERS_DIR}/detail/reader/point.hpp)
+
+set(LIBLAS_DETAIL_WRITER_HPP
   ${LIBLAS_HEADERS_DIR}/detail/writer/writer.hpp
   ${LIBLAS_HEADERS_DIR}/detail/writer/base.hpp
   ${LIBLAS_HEADERS_DIR}/detail/writer/point.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/writer/header.hpp    
-  )
+  ${LIBLAS_HEADERS_DIR}/detail/writer/header.hpp)
 
 set(LIBLAS_CPP
   lasbounds.cpp
@@ -71,32 +73,31 @@ set(LIBLAS_CPP
   lasvariablerecord.cpp
   laswriter.cpp)
 
-set(LIBLAS_DETAIL_CPP
+set(LIBLAS_DETAIL_CPP) # Currently empty
+
+set(LIBLAS_DETAIL_READER_CPP
   detail/reader/header.cpp
   detail/reader/point.cpp
-  detail/reader/reader.cpp
+  detail/reader/reader.cpp)
+
+set(LIBLAS_DETAIL_WRITER_CPP
   detail/writer/base.cpp
   detail/writer/header.cpp
   detail/writer/point.cpp
   detail/writer/writer.cpp)
 
-set(LIBLAS_SOURCES
-  ${LIBLAS_HPP}
-  ${LIBLAS_DETAIL_HPP}
-  ${LIBLAS_INDEX_HPP}
-  ${LIBLAS_CPP}
-  ${LIBLAS_DETAIL_CPP}
-  ${LIBLAS_GDAL_CPP})
-
-set(LIBLAS_C_SOURCES
-  ${LIBLAS_HEADERS_DIR}/capi/las_config.h
-  ${LIBLAS_HEADERS_DIR}/capi/las_version.h
-  ${LIBLAS_HEADERS_DIR}/capi/liblas.h
-  las_c_api.cpp)
-
+# Group source files for IDE source explorers (e.g. Visual Studio)
 source_group("CMake Files" FILES CMakeLists.txt)
-source_group("Header Files" FILES ${LIBLAS_HPP} ${LIBLAS_DETAIL_HPP})
-source_group("Source Files" FILES ${LIBLAS_CPP} ${LIBLAS_DETAIL_CPP})
+source_group("Header Files" FILES ${LIBLAS_HPP})
+source_group("Header Files\\detail" FILES ${LIBLAS_DETAIL_HPP})
+source_group("Header Files\\detail\\reader" FILES ${LIBLAS_DETAIL_READER_HPP})
+source_group("Header Files\\detail\\writer" FILES ${LIBLAS_DETAIL_WRITER_HPP})
+source_group("Source Files" FILES ${LIBLAS_CPP})
+source_group("Source Files\\reader" FILES ${LIBLAS_DETAIL_READER_CPP})
+source_group("Source Files\\writer" FILES ${LIBLAS_DETAIL_WRITER_CPP})
+if(GDAL_FOUND)
+    source_group("Source Files\\gdal" FILES ${LIBLAS_GDAL_CPP})
+endif()
 
 # Diable Visual C++ language extensions when building libLAS library
 if (WIN32)
@@ -111,10 +112,25 @@ include_directories(../include)
 ###############################################################################
 # Targets settings
 
+set(LIBLAS_SOURCES
+  ${LIBLAS_HPP}
+  ${LIBLAS_DETAIL_HPP}
+  ${LIBLAS_DETAIL_READER_HPP}
+  ${LIBLAS_DETAIL_WRITER_HPP}
+  ${LIBLAS_CPP}
+  ${LIBLAS_DETAIL_CPP}
+  ${LIBLAS_DETAIL_READER_CPP}
+  ${LIBLAS_DETAIL_WRITER_CPP}
+  ${LIBLAS_GDAL_CPP})
+
+set(LIBLAS_C_SOURCES
+  ${LIBLAS_HEADERS_DIR}/capi/las_config.h
+  ${LIBLAS_HEADERS_DIR}/capi/las_version.h
+  ${LIBLAS_HEADERS_DIR}/capi/liblas.h
+  las_c_api.cpp)
+
 # Static libLAS C++ library
 add_library(${LIBLAS_LIB_NAME} STATIC ${LIBLAS_SOURCES})
-
-
 
 # Shared libLAS C library
 add_library(${LIBLAS_C_LIB_NAME} SHARED ${LIBLAS_C_SOURCES})
