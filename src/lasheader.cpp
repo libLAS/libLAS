@@ -572,15 +572,15 @@ void Header::Init()
     m_dataFormatId = ePointFormat0;
     m_dataRecordLen = ePointSize0;
     
-
-    
+    m_createDOY = m_createYear = 0;
     std::time_t now;
     std::time(&now);
     std::tm* ptm = std::gmtime(&now);
-    assert(0 != ptm);
-    
-    m_createDOY = static_cast<uint16_t>(ptm->tm_yday);
-    m_createYear = static_cast<uint16_t>(ptm->tm_year + 1900);
+    if (0 != ptm)
+    {
+        m_createDOY = static_cast<uint16_t>(ptm->tm_yday);
+        m_createYear = static_cast<uint16_t>(ptm->tm_year + 1900);
+    }
 
     m_headerSize = eHeaderSize;
 
