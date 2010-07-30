@@ -84,7 +84,12 @@ public:
     reference operator*() const
     {
         assert(0 != m_reader);
-        return m_reader->GetPoint();
+        if (0 != m_reader)
+        {
+            return m_reader->GetPoint();
+        }
+
+        throw std::runtime_error("reader is null and iterator not dereferencable");
     }
 
     /// Pointer-to-member operator.
