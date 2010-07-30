@@ -48,7 +48,6 @@ set(LIBLAS_DETAIL_HPP
   ${LIBLAS_HEADERS_DIR}/detail/reader/header.hpp
   ${LIBLAS_HEADERS_DIR}/detail/reader/point.hpp
   ${LIBLAS_HEADERS_DIR}/detail/sha1.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/sharedptr.hpp
   ${LIBLAS_HEADERS_DIR}/detail/timer.hpp
   ${LIBLAS_HEADERS_DIR}/detail/utility.hpp
   ${LIBLAS_HEADERS_DIR}/detail/writer/writer.hpp
