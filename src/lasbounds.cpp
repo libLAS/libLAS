@@ -40,6 +40,9 @@
  ****************************************************************************/
 
 #include <liblas/lasbounds.hpp>
+// boost
+#include <boost/concept_check.hpp>
+// std
 #include <cmath>
 #include <limits>
 #include <string>
@@ -47,13 +50,10 @@
 
 namespace liblas { 
 
-
 Bounds::Bounds()
 {
-    for (int i = 0; i < 3; ++i) {
-        mins[i] = 0;
-        maxs[i] = 0;
-    }
+    mins.assign(0);
+    maxs.assign(0);
 }
 
 Bounds::Bounds( double minx, 
@@ -175,7 +175,7 @@ bool Bounds::intersects2d(Bounds const& other) const
 
 bool Bounds::intersects3d(Bounds const& other) const
 {
-    detail::ignore_unused_variable_warning(other);
+    boost::ignore_unused_variable_warning(other);
     // not implemented
     throw    std::runtime_error("not implemented");
 
