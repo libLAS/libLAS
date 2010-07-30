@@ -112,7 +112,14 @@ PointPtr ReaderImpl::ReadNextPoint(HeaderPtr header)
     if (m_current < m_size)
     {
         m_point_reader->read();
-        PointPtr ptr(new liblas::Point(m_point_reader->GetPoint()));
+        
+        PointPtr ptr = PointPtr(new liblas::Point(m_point_reader->GetPoint()));
+        if (ptr.get() == 0) {
+            std::ostringstream output;
+            output << "Unable to fetch point from reader " ;
+            std::string out(output.str());
+            throw std::runtime_error(out);
+        }
         ++m_current;
         return ptr;
 
@@ -313,6 +320,13 @@ liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, HeaderPtr head
     }
 
     PointPtr ptr = ReadCachedPoint(n, header);
+    if (ptr.get() == 0 ) {
+        std::ostringstream output;
+        output << "unable to fetch point from cache at position : " 
+               << n;
+        std::string out(output.str());
+        throw std::runtime_error(out);
+    }
     m_cache_read_position = n;
     return *ptr;
 }
