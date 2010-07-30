@@ -373,8 +373,7 @@ void Header::readvlrs()
 
         uint16_t length = vlrh.recordLengthAfterHeader;
 
-        std::vector<uint8_t> data;
-        data.resize(length);
+        std::vector<uint8_t> data(length);
 
         read_n(data.front(), m_ifs, length);
          
