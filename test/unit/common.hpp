@@ -42,7 +42,8 @@ struct bbox_calculator
 
     void operator()(liblas::Point const& p)
     {
-        assert(0 != bbox);
+        if (0 == bbox)
+            throw std::invalid_argument("bbox is null");
 
         // Box initialization during first iteration only
         if (empty)
