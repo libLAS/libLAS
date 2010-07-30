@@ -54,6 +54,7 @@
 #define LIBLAS_SHA1_HPP_INCLUDED
 
 #include <cassert>
+#include <boost/array.hpp>
 
 namespace liblas { namespace detail {
 
@@ -150,10 +151,8 @@ public:
      *  Comments:
      *
      */
-    bool Result(unsigned int* message_digest_array)
+    bool Result(::boost::array<unsigned int, 5>& message_digest_array)
     {
-		assert(0 != message_digest_array);
-
         int i = 0; // Counter
     
         if (Corrupted)
@@ -175,6 +174,11 @@ public:
         return true;
     }
     
+    void Input(::boost::array<unsigned char, 16> message_array)
+    {
+        Input(message_array.c_array(), message_array.size());
+    }
+
     /*  
      *  Input
      *
@@ -195,9 +199,7 @@ public:
      */
     void Input(unsigned char const* message_array, unsigned int length)
     {
-		assert(0 != message_array);
-
-        if (!length)
+		if (0 == message_array || 0 == length)
         {
             return;
         }
@@ -255,7 +257,8 @@ public:
      */
     void Input(char const* message_array, unsigned length)
     {
-		assert(0 != message_array);
+        assert(0 != message_array);
+        assert(0 != length);
 
 		typedef unsigned char const* target_type;
 		typedef void const* proxy_type;
@@ -327,9 +330,11 @@ public:
      */
 	SHA1& operator<<(const char *message_array)
 	{
-		const char* p = message_array;
+        assert(0 != message_array);
 
-		while(*p)
+        const char* p = message_array;
+
+		while(0 != p && *p)
 		{
 			Input(*p);
 			p++;
@@ -362,7 +367,7 @@ public:
 
         const unsigned char *p = message_array;
     
-        while(*p)
+        while(0 != p && *p)
         {
             Input(*p);
             p++;
@@ -626,12 +631,12 @@ private:
     
 private:
 
-    unsigned H[5];                      // Message digest buffers
+    boost::array<unsigned int, 5> H;    // Message digest buffers
 
     unsigned Length_Low;                // Message length in bits
     unsigned Length_High;               // Message length in bits
 
-    unsigned char Message_Block[64];    // 512-bit message blocks
+    boost::array<unsigned char, 64> Message_Block; // 512-bit message blocks
     int Message_Block_Index;            // Index into message block array
 
     bool Computed;                      // Is the digest computed?

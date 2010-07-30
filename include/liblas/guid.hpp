@@ -76,6 +76,9 @@
 #include <ctime>
 #include <cassert>
 
+// boost
+#include <boost/array.hpp>
+
 namespace liblas {
 
 /// Definition of Globally Unique Identifier type.
@@ -96,7 +99,7 @@ public:
     /// \post guid::is_null() == true.
     guid() /* throw() */
     {
-        std::fill(data_, data_ + static_size, 0);
+        data_.assign(0);
     }
 
     /// Initializes from textual representation of valid GUID.
@@ -136,7 +139,7 @@ public:
     /// \exception nothrow
     guid(guid const& rhs) /* throw() */
     {
-        std::copy(rhs.data_, rhs.data_ + static_size, data_);
+        data_ = rhs.data_;
     }
 
     /// Destructor.
@@ -150,7 +153,7 @@ public:
     {
         if (&rhs != this)
         {
-            std::copy(rhs.data_, rhs.data_ + static_size, data_);
+             data_ = rhs.data_;
         }
         return *this;
     }
@@ -159,7 +162,7 @@ public:
     /// \exception nothrow
     bool operator==(guid const& rhs) const /* throw() */
     {
-        return std::equal(data_, data_ + static_size, rhs.data_);
+        return data_ == rhs.data_;
     }
 
     /// Inequality operator.
@@ -176,7 +179,7 @@ public:
     /// \exception nothrow
     bool operator<(guid const& rhs) const /* throw() */
     {
-        return std::lexicographical_compare(data_, data_ + static_size, rhs.data_, rhs.data_ + static_size);
+        return data_ < rhs.data_;
     }
     
     /// More-than operator.
@@ -186,7 +189,7 @@ public:
     /// \exception nothrow
     bool operator>(guid const& rhs) const /* throw() */
     {
-        return std::lexicographical_compare(rhs.data_, rhs.data_ + static_size, data_, data_ + static_size);
+        return data_ > rhs.data_;
     }
 
     /// Less-than-or-equal-to operator.
@@ -194,7 +197,7 @@ public:
     /// \exception nothrow
     bool operator<=(guid const& rhs) const /* throw() */
     {
-        return (*this == rhs) || (*this < rhs);
+        return data_ <= rhs.data_;
     }
 
     /// More-than-or-equal-to operator.
@@ -202,7 +205,7 @@ public:
     /// \exception nothrow
     bool operator>=(guid const& rhs) const /* throw() */
     {
-        return (*this == rhs) || (*this > rhs);
+        return data_ >= rhs.data_;
     }
 
     /// Test if the GUID object is null GUID or not.
@@ -248,16 +251,20 @@ public:
     /// and equal to 16 bytes (128-bit number).
     size_t byte_count() const /* throw() */
     {
-        return static_size;
+        return data_.size();
     }
 
+    size_t size() const /* throw() */
+    {
+        return byte_count();
+    }
 
     /// Send bytes of GUID data to sequenec of bytes using given output iterator.
     /// \exception nothrow
     template <typename ByteOutputIterator>
     void output_bytes(ByteOutputIterator out) const
     {
-        std::copy(data_, data_ + static_size, out);
+        std::copy(data_.begin(), data_.end(), out);
     }
 
     /// Separate bytes of GUID data to distinct buffers.
@@ -411,7 +418,7 @@ private:
             init_rand = false;
         }
         
-        for (size_t i = 0; i < static_size; i++)
+        for (size_t i = 0; i < result.data_.size(); i++)
         {
             result.data_[i] = detail::generate_random_byte<liblas::uint8_t>();
         }
@@ -435,11 +442,13 @@ private:
         using liblas::uint8_t;
         
         detail::SHA1 sha1;
-        sha1.Input(namespace_guid.data_, namespace_guid.static_size);
+
+        sha1.Input(namespace_guid.data_);
         sha1.Input(name, name_length);
-		unsigned int digest[5] = { 0 };
+		boost::array<unsigned int, 5> digest;
+        digest.assign(0);
         
-        if (sha1.Result(digest) == false)
+        if (!sha1.Result(digest))
         {
             throw std::runtime_error("create error");
         }
@@ -475,8 +484,7 @@ private:
     
 private:
 
-    static const std::size_t static_size = 16;
-    liblas::uint8_t data_[static_size];
+    ::boost::array<liblas::uint8_t, 16> data_;
 };
 
 inline std::ostream& operator<<(std::ostream& os, guid const& g)
@@ -499,7 +507,7 @@ inline std::ostream& operator<<(std::ostream& os, guid const& g)
         }
         os << hex;
         os.fill('0');
-        for (size_t i = 0; i < g.static_size; ++i)
+        for (size_t i = 0; i < g.size(); ++i)
         {
             os.width(2);
             os << static_cast<unsigned int>(g.data_[i]);
@@ -539,7 +547,7 @@ inline std::istream& operator>>(std::istream& is, guid &g)
             is >> c; // read brace
         }
 
-        for (size_t i = 0; i < temp_guid.static_size && is; ++i)
+        for (size_t i = 0; i < temp_guid.size() && is; ++i)
         {
             std::stringstream ss;
 
