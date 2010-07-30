@@ -81,6 +81,7 @@ private:
     std::istream& m_ifs;
     HeaderPtr m_header;
     PointPtr m_point;
+    std::vector<uint8_t> m_raw_data;
     
     void setup();
     void fill(PointRecord& record);

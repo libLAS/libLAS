@@ -51,7 +51,7 @@ namespace liblas { namespace detail { namespace reader {
 
 void Point::setup()
 {
-
+    m_raw_data.resize(m_header->GetSchema().GetByteSize());
 }
 
 Point::Point(std::istream& ifs, HeaderPtr header) :
@@ -73,102 +73,108 @@ std::istream& Point::GetStream() const
 
 void Point::read()
 {
-    // accounting to keep track of the fact that the DataRecordLength 
-    // might not map to ePointSize0 or ePointSize1 (see http://liblas.org/ticket/142)
-    std::size_t bytesread(0);
 
     double gpst(0);
     liblas::uint16_t red(0);
     liblas::uint16_t blue(0);
     liblas::uint16_t green(0);
 
-    // raw byte data necessary to fill out the point format    
-    std::vector<uint8_t> format_data; 
-    
-    format_data.resize(m_header->GetSchema().GetBaseByteSize());
-    
-    detail::PointRecord record;
-    // TODO: Replace with compile-time assert
-
-    assert(liblas::ePointSize0 == sizeof(record));
+    // accounting to keep track of the fact that the DataRecordLength 
+    // might not map to ePointSize0 or ePointSize1 (see http://liblas.org/ticket/142)
+    std::vector<uint8_t>::size_type i = 0; 
 
     // Set the header for the point early because 
     // SetCoordinates will use it later to scale the 
     // point
     m_point->SetHeader(m_header);
-        
+    
     try
     {
-        detail::read_n(record, m_ifs, sizeof(PointRecord));
-        bytesread += sizeof(PointRecord);
+        detail::read_n(m_raw_data.front(), m_ifs, m_raw_data.size());
     }
     catch (std::out_of_range const& e) // we reached the end of the file
     {
         std::cerr << e.what() << std::endl;
-    }
+    }    
+    
+    detail::PointRecord record;
 
+    memcpy(&record.x, &(m_raw_data[i]), sizeof(int32_t)); i+=sizeof(int32_t);
+    memcpy(&record.y, &(m_raw_data[i]), sizeof(int32_t)); i+=sizeof(int32_t);
+    memcpy(&record.z, &(m_raw_data[i]), sizeof(int32_t)); i+=sizeof(int32_t);
+    memcpy(&record.intensity, &(m_raw_data[i]), sizeof(uint16_t)); i+=sizeof(uint16_t);
+    memcpy(&record.flags, &(m_raw_data[i]), sizeof(uint8_t)); i+=sizeof(uint8_t);
+    memcpy(&record.classification, &(m_raw_data[i]), sizeof(uint8_t)); i+=sizeof(uint8_t);
+    memcpy(&record.scan_angle_rank, &(m_raw_data[i]), sizeof(int8_t)); i+=sizeof(int8_t);
+    memcpy(&record.user_data, &(m_raw_data[i]), sizeof(uint8_t)); i+=sizeof(uint8_t);
+    memcpy(&record.point_source_id, &(m_raw_data[i]), sizeof(uint16_t)); i+=sizeof(uint16_t);
+    
+    
     fill(record);
-    // Reader::FillPoint(record, m_point, m_header);
     m_point->SetCoordinates(m_point->GetX(), m_point->GetY(), m_point->GetZ());
+    
 
     if (m_header->GetSchema().HasTime()) 
     {
-
-        detail::read_n(gpst, m_ifs, sizeof(double));
+        memcpy(&gpst, &(m_raw_data[i]), sizeof(double));
+        
         m_point->SetTime(gpst);
-        bytesread += sizeof(double);
+        i += sizeof(double);
         
         if (m_header->GetSchema().HasColor()) 
         {
-            detail::read_n(red, m_ifs, sizeof(uint16_t));
-            detail::read_n(green, m_ifs, sizeof(uint16_t));
-            detail::read_n(blue, m_ifs, sizeof(uint16_t));
-
+            memcpy(&red, &(m_raw_data[i]), sizeof(uint16_t));
+            memcpy(&green, &(m_raw_data[i]), sizeof(uint16_t));
+            memcpy(&blue, &(m_raw_data[i]), sizeof(uint16_t));
+    
             liblas::Color color(red, green, blue);
             m_point->SetColor(color);
             
-            bytesread += 3 * sizeof(uint16_t);
+            i += 3 * sizeof(uint16_t);
         }
     } else {
         if (m_header->GetSchema().HasColor()) 
         {
-            detail::read_n(red, m_ifs, sizeof(uint16_t));
-            detail::read_n(green, m_ifs, sizeof(uint16_t));
-            detail::read_n(blue, m_ifs, sizeof(uint16_t));
-
+            memcpy(&red, &(m_raw_data[i]), sizeof(uint16_t));
+            memcpy(&green, &(m_raw_data[i]), sizeof(uint16_t));
+            memcpy(&blue, &(m_raw_data[i]), sizeof(uint16_t));
+    
             liblas::Color color(red, green, blue);
             m_point->SetColor(color);
             
-            bytesread += 3 * sizeof(uint16_t);
+            i += 3 * sizeof(uint16_t);
         }        
     }
     
-
+    
     if (m_header->GetSchema().GetBaseByteSize() != m_header->GetSchema().GetByteSize())
     {
-        std::size_t bytesleft = m_header->GetDataRecordLength() - bytesread;
-
+        std::size_t bytesleft = m_header->GetDataRecordLength() - i;
+    
+        
         std::vector<uint8_t> data;
         data.resize(bytesleft);
-
-        detail::read_n(data.front(), m_ifs, bytesleft);
         
+        memcpy(&(data.front()), &(m_raw_data[i]), bytesleft);
         m_point->SetExtraData(data); 
         
-        bytesread = bytesread + bytesleft;
-
+        i = i + bytesleft;
+    
     }
     
-    if (bytesread != m_header->GetSchema().GetByteSize()) {
+    if (i != m_header->GetSchema().GetByteSize()) {
         std::ostringstream msg; 
-        msg <<  "The number of bytes that were read ("<< bytesread <<") does not " 
+        msg <<  "The number of bytes that were read ("<< i <<") does not " 
                 "match the number of bytes the point's format "
                 "says it should have (" << 
                 m_header->GetSchema().GetByteSize() << ")";
         throw std::runtime_error(msg.str());
         
     }
-    
+
+    // Put the data on the point
+    m_point->SetData(m_raw_data);
+
 
 }
 
