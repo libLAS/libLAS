@@ -40,7 +40,6 @@
  ****************************************************************************/
 
 #include <liblas/lascolor.hpp>
-#include <liblas/cstdint.hpp>
 
 namespace liblas {
 

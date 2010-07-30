@@ -42,10 +42,10 @@
 #ifndef LIBLAS_LASCOLOR_HPP_INCLUDED
 #define LIBLAS_LASCOLOR_HPP_INCLUDED
 
-#include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
@@ -57,13 +57,15 @@ class Color
 {
 public:
 
+    typedef boost::uint16_t value_type;
+
     /// Default constructor.
     /// Initializes with black color using RGB {0, 0, 0}.
     Color();
 
     // User-defined constructor.
     // Initializes object with given RGB values.
-    Color(uint16_t red, uint16_t green, uint16_t blue)
+    Color(value_type red, value_type green, value_type blue)
         : m_red(red), m_green(green), m_blue(blue)
     {}
 
@@ -77,39 +79,38 @@ public:
     bool operator==(const Color& other) const;
     
     /// Fetch value of the red image channel 
-    uint16_t GetRed() const;
+    value_type GetRed() const;
 
     /// Set value of the red image channel 
-    void SetRed(uint16_t const& value);
+    void SetRed(value_type const& value);
 
     /// Fetch value of the blue image channel 
-    uint16_t GetBlue() const;
+    value_type GetBlue() const;
 
     /// Set value of the blue image channel 
-    void SetBlue(uint16_t const& value);
+    void SetBlue(value_type const& value);
 
     /// Fetch value of the green image channel 
-    uint16_t GetGreen() const;
+    value_type GetGreen() const;
 
     /// Set value of the red image channel 
-    void SetGreen(uint16_t const& value);
+    void SetGreen(value_type const& value);
 
     /// Index operator providing access to RGB values.
     /// Valid index values are 0, 1 or 2.
     /// \exception std::out_of_range if requested index is out of range (> 2).
-    uint16_t& operator[](std::size_t const& n);
+    value_type& operator[](std::size_t const& n);
 
     /// Const version of index operator providing access to RGB values.
     /// Valid index values are 0, 1 or 2.
     /// \exception std::out_of_range if requested index is out of range (> 2).
-    uint16_t const& operator[](std::size_t const& n) const;    
+    value_type const& operator[](std::size_t const& n) const;
 
 private:
 
-    
-    uint16_t m_red;
-    uint16_t m_green;
-    uint16_t m_blue;
+    value_type m_red;
+    value_type m_green;
+    value_type m_blue;
     
     void throw_out_of_range() const
     {
@@ -118,37 +119,37 @@ private:
 };
 
 
-inline uint16_t Color::GetRed() const
+inline Color::value_type Color::GetRed() const
 {
     return m_red;
 }
 
-inline void Color::SetRed(uint16_t const& value)
+inline void Color::SetRed(Color::value_type const& value)
 {
     m_red = value;
 }
 
-inline uint16_t Color::GetBlue() const
+inline Color::value_type Color::GetBlue() const
 {
     return m_blue;
 }
 
-inline void Color::SetBlue(uint16_t const& value)
+inline void Color::SetBlue(Color::value_type const& value)
 {
     m_blue = value;
 }
 
-inline uint16_t Color::GetGreen() const
+inline Color::value_type Color::GetGreen() const
 {
     return m_green;
 }
 
-inline void Color::SetGreen(uint16_t const& value)
+inline void Color::SetGreen(Color::value_type const& value)
 {
     m_green = value;
 }
 
-inline uint16_t& Color::operator[](std::size_t const& n)
+inline Color::value_type& Color::operator[](std::size_t const& n)
 {
     if (n == 0) { return m_red; }
     if (n == 1) { return m_green; }
@@ -157,7 +158,7 @@ inline uint16_t& Color::operator[](std::size_t const& n)
     throw_out_of_range();
 }
 
-inline uint16_t const& Color::operator[](std::size_t const& n) const
+inline Color::value_type const& Color::operator[](std::size_t const& n) const
 {
     if (n == 0) { return m_red; }
     if (n == 1) { return m_green; }
