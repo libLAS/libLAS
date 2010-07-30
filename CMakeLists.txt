@@ -64,11 +64,7 @@ set(CMAKE_MODULE_PATH ${libLAS_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 # Default to release mode 
 set(CMAKE_BUILD_TYPE Release CACHE STRING 
-    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel"
-    
-    )
-
-set(BUILD_PEDANTIC TRUE CACHE BOOL "Choose compilation in pedantic or relaxed mode")
+    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel")
 
 # TODO: Still testing the output paths --mloskot
 set(LIBLAS_BUILD_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
@@ -90,10 +86,6 @@ file(WRITE "README.txt" "${README}")
 
 if(WIN32)
     if (MSVC)
-        if(BUILD_PEDANTIC)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-        endif()
-
         if (MSVC80 OR MSVC90 OR MSVC10)
             add_definitions(-D_CRT_SECURE_NO_WARNINGS)
             add_definitions(-D_CRT_NONSTDC_NO_WARNING)
@@ -111,11 +103,6 @@ else()
     if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
         
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -Wno-long-long -ansi")
-
-        if(BUILD_PEDANTIC)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic")
-        endif()
-        
         if (CMAKE_COMPILER_IS_GNUCXX)
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
         endif()
