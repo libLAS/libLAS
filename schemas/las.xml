@@ -200,4 +200,31 @@
         <minimum/>
         <maximum/>
     </ns1:dimension>
+    <ns1:dimension>
+        <name>Tangential curvature</name>
+        <description>
+            Second-order derivative of an interpolated DEM (elevation) surface
+            at this point.        
+        </description>
+        <position>12</position>
+        <active>1</active>
+        <size>8</size>
+        <units>byte</units>
+        <interpretation>double</interpretation>
+        <minimum/>
+        <maximum/>
+    </ns1:dimension>
+    <ns1:dimension>
+        <name>Profile curvature</name>
+        <description>
+            Second-order derivative of an interpolated DEM (elevation) surface
+            at this point.        
+        </description>
+        <position>12</position>
+        <active>1</active>
+        <size>8</size>
+        <units>byte</units>
+        <interpretation>double</interpretation>
+        <minimum/>
+        <maximum/>
 </ns1:LASSchema>
