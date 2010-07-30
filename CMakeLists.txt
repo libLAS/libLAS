@@ -89,6 +89,7 @@ if(WIN32)
         if (MSVC80 OR MSVC90 OR MSVC10)
             add_definitions(-D_CRT_SECURE_NO_WARNINGS)
             add_definitions(-D_CRT_NONSTDC_NO_WARNING)
+            add_definitions(-D_SCL_SECURE_NO_WARNINGS)
         endif()
 
         # Generate dot-user file with user-specific settings for Visual Studio project
