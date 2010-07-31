@@ -86,4 +86,4 @@ private:
 
 } // namespace liblas
 
-#endif
+#endif // LIBLAS_LASERROR_HPP_INCLUDED

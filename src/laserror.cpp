@@ -42,6 +42,8 @@
  ****************************************************************************/
 
 #include <liblas/laserror.hpp>
+// std
+#include <string>
 
 namespace liblas
 {
