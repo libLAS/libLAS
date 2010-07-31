@@ -153,12 +153,12 @@ inline Color::value_type const& Color::operator[](std::size_t const& index) cons
     return m_color[index];
 }
 
-bool operator==(Color const& lhs, Color const& rhs)
+inline bool operator==(Color const& lhs, Color const& rhs)
 {
     return lhs[0] == rhs[0] && lhs[1] == rhs[1] && lhs[2] == rhs[2];
 }
 
-bool operator!=(Color const& lhs, Color const& rhs)
+inline bool operator!=(Color const& lhs, Color const& rhs)
 {
     return !(lhs == rhs);
 }
