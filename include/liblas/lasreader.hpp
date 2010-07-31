@@ -43,9 +43,6 @@
 #ifndef LIBLAS_LASREADER_HPP_INCLUDED
 #define LIBLAS_LASREADER_HPP_INCLUDED
 
-#include <liblas/detail/fwd.hpp>
-#include <liblas/liblas.hpp>
-
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasvariablerecord.hpp>
@@ -53,11 +50,11 @@
 #include <liblas/lastransform.hpp>
 
 // std
-#include <iosfwd>
-#include <string>
-#include <memory>
-#include <vector>
 #include <cstddef>
+#include <iosfwd>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace liblas {
 
