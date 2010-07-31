@@ -40,20 +40,32 @@
  ****************************************************************************/
 
 #include <liblas/lascolor.hpp>
+// boost
+#include <boost/cstdint.hpp>
+// std
+#include <stdexcept> // std::out_of_range
 
 namespace liblas {
 
-Color::Color() :
-    m_red(0),
-    m_green(0),
-    m_blue(0)
+Color::Color()
 {
+    m_color.assign(0);
 }
 
-Color::Color(Color const& other) :
-    m_red(other.m_red),
-    m_green(other.m_green),
-    m_blue(other.m_blue)
+Color::Color(value_type red, value_type green, value_type blue)
+{
+    m_color[0] = red;
+    m_color[1] = green;
+    m_color[2] = blue;
+}
+
+Color::Color(boost::array<value_type, 3> const& color)
+{
+    m_color = color;
+}
+
+Color::Color(Color const& other)
+    : m_color(other.m_color)
 {
 }
 
@@ -61,23 +73,14 @@ Color& Color::operator=(Color const& rhs)
 {
     if (&rhs != this)
     {
-        m_red = rhs.m_red;
-        m_green = rhs.m_green;
-        m_blue = rhs.m_blue;
+        m_color = rhs.m_color;
     }
     return *this;
 }
 
-bool Color::operator==(Color const& other) const
+void Color::throw_out_of_range() const
 {
-    if (&other == this) return true;
-    
-    if (m_red != other.m_red) return false;
-    if (m_green != other.m_green) return false;
-    if (m_blue != other.m_blue) return false;
-
-    return true;
+    throw std::out_of_range("subscript out of range");
 }
 
 } // namespace liblas
-

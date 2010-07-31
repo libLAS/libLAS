@@ -14,8 +14,7 @@
  * modification, are permitted provided that the following 
  * conditions are met:
  * 
- *     * Redistributions of source code must retain the above copyright 
- *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions of source code must rede following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright 
  *       notice, this list of conditions and the following disclaimer in 
  *       the documentation and/or other materials provided 
@@ -42,12 +41,10 @@
 #ifndef LIBLAS_LASCOLOR_HPP_INCLUDED
 #define LIBLAS_LASCOLOR_HPP_INCLUDED
 
-#include <liblas/detail/fwd.hpp>
-#include <liblas/detail/utility.hpp>
 // boost
+#include <boost/array.hpp>
 #include <boost/cstdint.hpp>
 // std
-#include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
 
 namespace liblas {
@@ -65,9 +62,11 @@ public:
 
     // User-defined constructor.
     // Initializes object with given RGB values.
-    Color(value_type red, value_type green, value_type blue)
-        : m_red(red), m_green(green), m_blue(blue)
-    {}
+    Color(value_type red, value_type green, value_type blue);
+
+    /// User-defined constructor.
+    /// Initializes colour components based on values of 3-element array.
+    Color(boost::array<value_type, 3> const& color);
 
     /// Copy constructor.
     Color(Color const& other);
@@ -75,9 +74,6 @@ public:
     /// Assignment opreator.
     Color& operator=(Color const& rhs);
 
-    /// Comparison operator.
-    bool operator==(const Color& other) const;
-    
     /// Fetch value of the red image channel 
     value_type GetRed() const;
 
@@ -99,72 +95,75 @@ public:
     /// Index operator providing access to RGB values.
     /// Valid index values are 0, 1 or 2.
     /// \exception std::out_of_range if requested index is out of range (> 2).
-    value_type& operator[](std::size_t const& n);
+    value_type& operator[](std::size_t const& index);
 
     /// Const version of index operator providing access to RGB values.
     /// Valid index values are 0, 1 or 2.
     /// \exception std::out_of_range if requested index is out of range (> 2).
-    value_type const& operator[](std::size_t const& n) const;
+    value_type const& operator[](std::size_t const& index) const;
 
 private:
 
-    value_type m_red;
-    value_type m_green;
-    value_type m_blue;
+    typedef boost::array<value_type, 3> base_type;
+    base_type m_color;
     
-    void throw_out_of_range() const
-    {
-        throw std::out_of_range("subscript out of range");
-    }
+    void throw_out_of_range() const;
 };
-
 
 inline Color::value_type Color::GetRed() const
 {
-    return m_red;
+    return m_color[0];
 }
 
 inline void Color::SetRed(Color::value_type const& value)
 {
-    m_red = value;
-}
-
-inline Color::value_type Color::GetBlue() const
-{
-    return m_blue;
-}
-
-inline void Color::SetBlue(Color::value_type const& value)
-{
-    m_blue = value;
+    m_color[0] = value;
 }
 
 inline Color::value_type Color::GetGreen() const
 {
-    return m_green;
+    return m_color[1];
 }
 
 inline void Color::SetGreen(Color::value_type const& value)
 {
-    m_green = value;
+    m_color[1] = value;
 }
 
-inline Color::value_type& Color::operator[](std::size_t const& n)
+inline Color::value_type Color::GetBlue() const
 {
-    if (n == 0) { return m_red; }
-    if (n == 1) { return m_green; }
-    if (n == 2) { return m_blue; }
-
-    throw_out_of_range();
+    return m_color[2];
 }
 
-inline Color::value_type const& Color::operator[](std::size_t const& n) const
+inline void Color::SetBlue(Color::value_type const& value)
 {
-    if (n == 0) { return m_red; }
-    if (n == 1) { return m_green; }
-    if (n == 2) { return m_blue; }
+    m_color[2] = value;
+}
 
-    throw_out_of_range();
+inline Color::value_type& Color::operator[](std::size_t const& index)
+{
+    if (index > m_color.size() - 1)
+        throw_out_of_range();
+
+    return m_color[index];
+}
+
+inline Color::value_type const& Color::operator[](std::size_t const& index) const
+{
+    if (index > m_color.size() - 1)
+        throw_out_of_range();
+
+    return m_color[index];
+}
+
+bool operator==(Color const& lhs, Color const& rhs)
+{
+    return lhs[0] == rhs[0] && lhs[1] == rhs[1] && lhs[2] == rhs[2];
+}
+
+bool operator!=(Color const& lhs, Color const& rhs)
+{
+    return !(lhs == rhs);
 }
 
 } // namespace liblas
