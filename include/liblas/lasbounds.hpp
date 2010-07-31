@@ -42,43 +42,44 @@
 #ifndef LIBLAS_LASBOUNDS_HPP_INCLUDED
 #define LIBLAS_LASBOUNDS_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
 #include <liblas/detail/fwd.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/liblas.hpp>
 // boost
 #include <boost/array.hpp>
 
-namespace liblas
-{
-
-typedef boost::array <double, 3>  Array;
+namespace liblas {
 
 class Bounds
 {
 public:
+
+    typedef boost::array<double, 3> Array;
     
     Bounds();
-    Bounds( double minx, 
-            double miny, 
-            double maxx, 
-            double maxy, 
-            double minz, 
-            double maxz);
-    
-    Bounds( const Point& min, const Point& max);
-
-    Bounds( double minx, 
-            double miny, 
-            double maxx, 
-            double maxy);
+    Bounds(double minx, double miny, double maxx, double maxy, double minz, double maxz);
+    Bounds(double minx, double miny, double maxx, double maxy);
+    Bounds(const Point& min, const Point& max);
     Bounds(Bounds const& other);
     Bounds& operator=(Bounds const& rhs);
     
-    double min(Array::size_type i) const { return mins[i]; }
-    void min(Array::size_type i, double v) { mins[i] = v; }
-    double max(Array::size_type i) const { return maxs[i]; }
-    void max(Array::size_type i, double v) { maxs[i] = v; }
+    double min(std::size_t const& index) const
+    {
+        return mins[index];
+    }
+
+    void min(std::size_t const& index, double v)
+    {
+        mins[index] = v;
+    }
+
+    double max(std::size_t const& index) const
+    {
+        return maxs[index];
+    }
+    
+    void max(std::size_t const& index, double v)
+    {
+        maxs[index] = v;
+    }
 
     bool equal(Bounds const& other) const;
     bool intersects2d(Bounds const& other) const;
