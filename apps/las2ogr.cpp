@@ -330,8 +330,8 @@ int main(int argc, char* argv[])
         //
         // Translation of points cloud to features set
         //
-        liblas::uint32_t i = 0;
-        liblas::uint32_t const size = reader.GetHeader().GetPointRecordsCount();
+        uint32_t i = 0;
+        uint32_t const size = reader.GetHeader().GetPointRecordsCount();
 
         std::cout << "Translating " << size << " points:\n";
 
