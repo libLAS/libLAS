@@ -5,9 +5,12 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
+// liblas
+#include <liblas/liblas.hpp>
 #include <liblas/lasvariablerecord.hpp>
-#include <liblas/cstdint.hpp>
+// tut
 #include <tut/tut.hpp>
+// std
 #include <string>
 
 namespace tut
@@ -19,13 +22,13 @@ namespace tut
         void test_default(liblas::VariableRecord const& h)
         {
             ensure_equals("wrong default reserved bytes",
-                h.GetReserved(), liblas::uint16_t());
+                h.GetReserved(), boost::uint16_t());
 
             ensure_equals("wrong default record identifier",
-                h.GetRecordId(), liblas::uint16_t());
+                h.GetRecordId(), boost::uint16_t());
 
             ensure_equals("wrong default record length",
-                h.GetRecordLength(), liblas::uint16_t());
+                h.GetRecordLength(), boost::uint16_t());
 
             ensure_equals("wrong default user identifier",
                 h.GetUserId(true).c_str(), std::string());
@@ -78,7 +81,7 @@ namespace tut
         ensure("two default headers not equal", m_default.equal(hdr));
 
         liblas::VariableRecord hdr_copy(m_default);
-        ensure("copy of default header not equal", hdr.equal(m_default));
+        ensure("copy of default header not equal", hdr_copy.equal(m_default));
     }
 
     // Test equal-to operator
@@ -90,7 +93,7 @@ namespace tut
         ensure("two default headers not equal", m_default == hdr);
 
         liblas::VariableRecord hdr_copy(m_default);
-        ensure("copy of default header not equal", hdr == m_default);
+        ensure("copy of default header not equal", hdr_copy == m_default);
     }
 
     // Test not-equal-to operator
@@ -102,7 +105,7 @@ namespace tut
         ensure_not("two default headers not equal", m_default != hdr);
 
         liblas::VariableRecord hdr_copy(m_default);
-        ensure_not("copy of default header not equal", hdr != m_default);
+        ensure_not("copy of default header not equal", hdr_copy != m_default);
     }
 }
 

@@ -8,7 +8,6 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/cstdint.hpp>
 #include <liblas/liblas.hpp>
 #include <tut/tut.hpp>
 #include <fstream>

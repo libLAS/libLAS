@@ -6,7 +6,6 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/lasspatialreference.hpp>
-#include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <tut/tut.hpp>
 #include <string>

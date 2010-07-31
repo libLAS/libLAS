@@ -6,13 +6,17 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/lasheader.hpp>
-#include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <tut/tut.hpp>
 #include "common.hpp"
+// boost
+#include <boost/cstdint.hpp>
+// std
+#include <string>
 
-namespace tut
-{
+namespace tut {
+
+using namespace boost;
 
 void test_default_header(liblas::Header const& h)
 {
@@ -46,9 +50,9 @@ void test_default_header(liblas::Header const& h)
     // ensure_equals("wrong default creation year",
     //     h.GetCreationYear(), 0);
     ensure_equals("wrong default header size",
-        h.GetHeaderSize(), liblas::uint16_t(227));
+        h.GetHeaderSize(), boost::uint16_t(227));
     
-    liblas::uint32_t offset = 229;
+    boost::uint32_t offset = 229;
     if (h.GetVersionMinor() == 1 || h.GetVersionMinor() == 2)
     {
         offset = 227;
@@ -57,13 +61,13 @@ void test_default_header(liblas::Header const& h)
         h.GetDataOffset(), offset);
     
     ensure_equals("wrong default records count",
-        h.GetRecordsCount(), liblas::uint32_t(0));
+        h.GetRecordsCount(), boost::uint32_t(0));
     ensure_equals("wrong default data format id",
         h.GetDataFormatId(), liblas::ePointFormat0);
     ensure_equals("wrong default data record length",
         h.GetDataRecordLength(), liblas::ePointSize0);
     ensure_equals("wrong default point records count",
-        h.GetPointRecordsCount(), liblas::uint32_t(0));
+        h.GetPointRecordsCount(), boost::uint32_t(0));
 
     ensure_equals("wrong default X scale", h.GetScaleX(), double(0.01));
     ensure_equals("wrong default Y scale", h.GetScaleY(), double(0.01));
@@ -136,12 +140,12 @@ void test_file10_header(liblas::Header const& h)
     ensure_equals(h.GetSoftwareId(), std::string("TerraScan"));
     ensure_equals(h.GetCreationDOY(), 0);
     ensure_equals(h.GetCreationYear(), 0);
-    ensure_equals(h.GetHeaderSize(), liblas::uint16_t(227));
-    ensure_equals(h.GetDataOffset(), liblas::uint32_t(229));
-    ensure_equals(h.GetRecordsCount(), liblas::uint32_t(0));
+    ensure_equals(h.GetHeaderSize(), boost::uint16_t(227));
+    ensure_equals(h.GetDataOffset(), boost::uint32_t(229));
+    ensure_equals(h.GetRecordsCount(), boost::uint32_t(0));
     ensure_equals(h.GetDataFormatId(), liblas::ePointFormat1);
     ensure_equals(h.GetDataRecordLength(), liblas::ePointSize1);
-    ensure_equals(h.GetPointRecordsCount(), liblas::uint32_t(8));
+    ensure_equals(h.GetPointRecordsCount(), boost::uint32_t(8));
     ensure_equals(h.GetScaleX(), double(0.01));
     ensure_equals(h.GetScaleY(), double(0.01));
     ensure_equals(h.GetScaleZ(), double(0.01));

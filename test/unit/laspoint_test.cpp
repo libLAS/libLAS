@@ -5,6 +5,7 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
+#include <liblas/liblas.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lascolor.hpp>
 #include <liblas/exception.hpp>
@@ -86,19 +87,19 @@ namespace tut
         ensure_equals("invalid default return number",
                       m_default.GetReturnNumber(), 0);
 
-        liblas::uint16_t const num1 = 7;
+        boost::uint16_t const num1 = 7;
         m_default.SetReturnNumber(num1);
         ensure_equals("invalid return number",
                       m_default.GetReturnNumber(), num1);
 
-        liblas::uint16_t const num2 = 3;
+        boost::uint16_t const num2 = 3;
         m_default.SetReturnNumber(num2);
         ensure_equals("invalid return number",
                       m_default.GetReturnNumber(), num2);
 
         try
         {
-            liblas::uint16_t const outofrange = 8;
+            boost::uint16_t const outofrange = 8;
             m_default.SetReturnNumber(outofrange);
             m_default.Validate(); // throws
 
@@ -121,19 +122,19 @@ namespace tut
         ensure_equals("invalid default number of returns",
                       m_default.GetNumberOfReturns(), 0);
 
-        liblas::uint16_t const num1 = 7;
+        boost::uint16_t const num1 = 7;
         m_default.SetNumberOfReturns(num1);
         ensure_equals("invalid number of returns",
                       m_default.GetNumberOfReturns(), num1);
 
-        liblas::uint16_t const num2 = 3;
+        boost::uint16_t const num2 = 3;
         m_default.SetNumberOfReturns(num2);
         ensure_equals("invalid number of returns",
                       m_default.GetNumberOfReturns(), num2);
 
         try
         {
-            liblas::uint16_t const outofrange = 8;
+            boost::uint16_t const outofrange = 8;
             m_default.SetNumberOfReturns(outofrange);
             m_default.Validate(); // throws
 
@@ -156,19 +157,19 @@ namespace tut
         ensure_equals("invalid default scan direction flag",
                       m_default.GetScanDirection(), 0);
 
-        liblas::uint16_t const positive = 1;
+        boost::uint16_t const positive = 1;
         m_default.SetScanDirection(positive);
         ensure_equals("invalid scan direction flag",
                       m_default.GetScanDirection(), positive);
 
-        liblas::uint16_t const negative = 0;
+        boost::uint16_t const negative = 0;
         m_default.SetScanDirection(negative);
         ensure_equals("invalid scan direction flag",
                       m_default.GetScanDirection(), negative);
 
         try
         {
-            liblas::uint16_t const outofrange = 2;
+            boost::uint16_t const outofrange = 2;
             m_default.SetScanDirection(outofrange);
             m_default.Validate(); // throws
 
@@ -191,19 +192,19 @@ namespace tut
         ensure_equals("invalid default edge of flight line",
                       m_default.GetFlightLineEdge(), 0);
 
-        liblas::uint16_t const endofscan = 1;
+        boost::uint16_t const endofscan = 1;
         m_default.SetFlightLineEdge(endofscan);
         ensure_equals("invalid edge of flight line",
                       m_default.GetFlightLineEdge(), endofscan);
 
-        liblas::uint16_t const notendofscan = 0;
+        boost::uint16_t const notendofscan = 0;
         m_default.SetFlightLineEdge(notendofscan);
         ensure_equals("invalid edge of flight line",
                       m_default.GetFlightLineEdge(), notendofscan);
 
         try
         {
-            liblas::uint16_t const outofrange = 2;
+            boost::uint16_t const outofrange = 2;
             m_default.SetFlightLineEdge(outofrange);
             m_default.Validate(); // throws
 
@@ -254,14 +255,14 @@ namespace tut
 
         liblas::Classification c;
         
-        liblas::uint8_t const begclass = 0;
+        boost::uint8_t const begclass = 0;
         c.SetClass(begclass);
         m_default.SetClassification(c);
         
         ensure_equals("invalid class index",
             m_default.GetClassification().GetClass(), begclass);
 
-        liblas::uint8_t const endclass = 31;
+        boost::uint8_t const endclass = 31;
         c.SetClass(endclass);
         m_default.SetClassification(c);
         ensure_equals("invalid class index",
@@ -276,19 +277,19 @@ namespace tut
         ensure_equals("invalid default scan angle rank",
                       m_default.GetScanAngleRank(), 0);
 
-        liblas::int8_t const rank1 = -90;
+        boost::int8_t const rank1 = -90;
         m_default.SetScanAngleRank(rank1);
         ensure_equals("invalid scan angle rank",
                       m_default.GetScanAngleRank(), rank1);
 
-        liblas::int8_t const rank2 = 90;
+        boost::int8_t const rank2 = 90;
         m_default.SetScanAngleRank(rank2);
         ensure_equals("invalid scan angle rank",
                       m_default.GetScanAngleRank(), rank2);
 
         try
         {
-            liblas::int8_t const outofrange = 91;
+            boost::int8_t const outofrange = 91;
             m_default.SetScanAngleRank(outofrange);
             m_default.Validate(); // throws
 
@@ -309,7 +310,7 @@ namespace tut
         ensure_equals("invalid default user data value",
                       m_default.GetUserData(), 0);
 
-        liblas::uint8_t const data = 7; // dummy value
+        boost::uint8_t const data = 7; // dummy value
         m_default.SetUserData(data);
 
         ensure_equals("invalid user data value",
@@ -338,7 +339,7 @@ namespace tut
     {
         {
             liblas::Point p;
-            liblas::uint16_t const outofrange = 8;
+            boost::uint16_t const outofrange = 8;
             p.SetReturnNumber(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
             //ensure_not(p.IsValid());
@@ -346,7 +347,7 @@ namespace tut
 
         {
             liblas::Point p;
-            liblas::uint16_t const outofrange = 8;
+            boost::uint16_t const outofrange = 8;
             p.SetNumberOfReturns(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
             //ensure_not(p.IsValid());
@@ -354,7 +355,7 @@ namespace tut
 
         {
             liblas::Point p;
-            liblas::uint16_t const outofrange = 2;
+            boost::uint16_t const outofrange = 2;
             p.SetScanDirection(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
             //ensure_not(p.IsValid());
@@ -362,7 +363,7 @@ namespace tut
 
         {
             liblas::Point p;
-            liblas::uint16_t const outofrange = 2;
+            boost::uint16_t const outofrange = 2;
             p.SetFlightLineEdge(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
             //ensure_not(p.IsValid());
@@ -370,7 +371,7 @@ namespace tut
 
         {
             liblas::Point p;
-            liblas::int8_t const outofrange = 91;
+            boost::int8_t const outofrange = 91;
             p.SetScanAngleRank(outofrange);
             ensure_not(p.IsValid());
         }
@@ -424,7 +425,7 @@ namespace tut
     template<>
     void to::test<17>()
     {
-        typedef std::vector<liblas::uint8_t> data_t;
+        typedef std::vector<boost::uint8_t> data_t;
         
         data_t data;
         data.push_back(254);

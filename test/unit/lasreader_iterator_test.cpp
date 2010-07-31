@@ -5,7 +5,7 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
-#include <liblas/cstdint.hpp>
+#include <liblas/liblas.hpp>
 #include <liblas/iterator.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasreader.hpp>
@@ -181,11 +181,11 @@ namespace tut
     template<>
     void to::test<13>()
     {
-        liblas::uint32_t const cnt = reader_.GetHeader().GetPointRecordsCount();
+        boost::uint32_t const cnt = reader_.GetHeader().GetPointRecordsCount();
         lasreader_iterator it(reader_); // move to 1st point
         lasreader_iterator end;
 
-        liblas::uint32_t s = 0;
+        boost::uint32_t s = 0;
         while (end != it)
         {
             s++;
@@ -200,7 +200,7 @@ namespace tut
     template<>
     void to::test<14>()
     {
-        liblas::uint32_t const cnt = reader_.GetHeader().GetPointRecordsCount();
+        boost::uint32_t const cnt = reader_.GetHeader().GetPointRecordsCount();
         lasreader_iterator it(reader_); // move to 1st point
         lasreader_iterator end;
 
@@ -246,7 +246,7 @@ namespace tut
     template<>
     void to::test<17>()
     {
-        liblas::uint32_t const size = reader_.GetHeader().GetPointRecordsCount();
+        boost::uint32_t const size = reader_.GetHeader().GetPointRecordsCount();
         lasreader_iterator it(reader_);
         lasreader_iterator end;
 

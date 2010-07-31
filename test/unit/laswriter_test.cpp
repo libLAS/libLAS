@@ -10,7 +10,6 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasclassification.hpp>
-#include <liblas/cstdint.hpp>
 #include <liblas/liblas.hpp>
 #include <tut/tut.hpp>
 #include <cstdio>

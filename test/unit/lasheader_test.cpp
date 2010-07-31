@@ -5,9 +5,9 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
+#include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/lasspatialreference.hpp>
-#include <liblas/cstdint.hpp>
 #include <liblas/guid.hpp>
 #include <tut/tut.hpp>
 #include <string>
@@ -104,7 +104,7 @@ namespace tut
     void to::test<5>()
     {
         using liblas::Header;
-        using liblas::uint16_t;
+        using boost::uint16_t;
 
         uint16_t const id1 = 1;
         uint16_t const id2 = 65535;
@@ -118,11 +118,11 @@ namespace tut
 
 #ifdef _MSC_VER
 # pragma warning(push)
-# pragma warning(disable: 4305) //  truncation from 'int' to 'liblas::uint16_t'
+# pragma warning(disable: 4305) //  truncation from 'int' to 'boost::uint16_t'
 # pragma warning(disable: 4309) // conditional expression is constant.
 #endif
         // Unsigned overflow
-        // Likely compiler warning: truncation from int to liblas::uint16_t
+        // Likely compiler warning: truncation from int to boost::uint16_t
         h1.SetFileSourceId(id2 + 1);
         ensure_equals(h1.GetFileSourceId(), overflowed);
 
@@ -248,7 +248,7 @@ namespace tut
     void to::test<11>()
     {
         typedef ::liblas::Header::RecordsByReturnArray::size_type size_type;
-        typedef ::liblas::uint32_t count_type;
+        typedef ::boost::uint32_t count_type;
 
         liblas::Header h;
         // NOTE: The committee in its infinite stupidity decided to increase the size of this array to 7 at 1.3.

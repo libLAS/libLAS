@@ -12,7 +12,6 @@
 #include <liblas/liblas.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasreader.hpp>
-#include <liblas/cstdint.hpp>
 #include <liblas/detail/timer.hpp>
 //std
 #include <algorithm>
