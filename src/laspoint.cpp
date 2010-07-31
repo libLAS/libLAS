@@ -41,11 +41,14 @@
 
 #include <liblas/laspoint.hpp>
 #include <liblas/lasheader.hpp>
-#include <liblas/cstdint.hpp>
 #include <liblas/exception.hpp>
 #include <liblas/detail/utility.hpp>
 // std
 #include <cstring>
+#include <string>
+#include <vector>
+// boost
+#include <boost/cstdint.hpp>
 
 namespace liblas {
 
@@ -184,7 +187,7 @@ void Point::SetClassification(Classification::bitset_type const& flags)
     m_cls = Classification(flags);
 }
 
-void Point::SetClassification(liblas::uint8_t const& flags)
+void Point::SetClassification(boost::uint8_t const& flags)
 {
     m_cls = Classification(flags);
 }

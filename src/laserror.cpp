@@ -42,7 +42,6 @@
  ****************************************************************************/
 
 #include <liblas/laserror.hpp>
-#include <liblas/cstdint.hpp>
 
 namespace liblas
 {

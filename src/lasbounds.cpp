@@ -109,9 +109,9 @@ Bounds::Bounds( double minx,
 }
 
 Bounds::Bounds(Bounds const& other)
-: mins(other.mins), maxs(other.maxs)
+    : mins(other.mins)
+    , maxs(other.maxs)
 {
-    
 }
 
 Bounds& Bounds::operator=(Bounds const& rhs) 
@@ -131,26 +131,24 @@ void Bounds::verify()
     {
         if (min(d) > max(d) )
         {
+            // FIXME: direct comparison of float-point may not be robust enough --mloskot
             // check for infinitive region
             if (!(min(d) == std::numeric_limits<double>::max() ||
                  max(d) == -std::numeric_limits<double>::max() ))
             {
                 std::ostringstream msg; 
-                msg << "liblas::Bounds::verify: Minimum point at dimension " << d << 
-                "is greater than maximum point.  Neither point is infinity.";
-                std::string message(msg.str());
-                throw std::runtime_error(message);
+                msg << "liblas::Bounds::verify: Minimum point at dimension " << d
+                    << "is greater than maximum point.  Neither point is infinity.";
+                throw std::runtime_error(msg.str());
             }
         }
     }
-
 }
-
 
 bool Bounds::equal(Bounds const& other) const
 {
     // FIXME: direct comparison of float-point values may give wrong result --mloskot
-    for (uint32_t i = 0; i < 3; i++) {
+    for (Array::size_type i = 0; i < 3; i++) {
         if (!(min(i) == other.min(i)) && !(max(i) == other.max(i))) 
         {
             return false;
@@ -162,15 +160,10 @@ bool Bounds::equal(Bounds const& other) const
 bool Bounds::intersects2d(Bounds const& other) const
 {
 
-    return ( ( other.min(0) < max(0) && other.min(0) > min(0) &&
-        other.min(1) < max(1) && other.min(1) > max(1) ) ||
-        ( other.max(0) < max(0) && other.max(0) > min(0) &&
-          other.min(1) < max(1) && other.min(1) > max(1) ) ||
-        ( other.min(0) < max(0) && other.min(0) > min(0) &&
-          other.max(1) < max(1) && other.max(1) > max(1) ) ||
-        ( other.max(0) < max(0) && other.max(0) > min(0) &&
-          other.max(1) < max(1) && other.max(1) > max(1) ) );
-
+    return (other.min(0) < max(0) && other.min(0) > min(0) && other.min(1) < max(1) && other.min(1) > max(1))
+        || (other.max(0) < max(0) && other.max(0) > min(0) && other.min(1) < max(1) && other.min(1) > max(1))
+        || (other.min(0) < max(0) && other.min(0) > min(0) && other.max(1) < max(1) && other.max(1) > max(1))
+        || (other.max(0) < max(0) && other.max(0) > min(0) && other.max(1) < max(1) && other.max(1) > max(1));
 }
 
 bool Bounds::intersects3d(Bounds const& other) const

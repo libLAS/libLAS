@@ -42,8 +42,6 @@
 #ifndef LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED
 #define LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED
 
-
-#include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
 

@@ -46,9 +46,7 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/liblas.hpp>
-
-#include <vector>
-
+// boost
 #include <boost/array.hpp>
 
 namespace liblas
@@ -77,10 +75,10 @@ public:
     Bounds(Bounds const& other);
     Bounds& operator=(Bounds const& rhs);
     
-    double min(liblas::uint32_t i) const { return mins[i]; }
-    void min(liblas::uint32_t i, double v) { mins[i] = v; }
-    double max(liblas::uint32_t i) const { return maxs[i]; }
-    void max(liblas::uint32_t i, double v) { maxs[i] = v; }
+    double min(Array::size_type i) const { return mins[i]; }
+    void min(Array::size_type i, double v) { mins[i] = v; }
+    double max(Array::size_type i) const { return maxs[i]; }
+    void max(Array::size_type i, double v) { maxs[i] = v; }
 
     bool equal(Bounds const& other) const;
     bool intersects2d(Bounds const& other) const;
@@ -91,7 +89,6 @@ private:
     Array maxs;
     
     void verify();
-    
 };
 
 inline bool operator==(Bounds const& lhs, Bounds const& rhs)
@@ -103,8 +100,6 @@ inline bool operator!=(Bounds const& lhs, Bounds const& rhs)
 {
     return (!lhs.equal(rhs));
 }
-
-
 
 } // namespace liblas
 

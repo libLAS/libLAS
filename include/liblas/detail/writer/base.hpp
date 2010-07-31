@@ -45,26 +45,23 @@
 #include <liblas/lasversion.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
-
-
-
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <iosfwd>
 
 namespace liblas { namespace detail {
 
-
 class WriterBase
 {
 public:
 
-    WriterBase(std::ostream& ofs, liblas::uint32_t& count);
+    WriterBase(std::ostream& ofs, boost::uint32_t& count);
     ~WriterBase();
     
     std::ostream& GetStream() const { return m_ofs; }
-    liblas::uint32_t& GetPointCount() const { return m_pointCount; }
-    void SetPointCount(liblas::uint32_t& count) { m_pointCount = count; }
-    
+    boost::uint32_t& GetPointCount() const { return m_pointCount; }
+    void SetPointCount(boost::uint32_t& count) { m_pointCount = count; }
     
 private:
 
@@ -72,16 +69,10 @@ private:
     WriterBase(WriterBase const& other);
     WriterBase& operator=(WriterBase const& rhs);
 
-    
-    liblas::uint32_t& m_pointCount;
+    boost::uint32_t& m_pointCount;
     std::ostream& m_ofs;
-    
-    
 };
 
 }} // namespace liblas::detail
-
-
-
 
 #endif // LIBLAS_DETAIL_WRITER_BASE_HPP_INCLUDED

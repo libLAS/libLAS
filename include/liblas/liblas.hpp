@@ -45,13 +45,16 @@
 #ifndef LIBLAS_HPP_INCLUDED
 #define LIBLAS_HPP_INCLUDED
 
-#include <liblas/cstdint.hpp>
+// liblas
 #include <liblas/detail/fwd.hpp>
-
+// booost
+#include <boost/array.hpp>
+#include <boost/concept_check.hpp>
+#include <boost/cstdint.hpp>
+#include <boost/shared_ptr.hpp>
+// std
 #include <fstream>
 #include <string>
-
-#include <boost/shared_ptr.hpp>
 
 typedef boost::shared_ptr< liblas::Header > HeaderPtr;
 typedef boost::shared_ptr< liblas::Point > PointPtr;

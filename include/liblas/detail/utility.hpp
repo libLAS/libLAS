@@ -42,8 +42,10 @@
 #ifndef LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 #define LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 
-#include <liblas/cstdint.hpp>
 #include <liblas/detail/endian.hpp>
+// boost
+#include <boost/concept_check.hpp>
+#include <boost/cstdint.hpp>
 // std
 #include <cassert>
 #include <cstddef>
@@ -55,30 +57,10 @@
 #include <stdexcept>
 #include <cmath>
 
-
-// boost
-#ifdef HAVE_BOOST
-#include <boost/concept_check.hpp>
-#endif
-
 /// Defines utilities for internal use in libLAS.
 /// The liblas::detail elements do not belong to the public
 /// interface of libLAS.
 namespace liblas { namespace detail {
-
-
-// Utilities stolen from Boost and accessible for compilation
-// without Boost support (optional) enabled.
-#ifndef HAVE_BOOST
-
-template <class T>
-inline void ignore_unused_variable_warning(T const&) {}
-
-#else
-
-using boost::ignore_unused_variable_warning;
-
-#endif // HAVE_BOOST
 
 // From http://stackoverflow.com/questions/485525/round-for-float-in-c
 inline double sround(double r) {
@@ -90,7 +72,7 @@ inline double sround(double r) {
 template <typename T, std::size_t N>
 inline std::size_t static_array_size(T (&t)[N])
 {
-    detail::ignore_unused_variable_warning(t);
+    boost::ignore_unused_variable_warning(t);
     return (sizeof(t) / sizeof(t[0]));
 }
 
@@ -326,7 +308,7 @@ inline void check_stream_state(std::basic_ios<C, T>& srtm)
     else if (srtm.bad())
         throw std::runtime_error("fatal I/O error occured");
 #else
-    ignore_unused_variable_warning(srtm);
+    boost::ignore_unused_variable_warning(srtm);
 #endif
 }
 

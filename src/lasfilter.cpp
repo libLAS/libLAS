@@ -41,29 +41,30 @@
 
 #include <liblas/lasfilter.hpp>
 #include <liblas/lasclassification.hpp>
+// boost
+#include <boost/cstdint.hpp>
+// std
+#include <vector>
 
 namespace liblas { 
 
-
-ClassificationFilter::ClassificationFilter( std::vector<liblas::uint8_t> classes ) : 
- FilterI(eInclusion), m_classes(classes) 
+ClassificationFilter::ClassificationFilter( std::vector<boost::uint8_t> classes )
+    : FilterI(eInclusion)
+    , m_classes(classes) 
 {
 }
-
-
 
 bool ClassificationFilter::filter(const Point& p)
 {
     Classification c = p.GetClassification();
-    liblas::uint8_t cls = c.GetClass();
+    boost::uint8_t cls = c.GetClass();
     
     // If the user gave us an empty set of classes to filter
     // we're going to return true regardless
     bool output = true;
-    std::vector<liblas::uint8_t>::const_iterator i;
-    for (i = m_classes.begin(); i != m_classes.end(); ++i) {
+    for (class_list_type::const_iterator it = m_classes.begin(); it != m_classes.end(); ++it) {
         
-        if (cls == *i) {
+        if (cls == *it) {
             if (GetType() == eInclusion) {
                 output = true;
             } else {
@@ -76,7 +77,6 @@ bool ClassificationFilter::filter(const Point& p)
     }
     return output;
 }
-
 
 BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy ) : FilterI(eInclusion)
 {

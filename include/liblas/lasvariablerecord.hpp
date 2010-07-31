@@ -43,7 +43,6 @@
 #ifndef LIBLAS_LASVARIABLERECORD_HPP_INCLUDED
 #define LIBLAS_LASVARIABLERECORD_HPP_INCLUDED
 
-#include <liblas/cstdint.hpp>
 #include <liblas/detail/utility.hpp>
 
 // std

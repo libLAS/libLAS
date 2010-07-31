@@ -41,28 +41,29 @@
 
 #include <liblas/lasschema.hpp>
 #include <liblas/detail/utility.hpp>
+// boost
+#include <boost/cstdint.hpp>
 
 namespace liblas { 
 
-void Schema::updatesize(liblas::uint16_t new_size) {
+void Schema::updatesize(boost::uint16_t new_size) {
         
-        // if the difference between the new size we're given 
-        // and our existing size is 0, do nothing.
-        if ((new_size - m_size) == 0) {
-            return;
-        }
-        
+    // if the difference between the new size we're given 
+    // and our existing size is 0, do nothing.
+    if ((new_size - m_size) != 0)
+    {
         // Use the larger of either our base size (accounting for 
         // color, time, etc) and the size we were given.
         m_size = std::max(new_size, m_base_size);
-        
+    }    
 }
 
-liblas::uint16_t Schema::calculate_base_size() {
-    liblas::uint16_t new_base_size = sizeof(detail::PointRecord);
+boost::uint16_t Schema::calculate_base_size() {
+
+    boost::uint16_t new_base_size = sizeof(detail::PointRecord);
     
     if (HasColor()) {
-        new_base_size += 3 * sizeof(liblas::uint16_t);
+        new_base_size += 3 * sizeof(boost::uint16_t);
     }
     
     if (HasTime()) {
@@ -72,7 +73,7 @@ liblas::uint16_t Schema::calculate_base_size() {
     
 }
 void Schema::updatesize() {
-    liblas::uint16_t new_base_size = calculate_base_size();
+    boost::uint16_t new_base_size = calculate_base_size();
     
     // Set to the base if we haven't set it at all yet
     if (m_size == 0) {
@@ -90,20 +91,20 @@ void Schema::updatesize() {
         }
         else if (base_difference > 0) {
             // Expand m_size to include new_base_size
-			m_size = m_size + static_cast<liblas::uint16_t>(base_difference);
+			m_size = m_size + static_cast<boost::uint16_t>(base_difference);
             m_base_size = new_base_size;
         }
         else {
-            m_size = m_size - static_cast<liblas::uint16_t>(base_difference);
+            m_size = m_size - static_cast<boost::uint16_t>(base_difference);
             m_base_size = new_base_size;
         }
         
     }
 }
 
-Schema::Schema( liblas::uint8_t major, 
-                liblas::uint8_t minor, 
-                liblas::uint16_t size) :
+Schema::Schema( boost::uint8_t major, 
+                boost::uint8_t minor, 
+                boost::uint16_t size) :
     m_size(size),
     m_versionminor(minor), 
     m_versionmajor(major),
@@ -115,9 +116,9 @@ Schema::Schema( liblas::uint8_t major,
 }
 
 
-Schema::Schema( liblas::uint8_t major, 
-                liblas::uint8_t minor, 
-                liblas::uint16_t size,
+Schema::Schema( boost::uint8_t major, 
+                boost::uint8_t minor, 
+                boost::uint16_t size,
                 bool bColor,
                 bool bTime) :
     m_size(size),

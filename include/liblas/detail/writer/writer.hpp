@@ -46,13 +46,11 @@
 #include <liblas/liblas.hpp>
 #include <liblas/detail/writer/point.hpp>
 #include <liblas/detail/writer/header.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 
-
-
 namespace liblas { namespace detail { 
-
 
 typedef boost::shared_ptr< writer::Point > PointWriterPtr;
 typedef boost::shared_ptr< writer::Header > HeaderWriterPtr;
@@ -61,7 +59,6 @@ class WriterImpl : public WriterI
 {
 public:
 
-    
     WriterImpl(std::ostream& ofs);
     ~WriterImpl();
     LASVersion GetVersion() const;
@@ -80,7 +77,7 @@ protected:
     
 private:
 
-    liblas::uint32_t m_pointCount;
+    boost::uint32_t m_pointCount;
 
     // block copying operations
     WriterImpl(WriterImpl const& other);
@@ -91,7 +88,7 @@ class WriterFactory
 {
 public:
 
-    static WriterImpl* Create(std::ostream& ofs);
+    static WriterImpl* Create(std::ostream& ofs); // TODO: replace with shared_ptr to writer, remove Destroy as redundant --mloskot
     static void Destroy(WriterImpl* p);
 };
 

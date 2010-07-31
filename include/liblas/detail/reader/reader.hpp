@@ -46,7 +46,8 @@
 #include <liblas/detail/reader/point.hpp>
 #include <liblas/detail/reader/header.hpp>
 #include <liblas/liblas.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <iosfwd>
 #include <boost/shared_ptr.hpp>
@@ -74,15 +75,13 @@ public:
 
 protected:
     void CreateTransform();
-    
-
 
     typedef std::istream::off_type off_type;
     typedef std::istream::pos_type pos_type;
     
     std::istream& m_ifs;
-    uint32_t m_size;
-    uint32_t m_current;
+    boost::uint32_t m_size;
+    boost::uint32_t m_current;
     
     PointReaderPtr m_point_reader;
     HeaderReaderPtr m_header_reader;
@@ -92,7 +91,6 @@ private:
     // Blocked copying operations, declared but not defined.
     ReaderImpl(ReaderImpl const& other);
     ReaderImpl& operator=(ReaderImpl const& rhs);
-
 };
 
 class CachedReaderImpl : public ReaderImpl
@@ -117,18 +115,18 @@ private:
     // Blocked copying operations, declared but not defined.
     CachedReaderImpl(CachedReaderImpl const& other);
     CachedReaderImpl& operator=(CachedReaderImpl const& rhs);
-    PointPtr ReadCachedPoint(liblas::uint32_t position, HeaderPtr header);
+    PointPtr ReadCachedPoint(boost::uint32_t position, HeaderPtr header);
     
-    void CacheData(liblas::uint32_t position, HeaderPtr header);
-        
-    std::vector<uint8_t>::size_type  m_cache_size;
-    std::vector<uint8_t> m_mask;
-    
-    std::vector<uint8_t>::size_type m_cache_start_position;
-    std::vector<uint8_t>::size_type m_cache_read_position;
-    std::vector<PointPtr> m_cache;
+    void CacheData(boost::uint32_t position, HeaderPtr header);
 
+    typedef std::vector<uint8_t> cache_mask_type;
+    cache_mask_type m_mask;
+    cache_mask_type::size_type m_cache_size;    
+    cache_mask_type::size_type m_cache_start_position;
+    cache_mask_type::size_type m_cache_read_position;
 
+    typedef std::vector<PointPtr> cache_type;
+    cache_type m_cache;
 };
 
 // class ReaderFactory

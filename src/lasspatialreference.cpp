@@ -42,7 +42,8 @@
 
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/utility.hpp>
-
+// boost
+#include <boost/concept_check.hpp>
 // std
 #include <stdexcept>
 #include <string>
@@ -371,7 +372,7 @@ const GTIF* SpatialReference::GetGTIF()
 std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const 
 {
 #ifndef HAVE_GDAL
-	detail::ignore_unused_variable_warning(mode_flag);
+	boost::ignore_unused_variable_warning(mode_flag);
     return std::string();
 #else
     GTIFDefn sGTIFDefn;
@@ -405,7 +406,7 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const
             delete poSRS;
         }
 #else
-		detail::ignore_unused_variable_warning(mode_flag);
+		boost::ignore_unused_variable_warning(mode_flag);
 #endif
 
 
@@ -441,7 +442,7 @@ void SpatialReference::SetFromUserInput( std::string const& v)
     
     SetWKT(tmp);
 #else
-    detail::ignore_unused_variable_warning(v);
+    boost::ignore_unused_variable_warning(v);
     throw std::runtime_error("GDAL is not available, SpatialReference could not be set from WKT");
 #endif
 }
@@ -470,7 +471,7 @@ void SpatialReference::SetWKT(std::string const& v)
 
     ResetVLRs();
 #else
-    detail::ignore_unused_variable_warning(v);
+    boost::ignore_unused_variable_warning(v);
     throw std::runtime_error("GDAL is not available, SpatialReference could not be set from WKT");
 #endif
 }
@@ -511,10 +512,10 @@ void SpatialReference::SetVerticalCS( int verticalCSType,
 
     ResetVLRs();
 #else
-    detail::ignore_unused_variable_warning(citation);
-    detail::ignore_unused_variable_warning(verticalUnits);
-    detail::ignore_unused_variable_warning(verticalDatum);
-    detail::ignore_unused_variable_warning(verticalCSType);
+    boost::ignore_unused_variable_warning(citation);
+    boost::ignore_unused_variable_warning(verticalUnits);
+    boost::ignore_unused_variable_warning(verticalDatum);
+    boost::ignore_unused_variable_warning(verticalCSType);
 #endif /* def HAVE_LIBGEOTIFF */
 }
                                          
@@ -610,7 +611,7 @@ void SpatialReference::SetProj4(std::string const& v)
         std::free(proj4def); /* risk of cross-heap issue, but no free function in libgeotiff matching GTIFGetProj4Defn */
     }
 #else
-    detail::ignore_unused_variable_warning(v);
+    boost::ignore_unused_variable_warning(v);
 #endif
 
 // if we have libgeotiff but not GDAL, we'll use the 

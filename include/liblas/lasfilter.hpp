@@ -46,13 +46,12 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/detail/fwd.hpp>
-#include <liblas/liblas.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
+// std
 #include <vector>
 
-namespace liblas
-{
-
+namespace liblas {
 
 class BoundsFilter: public FilterI
 {
@@ -63,9 +62,8 @@ public:
     bool filter(const Point& point);
 
 private:
-    double mins[3];
+    double mins[3]; // TODO: use Bounds directly or array<double, 3> --mloskot
     double maxs[3];
-    
     
     bool m_2d;
 
@@ -78,12 +76,14 @@ class ClassificationFilter: public FilterI
 {
 public:
     
-    ClassificationFilter(std::vector<liblas::uint8_t> classes);
-    bool filter(const Point& point);
+    typedef std::vector<boost::uint8_t> class_list_type;
 
+    ClassificationFilter(class_list_type classes);
+    bool filter(const Point& point);
     
 private:
-    std::vector<liblas::uint8_t> m_classes;
+
+    class_list_type m_classes;
 
     ClassificationFilter(ClassificationFilter const& other);
     ClassificationFilter& operator=(ClassificationFilter const& rhs);

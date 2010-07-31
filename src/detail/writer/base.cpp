@@ -40,21 +40,23 @@
  ****************************************************************************/
 
 #include <liblas/detail/writer/writer.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
+// std
+#include <ostream>
 
 namespace liblas { namespace detail {
 
+using namespace boost;
 
-
-WriterBase::WriterBase(   std::ostream& ofs, 
-                        liblas::uint32_t& count) : 
-        m_pointCount(count), m_ofs(ofs) 
+WriterBase::WriterBase(std::ostream& ofs, uint32_t& count)
+    : m_pointCount(count)
+    , m_ofs(ofs)
 {
 }
 
 WriterBase::~WriterBase()
 {
-
 }
 
 }} // namespace liblas::detail

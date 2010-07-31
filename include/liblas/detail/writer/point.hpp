@@ -42,14 +42,14 @@
 #ifndef LIBLAS_DETAIL_WRITER_POINT_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_POINT_HPP_INCLUDED
 
-#include <liblas/detail/fwd.hpp>
-
 #include <liblas/laspoint.hpp>
 #include <liblas/lasschema.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/detail/writer/base.hpp>
-
+#include <liblas/detail/fwd.hpp>
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <iosfwd>
 
@@ -61,7 +61,7 @@ public:
     
     typedef WriterBase Base;
     
-    Point(std::ostream& ofs, liblas::uint32_t& count, liblas::Header const& header);
+    Point(std::ostream& ofs, boost::uint32_t& count, liblas::Header const& header);
     virtual ~Point();
 
     const liblas::Point& GetPoint() const { return m_point; }
@@ -72,7 +72,6 @@ protected:
     typedef std::ostream::off_type off_type;
     typedef std::ostream::pos_type pos_type;
         
-    
 private:
 
     // Blocked copying operations, declared but not defined.
@@ -87,12 +86,11 @@ private:
     
     Schema m_format;
     
-    liblas::uint8_t* m_blanks;
+    boost::uint8_t* m_blanks; // TODO: shared_ptr --mlosko
     
     void setup();
     void fill();
 };
-
 
 }}} // namespace liblas::detail::writer
 

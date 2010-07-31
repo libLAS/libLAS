@@ -42,12 +42,12 @@
 #ifndef LIBLAS_DETAIL_WRITER_HEADER_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_HEADER_HPP_INCLUDED
 
+#include <liblas/lasheader.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
-
-#include <liblas/lasheader.hpp>
 #include <liblas/detail/writer/base.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <iosfwd>
 
@@ -59,19 +59,16 @@ class Header : public WriterBase
 public:
     typedef WriterBase Base;
 
-    Header(std::ostream& ofs, liblas::uint32_t& count, liblas::Header const& header );
+    Header(std::ostream& ofs, boost::uint32_t& count, liblas::Header const& header );
 
     const liblas::Header& GetHeader() const { return m_header; }
     void write();
-    
-protected:
 
 private:
     
-    int32_t WriteVLRs();
+    boost::int32_t WriteVLRs();
     void WriteLAS10PadSignature();
     liblas::Header m_header;
-    
 };
 
 }}} // namespace liblas::detail::writer

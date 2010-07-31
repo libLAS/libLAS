@@ -6,7 +6,7 @@
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Mateusz Loskot
  * Copyright (c) 2008, Phil Vachon
  *
  * All rights reserved.
@@ -43,11 +43,8 @@
 #ifndef LIBLAS_LASHEADER_HPP_INCLUDED
 #define LIBLAS_LASHEADER_HPP_INCLUDED
 
-#include <liblas/cstdint.hpp>
-#include <liblas/detail/utility.hpp>
-#include <liblas/lasbounds.hpp>
 #include <liblas/detail/fwd.hpp>
-
+#include <liblas/lasbounds.hpp>
 #include <liblas/liblas.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
@@ -73,7 +70,6 @@ class Header
 {
 public:
 
-
     /// Official signature of ASPRS LAS file format, always \b "LASF".
     static char const* const FileSignature;
 
@@ -85,7 +81,7 @@ public:
 
     /// Array of 5 elements - numbers of points recorded by each return.
     /// \todo TODO: Consider replacing with {boost|std::tr1}::array<T, 5> --mloskot
-    typedef std::vector<uint32_t> RecordsByReturnArray;
+    typedef std::vector<boost::uint32_t> RecordsByReturnArray;
 
     /// Default constructor.
     /// The default constructed header is configured according to the ASPRS
@@ -116,25 +112,25 @@ public:
 
     /// Get file source identifier.
     /// \exception No throw
-    uint16_t GetFileSourceId() const;
+    boost::uint16_t GetFileSourceId() const;
 
     /// Set file source identifier.
     /// \param v - should be set to a value between 1 and 65535.
     /// \exception No throw
     ///
     /// \todo TODO: Should we warn or throw about type overflow when user passes 65535 + 1 = 0
-    void SetFileSourceId(uint16_t v);
+    void SetFileSourceId(boost::uint16_t v);
 
     /// Get value field reserved by the ASPRS LAS Specification.
     /// \note This field is always filled with 0.
     ///
     /// \todo TODO: Should we warn or throw about type overflow when user passes 65535 + 1 = 0
-    uint16_t GetReserved() const;
+    boost::uint16_t GetReserved() const;
 
     /// Set reserved value for the header identifier.
     /// \param v - should be set to a value between 1 and 65535.
     /// \exception No throw
-    void SetReserved(uint16_t v);
+    void SetReserved(boost::uint16_t v);
 
     /// Get project identifier.
     /// \return Global Unique Identifier as an instance of liblas::guid class.
@@ -145,21 +141,21 @@ public:
 
     /// Get major component of version of LAS format.
     /// \return Always 1 is returned as the only valid value.
-    uint8_t GetVersionMajor() const;
+    boost::uint8_t GetVersionMajor() const;
 
     /// Set major component of version of LAS format.
     /// \exception std::out_of_range - invalid value given.
     /// \param v - value between eVersionMajorMin and eVersionMajorMax.
-    void SetVersionMajor(uint8_t v);
+    void SetVersionMajor(boost::uint8_t v);
 
     /// Get minor component of version of LAS format.
     /// \return Valid values are 1 or 0.
-    uint8_t GetVersionMinor() const;
+    boost::uint8_t GetVersionMinor() const;
 
     /// Set minor component of version of LAS format.
     /// \exception std::out_of_range - invalid value given.
     /// \param v - value between eVersionMinorMin and eVersionMinorMax.
-    void SetVersionMinor(uint8_t v);
+    void SetVersionMinor(boost::uint8_t v);
 
     /// Get system identifier.
     /// Default value is \b "libLAS" specified as the SystemIdentifier constant.
@@ -188,7 +184,7 @@ public:
 
     /// Get day of year of file creation date.
     /// \todo TODO: Use full date structure instead of Julian date number.
-    uint16_t GetCreationDOY() const;
+    boost::uint16_t GetCreationDOY() const;
 
     /// Set day of year of file creation date.
     /// \exception std::out_of_range - given value is higher than number 366.

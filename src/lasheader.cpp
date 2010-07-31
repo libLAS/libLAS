@@ -40,14 +40,13 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/cstdint.hpp>
 #include <liblas/detail/utility.hpp>
-
 #include <liblas/lasheader.hpp>
-#include <liblas/guid.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lasschema.hpp>
-
+#include <liblas/guid.hpp>
+// boost
+#include <boost/cstdint.hpp>
 //std
 #include <algorithm>
 #include <fstream>
@@ -58,9 +57,7 @@
 #include <cassert>
 #include <ctime>
 
-
-namespace liblas
-{
+namespace liblas {
 
 char const* const Header::FileSignature = "LASF";
 char const* const Header::SystemIdentifier = "libLAS";

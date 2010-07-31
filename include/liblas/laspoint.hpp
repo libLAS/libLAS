@@ -42,21 +42,18 @@
 #ifndef LIBLAS_LASPOINT_HPP_INCLUDED
 #define LIBLAS_LASPOINT_HPP_INCLUDED
 
-#include <liblas/cstdint.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasclassification.hpp>
 #include <liblas/lascolor.hpp>
 #include <liblas/liblas.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
+#include <boost/shared_ptr.hpp>
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
 #include <vector> // std::vector
-
-#include <boost/shared_ptr.hpp>
-
-
 
 namespace liblas {
 
@@ -64,8 +61,6 @@ namespace liblas {
 
 /// Point data record composed with X, Y, Z coordinates and attributes.
 class Point
-
-
 {
 public:
 
@@ -79,7 +74,6 @@ public:
         eScanAngleRank = 32,
         eTime = 64
     };
-
 
     enum ClassificationType
     {
@@ -119,8 +113,8 @@ public:
     void SetY(double const& value);
     void SetZ(double const& value);
 
-    uint16_t GetIntensity() const;
-    void SetIntensity(uint16_t const& intensity);
+    boost::uint16_t GetIntensity() const;
+    void SetIntensity(boost::uint16_t const& intensity);
 
     /// Gets all scanning flags encoded as single byte.
     /// The flags are (mandatory):
@@ -128,44 +122,44 @@ public:
     /// - Number of Returns - given pulse (bits 3, 4, 5);
     /// - Scan Direction Flag (bit 6);
     /// - Edge of Flight Line (bit 7).
-    uint8_t GetScanFlags() const;
+    boost::uint8_t GetScanFlags() const;
 
     /// Sets all scanning flags passed as a single byte.
     /// \sa Documentation of GetScanFlags method for flags details.
-    void SetScanFlags(uint8_t const& flags);
+    void SetScanFlags(boost::uint8_t const& flags);
     
-    uint16_t GetReturnNumber() const;
-    void SetReturnNumber(uint16_t const& num);
+    boost::uint16_t GetReturnNumber() const;
+    void SetReturnNumber(boost::uint16_t const& num);
 
-    uint16_t GetNumberOfReturns() const;
-    void SetNumberOfReturns(uint16_t const& num);
+    boost::uint16_t GetNumberOfReturns() const;
+    void SetNumberOfReturns(boost::uint16_t const& num);
 
-    uint16_t GetScanDirection() const;
-    void SetScanDirection(uint16_t const& dir);
+    boost::uint16_t GetScanDirection() const;
+    void SetScanDirection(boost::uint16_t const& dir);
     
-    uint16_t GetFlightLineEdge() const;
-    void SetFlightLineEdge(uint16_t const& edge);
+    boost::uint16_t GetFlightLineEdge() const;
+    void SetFlightLineEdge(boost::uint16_t const& edge);
 
     //Classification& GetClassification();
     Classification const& GetClassification() const;
     void SetClassification(Classification const& cls);
     void SetClassification(Classification::bitset_type const& flags);
-    void SetClassification(liblas::uint8_t const& flags);
+    void SetClassification(boost::uint8_t const& flags);
 
-    int8_t GetScanAngleRank() const;
-    void SetScanAngleRank(int8_t const& rank);
+    boost::int8_t GetScanAngleRank() const;
+    void SetScanAngleRank(boost::int8_t const& rank);
 
     /// Fetch value of File Marker (LAS 1.0) or User Data (LAS 1.1).
-    uint8_t GetUserData() const;
+    boost::uint8_t GetUserData() const;
 
     /// Set value of File Marker (LAS 1.0) or User Data (LAS 1.1).
-    void SetUserData(uint8_t const& data);
+    void SetUserData(boost::uint8_t const& data);
 
     /// Fetch value of User Bit Field (LAS 1.0) or Point Source ID (LAS 1.1).
-    uint16_t GetPointSourceID() const;
+    boost::uint16_t GetPointSourceID() const;
 
     /// Set value of User Bit Field (LAS 1.0) or Point Source ID (LAS 1.1).
-    void SetPointSourceID(uint16_t const& id);
+    void SetPointSourceID(boost::uint16_t const& id);
 
     /// Fetch color value associated with this point (LAS 1.2)
     Color const& GetColor() const;
@@ -173,7 +167,6 @@ public:
     /// Set color value associated with this point (LAS 1.2)
     void SetColor(Color const& value);
 
-                
     double GetTime() const;
     void SetTime(double const& time);
 
@@ -193,31 +186,32 @@ public:
     bool Validate() const;
     bool IsValid() const;
     
-    std::vector<liblas::uint8_t> const& GetExtraData() const { return m_extra_data; }
-    void SetExtraData(std::vector<uint8_t> const& v) { m_extra_data = v;}
+    std::vector<boost::uint8_t> const& GetExtraData() const { return m_extra_data; }
+    void SetExtraData(std::vector<boost::uint8_t> const& v) { m_extra_data = v;}
 
-    std::vector<liblas::uint8_t> const& GetData() const {return m_format_data; }
-    void SetData(std::vector<uint8_t> const& v) { m_format_data = v;}
+    std::vector<boost::uint8_t> const& GetData() const {return m_format_data; }
+    void SetData(std::vector<boost::uint8_t> const& v) { m_format_data = v;}
     
     void SetHeader(HeaderPtr header);
     HeaderPtr GetHeaderPtr () { return m_hdr; }
+
 private:
 
     static std::size_t const coords_size = 3;
 
     detail::PointRecord m_rec;
-    double m_coords[coords_size];
+    double m_coords[coords_size]; // FIXME: use boost::array
     double m_gpsTime;
     Color m_color;
     Classification m_cls;
-    uint16_t m_intensity;
-    uint16_t m_pointSourceId;
-    uint8_t m_flags;
-    uint8_t m_userData;
-    int8_t m_angleRank;
+    boost::uint16_t m_intensity;
+    boost::uint16_t m_pointSourceId;
+    boost::uint8_t m_flags;
+    boost::uint8_t m_userData;
+    boost::int8_t m_angleRank;
 
-    std::vector<uint8_t> m_extra_data;
-    std::vector<uint8_t> m_format_data;
+    std::vector<boost::uint8_t> m_extra_data;
+    std::vector<boost::uint8_t> m_format_data;
     
     HeaderPtr m_hdr;
     
@@ -276,66 +270,66 @@ inline void Point::SetZ( double const& value )
     m_coords[2] = value;
 }
 
-inline uint16_t Point::GetIntensity() const
+inline boost::uint16_t Point::GetIntensity() const
 {
     return m_intensity;
 }
 
-inline void Point::SetIntensity(uint16_t const& intensity)
+inline void Point::SetIntensity(boost::uint16_t const& intensity)
 {
     m_intensity = intensity;
 }
 
-inline uint16_t Point::GetReturnNumber() const
+inline boost::uint16_t Point::GetReturnNumber() const
 {
     // Read bits 1,2,3 (first 3 bits)
     return (m_flags & 0x07);
 }
 
-inline uint16_t Point::GetNumberOfReturns() const
+inline boost::uint16_t Point::GetNumberOfReturns() const
 {
     // Read bits 4,5,6
     return ((m_flags >> 3) & 0x07);
 }
 
-inline uint16_t Point::GetScanDirection() const
+inline boost::uint16_t Point::GetScanDirection() const
 {
     // Read 7th bit
     return ((m_flags >> 6) & 0x01);
 }
 
-inline uint16_t Point::GetFlightLineEdge() const
+inline boost::uint16_t Point::GetFlightLineEdge() const
 {
     // Read 8th bit
     return ((m_flags >> 7) & 0x01);
 }
 
-inline uint8_t Point::GetScanFlags() const
+inline boost::uint8_t Point::GetScanFlags() const
 {
     return m_flags;
 }
 
-inline void Point::SetScanFlags(uint8_t const& flags)
+inline void Point::SetScanFlags(boost::uint8_t const& flags)
 {
     m_flags = flags;
 }
 
-inline int8_t Point::GetScanAngleRank() const
+inline boost::int8_t Point::GetScanAngleRank() const
 {
     return m_angleRank;
 }
 
-inline uint8_t Point::GetUserData() const
+inline boost::uint8_t Point::GetUserData() const
 {
     return m_userData;
 }
 
-inline uint16_t Point::GetPointSourceID() const
+inline boost::uint16_t Point::GetPointSourceID() const
 {
     return m_pointSourceId;
 }
 
-inline void Point::SetPointSourceID(uint16_t const& id)
+inline void Point::SetPointSourceID(boost::uint16_t const& id)
 {
     m_pointSourceId = id;
 }

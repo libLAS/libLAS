@@ -44,7 +44,9 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasspatialreference.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
+// std
 #include <cassert>
 #include <cstdlib> // std::size_t
 #include <algorithm>
@@ -56,10 +58,12 @@
 #include <string>
 #include <vector>
 
-
 namespace liblas { namespace detail { namespace writer {
 
-Header::Header(std::ostream& ofs, liblas::uint32_t& count, liblas::Header const& header) :
+using namespace boost;
+using namespace std;
+
+Header::Header(std::ostream& ofs, uint32_t& count, liblas::Header const& header) :
     Base(ofs, count)
 {
     m_header = header;
@@ -78,28 +82,29 @@ void Header::write()
     // Figure out how many points we already have.  
 
     // Seek to the beginning
-    GetStream().seekp(0, std::ios::beg);
-    std::ios::pos_type beginning = GetStream().tellp();
+    GetStream().seekp(0, ios::beg);
+    ios::pos_type begin = GetStream().tellp();
 
     // Seek to the end
-    GetStream().seekp(0, std::ios::end);
-    std::ios::pos_type end = GetStream().tellp();
+    GetStream().seekp(0, ios::end);
+    ios::pos_type end = GetStream().tellp();
     // std::ios::off_type size = end - beginning;
      
-    std::ios::off_type count = (end - static_cast<std::ios::off_type>(m_header.GetDataOffset())) / 
-                                 static_cast<std::ios::off_type>(m_header.GetDataRecordLength());
+    ios::off_type count = 
+        (end - static_cast<ios::off_type>(m_header.GetDataOffset()))
+            / static_cast<ios::off_type>(m_header.GetDataRecordLength());
     
     // This test should only be true if we were opened in both 
     // std::ios::in *and* std::ios::out, otherwise it should return false 
     // and we won't adjust the point count.
     
-    if ((beginning != end) && (end != static_cast<std::ios::pos_type>(0))) {
-        liblas::uint32_t& cnt =  GetPointCount();
-        cnt = static_cast<liblas::uint32_t>(count);
+    if ((begin != end) && (end != static_cast<ios::pos_type>(0))) {
+        uint32_t& cnt =  GetPointCount();
+        cnt = static_cast<uint32_t>(count);
         SetPointCount(cnt);
 
         // Position to the beginning of the file to start writing the header
-        GetStream().seekp(0, std::ios::beg);
+        GetStream().seekp(0, ios::beg);
     }
 
     // 1. File Signature
@@ -118,7 +123,6 @@ void Header::write()
         n2 = m_header.GetReserved();
         detail::write_n(GetStream(), n2, sizeof(n2));        
     } 
-
 
     // 3-6. GUID data
     uint32_t d1 = 0;

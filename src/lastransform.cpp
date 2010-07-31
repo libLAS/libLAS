@@ -40,11 +40,19 @@
  ****************************************************************************/
 
 #include <liblas/lastransform.hpp>
+// boost
+#include <boost/concept_check.hpp>
+// std
+#include <sstream>
+#include <stdexcept>
+#include <string>
 
 namespace liblas { 
 
-ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS) : 
- m_transform(0), m_in_ref(0), m_out_ref(0)
+ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS)
+    : m_transform(0)
+    , m_in_ref(0)
+    , m_out_ref(0)
 {
 
 #ifdef HAVE_GDAL
@@ -72,8 +80,7 @@ ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, cons
         msg << "Could not import input spatial reference for ReprojectionTransform:: " 
             << CPLGetLastErrorMsg() << " code: " << result 
             << "wkt: '" << inSRS.GetWKT() << "'";
-        std::string message(msg.str());
-        throw std::runtime_error(message);
+        throw std::runtime_error(msg);
     }
     
     result = OSRSetFromUserInput(m_out_ref, outSRS.GetWKT().c_str());
@@ -90,8 +97,8 @@ ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, cons
     m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
 #else
 
-    detail::ignore_unused_variable_warning(inSRS);
-    detail::ignore_unused_variable_warning(outSRS);
+    boost::ignore_unused_variable_warning(inSRS);
+    boost::ignore_unused_variable_warning(outSRS);
 #endif
 }
 
@@ -129,8 +136,7 @@ bool ReprojectionTransform::transform(Point& point)
     {
         std::ostringstream msg; 
         msg << "Could not project point for ReprojectionTransform::" << CPLGetLastErrorMsg() << ret;
-        std::string message(msg.str());
-        throw std::runtime_error(message);
+        throw std::runtime_error(msg.str());
     }
 
     point.SetX(x);
@@ -139,7 +145,7 @@ bool ReprojectionTransform::transform(Point& point)
     
     return true;
 #else
-    detail::ignore_unused_variable_warning(point);
+    boost::ignore_unused_variable_warning(point);
     return true;
 #endif
 }

@@ -20,7 +20,6 @@ endif()
 set(LIBLAS_HEADERS_DIR ../include/liblas)
 
 set(LIBLAS_HPP
-  ${LIBLAS_HEADERS_DIR}/cstdint.hpp
   ${LIBLAS_HEADERS_DIR}/exception.hpp
   ${LIBLAS_HEADERS_DIR}/guid.hpp
   ${LIBLAS_HEADERS_DIR}/iterator.hpp

@@ -42,7 +42,6 @@
 #ifndef LIBLAS_DETAIL_READER_HEADER_HPP_INCLUDED
 #define LIBLAS_DETAIL_READER_HEADER_HPP_INCLUDED
 
-#include <liblas/cstdint.hpp>
 #include <liblas/lasversion.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/fwd.hpp>

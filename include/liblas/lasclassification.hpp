@@ -42,8 +42,8 @@
 #ifndef LIBLAS_LASCLASSIFICATION_HPP_INCLUDED
 #define LIBLAS_LASCLASSIFICATION_HPP_INCLUDED
 
-#include <liblas/cstdint.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <cassert>
 #include <cstddef>
@@ -94,7 +94,7 @@ public:
 
     /// Initializes classification flags using 8 bits of integral type.
     /// @param flags [in] - contains 8 bits representing classification flags.
-    explicit Classification(uint8_t const& flags)
+    explicit Classification(boost::uint8_t const& flags)
         : m_flags(flags)
     {}
 
@@ -106,7 +106,7 @@ public:
     /// @param k [in] - If set, this point is considered to be a model keypoint and
     /// thus generally should not be withheld in a thinning algorithm.
     /// @param w [in] - If set, this point should not be included in processing.
-    Classification(uint8_t cls, bool s, bool k, bool w)
+    Classification(boost::uint8_t cls, bool s, bool k, bool w)
     {
         SetClass(cls);
         SetSynthetic(s);
@@ -144,31 +144,7 @@ public:
     std::string GetClassName() const;
 
     /// Returns index of ASPRS classification as defined in the lookup table.
-    uint8_t GetClass() const
-    {
-        bitset_type bits(m_flags);
-        
-        // MSVC 2010 changed this to an unsigned long long, but did not 
-        // provide the old constructor for merely an unsigned long.  AFAIK
-        // there is only std::bitset<_Bits>::bitset(_ULonglong) and 
-        // std::bitset<_Bits>::bitset(int) here.  As an aside, I see no reason
-        // to have a mask any larger than std::bitset<_Bits>::bitset(int)
-#ifdef WIN32 
-#if (_MSC_VER >= 1600)
-        bitset_type const mask(static_cast<unsigned long long>(class_table_size) - 1);
-#else
-        bitset_type const mask(static_cast<unsigned long>(class_table_size) - 1);
-#endif
-#else
-        bitset_type const mask(static_cast<unsigned long>(class_table_size) - 1);
-#endif
-        bits &= mask;
-
-        uint8_t const index = static_cast<uint8_t>(bits.to_ulong());
-        assert(index < class_table_size);
-
-        return index;
-    }
+    uint8_t GetClass() const;
 
     /// Updates index of ASPRS classification as defined in the lookup table.
     /// Valid index is in range from 0 to class_table_size - 1.
@@ -179,18 +155,7 @@ public:
     /// table is supported.
     /// @exception Theoretically, may throw std::out_of_range in case index 
     /// value is not in range between 0 and class_table_size - 1.
-    void SetClass(uint8_t index)
-    {
-        check_class_index(index);
-
-        bitset_type binval(index);
-        binval <<= 0;
-
-        // Store value in bits 0,1,2,3,4
-        bitset_type const mask(0x1F);
-        m_flags &= ~mask;
-        m_flags |= mask & binval;
-    }
+    void SetClass(uint8_t index);
 
     /// Sets if this point was created by a technique other than LIDAR
     /// collection such as digitized from a photogrammetric stereo model.
@@ -246,10 +211,10 @@ private:
     {
         if (index > (class_table_size - 1))
         {
-            std::ostringstream oss;
-            oss << "given index is " << index
+            std::ostringstream msg;
+            msg << "given index is " << index
                 << ", but must fit between 0 and " << (class_table_size - 1);
-            throw std::out_of_range(oss.str());
+            throw std::out_of_range(msg.str());
         }
     }
 };

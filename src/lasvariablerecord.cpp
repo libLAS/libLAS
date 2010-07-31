@@ -42,7 +42,7 @@
  ****************************************************************************/
 
 #include <liblas/lasvariablerecord.hpp>
-#include <liblas/cstdint.hpp>
+
 // std
 #include <algorithm>
 #include <stdexcept>

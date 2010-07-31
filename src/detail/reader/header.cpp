@@ -43,19 +43,23 @@
 #include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/lasvariablerecord.hpp>
-
+// boost
+#include <boost/concept_check.hpp>
+#include <boost/cstdint.hpp>
 
 namespace liblas { namespace detail { namespace reader {
 
-Header::Header(std::istream& ifs) :
-    m_ifs(ifs), m_header(new liblas::Header())
+using namespace boost;
+
+Header::Header(std::istream& ifs)
+    : m_ifs(ifs)
+    , m_header(new liblas::Header())
 {
 }
 
 Header::~Header()
 {
 }
-
 
 void Header::read()
 {
@@ -328,13 +332,13 @@ bool Header::HasLAS10PadSignature()
     }
     catch (std::out_of_range& e) 
     {
-        ignore_unused_variable_warning(e);
+        boost::ignore_unused_variable_warning(e);
         m_ifs.seekg(current_pos, std::ios::beg);
         return false;
     }
     catch (std::runtime_error& e)
     {
-        ignore_unused_variable_warning(e);
+        boost::ignore_unused_variable_warning(e);
         m_ifs.seekg(current_pos, std::ios::beg);
         return false;        
     }

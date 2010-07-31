@@ -43,47 +43,39 @@
 #define LIBLAS_SCHEMA_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
-#include <liblas/cstdint.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <iosfwd>
 
 namespace liblas {  
 
-
-
 class Schema
 {
 public:
 
-    Schema( liblas::uint8_t major, 
-                    liblas::uint8_t minor, 
-                    liblas::uint16_t size);
+    Schema(boost::uint8_t major, boost::uint8_t minor, boost::uint16_t size);
+    Schema(boost::uint8_t major, boost::uint8_t minor, boost::uint16_t size, bool bColor, bool bTime);
 
-    Schema( liblas::uint8_t major, 
-                    liblas::uint8_t minor, 
-                    liblas::uint16_t size,
-                    bool bColor,
-                    bool bTime);
     Schema& operator=(Schema const& rhs);
     Schema(Schema const& other);
     
     ~Schema() {};
 
     /// Fetch byte size
-    uint16_t GetByteSize() const;
+    boost::uint16_t GetByteSize() const;
 
     /// Set value of the red image channel 
-    void SetByteSize(uint16_t const& value);
+    void SetByteSize(boost::uint16_t const& value);
 
     /// Get the base size (only accounting for Time, Color, etc )
-    uint16_t GetBaseByteSize() const;
+    boost::uint16_t GetBaseByteSize() const;
     
-    uint8_t GetVersionMajor() const; 
-    void SetVersionMajor(uint8_t const& value);
+    boost::uint8_t GetVersionMajor() const; 
+    void SetVersionMajor(boost::uint8_t const& value);
     
-    uint8_t GetVersionMinor() const;
-    void SetVersionMinor(uint8_t const& value);
+    boost::uint8_t GetVersionMinor() const;
+    void SetVersionMinor(boost::uint8_t const& value);
 
     bool HasColor() const;
     void Color(bool const& bColor); // updatesize(); }
@@ -92,22 +84,20 @@ public:
   
 protected:
     
-    liblas::uint16_t m_size;
-    liblas::uint8_t m_versionminor;
-    liblas::uint8_t m_versionmajor;
+    boost::uint16_t m_size;
+    boost::uint8_t m_versionminor;
+    boost::uint8_t m_versionmajor;
 
     bool m_hasColor;
     bool m_hasTime;
     
-    liblas::uint16_t m_base_size;
+    boost::uint16_t m_base_size;
 
 private:
     void updatesize();
-    void updatesize(liblas::uint16_t new_size);
-    liblas::uint16_t calculate_base_size();
+    void updatesize(boost::uint16_t new_size);
+    boost::uint16_t calculate_base_size();
 };
-
-
 
 } // namespace liblas
 

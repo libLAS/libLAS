@@ -45,13 +45,32 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasschema.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
+// std
+#include <cmath>
 #include <sstream> 
 
-#include <cmath>
-
-
 namespace liblas { namespace detail { namespace writer {
+
+using namespace boost;
+
+Point::Point(std::ostream& ofs, uint32_t& count, const liblas::Header& header)
+    : Base(ofs, count)
+    , m_ofs(ofs)
+    , m_header(header)
+    , m_point(liblas::Point())
+    , m_format(header.GetSchema())
+    , m_blanks(0)
+{
+    setup();
+}
+
+Point::~Point()
+{
+    if (m_blanks != 0) 
+        delete[] m_blanks; 
+}
 
 void Point::setup()
 {
@@ -68,32 +87,12 @@ void Point::setup()
             throw std::runtime_error("ByteSize of format was less than BaseByteSize, this cannot happen!");
         }
         
-        m_blanks = new liblas::uint8_t[size];
+        m_blanks = new uint8_t[size]; // FIXME: RAII for m_blanks!!! --mloskot
         for (int i=0; i < size; ++i) {
             m_blanks[i] = 0;
         }
     }
 }
-
-Point::Point(   std::ostream& ofs, 
-                liblas::uint32_t& count, 
-                const liblas::Header& header) : 
-    Base(ofs, count), 
-    m_ofs(ofs), 
-    m_header(header), 
-    m_point(liblas::Point()),
-    m_format(header.GetSchema()),
-    m_blanks(0)
-{
-    setup();
-}
-
-Point::~Point()
-{
-    if (m_blanks != 0) 
-        delete[] m_blanks; 
-}
-
 
 void Point::write(const liblas::Point& point)
 {
@@ -141,11 +140,10 @@ void Point::write(const liblas::Point& point)
             detail::write_n(m_ofs, green, sizeof(uint16_t));
             detail::write_n(m_ofs, blue, sizeof(uint16_t));
             byteswritten += 3 * sizeof(uint16_t);
-        }        
+        }
     }
 
-
-    liblas::uint32_t& count = GetPointCount();
+    uint32_t& count = GetPointCount();
     count++;
     SetPointCount(count);
 
@@ -176,7 +174,6 @@ void Point::write(const liblas::Point& point)
     }
 }
 
-
 void Point::fill() 
 {
     liblas::Point& p = m_point;
@@ -194,4 +191,5 @@ void Point::fill()
     m_record.user_data = p.GetUserData();
     m_record.point_source_id = p.GetPointSourceID();
 }
+
 }}} // namespace liblas::detail::reader
