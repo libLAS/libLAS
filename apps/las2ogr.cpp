@@ -22,7 +22,7 @@
 #include <liblas/liblas.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasreader.hpp>
-#include <liblas/cstdint.hpp>
+
 //std
 #include <cassert>
 #include <algorithm>

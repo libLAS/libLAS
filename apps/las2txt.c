@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
     FILE* file_out = NULL;
     int len;
     
-    uint32_t index = 0;
+    unsigned int index = 0;
     
     for (i = 1; i < argc; i++)
     {
@@ -538,7 +538,7 @@ int main(int argc, char *argv[])
                 fprintf(file_out, "%d", LASColor_GetBlue(color));
                 break;            
             case 'M':
-                fprintf(file_out, "%d", index);
+                fprintf(file_out, "%u", index);
                 break;
             case 'p':
                 fprintf(file_out, "%d", LASPoint_GetPointSourceId(p));

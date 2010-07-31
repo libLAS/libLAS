@@ -7,7 +7,6 @@
 
 #include "oci_wrapper.h"
 
-#include <liblas/cstdint.hpp>
 #include <liblas/detail/utility.hpp>
 
 #include <liblas/laspoint.hpp>

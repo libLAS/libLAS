@@ -16,7 +16,7 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/laswriter.hpp>
 #include <liblas/lasfilter.hpp>
-#include <liblas/cstdint.hpp>
+#include <liblas/liblas.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
     int rc = 0;
 
     std::vector<std::string> tokens;
-    std::vector<liblas::uint8_t> classes;
+    std::vector<boost::uint8_t> classes;
     std::vector<double> bounds;
     std::vector<liblas::FilterI*> filters;
     
@@ -220,8 +220,8 @@ int main(int argc, char* argv[])
         //
         // Translation of points cloud to features set
         //
-        liblas::uint32_t i = 0;
-        liblas::uint32_t const size = reader.GetHeader().GetPointRecordsCount();
+        boost::uint32_t i = 0;
+        boost::uint32_t const size = reader.GetHeader().GetPointRecordsCount();
 
       while (reader.ReadNextPoint())
         {

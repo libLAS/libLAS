@@ -52,13 +52,11 @@ LASPointSummary* SummarizePoints(LASReaderH reader) {
     LASColorH min_color = NULL;
     LASColorH max_color = NULL;
     
-    uint8_t cls = 0;
-    uint16_t red = 0;
-    uint16_t green = 0;
-    uint16_t blue = 0;
-    
-    uint16_t ptsrc = 0;
-    
+    unsigned char cls = 0;
+    unsigned short red = 0;
+    unsigned short green = 0;
+    unsigned short blue = 0;
+    unsigned short ptsrc = 0;
     int i = 0;
 
     summary = (LASPointSummary*) malloc(sizeof(LASPointSummary));
@@ -366,7 +364,7 @@ void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header
     fprintf(file, "\n Total Pulses: %ld\n", rgpsum); 
 
     for (i = 0; i < 5; i++) {
-        if (LASHeader_GetPointRecordsByReturnCount(header, i) != (uint32_t)summary->number_of_points_by_return[i]) 
+        if (LASHeader_GetPointRecordsByReturnCount(header, i) != (unsigned int)summary->number_of_points_by_return[i]) 
         {
             fprintf(file, " \n Actual number of points by return \n is different from header (actual, header):\n"); 
             for (i = 0; i < 5; i++) {
@@ -412,12 +410,12 @@ void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSki
     
     char *pszVLRUser = NULL;
     char *pszVLRDescription = NULL;
-    uint16_t nVLRLength = 0;
-    uint16_t nVLRRecordId = 0;
+    unsigned short nVLRLength = 0;
+    unsigned short nVLRRecordId = 0;
     
     LASVLRH pVLR = NULL;
     LASSRSH pSRS = NULL;
-    uint32_t nVLR = 0;
+    unsigned int nVLR = 0;
     int i = 0;
 
 #ifdef HAVE_LIBGEOTIFF
@@ -630,7 +628,7 @@ void repair_header(FILE *file, LASHeaderH header, LASPointSummary* summary) {
     for (i = 0; i < 5; i++) {
 
         if (LASHeader_GetPointRecordsByReturnCount(header, i) != 
-            (uint8_t)summary->number_of_points_by_return[i]) 
+            (unsigned char)summary->number_of_points_by_return[i]) 
         {
             update_return_counts = TRUE;
             break;

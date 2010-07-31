@@ -1,6 +1,5 @@
 #ifndef TS2LAS_HPP_INCLUDED
 
-#include <liblas/cstdint.hpp>
 #include <liblas/detail/utility.hpp>
 
 #include <liblas/laswriter.hpp>

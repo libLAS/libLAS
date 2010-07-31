@@ -9,16 +9,13 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
-
-
+#include <liblas/liblas.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/lasbounds.hpp>
 #include "chipper.hpp"
-
-
+// std
 #include <fstream>
 #include <vector>
-
 
 #ifdef _WIN32
 #define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
@@ -123,14 +120,14 @@ int main(int argc, char* argv[])
 
     std::cout << "Blocking " << input<< " to " << output <<std::endl;
 
-    liblas::uint32_t num_blocks = c.GetBlockCount();
+    boost::uint32_t num_blocks = c.GetBlockCount();
     
     std::cout << "Block count: " << num_blocks << std::endl;
-    for ( liblas::uint32_t i = 0; i < num_blocks; ++i )
+    for ( boost::uint32_t i = 0; i < num_blocks; ++i )
     {
         const liblas::chipper::Block& b = c.GetBlock(i);
 
-        std::vector<liblas::uint32_t> ids = b.GetIDs();
+        std::vector<boost::uint32_t> ids = b.GetIDs();
         out << i << " " << ids.size() << " ";
         
         out.setf(std::ios::dec, std::ios::floatfield);
@@ -138,7 +135,7 @@ int main(int argc, char* argv[])
         
         out << b.GetXmin() << " " << b.GetYmin() << " " << b.GetXmax() << " " <<  b.GetYmax()<< " " ;
         
-        for ( liblas::uint32_t pi = 0; pi < ids.size(); ++pi )
+        for ( boost::uint32_t pi = 0; pi < ids.size(); ++pi )
         {
             out << ids[pi] << " ";
         }
@@ -147,5 +144,4 @@ int main(int argc, char* argv[])
 
         out << std::endl;
     }
-
 }

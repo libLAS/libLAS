@@ -96,8 +96,8 @@ int main(int argc, char *argv[])
 
     char *system_identifier = NULL;
     char *generating_software = NULL;
-    uint8_t file_creation_day = 0;
-    uint8_t file_creation_year = 0;
+    unsigned char file_creation_day = 0;
+    unsigned char file_creation_year = 0;
 
     int err = 0;
 
@@ -193,9 +193,9 @@ int main(int argc, char *argv[])
             /* XXX - mloskot: Consider replacing atoi with strtol,
             see http://www.iso-9899.info/wiki/Converting */
             i++;
-            file_creation_day = (uint8_t)atoi(argv[i]);
+            file_creation_day = (unsigned char)atoi(argv[i]);
             i++;
-            file_creation_year = (uint8_t)atoi(argv[i]);
+            file_creation_year = (unsigned char)atoi(argv[i]);
             change_header = TRUE;
         }
         else if (strcmp(argv[i],"--skip_vlr") == 0 || strcmp(argv[i],"--no_vlr") == 0)
