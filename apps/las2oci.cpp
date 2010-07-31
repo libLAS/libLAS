@@ -1,350 +1,15 @@
-
-#include <stdlib.h>
-
-
-// god-awful hack because of GDAL/GeoTIFF's shitty include structure
-#define CPL_SERV_H_INCLUDED
-
-#include "oci_wrapper.h"
-
-#include <liblas/detail/utility.hpp>
-
-#include <liblas/laspoint.hpp>
-#include <liblas/lasreader.hpp>
-#include <liblas/lasheader.hpp>
-
-#include <string>
-#include <sstream>
-#include <iostream>
-#include <fstream>
-#include <exception>
-#include <algorithm>
-#include <vector>
-#include <cctype>
-#include <cmath>
-
-#include <sys/stat.h>
-
-#include <liblas/lasbounds.hpp>
-
-#include <oci.h>
-
-using namespace std;
-using namespace liblas;
-
-#ifdef _WIN32
-#define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
-#else
-#define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
-#endif
-
-// #define MAX_POINTS_PER_ROW 1000
+#include "las2oci.hpp"
 
 
-#include <boost/array.hpp>
-#include <boost/shared_ptr.hpp>
-
-typedef std::vector<uint32_t> IDVector;
-typedef boost::shared_ptr< IDVector > IDVectorPtr;
-
-typedef struct
-{
-    long* pc_ids;
-    long* block_ids;
-    long* num_points;
-    OCILobLocator** locators; // =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
-
-    std::vector<uint8_t>** blobs;
-
-    long* srids;
-    long* gtypes;
-    OCIArray** element_arrays;
-    OCIArray** coordinate_arrays;
-    
-    long size;
-        
-} blocks;
-
-typedef struct
-{
-    double x0;
-    double x1;
-    double y0;
-    double y1;
-    double z0;
-    double z1;
-    bool bUse3d;
-   
-} extent;
 
 
-class IndexResult 
-{
-public:
-    IndexResult(uint32_t id) : bounds(), m_id(id) {}
-    // 
-    // /// Copy constructor.
-    // IndexResult(IndexResult const& other);
 
-    // /// Assignment operator.
-    // IndexResult& operator=(IndexResult const& rhs);
-        
-    IDVector const& GetIDs() const { return ids; }
-    void SetIDs(IDVector& v) {ids = v;}
-    const liblas::Bounds GetBounds() const { return bounds; }
-    void SetBounds(const liblas::Bounds b) {bounds = b;}
-    uint32_t GetID() const {return m_id;}
-    void SetID(uint32_t v) {m_id = v;}
 
-private:
-    IDVector ids;
-    liblas::Bounds bounds;
-    uint32_t m_id;
 
-};
 
-typedef std::vector<IndexResult> ResultsVector;
-class KDXIndexSummary
-{
-public:
-    KDXIndexSummary(std::istream& input);    
-    boost::shared_ptr<liblas::Bounds> bounds;
-    ResultsVector& GetResults() { return m_results; }
-private:
-    ResultsVector m_results;
-    bool m_first;    
-};
 
-KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
-{
-    long id_count = 0;
-    long id = 0;
-    long i = 0;
 
-    
-    double low[2];
-    double high[2];
-    
-    double mins[2];
-    double maxs[2];
-    
-    bool first = true;
-    
-    while(input) {
-        input >> id >> id_count >> low[0] >> low[1] >> high[0] >> high[1];
-        // printf("count:%d %.2f %.2f %.2f %.2f\n", id_count, low[0], low[1], high[0], high[1]);
-        
-        if (first) {
-            mins[0] = low[0];
-            mins[1] = low[1];
-            maxs[0] = high[0];
-            maxs[1] = high[1];
-            first = false;
-        }
-        
-        mins[0] = std::min(mins[0], low[0]);
-        mins[1] = std::min(mins[1], low[1]);
-        
-        maxs[0] = std::max(maxs[0], high[0]);
-        maxs[1] = std::max(maxs[1], high[1]);
-        // if (!input.good()) continue;
-        
-        IDVector ids;
-        for (int j=0; j<id_count; j++) {
-            input >> i;
-            ids.push_back(i);
-        }
-        liblas::Bounds b(low[0], low[1], high[0],high[1]);
-        // SpatialIndex::Region* pr = new SpatialIndex::Region(low, high, 2);
-        // printf("Ids size: %d %.3f\n", ids.size(), pr->getLow(0));
-        IndexResult result(static_cast<uint32_t>(id));
-        result.SetIDs(ids);
-        result.SetBounds(b);
-        m_results.push_back(result);
-    }
 
-    bounds = boost::shared_ptr<liblas::Bounds>(new liblas::Bounds(mins[0], mins[1], maxs[0], maxs[1]));
-}
-
-bool KDTreeIndexExists(std::string& filename)
-{
-    struct stat stats;
-    std::ostringstream os;
-    os << filename << ".kdx";
-
-    std::string indexname = os.str();
-    
-    // ret is -1 for no file existing and 0 for existing
-    int ret = stat(indexname.c_str(),&stats);
-
-    bool output = false;
-    if (ret == 0) output= true; else output =false;
-    return output;
-}
-
-std::istream* OpenInput(std::string filename, bool bEnd) 
-{
-    std::ios::openmode mode = std::ios::in | std::ios::binary;
-    if (bEnd == true) {
-        mode = mode | std::ios::ate;
-    }
-    std::istream* istrm;
-    if (compare_no_case(filename.c_str(),"STDIN",5) == 0)
-    {
-        istrm = &std::cin;
-    }
-    else 
-    {
-        istrm = new std::ifstream(filename.c_str(), mode);
-    }
-    
-    if (!istrm->good())
-    {
-        delete istrm;
-        throw std::runtime_error("Reading stream was not able to be created");
-        exit(1);
-    }
-    return istrm;
-}
-
-std::string ReadSQLData(char const* filename)
-{
-    std::istream* infile = OpenInput(filename, true);
-    ifstream::pos_type size;
-    char* data;
-    if (infile->good()){
-        size = infile->tellg();
-        data = new char [size];
-        infile->seekg (0, ios::beg);
-        infile->read (data, size);
-        // infile->close();
-
-        std::string output = std::string(data);
-        delete[] data;
-        delete infile;
-        return output;
-    } 
-    else 
-    {   
-        delete infile;
-        return std::string("");
-    }
-}
-
-bool EnableTracing(OWConnection* connection)
-{
-    ostringstream oss;
-// http://www.oracle-base.com/articles/10g/SQLTrace10046TrcsessAndTkprof10g.php
-    oss << "ALTER SESSION SET EVENTS '10046 trace name context forever, level 12'";
-
-    OWStatement* statement = 0;
-    
-    statement = connection->CreateStatement(oss.str().c_str());
-    
-    if (statement->Execute() == false) {
-        
-        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
-        delete statement;
-        return 0;
-    }    
-    
-    return true;
-}
-
-bool IsGeographic(OWConnection* connection, long srid) {
-
-    ostringstream oss;
-    char* kind = (char* ) malloc (OWNAME * sizeof(char));
-    oss << "SELECT COORD_REF_SYS_KIND from MDSYS.SDO_COORD_REF_SYSTEM WHERE SRID = :1";
-    
-    OWStatement* statement = 0;
-
-    statement = connection->CreateStatement(oss.str().c_str());
-    long* p_srid = (long*) malloc( 1 * sizeof(long));
-    p_srid[0] = srid;
-    
-    statement->Bind(p_srid);
-    statement->Define(kind);    
-    if (statement->Execute() == false) {
-        
-        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
-        delete statement;
-        return false;
-    }
-    
-    if (compare_no_case(kind, "GEOGRAPHIC2D",12) == 0) {
-        delete statement;
-        free(kind);
-        return true;
-    }
-    if (compare_no_case(kind, "GEOGRAPHIC3D",12) == 0) {
-        delete statement;
-        free(kind);
-        return true;
-    }
-
-    free(kind);
-
-    return false;
-}
-
-OWStatement* Run(OWConnection* connection, ostringstream& command) 
-{
-    OWStatement* statement = 0;
-    statement = connection->CreateStatement(command.str().c_str());
-    
-    if (statement->Execute() == false) {
-        
-        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
-        delete statement;
-        return 0;
-    }
-    
-    return statement;    
-}
-
-bool Cleanup(OWConnection* connection, const char* tableName)
-{
-    ostringstream oss;
-    OWStatement* statement = 0;
-    
-    oss << "DELETE FROM " << tableName;
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement;
-    oss.str("");
-
-    oss << "DROP TABLE " << tableName;
-    cout << oss.str() << endl;
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement; 
-    oss.str("");       
-
-    oss << "DELETE FROM USER_SDO_GEOM_METADATA WHERE TABLE_NAME='"<< tableName << "'";
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement; 
-    oss.str("");
-
-    connection->Commit();
-    
-    return true;    
-}
-
-bool CreateBlockTable(OWConnection* connection, const char* tableName)
-{
-    ostringstream oss;
-    OWStatement* statement = 0;
-    
-    oss << "CREATE TABLE " << tableName << " AS SELECT * FROM MDSYS.SDO_PC_BLK_TABLE";
-
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
-    oss.str("");
-
-    connection->Commit();
-    
-    return true;
-
-}
 
 bool DeleteTable(   OWConnection* connection, 
                     const char* tableName, 
@@ -355,45 +20,39 @@ bool DeleteTable(   OWConnection* connection,
     OWStatement* statement = 0;
 
     oss << "DELETE from " <<cloudTableName;
-    statement = Run(connection, oss);
+    statement = RunSQL(connection, oss);
     if (statement != 0) delete statement; else 
     {
         // if we failed, try dropping the index
         std::cout << "Dropping index ..." << std::endl;
         oss.str("");  
         oss << "DROP INDEX "<<tableName<<"_cloud_idx" ;
-        statement = Run(connection, oss);
+        statement = RunSQL(connection, oss);
         if (statement != 0) delete statement; else return false;
         oss.str("");
         
         // redelete from the table
         oss << "DELETE from " <<cloudTableName;
-        statement = Run(connection, oss);
+        statement = RunSQL(connection, oss);
         if (statement != 0) delete statement; else return false;
         oss.str("");
     }
     oss.str("");
     
-    std::string cloudColumnName_l = std::string(cloudColumnName);
-    std::string cloudColumnName_u = std::string(cloudColumnName_l);
-    
-    std::transform(cloudColumnName_l.begin(), cloudColumnName_l.end(), cloudColumnName_u.begin(), static_cast < int(*)(int) > (toupper));
+    std::string cloudColumnName_u = to_upper(cloudColumnName);
+    std::string cloudTableName_u = to_upper(cloudTableName);
 
-    std::string cloudTableName_l = std::string(cloudTableName);
-    std::string cloudTableName_u = std::string(cloudTableName_l);
-    
-    std::transform(cloudTableName_l.begin(), cloudTableName_l.end(), cloudTableName_u.begin(), static_cast < int(*)(int) > (toupper));
 
 oss << "declare\n"
 "begin \n"
 "  mdsys.sdo_pc_pkg.drop_dependencies('"<<cloudTableName_u<<"', '"<<cloudColumnName_u<<"');"
 "end;";
-    statement = Run(connection, oss);
+    statement = RunSQL(connection, oss);
     if (statement != 0) delete statement; 
     oss.str("");
     
     oss << "DROP TABLE "<< tableName ;
-    statement = Run(connection, oss);
+    statement = RunSQL(connection, oss);
     if (statement != 0) delete statement; 
     oss.str("");
 
@@ -401,10 +60,10 @@ oss << "declare\n"
     // USER_SDO_GEOM_METADATA.  We'll use std::transform to do it. 
     // See http://forums.devx.com/showthread.php?t=83058 for the 
     // technique
-    string table(tableName);
-    std::transform(table.begin(), table.end(), table.begin(), static_cast < int(*)(int) > (toupper));
+    // string table(tableName);
+    std::string table = to_upper(tableName);
     oss << "DELETE FROM USER_SDO_GEOM_METADATA WHERE TABLE_NAME='"<<table<<"'" ;
-    statement = Run(connection, oss);
+    statement = RunSQL(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");   
 
@@ -427,7 +86,6 @@ bool GetResultData( const IndexResult& result,
     // 4-byte big-endian integer for the BLK_ID value
     // 4-byte big-endian integer for the PT_ID value
     
-    bool bTime = false;
     // if (nDimension == 4)
     // {
     //     bTime = true;
@@ -945,7 +603,7 @@ bool CreateSDOEntry(    OWConnection* connection,
     }
     oss << ")," << s_srid.str() << ")";
     
-    statement = Run(connection, oss);
+    statement = RunSQL(connection, oss);
     if (statement != 0) delete statement; else return false;
     oss.str("");
     
@@ -955,68 +613,7 @@ bool CreateSDOEntry(    OWConnection* connection,
         
 }
 
-bool CreateBlockIndex(  OWConnection* connection, 
-                        const char* tableName, 
-                        long srid, 
-                        bool bUseSolidGeometry,
-                        bool bUse3d)
-{
-    ostringstream oss;
-    OWStatement* statement = 0;
-    
-    
-    // if (bUseSolidGeometry == true) {
-    //     bUse3d = true;
-    // }
-    
-    // if (srid == 0) {
-        // bUse3d = true;
-    // } 
-    
-    // if (srid == 4326) {
-    //     bUse3d = true;
-    // }
-    
-    oss << "CREATE INDEX "<< tableName <<"_cloud_idx on "<<tableName<<"(blk_extent) INDEXTYPE IS MDSYS.SPATIAL_INDEX";
-    
-    if (bUse3d) {
-        oss <<" PARAMETERS('sdo_indx_dims=3')" ;
-    }
-    
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
-    oss.str("");
 
-    oss << "CREATE INDEX "<< tableName <<"_objectid_idx on "<<tableName<<"(OBJ_ID,BLK_ID) COMPRESS 2" ;
-    statement = Run(connection, oss);
-    if (statement != 0) delete statement; else return false;
-    oss.str("");    
-    return true;
-        
-}
-
-bool BlockTableExists(OWConnection* connection, const char* tableName)
-{
-    ostringstream oss;
-
-    char szTable[OWNAME]= "";
-    oss << "select table_name from user_tables where table_name like upper('%%"<< tableName <<"%%') ";
-
-    OWStatement* statement = 0;
-    
-    statement = connection->CreateStatement(oss.str().c_str());
-    statement->Define(szTable);
-    
-    if (statement->Execute() == false) {
-        
-        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
-        delete statement;
-        return false;
-    }
-    
-    return true;
-        
-}
 
 
 
@@ -1048,32 +645,18 @@ long CreatePCEntry( OWConnection* connection,
     oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
     oss.precision(precision);
     
-    std::string blkTableName_l = std::string(blkTableName);
-    std::string blkTableName_u = std::string(blkTableName_l);
-    
-    std::string pcTableName_l = std::string(pcTableName);
-    std::string pcTableName_u = std::string(pcTableName_l);
-    
-    std::string cloudColumnName_l = std::string(cloudColumnName);
-    std::string cloudColumnName_u = std::string(cloudColumnName_l);
+    std::string blkTableName_u = to_upper(blkTableName);    
+    std::string pcTableName_u = to_upper(pcTableName);
+    std::string cloudColumnName_u = to_upper(cloudColumnName);
+    std::string aux_columns_u = to_upper(aux_columns);
 
-    std::string aux_columns_l = std::string(aux_columns);
-    std::string aux_columns_u = std::string(aux_columns);
- 
-    std::string aux_values_l = std::string(aux_values);
-           
-    std::transform(blkTableName_l.begin(), blkTableName_l.end(), blkTableName_u.begin(), static_cast < int(*)(int) > (toupper));
-    std::transform(pcTableName_l.begin(), pcTableName_l.end(), pcTableName_u.begin(), static_cast < int(*)(int) > (toupper));
-    std::transform(cloudColumnName_l.begin(), cloudColumnName_l.end(), cloudColumnName_u.begin(), static_cast < int(*)(int) > (toupper));
-    std::transform(aux_columns_l.begin(), aux_columns_l.end(), aux_columns_u.begin(), static_cast < int(*)(int) > (toupper));
-    
     ostringstream columns;
     ostringstream values;
     
     if (!aux_columns_u.empty() ) {
         columns << cloudColumnName_u << "," << aux_columns_u;
     
-        values << "pc," << aux_values_l;
+        values << "pc," << aux_values;
     } else {
         columns << cloudColumnName_u;
         values << "pc";
@@ -1215,22 +798,6 @@ void usage() {
     fprintf(stderr,"----------------------------------------------------------\n");    
 }
 
-bool ExternalIndexExists(std::string& filename)
-{
-    struct stat stats;
-    std::ostringstream os;
-    os << filename << ".dat";
-    
-    std::string indexname = os.str();
-    
-    // ret is -1 for no file existing and 0 for existing
-    int ret = stat(indexname.c_str(),&stats);
-
-    bool output = false;
-    if (ret == 0) output= true; else output =false;
-    return output;
-}
-
 
 // select sdo_pc_pkg.to_geometry(a.points, a.num_points, 3, 4326) from NACHES_BAREEARTH_BLOCK1 a where a.obj_id= 8907
 int main(int argc, char* argv[])
@@ -1258,10 +825,9 @@ int main(int argc, char* argv[])
     bool bUse3d = false;
     
     uint32_t nCapacity = 10000;
-    double dFillFactor = 0.99;
+
     int srid = 0;
     long precision = 8;
-    long idx_dimension = 3;
     
     double xmin = 0.0;
     double ymin = 0.0;
@@ -1306,14 +872,6 @@ int main(int argc, char* argv[])
             i++;
             nCapacity=atoi(argv[i]);
         }
-        else if (   strcmp(argv[i],"--fill") == 0  ||
-                    strcmp(argv[i],"-fill") == 0   ||
-                    strcmp(argv[i],"-f") == 0 
-                )
-        {
-            i++;
-            dFillFactor=atof(argv[i]);
-        }
         else if (   strcmp(argv[i],"--srid") == 0  ||
                     strcmp(argv[i],"-srid") == 0   ||
                     strcmp(argv[i],"-s") == 0 
@@ -1323,14 +881,6 @@ int main(int argc, char* argv[])
             srid=atoi(argv[i]);
         }
 
-        else if (   strcmp(argv[i],"--idx-dimension") == 0  ||
-                    strcmp(argv[i],"-dim") == 0  
-                )
-        {
-            i++;
-            idx_dimension=atoi(argv[i]);
-        }
-        
         else if (   strcmp(argv[i],"--cloud-column-name") == 0  ||
                     strcmp(argv[i],"-cn") == 0  
                 )
@@ -1558,7 +1108,7 @@ int main(int argc, char* argv[])
         ostringstream oss;
         oss << pre_sql;
         OWStatement* statement = 0;
-        statement = Run(con, oss);
+        statement = RunSQL(con, oss);
         if (statement != 0) {
             delete statement; 
         }
@@ -1569,32 +1119,17 @@ int main(int argc, char* argv[])
         oss.str("");        
     }
     if (!BlockTableExists(con, table_name.c_str()))
-        CreateBlockTable(con, table_name.c_str());
+        CreateBlockTable(con, table_name);
     else {
         bUseExistingBlockTable = true;
         std::cout << "Using existing block table ... " << std::endl;
 
     }
 
-    liblas::Reader* reader = new liblas::Reader(*istrm);
     KDXIndexSummary* query = 0;
     if (!KDTreeIndexExists(input)) {
         std::cout << "KDTree .kdx file does not exist for file, unable to proceed" << std::endl;
-        exit(1);
-    // 
-    //     LASIndexDataStream* idxstrm = new LASIndexDataStream(reader, idx_dimension);
-    // 
-    //     LASIndex* idx = new LASIndex(input);
-    //     idx->SetType(LASIndex::eExternalIndex);
-    //     idx->SetLeafCapacity(nCapacity);
-    //     idx->SetFillFactor(dFillFactor);
-    //     idx->Initialize(*idxstrm);
-    //     query = new LASQuery;
-    //     idx->Query(*query);
-    //     if (idx != 0) delete idx;
-    //     if (reader != 0) delete reader;
-    //     if (istrm != 0 ) delete istrm;
-    //         
+        exit(1);  
     } else {
         std::cout << "Using kdtree ... " << std::endl;
         std::ostringstream os;
@@ -1639,7 +1174,7 @@ int main(int argc, char* argv[])
         ostringstream oss;
         oss << pre_block_sql;
         OWStatement* statement = 0;
-        statement = Run(con, oss);
+        statement = RunSQL(con, oss);
         if (statement != 0) {
             delete statement; 
         }
@@ -1685,8 +1220,7 @@ int main(int argc, char* argv[])
                         
         CreateBlockIndex(   con, 
                             table_name.c_str(), 
-                            srid, 
-                            bUseSolidGeometry, 
+                            srid,  
                             bUse3d);
     }
 
@@ -1699,7 +1233,7 @@ int main(int argc, char* argv[])
         ostringstream oss;
         oss << post_sql;
         OWStatement* statement = 0;
-        statement = Run(con, oss);
+        statement = RunSQL(con, oss);
         if (statement != 0) {
             delete statement; 
         }
