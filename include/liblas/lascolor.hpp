@@ -67,6 +67,7 @@ public:
 
     /// User-defined constructor.
     /// Initializes colour components based on values of 3-element array.
+    /// \exception std::invalid_argument if color component value is out of range of unsigned 8-bit integer.
     Color(boost::array<value_type, 3> const& color);
 
     /// Copy constructor.
