@@ -44,7 +44,7 @@ using namespace liblas;
 #include <boost/array.hpp>
 #include <boost/shared_ptr.hpp>
 
-typedef std::vector<liblas::uint32_t> IDVector;
+typedef std::vector<uint32_t> IDVector;
 typedef boost::shared_ptr< IDVector > IDVectorPtr;
 
 typedef struct
@@ -54,7 +54,7 @@ typedef struct
     long* num_points;
     OCILobLocator** locators; // =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
 
-    std::vector<liblas::uint8_t>** blobs;
+    std::vector<uint8_t>** blobs;
 
     long* srids;
     long* gtypes;
@@ -81,7 +81,7 @@ typedef struct
 class IndexResult 
 {
 public:
-    IndexResult(liblas::uint32_t id) : bounds(), m_id(id) {}
+    IndexResult(uint32_t id) : bounds(), m_id(id) {}
     // 
     // /// Copy constructor.
     // IndexResult(IndexResult const& other);
@@ -93,13 +93,13 @@ public:
     void SetIDs(IDVector& v) {ids = v;}
     const liblas::Bounds GetBounds() const { return bounds; }
     void SetBounds(const liblas::Bounds b) {bounds = b;}
-    liblas::uint32_t GetID() const {return m_id;}
-    void SetID(liblas::uint32_t v) {m_id = v;}
+    uint32_t GetID() const {return m_id;}
+    void SetID(uint32_t v) {m_id = v;}
 
 private:
     IDVector ids;
     liblas::Bounds bounds;
-    liblas::uint32_t m_id;
+    uint32_t m_id;
 
 };
 
@@ -157,7 +157,7 @@ KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
         liblas::Bounds b(low[0], low[1], high[0],high[1]);
         // SpatialIndex::Region* pr = new SpatialIndex::Region(low, high, 2);
         // printf("Ids size: %d %.3f\n", ids.size(), pr->getLow(0));
-        IndexResult result(static_cast<liblas::uint32_t>(id));
+        IndexResult result(static_cast<uint32_t>(id));
         result.SetIDs(ids);
         result.SetBounds(b);
         m_results.push_back(result);
@@ -436,18 +436,18 @@ bool GetResultData( const IndexResult& result,
     data.clear();
 
     IDVector::const_iterator i;
-    vector<liblas::uint8_t>::iterator pi;    
+    vector<uint8_t>::iterator pi;    
     
     // list<SpatialIndex::id_type>::const_iterator i;
-//    vector<liblas::uint8_t>::iterator pi;
+//    vector<uint8_t>::iterator pi;
     
-//    liblas::uint32_t block_id = result.GetID();
+//    uint32_t block_id = result.GetID();
 
-    std::vector<liblas::uint8_t> point_data;
+    std::vector<uint8_t> point_data;
     
     for (i=ids.begin(); i!=ids.end(); ++i) 
     {
-        liblas::uint32_t id = *i;
+        uint32_t id = *i;
         // SpatialIndex::id_type id = *i;
 
         bool doRead = reader->ReadPointAt(id);
@@ -536,7 +536,7 @@ blocks* CreateBlock(int size)
     b->pc_ids = (long*) malloc( size * sizeof(long));
     b->block_ids = (long*) malloc ( size * sizeof(long));
     b->num_points = (long*) malloc ( size * sizeof(long));
-    b->blobs = (std::vector<liblas::uint8_t>**) malloc ( size * sizeof(std::vector<liblas::uint8_t>*));
+    b->blobs = (std::vector<uint8_t>**) malloc ( size * sizeof(std::vector<uint8_t>*));
     b->locators =(OCILobLocator**) malloc( sizeof(OCILobLocator*) * size );
 
     b->srids = (long*) malloc ( size * sizeof(long));
@@ -612,7 +612,7 @@ bool InsertBlocks(OWConnection* connection,
     ostringstream oss;
     IDVector const& ids = result.GetIDs();
     liblas::Bounds b = result.GetBounds();
-    liblas::uint32_t num_points =ids.size();
+    uint32_t num_points =ids.size();
     ostringstream oss_geom;
 
     ostringstream s_srid;
@@ -1257,7 +1257,7 @@ int main(int argc, char* argv[])
     bool bUseSolidGeometry = false;
     bool bUse3d = false;
     
-    liblas::uint32_t nCapacity = 10000;
+    uint32_t nCapacity = 10000;
     double dFillFactor = 0.99;
     int srid = 0;
     long precision = 8;

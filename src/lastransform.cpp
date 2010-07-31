@@ -80,7 +80,7 @@ ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, cons
         msg << "Could not import input spatial reference for ReprojectionTransform:: " 
             << CPLGetLastErrorMsg() << " code: " << result 
             << "wkt: '" << inSRS.GetWKT() << "'";
-        throw std::runtime_error(msg);
+        throw std::runtime_error(msg.str());
     }
     
     result = OSRSetFromUserInput(m_out_ref, outSRS.GetWKT().c_str());
