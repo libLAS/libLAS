@@ -44,7 +44,6 @@
 
 #include <liblas/lasversion.hpp>
 #include <liblas/lasspatialreference.hpp>
-#include <liblas/detail/fwd.hpp>
 #include <liblas/lasheader.hpp>
 
 // std
@@ -76,9 +75,7 @@ private:
     Header& operator=(Header const& rhs);
     
     bool HasLAS10PadSignature();
-
 };
-
 
 }}} // namespace liblas::detail::reader
 
