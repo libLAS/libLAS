@@ -42,7 +42,6 @@
 #ifndef LIBLAS_SCHEMA_HPP_INCLUDED
 #define LIBLAS_SCHEMA_HPP_INCLUDED
 
-#include <liblas/detail/fwd.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std
