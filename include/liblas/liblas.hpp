@@ -41,24 +41,40 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-
 #ifndef LIBLAS_HPP_INCLUDED
 #define LIBLAS_HPP_INCLUDED
 
 // liblas
-#include <liblas/detail/fwd.hpp>
+#include <liblas/version.hpp>
+#include <liblas/exception.hpp>
+#include <liblas/guid.hpp>
+#include <liblas/iterator.hpp>
+#include <liblas/lasbounds.hpp>
+#include <liblas/lasclassification.hpp>
+#include <liblas/lascolor.hpp>
+#include <liblas/laserror.hpp>
+#include <liblas/lasfilter.hpp>
+#include <liblas/lasheader.hpp>
+#include <liblas/laspoint.hpp>
+#include <liblas/lasreader.hpp>
+#include <liblas/lasschema.hpp>
+#include <liblas/lasspatialreference.hpp>
+#include <liblas/lastransform.hpp>
+#include <liblas/lasvariablerecord.hpp>
+#include <liblas/lasversion.hpp>
+#include <liblas/laswriter.hpp>
+#include <liblas/detail/endian.hpp>
+#include <liblas/detail/utility.hpp>
 // booost
 #include <boost/array.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 // std
+#include <cstring>
 #include <fstream>
 #include <string>
-
-typedef boost::shared_ptr< liblas::Header > HeaderPtr;
-typedef boost::shared_ptr< liblas::Point > PointPtr;
-typedef boost::shared_ptr< liblas::TransformI > TransformPtr;
+#include <vector>
 
 /// Namespace grouping all elements of libLAS public interface.
 /// \note
@@ -128,38 +144,6 @@ inline bool IsLibSpatialIndexEnabled()
 #endif
 }
 
-/// Range of allowed ASPRS LAS file format versions.
-enum FormatVersion
-{
-    eVersionMajorMin = 1, ///< Minimum of major component
-    eVersionMajorMax = 1, ///< Maximum of major component
-    eVersionMinorMin = 0, ///< Minimum of minor component
-    eVersionMinorMax = 3 ///< Maximum of minor component
-};
-
-/// Versions of point record format.
-enum PointFormatName
-{
-    ePointFormat0 = 0, ///< Point Data Format \e 0
-    ePointFormat1 = 1, ///< Point Data Format \e 1
-    ePointFormat2 = 2, ///< Point Data Format \e 2
-    ePointFormat3 = 3,  ///< Point Data Format \e 3
-    ePointFormat4 = 4,  ///< Point Data Format \e 3
-    ePointFormat5 = 5,  ///< Point Data Format \e 3
-    ePointFormatUnknown = -99 ///< Point Data Format is unknown
-};
-
-/// Number of bytes of point record storage in particular format.
-enum PointSize
-{
-    ePointSize0 = 20, ///< Size of point record in data format \e 0
-    ePointSize1 = 28, ///< Size of point record in data format \e 1
-    ePointSize2 = 26, ///< Size of point record in data format \e 2
-    ePointSize3 = 34  ///< Size of point record in data format \e 3
-
-};
-
-
 class ReaderI
 {
 public:
@@ -190,47 +174,6 @@ public:
 
 };
 
-/// Defines public interface to LAS filter implementation.
-class FilterI
-{
-public:
-    
-    /// Determines whether or not the filter keeps or rejects points that meet 
-    /// filtering criteria
-    enum FilterType
-    {
-        eExclusion = 0, ///< Filter removes point that meet the criteria of filter(const Point& point)
-        eInclusion = 1 ///< Filter keeps point that meet the criteria of filter(const Point& point)
-    };
-    
-    virtual bool filter(const Point& point) = 0;
-    
-    void SetType(FilterType t) {m_type = t;}
-    FilterType GetType() const {return m_type; }
-
-    virtual ~FilterI() {};
-
-    FilterI(FilterType t) : m_type(t) {}
-    
-private:
-
-    FilterI(FilterI const& other);
-    FilterI& operator=(FilterI const& rhs);
-
-    FilterType m_type;
-
-    
-};
-
-/// Defines public interface to LAS transform implementation.
-class TransformI
-{
-public:
-    
-    virtual bool transform(Point& point) = 0;
-    virtual ~TransformI() {};
-
-};
 
 } // namespace liblas
 
