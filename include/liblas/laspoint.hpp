@@ -42,11 +42,10 @@
 #ifndef LIBLAS_LASPOINT_HPP_INCLUDED
 #define LIBLAS_LASPOINT_HPP_INCLUDED
 
-#include <liblas/detail/fwd.hpp>
-#include <liblas/detail/utility.hpp>
 #include <liblas/lasclassification.hpp>
 #include <liblas/lascolor.hpp>
-#include <liblas/liblas.hpp>
+#include <liblas/detail/pointrecord.hpp>
+#include <liblas/detail/fwd.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
@@ -56,8 +55,6 @@
 #include <vector> // std::vector
 
 namespace liblas {
-
-    class Header; // forward declaration
 
 /// Point data record composed with X, Y, Z coordinates and attributes.
 class Point
@@ -173,12 +170,12 @@ public:
     /// Index operator providing access to XYZ coordinates of point record.
     /// Valid index values are 0, 1 or 2.
     /// \exception std::out_of_range if requested index is out of range (> 2).
-    double& operator[](std::size_t const& n);
+    double& operator[](std::size_t const& index);
 
     /// Const version of index operator providing access to XYZ coordinates of point record.
     /// Valid index values are 0, 1 or 2.
     /// \exception std::out_of_range if requested index is out of range (> 2).
-    double const& operator[](std::size_t const& n) const;
+    double const& operator[](std::size_t const& index) const;
 
     /// \todo TODO: Should we compare other data members, but not only coordinates?
     bool equal(Point const& other) const;
@@ -193,7 +190,7 @@ public:
     void SetData(std::vector<boost::uint8_t> const& v) { m_format_data = v;}
     
     void SetHeader(HeaderPtr header);
-    HeaderPtr GetHeaderPtr () { return m_hdr; }
+    HeaderPtr GetHeaderPtr() const;
 
 private:
 
@@ -213,12 +210,9 @@ private:
     std::vector<boost::uint8_t> m_extra_data;
     std::vector<boost::uint8_t> m_format_data;
     
-    HeaderPtr m_hdr;
-    
-    void throw_out_of_range() const
-    {
-        throw std::out_of_range("coordinate subscript out of range");
-    }
+    HeaderPtr m_header;
+
+    void throw_out_of_range() const;
 };
 
 /// Equal-to operator implemented in terms of Point::equal method.
@@ -368,11 +362,6 @@ inline double const& Point::operator[](std::size_t const& n) const
         throw_out_of_range();
 
     return m_coords[n];
-}
-
-inline void Point::SetHeader(HeaderPtr header) 
-{
-    m_hdr = header;
 }
 
 } // namespace liblas
