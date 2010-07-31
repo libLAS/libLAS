@@ -47,23 +47,15 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lastransform.hpp>
 #include <liblas/lasfilter.hpp>
-#include <liblas/detail/fwd.hpp>
-#include <liblas/liblas.hpp>
-
+// boost
+#include <boost/shared_ptr.hpp>
 // std
 #include <iosfwd> // std::ostream
 #include <string>
 #include <memory>
 #include <cstdlib> // std::size_t
 
-#include <boost/shared_ptr.hpp>
-
-namespace liblas
-{
-
-
-typedef boost::shared_ptr< liblas::TransformI > TransformPtr;
-
+namespace liblas {
 
 /// Defines public interface to LAS writer implementation.
 /// This class 
