@@ -42,6 +42,7 @@
 #ifndef LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 #define LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
 
+#include <liblas/detail/pointrecord.hpp>
 #include <liblas/detail/endian.hpp>
 // boost
 #include <boost/concept_check.hpp>
@@ -151,29 +152,6 @@ struct VLRHeader
   uint16_t recordId;
   uint16_t recordLengthAfterHeader;
   char description[32];
-};
-
-struct PointRecord
-{
-    PointRecord() :
-        x(0), y(0), z(0),
-        intensity(0),
-        flags(0),
-        classification(0),
-        scan_angle_rank(0),
-        user_data(0),
-        point_source_id(0)
-    {}
-
-    int32_t x;
-    int32_t y;
-    int32_t z;
-    uint16_t intensity;
-    uint8_t flags; // TODO: Replace with portable std::bitset<8>
-    uint8_t classification;
-    int8_t scan_angle_rank;
-    uint8_t user_data; // 1.0: File Marker / 1.1: User Data
-    uint16_t point_source_id; // 1.0: User Bit field / 1.1: Point Source ID
 };
 
 template <typename T> 
