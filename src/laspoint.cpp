@@ -42,24 +42,24 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/exception.hpp>
-#include <liblas/detail/utility.hpp>
-// std
-#include <cstring>
-#include <string>
-#include <vector>
+#include <liblas/detail/pointrecord.hpp>
 // boost
 #include <boost/cstdint.hpp>
+// std
+#include <cstring>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace liblas {
 
-Point::Point() :
-    m_gpsTime(0),
-    m_intensity(0),
-    m_pointSourceId(0),
-    m_flags(0),
-    m_userData(0),
-    m_angleRank(0),
-    m_hdr(HeaderPtr())
+Point::Point()
+    : m_gpsTime(0)
+    , m_intensity(0)
+    , m_pointSourceId(0)
+    , m_flags(0)
+    , m_userData(0)
+    , m_angleRank(0)
 {
     std::memset(m_coords, 0, sizeof(m_coords));
     m_extra_data.resize(0);
@@ -75,12 +75,11 @@ Point::Point(Point const& other) :
     m_flags(other.m_flags),
     m_userData(other.m_userData),
     m_angleRank(other.m_angleRank),
-    m_hdr(other.m_hdr)
+    m_header(other.m_header)
 {
     std::memcpy(m_coords, other.m_coords, sizeof(m_coords));
     std::vector<uint8_t>(other.m_extra_data).swap(m_extra_data);
     std::vector<uint8_t>(other.m_format_data).swap(m_format_data);
-    
 }
 
 Point& Point::operator=(Point const& rhs)
@@ -100,7 +99,7 @@ Point& Point::operator=(Point const& rhs)
         m_color = rhs.m_color;
         std::vector<uint8_t>(rhs.m_extra_data).swap(m_extra_data);
         std::vector<uint8_t>(rhs.m_format_data).swap(m_format_data);
-        m_hdr = rhs.m_hdr;
+        m_header = rhs.m_header;
     }
     return *this;
 }
@@ -116,17 +115,15 @@ Point& Point::operator=(Point const& rhs)
 
 void Point::SetCoordinates(double const& x, double const& y, double const& z)
 {
-    if (m_hdr.get() != 0 ) {
-        m_coords[0] = (x * m_hdr->GetScaleX()) + m_hdr->GetOffsetX();
-        m_coords[1] = (y * m_hdr->GetScaleY()) + m_hdr->GetOffsetY();
-        m_coords[2] = (z * m_hdr->GetScaleZ()) + m_hdr->GetOffsetZ();
-        
+    if (m_header.get() != 0 ) {
+        m_coords[0] = (x * m_header->GetScaleX()) + m_header->GetOffsetX();
+        m_coords[1] = (y * m_header->GetScaleY()) + m_header->GetOffsetY();
+        m_coords[2] = (z * m_header->GetScaleZ()) + m_header->GetOffsetZ();   
     } else {
         m_coords[0] = x;
         m_coords[1] = y;
         m_coords[2] = z;
     }
-
 }
 
 
@@ -254,13 +251,10 @@ bool Point::Validate() const
     return true;
 }
 
-
 bool Point::IsValid() const
 {
     
-    if( eScanAngleRankMin > this->GetScanAngleRank() 
-        || this->GetScanAngleRank() > eScanAngleRankMax
-      )
+    if (eScanAngleRankMin > this->GetScanAngleRank() || this->GetScanAngleRank() > eScanAngleRankMax)
         return false;
 
     if (this->GetFlightLineEdge() > 0x01)
@@ -279,5 +273,19 @@ bool Point::IsValid() const
     return true;
 }
 
+void Point::SetHeader(HeaderPtr header) 
+{
+    m_header = header;
+}
+
+HeaderPtr Point::GetHeaderPtr() const
+{
+    return m_header;
+}
+
+void Point::throw_out_of_range() const
+{
+    throw std::out_of_range("coordinate subscript out of range");
+}
 
 } // namespace liblas
