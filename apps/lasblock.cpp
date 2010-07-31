@@ -10,8 +10,6 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/liblas.hpp>
-#include <liblas/lasreader.hpp>
-#include <liblas/lasbounds.hpp>
 #include "chipper.hpp"
 // std
 #include <fstream>

@@ -9,10 +9,6 @@
 
 #include <liblas/detail/utility.hpp>
 
-#include <liblas/laspoint.hpp>
-#include <liblas/lasreader.hpp>
-#include <liblas/lasheader.hpp>
-
 #include <string>
 #include <sstream>
 #include <iostream>

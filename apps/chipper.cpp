@@ -41,9 +41,7 @@
 
 #include "chipper.hpp"
 
-#include <math.h>
-
-using namespace std;
+#include <cmath>
 
 /**
 The objective is to split the region into non-overlapping blocks, each
@@ -77,6 +75,9 @@ be stored.
 
 namespace liblas
 {
+
+using namespace std;
+using namespace boost;
 
 namespace chipper
 {

@@ -1,12 +1,4 @@
-#include <liblas/detail/utility.hpp>
-
-#include <liblas/laswriter.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lascolor.hpp>
-#include <liblas/lasreader.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/lasvariablerecord.hpp>
-#include <liblas/index/index.hpp>
+#include <liblas/liblas.hpp>
 
 #include <cstring>
 #include <iterator>

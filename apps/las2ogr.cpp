@@ -20,8 +20,6 @@
 
 // liblas
 #include <liblas/liblas.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lasreader.hpp>
 
 //std
 #include <cassert>

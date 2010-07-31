@@ -12,11 +12,6 @@
 //
 // liblas
 #include <liblas/liblas.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lasreader.hpp>
-#include <liblas/laswriter.hpp>
-#include <liblas/lasfilter.hpp>
-#include <liblas/liblas.hpp>
 
 #include <fstream>
 #include <iostream>

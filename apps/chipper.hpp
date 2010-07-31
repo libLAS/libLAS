@@ -1,9 +1,8 @@
 #ifndef LIBLAS_CHIPPER_H
 #define LIBLAS_CHIPPER_H
 
+#include <liblas/liblas.hpp>
 #include <vector>
-#include <liblas/lasreader.hpp>
-#include <liblas/detail/utility.hpp>
 
 namespace liblas
 {
@@ -22,8 +21,8 @@ class PtRef
 {
 public:
     double m_pos;
-    uint32_t m_ptindex;
-    uint32_t m_oindex;
+    boost::uint32_t m_ptindex;
+    boost::uint32_t m_oindex;
 
     bool operator < (const PtRef& pt) const
         { return m_pos < pt.m_pos; }
@@ -68,15 +67,15 @@ class Block
 
 private:
     RefList *m_list_p;
-    uint32_t m_left;
-    uint32_t m_right;
+    boost::uint32_t m_left;
+    boost::uint32_t m_right;
     double m_xmin;
     double m_ymin;
     double m_xmax;
     double m_ymax;
 
 public:
-    std::vector<uint32_t> GetIDs() const; 
+    std::vector<boost::uint32_t> GetIDs() const; 
     double GetXmin() const
         { return m_xmin; }
     double GetYmin() const
@@ -90,34 +89,34 @@ public:
 class Chipper
 {
 public:
-    Chipper(Reader *reader, uint32_t max_partition_size) :
+    Chipper(Reader *reader, boost::uint32_t max_partition_size) :
         m_reader(reader), m_threshold(max_partition_size),
         m_xvec(DIR_X), m_yvec(DIR_Y), m_spare(DIR_NONE)
     {}
 
     void Chip();
-    uint32_t GetBlockCount()
+    boost::uint32_t GetBlockCount()
         { return m_blocks.size(); }
-    const Block& GetBlock(uint32_t i)
+    const Block& GetBlock(boost::uint32_t i)
         { return m_blocks[i]; }
 
 private:
     void Load(RefList& xvec, RefList& yvec, RefList& spare);
-    void Partition(uint32_t size);
+    void Partition(boost::uint32_t size);
     void Split(RefList& xvec, RefList& yvec, RefList& spare);
     void DecideSplit(RefList& v1, RefList& v2, RefList& spare,
-        uint32_t left, uint32_t right);
+        boost::uint32_t left, boost::uint32_t right);
     void Split(RefList& wide, RefList& narrow, RefList& spare,
-        uint32_t left, uint32_t right);
+        boost::uint32_t left, boost::uint32_t right);
     void FinalSplit(RefList& wide, RefList& narrow,
-        uint32_t pleft, uint32_t pcenter);
-    void Emit(RefList& wide, uint32_t widemin, uint32_t widemax,
-        RefList& narrow, uint32_t narrowmin, uint32_t narrowmax );
+        boost::uint32_t pleft, boost::uint32_t pcenter);
+    void Emit(RefList& wide, boost::uint32_t widemin, boost::uint32_t widemax,
+        RefList& narrow, boost::uint32_t narrowmin, boost::uint32_t narrowmax );
 
     Reader *m_reader;
-    uint32_t m_threshold;
+    boost::uint32_t m_threshold;
     std::vector<Block> m_blocks;
-    std::vector<uint32_t> m_partitions;
+    std::vector<boost::uint32_t> m_partitions;
     RefList m_xvec;
     RefList m_yvec;
     RefList m_spare;
