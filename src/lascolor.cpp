@@ -43,7 +43,7 @@
 // boost
 #include <boost/cstdint.hpp>
 // std
-#include <stdexcept> // std::out_of_range
+#include <stdexcept>
 
 namespace liblas {
 
@@ -54,6 +54,9 @@ Color::Color()
 
 Color::Color(value_type red, value_type green, value_type blue)
 {
+    if (red > 255 || green > 255 || blue > 255)
+        throw_invalid_color_component();
+
     m_color[0] = red;
     m_color[1] = green;
     m_color[2] = blue;
@@ -61,6 +64,9 @@ Color::Color(value_type red, value_type green, value_type blue)
 
 Color::Color(boost::array<value_type, 3> const& color)
 {
+    if (color[0] > 255 || color[1] > 255 || color[2] > 255)
+        throw_invalid_color_component();
+
     m_color = color;
 }
 
@@ -78,9 +84,14 @@ Color& Color::operator=(Color const& rhs)
     return *this;
 }
 
-void Color::throw_out_of_range() const
+void Color::throw_index_out_of_range() const
 {
     throw std::out_of_range("subscript out of range");
+}
+
+void Color::throw_invalid_color_component() const
+{
+    throw std::invalid_argument("color component value too large");
 }
 
 } // namespace liblas

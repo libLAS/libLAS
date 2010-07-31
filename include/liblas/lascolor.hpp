@@ -60,8 +60,9 @@ public:
     /// Initializes with black color using RGB {0, 0, 0}.
     Color();
 
-    // User-defined constructor.
-    // Initializes object with given RGB values.
+    /// User-defined constructor.
+    /// Initializes object with given RGB values.
+    /// \exception std::invalid_argument if color component value is out of range of unsigned 8-bit integer.
     Color(value_type red, value_type green, value_type blue);
 
     /// User-defined constructor.
@@ -106,8 +107,9 @@ private:
 
     typedef boost::array<value_type, 3> base_type;
     base_type m_color;
-    
-    void throw_out_of_range() const;
+
+    void throw_index_out_of_range() const;
+    void throw_invalid_color_component() const;
 };
 
 inline Color::value_type Color::GetRed() const
@@ -142,17 +144,11 @@ inline void Color::SetBlue(Color::value_type const& value)
 
 inline Color::value_type& Color::operator[](std::size_t const& index)
 {
-    if (index > m_color.size() - 1)
-        throw_out_of_range();
-
     return m_color[index];
 }
 
 inline Color::value_type const& Color::operator[](std::size_t const& index) const
 {
-    if (index > m_color.size() - 1)
-        throw_out_of_range();
-
     return m_color[index];
 }
 
