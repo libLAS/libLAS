@@ -526,8 +526,14 @@ void Header::SetMin(double x, double y, double z)
     m_extent = Bounds(x, y, m_extent.max(0), m_extent.max(1), z, m_extent.max(2));
 }
 
-void Header::SetExtent(Bounds& b) {
-    m_extent = b;
+void Header::SetExtent(Bounds const& extent)
+{
+    m_extent = extent;
+}
+
+const Bounds& Header::GetExtent() const
+{
+    return m_extent;
 }
 
 void Header::AddVLR(VariableRecord const& v) 

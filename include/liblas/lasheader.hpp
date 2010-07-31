@@ -43,14 +43,15 @@
 #ifndef LIBLAS_LASHEADER_HPP_INCLUDED
 #define LIBLAS_LASHEADER_HPP_INCLUDED
 
-#include <liblas/detail/fwd.hpp>
-#include <liblas/lasbounds.hpp>
-#include <liblas/liblas.hpp>
-#include <liblas/lasvariablerecord.hpp>
-#include <liblas/lasspatialreference.hpp>
-#include <liblas/lasschema.hpp>
 #include <liblas/guid.hpp>
-
+#include <liblas/lasbounds.hpp>
+#include <liblas/lasheader.hpp>
+#include <liblas/lasschema.hpp>
+#include <liblas/lasspatialreference.hpp>
+#include <liblas/lasvariablerecord.hpp>
+#include <liblas/lasversion.hpp>
+// boost
+#include <boost/cstdint.hpp>
 //std
 #include <cstddef>
 #include <string>
@@ -323,8 +324,9 @@ public:
     Schema GetSchema() const;
     void SetSchema(const Schema& format);
 
-    void SetExtent(Bounds& b);
-    const Bounds& GetExtent() const {return m_extent; } 
+    const Bounds& GetExtent() const;
+    void SetExtent(Bounds const& extent);
+
 private:
     
     typedef detail::Point<double> PointScales;
