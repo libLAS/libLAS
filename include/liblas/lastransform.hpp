@@ -45,38 +45,45 @@
 #include <liblas/lasversion.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/detail/fwd.hpp>
-#include <liblas/liblas.hpp>
 #include <liblas/lasspatialreference.hpp>
-
+// boost
+#include <boost/shared_ptr.hpp>
+// std
 #include <vector>
 
-namespace liblas
-{
-
-
+namespace liblas {
 
 #ifndef HAVE_GDAL
     typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
     typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
 #endif
 
+
+/// Defines public interface to LAS transform implementation.
+class TransformI
+{
+public:
+    
+    virtual bool transform(Point& point) = 0;
+    virtual ~TransformI() {};
+};
+
+typedef boost::shared_ptr<liblas::TransformI> TransformPtr;
+
 class ReprojectionTransform: public TransformI
 {
 public:
     
-    ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS);
-    bool transform(Point& point);
-    
+    ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS);    
     ~ReprojectionTransform();
+
+    bool transform(Point& point);
 
 private:
 
     OGRCoordinateTransformationH m_transform;
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
-
-
 
     ReprojectionTransform(ReprojectionTransform const& other);
     ReprojectionTransform& operator=(ReprojectionTransform const& rhs);
