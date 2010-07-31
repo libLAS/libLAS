@@ -40,7 +40,9 @@
  ****************************************************************************/
 
 #include <liblas/lasbounds.hpp>
+#include <liblas/laspoint.hpp>
 // boost
+#include <boost/array.hpp>
 #include <boost/concept_check.hpp>
 // std
 #include <cmath>
