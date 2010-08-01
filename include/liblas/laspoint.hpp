@@ -47,6 +47,7 @@
 #include <liblas/detail/pointrecord.hpp>
 #include <liblas/detail/fwd.hpp>
 // boost
+#include <boost/array.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 // std
@@ -194,22 +195,18 @@ public:
 
 private:
 
-    static std::size_t const coords_size = 3;
-
-    detail::PointRecord m_rec;
-    double m_coords[coords_size]; // FIXME: use boost::array
-    double m_gpsTime;
-    Color m_color;
-    Classification m_cls;
-    boost::uint16_t m_intensity;
-    boost::uint16_t m_pointSourceId;
-    boost::uint8_t m_flags;
-    boost::uint8_t m_userData;
-    boost::int8_t m_angleRank;
-
+    detail::PointRecord m_record;
     std::vector<boost::uint8_t> m_extra_data;
     std::vector<boost::uint8_t> m_format_data;
-    
+    boost::array<double, 3> m_coords;
+    Color m_color;
+    double m_gps_time;
+    boost::uint16_t m_intensity;
+    boost::uint16_t m_source_id;
+    boost::uint8_t m_flags;
+    boost::uint8_t m_user_data;
+    boost::int8_t m_angle_rank;
+    Classification m_class;
     HeaderPtr m_header;
 
     void throw_out_of_range() const;
@@ -310,32 +307,33 @@ inline void Point::SetScanFlags(boost::uint8_t const& flags)
 
 inline boost::int8_t Point::GetScanAngleRank() const
 {
-    return m_angleRank;
+    return m_angle_rank;
 }
 
 inline boost::uint8_t Point::GetUserData() const
 {
-    return m_userData;
+    return m_user_data;
 }
 
 inline boost::uint16_t Point::GetPointSourceID() const
 {
-    return m_pointSourceId;
+    return m_source_id;
 }
 
 inline void Point::SetPointSourceID(boost::uint16_t const& id)
 {
-    m_pointSourceId = id;
+    m_source_id = id;
 }
 
 inline double Point::GetTime() const
 {
-    return m_gpsTime;
+    return m_gps_time;
 }
 
 inline void Point::SetTime(double const& time)
 {
-    m_gpsTime = time;
+    assert(time >= 0); // TODO: throw? --mloskot
+    m_gps_time = time;
 }
 
 inline Color const& Point::GetColor() const
@@ -348,20 +346,20 @@ inline void Point::SetColor(Color const& value)
     m_color = value;
 }
 
-inline double& Point::operator[](std::size_t const& n)
+inline double& Point::operator[](std::size_t const& index)
 {
-    if (coords_size <= n)
+    if (index > m_coords.size() - 1)
         throw_out_of_range();
 
-    return m_coords[n];
+    return m_coords[index];
 }
 
-inline double const& Point::operator[](std::size_t const& n) const
+inline double const& Point::operator[](std::size_t const& index) const
 {
-    if (coords_size <= n)
+    if (index > m_coords.size() - 1)
         throw_out_of_range();
 
-    return m_coords[n];
+    return m_coords[index];
 }
 
 } // namespace liblas

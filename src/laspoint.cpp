@@ -44,6 +44,7 @@
 #include <liblas/exception.hpp>
 #include <liblas/detail/pointrecord.hpp>
 // boost
+#include <boost/array.hpp>
 #include <boost/cstdint.hpp>
 // std
 #include <cstring>
@@ -54,51 +55,49 @@
 namespace liblas {
 
 Point::Point()
-    : m_gpsTime(0)
+    : m_extra_data(0)
+    , m_format_data(0)
+    , m_gps_time(0)
     , m_intensity(0)
-    , m_pointSourceId(0)
+    , m_source_id(0)
     , m_flags(0)
-    , m_userData(0)
-    , m_angleRank(0)
+    , m_user_data(0)
+    , m_angle_rank(0)
 {
-    std::memset(m_coords, 0, sizeof(m_coords));
-    m_extra_data.resize(0);
-    m_format_data.resize(0);
+    m_coords.assign(0);
 }
 
-Point::Point(Point const& other) :
-    m_gpsTime(other.m_gpsTime),
-    m_color(other.m_color),
-    m_cls(other.m_cls),
-    m_intensity(other.m_intensity),
-    m_pointSourceId(other.m_pointSourceId),
-    m_flags(other.m_flags),
-    m_userData(other.m_userData),
-    m_angleRank(other.m_angleRank),
-    m_header(other.m_header)
+Point::Point(Point const& other)
+    : m_extra_data(other.m_extra_data)
+    , m_format_data(other.m_format_data)
+    , m_coords(other.m_coords)
+    , m_color(other.m_color)
+    , m_gps_time(other.m_gps_time)
+    , m_intensity(other.m_intensity)
+    , m_source_id(other.m_source_id)
+    , m_flags(other.m_flags)
+    , m_user_data(other.m_user_data)
+    , m_angle_rank(other.m_angle_rank)
+    , m_class(other.m_class)
+    , m_header(other.m_header)
 {
-    std::memcpy(m_coords, other.m_coords, sizeof(m_coords));
-    std::vector<uint8_t>(other.m_extra_data).swap(m_extra_data);
-    std::vector<uint8_t>(other.m_format_data).swap(m_format_data);
 }
 
 Point& Point::operator=(Point const& rhs)
 {
     if (&rhs != this)
     {
-        m_coords[0] = rhs.m_coords[0];
-        m_coords[1] = rhs.m_coords[1];
-        m_coords[2] = rhs.m_coords[2];
-        m_intensity = rhs.m_intensity;
-        m_flags = rhs.m_flags;
-        m_cls = rhs.m_cls;
-        m_angleRank = rhs.m_angleRank;
-        m_userData = rhs.m_userData;
-        m_pointSourceId = rhs.m_pointSourceId;
-        m_gpsTime = rhs.m_gpsTime;
+        m_extra_data = rhs.m_extra_data;
+        m_format_data = rhs.m_format_data;
+        m_coords = rhs.m_coords;
         m_color = rhs.m_color;
-        std::vector<uint8_t>(rhs.m_extra_data).swap(m_extra_data);
-        std::vector<uint8_t>(rhs.m_format_data).swap(m_format_data);
+        m_gps_time = rhs.m_gps_time;
+        m_class = rhs.m_class;
+        m_intensity = rhs.m_intensity;
+        m_source_id = rhs.m_source_id;
+        m_flags = rhs.m_flags;
+        m_user_data = rhs.m_user_data;
+        m_angle_rank = rhs.m_angle_rank;
         m_header = rhs.m_header;
     }
     return *this;
@@ -161,32 +160,32 @@ void Point::SetFlightLineEdge(uint16_t const& edge)
 
 void Point::SetScanAngleRank(int8_t const& rank)
 {
-    m_angleRank = rank;
+    m_angle_rank = rank;
 }
 
 void Point::SetUserData(uint8_t const& data)
 {
-    m_userData = data;
+    m_user_data = data;
 }
 
 Classification const& Point::GetClassification() const
 {
-    return m_cls;
+    return m_class;
 }
 
 void Point::SetClassification(Classification const& cls)
 {
-    m_cls = cls;
+    m_class = cls;
 }
 
 void Point::SetClassification(Classification::bitset_type const& flags)
 {
-    m_cls = Classification(flags);
+    m_class = Classification(flags);
 }
 
 void Point::SetClassification(boost::uint8_t const& flags)
 {
-    m_cls = Classification(flags);
+    m_class = Classification(flags);
 }
 
 bool Point::equal(Point const& other) const
@@ -202,9 +201,9 @@ bool Point::equal(Point const& other) const
 
     // TODO: Should we compare other data members, besides the coordinates?
 
-    if (((dx <= epsilon) && (dx >= -epsilon))
-        && ((dy <= epsilon) && (dy >= -epsilon))
-        && ((dz <= epsilon) && (dz >= -epsilon)))
+    if ((dx <= epsilon && dx >= -epsilon)
+     && (dy <= epsilon && dy >= -epsilon)
+     && (dz <= epsilon && dz >= -epsilon))
     {
         return true;
     }
