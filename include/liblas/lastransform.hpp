@@ -81,6 +81,7 @@ public:
 
 private:
 
+    // FIXME: use shared_ptr with custom deleter and get rid of bloat of OGR manual calls --mloskot
     OGRCoordinateTransformationH m_transform;
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
