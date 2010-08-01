@@ -105,7 +105,7 @@ public:
     ~SpatialReference();
 
     /// Constructor creating SpatialReference instance from given Variable-Length Record.
-    SpatialReference(const std::vector<VariableRecord>& vlrs);
+    SpatialReference(std::vector<VariableRecord> const& vlrs);
 
     /// Copy constryctor.
     SpatialReference(SpatialReference const& other);
@@ -147,9 +147,9 @@ public:
     /// -1 if no value is available.
     /// \param verticalUnits - the EPSG vertical units code, often 9001 for Metre.
     void SetVerticalCS(int verticalCSType, 
-                       std::string const& citation = "",
+                       std::string const& citation = std::string(0),
                        int verticalDatum = -1,
-                       int verticalUnits = 9001 );
+                       int verticalUnits = 9001);
 
     /// Sets the SRS using GDAL's SetFromUserInput function. If GDAL is not linked, this 
     /// operation has no effect.
@@ -175,21 +175,22 @@ public:
     /// VLR records that pertain to the GeoTIFF keys, and extraneous 
     /// VLR records will not be copied.
     /// \param vlrs - A list of VLRs that contains VLRs describing GeoTIFF keys
-    void SetVLRs(const std::vector<VariableRecord>& vlrs);
+    void SetVLRs(std::vector<VariableRecord> const& vlrs);
     
     /// Add a VLR representing GeoTIFF keys to the SRS
-    void AddVLR(const VariableRecord& vlr);
+    void AddVLR(VariableRecord const& vlr);
     
     /// Return a copy of the LASVLRs that SpatialReference maintains
     std::vector<VariableRecord> GetVLRs() const;
 
 private:
 
+    // FIXME: Define as shared_ptr<GTIF> with custom deleter to get rid of bloated mem management, unsafe anyway --mloskot
     GTIF* m_gtiff;
     ST_TIFF* m_tiff;
 
     std::vector<VariableRecord> m_vlrs;
-    bool IsGeoVLR(const VariableRecord& vlr) const;
+    bool IsGeoVLR(VariableRecord const& vlr) const;
 
     /// Reset the VLRs of the SpatialReference using the existing GTIF* and ST_TIF*
     /// Until this method is called, 

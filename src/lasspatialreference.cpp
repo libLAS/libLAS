@@ -49,15 +49,30 @@
 #include <string>
 #include <vector>
 
-namespace liblas
-{
+namespace liblas {
 
-SpatialReference::SpatialReference() :
-    m_gtiff(0),
-    m_tiff(0)
+SpatialReference::SpatialReference()
+    : m_gtiff(0)
+    , m_tiff(0)
 {
     assert(0 == m_gtiff);
     assert(0 == m_tiff);
+}
+
+SpatialReference::SpatialReference(std::vector<VariableRecord> const& vlrs) 
+    : m_gtiff(0)
+    , m_tiff(0)
+{
+    SetVLRs(vlrs);
+    GetGTIF();
+}
+
+SpatialReference::SpatialReference(SpatialReference const& other) 
+    : m_gtiff(0)
+    , m_tiff(0)
+{
+    SetVLRs(other.GetVLRs());
+    GetGTIF();
 }
 
 SpatialReference& SpatialReference::operator=(SpatialReference const& rhs)
@@ -84,22 +99,6 @@ SpatialReference::~SpatialReference()
         m_tiff = 0;
     }
 #endif
-}
-
-SpatialReference::SpatialReference(SpatialReference const& other) 
-{
-    m_tiff = 0;
-    m_gtiff = 0;
-    SetVLRs(other.GetVLRs());
-    GetGTIF();
-}
-
-SpatialReference::SpatialReference(std::vector<VariableRecord> const& vlrs) 
-{
-    m_tiff = 0;
-    m_gtiff = 0;
-    SetVLRs(vlrs);
-    GetGTIF();
 }
 
 /// Keep a copy of the VLRs that are related to GeoTIFF SRS information.
@@ -295,8 +294,8 @@ void SpatialReference::SetGTIF(const GTIF* pgtiff, const ST_TIFF* ptiff)
     m_gtiff = (GTIF*)pgtiff;
     m_tiff = (ST_TIFF*)ptiff;
     ResetVLRs();
-    m_gtiff = NULL;
-    m_tiff = NULL;
+    m_gtiff = 0;
+    m_tiff = 0;
 }
 const GTIF* SpatialReference::GetGTIF()
 {
@@ -421,7 +420,7 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const
 #endif
 }
 
-void SpatialReference::SetFromUserInput( std::string const& v)
+void SpatialReference::SetFromUserInput(std::string const& v)
 {
 #ifdef HAVE_GDAL
 
@@ -476,11 +475,10 @@ void SpatialReference::SetWKT(std::string const& v)
 #endif
 }
 
-void SpatialReference::SetVerticalCS( int verticalCSType, 
-                                         std::string const& citation,
-                                         int verticalDatum,
-                                         int verticalUnits )
-
+void SpatialReference::SetVerticalCS(int verticalCSType, 
+                                     std::string const& citation,
+                                     int verticalDatum,
+                                     int verticalUnits)
 {
     if (!m_gtiff)
     {
@@ -519,7 +517,6 @@ void SpatialReference::SetVerticalCS( int verticalCSType,
 #endif /* def HAVE_LIBGEOTIFF */
 }
                                          
-
 std::string SpatialReference::GetProj4() const 
 {
 #ifdef HAVE_GDAL
