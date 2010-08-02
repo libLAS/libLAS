@@ -45,6 +45,7 @@
 
 #include <liblas/detail/utility.hpp>
 // boost
+#include <boost/array.hpp>
 #include <boost/cstdint.hpp>
 // std
 #include <string>
@@ -119,24 +120,16 @@ public:
     bool equal(VariableRecord const& other) const;
 
     /// Get the total size of the VLR in bytes
-    boost::uint32_t GetTotalSize() const;
-    
-        
+    std::size_t GetTotalSize() const;
+
 private:
 
-    enum
-    {
-        eUIDSize = 16,
-        eDescriptionSize = 32
-    };
-    
-    boost::uint16_t m_reserved;
-    boost::uint16_t m_recordId;
-    boost::uint16_t m_recordLength; // after header
-
-    char m_userId[eUIDSize]; // TODO: replace with boost::array
-    char m_desc[eDescriptionSize];
     std::vector<boost::uint8_t> m_data;
+    boost::array<char, 32> m_description;
+    boost::array<char, 16> m_user_id;    
+    boost::uint16_t m_reserved;
+    boost::uint16_t m_record_id;
+    boost::uint16_t m_record_size; // length after header
 };
 
 /// Equality operator.

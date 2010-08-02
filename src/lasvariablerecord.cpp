@@ -56,53 +56,40 @@ using namespace boost;
 
 namespace liblas {
 
-VariableRecord::VariableRecord() :
-    m_reserved(0), m_recordId(0), m_recordLength(0)
+VariableRecord::VariableRecord()
+    : m_data(40)
+    , m_reserved(0)
+    , m_record_id(0)
+    , m_record_size(0)
 {    
-    std::memset(m_userId, 0, eUIDSize);
-    std::memset(m_desc, 0, eDescriptionSize);
-    
-    m_data.resize(40);
-
+    m_user_id.assign(0);
+    m_description.assign(0);
 }
 
-VariableRecord::VariableRecord(VariableRecord const& other) :
-    m_reserved(other.m_reserved),
-    m_recordId(other.m_recordId),
-    m_recordLength(other.m_recordLength)
+VariableRecord::VariableRecord(VariableRecord const& other)
+    : m_data(other.m_data)
+    , m_description(other.m_description)
+    , m_user_id(other.m_user_id)
+    , m_reserved(other.m_reserved)
+    , m_record_id(other.m_record_id)
+    , m_record_size(other.m_record_size)
 {
-    void* p = 0;
-
-    p = std::memcpy(m_userId, other.m_userId, eUIDSize);
-    assert(p == m_userId);
-
-    p = std::memcpy(m_desc, other.m_desc, eDescriptionSize);
-    assert(p == m_desc);
-    
-    std::vector<uint8_t>(other.m_data).swap(m_data);
 }
 
 VariableRecord::~VariableRecord()
 {
-
 }
 
 VariableRecord& VariableRecord::operator=(VariableRecord const& rhs)
 {
-    void* p = 0;
     if (this != &rhs)
     {
+        m_data = rhs.m_data;
+        m_description = rhs.m_description;
+        m_user_id = rhs.m_user_id;
         m_reserved = rhs.m_reserved;
-        m_recordId = rhs.m_recordId;
-        m_recordLength = rhs.m_recordLength;
-
-        p = std::memcpy(m_userId, rhs.m_userId, eUIDSize);
-        assert(p == m_userId);
-
-        p = std::memcpy(m_desc, rhs.m_desc, eDescriptionSize);
-        assert(p == m_desc);
-
-        std::vector<uint8_t>(rhs.m_data).swap(m_data);
+        m_record_id = rhs.m_record_id;
+        m_record_size = rhs.m_record_size;
     }
     return (*this);
 }
@@ -120,76 +107,76 @@ void VariableRecord::SetReserved(uint16_t data)
 std::string VariableRecord::GetUserId(bool pad /*= false*/) const
 {
     // copy array of chars and trim zeros if smaller than 32 bytes
-    std::string tmp(std::string(m_userId, eUIDSize).c_str());
+    std::string tmp(std::string(m_user_id.begin(), m_user_id.end()).c_str());
 
     // pad right side with spaces
-    if (pad && tmp.size() < eUIDSize)
+    if (pad && tmp.size() < m_user_id.size())
     {
-        tmp.resize(eUIDSize, 0);
-        assert(tmp.size() == eUIDSize);
+        tmp.resize(m_user_id.size(), 0);
+        assert(tmp.size() == m_user_id.size());
     }
 
-    assert(tmp.size() <= eUIDSize);
+    assert(tmp.size() <= m_user_id.size());
     return tmp;
 }
 
 void VariableRecord::SetUserId(std::string const& id)
 {
-    if (id.size() > eUIDSize)
+    if (id.size() > m_user_id.size())
     {
         std::ostringstream msg;
         msg << "User ID for VLR is too long: " << id.size();
         throw std::invalid_argument(msg.str());
     }
 
-    std::fill(m_userId, m_userId + eUIDSize, 0);
-    std::strncpy(m_userId, id.c_str(), eUIDSize);
+    std::fill(m_user_id.begin(), m_user_id.end(), 0);
+    std::copy(id.begin(), id.end(), m_user_id.begin());
 }
 
 uint16_t VariableRecord::GetRecordId() const
 {
-    return m_recordId;
+    return m_record_id;
 }
 
 void VariableRecord::SetRecordId(uint16_t id)
 {
-    m_recordId = id;
+    m_record_id = id;
 }
 
 uint16_t VariableRecord::GetRecordLength() const
 {
-    return m_recordLength;
+    return m_record_size;
 }
 
 void VariableRecord::SetRecordLength(uint16_t length)
 {
-    m_recordLength = length;
+    m_record_size = length;
 }
 
 std::string VariableRecord::GetDescription(bool pad /*= false*/) const
 {
     // copy array of chars and trim zeros if smaller than 32 bytes
-    std::string tmp(std::string(m_desc, eDescriptionSize).c_str());
+    std::string tmp(std::string(m_description.begin(), m_description.end()).c_str());
 
     // pad right side with spaces
-    if (pad && tmp.size() < eDescriptionSize)
+    if (pad && tmp.size() < m_description.size())
     {
-        tmp.resize(eDescriptionSize, 0);
-        assert(tmp.size() == eDescriptionSize);
+        tmp.resize(m_description.size(), 0);
+        assert(tmp.size() == m_description.size());
     }
 
-    assert(tmp.size() <= eDescriptionSize);
+    assert(tmp.size() <= m_description.size());
     return tmp;
 }
 
 void VariableRecord::SetDescription(std::string const& text)
 {
-    if (text.size() > eDescriptionSize)
+    if (text.size() > m_description.size())
         throw std::invalid_argument("description is too long");
     
 
-    std::fill(m_desc, m_desc + eDescriptionSize, 0);
-    std::strncpy(m_desc, text.c_str(), eDescriptionSize);
+    std::fill(m_description.begin(), m_description.end(), 0);
+    std::copy(text.begin(), text.end(), m_description.begin());
 }
 
 
@@ -205,14 +192,14 @@ void VariableRecord::SetData(const std::vector<uint8_t>& data)
 
 bool VariableRecord::equal(VariableRecord const& other) const
 {
-    return (m_recordId == other.m_recordId
-            && std::string(m_userId) == std::string(other.m_userId) 
-            && std::string(m_desc) == std::string(other.m_desc)
-            && m_reserved == other.m_reserved
-            && m_recordLength == other.m_recordLength);
+    return m_record_id == other.m_record_id
+        && m_user_id == other.m_user_id
+        && m_description == other.m_description
+        && m_reserved == other.m_reserved
+        && m_record_size == other.m_record_size;
 }
 
-uint32_t VariableRecord::GetTotalSize() const
+std::size_t VariableRecord::GetTotalSize() const
 {
     // Signature 2 bytes
     // UserID 16 bytes
@@ -221,9 +208,8 @@ uint32_t VariableRecord::GetTotalSize() const
     // Description 32 bytes
     // Data length -- size of the data's vector * the size of uint8_t
     std::size_t const sum = 2 + 16 + 2 + 2 + 32 + GetData().size() * sizeof(uint8_t);
-    return static_cast<uint32_t>(sum);
+    return sum;
 }
-
 
 } // namespace liblas
 
