@@ -61,15 +61,15 @@ struct PointRecord
         , point_source_id(0)
     {}
 
-    int32_t x;
-    int32_t y;
-    int32_t z;
-    uint16_t intensity;
-    uint8_t flags; // TODO: Replace with portable std::bitset<8>
-    uint8_t classification;
-    int8_t scan_angle_rank;
-    uint8_t user_data; // 1.0: File Marker / 1.1: User Data
-    uint16_t point_source_id; // 1.0: User Bit field / 1.1: Point Source ID
+    boost::int32_t x;
+    boost::int32_t y;
+    boost::int32_t z;
+    boost::uint16_t intensity;
+    boost::uint8_t flags; // TODO: Replace with portable std::bitset<8>
+    boost::uint8_t classification;
+    boost::int8_t scan_angle_rank;
+    boost::uint8_t user_data; // 1.0: File Marker / 1.1: User Data
+    boost::uint16_t point_source_id; // 1.0: User Bit field / 1.1: Point Source ID
 };
 
 }} // namespace liblas::detail

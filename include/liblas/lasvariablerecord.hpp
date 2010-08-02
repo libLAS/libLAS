@@ -44,7 +44,8 @@
 #define LIBLAS_LASVARIABLERECORD_HPP_INCLUDED
 
 #include <liblas/detail/utility.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <string>
 #include <vector>
@@ -77,48 +78,48 @@ public:
 
     /// Get record signature (LAS 1.0) or reserved bytes (LAS 1.1).
     /// \exception No throw
-    uint16_t GetReserved() const;
+    boost::uint16_t GetReserved() const;
     
-    void SetReserved(uint16_t);
+    void SetReserved(boost::uint16_t data);
 
     /// Get identifier of user which created the record.
     /// The character data is up to 16 bytes long.
     /// \exception No throw
     std::string GetUserId(bool pad /*= false*/) const;
     
-    void SetUserId(std::string const&);
+    void SetUserId(std::string const& id);
 
     /// Get identifier of record.
     /// The record ID is closely related to the user ID.
     /// \exception No throw
-    uint16_t GetRecordId() const;
+    boost::uint16_t GetRecordId() const;
     
-    void SetRecordId(uint16_t);
+    void SetRecordId(boost::uint16_t id);
 
     /// Get record length after the header.
     /// \exception No throw
-    uint16_t GetRecordLength() const;
+    boost::uint16_t GetRecordLength() const;
     
-    void SetRecordLength(uint16_t);
+    void SetRecordLength(boost::uint16_t length);
 
     /// Get text description of data in the record.
     /// The character data is up to 32 bytes long.
     /// \exception No throw
     std::string GetDescription(bool pad /*= false*/) const;
     
-    void SetDescription(std::string const&);
+    void SetDescription(std::string const& text);
 
     /// Get the data for this VLR
-    std::vector<uint8_t> const& GetData() const;
+    std::vector<boost::uint8_t> const& GetData() const;
     
-    void SetData(std::vector<uint8_t> const&);
+    void SetData(std::vector<boost::uint8_t> const& data);
 
     /// Compare actual header object against the other.
     /// \exception No throw
     bool equal(VariableRecord const& other) const;
 
     /// Get the total size of the VLR in bytes
-    uint32_t GetTotalSize() const;
+    boost::uint32_t GetTotalSize() const;
     
         
 private:
@@ -129,13 +130,13 @@ private:
         eDescriptionSize = 32
     };
     
-    uint16_t m_reserved;
-    uint16_t m_recordId;
-    uint16_t m_recordLength; // after header
+    boost::uint16_t m_reserved;
+    boost::uint16_t m_recordId;
+    boost::uint16_t m_recordLength; // after header
 
-    char m_userId[eUIDSize];
+    char m_userId[eUIDSize]; // TODO: replace with boost::array
     char m_desc[eDescriptionSize];
-    std::vector<uint8_t> m_data;
+    std::vector<boost::uint8_t> m_data;
 };
 
 /// Equality operator.

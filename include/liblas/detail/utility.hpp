@@ -147,11 +147,11 @@ private:
 /// Definition of variable-length record header.
 struct VLRHeader
 {
-  uint16_t reserved;
-  char userId[16]; 
-  uint16_t recordId;
-  uint16_t recordLengthAfterHeader;
-  char description[32];
+  boost::uint16_t reserved;
+  char userId[16]; // TODO: replace wtih boost::array --mloskot
+  boost::uint16_t recordId;
+  boost::uint16_t recordLengthAfterHeader;
+  char description[32]; // TODO: replace wtih boost::array --mloskot
 };
 
 template <typename T> 

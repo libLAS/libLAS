@@ -57,6 +57,8 @@
 #include <cassert>
 #include <ctime>
 
+using namespace boost;
+
 namespace liblas {
 
 char const* const Header::FileSignature = "LASF";

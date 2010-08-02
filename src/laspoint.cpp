@@ -52,6 +52,8 @@
 #include <string>
 #include <vector>
 
+using namespace boost;
+
 namespace liblas {
 
 Point::Point()

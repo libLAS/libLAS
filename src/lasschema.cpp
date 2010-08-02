@@ -43,6 +43,10 @@
 #include <liblas/detail/utility.hpp>
 // boost
 #include <boost/cstdint.hpp>
+// std
+#include <algorithm>
+
+using namespace boost;
 
 namespace liblas { 
 

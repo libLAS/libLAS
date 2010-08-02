@@ -144,7 +144,7 @@ public:
     std::string GetClassName() const;
 
     /// Returns index of ASPRS classification as defined in the lookup table.
-    uint8_t GetClass() const;
+    boost::uint8_t GetClass() const;
 
     /// Updates index of ASPRS classification as defined in the lookup table.
     /// Valid index is in range from 0 to class_table_size - 1.
@@ -155,7 +155,7 @@ public:
     /// table is supported.
     /// @exception Theoretically, may throw std::out_of_range in case index 
     /// value is not in range between 0 and class_table_size - 1.
-    void SetClass(uint8_t index);
+    void SetClass(boost::uint8_t index);
 
     /// Sets if this point was created by a technique other than LIDAR
     /// collection such as digitized from a photogrammetric stereo model.

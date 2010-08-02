@@ -119,7 +119,7 @@ private:
     
     void CacheData(boost::uint32_t position, HeaderPtr header);
 
-    typedef std::vector<uint8_t> cache_mask_type;
+    typedef std::vector<boost::uint8_t> cache_mask_type;
     cache_mask_type m_mask;
     cache_mask_type::size_type m_cache_size;    
     cache_mask_type::size_type m_cache_start_position;

@@ -44,10 +44,8 @@
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-
 // boost
 #include <boost/cstdint.hpp>
-
 // std
 #include <fstream>
 #include <istream>
@@ -56,6 +54,8 @@
 #include <cstddef> // std::size_t
 #include <cstdlib> // std::free
 #include <cassert>
+
+using namespace boost;
 
 namespace liblas { namespace detail { 
 
@@ -88,7 +88,8 @@ void ReaderImpl::Reset(HeaderPtr header)
     
     // If we reset the reader, we're ready to start reading points, so 
     // we'll create a point reader at this point.
-    if (m_point_reader == 0) {
+    if (!m_point_reader)
+    {
         m_point_reader = PointReaderPtr(new reader::Point(m_ifs, header));
     } 
 }
@@ -157,10 +158,9 @@ void ReaderImpl::Seek(std::size_t n, HeaderPtr header)
     if (m_size == n) {
         throw std::out_of_range("file has no more points to read, end of file reached");
     } else if (m_size < n) {
-        std::ostringstream output;
-        output << "Seek:: Inputted value: " << n << " is greater than the number of points: " << m_size;
-        std::string out(output.str());
-        throw std::runtime_error(out);
+        std::ostringstream msg;
+        msg << "Seek:: Inputted value: " << n << " is greater than the number of points: " << m_size;
+        throw std::runtime_error(msg.str());
     } 
 
     std::streamsize pos = (static_cast<std::streamsize>(n) * header->GetDataRecordLength()) + header->GetDataOffset();    
@@ -212,7 +212,8 @@ void CachedReaderImpl::CacheData(boost::uint32_t position, HeaderPtr header)
 
     cache_mask_type::size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position);
 
-    for (uint32_t i = 0; i < to_mark; ++i) {
+    for (uint32_t i = 0; i < to_mark; ++i)
+    {
         m_mask[old_cache_start_position + i] = 0;
     }
 
@@ -290,7 +291,8 @@ PointPtr CachedReaderImpl::ReadCachedPoint(boost::uint32_t position, HeaderPtr h
 
 PointPtr CachedReaderImpl::ReadNextPoint(HeaderPtr header)
 {
-    if (m_cache_read_position == m_size ){
+    if (m_cache_read_position == m_size )
+    {
         throw std::out_of_range("file has no more points to read, end of file reached");
     }
     

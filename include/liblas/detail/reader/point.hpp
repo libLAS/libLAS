@@ -48,8 +48,8 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasschema.hpp>
-
-
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <iosfwd>
 
@@ -80,7 +80,7 @@ private:
     std::istream& m_ifs;
     HeaderPtr m_header;
     PointPtr m_point;
-    std::vector<uint8_t> m_raw_data;
+    std::vector<boost::uint8_t> m_raw_data;
     
     void setup();
     void fill(PointRecord& record);
