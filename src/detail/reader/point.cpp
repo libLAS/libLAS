@@ -50,10 +50,10 @@
 #include <cstring>
 #include <sstream> 
 
-namespace liblas { namespace detail { namespace reader {
-
 using namespace boost;
 using namespace std;
+
+namespace liblas { namespace detail { namespace reader {
 
 Point::Point(std::istream& ifs, HeaderPtr header)
     : m_ifs(ifs)

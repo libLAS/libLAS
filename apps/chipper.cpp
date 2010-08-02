@@ -38,10 +38,14 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-
 #include "chipper.hpp"
-
+// boost
+#include <boost/cstdint.hpp>
+// std
 #include <cmath>
+
+using namespace boost;
+using namespace std;
 
 /**
 The objective is to split the region into non-overlapping blocks, each
@@ -73,14 +77,7 @@ from the narrow array so that the approriate extrema of the block can
 be stored.
 **/
 
-namespace liblas
-{
-
-using namespace std;
-using namespace boost;
-
-namespace chipper
-{
+namespace liblas { namespace chipper {
 
 vector<uint32_t> Block::GetIDs() const
 {
@@ -305,6 +302,4 @@ void Chipper::Emit(RefList& wide, uint32_t widemin, uint32_t widemax,
     m_blocks.push_back(b);
 }
 
-} // namespace chipper
-
-} // namespace liblas
+}} // namespace liblas::chipper

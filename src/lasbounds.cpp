@@ -42,6 +42,7 @@
 #include <liblas/lasbounds.hpp>
 #include <liblas/laspoint.hpp>
 // boost
+#include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/concept_check.hpp>
 // std
@@ -49,6 +50,8 @@
 #include <limits>
 #include <string>
 #include <sstream>
+
+using namespace boost;
 
 namespace liblas { 
 
@@ -128,7 +131,6 @@ Bounds& Bounds::operator=(Bounds const& rhs)
 
 void Bounds::verify()
 {
-
     for (uint32_t d = 0; d < 3; ++d)
     {
         if (min(d) > max(d) )

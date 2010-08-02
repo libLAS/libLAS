@@ -14,9 +14,9 @@
 // std
 #include <string>
 
-namespace tut {
-
 using namespace boost;
+
+namespace tut {
 
 void test_default_header(liblas::Header const& h)
 {

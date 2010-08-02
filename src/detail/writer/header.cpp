@@ -58,13 +58,13 @@
 #include <string>
 #include <vector>
 
-namespace liblas { namespace detail { namespace writer {
-
 using namespace boost;
 using namespace std;
 
-Header::Header(std::ostream& ofs, uint32_t& count, liblas::Header const& header) :
-    Base(ofs, count)
+namespace liblas { namespace detail { namespace writer {
+
+Header::Header(std::ostream& ofs, uint32_t& count, liblas::Header const& header)
+    : Base(ofs, count)
 {
     m_header = header;
 }

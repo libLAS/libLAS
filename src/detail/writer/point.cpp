@@ -51,9 +51,9 @@
 #include <cmath>
 #include <sstream> 
 
-namespace liblas { namespace detail { namespace writer {
-
 using namespace boost;
+
+namespace liblas { namespace detail { namespace writer {
 
 Point::Point(std::ostream& ofs, uint32_t& count, const liblas::Header& header)
     : Base(ofs, count)

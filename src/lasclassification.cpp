@@ -47,6 +47,8 @@
 #include <cstddef>
 #include <string>
 
+using namespace boost;
+
 namespace {
 
 static std::string g_class_names[] =
@@ -88,8 +90,6 @@ static std::string g_class_names[] =
 } // namespace anonymous
 
 namespace liblas {
-
-using namespace boost;
 
 std::size_t const Classification::class_table_size = detail::static_array_size(g_class_names);
 

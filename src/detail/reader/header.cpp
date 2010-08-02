@@ -44,12 +44,13 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/lasvariablerecord.hpp>
 // boost
+#include <boost/cstdint.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/cstdint.hpp>
 
-namespace liblas { namespace detail { namespace reader {
-
 using namespace boost;
+
+namespace liblas { namespace detail { namespace reader {
 
 Header::Header(std::istream& ifs)
     : m_ifs(ifs)
