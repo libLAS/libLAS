@@ -2,10 +2,10 @@
 #define KDX_UTIL_HPP_INCLUDED
 
 #include <boost/shared_ptr.hpp>
-
-#include <liblas/lasbounds.hpp>
+#include <liblas/liblas.hpp>
 
 #include <fstream>
+#include <sstream>
 #include <exception>
 #include <vector>
 #include <sys/stat.h>

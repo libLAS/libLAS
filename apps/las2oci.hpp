@@ -10,12 +10,7 @@
 #define CPL_SERV_H_INCLUDED
 
 
-#include <liblas/detail/utility.hpp>
-
-#include <liblas/laspoint.hpp>
-#include <liblas/lasreader.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/lasbounds.hpp>
+#include <liblas/liblas.hpp>
 
 #include <string>
 #include <sstream>
