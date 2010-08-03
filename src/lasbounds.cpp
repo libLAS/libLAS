@@ -191,12 +191,12 @@ Bounds& Bounds::operator=(Bounds const& rhs)
     return *this;
 }
 
-uint32_t Bounds::dimension() const
+Bounds::size_type Bounds::dimension() const
 {
     return mins.size();
 }
 
-void Bounds::dimension(uint32_t d)
+void Bounds::dimension(Bounds::size_type d)
 {
     if (maxs.size() < d) {
         maxs.resize(d);
@@ -208,7 +208,7 @@ void Bounds::dimension(uint32_t d)
 
 void Bounds::verify()
 {
-    for (uint32_t d = 0; d < dimension(); ++d)
+    for (size_type d = 0; d < dimension(); ++d)
     {
         if (min(d) > max(d) )
         {

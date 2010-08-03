@@ -53,7 +53,8 @@ class Bounds
 public:
 
     typedef std::vector<double> Vector;
-    
+    typedef std::vector<double>::size_type size_type;
+        
     Bounds();
     Bounds(double minx, double miny, double maxx, double maxy, double minz, double maxz);
     Bounds(double minx, double miny, double maxx, double maxy);
@@ -69,8 +70,8 @@ public:
     
     bool equal(Bounds const& other) const;
     bool intersects(Bounds const& other) const;
-    uint32_t dimension() const;
-    void dimension(uint32_t d);
+    size_type dimension() const;
+    void dimension(size_type d);
         
 private:
     Vector mins;
