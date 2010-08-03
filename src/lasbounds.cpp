@@ -166,10 +166,9 @@ void Bounds::verify()
     {
         if (min(d) > max(d) )
         {
-            // FIXME: direct comparison of float-point may not be robust enough --mloskot
-            // check for infinitive region
-            if (!(min(d) == std::numeric_limits<double>::max() ||
-                 max(d) == -std::numeric_limits<double>::max() ))
+            // Check that we're not infinity either way
+            if (!(detail::compare_distance(min(d), std::numeric_limits<double>::max()) ||
+                  detail::compare_distance(max(d), -std::numeric_limits<double>::max()) ))
             {
                 std::ostringstream msg; 
                 msg << "liblas::Bounds::verify: Minimum point at dimension " << d
