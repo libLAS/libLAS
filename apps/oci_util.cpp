@@ -217,12 +217,74 @@ bool CreateBlockIndex(  OWConnection* connection,
 }
 
 
-std::string to_upper(const char* input)
+std::string to_upper(const std::string& input)
 {
-    std::string inp = std::string(inp);
+    std::string inp = std::string(input);
     std::string output = std::string(input);
     
     std::transform(inp.begin(), inp.end(), output.begin(), static_cast < int(*)(int) > (toupper));
     
     return output;
+}
+
+bool WipeBlockTable(   OWConnection* connection, 
+                    std::string tableName, 
+                    std::string cloudTableName, 
+                    std::string cloudColumnName)
+{
+    std::ostringstream oss;
+    OWStatement* statement = 0;
+
+    oss << "DELETE from " <<cloudTableName;
+    statement = RunSQL(connection, oss);
+    if (statement != 0) delete statement; else 
+    {
+        // if we failed, try dropping the index
+        std::cout << "Dropping index ..." << std::endl;
+        oss.str("");  
+        oss << "DROP INDEX "<<tableName<<"_cloud_idx" ;
+        statement = RunSQL(connection, oss);
+        if (statement != 0) delete statement; else return false;
+        oss.str("");
+        
+        // redelete from the table
+        oss << "DELETE from " <<cloudTableName;
+        statement = RunSQL(connection, oss);
+        if (statement != 0) delete statement; else return false;
+        oss.str("");
+    }
+    oss.str("");
+    
+    std::string cloudColumnName_u = to_upper(cloudColumnName);
+    std::string cloudTableName_u = to_upper(cloudTableName);
+
+
+oss << "declare\n"
+"begin \n"
+"  mdsys.sdo_pc_pkg.drop_dependencies('"<<cloudTableName_u<<"', '"<<cloudColumnName_u<<"');"
+"end;";
+    statement = RunSQL(connection, oss);
+    if (statement != 0) delete statement; 
+    oss.str("");
+    
+    oss << "DROP TABLE "<< tableName ;
+    statement = RunSQL(connection, oss);
+    if (statement != 0) delete statement; 
+    oss.str("");
+
+    // Oracle upper cases the table name when inserting it in the 
+    // USER_SDO_GEOM_METADATA.  We'll use std::transform to do it. 
+    // See http://forums.devx.com/showthread.php?t=83058 for the 
+    // technique
+    // string table(tableName);
+    std::string table = to_upper(tableName);
+    oss << "DELETE FROM USER_SDO_GEOM_METADATA WHERE TABLE_NAME='"<<table<<"'" ;
+    statement = RunSQL(connection, oss);
+    if (statement != 0) delete statement; else return false;
+    oss.str("");   
+
+    connection->Commit();
+   
+    return true;
+
 }

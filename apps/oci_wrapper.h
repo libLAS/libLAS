@@ -410,6 +410,8 @@ public:
                             int nValue );
     void                AddElement( OCIArray* ppoData,
                             double dfValue );
+    OWConnection*       GetConnection() {return poConnection;}
+
 };
 
 #endif /* ifndef _ORCL_WRAP_H_INCLUDED */

@@ -11,118 +11,9 @@
 
 
 
-bool DeleteTable(   OWConnection* connection, 
-                    const char* tableName, 
-                    const char* cloudTableName, 
-                    const char* cloudColumnName)
-{
-    ostringstream oss;
-    OWStatement* statement = 0;
-
-    oss << "DELETE from " <<cloudTableName;
-    statement = RunSQL(connection, oss);
-    if (statement != 0) delete statement; else 
-    {
-        // if we failed, try dropping the index
-        std::cout << "Dropping index ..." << std::endl;
-        oss.str("");  
-        oss << "DROP INDEX "<<tableName<<"_cloud_idx" ;
-        statement = RunSQL(connection, oss);
-        if (statement != 0) delete statement; else return false;
-        oss.str("");
-        
-        // redelete from the table
-        oss << "DELETE from " <<cloudTableName;
-        statement = RunSQL(connection, oss);
-        if (statement != 0) delete statement; else return false;
-        oss.str("");
-    }
-    oss.str("");
-    
-    std::string cloudColumnName_u = to_upper(cloudColumnName);
-    std::string cloudTableName_u = to_upper(cloudTableName);
 
 
-oss << "declare\n"
-"begin \n"
-"  mdsys.sdo_pc_pkg.drop_dependencies('"<<cloudTableName_u<<"', '"<<cloudColumnName_u<<"');"
-"end;";
-    statement = RunSQL(connection, oss);
-    if (statement != 0) delete statement; 
-    oss.str("");
-    
-    oss << "DROP TABLE "<< tableName ;
-    statement = RunSQL(connection, oss);
-    if (statement != 0) delete statement; 
-    oss.str("");
 
-    // Oracle upper cases the table name when inserting it in the 
-    // USER_SDO_GEOM_METADATA.  We'll use std::transform to do it. 
-    // See http://forums.devx.com/showthread.php?t=83058 for the 
-    // technique
-    // string table(tableName);
-    std::string table = to_upper(tableName);
-    oss << "DELETE FROM USER_SDO_GEOM_METADATA WHERE TABLE_NAME='"<<table<<"'" ;
-    statement = RunSQL(connection, oss);
-    if (statement != 0) delete statement; else return false;
-    oss.str("");   
-
-    connection->Commit();
-   
-    return true;
-
-}
-
-bool GetResultData( const IndexResult& result, 
-                    liblas::Reader* reader, 
-                    std::vector<double>& data,
-                    int nDimension)
-{
-    IDVector const& ids = result.GetIDs();
-    // list<SpatialIndex::id_type> const& ids = result.GetIDs();
-
-
-    // d 8-byte IEEE  big-endian doubles, where d is the PC_TOT_DIMENSIONS value
-    // 4-byte big-endian integer for the BLK_ID value
-    // 4-byte big-endian integer for the PT_ID value
-    
-    // if (nDimension == 4)
-    // {
-    //     bTime = true;
-    // }
-    
-    data.clear();
-
-    IDVector::const_iterator i;
-    vector<uint8_t>::iterator pi;    
-    
-    // list<SpatialIndex::id_type>::const_iterator i;
-//    vector<uint8_t>::iterator pi;
-    
-//    uint32_t block_id = result.GetID();
-
-    std::vector<uint8_t> point_data;
-    
-    for (i=ids.begin(); i!=ids.end(); ++i) 
-    {
-        uint32_t id = *i;
-        // SpatialIndex::id_type id = *i;
-
-        bool doRead = reader->ReadPointAt(id);
-
-        if (doRead) {
-
-            liblas::Point const& p = reader->GetPoint();
-
-            data.push_back( p.GetX() );
-            data.push_back( p.GetY() );
-            data.push_back( p.GetZ() );
-            data.push_back( p.GetIntensity() );
-        }
-    }
-
-    return true;
-}
 
 void SetElements(   OWStatement* statement,
                     OCIArray* sdo_elem_info, 
@@ -145,47 +36,74 @@ void SetElements(   OWStatement* statement,
 
 void SetOrdinates(   OWStatement* statement,
                      OCIArray* sdo_ordinates, 
-                     extent* extent)
+                     liblas::Bounds const& extent)
 {
     
-    statement->AddElement(sdo_ordinates, extent->x0);
-    statement->AddElement(sdo_ordinates, extent->y0);
-    if (extent->bUse3d)
-        statement->AddElement(sdo_ordinates, extent->z0);
+    statement->AddElement(sdo_ordinates, extent.min(0));
+    statement->AddElement(sdo_ordinates, extent.min(1));
+    if (extent.dimension() > 2)
+        statement->AddElement(sdo_ordinates, extent.min(2));
     
-    statement->AddElement(sdo_ordinates, extent->x1);
-    statement->AddElement(sdo_ordinates, extent->y1);
-    if (extent->bUse3d)
-        statement->AddElement(sdo_ordinates, extent->z1);
+    statement->AddElement(sdo_ordinates, extent.max(0));
+    statement->AddElement(sdo_ordinates, extent.max(1));
+    if (extent.dimension() > 2)
+        statement->AddElement(sdo_ordinates, extent.max(2));
         
 
 }
 
-extent* GetExtent(  const liblas::Bounds b,
-                    bool bUse3d
-                 )
-{
-    double x0, x1, y0, y1, z0, z1;
-    // const SpatialIndex::Region* b = result.GetBounds();
 
-    x0 = b.min(0); 
-    x1 = b.max(0); 
-    y0 = b.min(1); 
-    y1 = b.max(1);
-    z0 = 0;
-    z1 = 20000;
-    if (bUse3d) {
-        z0 = b.min(2);
-        z1 = b.max(2);
-    }
-    extent* e = (extent*) malloc (sizeof(extent));
-    e->x0 = x0; e->x1 = x1;
-    e->y0 = y0; e->y1 = y1;
-    e->z0 = z0; e->z1 = z1;
-    e->bUse3d = bUse3d;
+bool FillBlock( OWStatement* statement,
+                IndexResult& result, 
+                liblas::Reader* reader,
+                blocks* b,
+                long index,
+                int srid, 
+                long pc_id,
+                long gtype,
+                bool bUseSolidGeometry,
+                bool bUse3d,
+                long nDimensions
+              )
+{
+
+
+    // list<SpatialIndex::id_type> const& ids = result.GetIDs();
+    IDVector const& ids = result.GetIDs();
     
-    return e;     
+    b->pc_ids[index] = pc_id;
+    b->srids[index] = (long)srid;
+    b->block_ids[index] = result.GetID();
+    b->num_points[index] = (long)ids.size();
+    
+    std::vector<uint8_t>* blob = new std::vector<uint8_t>;
+    result.GetData(reader, *blob);
+
+    
+    b->blobs[index] = blob;
+    // // FIXME: null srids not supported 
+    b->srids[index] = srid;
+    b->gtypes[index] = gtype;
+    // 
+    OCIArray* sdo_elem_info=0;
+    statement->GetConnection()->CreateType(&sdo_elem_info, statement->GetConnection()->GetElemInfoType());
+    SetElements(statement, sdo_elem_info, bUseSolidGeometry);
+    // 
+    b->element_arrays[index] = sdo_elem_info;
+    
+    OCIArray* sdo_ordinates=0;
+    statement->GetConnection()->CreateType(&sdo_ordinates, statement->GetConnection()->GetOrdinateType());
+    // 
+    // 
+    // 
+    SetOrdinates(statement, sdo_ordinates, result.GetBounds());
+    
+    b->coordinate_arrays[index] = sdo_ordinates;
+    
+
+    return true;
 }
+
 
 blocks* CreateBlock(int size)
 {
@@ -231,312 +149,519 @@ long GetGType(  bool bUse3d,
     return gtype;   
 }
 
-bool ArrayInsert( OWConnection* connection,
-        const char* insertStatement,
-        int* panObjId,
-        int* panBlockId,
-        int* panNumPoints,
-        double** ppfdBuffer,
-        int nArrayCols,
-        int nRowsToInsert)
+bool InsertBlock(OWConnection* connection, 
+                IndexResult& result, 
+                blocks* block,
+                long block_index,
+                int srid, 
+                liblas::Reader* reader, 
+                const char* tableName, 
+                long precision,
+                long pc_id,
+                bool bUseSolidGeometry,
+                bool bUse3d)
 {
-    OWStatement* statement = connection->CreateStatement( insertStatement );
+    ostringstream oss;
 
-    statement->Bind( panObjId );
-    statement->Bind( panBlockId );
-    statement->Bind( panNumPoints );
-    statement->BindArray( ppfdBuffer, nArrayCols );
+    IDVector const& ids = result.GetIDs();
+    // const SpatialIndex::Region* b = result.GetBounds();
+    uint32_t num_points = ids.size();
 
-    if (statement->Execute(nRowsToInsert) == false) {
+
+    // EnableTracing(connection);
+    
+    long gtype = GetGType(bUse3d, bUseSolidGeometry);
+
+    oss << "INSERT INTO "<< tableName << 
+            "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS,   "
+            "PCBLK_MIN_RES, BLK_EXTENT, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
+            "VALUES ( :1, :2, :3, :4, 1, mdsys.sdo_geometry(:5, :6, null,:7, :8)" 
+            ", 1, 0, 1)";
+          
+    OWStatement* statement = 0;
+    // TODO: If gotdata == false below, this memory probably leaks --mloskot
+    OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
+
+    statement = connection->CreateStatement(oss.str().c_str());
+    
+
+    
+    long* p_pc_id = (long*) malloc( 1 * sizeof(long));
+    p_pc_id[0] = pc_id;
+
+    long* p_result_id = (long*) malloc( 1 * sizeof(long));
+    p_result_id[0] = (long)result.GetID();
+    
+    long* p_num_points = (long*) malloc (1 * sizeof(long));
+    p_num_points[0] = (long)num_points;
+    
+    
+    // :1
+    statement->Bind( p_pc_id );
+    
+    // :2
+    statement->Bind( p_result_id );
+
+    // :3
+    statement->Bind( p_num_points );
+       
+    // :4
+    statement->Define( locator, 1 ); 
+
+    std::vector<uint8_t> data;
+    result.GetData(reader, data);
+        
+    // std::vector<liblas::uint8_t> data;
+    // bool gotdata = GetResultData(result, reader, data, 3);
+    // if (! gotdata) throw std::runtime_error("unable to fetch point data byte array");
+
+    statement->Bind((char*)&(data[0]),(long)data.size());
+
+    // :5
+    long* p_gtype = (long*) malloc (1 * sizeof(long));
+    p_gtype[0] = gtype;
+
+    statement->Bind(p_gtype);
+    
+    // :6
+    long* p_srid  = 0;
+    
+    
+    if (srid != 0) {
+        p_srid = (long*) malloc (1 * sizeof(long));
+        p_srid[0] = srid;
+    }
+    statement->Bind(p_srid);
+    
+    // :7
+    OCIArray* sdo_elem_info=0;
+    connection->CreateType(&sdo_elem_info, connection->GetElemInfoType());
+    SetElements(statement, sdo_elem_info, bUseSolidGeometry);    
+    statement->Bind(&sdo_elem_info, connection->GetElemInfoType());
+    
+    // :8
+    OCIArray* sdo_ordinates=0;
+    connection->CreateType(&sdo_ordinates, connection->GetOrdinateType());
+    
+     // x0, x1, y0, y1, z0, z1, bUse3d
+    SetOrdinates(statement, sdo_ordinates, result.GetBounds());
+    statement->Bind(&sdo_ordinates, connection->GetOrdinateType());
+    
+    if (statement->Execute() == false) {
         delete statement;
         return false;
     }
+    
+    delete statement; statement = 0;
+    oss.str("");
+    
+
+    OWStatement::Free(locator, 1);
 
     delete statement;
-    return true;
-}
-
-bool InsertBlocks(OWConnection* connection,
-                  const IndexResult& result,
-                  int srid,
-                  liblas::Reader* reader,
-                  const char* tableName,
-                  long precision,
-                  long pc_id,
-                  bool bUseSolidGeometry,
-                  bool bUse3d,
-                  int max_points_per_row)
-{
-    ostringstream oss;
-    IDVector const& ids = result.GetIDs();
-    liblas::Bounds b = result.GetBounds();
-    uint32_t num_points =ids.size();
-    ostringstream oss_geom;
-
-    ostringstream s_srid;
-    ostringstream s_gtype;
-    ostringstream s_eleminfo;
-    bool bGeographic = false;
-
-    if (srid == 0) {
-        s_srid << "NULL";
-        // bUse3d = true;
-        // bUseSolidGeometry = true;
-        }
-    else if (srid == 4326) {
-        // bUse3d = true;
-        // bUseSolidGeometry = true;
-        bGeographic = true;
-        s_srid << srid;
-        // s_srid << "NULL";
-    }
-    else {
-        s_srid << srid;
-        // bUse3d = false;
-        // If the user set an srid and set it to solid, we're still 3d
-        // if (bUseSolidGeometry == true)
-        //     bUse3d = true;
-    }
-
-    if (bUse3d) {
-        if (bUseSolidGeometry == true) {
-            s_gtype << "3008";
-            s_eleminfo << "(1,1007,3)";
-
-        } else {
-            s_gtype << "3003";
-            s_eleminfo  << "(1,1003,3)";
-
-        }
-    } else {
-        if (bUseSolidGeometry == true) {
-            s_gtype << "2008";
-            s_eleminfo << "(1,1007,3)";
-
-        } else {
-            s_gtype << "2003";
-            s_eleminfo  << "(1,1003,3)";
-
-        }
-    }
-
-    double x0, x1, y0, y1, z0, z1;
-    double tolerance = 0.05;
-
-
-    x0 = b.min(0);
-    x1 = b.max(0);
-    y0 = b.min(1);
-    y1 = b.max(1);
-
-    if (bUse3d) {
-
-        z0 = b.min(2);
-        z1 = b.max(2);
-
-    } else if (bGeographic) {
-        x0 = -180.0;
-        x1 = 180.0;
-        y0 = -90.0;
-        y1 = 90.0;
-        z0 = 0.0;
-        z1 = 20000.0;
-        tolerance = 0.000000005;
-    } else {
-        z0 = 0.0;
-        z1 = 20000.0;
-    }
-
-
-    // std::cout << "use 3d?: " << bUse3d << " srid: " << s_srid.str() << std::endl;
-    oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    oss_geom.precision(precision);
-
-    oss_geom << "mdsys.sdo_geometry(" << s_gtype.str() << ", " << s_srid.str() << ", null, "
-        "mdsys.sdo_elem_info_array" << s_eleminfo.str() << ", "
-        "mdsys.sdo_ordinate_array( ";
-
-    oss_geom << x0 << ", " << y0 << ", ";
-
-    if (bUse3d) {
-        oss_geom << z0 << ", ";
-    }
-
-    oss_geom << x1 << ", " << y1 << "";
-
-    if (bUse3d) {
-        oss_geom << ", ";
-        oss_geom << z1;
-    }
-
-    oss_geom << "))";
-
-    oss << "INSERT INTO " << tableName << " (" <<
-        "OBJ_ID, "
-        "BLK_ID, "
-        "BLK_EXTENT, "
-        "BLK_DOMAIN, "
-        "PCBLK_MIN_RES, "
-        "PCBLK_MAX_RES, "
-        "NUM_POINTS, "
-        "NUM_UNSORTED_POINTS, "
-        "PT_SORT_DIM, "
-        "POINTS) "
-        "VALUES (:1, :2, " << oss_geom.str() << ", NULL, 1, 1, :3, 0, 1, :4)";
-
-    std::vector<double> data;
-
-    bool gotdata = GetResultData(result, reader, data, 3);
-
-    if (! gotdata)
-    {
-        throw std::runtime_error("unable to fetch point data byte array");
-    }
-
-    /*
-     *  Assuming 3 Dimensions data
-     */
-
-    int nDims = 3;
-
-    /*
-     *  Allocate fixed width buffer dimensions
-     */
-
-    double** ppfdBuffer = NULL;
-
-    int nPoints = num_points;
-    int nFizedRows = nPoints / max_points_per_row;
-    int nFixedCols = min(nPoints, max_points_per_row) * nDims;
-
-    ppfdBuffer = (double**) malloc( sizeof(double*) * nFizedRows );
-
-    if( ppfdBuffer == NULL )
-        throw std::runtime_error("unable to allocate memory");
-
-    for( int i = 0; i < nFizedRows; i++ )
-    {
-        ppfdBuffer[i] = (double*) malloc( sizeof(double) * nFixedCols );
-        
-        if( ppfdBuffer[i] == NULL )
-            throw std::runtime_error("unable to allocate memory");
-    }
-
-    /*
-     *  Allocate buffer for extra row
-     *
-     *  That row could be the last row, or the only row. In both
-     *  case it should be also smaller than MAX_POINTS_PER_ROW.
-     */
-
-    int nExtraPoints = num_points - (nFizedRows * max_points_per_row);
-    int nExtraCols = nExtraPoints * nDims;
-
-    double* ppfdExtra[1];
     
-    if( nExtraPoints > 0 )
-    {
-        ppfdExtra[0] = (double*) malloc( sizeof(double) * nExtraCols );
-    }
-
-    /*
-     *  Load points data swapping words as nedded
-     */
-
-    int index = 0;
-
-    for( int i = 0; i < nFizedRows; i++)
-    {
-        for( int j = 0; j < nFixedCols; j++)
-        {
-            ppfdBuffer[i][j] = data.at(index++);
-        }
-
-        GDALSwapWords( ppfdBuffer[i], sizeof(double), nFixedCols, sizeof(double) );
-    }
-
-    if( nExtraPoints > 0 )
-    {
-        for( int i = 0; i < nExtraCols; i++)
-        {
-            ppfdExtra[0][i] = data.at(index++);
-        }
-        
-        GDALSwapWords( ppfdExtra[0], sizeof(double), nExtraCols, sizeof(double) );
-    }
-
-    /*
-     *  Create array for each other column
-     */
-
-    int  nRows = max(nFizedRows,1); /* it could be just one "extra" row */
-
-    int* panObjId = (int*) malloc( sizeof(long) * nRows );
-    int* panBlockId = (int*) malloc( sizeof(long) * nRows );
-    int* panNumPoints = (int*) malloc( sizeof(long) * nRows );
-
-    for( int i = 0; i < nRows; i++ )
-    {
-        panObjId[i] = pc_id;
-        panBlockId[i] = result.GetID();
-        panNumPoints[i] = max_points_per_row;
-    }
-
-    /*
-     *  Insert nFizedRows at once
-     */
-
-    if( nFizedRows > 0 )
-    {
-        if( ArrayInsert( connection,
-                oss.str().c_str(),
-                panObjId,
-                panBlockId,
-                panNumPoints,
-                ppfdBuffer,
-                nFixedCols,
-                nFizedRows ) == false )
-        {
-            throw std::runtime_error("error writing blocks.");
-        }
-    }
-
-    /*
-     *  Insert one extra row
-     */
-
-    if( nExtraPoints > 0 )
-    {
-        panNumPoints[0] = nExtraPoints;
-
-        if( ArrayInsert( connection,
-                oss.str().c_str(),
-                panObjId,
-                panBlockId,
-                panNumPoints,
-                ppfdExtra,
-                nExtraCols, 1 ) == false )
-        {
-            throw std::runtime_error("error writing single block.");
-        }
-    }
-
-    connection->Commit();
-
-    free( panObjId );
-    free( panBlockId );
-    free( panNumPoints );
-    for( int i = 0; i < nFizedRows; i++ )
-    {
-        free( ppfdBuffer[i] );
-    }
-    free( ppfdBuffer );
-    if( ppfdExtra[0] != NULL)
-    {
-        free( ppfdExtra[0] );
-    }
     return true;
+
 }
+
+
+bool InsertBlocks(
+                OWConnection* con, 
+                KDXIndexSummary* summary,
+                liblas::Reader* reader2, 
+                const std::string& table_name, 
+                long nCommitInterval, 
+                int srid, 
+                long precision,
+                long pc_id,
+                bool bUseSolidGeometry,
+                bool bUse3d,
+                long nDimensions
+                )
+{
+    ResultsVector::iterator i;
+
+    long commit_interval = 1000;
+    blocks* b = CreateBlock(nCommitInterval);
+
+    ostringstream oss;
+    oss << "INSERT INTO "<< table_name << 
+            "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS,   "
+            "PCBLK_MIN_RES, BLK_EXTENT, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
+            "VALUES ( :1, :2, :3, :4, 1, mdsys.sdo_geometry(:5, :6, null,:7, :8)" 
+            ", 1, 0, 1)";
+          
+    OWStatement* statement = 0;
+    // OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1000 );
+
+    statement = con->CreateStatement(oss.str().c_str());
+    long j = 0;
+    bool inserted = false;
+    ResultsVector& results = summary->GetResults();
+    
+    long total_blocks = results.size();
+    long blocks_written = 0;
+    long blocks_left= 0;
+    long to_fill = 0;
+    
+    
+    // for (j = 0; j < total_blocks; j+=commit_interval) {
+    //      blocks_left = total_blocks - blocks_written;
+    //      if (blocks_left < commit_interval) {
+    //          // only fill to this level
+    //          to_fill = blocks_left;
+    //      } else {
+    //          to_fill = commit_interval;
+    //      }
+    //      
+    //      
+    //      for (int t = 0; t< to_fill; t++) {
+    //          FillBlock(statement,
+    //                          results[t], 
+    //                          reader2,
+    //                          b,
+    //                          t,
+    //                          srid, 
+    //                           pc_id,
+    //                           GetGType(bUse3d, bUseSolidGeometry),
+    //                           bUseSolidGeometry,
+    //                           bUse3d,
+    //                           nDimensions
+    //                           );
+    // 
+    // 
+    //          t++;
+    //      
+    //      
+    //      }
+    //      
+    //      
+    //      
+    //      blocks_written = blocks_written + to_fill;
+    //  }
+
+
+    for (i=results.begin(); i!=results.end(); i++)
+    {        
+        inserted = InsertBlock(con, 
+                                    *i,
+                                    b,
+                                    j, 
+                                    srid, 
+                                    reader2, 
+                                    table_name.c_str(), 
+                                    precision, 
+                                    pc_id, 
+                                    bUseSolidGeometry, 
+                                    bUse3d);
+        j++;
+    }
+    return inserted;
+}
+
+
+// bool ArrayInsert( OWConnection* connection,
+//         const char* insertStatement,
+//         int* panObjId,
+//         int* panBlockId,
+//         int* panNumPoints,
+//         double** ppfdBuffer,
+//         int nArrayCols,
+//         int nRowsToInsert)
+// {
+//     OWStatement* statement = connection->CreateStatement( insertStatement );
+// 
+//     statement->Bind( panObjId );
+//     statement->Bind( panBlockId );
+//     statement->Bind( panNumPoints );
+//     statement->BindArray( ppfdBuffer, nArrayCols );
+// 
+//     if (statement->Execute(nRowsToInsert) == false) {
+//         delete statement;
+//         return false;
+//     }
+// 
+//     delete statement;
+//     return true;
+// }
+
+// bool InsertBlocks(OWConnection* connection,
+//                   IndexResult& result,
+//                   int srid,
+//                   liblas::Reader* reader,
+//                   const char* tableName,
+//                   long precision,
+//                   long pc_id,
+//                   bool bUseSolidGeometry,
+//                   bool bUse3d,
+//                   int max_points_per_row)
+// {
+//     ostringstream oss;
+//     IDVector const& ids = result.GetIDs();
+//     liblas::Bounds b = result.GetBounds();
+//     uint32_t num_points =ids.size();
+//     ostringstream oss_geom;
+// 
+//     ostringstream s_srid;
+//     ostringstream s_gtype;
+//     ostringstream s_eleminfo;
+//     bool bGeographic = false;
+// 
+//     if (srid == 0) {
+//         s_srid << "NULL";
+//         // bUse3d = true;
+//         // bUseSolidGeometry = true;
+//         }
+//     else if (srid == 4326) {
+//         // bUse3d = true;
+//         // bUseSolidGeometry = true;
+//         bGeographic = true;
+//         s_srid << srid;
+//         // s_srid << "NULL";
+//     }
+//     else {
+//         s_srid << srid;
+//         // bUse3d = false;
+//         // If the user set an srid and set it to solid, we're still 3d
+//         // if (bUseSolidGeometry == true)
+//         //     bUse3d = true;
+//     }
+// 
+//     if (bUse3d) {
+//         if (bUseSolidGeometry == true) {
+//             s_gtype << "3008";
+//             s_eleminfo << "(1,1007,3)";
+// 
+//         } else {
+//             s_gtype << "3003";
+//             s_eleminfo  << "(1,1003,3)";
+// 
+//         }
+//     } else {
+//         if (bUseSolidGeometry == true) {
+//             s_gtype << "2008";
+//             s_eleminfo << "(1,1007,3)";
+// 
+//         } else {
+//             s_gtype << "2003";
+//             s_eleminfo  << "(1,1003,3)";
+// 
+//         }
+//     }
+// 
+//     double x0, x1, y0, y1, z0, z1;
+//     double tolerance = 0.05;
+// 
+// 
+//     x0 = b.min(0);
+//     x1 = b.max(0);
+//     y0 = b.min(1);
+//     y1 = b.max(1);
+// 
+//     if (bUse3d) {
+// 
+//         z0 = b.min(2);
+//         z1 = b.max(2);
+// 
+//     } else if (bGeographic) {
+//         x0 = -180.0;
+//         x1 = 180.0;
+//         y0 = -90.0;
+//         y1 = 90.0;
+//         z0 = 0.0;
+//         z1 = 20000.0;
+//         tolerance = 0.000000005;
+//     } else {
+//         z0 = 0.0;
+//         z1 = 20000.0;
+//     }
+// 
+// 
+//     // std::cout << "use 3d?: " << bUse3d << " srid: " << s_srid.str() << std::endl;
+//     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
+//     oss_geom.precision(precision);
+// 
+//     oss_geom << "mdsys.sdo_geometry(" << s_gtype.str() << ", " << s_srid.str() << ", null, "
+//         "mdsys.sdo_elem_info_array" << s_eleminfo.str() << ", "
+//         "mdsys.sdo_ordinate_array( ";
+// 
+//     oss_geom << x0 << ", " << y0 << ", ";
+// 
+//     if (bUse3d) {
+//         oss_geom << z0 << ", ";
+//     }
+// 
+//     oss_geom << x1 << ", " << y1 << "";
+// 
+//     if (bUse3d) {
+//         oss_geom << ", ";
+//         oss_geom << z1;
+//     }
+// 
+//     oss_geom << "))";
+// 
+//     oss << "INSERT INTO " << tableName << " (" <<
+//         "OBJ_ID, "
+//         "BLK_ID, "
+//         "BLK_EXTENT, "
+//         "BLK_DOMAIN, "
+//         "PCBLK_MIN_RES, "
+//         "PCBLK_MAX_RES, "
+//         "NUM_POINTS, "
+//         "NUM_UNSORTED_POINTS, "
+//         "PT_SORT_DIM, "
+//         "POINTS) "
+//         "VALUES (:1, :2, " << oss_geom.str() << ", NULL, 1, 1, :3, 0, 1, :4)";
+// 
+//     std::vector<uint8_t> data;
+// 
+//     result.GetData(reader, data);
+// 
+// 
+//     /*
+//      *  Assuming 3 Dimensions data
+//      */
+// 
+//     int nDims = 3;
+// 
+//     /*
+//      *  Allocate fixed width buffer dimensions
+//      */
+// 
+//     double** ppfdBuffer = NULL;
+// 
+//     int nPoints = num_points;
+//     int nFizedRows = nPoints / max_points_per_row;
+//     int nFixedCols = min(nPoints, max_points_per_row) * nDims;
+// 
+//     ppfdBuffer = (double**) malloc( sizeof(double*) * nFizedRows );
+// 
+//     if( ppfdBuffer == NULL )
+//         throw std::runtime_error("unable to allocate memory");
+// 
+//     for( int i = 0; i < nFizedRows; i++ )
+//     {
+//         ppfdBuffer[i] = (double*) malloc( sizeof(double) * nFixedCols );
+//         
+//         if( ppfdBuffer[i] == NULL )
+//             throw std::runtime_error("unable to allocate memory");
+//     }
+// 
+//     /*
+//      *  Allocate buffer for extra row
+//      *
+//      *  That row could be the last row, or the only row. In both
+//      *  case it should be also smaller than MAX_POINTS_PER_ROW.
+//      */
+// 
+//     int nExtraPoints = num_points - (nFizedRows * max_points_per_row);
+//     int nExtraCols = nExtraPoints * nDims;
+// 
+//     double* ppfdExtra[1];
+//     
+//     if( nExtraPoints > 0 )
+//     {
+//         ppfdExtra[0] = (double*) malloc( sizeof(double) * nExtraCols );
+//     }
+// 
+//     /*
+//      *  Load points data swapping words as nedded
+//      */
+// 
+//     int index = 0;
+// 
+//     for( int i = 0; i < nFizedRows; i++)
+//     {
+//         for( int j = 0; j < nFixedCols; j++)
+//         {
+//             ppfdBuffer[i][j] = data.at(index++);
+//         }
+// 
+//         GDALSwapWords( ppfdBuffer[i], sizeof(double), nFixedCols, sizeof(double) );
+//     }
+// 
+//     if( nExtraPoints > 0 )
+//     {
+//         for( int i = 0; i < nExtraCols; i++)
+//         {
+//             ppfdExtra[0][i] = data.at(index++);
+//         }
+//         
+//         GDALSwapWords( ppfdExtra[0], sizeof(double), nExtraCols, sizeof(double) );
+//     }
+// 
+//     /*
+//      *  Create array for each other column
+//      */
+// 
+//     int  nRows = max(nFizedRows,1); /* it could be just one "extra" row */
+// 
+//     int* panObjId = (int*) malloc( sizeof(long) * nRows );
+//     int* panBlockId = (int*) malloc( sizeof(long) * nRows );
+//     int* panNumPoints = (int*) malloc( sizeof(long) * nRows );
+// 
+//     for( int i = 0; i < nRows; i++ )
+//     {
+//         panObjId[i] = pc_id;
+//         panBlockId[i] = result.GetID();
+//         panNumPoints[i] = max_points_per_row;
+//     }
+// 
+//     /*
+//      *  Insert nFizedRows at once
+//      */
+// 
+//     if( nFizedRows > 0 )
+//     {
+//         if( ArrayInsert( connection,
+//                 oss.str().c_str(),
+//                 panObjId,
+//                 panBlockId,
+//                 panNumPoints,
+//                 ppfdBuffer,
+//                 nFixedCols,
+//                 nFizedRows ) == false )
+//         {
+//             throw std::runtime_error("error writing blocks.");
+//         }
+//     }
+// 
+//     /*
+//      *  Insert one extra row
+//      */
+// 
+//     if( nExtraPoints > 0 )
+//     {
+//         panNumPoints[0] = nExtraPoints;
+// 
+//         if( ArrayInsert( connection,
+//                 oss.str().c_str(),
+//                 panObjId,
+//                 panBlockId,
+//                 panNumPoints,
+//                 ppfdExtra,
+//                 nExtraCols, 1 ) == false )
+//         {
+//             throw std::runtime_error("error writing single block.");
+//         }
+//     }
+// 
+//     connection->Commit();
+// 
+//     free( panObjId );
+//     free( panBlockId );
+//     free( panNumPoints );
+//     for( int i = 0; i < nFizedRows; i++ )
+//     {
+//         free( ppfdBuffer[i] );
+//     }
+//     free( ppfdBuffer );
+//     if( ppfdExtra[0] != NULL)
+//     {
+//         free( ppfdExtra[0] );
+//     }
+//     return true;
+// }
 
 bool CreateSDOEntry(    OWConnection* connection, 
                         const char* tableName, 
@@ -546,12 +671,7 @@ bool CreateSDOEntry(    OWConnection* connection,
                         bool bUseSolidGeometry,
                         bool bUse3d,
                         bool bSetExtents,
-                        double xmin,
-                        double xmax,
-                        double ymin,
-                        double ymax,
-                        double zmin,
-                        double zmax)
+                        liblas::Bounds const& bounds)
 {
     ostringstream oss;
     OWStatement* statement = 0;
@@ -573,33 +693,34 @@ bool CreateSDOEntry(    OWConnection* connection,
     }
 
     double tolerance = 0.05;
-    extent* e = GetExtent(  *query->bounds.get(), bUse3d );
+    liblas::Bounds e = *query->bounds.get();
 
     if (IsGeographic(connection, srid)) {
-        e->x0 = -180.0; e->x1 = 180.0;
-        e->y0 = -90.0; e->y1 = 90.0;
-        e->z0 = 0.0; e->z1 = 20000.0;
+        e.min(0,-180.0); e.max(0,180.0);
+        e.min(1,-90.0); e.max(1,90.0);
+        e.min(2,0.0); e.max(2,20000.0);
 
         tolerance = 0.000000005;
     }
 
 
     if (bSetExtents){
-        e->x0 = xmin; e->x1 = xmax;
-        e->y0 = ymin; e->y1 = ymax;
-        e->z0 = zmin; e->z1 = zmax;
+        e = bounds;
+        // e->x0 = bounds.min(0); e->x1 = bounds.max(0);
+        // e->y0 = bounds.min(1); e->y1 = bounds.max(1);
+        // e->z0 = bounds.min(2); e->z1 = bounds.max(2);
     }     
 
      
     oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
         "','blk_extent', MDSYS.SDO_DIM_ARRAY(";
     
-    oss << "MDSYS.SDO_DIM_ELEMENT('X', " << e->x0 << "," << e->x1 <<"," << tolerance << "),"
-           "MDSYS.SDO_DIM_ELEMENT('Y', " << e->y0 << "," << e->y1 <<"," << tolerance << ")";
+    oss << "MDSYS.SDO_DIM_ELEMENT('X', " << e.min(0) << "," << e.max(0) <<"," << tolerance << "),"
+           "MDSYS.SDO_DIM_ELEMENT('Y', " << e.min(1) << "," << e.max(1) <<"," << tolerance << ")";
            
-    if (e->bUse3d) {
+    if (bUse3d) {
         oss << ",";
-        oss <<"MDSYS.SDO_DIM_ELEMENT('Z', "<< e->z0 << "," << e->z1 << "," << tolerance << ")";
+        oss <<"MDSYS.SDO_DIM_ELEMENT('Z', "<< e.min(2) << "," << e.max(2) << "," << tolerance << ")";
     }
     oss << ")," << s_srid.str() << ")";
     
@@ -607,7 +728,6 @@ bool CreateSDOEntry(    OWConnection* connection,
     if (statement != 0) delete statement; else return false;
     oss.str("");
     
-    delete e;
     
     return true;
         
@@ -619,24 +739,17 @@ bool CreateSDOEntry(    OWConnection* connection,
 
 long CreatePCEntry( OWConnection* connection, 
                     KDXIndexSummary* query, 
-                    const char* blkTableName, 
-                    const char* pcTableName, 
-                    const char* cloudColumnName,
-                    const char* aux_columns,
-                    const char* aux_values,
+                    std::string blkTableName, 
+                    std::string pcTableName, 
+                    std::string cloudColumnName,
+                    std::string aux_columns,
+                    std::string aux_values,
                     int nDimension, 
                     int srid,
                     int blk_capacity,
                     long precision,
                     bool bUseSolidGeometry,
-                    bool bUse3d,
-                    bool bSetExtents,
-                    double xmin,
-                    double xmax,
-                    double ymin,
-                    double ymax,
-                    double zmin,
-                    double zmax)
+                    bool bUse3d)
 {
     ostringstream oss;
 
@@ -705,23 +818,23 @@ long CreatePCEntry( OWConnection* connection,
     }
     
 
-    extent* e = GetExtent(  *(query->bounds.get()), bUse3d );
-
+    // extent* e = GetExtent(  *(query->bounds.get()), bUse3d );
+    liblas::Bounds e =  *(query->bounds.get());
 
     s_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
 "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
 "              mdsys.sdo_ordinate_array(\n";
 
-    s_geom << e->x0 << "," << e->y0 << ",";
+    s_geom << e.min(0) << "," << e.min(1) << ",";
 
     if (bUse3d) {
-        s_geom << e->z0 << ",";
+        s_geom << e.min(2) << ",";
     }
     
-    s_geom << e->x1 << "," << e->y1;
+    s_geom << e.max(0) << "," << e.max(1);
 
     if (bUse3d) {
-        s_geom << "," << e->z1;
+        s_geom << "," << e.max(2);
     }
 
     s_geom << "))";
@@ -829,12 +942,8 @@ int main(int argc, char* argv[])
     int srid = 0;
     long precision = 8;
     
-    double xmin = 0.0;
-    double ymin = 0.0;
-    double zmin = 0.0;
-    double xmax = 0.0;
-    double ymax = 0.0;
-    double zmax = 0.0;
+    liblas::Bounds global_extent;
+    
     bool bSetExtents = false;
     
     int nCommitInterval = 100;
@@ -980,7 +1089,7 @@ int main(int argc, char* argv[])
                 )
         {
             i++;
-            xmin = atof(argv[i]);
+            global_extent.min(0, atof(argv[i]));
             bSetExtents = true;
         }
 
@@ -989,7 +1098,7 @@ int main(int argc, char* argv[])
                 )
         {
             i++;
-            xmax = atof(argv[i]);
+            global_extent.max(0, atof(argv[i]));
             bSetExtents = true;
         }
 
@@ -998,7 +1107,7 @@ int main(int argc, char* argv[])
                 )
         {
             i++;
-            ymin = atof(argv[i]);
+            global_extent.min(1, atof(argv[i]));
             bSetExtents = true;
         }
 
@@ -1007,7 +1116,7 @@ int main(int argc, char* argv[])
                 )
         {
             i++;
-            ymax = atof(argv[i]);
+            global_extent.max(1, atof(argv[i]));
             bSetExtents = true;
         }
         else if (   strcmp(argv[i],"--zmin") == 0  ||
@@ -1015,7 +1124,7 @@ int main(int argc, char* argv[])
                 )
         {
             i++;
-            zmin = atof(argv[i]);
+            global_extent.min(2, atof(argv[i]));
             bSetExtents = true;
         }
 
@@ -1024,7 +1133,7 @@ int main(int argc, char* argv[])
                 )
         {
             i++;
-            zmax = atof(argv[i]);
+            global_extent.max(2, atof(argv[i]));
             bSetExtents = true;
         }
         else if (input.empty())
@@ -1047,15 +1156,15 @@ int main(int argc, char* argv[])
         usage();
         exit(1);
     }
-    string table_name ;
+
     if (block_table_name.size() == 0) {
         // change filename foo.las -> foo for an appropriate
         // block tablename for oracle... must be less than 30 characters
         // and no extraneous characters.
         string::size_type dot_pos = input.find_first_of(".");
-        table_name = input.substr(0,dot_pos);
+        block_table_name = input.substr(0,dot_pos);
     } else {
-        table_name = block_table_name;
+        block_table_name = block_table_name;
     }
     string::size_type slash_pos = connection.find("/",0);
     username = connection.substr(0,slash_pos);
@@ -1085,22 +1194,23 @@ int main(int argc, char* argv[])
         std::cout <<"Oracle connection failed" << std::endl; exit(1);
     }
 
-    std::istream* istrm;
-    try {
-            istrm = OpenInput(input, false);
-    } catch (std::exception const& e)
-    {
-        std::cout << e.what() << std::endl;
-        std::cout << "exiting..." << std::endl;
-        exit(-1);
-    }
+    // std::istream* istrm;
+    // try {
+    //         istrm = OpenInput(input, false);
+    // } catch (std::exception const& e)
+    // {
+    //     std::cout << e.what() << std::endl;
+    //     std::cout << "exiting..." << std::endl;
+    //     exit(-1);
+    // }
 
     
-    
+    con->StartTransaction();
+
     if (bDropTable) {
         std::cout << "dropping existing tables..." << std::endl;
 
-        DeleteTable(con, table_name.c_str(), base_table_name.c_str(), point_cloud_name.c_str());
+        WipeBlockTable(con, block_table_name, base_table_name, point_cloud_name);
     }
     
     if (!pre_sql.empty()) {
@@ -1118,8 +1228,8 @@ int main(int argc, char* argv[])
         }
         oss.str("");        
     }
-    if (!BlockTableExists(con, table_name.c_str()))
-        CreateBlockTable(con, table_name);
+    if (!BlockTableExists(con, block_table_name.c_str()))
+        CreateBlockTable(con, block_table_name);
     else {
         bUseExistingBlockTable = true;
         std::cout << "Using existing block table ... " << std::endl;
@@ -1141,7 +1251,7 @@ int main(int argc, char* argv[])
 
     ResultsVector& results = query->GetResults();
     
-    ResultsVector::const_iterator i;
+    ResultsVector::iterator i;
     
     std::istream* istrm2;
     istrm2 = OpenInput(input, false);
@@ -1150,19 +1260,17 @@ int main(int argc, char* argv[])
 
     long pc_id = CreatePCEntry(  con, 
                     query, 
-                    table_name.c_str(),
-                    base_table_name.c_str(),
-                    point_cloud_name.c_str(),
-                    aux_columns.c_str(),
-                    aux_values.c_str(),
+                    block_table_name,
+                    base_table_name,
+                    point_cloud_name,
+                    aux_columns,
+                    aux_values,
                     3, // we're assuming 3d for now
                     srid,
                     nCapacity,
                     precision,
                     bUseSolidGeometry,
-                    bUse3d,
-                    bSetExtents,
-                    xmin, xmax, ymin, ymax, zmin, zmax);
+                    bUse3d);
                     
     
     std::cout << "Writing " << results.size() << " blocks ..." << std::endl;
@@ -1185,41 +1293,47 @@ int main(int argc, char* argv[])
         oss.str("");
         con->Commit();     
     }
-    
-    for (i=results.begin(); i!=results.end(); i++)
-    {
-        InsertBlocks(con,
-                     *i,
-                     srid,
-                     reader2,
-                     table_name.c_str(),
-                     precision,
-                     pc_id,
-                     bUseSolidGeometry,
-                     bUse3d,
-                     nCapacity);
-    }
+                // 
+                // OWConnection* con, 
+                // KDXIndexSummary* summary,
+                // liblas::Reader* reader2, 
+                // const std::string& table_name, 
+                // long nCommitInterval, 
+                // int srid, 
+                // long precision,
+                // long pc_id,
+                // bool bUseSolidGeometry,
+                // bool bUse3d,
+
+                // long nDimensions    
+
+    InsertBlocks(con,
+                 query,
+                 reader2,
+                 block_table_name,
+                 nCommitInterval,
+                 srid,
+                 precision,
+                 pc_id,
+                 bUseSolidGeometry,
+                 bUse3d,
+                 nCapacity);
  
     
     if (!bUseExistingBlockTable) {
         std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
         CreateSDOEntry( con, 
-                        table_name.c_str(), 
+                        block_table_name.c_str(), 
                         query, 
                         srid , 
                         precision, 
                         bUseSolidGeometry,
                         bUse3d,
                         bSetExtents,
-                        xmin,
-                        xmax,
-                        ymin,
-                        ymax,
-                        zmin,
-                        zmax);
+                        global_extent);
                         
         CreateBlockIndex(   con, 
-                            table_name.c_str(), 
+                            block_table_name.c_str(), 
                             srid,  
                             bUse3d);
     }

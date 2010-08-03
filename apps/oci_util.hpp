@@ -24,8 +24,12 @@ bool CreateBlockIndex(  OWConnection* connection,
                         std::string tableName, 
                         long srid, 
                         bool bUse3d);
-                        
-std::string to_upper(const char* input);
+
+bool WipeBlockTable(   OWConnection* connection, 
+                    std::string tableName, 
+                    std::string cloudTableName, 
+                    std::string cloudColumnName);
+std::string to_upper(const std::string&);
 
 #ifdef _WIN32
 #define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )

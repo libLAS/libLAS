@@ -27,6 +27,8 @@ public:
     void SetBounds(const liblas::Bounds b) {bounds = b;}
     uint32_t GetID() const {return m_id;}
     void SetID(uint32_t v) {m_id = v;}
+    
+    void GetData(liblas::Reader* reader, std::vector<uint8_t>& data);
 
 private:
 
