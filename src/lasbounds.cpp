@@ -140,10 +140,45 @@ Bounds::Bounds( std::vector<double> const& low, std::vector<double> const& high)
 #endif
 
 }
+
 Bounds::Bounds(Bounds const& other)
     : mins(other.mins)
     , maxs(other.maxs)
 {
+}
+
+double Bounds::min(std::size_t const& index) const
+{
+    if (mins.size() <= index) {
+        return 0.0;
+    }
+    return mins[index];
+}
+
+void Bounds::min(std::size_t const& index, double v)
+{
+    if (mins.size() <= index) {
+        mins.resize(index + 1);
+        maxs.resize(index + 1);
+    }
+    mins[index] = v;
+}
+
+double Bounds::max(std::size_t const& index) const
+{
+    if (maxs.size() <= index) {
+        return 0.0;
+    }
+        return maxs[index];
+}
+
+void Bounds::max(std::size_t const& index, double v)
+{
+    if (maxs.size() <= index) {
+        maxs.resize(index + 1);
+        mins.resize(index + 1);
+    }
+    maxs[index] = v;
 }
 
 Bounds& Bounds::operator=(Bounds const& rhs) 
@@ -160,6 +195,17 @@ uint32_t Bounds::dimension() const
 {
     return mins.size();
 }
+
+void Bounds::dimension(uint32_t d)
+{
+    if (maxs.size() < d) {
+        maxs.resize(d);
+    }    
+    if (mins.size() < d){
+        mins.resize(d);
+    }
+}
+
 void Bounds::verify()
 {
     for (uint32_t d = 0; d < dimension(); ++d)

@@ -62,29 +62,15 @@ public:
     Bounds(Bounds const& other);
     Bounds& operator=(Bounds const& rhs);
     
-    double min(std::size_t const& index) const
-    {
-        return mins[index];
-    }
-
-    void min(std::size_t const& index, double v)
-    {
-        mins[index] = v;
-    }
-
-    double max(std::size_t const& index) const
-    {
-        return maxs[index];
-    }
+    double min(std::size_t const& index) const;
+    void min(std::size_t const& index, double v);
+    double max(std::size_t const& index) const;
+    void max(std::size_t const& index, double v);
     
-    void max(std::size_t const& index, double v)
-    {
-        maxs[index] = v;
-    }
-
     bool equal(Bounds const& other) const;
     bool intersects(Bounds const& other) const;
     uint32_t dimension() const;
+    void dimension(uint32_t d);
         
 private:
     Vector mins;
