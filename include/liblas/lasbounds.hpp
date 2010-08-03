@@ -43,8 +43,8 @@
 #define LIBLAS_LASBOUNDS_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
-// boost
-#include <boost/array.hpp>
+
+#include <vector>
 
 namespace liblas {
 
@@ -52,12 +52,13 @@ class Bounds
 {
 public:
 
-    typedef boost::array<double, 3> Array;
+    typedef std::vector<double> Vector;
     
     Bounds();
     Bounds(double minx, double miny, double maxx, double maxy, double minz, double maxz);
     Bounds(double minx, double miny, double maxx, double maxy);
     Bounds(const Point& min, const Point& max);
+    Bounds( std::vector<double> const& low, std::vector<double> const& high);
     Bounds(Bounds const& other);
     Bounds& operator=(Bounds const& rhs);
     
@@ -82,12 +83,12 @@ public:
     }
 
     bool equal(Bounds const& other) const;
-    bool intersects2d(Bounds const& other) const;
-    bool intersects3d(Bounds const& other) const;
+    bool intersects(Bounds const& other) const;
+    uint32_t dimension() const;
         
 private:
-    Array mins;
-    Array maxs;
+    Vector mins;
+    Vector maxs;
     
     void verify();
 };

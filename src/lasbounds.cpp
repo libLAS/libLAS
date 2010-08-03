@@ -41,15 +41,18 @@
 
 #include <liblas/lasbounds.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/detail/utility.hpp>
+
 // boost
 #include <boost/cstdint.hpp>
-#include <boost/array.hpp>
+
 #include <boost/concept_check.hpp>
 // std
 #include <cmath>
 #include <limits>
 #include <string>
 #include <sstream>
+#include <vector>
 
 using namespace boost;
 
@@ -57,8 +60,8 @@ namespace liblas {
 
 Bounds::Bounds()
 {
-    mins.assign(0);
-    maxs.assign(0);
+    mins.resize(0);
+    maxs.resize(0);
 }
 
 Bounds::Bounds( double minx, 
@@ -68,6 +71,9 @@ Bounds::Bounds( double minx,
                 double minz, 
                 double maxz)
 {
+    mins.resize(3);
+    maxs.resize(3);
+    
     mins[0] = minx;
     mins[1] = miny;
     mins[2] = minz;
@@ -82,6 +88,9 @@ Bounds::Bounds( double minx,
 }
 Bounds::Bounds( const Point& min, const Point& max)
 {
+    mins.resize(3);
+    maxs.resize(3);
+    
     mins[0] = min.GetX();
     mins[1] = min.GetY();
     mins[2] = min.GetZ();
@@ -100,12 +109,12 @@ Bounds::Bounds( double minx,
                 double maxx, 
                 double maxy)
 {
+    mins.resize(2);
+    maxs.resize(2);
     mins[0] = minx;
     mins[1] = miny;
-    mins[2] = 0;
     maxs[0] = maxx;
     maxs[1] = maxy;
-    maxs[2] = 0;
     
 #ifdef DEBUG
     verify();
@@ -113,6 +122,24 @@ Bounds::Bounds( double minx,
 
 }
 
+Bounds::Bounds( std::vector<double> const& low, std::vector<double> const& high)
+{
+    if (low.size() != high.size() ) {
+        std::ostringstream msg; 
+        msg << "Bounds dimensions are not equal.  Low bounds dimensions are " << low.size()
+            << " and the high bounds are " << high.size();
+        throw std::runtime_error(msg.str());                
+    }
+    mins.resize(low.size());
+    
+    mins = low;
+    maxs = high;
+    
+#ifdef DEBUG
+    verify();
+#endif
+
+}
 Bounds::Bounds(Bounds const& other)
     : mins(other.mins)
     , maxs(other.maxs)
@@ -129,9 +156,13 @@ Bounds& Bounds::operator=(Bounds const& rhs)
     return *this;
 }
 
+uint32_t Bounds::dimension() const
+{
+    return mins.size();
+}
 void Bounds::verify()
 {
-    for (uint32_t d = 0; d < 3; ++d)
+    for (uint32_t d = 0; d < dimension(); ++d)
     {
         if (min(d) > max(d) )
         {
@@ -151,9 +182,10 @@ void Bounds::verify()
 
 bool Bounds::equal(Bounds const& other) const
 {
-    // FIXME: direct comparison of float-point values may give wrong result --mloskot
-    for (Array::size_type i = 0; i < 3; i++) {
-        if (!(min(i) == other.min(i)) && !(max(i) == other.max(i))) 
+    for (Vector::size_type i = 0; i < dimension(); i++) {
+        
+        if    (!(detail::compare_distance(min(i), other.min(i)))  
+            && !(detail::compare_distance(max(i), other.max(i)))) 
         {
             return false;
         }
@@ -161,20 +193,23 @@ bool Bounds::equal(Bounds const& other) const
     return true;
 }
 
-bool Bounds::intersects2d(Bounds const& other) const
+bool Bounds::intersects(Bounds const& other) const
 {
+    
+    if (other.dimension() != dimension())
+    {
+        std::ostringstream msg; 
+        msg << "Bounds dimensions are not equal.  Comparison dimension is " << other.dimension()
+            << " and this dimension is " << dimension();
+        throw std::runtime_error(msg.str());        
+    }
 
-    return (other.min(0) < max(0) && other.min(0) > min(0) && other.min(1) < max(1) && other.min(1) > max(1))
-        || (other.max(0) < max(0) && other.max(0) > min(0) && other.min(1) < max(1) && other.min(1) > max(1))
-        || (other.min(0) < max(0) && other.min(0) > min(0) && other.max(1) < max(1) && other.max(1) > max(1))
-        || (other.max(0) < max(0) && other.max(0) > min(0) && other.max(1) < max(1) && other.max(1) > max(1));
+    for (uint32_t i = 0; i < dimension(); i++){
+        if (min(i) > other.max(i) || max(i) < other.min(i)) return false;
+    }
+    
+    return true;
 }
 
-bool Bounds::intersects3d(Bounds const& other) const
-{
-    boost::ignore_unused_variable_warning(other);
-    // not implemented
-    throw    std::runtime_error("not implemented");
 
-}
 } // namespace liblas
