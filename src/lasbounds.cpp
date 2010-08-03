@@ -167,7 +167,7 @@ void Bounds::verify()
         if (min(d) > max(d) )
         {
             // Check that we're not infinity either way
-            if (!(detail::compare_distance(min(d), std::numeric_limits<double>::max()) ||
+            if ( (detail::compare_distance(min(d), std::numeric_limits<double>::max()) ||
                   detail::compare_distance(max(d), -std::numeric_limits<double>::max()) ))
             {
                 std::ostringstream msg; 
@@ -184,7 +184,7 @@ bool Bounds::equal(Bounds const& other) const
     for (Vector::size_type i = 0; i < dimension(); i++) {
         
         if    (!(detail::compare_distance(min(i), other.min(i)))  
-            && !(detail::compare_distance(max(i), other.max(i)))) 
+            || !(detail::compare_distance(max(i), other.max(i)))) 
         {
             return false;
         }
