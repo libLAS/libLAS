@@ -121,6 +121,45 @@ private:
 };
 
 
+class ThinFilter: public liblas::FilterI
+{
+public:
+
+    ThinFilter(uint32_t thin);
+    bool filter(const liblas::Point& point);
+
+
+private:
+
+    ThinFilter(ThinFilter const& other);
+    ThinFilter& operator=(ThinFilter const& rhs);
+    
+    uint32_t thin_amount;
+    uint32_t thin_count;
+};
+
+
+
+class ReturnFilter: public FilterI
+{
+public:
+    
+    typedef std::vector<boost::uint16_t> return_list_type;
+
+    ReturnFilter(return_list_type returns, bool last_only);
+    bool filter(const Point& point);
+    
+private:
+
+    return_list_type m_returns;
+    bool last_only;
+
+    ReturnFilter(ReturnFilter const& other);
+    ReturnFilter& operator=(ReturnFilter const& rhs);
+};
+
+
+
 } // namespace liblas
 
 #endif // ndef LIBLAS_LASFILTER_HPP_INCLUDED

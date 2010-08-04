@@ -137,4 +137,76 @@ bool BoundsFilter::filter(const Point& p)
 }
 
 
+
+ThinFilter::ThinFilter( uint32_t thin ) :
+ liblas::FilterI(eInclusion)
+{
+    thin_amount = thin;
+    thin_count = 0;
+}
+
+
+
+bool ThinFilter::filter(const liblas::Point& p)
+{
+
+    // If thin_amount == thin_count, we throw this one 
+    // out.
+    bool output = false;
+    if (thin_amount == thin_count)
+    {
+        output = true;
+        thin_count = 0;
+    }
+    
+    thin_count = thin_count + 1;
+    
+    return output;
+}
+
+
+ReturnFilter::ReturnFilter( return_list_type returns, bool last_only )
+    : FilterI(eInclusion)
+    , m_returns(returns), last_only(last_only)
+{
+}
+
+bool ReturnFilter::filter(const Point& p)
+{
+    if (last_only) {
+        bool output = false;
+        if (p.GetReturnNumber() == p.GetNumberOfReturns()) {
+            output = true;
+        }
+
+        // If the type is switched to eExclusion, we'll throw out all last returns.
+        if (GetType() == eExclusion && output == true) {
+            output = false;
+        } else {
+            output = true;
+        }
+        return output;
+    }
+    
+    uint16_t r = p.GetReturnNumber();
+    
+    // If the user gave us an empty set of classes to filter
+    // we're going to return true regardless
+    bool output = true;
+    for (return_list_type::const_iterator it = m_returns.begin(); it != m_returns.end(); ++it) {
+        
+        if (r == *it) {
+            if (GetType() == eInclusion) {
+                output = true;
+            } else {
+                output = false;
+            }
+            break;
+        } else {
+            output = false;
+        }
+    }
+    return output;
+}
+
 } // namespace liblas
