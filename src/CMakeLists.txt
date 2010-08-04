@@ -29,6 +29,7 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/laserror.hpp
   ${LIBLAS_HEADERS_DIR}/lasfilter.hpp
   ${LIBLAS_HEADERS_DIR}/lasheader.hpp
+  ${LIBLAS_HEADERS_DIR}/lasindex.hpp
   ${LIBLAS_HEADERS_DIR}/laspoint.hpp
   ${LIBLAS_HEADERS_DIR}/lasreader.hpp
   ${LIBLAS_HEADERS_DIR}/lasschema.hpp
@@ -48,6 +49,10 @@ set(LIBLAS_DETAIL_HPP
   ${LIBLAS_HEADERS_DIR}/detail/timer.hpp
   ${LIBLAS_HEADERS_DIR}/detail/utility.hpp)
 
+set(LIBLAS_DETAIL_INDEX_HPP
+  ${LIBLAS_HEADERS_DIR}/detail/index/indexoutput.hpp
+  ${LIBLAS_HEADERS_DIR}/detail/index/indexcell.hpp)
+  
 set(LIBLAS_DETAIL_READER_HPP
   ${LIBLAS_HEADERS_DIR}/detail/reader/reader.hpp
   ${LIBLAS_HEADERS_DIR}/detail/reader/header.hpp
@@ -66,6 +71,7 @@ set(LIBLAS_CPP
   laserror.cpp
   lasfilter.cpp
   lasheader.cpp
+  lasindex.cpp
   laspoint.cpp
   lasreader.cpp
   lasspatialreference.cpp
@@ -75,6 +81,11 @@ set(LIBLAS_CPP
   laswriter.cpp)
 
 set(LIBLAS_DETAIL_CPP) # Currently empty
+
+set(LIBLAS_DETAIL_INDEX_CPP
+  detail/index/indexcell.cpp
+  detail/index/indexoutput.cpp)
+
 
 set(LIBLAS_DETAIL_READER_CPP
   detail/reader/header.cpp
@@ -91,9 +102,11 @@ set(LIBLAS_DETAIL_WRITER_CPP
 source_group("CMake Files" FILES CMakeLists.txt)
 source_group("Header Files" FILES ${LIBLAS_HPP})
 source_group("Header Files\\detail" FILES ${LIBLAS_DETAIL_HPP})
+source_group("Header Files\\detail\\index" FILES ${LIBLAS_DETAIL_INDEX_HPP})
 source_group("Header Files\\detail\\reader" FILES ${LIBLAS_DETAIL_READER_HPP})
 source_group("Header Files\\detail\\writer" FILES ${LIBLAS_DETAIL_WRITER_HPP})
 source_group("Source Files" FILES ${LIBLAS_CPP})
+source_group("Source Files\\index" FILES ${LIBLAS_DETAIL_INDEX_CPP})
 source_group("Source Files\\reader" FILES ${LIBLAS_DETAIL_READER_CPP})
 source_group("Source Files\\writer" FILES ${LIBLAS_DETAIL_WRITER_CPP})
 if(GDAL_FOUND)
