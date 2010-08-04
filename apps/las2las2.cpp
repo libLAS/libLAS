@@ -71,6 +71,12 @@ bool term_progress(std::ostream& os, double complete)
 
 
 
+
+
+
+
+
+
 liblas::Writer* start_writer(   std::ofstream* strm, 
                                 std::string const& output, 
                                 liblas::Header const& header)
@@ -87,42 +93,14 @@ liblas::Writer* start_writer(   std::ofstream* strm,
 }
 
 
+
 bool process(   std::string const& input,
                 std::string const& output,
-                liblas::Bounds const& bounds,
-                uint32_t split_size,
-                std::vector<uint8_t> keep_classes,
-                std::vector<uint8_t> drop_classes)
+                std::vector<liblas::FilterI*>& filters,
+                uint32_t split_size)
 {
 
-    std::vector<liblas::FilterI*> filters;
 
- 
-    //
-    // Source
-    //
-    std::cout << "Processing:" << "\n - dataset: " << input << std::endl;
-
-    // Make the filters
-    
-    if (keep_classes.size() > 0) {
-        liblas::ClassificationFilter* class_filter = new ClassificationFilter(keep_classes);
-        class_filter->SetType(liblas::FilterI::eInclusion);
-        filters.push_back(class_filter);
-        
-    }
-    
-    if (drop_classes.size() > 0)
-    {
-        liblas::ClassificationFilter* class_filter = new ClassificationFilter(drop_classes);
-        class_filter->SetType(liblas::FilterI::eExclusion);
-        filters.push_back(class_filter);        
-    }
-    
-    if (bounds.dimension() > 0) {
-        liblas::BoundsFilter* bounds_filter = new BoundsFilter(bounds);
-        filters.push_back(bounds_filter);
-    }
     
     std::ifstream ifs;
     if (!liblas::Open(ifs, input.c_str()))
@@ -158,45 +136,59 @@ bool process(   std::string const& input,
     boost::uint32_t const size = reader.GetHeader().GetPointRecordsCount();
     
     boost::int32_t split_bytes_count = 1024*1024*split_size;
-    std::cout << "count: " << split_bytes_count;
-    int k = 2;
+    int fileno = 2;
+
     while (reader.ReadNextPoint())
     {
         liblas::Point const& p = reader.GetPoint(); 
         writer->WritePoint(p);  
-        split_bytes_count = split_bytes_count - reader.GetHeader().GetSchema().GetByteSize();
         term_progress(std::cout, (i + 1) / static_cast<double>(size));
         i++;
-        if (split_bytes_count < 0) {
+
+        split_bytes_count = split_bytes_count - reader.GetHeader().GetSchema().GetByteSize();        
+        if (split_bytes_count < 0 && split_size > 0) {
+            // The user specifies a split size in mb, and we keep counting 
+            // down until we've written that many points into the file.  
+            // After that point, we make a new file and start writing into 
+            // that.  
+            // FIXME. No header accounting is done at this time.
             delete writer;
             delete ofs;
             
             ofs = new std::ofstream;
             ostringstream oss;
-            oss << out << "-"<< k <<".las";
+            oss << out << "-"<< fileno <<".las";
 
-            // out = std::string(oss.str());
             writer = start_writer(ofs, oss.str(), reader.GetHeader());
-            k++;
+            fileno++;
             split_bytes_count = 1024*1024*split_size;
         }
     }
     
     delete writer;
     delete ofs;
+    
+    //FIXME: clean up filters
     return true;
 }
 int main(int argc, char* argv[])
 {
 
     uint32_t split_size;
+    uint32_t thin;
     std::string input;
     std::string output;
 
-    std::vector<boost::uint8_t> keep_classes;
-    std::vector<boost::uint8_t> drop_classes;
+
+
+    std::vector<boost::uint8_t> drop_returns;
+    
     liblas::Bounds bounds;
     
+    bool last_return_only;
+    bool first_return_only;
+    std::vector<liblas::FilterI*> filters;    
+
     try {
 
         po::options_description desc("Allowed options");
@@ -212,6 +204,12 @@ int main(int argc, char* argv[])
             ("keep-classes,k", po::value< string >(), "Classifications to keep.\nUse a comma-separated list, for example, -k 2,4,12")
             ("drop-classes,d", po::value< string >(), "Classifications to drop.\nUse a comma-separated list, for example, -d 1,7,8")
             ("extent,e", po::value< string >(), "Extent window that points must fall within to keep.\nUse a comma-separated list, for example, \n  -e minx, miny, maxx, maxy\n  or \n  -e minx, miny, maxx, maxy, minz, maxz")
+            ("thin,t", po::value<uint32_t>(&thin)->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
+            ("last_return_only", po::value<bool>(&last_return_only)->zero_tokens(), "Keep last returns (cannot be used with --first_return_only)")
+            ("first_return_only", po::value<bool>(&first_return_only)->zero_tokens(), "Keep first returns (cannot be used with --last_return_only")
+            ("keep-returns", po::value< string >(), "Return numbers to keep.\nUse a comma-separated list, for example, --keep-returns 1\nUse --last_return_only or --first_return_only if you want to ensure getting either one of these.")
+            ("drop-returns", po::value< string >(), "Return numbers to drop.\nUse a comma-separated list, for example, --drop-returns 2,3,4,5\nUse --last_return_only or --first_return_only if you want to ensure getting either one of these.")
+
 
     ;
     
@@ -227,24 +225,56 @@ int main(int argc, char* argv[])
             return 1;
         }
 
-        boost::char_separator<char> sep(",");
+        boost::char_separator<char> sep(",|");
 
         if (vm.count("keep-classes")) 
         {
+            std::vector<boost::uint8_t> keep_classes;
             tokenizer tokens(vm["keep-classes"].as< string >(), sep);
             for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
                 keep_classes.push_back(atoi((*t).c_str()));
             }
+            liblas::ClassificationFilter* class_filter = new ClassificationFilter(keep_classes);
+            class_filter->SetType(liblas::FilterI::eInclusion);
+            filters.push_back(class_filter);
         }
 
         if (vm.count("drop-classes")) 
         {
+            std::vector<boost::uint8_t> drop_classes;            
             tokenizer tokens(vm["drop-classes"].as< string >(), sep);
             for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
                 drop_classes.push_back(atoi((*t).c_str()));
             }
+            liblas::ClassificationFilter* class_filter = new ClassificationFilter(drop_classes);
+            class_filter->SetType(liblas::FilterI::eExclusion);
+            filters.push_back(class_filter);       
         }
-        
+
+        if (vm.count("keep-returns")) 
+        {
+            std::vector<boost::uint16_t> keep_returns;
+            tokenizer tokens(vm["keep-returns"].as< string >(), sep);
+            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+                keep_returns.push_back(atoi((*t).c_str()));
+            }
+            liblas::ReturnFilter* return_filter = new ReturnFilter(keep_returns, false);
+            return_filter->SetType(liblas::FilterI::eInclusion);
+            filters.push_back(return_filter);
+        }
+
+        if (vm.count("drop-returns")) 
+        {
+            std::vector<boost::uint16_t> drop_returns;
+            tokenizer tokens(vm["drop-returns"].as< string >(), sep);
+            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+                drop_returns.push_back(atoi((*t).c_str()));
+            }
+            liblas::ReturnFilter* return_filter = new ReturnFilter(drop_returns, false);
+            return_filter->SetType(liblas::FilterI::eInclusion);
+            filters.push_back(return_filter); 
+        }
+                
         if (vm.count("extent")) 
         {
             std::vector<double> vbounds;
@@ -262,8 +292,35 @@ int main(int argc, char* argv[])
                 std::cerr << "Bounds must be specified as a 4-tuple or 6-tuple, not a "<< vbounds.size()<<"-tuple" << "\n";
                 return 1;
             }
+            liblas::BoundsFilter* bounds_filter = new BoundsFilter(bounds);
+            filters.push_back(bounds_filter);
+            
+        }
+        if (thin > 0) 
+        {
+            liblas::ThinFilter* thin_filter = new ThinFilter(thin);
+            filters.push_back(thin_filter);    
+        }
+        
+        if (first_return_only && last_return_only) {
+            std::cerr << "--first_return_only and --last_return_only cannot be used simultaneously.  Use --keep-returns";
+            return 1;
         }
 
+        if (last_return_only){
+            std::vector<boost::uint16_t> returns;
+            liblas::ReturnFilter* last_filter = new ReturnFilter(returns, true);
+            filters.push_back(last_filter);
+        }
+    
+        if (first_return_only){
+            std::vector<boost::uint16_t> returns;
+            returns.push_back(1);
+            liblas::ReturnFilter* return_filter = new ReturnFilter(returns, false);
+            filters.push_back(return_filter);
+        }
+        
+        
         if (vm.count("input")) 
         {
             input = vm["input"].as< string >();
@@ -272,7 +329,11 @@ int main(int argc, char* argv[])
             return 1;
         } 
         
-        bool op = process(input, output, bounds, split_size, keep_classes, drop_classes);
+        bool op = process(  input, 
+                            output, 
+                            filters,
+                            split_size
+                            );
         if (!op) {
             return (1);
         }
