@@ -89,6 +89,7 @@ public:
     
     BoundsFilter(double minx, double miny, double maxx, double maxy);
     BoundsFilter(double minx, double miny, double maxx, double maxy, double minz, double maxz);
+    BoundsFilter(Bounds const& bounds);
     bool filter(const Point& point);
 
 private:

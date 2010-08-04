@@ -100,6 +100,18 @@ BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy, 
     m_2d = false;
 }
 
+BoundsFilter::BoundsFilter( Bounds const& bounds) : FilterI(eInclusion)
+{
+    mins[0] = bounds.min(0);
+    mins[1] = bounds.min(1);
+    maxs[0] = bounds.max(0);
+    maxs[1] = bounds.max(1);
+
+    if (bounds.dimension() > 2)
+        mins[2] = bounds.min(2);
+        maxs[2] = bounds.max(2);
+        m_2d = false;
+}
 bool BoundsFilter::filter(const Point& p)
 {
     bool output = false;
