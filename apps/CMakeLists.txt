@@ -89,7 +89,7 @@ endif()
 
 if(LAS2LAS2)
     add_executable(${LAS2LAS2} las2las2.cpp)
-    target_link_libraries(${LAS2LAS2} ${APPS_CPP_DEPENDENCIES})
+    target_link_libraries(${LAS2LAS2} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
 endif()
 
 # Build las2txt

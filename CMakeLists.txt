@@ -124,9 +124,9 @@ endif(APPLE)
 
 # Boost C++ Libraries support - required
 message(STATUS "Searching for Boost 1.38+ - done")
-find_package(Boost 1.38 REQUIRED)
+find_package(Boost 1.38 REQUIRED program_options)
 
-if(Boost_FOUND)
+if(Boost_FOUND AND Boost_program_options_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
