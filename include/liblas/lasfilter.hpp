@@ -48,8 +48,10 @@
 #include <liblas/detail/fwd.hpp>
 // boost
 #include <boost/cstdint.hpp>
+#include <boost/function.hpp>
 // std
 #include <vector>
+#include <functional>
 
 namespace liblas {
 
@@ -139,7 +141,6 @@ private:
 };
 
 
-
 class ReturnFilter: public FilterI
 {
 public:
@@ -159,6 +160,57 @@ private:
 };
 
 
+class ValidationFilter: public FilterI
+{
+public:
+
+    ValidationFilter();
+    bool filter(const Point& point);
+    
+private:
+
+    ValidationFilter(ValidationFilter const& other);
+    ValidationFilter& operator=(ValidationFilter const& rhs);
+};
+
+
+
+
+template <typename T>
+class ContinuousValueFilter: public FilterI
+{
+public:
+    typedef boost::function<T (const Point*)> filter_func;
+
+    ContinuousValueFilter(filter_func f, T value) :
+        liblas::FilterI(eInclusion), f(f), value(value)
+            {};
+            
+    bool filter(const liblas::Point& p)
+    {
+
+        bool output = false;
+
+        T v = f(&p);
+        if (v > value ){
+            if (GetType() == eInclusion) {
+                output = true;
+            } else {
+                output = false;
+            }    
+        }
+
+        return output;
+    }    
+private:
+
+    ContinuousValueFilter(ContinuousValueFilter const& other);
+    ContinuousValueFilter& operator=(ContinuousValueFilter const& rhs);
+    filter_func f;
+    T value;
+
+
+};
 
 } // namespace liblas
 

@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include <string>
+#include <functional>
 
 #include <boost/program_options.hpp>
 #include <boost/tokenizer.hpp>
@@ -187,6 +188,7 @@ int main(int argc, char* argv[])
     
     bool last_return_only;
     bool first_return_only;
+    bool valid_only;
     std::vector<liblas::FilterI*> filters;    
 
     try {
@@ -209,7 +211,9 @@ int main(int argc, char* argv[])
             ("first_return_only", po::value<bool>(&first_return_only)->zero_tokens(), "Keep first returns (cannot be used with --last_return_only")
             ("keep-returns", po::value< string >(), "Return numbers to keep.\nUse a comma-separated list, for example, --keep-returns 1\nUse --last_return_only or --first_return_only if you want to ensure getting either one of these.")
             ("drop-returns", po::value< string >(), "Return numbers to drop.\nUse a comma-separated list, for example, --drop-returns 2,3,4,5\nUse --last_return_only or --first_return_only if you want to ensure getting either one of these.")
-
+            ("valid_only", po::value<bool>(&valid_only)->zero_tokens(), "Keep only valid points")
+            ("keep-intensity", po::value< string >(), "Range in which to keep intensity.\nUse a comma-separated list, for example, --keep-intensity 0-100 --keep-intensity <200\n")
+            
 
     ;
     
@@ -296,6 +300,16 @@ int main(int argc, char* argv[])
             filters.push_back(bounds_filter);
             
         }
+        if (vm.count("keep-intensity")) 
+        {
+            std::string intensities = vm["keep-intensity"].as< string >();
+            boost::function<uint16_t (const Point*) > f =&liblas::Point::GetIntensity;
+
+            liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, atoi(intensities.c_str()));
+            intensity_filter->SetType(liblas::FilterI::eInclusion);
+            filters.push_back(intensity_filter);
+        }
+
         if (thin > 0) 
         {
             liblas::ThinFilter* thin_filter = new ThinFilter(thin);
@@ -318,6 +332,11 @@ int main(int argc, char* argv[])
             returns.push_back(1);
             liblas::ReturnFilter* return_filter = new ReturnFilter(returns, false);
             filters.push_back(return_filter);
+        }
+        
+        if (valid_only){
+            liblas::ValidationFilter* valid_filter = new ValidationFilter();
+            filters.push_back(valid_filter);            
         }
         
         

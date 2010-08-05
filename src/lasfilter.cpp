@@ -209,4 +209,28 @@ bool ReturnFilter::filter(const Point& p)
     return output;
 }
 
+ValidationFilter::ValidationFilter() :
+ liblas::FilterI(eInclusion)
+{
+
+}
+
+
+
+bool ValidationFilter::filter(const liblas::Point& p)
+{
+
+    bool output = false;
+    if (p.IsValid()){
+        if (GetType() == eInclusion) {
+            output = true;
+        } else {
+            output = false;
+        }    
+    }
+
+    return output;
+}
+
+
 } // namespace liblas
