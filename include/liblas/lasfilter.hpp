@@ -52,6 +52,7 @@
 // std
 #include <vector>
 #include <functional>
+#include <string>
 
 namespace liblas {
 
@@ -179,12 +180,108 @@ private:
 template <typename T>
 class ContinuousValueFilter: public FilterI
 {
+    // A ContinuousValueFilter is a templated class that allows you 
+    // to create complexe filters using functions that are callable 
+    // from the liblas::Point class.  See las2las2 for examples 
+    // how to use it for filtering intensity and time values.  
+    
+    
+    // To use this we must take in a filtering function that returns 
+    // us a value from the point, and a binary_predicate comparator
+    // (ie, std::less, std::greater, std::equal_to, etc).  
+    
+    // Example:
+    // GetIntensity returns a uint16_t, so we use that for our template 
+    // value.  This filter would keep all points with intensities that are 
+    // less than 100.
+    
+    // liblas::ContinuousValueFilter<uint16_t>::compare_func c = std::less<uint16_t>();
+    // liblas::ContinuousValueFilter<uint16_t>::filter_func f = &liblas::Point::GetIntensity;
+    // liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, 100, c);
+    // intensity_filter->SetType(liblas::FilterI::eInclusion);
+    
+    
+    // In addition to explicitly setting your comparator function, you can 
+    // also use the constructor that takes in a simple expression string 
+    // and constructs the basic comparators.  See the source code or las2las2 
+    // help output for the forms that are supported.  This may be 
+    // improved in the future.
+    
+    // std::string intensities("<100")
+    // liblas::ContinuousValueFilter<uint16_t>::filter_func f = &liblas::Point::GetIntensity;
+    // liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, intensities);
+    // intensity_filter->SetType(liblas::FilterI::eInclusion);
+    // 
 public:
     typedef boost::function<T (const Point*)> filter_func;
-
-    ContinuousValueFilter(filter_func f, T value) :
-        liblas::FilterI(eInclusion), f(f), value(value)
+    typedef boost::function<bool(T, T)> compare_func;
+    
+    ContinuousValueFilter(filter_func f, T value, compare_func c) :
+        liblas::FilterI(eInclusion), f(f), c(c),value(value)
             {};
+            
+    ContinuousValueFilter(filter_func f, std::string const& filter_string) :
+        liblas::FilterI(eInclusion), f(f) 
+    {
+        // Support taking in a simple expression and turning it into 
+        // a comparator we can use.  We support dead simple stuff:
+        // >200
+        // ==150
+        // >=32
+        // <=150
+        // <100
+        
+        // We don't strip whitespace, and we don't support complex 
+        // comparisons (ie, two function  10<x<300)
+        compare_func compare;
+
+        bool gt = HasPredicate(filter_string, ">");
+        bool gte = HasPredicate(filter_string, ">=");
+        bool lt = HasPredicate(filter_string, "<");
+        bool lte = HasPredicate(filter_string, "<=");
+        bool eq = HasPredicate(filter_string, "==");
+
+        std::string::size_type pos;
+        std::string out;
+
+        if (gte) // >=
+        {
+            // std::cout<<"have gte!" << std::endl;
+            c = std::greater_equal<T>();
+            pos = filter_string.find_first_of("=") + 1;
+        }
+        else if (gt) // .
+        {
+            // std::cout<<"have gt!" << std::endl;
+            c = std::greater<T>();
+            pos = filter_string.find_first_of(">") + 1;
+        }
+        else if (lte) // <=
+        {
+            // std::cout<<"have lte!" << std::endl;
+            c = std::less_equal<T>();
+            pos = filter_string.find_first_of("=") +1;
+        }
+        else if (lt) // <
+        {
+            // std::cout<<"have le!" << std::endl;
+            c = std::less<T>();    
+            pos = filter_string.find_first_of("<") + 1;
+        }
+        else if (eq) // ==
+        {
+            // std::cout<<"have eq!" << std::endl;
+            c = std::equal_to<T>();
+            pos = filter_string.find_last_of("=") + 1;
+    
+        }
+
+        out = filter_string.substr(pos, filter_string.size());
+        value = atoi(out.c_str());
+        // std::cout << "Value is: " << value << " pos " << pos << " out " << out << std::endl;
+
+
+    };
             
     bool filter(const liblas::Point& p)
     {
@@ -192,22 +289,52 @@ public:
         bool output = false;
 
         T v = f(&p);
-        if (v > value ){
+        // std::cout << std::endl<< "Checking c(v, value) v: " << v << " value: " << value;
+        if (c(v, value)){
+            // std::cout<< " ... succeeded "<<std::endl;
             if (GetType() == eInclusion) {
                 output = true;
             } else {
+                // std::cout << "Filter type is eExclusion and test passed" << std::endl;
                 output = false;
             }    
+        } else {
+            // std::cout<<" ... failed" <<std::endl;
+            if (GetType() == eInclusion) {
+                output = false;
+            } else {
+                // std::cout << "Filter type is eExclusion and test failed" << std::endl;
+                output = true;
+            }    
         }
-
+        // std::cout << " returning " << output << std::endl;
         return output;
-    }    
+    }
+    
 private:
 
     ContinuousValueFilter(ContinuousValueFilter const& other);
     ContinuousValueFilter& operator=(ContinuousValueFilter const& rhs);
     filter_func f;
+    compare_func c;
     T value;
+
+    bool HasPredicate(std::string const& parse_string, std::string predicate)
+    {
+        // Check if the given string contains all of the characters of predicate
+        // For example, does '>=300' have both > and = (as given in the predicate string)
+        bool output = false;
+        // We must have all of the characters in the predicate to return true
+        for (std::string::const_iterator i = predicate.begin(); i!=predicate.end(); ++i) {
+            std::string::size_type pred = parse_string.find_first_of(*i);
+            if (pred != std::string::npos) {
+                output = true;
+            } else {
+                return false;
+            }
+        }
+        return output;
+    }
 
 
 };

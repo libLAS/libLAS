@@ -15,6 +15,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <string>
@@ -36,7 +37,7 @@ using namespace std;
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
 #endif
 
-
+#define SEPARATORS ",|"
 
 bool term_progress(std::ostream& os, double complete)
 {
@@ -84,7 +85,7 @@ liblas::Writer* start_writer(   std::ofstream* strm,
 {
     
     if (!liblas::Create(*strm, output.c_str()))
-    {
+{
         std::cerr << "Cannot create " << output << "for write.  Exiting...";
     
     }        
@@ -93,7 +94,92 @@ liblas::Writer* start_writer(   std::ofstream* strm,
     
 }
 
+bool IsDualRangeFilter(std::string parse_string) 
+{
 
+string::size_type dash = parse_string.find_first_of("-");
+
+if (dash != std::string::npos) {
+    return true;
+}
+return false;
+}
+
+liblas::FilterI*  MakeReturnFilter(std::string return_string, liblas::FilterI::FilterType ftype) 
+{
+    boost::char_separator<char> sep(SEPARATORS);
+
+    std::vector<uint16_t> returns;
+    tokenizer tokens(return_string, sep);
+    for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+        returns.push_back(atoi((*t).c_str()));
+    }
+
+    liblas::ReturnFilter* return_filter = new ReturnFilter(returns, false);
+    return_filter->SetType(ftype);
+    return return_filter;
+}
+
+
+liblas::FilterI*  MakeClassFilter(std::string class_string, liblas::FilterI::FilterType ftype) 
+{
+    boost::char_separator<char> sep(SEPARATORS);
+
+    std::vector<uint8_t> classes;
+    tokenizer tokens(class_string, sep);
+    for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+        classes.push_back(atoi((*t).c_str()));
+    }
+
+    liblas::ClassificationFilter* class_filter = new ClassificationFilter(classes); 
+    class_filter->SetType(ftype);
+    return class_filter;
+}
+
+liblas::FilterI*  MakeBoundsFilter(std::string bounds_string, liblas::FilterI::FilterType ftype) 
+{
+    boost::char_separator<char> sep(SEPARATORS);
+    std::vector<double> vbounds;
+    tokenizer tokens(bounds_string, sep);
+    liblas::Bounds bounds;
+    for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+        vbounds.push_back(atof((*t).c_str()));
+    }
+    if (vbounds.size() == 4) 
+    {
+        bounds = liblas::Bounds(vbounds[0], 
+                                vbounds[1], 
+                                vbounds[2], 
+                                vbounds[3]);
+    } else if (vbounds.size() == 6)
+    {
+        bounds = liblas::Bounds(vbounds[0], 
+                                vbounds[1], 
+                                vbounds[2], 
+                                vbounds[3], 
+                                vbounds[4], 
+                                vbounds[5]);
+    } else {
+        ostringstream oss;
+        oss << "Bounds must be specified as a 4-tuple or "
+               "6-tuple, not a "<< vbounds.size()<<"-tuple" << "\n";
+        throw std::runtime_error(oss.str());
+    }
+    liblas::BoundsFilter* bounds_filter = new BoundsFilter(bounds);
+    bounds_filter->SetType(ftype);
+    return bounds_filter;
+}
+
+liblas::FilterI*  MakeIntensityFilter(std::string intensities, liblas::FilterI::FilterType ftype) 
+{
+    liblas::ContinuousValueFilter<uint16_t>::filter_func f = &liblas::Point::GetIntensity;
+    liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, intensities);
+    intensity_filter->SetType(ftype);
+    return intensity_filter;
+}
+
+            
+            
 
 bool process(   std::string const& input,
                 std::string const& output,
@@ -166,10 +252,16 @@ bool process(   std::string const& input,
         }
     }
     
+    std::cout << std::endl;
+    
     delete writer;
     delete ofs;
     
-    //FIXME: clean up filters
+    for(std::vector<liblas::FilterI*>::iterator i=filters.begin(); i!=filters.end(); i++)
+    {
+        delete *i;
+    }
+    
     return true;
 }
 int main(int argc, char* argv[])
@@ -182,7 +274,7 @@ int main(int argc, char* argv[])
 
 
 
-    std::vector<boost::uint8_t> drop_returns;
+    // std::vector<boost::uint16_t> returns;
     
     liblas::Bounds bounds;
     
@@ -212,7 +304,8 @@ int main(int argc, char* argv[])
             ("keep-returns", po::value< string >(), "Return numbers to keep.\nUse a comma-separated list, for example, --keep-returns 1\nUse --last_return_only or --first_return_only if you want to ensure getting either one of these.")
             ("drop-returns", po::value< string >(), "Return numbers to drop.\nUse a comma-separated list, for example, --drop-returns 2,3,4,5\nUse --last_return_only or --first_return_only if you want to ensure getting either one of these.")
             ("valid_only", po::value<bool>(&valid_only)->zero_tokens(), "Keep only valid points")
-            ("keep-intensity", po::value< string >(), "Range in which to keep intensity.\nUse a comma-separated list, for example, --keep-intensity 0-100 --keep-intensity <200\n")
+            ("keep-intensity", po::value< string >(), "Range in which to keep intensity.\nThe following expression types are supported.  --keep-intensity 0-100\n --keep-intensity <200\n --keep-intensity >400\n--keep-intensity >=200")
+            ("drop-intensity", po::value< string >(), "Range in which to drop intensity.\nThe following expression types are supported.  --drop-intensity <200\n --drop-intensity >400\n--drop-intensity >=200")
             
 
     ;
@@ -229,85 +322,79 @@ int main(int argc, char* argv[])
             return 1;
         }
 
-        boost::char_separator<char> sep(",|");
+        boost::char_separator<char> sep(SEPARATORS);
 
         if (vm.count("keep-classes")) 
         {
-            std::vector<boost::uint8_t> keep_classes;
-            tokenizer tokens(vm["keep-classes"].as< string >(), sep);
-            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-                keep_classes.push_back(atoi((*t).c_str()));
-            }
-            liblas::ClassificationFilter* class_filter = new ClassificationFilter(keep_classes);
-            class_filter->SetType(liblas::FilterI::eInclusion);
-            filters.push_back(class_filter);
+            std::string returns = vm["keep-classes"].as< string >();
+            liblas::FilterI* return_filter = MakeClassFilter(  returns, 
+                                                                liblas::FilterI::eInclusion);
+            filters.push_back(return_filter); 
         }
 
         if (vm.count("drop-classes")) 
         {
-            std::vector<boost::uint8_t> drop_classes;            
-            tokenizer tokens(vm["drop-classes"].as< string >(), sep);
-            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-                drop_classes.push_back(atoi((*t).c_str()));
-            }
-            liblas::ClassificationFilter* class_filter = new ClassificationFilter(drop_classes);
-            class_filter->SetType(liblas::FilterI::eExclusion);
-            filters.push_back(class_filter);       
+            std::string returns = vm["drop-classes"].as< string >();
+            liblas::FilterI* return_filter = MakeClassFilter(  returns, 
+                                                                liblas::FilterI::eExclusion);
+            filters.push_back(return_filter);
         }
 
         if (vm.count("keep-returns")) 
         {
-            std::vector<boost::uint16_t> keep_returns;
-            tokenizer tokens(vm["keep-returns"].as< string >(), sep);
-            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-                keep_returns.push_back(atoi((*t).c_str()));
-            }
-            liblas::ReturnFilter* return_filter = new ReturnFilter(keep_returns, false);
-            return_filter->SetType(liblas::FilterI::eInclusion);
-            filters.push_back(return_filter);
+            std::string returns = vm["keep-returns"].as< string >();
+            liblas::FilterI* return_filter = MakeReturnFilter(  returns, 
+                                                                liblas::FilterI::eInclusion);
+            filters.push_back(return_filter); 
         }
 
         if (vm.count("drop-returns")) 
         {
-            std::vector<boost::uint16_t> drop_returns;
-            tokenizer tokens(vm["drop-returns"].as< string >(), sep);
-            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-                drop_returns.push_back(atoi((*t).c_str()));
-            }
-            liblas::ReturnFilter* return_filter = new ReturnFilter(drop_returns, false);
-            return_filter->SetType(liblas::FilterI::eInclusion);
+            std::string returns = vm["drop-returns"].as< string >();
+            liblas::FilterI* return_filter = MakeReturnFilter(  returns, 
+                                                                liblas::FilterI::eExclusion);
             filters.push_back(return_filter); 
         }
                 
         if (vm.count("extent")) 
         {
-            std::vector<double> vbounds;
-            tokenizer tokens(vm["extent"].as< string >(), sep);
-            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-                vbounds.push_back(atof((*t).c_str()));
-            }
-            if (vbounds.size() == 4) 
-            {
-                bounds = liblas::Bounds(vbounds[0], vbounds[1], vbounds[2], vbounds[3]);
-            } else if (vbounds.size() == 6)
-            {
-                bounds = liblas::Bounds(vbounds[0], vbounds[1], vbounds[2], vbounds[3], vbounds[4], vbounds[5]);
-            } else {
-                std::cerr << "Bounds must be specified as a 4-tuple or 6-tuple, not a "<< vbounds.size()<<"-tuple" << "\n";
-                return 1;
-            }
-            liblas::BoundsFilter* bounds_filter = new BoundsFilter(bounds);
+            std::string bounds = vm["extent"].as< string >();
+            liblas::FilterI* bounds_filter = MakeBoundsFilter(bounds, liblas::FilterI::eInclusion);
             filters.push_back(bounds_filter);
             
         }
         if (vm.count("keep-intensity")) 
         {
             std::string intensities = vm["keep-intensity"].as< string >();
-            boost::function<uint16_t (const Point*) > f =&liblas::Point::GetIntensity;
+            if (IsDualRangeFilter(intensities)) {
+                // We need to make two filters
+                // Given a range 0-200, split the expression into two filters 
+                string::size_type dash = intensities.find_first_of("-");
+                std::string low = intensities.substr(0,dash);
+                std::string high = intensities.substr(dash+1, intensities.size());
 
-            liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, atoi(intensities.c_str()));
-            intensity_filter->SetType(liblas::FilterI::eInclusion);
-            filters.push_back(intensity_filter);
+                liblas::FilterI* lt_filter = MakeIntensityFilter(">="+low, liblas::FilterI::eInclusion);
+                filters.push_back(lt_filter);
+                liblas::FilterI* gt_filter = MakeIntensityFilter("<="+high, liblas::FilterI::eInclusion);
+                filters.push_back(gt_filter);                
+            } else {
+                liblas::FilterI* intensity_filter = MakeIntensityFilter(intensities, liblas::FilterI::eInclusion);
+                filters.push_back(intensity_filter);
+                
+            }
+        }
+        if (vm.count("drop-intensity")) 
+        {
+            std::string intensities = vm["drop-intensity"].as< string >();
+            if (IsDualRangeFilter(intensities)) {
+                std::cerr << "Range filters are not supported for drop-intensity" << std::endl;
+                return(1);
+            } else {
+                liblas::FilterI* intensity_filter = MakeIntensityFilter(intensities, liblas::FilterI::eExclusion);
+                filters.push_back(intensity_filter);
+                
+            }
+
         }
 
         if (thin > 0) 
@@ -317,7 +404,9 @@ int main(int argc, char* argv[])
         }
         
         if (first_return_only && last_return_only) {
-            std::cerr << "--first_return_only and --last_return_only cannot be used simultaneously.  Use --keep-returns";
+            std::cerr << "--first_return_only and --last_return_only cannot "
+                         "be used simultaneously.  Use --keep-returns 1 in "
+                         "combination with --last_return_only";
             return 1;
         }
 
