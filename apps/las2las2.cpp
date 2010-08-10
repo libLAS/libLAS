@@ -188,6 +188,7 @@ liblas::FilterI*  MakeTimeFilter(std::string times, liblas::FilterI::FilterType 
 
 bool process(   std::string const& input,
                 std::string const& output,
+                liblas::Header const& header,
                 std::vector<liblas::FilterI*>& filters,
                 std::vector<liblas::TransformI*>& transforms,
                 uint32_t split_size,
@@ -211,16 +212,16 @@ bool process(   std::string const& input,
     std::string out = output;
     liblas::Writer* writer = 0;
     if (!split_size) {
-        writer = start_writer(ofs, output, reader.GetHeader());
+        writer = start_writer(ofs, output, header);
         
     } else {
         string::size_type dot_pos = output.find_first_of(".");
         out = output.substr(0, dot_pos);
-        writer = start_writer(ofs, out+"-1"+".las", reader.GetHeader());
+        writer = start_writer(ofs, out+"-1"+".las", header);
     }
 
     if (verbose)
-    std::cout << "Target:" 
+    std::cout << "Writing output:" 
         << "\n - : " << output
         << std::endl;
 
@@ -228,7 +229,7 @@ bool process(   std::string const& input,
     // Translation of points cloud to features set
     //
     boost::uint32_t i = 0;
-    boost::uint32_t const size = reader.GetHeader().GetPointRecordsCount();
+    boost::uint32_t const size = header.GetPointRecordsCount();
     
     boost::int32_t split_bytes_count = 1024*1024*split_size;
     int fileno = 2;
@@ -241,7 +242,7 @@ bool process(   std::string const& input,
             term_progress(std::cout, (i + 1) / static_cast<double>(size));
         i++;
 
-        split_bytes_count = split_bytes_count - reader.GetHeader().GetSchema().GetByteSize();        
+        split_bytes_count = split_bytes_count - header.GetSchema().GetByteSize();        
         if (split_bytes_count < 0 && split_size > 0) {
             // The user specifies a split size in mb, and we keep counting 
             // down until we've written that many points into the file.  
@@ -255,7 +256,7 @@ bool process(   std::string const& input,
             ostringstream oss;
             oss << out << "-"<< fileno <<".las";
 
-            writer = start_writer(ofs, oss.str(), reader.GetHeader());
+            writer = start_writer(ofs, oss.str(), header);
             fileno++;
             split_bytes_count = 1024*1024*split_size;
         }
@@ -288,6 +289,7 @@ int main(int argc, char* argv[])
     std::vector<liblas::FilterI*> filters;
     std::vector<liblas::TransformI*> transforms;
     
+    liblas::Header header;
 
     try {
 
@@ -307,8 +309,8 @@ int main(int argc, char* argv[])
             ("thin,t", po::value<uint32_t>(&thin)->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
             ("last_return_only", po::value<bool>(&last_return_only)->zero_tokens(), "Keep last returns (cannot be used with --first_return_only)")
             ("first_return_only", po::value<bool>(&first_return_only)->zero_tokens(), "Keep first returns (cannot be used with --last_return_only")
-            ("keep-returns", po::value< string >(), "A comma-separated list of return numbers to keep in the output file: \n--keep-returns 1\nUse --last_return_only ")
-            ("drop-returns", po::value< string >(), "Return numbers to drop.\nUse a comma-separated list, for example, --drop-returns 2,3,4,5\nUse --last_return_only or --first_return_only if you want to ensure getting either one of these.")
+            ("keep-returns", po::value< string >(), "A comma-separated list of return numbers to keep in the output file: \n--keep-returns 1,2,3")
+            ("drop-returns", po::value< string >(), "Return numbers to drop.\nUse a comma-separated list, for example, --drop-returns 2,3,4,5")
             ("valid_only", po::value<bool>(&valid_only)->zero_tokens(), "Keep only valid points")
             ("keep-intensity", po::value< string >(), "Range in which to keep intensity.\nThe following expression types are supported:  \n--keep-intensity 0-100 \n--keep-intensity <200 \n--keep-intensity >400 \n--keep-intensity >=200")
             ("drop-intensity", po::value< string >(), "Range in which to drop intensity.\nThe following expression types are supported:  \n--drop-intensity <200 \n--drop-intensity >400 \n--drop-intensity >=200")
@@ -317,6 +319,8 @@ int main(int argc, char* argv[])
             ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Keep only valid points")
             ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
             ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")   
+            ("offset", po::value< string >(), "A comma-separated list of offsets to set on the output file: \n--offset 0,0,0 \n--offset  min,min,min\n ")
+            ("scale", po::value< string >(), "A comma-separated list of scales to set on the output file: \n--scale 0.1,0.1,0.00001\n ")
 
     ;
     
@@ -337,6 +341,16 @@ int main(int argc, char* argv[])
         if (vm.count("input")) 
         {
             input = vm["input"].as< string >();
+            std::ifstream ifs;
+            if (verbose)
+                std::cout << "Opening " << input << " to fetch Header" << std::endl;
+            if (!liblas::Open(ifs, input.c_str()))
+            {
+                std::cerr << "Cannot open " << input << "for read.  Exiting...";
+                return 1;
+            }
+            liblas::Reader reader(ifs);
+            header = reader.GetHeader();
         } else {
             std::cerr << "Input LAS file not specified!\n" << desc << "\n";
             return 1;
@@ -344,23 +358,32 @@ int main(int argc, char* argv[])
         
         if (vm.count("keep-classes")) 
         {
-            std::string returns = vm["keep-classes"].as< string >();
-            liblas::FilterI* return_filter = MakeClassFilter(  returns, 
-                                                                liblas::FilterI::eInclusion);
-            filters.push_back(return_filter); 
+            std::string classes = vm["keep-classes"].as< string >();
+            if (verbose)
+                std::cout << "Keeping classes with the values: " << classes << std::endl;
+                
+            liblas::FilterI* class_filter = MakeClassFilter(  classes, 
+                                                              liblas::FilterI::eInclusion);
+            filters.push_back(class_filter); 
         }
 
         if (vm.count("drop-classes")) 
         {
-            std::string returns = vm["drop-classes"].as< string >();
-            liblas::FilterI* return_filter = MakeClassFilter(  returns, 
+            std::string classes = vm["drop-classes"].as< string >();
+            if (verbose)
+                std::cout << "Dropping classes with the values: " << classes << std::endl;
+                
+            liblas::FilterI* class_filter = MakeClassFilter(  classes, 
                                                                 liblas::FilterI::eExclusion);
-            filters.push_back(return_filter);
+            filters.push_back(class_filter);
         }
 
         if (vm.count("keep-returns")) 
         {
             std::string returns = vm["keep-returns"].as< string >();
+            if (verbose)
+                std::cout << "Keeping returns with the values: " << returns << std::endl;
+                
             liblas::FilterI* return_filter = MakeReturnFilter(  returns, 
                                                                 liblas::FilterI::eInclusion);
             filters.push_back(return_filter); 
@@ -369,6 +392,9 @@ int main(int argc, char* argv[])
         if (vm.count("drop-returns")) 
         {
             std::string returns = vm["drop-returns"].as< string >();
+            if (verbose)
+                std::cout << "Dropping returns with the values: " << returns << std::endl;
+                
             liblas::FilterI* return_filter = MakeReturnFilter(  returns, 
                                                                 liblas::FilterI::eExclusion);
             filters.push_back(return_filter); 
@@ -377,6 +403,8 @@ int main(int argc, char* argv[])
         if (vm.count("extent")) 
         {
             std::string bounds = vm["extent"].as< string >();
+            if (verbose)
+                std::cout << "Clipping file to the extent : " << bounds << std::endl;
             liblas::FilterI* bounds_filter = MakeBoundsFilter(bounds, liblas::FilterI::eInclusion);
             filters.push_back(bounds_filter);
             
@@ -384,6 +412,8 @@ int main(int argc, char* argv[])
         if (vm.count("keep-intensity")) 
         {
             std::string intensities = vm["keep-intensity"].as< string >();
+            if (verbose)
+                std::cout << "Keeping intensities with values: " << intensities << std::endl;
             if (IsDualRangeFilter(intensities)) {
                 // We need to make two filters
                 // Given a range 0-200, split the expression into two filters 
@@ -404,6 +434,9 @@ int main(int argc, char* argv[])
         if (vm.count("drop-intensity")) 
         {
             std::string intensities = vm["drop-intensity"].as< string >();
+            if (verbose)
+                std::cout << "Dropping intensities with values: " << intensities << std::endl;
+
             if (IsDualRangeFilter(intensities)) {
                 std::cerr << "Range filters are not supported for drop-intensity" << std::endl;
                 return(1);
@@ -415,6 +448,8 @@ int main(int argc, char* argv[])
         if (vm.count("keep-time")) 
         {
             std::string times = vm["keep-time"].as< string >();
+            if (verbose)
+                std::cout << "Keeping times with values: " << times << std::endl;
             if (IsDualRangeFilter(times)) {
                 // We need to make two filters
                 // Given a range 0-200, split the expression into two filters 
@@ -435,6 +470,9 @@ int main(int argc, char* argv[])
         if (vm.count("drop-time")) 
         {
             std::string times = vm["drop-time"].as< string >();
+            if (verbose)
+                std::cout << "Dropping times with values: " << times << std::endl;
+                
             if (IsDualRangeFilter(times)) {
                 std::cerr << "Range filters are not supported for drop-time" << std::endl;
                 return(1);
@@ -444,40 +482,97 @@ int main(int argc, char* argv[])
             }
         }
 
+        if (vm.count("a_srs")) 
+        {
+            liblas::SpatialReference in_ref;
+            
+            std::string input_srs = vm["a_srs"].as< string >();
+            if (verbose)
+                std::cout << "Setting input SRS to " << input_srs << std::endl;
+            in_ref.SetFromUserInput(input_srs);
+            header.SetSRS(in_ref);
+        }
+        
         if (vm.count("t_srs")) 
         {
             liblas::SpatialReference in_ref;
             liblas::SpatialReference out_ref;
             
             std::string output_srs = vm["t_srs"].as< string >();
+            if (verbose)
+                std::cout << "Setting output SRS to " << output_srs << std::endl;
             out_ref.SetFromUserInput(output_srs);
 
             if (vm.count("a_srs")){
                 std::string input_srs = vm["a_srs"].as< string >();
                 in_ref.SetFromUserInput(input_srs);
             } else {
-                // If the user didn't assign an input SRS, we'll read the 
-                // file and fetch it from there.
-                std::ifstream ifs;
-                if (verbose)
-                    std::cout << "Opening " << input << " to fetch SRS" << std::endl;
-                if (!liblas::Open(ifs, input.c_str()))
-                {
-                    std::cerr << "Cannot open " << input << "for read.  Exiting...";
-                    return 1;
-                }
-                liblas::Reader reader(ifs);
-                in_ref = reader.GetHeader().GetSRS();
+                // If the user didn't assign an input SRS, we'll try to take 
+                // it from our existing header.
+                in_ref = header.GetSRS();
                 if (in_ref.GetVLRs().size() == 0)
                 {
                     std::cerr << "No input SRS is available on the file you have specified.  Please use --a_srs to assign one" << std::endl;
                     return 1;
                 }
+                
             }
+            // Set the header's SRS to the output SRS now.  We've already 
+            // made the transformation, and this SRS will be used to 
+            // write the new file(s)
+            header.SetSRS(out_ref);
             liblas::TransformI* srs_transform = new liblas::ReprojectionTransform(in_ref, out_ref);
             transforms.push_back(srs_transform);
         }
-        
+
+        if (vm.count("offset")) 
+        {
+            std::string offset_string = vm["offset"].as< string >();
+            if (verbose)
+                std::cout << "Setting offsets to: " << offset_string << std::endl;
+            boost::char_separator<char> sep(SEPARATORS);
+            std::vector<double> offsets;
+            tokenizer tokens(offset_string, sep);
+            bool mins = false;
+            std::string m("min");
+            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+                // Check if the user set --offset min,min,min
+                // FIXME: make this so the user could do --offset min,min,20.00
+                if (!(*t).compare(m))
+                {   
+                    mins = true;
+                    continue;
+                }
+                else
+                {
+                    mins = false;
+                    offsets.push_back(atof((*t).c_str()));
+                }
+            }
+            if (offsets.size() != 3) 
+            {
+                std::cerr << "All three values for setting the offset must be floats"<< std::endl;
+                return (1);
+            }
+            header.SetOffset(offsets[0], offsets[1], offsets[2]);
+        }
+
+        if (vm.count("scale")) 
+        {
+            std::string scale_string = vm["scale"].as< string >();
+            if (verbose)
+                std::cout << "Setting scales to: " << scale_string << std::endl;
+
+            boost::char_separator<char> sep(SEPARATORS);
+            std::vector<double> scales;
+            tokenizer tokens(scale_string, sep);
+            std::string m("min");
+            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+                scales.push_back(atof((*t).c_str()));
+            }
+
+            header.SetScale(scales[0], scales[1], scales[2]);
+        }                
         if (thin > 0) 
         {
             liblas::ThinFilter* thin_filter = new ThinFilter(thin);
@@ -513,7 +608,8 @@ int main(int argc, char* argv[])
 
         
         bool op = process(  input, 
-                            output, 
+                            output,
+                            header, 
                             filters,
                             transforms,
                             split_size,
