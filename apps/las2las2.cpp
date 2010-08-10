@@ -141,19 +141,19 @@ liblas::FilterI*  MakeBoundsFilter(std::string bounds_string, liblas::FilterI::F
     boost::char_separator<char> sep(SEPARATORS);
     std::vector<double> vbounds;
     tokenizer tokens(bounds_string, sep);
-    liblas::Bounds bounds;
+    liblas::Bounds<double> bounds;
     for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
         vbounds.push_back(atof((*t).c_str()));
     }
     if (vbounds.size() == 4) 
     {
-        bounds = liblas::Bounds(vbounds[0], 
+        bounds = liblas::Bounds<double>(vbounds[0], 
                                 vbounds[1], 
                                 vbounds[2], 
                                 vbounds[3]);
     } else if (vbounds.size() == 6)
     {
-        bounds = liblas::Bounds(vbounds[0], 
+        bounds = liblas::Bounds<double>(vbounds[0], 
                                 vbounds[1], 
                                 vbounds[2], 
                                 vbounds[3], 
@@ -178,8 +178,15 @@ liblas::FilterI*  MakeIntensityFilter(std::string intensities, liblas::FilterI::
     return intensity_filter;
 }
 
-            
-            
+
+liblas::FilterI*  MakeTimeFilter(std::string times, liblas::FilterI::FilterType ftype) 
+{
+    liblas::ContinuousValueFilter<double>::filter_func f = &liblas::Point::GetTime;
+    liblas::ContinuousValueFilter<double>* time_filter = new liblas::ContinuousValueFilter<double>(f, times);
+    time_filter->SetType(ftype);
+    return time_filter;
+}
+
 
 bool process(   std::string const& input,
                 std::string const& output,
@@ -276,7 +283,7 @@ int main(int argc, char* argv[])
 
     // std::vector<boost::uint16_t> returns;
     
-    liblas::Bounds bounds;
+    // liblas::Bounds<double bounds;
     
     bool last_return_only;
     bool first_return_only;
@@ -306,6 +313,8 @@ int main(int argc, char* argv[])
             ("valid_only", po::value<bool>(&valid_only)->zero_tokens(), "Keep only valid points")
             ("keep-intensity", po::value< string >(), "Range in which to keep intensity.\nThe following expression types are supported.  --keep-intensity 0-100\n --keep-intensity <200\n --keep-intensity >400\n--keep-intensity >=200")
             ("drop-intensity", po::value< string >(), "Range in which to drop intensity.\nThe following expression types are supported.  --drop-intensity <200\n --drop-intensity >400\n--drop-intensity >=200")
+            ("keep-time", po::value< string >(), "Range in which to keep time.\nThe following expression types are supported.  --keep-time 413665.2336-414092.8462\n --keep-time <414094.8462\n --keep-time >413665.2336\n--keep-time >=413665.2336")
+            ("drop-time", po::value< string >(), "Range in which to drop time.\nThe following expression types are supported.  --drop-time <413666.2336\n --drop-time >413665.2336\n--drop-time >=413665.2336")
             
 
     ;
@@ -391,12 +400,40 @@ int main(int argc, char* argv[])
                 return(1);
             } else {
                 liblas::FilterI* intensity_filter = MakeIntensityFilter(intensities, liblas::FilterI::eExclusion);
-                filters.push_back(intensity_filter);
+                filters.push_back(intensity_filter);   
+            }
+        }
+        if (vm.count("keep-time")) 
+        {
+            std::string times = vm["keep-time"].as< string >();
+            if (IsDualRangeFilter(times)) {
+                // We need to make two filters
+                // Given a range 0-200, split the expression into two filters 
+                string::size_type dash = times.find_first_of("-");
+                std::string low = times.substr(0,dash);
+                std::string high = times.substr(dash+1, times.size());
+
+                liblas::FilterI* lt_filter = MakeTimeFilter(">="+low, liblas::FilterI::eInclusion);
+                filters.push_back(lt_filter);
+                liblas::FilterI* gt_filter = MakeTimeFilter("<="+high, liblas::FilterI::eInclusion);
+                filters.push_back(gt_filter);                
+            } else {
+                liblas::FilterI* time_filter = MakeTimeFilter(times, liblas::FilterI::eInclusion);
+                filters.push_back(time_filter);
                 
             }
-
         }
-
+        if (vm.count("drop-time")) 
+        {
+            std::string times = vm["drop-time"].as< string >();
+            if (IsDualRangeFilter(times)) {
+                std::cerr << "Range filters are not supported for drop-time" << std::endl;
+                return(1);
+            } else {
+                liblas::FilterI* time_filter = MakeTimeFilter(times, liblas::FilterI::eExclusion);
+                filters.push_back(time_filter);   
+            }
+        }
         if (thin > 0) 
         {
             liblas::ThinFilter* thin_filter = new ThinFilter(thin);

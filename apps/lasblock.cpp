@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
             out << ids[pi] << " ";
         }
 
-        liblas::Bounds bds(b.GetXmin(), b.GetYmin(), b.GetXmax(), b.GetYmax());
+        liblas::Bounds<double> bds(b.GetXmin(), b.GetYmin(), b.GetXmax(), b.GetYmax());
 
         out << std::endl;
     }

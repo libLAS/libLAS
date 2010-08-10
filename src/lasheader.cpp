@@ -520,20 +520,20 @@ double Header::GetMinZ() const
 void Header::SetMax(double x, double y, double z)
 {
     // m_extent = Bounds(m_extent.min(0), m_extent.min(1), m_extent.max(0), m_extent.max(1), m_extent.min(2), m_extent.max(2));
-    m_extent = Bounds(m_extent.min(0), m_extent.min(1), x, y, m_extent.min(2), z);
+    m_extent = Bounds<double>(m_extent.min(0), m_extent.min(1), x, y, m_extent.min(2), z);
 }
 
 void Header::SetMin(double x, double y, double z)
 {
-    m_extent = Bounds(x, y, m_extent.max(0), m_extent.max(1), z, m_extent.max(2));
+    m_extent = Bounds<double>(x, y, m_extent.max(0), m_extent.max(1), z, m_extent.max(2));
 }
 
-void Header::SetExtent(Bounds const& extent)
+void Header::SetExtent(Bounds<double> const& extent)
 {
     m_extent = extent;
 }
 
-const Bounds& Header::GetExtent() const
+const Bounds<double>& Header::GetExtent() const
 {
     return m_extent;
 }

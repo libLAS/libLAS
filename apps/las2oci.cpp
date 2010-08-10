@@ -36,7 +36,7 @@ void SetElements(   OWStatement* statement,
 
 void SetOrdinates(   OWStatement* statement,
                      OCIArray* sdo_ordinates, 
-                     liblas::Bounds const& extent)
+                     liblas::Bounds<double> const& extent)
 {
     
     statement->AddElement(sdo_ordinates, extent.min(0));
@@ -671,7 +671,7 @@ bool CreateSDOEntry(    OWConnection* connection,
                         bool bUseSolidGeometry,
                         bool bUse3d,
                         bool bSetExtents,
-                        liblas::Bounds const& bounds)
+                        liblas::Bounds<double> const& bounds)
 {
     ostringstream oss;
     OWStatement* statement = 0;
@@ -693,7 +693,7 @@ bool CreateSDOEntry(    OWConnection* connection,
     }
 
     double tolerance = 0.05;
-    liblas::Bounds e = *query->bounds.get();
+    liblas::Bounds<double> e = *query->bounds.get();
 
     if (IsGeographic(connection, srid)) {
         e.min(0,-180.0); e.max(0,180.0);
@@ -819,7 +819,7 @@ long CreatePCEntry( OWConnection* connection,
     
 
     // extent* e = GetExtent(  *(query->bounds.get()), bUse3d );
-    liblas::Bounds e =  *(query->bounds.get());
+    liblas::Bounds<double> e =  *(query->bounds.get());
 
     s_geom << "           mdsys.sdo_geometry("<<s_gtype.str() <<", "<<s_srid.str()<<", null,\n"
 "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
@@ -942,7 +942,7 @@ int main(int argc, char* argv[])
     int srid = 0;
     long precision = 8;
     
-    liblas::Bounds global_extent;
+    liblas::Bounds<double> global_extent;
     
     bool bSetExtents = false;
     

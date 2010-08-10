@@ -38,7 +38,7 @@ struct is_xy
 // Functor to calculate bounding box of a set of points
 struct bbox_calculator
 {
-    bbox_calculator(liblas::Bounds& bbox) : bbox(&bbox), empty(true) {}
+    bbox_calculator(liblas::Bounds<double>& bbox) : bbox(&bbox), empty(true) {}
 
     void operator()(liblas::Point const& p)
     {
@@ -67,7 +67,7 @@ struct bbox_calculator
     }
 
 private:
-    liblas::Bounds* bbox;
+    liblas::Bounds<double>* bbox;
     bool empty;
 };
 

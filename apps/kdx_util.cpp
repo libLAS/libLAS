@@ -41,7 +41,7 @@ KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
             input >> i;
             ids.push_back(i);
         }
-        liblas::Bounds b(low[0], low[1], high[0],high[1]);
+        liblas::Bounds<double> b(low[0], low[1], high[0],high[1]);
         // SpatialIndex::Region* pr = new SpatialIndex::Region(low, high, 2);
         // printf("Ids size: %d %.3f\n", ids.size(), pr->getLow(0));
         IndexResult result(static_cast<uint32_t>(id));
@@ -50,7 +50,7 @@ KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
         m_results.push_back(result);
     }
 
-    bounds = boost::shared_ptr<liblas::Bounds>(new liblas::Bounds(mins[0], mins[1], maxs[0], maxs[1]));
+    bounds = boost::shared_ptr<liblas::Bounds<double > >(new liblas::Bounds<double>(mins[0], mins[1], maxs[0], maxs[1]));
 }
 
 bool GetPointData(  liblas::Point const& p, 

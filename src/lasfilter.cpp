@@ -100,7 +100,7 @@ BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy, 
     m_2d = false;
 }
 
-BoundsFilter::BoundsFilter( Bounds const& bounds) : FilterI(eInclusion)
+BoundsFilter::BoundsFilter( Bounds<double> const& bounds) : FilterI(eInclusion)
 {
     mins[0] = bounds.min(0);
     mins[1] = bounds.min(1);

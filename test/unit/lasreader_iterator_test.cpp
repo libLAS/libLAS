@@ -379,7 +379,7 @@ namespace tut
         lasreader_iterator end;
 
         typedef liblas::detail::Point<double> point_t;
-        typedef liblas::Bounds bbox_t;
+        typedef liblas::Bounds<double> bbox_t;
 
         Header const& h = reader_.GetHeader();
         bbox_t lasbbox = h.GetExtent();

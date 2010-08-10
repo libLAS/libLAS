@@ -65,7 +65,6 @@ set(LIBLAS_DETAIL_WRITER_HPP
   ${LIBLAS_HEADERS_DIR}/detail/writer/header.hpp)
 
 set(LIBLAS_CPP
-  lasbounds.cpp
   lasclassification.cpp
   lascolor.cpp
   laserror.cpp

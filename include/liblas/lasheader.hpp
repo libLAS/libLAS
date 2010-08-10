@@ -324,8 +324,8 @@ public:
     Schema GetSchema() const;
     void SetSchema(const Schema& format);
 
-    const Bounds& GetExtent() const;
-    void SetExtent(Bounds const& extent);
+    const Bounds<double>& GetExtent() const;
+    void SetExtent(Bounds<double> const& extent);
 
 private:
     
@@ -379,7 +379,7 @@ private:
     RecordsByReturnArray m_pointRecordsByReturn;
     PointScales m_scales;
     PointOffsets m_offsets;
-    Bounds m_extent;
+    Bounds<double> m_extent;
     std::vector<VariableRecord> m_vlrs;
     SpatialReference m_srs;
     Schema m_format;

@@ -23,8 +23,8 @@ public:
 
     IDVector const& GetIDs() const { return ids; }
     void SetIDs(IDVector& v) {ids = v;}
-    const liblas::Bounds GetBounds() const { return bounds; }
-    void SetBounds(const liblas::Bounds b) {bounds = b;}
+    const liblas::Bounds<double> GetBounds() const { return bounds; }
+    void SetBounds(const liblas::Bounds<double> b) {bounds = b;}
     uint32_t GetID() const {return m_id;}
     void SetID(uint32_t v) {m_id = v;}
     
@@ -39,7 +39,7 @@ private:
     // IndexResult& operator=(IndexResult const& rhs);
     
     IDVector ids;
-    liblas::Bounds bounds;
+    liblas::Bounds<double> bounds;
     uint32_t m_id;
 
 };
@@ -49,7 +49,7 @@ class KDXIndexSummary
 {
 public:
     KDXIndexSummary(std::istream& input);    
-    boost::shared_ptr<liblas::Bounds> bounds;
+    boost::shared_ptr<liblas::Bounds<double > > bounds;
     ResultsVector& GetResults() { return m_results; }
 private:
     ResultsVector m_results;
