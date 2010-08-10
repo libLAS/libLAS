@@ -198,20 +198,12 @@ void max(std::size_t const& index, T v)
     }
     maxs[index] = v;
 }
-// 
-// inline bool operator==(Bounds<T> const& lhs, Bounds<T> const& rhs)
-// {
-//     return lhs.equal(rhs);
-// }
+
 inline bool operator==(Bounds<T> const& rhs) const
 {
     return equal(rhs);
 }
 
-// inline bool operator!=(Bounds<T> const& lhs, Bounds<T> const& rhs)
-// {
-//     return (!lhs.equal(rhs));
-// }
 inline bool operator!=(Bounds<T> const& rhs) const
 {
     return (!equal(rhs));
@@ -268,7 +260,7 @@ bool intersects(Bounds const& other) const
         throw std::runtime_error(msg.str());        
     }
 
-    for (uint32_t i = 0; i < dimension(); i++){
+    for (size_type i = 0; i < dimension(); i++){
         if (min(i) > other.max(i) || max(i) < other.min(i)) return false;
     }
     
