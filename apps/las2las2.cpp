@@ -321,6 +321,7 @@ int main(int argc, char* argv[])
             ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")   
             ("offset", po::value< string >(), "A comma-separated list of offsets to set on the output file: \n--offset 0,0,0 \n--offset  min,min,min\n ")
             ("scale", po::value< string >(), "A comma-separated list of scales to set on the output file: \n--scale 0.1,0.1,0.00001\n ")
+            ("format,f", po::value< string >(), "Set the LAS format of the new file (only 1.0-1.2 supported at this time): \n--format 1.2\n-f 1.1")
 
     ;
     
@@ -572,7 +573,34 @@ int main(int argc, char* argv[])
             }
 
             header.SetScale(scales[0], scales[1], scales[2]);
-        }                
+        }
+        if (vm.count("format")) 
+        {
+            std::string format_string = vm["format"].as< string >();
+            if (verbose)
+                std::cout << "Setting format to: " << format_string << std::endl;
+                
+            boost::char_separator<char> sep(".");
+            std::vector<int> versions;
+            tokenizer tokens(format_string, sep);
+            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+                const char* v =(*t).c_str();
+                int i = atoi(v);
+                versions.push_back(i);
+            }
+            if (versions.size() < 2)
+            {
+                std::cerr << "Format version must dotted -- ie, '1.0' or '1.2', not " << format_string << std::endl;
+                return (1);                
+            }
+            
+            int minor = versions[1];
+            if (minor > 2){
+                std::cerr << "Format version must be 1.0-1.2, not " << format_string << std::endl;
+                return (1);
+            }
+            header.SetVersionMinor(static_cast<uint8_t>(minor)); 
+        }
         if (thin > 0) 
         {
             liblas::ThinFilter* thin_filter = new ThinFilter(thin);
