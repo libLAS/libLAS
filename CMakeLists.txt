@@ -3,10 +3,6 @@
 #
 # Author: Mateusz Loskot <mateusz@loskot.net>
 #
-# ************************************************************************
-# WARNING (mloskot): A PROTOTYPE - WORK IN PROGRESS
-# Here are details about this work: http://liblas.org/ticket/52
-# ************************************************************************
 #
 ###############################################################################
 # libLAS general settings
@@ -49,7 +45,7 @@ set(ENABLE_CTEST FALSE CACHE BOOL
 
 ###############################################################################
 # CMake settings
-cmake_minimum_required(VERSION 2.8.0)
+cmake_minimum_required(VERSION 2.6.0)
 
 set(CMAKE_COLOR_MAKEFILE ON)
 
