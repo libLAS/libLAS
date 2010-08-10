@@ -189,6 +189,7 @@ liblas::FilterI*  MakeTimeFilter(std::string times, liblas::FilterI::FilterType 
 bool process(   std::string const& input,
                 std::string const& output,
                 std::vector<liblas::FilterI*>& filters,
+                std::vector<liblas::TransformI*>& transforms,
                 uint32_t split_size,
                 bool verbose)
 {
@@ -204,6 +205,7 @@ bool process(   std::string const& input,
     liblas::Reader reader(ifs);
     
     reader.SetFilters(&filters);
+    reader.SetTransforms(&transforms);
 
     std::ofstream* ofs = new std::ofstream;
     std::string out = output;
@@ -278,18 +280,14 @@ int main(int argc, char* argv[])
     uint32_t thin;
     std::string input;
     std::string output;
-
-
-
-    // std::vector<boost::uint16_t> returns;
-    
-    // liblas::Bounds<double bounds;
     
     bool last_return_only;
     bool first_return_only;
     bool valid_only;
     bool verbose = false;
-    std::vector<liblas::FilterI*> filters;    
+    std::vector<liblas::FilterI*> filters;
+    std::vector<liblas::TransformI*> transforms;
+    
 
     try {
 
@@ -299,25 +297,26 @@ int main(int argc, char* argv[])
         p.add("output", 1);
 
         desc.add_options()
-            ("help", "produce help message")
+            ("help,h", "produce help message")
             ("split,s", po::value<uint32_t>(&split_size)->default_value(0), "Split file into multiple files with each being this size in MB or less. If this value is 0, no splitting is done")
             ("input,i", po::value< string >(), "input LAS file")
             ("output,o", po::value< string >(&output)->default_value("output.las"), "output LAS file")
-            ("keep-classes,k", po::value< string >(), "Classifications to keep.\nUse a comma-separated list, for example, -k 2,4,12")
-            ("drop-classes,d", po::value< string >(), "Classifications to drop.\nUse a comma-separated list, for example, -d 1,7,8")
+            ("keep-classes,k", po::value< string >(), "A comma-separated list of classifications to keep:\n-k 2,4,12\n--keep-classes 2")
+            ("drop-classes,d", po::value< string >(), "A comma-separated list of classifications to drop:\n-d 1,7,8\n--drop-classes 2")
             ("extent,e", po::value< string >(), "Extent window that points must fall within to keep.\nUse a comma-separated list, for example, \n  -e minx, miny, maxx, maxy\n  or \n  -e minx, miny, maxx, maxy, minz, maxz")
             ("thin,t", po::value<uint32_t>(&thin)->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
             ("last_return_only", po::value<bool>(&last_return_only)->zero_tokens(), "Keep last returns (cannot be used with --first_return_only)")
             ("first_return_only", po::value<bool>(&first_return_only)->zero_tokens(), "Keep first returns (cannot be used with --last_return_only")
-            ("keep-returns", po::value< string >(), "Return numbers to keep.\nUse a comma-separated list, for example, --keep-returns 1\nUse --last_return_only or --first_return_only if you want to ensure getting either one of these.")
+            ("keep-returns", po::value< string >(), "A comma-separated list of return numbers to keep in the output file: \n--keep-returns 1\nUse --last_return_only ")
             ("drop-returns", po::value< string >(), "Return numbers to drop.\nUse a comma-separated list, for example, --drop-returns 2,3,4,5\nUse --last_return_only or --first_return_only if you want to ensure getting either one of these.")
             ("valid_only", po::value<bool>(&valid_only)->zero_tokens(), "Keep only valid points")
-            ("keep-intensity", po::value< string >(), "Range in which to keep intensity.\nThe following expression types are supported.  --keep-intensity 0-100\n --keep-intensity <200\n --keep-intensity >400\n--keep-intensity >=200")
-            ("drop-intensity", po::value< string >(), "Range in which to drop intensity.\nThe following expression types are supported.  --drop-intensity <200\n --drop-intensity >400\n--drop-intensity >=200")
-            ("keep-time", po::value< string >(), "Range in which to keep time.\nThe following expression types are supported.  --keep-time 413665.2336-414092.8462\n --keep-time <414094.8462\n --keep-time >413665.2336\n--keep-time >=413665.2336")
-            ("drop-time", po::value< string >(), "Range in which to drop time.\nThe following expression types are supported.  --drop-time <413666.2336\n --drop-time >413665.2336\n--drop-time >=413665.2336")
-            ("verbose", po::value<bool>(&verbose)->zero_tokens(), "Keep only valid points")
-            
+            ("keep-intensity", po::value< string >(), "Range in which to keep intensity.\nThe following expression types are supported:  \n--keep-intensity 0-100 \n--keep-intensity <200 \n--keep-intensity >400 \n--keep-intensity >=200")
+            ("drop-intensity", po::value< string >(), "Range in which to drop intensity.\nThe following expression types are supported:  \n--drop-intensity <200 \n--drop-intensity >400 \n--drop-intensity >=200")
+            ("keep-time", po::value< string >(), "Range in which to keep time.\nThe following expression types are supported:  \n--keep-time 413665.2336-414092.8462 \n--keep-time <414094.8462 \n--keep-time >413665.2336 \n--keep-time >=413665.2336")
+            ("drop-time", po::value< string >(), "Range in which to drop time.\nThe following expression types are supported:  \n--drop-time <413666.2336 \n--drop-time >413665.2336 \n--drop-time >=413665.2336")
+            ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Keep only valid points")
+            ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
+            ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")   
 
     ;
     
@@ -335,6 +334,14 @@ int main(int argc, char* argv[])
 
         boost::char_separator<char> sep(SEPARATORS);
 
+        if (vm.count("input")) 
+        {
+            input = vm["input"].as< string >();
+        } else {
+            std::cerr << "Input LAS file not specified!\n" << desc << "\n";
+            return 1;
+        }
+        
         if (vm.count("keep-classes")) 
         {
             std::string returns = vm["keep-classes"].as< string >();
@@ -436,6 +443,41 @@ int main(int argc, char* argv[])
                 filters.push_back(time_filter);   
             }
         }
+
+        if (vm.count("t_srs")) 
+        {
+            liblas::SpatialReference in_ref;
+            liblas::SpatialReference out_ref;
+            
+            std::string output_srs = vm["t_srs"].as< string >();
+            out_ref.SetFromUserInput(output_srs);
+
+            if (vm.count("a_srs")){
+                std::string input_srs = vm["a_srs"].as< string >();
+                in_ref.SetFromUserInput(input_srs);
+            } else {
+                // If the user didn't assign an input SRS, we'll read the 
+                // file and fetch it from there.
+                std::ifstream ifs;
+                if (verbose)
+                    std::cout << "Opening " << input << " to fetch SRS" << std::endl;
+                if (!liblas::Open(ifs, input.c_str()))
+                {
+                    std::cerr << "Cannot open " << input << "for read.  Exiting...";
+                    return 1;
+                }
+                liblas::Reader reader(ifs);
+                in_ref = reader.GetHeader().GetSRS();
+                if (in_ref.GetVLRs().size() == 0)
+                {
+                    std::cerr << "No input SRS is available on the file you have specified.  Please use --a_srs to assign one" << std::endl;
+                    return 1;
+                }
+            }
+            liblas::TransformI* srs_transform = new liblas::ReprojectionTransform(in_ref, out_ref);
+            transforms.push_back(srs_transform);
+        }
+        
         if (thin > 0) 
         {
             liblas::ThinFilter* thin_filter = new ThinFilter(thin);
@@ -468,17 +510,12 @@ int main(int argc, char* argv[])
         }
         
         
-        if (vm.count("input")) 
-        {
-            input = vm["input"].as< string >();
-        } else {
-            std::cerr << "Input LAS file not specified!\n" << desc << "\n";
-            return 1;
-        } 
+
         
         bool op = process(  input, 
                             output, 
                             filters,
+                            transforms,
                             split_size,
                             verbose
                             );
