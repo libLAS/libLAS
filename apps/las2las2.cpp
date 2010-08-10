@@ -1,16 +1,14 @@
-// $Id$
-//
-// ts2las translates TerraSolid .bin file to ASPRS LAS file.
-//
-// TerraSolid format: http://cdn.terrasolid.fi/tscan.pdf
-//
-// (C) Copyright Howard Butler 2009, hobu.inc@gmail.com
-//
-// Distributed under the BSD License
-// (See accompanying file LICENSE.txt or copy at
-// http://www.opensource.org/licenses/bsd-license.php)
-//
-// liblas
+/***************************************************************************
+ *
+ * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
+ * Purpose: LAS translation with optional configuration
+ * Author:  Howard Butler, hobu.inc at gmail.com
+ ***************************************************************************
+ * Copyright (c) 2010, Howard Butler, hobu.inc at gmail.com 
+ *
+ * See LICENSE.txt in this source distribution for more information.
+ **************************************************************************/
+
 #include <liblas/liblas.hpp>
 
 #include <fstream>
@@ -191,7 +189,8 @@ liblas::FilterI*  MakeTimeFilter(std::string times, liblas::FilterI::FilterType 
 bool process(   std::string const& input,
                 std::string const& output,
                 std::vector<liblas::FilterI*>& filters,
-                uint32_t split_size)
+                uint32_t split_size,
+                bool verbose)
 {
 
 
@@ -218,7 +217,7 @@ bool process(   std::string const& input,
         writer = start_writer(ofs, out+"-1"+".las", reader.GetHeader());
     }
 
-
+    if (verbose)
     std::cout << "Target:" 
         << "\n - : " << output
         << std::endl;
@@ -235,8 +234,9 @@ bool process(   std::string const& input,
     while (reader.ReadNextPoint())
     {
         liblas::Point const& p = reader.GetPoint(); 
-        writer->WritePoint(p);  
-        term_progress(std::cout, (i + 1) / static_cast<double>(size));
+        writer->WritePoint(p);
+        if (verbose)
+            term_progress(std::cout, (i + 1) / static_cast<double>(size));
         i++;
 
         split_bytes_count = split_bytes_count - reader.GetHeader().GetSchema().GetByteSize();        
@@ -258,8 +258,8 @@ bool process(   std::string const& input,
             split_bytes_count = 1024*1024*split_size;
         }
     }
-    
-    std::cout << std::endl;
+    if (verbose)
+        std::cout << std::endl;
     
     delete writer;
     delete ofs;
@@ -288,6 +288,7 @@ int main(int argc, char* argv[])
     bool last_return_only;
     bool first_return_only;
     bool valid_only;
+    bool verbose = false;
     std::vector<liblas::FilterI*> filters;    
 
     try {
@@ -315,6 +316,7 @@ int main(int argc, char* argv[])
             ("drop-intensity", po::value< string >(), "Range in which to drop intensity.\nThe following expression types are supported.  --drop-intensity <200\n --drop-intensity >400\n--drop-intensity >=200")
             ("keep-time", po::value< string >(), "Range in which to keep time.\nThe following expression types are supported.  --keep-time 413665.2336-414092.8462\n --keep-time <414094.8462\n --keep-time >413665.2336\n--keep-time >=413665.2336")
             ("drop-time", po::value< string >(), "Range in which to drop time.\nThe following expression types are supported.  --drop-time <413666.2336\n --drop-time >413665.2336\n--drop-time >=413665.2336")
+            ("verbose", po::value<bool>(&verbose)->zero_tokens(), "Keep only valid points")
             
 
     ;
@@ -477,7 +479,8 @@ int main(int argc, char* argv[])
         bool op = process(  input, 
                             output, 
                             filters,
-                            split_size
+                            split_size,
+                            verbose
                             );
         if (!op) {
             return (1);
