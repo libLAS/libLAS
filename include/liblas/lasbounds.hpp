@@ -68,29 +68,9 @@ public:
     typedef typename std::vector<T> Vector;
     typedef typename std::vector<T>::size_type size_type;
         
-    // Bounds<T>();
-    // Bounds(T minx, T miny, T maxx, T maxy, T minz, T maxz);
-    // Bounds(T minx, T miny, T maxx, T maxy);
-    // Bounds(const Point& min, const Point& max);
-    // // Bounds( Vector const& low, Vector const& high);
-    // Bounds(Bounds<T> const& other);
-    // Bounds& operator=(Bounds const& rhs);
-    
-    // T min(std::size_t const& index) const;
-    // void min(std::size_t const& index, T v);
-    // T max(std::size_t const& index) const;
-    // void max(std::size_t const& index, T v);
-    
-    // bool equal(Bounds<T> const& other) const;
-    // bool intersects(Bounds<T> const& other) const;
-    // size_type dimension() const;
-    // void dimension(size_type d);
-        
 private:
     Vector mins;
     Vector maxs;
-    
-    // void verify();
 
 public:
 
