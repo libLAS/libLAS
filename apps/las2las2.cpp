@@ -176,7 +176,6 @@ liblas::FilterI*  MakeIntensityFilter(std::string intensities, liblas::FilterI::
     return intensity_filter;
 }
 
-
 liblas::FilterI*  MakeTimeFilter(std::string times, liblas::FilterI::FilterType ftype) 
 {
     liblas::ContinuousValueFilter<double>::filter_func f = &liblas::Point::GetTime;
@@ -185,6 +184,13 @@ liblas::FilterI*  MakeTimeFilter(std::string times, liblas::FilterI::FilterType 
     return time_filter;
 }
 
+liblas::FilterI*  MakeScanAngleFilter(std::string intensities, liblas::FilterI::FilterType ftype) 
+{
+    liblas::ContinuousValueFilter<int8_t>::filter_func f = &liblas::Point::GetScanAngleRank;
+    liblas::ContinuousValueFilter<int8_t>* intensity_filter = new liblas::ContinuousValueFilter<int8_t>(f, intensities);
+    intensity_filter->SetType(ftype);
+    return intensity_filter;
+}
 
 bool process(   std::string const& input,
                 std::string const& output,
@@ -316,6 +322,9 @@ int main(int argc, char* argv[])
             ("drop-intensity", po::value< string >(), "Range in which to drop intensity.\nThe following expression types are supported:  \n--drop-intensity <200 \n--drop-intensity >400 \n--drop-intensity >=200")
             ("keep-time", po::value< string >(), "Range in which to keep time.\nThe following expression types are supported:  \n--keep-time 413665.2336-414092.8462 \n--keep-time <414094.8462 \n--keep-time >413665.2336 \n--keep-time >=413665.2336")
             ("drop-time", po::value< string >(), "Range in which to drop time.\nThe following expression types are supported:  \n--drop-time <413666.2336 \n--drop-time >413665.2336 \n--drop-time >=413665.2336")
+            ("keep-scan-angle", po::value< string >(), "Range in which to keep scan angle.\nThe following expression types are supported:  \n--keep-scan-angle 0-100 \n--keep-scan-angle <100\n--keep-scan-angle <=100")
+            ("drop-scan-angle", po::value< string >(), "Range in which to drop scan angle.\nThe following expression types are supported:  \n--drop-scan-angle <30 \n--drop-scan-angle >100 \n--drop-scan-angle >=100")
+
             ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Verbose message output")
             ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
             ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")   
@@ -446,6 +455,43 @@ int main(int argc, char* argv[])
                 filters.push_back(intensity_filter);   
             }
         }
+        if (vm.count("keep-scan-angle")) 
+        {
+            std::string angles = vm["keep-scan-angle"].as< string >();
+            if (verbose)
+                std::cout << "Keeping scan angles with values: " << angles << std::endl;
+            if (IsDualRangeFilter(angles)) {
+                // We need to make two filters
+                // Given a range 0-200, split the expression into two filters 
+                string::size_type dash = angles.find_first_of("-");
+                std::string low = angles.substr(0,dash);
+                std::string high = angles.substr(dash+1, angles.size());
+
+                liblas::FilterI* lt_filter = MakeScanAngleFilter(">="+low, liblas::FilterI::eInclusion);
+                filters.push_back(lt_filter);
+                liblas::FilterI* gt_filter = MakeScanAngleFilter("<="+high, liblas::FilterI::eInclusion);
+                filters.push_back(gt_filter);                
+            } else {
+                liblas::FilterI* angle_filter = MakeScanAngleFilter(angles, liblas::FilterI::eInclusion);
+                filters.push_back(angle_filter);
+                
+            }
+        }
+        if (vm.count("drop-scan-angle")) 
+        {
+            std::string angles = vm["drop-scan-angle"].as< string >();
+            if (verbose)
+                std::cout << "Dropping scan angles with values: " << angles << std::endl;
+
+            if (IsDualRangeFilter(angles)) {
+                std::cerr << "Range filters are not supported for drop-scan-angle" << std::endl;
+                return(1);
+            } else {
+                liblas::FilterI* angle_filter = MakeScanAngleFilter(angles, liblas::FilterI::eExclusion);
+                filters.push_back(angle_filter);   
+            }
+        }
+        
         if (vm.count("keep-time")) 
         {
             std::string times = vm["keep-time"].as< string >();
