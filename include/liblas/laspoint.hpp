@@ -332,7 +332,7 @@ inline double Point::GetTime() const
 
 inline void Point::SetTime(double const& time)
 {
-    assert(time >= 0); // TODO: throw? --mloskot
+    // assert(time >= 0); // TODO: throw? --mloskot  // negative times are legit, I think -- hobu
     m_gps_time = time;
 }
 
