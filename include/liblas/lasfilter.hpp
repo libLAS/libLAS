@@ -339,6 +339,32 @@ private:
 
 };
 
+
+class ColorFilter: public FilterI
+{
+public:
+
+    ColorFilter(liblas::Color const& low, 
+                liblas::Color const& high);
+                
+    ColorFilter(liblas::Color::value_type low_red, 
+                liblas::Color::value_type high_red,
+                liblas::Color::value_type low_blue,
+                liblas::Color::value_type high_blue,
+                liblas::Color::value_type low_green,
+                liblas::Color::value_type high_green);
+    bool filter(const Point& point);
+    
+private:
+    
+    liblas::Color m_low;
+    liblas::Color m_high;
+
+    ColorFilter(ColorFilter const& other);
+    ColorFilter& operator=(ColorFilter const& rhs);
+    bool DoExclude();
+};
+
 } // namespace liblas
 
 #endif // ndef LIBLAS_LASFILTER_HPP_INCLUDED

@@ -233,4 +233,57 @@ bool ValidationFilter::filter(const liblas::Point& p)
 }
 
 
+ColorFilter::ColorFilter(liblas::Color const& low, liblas::Color const& high) :
+ liblas::FilterI(eInclusion), m_low(low), m_high(high)
+{
+
+}
+
+ColorFilter::ColorFilter(liblas::Color::value_type low_red, 
+                liblas::Color::value_type high_red,
+                liblas::Color::value_type low_blue,
+                liblas::Color::value_type high_blue,
+                liblas::Color::value_type low_green,
+                liblas::Color::value_type high_green) :
+ liblas::FilterI(eInclusion), m_low(low_red, low_green, low_blue), m_high(high_red, high_blue, high_green)
+{
+
+}
+
+bool ColorFilter::DoExclude()
+{
+    if (GetType() == eInclusion) {
+        return true;
+    } else {
+        return false;
+    }  
+}
+
+
+bool ColorFilter::filter(const liblas::Point& p)
+{
+
+    liblas::Color const& c = p.GetColor();
+    
+    if (c.GetRed() < m_low.GetRed())
+        return !DoExclude();
+    
+    if (c.GetRed() > m_high.GetRed())
+        return !DoExclude();
+
+    if (c.GetBlue() < m_low.GetBlue())
+        return !DoExclude();
+    
+    if (c.GetBlue() > m_high.GetBlue())
+        return !DoExclude();
+
+    if (c.GetGreen() < m_low.GetGreen())
+        return !DoExclude();
+    
+    if (c.GetGreen() > m_high.GetGreen())
+        return !DoExclude();
+
+    return DoExclude();
+}
+
 } // namespace liblas
