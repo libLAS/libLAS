@@ -192,6 +192,13 @@ liblas::FilterI*  MakeScanAngleFilter(std::string intensities, liblas::FilterI::
     return intensity_filter;
 }
 
+liblas::FilterI* MakeColorFilter(liblas::Color const& low, liblas::Color const& high, liblas::FilterI::FilterType ftype)
+{
+    liblas::ColorFilter* filter = new liblas::ColorFilter(low, high);
+    filter->SetType(ftype);
+    return filter;
+}
+
 bool process(   std::string const& input,
                 std::string const& output,
                 liblas::Header const& header,
@@ -324,6 +331,8 @@ int main(int argc, char* argv[])
             ("drop-time", po::value< string >(), "Range in which to drop time.\nThe following expression types are supported:  \n--drop-time <413666.2336 \n--drop-time >413665.2336 \n--drop-time >=413665.2336")
             ("keep-scan-angle", po::value< string >(), "Range in which to keep scan angle.\nThe following expression types are supported:  \n--keep-scan-angle 0-100 \n--keep-scan-angle <100\n--keep-scan-angle <=100")
             ("drop-scan-angle", po::value< string >(), "Range in which to drop scan angle.\nThe following expression types are supported:  \n--drop-scan-angle <30 \n--drop-scan-angle >100 \n--drop-scan-angle >=100")
+            ("keep-color", po::value< string >(), "Range in which to keep colors.\nDefine colors as two 3-tuples (R,G,B-R,G,B):  \n--keep-color '0,0,0-125,125,125'")
+            ("drop-color", po::value< string >(), "Range in which to drop colors.\nDefine colors as two 3-tuples (R,G,B-R,G,B):  \n--drop-color '255,255,255-65536,65536,65536'")
 
             ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Verbose message output")
             ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
@@ -572,6 +581,60 @@ int main(int argc, char* argv[])
             transforms.push_back(srs_transform);
         }
 
+        if (vm.count("keep-color")) 
+        {
+            std::string keepers = vm["keep-color"].as< string >();
+            if (verbose)
+                std::cout << "Keeping colors in range:: " << keepers << std::endl;
+                
+            // Pull apart color ranges in the form: R,G,B-R,G,B
+            boost::char_separator<char> sep_dash("-");
+            boost::char_separator<char> sep_comma(",");
+            std::vector<liblas::Color> colors;
+            tokenizer low_high(keepers, sep_dash);
+            for (tokenizer::iterator t = low_high.begin(); t != low_high.end(); ++t) {
+                
+                tokenizer rgbs((*t), sep_comma);
+                std::vector<liblas::Color::value_type> rgb;
+                for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
+                {
+                    rgb.push_back(atof((*c).c_str()));
+                }
+                liblas::Color color(rgb[0], rgb[1], rgb[2]);
+                colors.push_back(color);
+            }
+            
+            liblas::FilterI* color_filter = MakeColorFilter(colors[0], colors[1], liblas::FilterI::eInclusion);
+            filters.push_back(color_filter);
+        }
+        if (vm.count("drop-color")) 
+        {
+            std::string dropers = vm["drop-color"].as< string >();
+            if (verbose)
+                std::cout << "Dropping colors in range:: " << dropers << std::endl;
+                
+            // Pull apart color ranges in the form: R,G,B-R,G,B
+            boost::char_separator<char> sep_dash("-");
+            boost::char_separator<char> sep_comma(",");
+            std::vector<liblas::Color> colors;
+            tokenizer low_high(dropers, sep_dash);
+            for (tokenizer::iterator t = low_high.begin(); t != low_high.end(); ++t) {
+                
+                tokenizer rgbs((*t), sep_comma);
+                std::vector<liblas::Color::value_type> rgb;
+                for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
+                {
+                    rgb.push_back(atof((*c).c_str()));
+                }
+                liblas::Color color(rgb[0], rgb[1], rgb[2]);
+                colors.push_back(color);
+            }
+            
+            liblas::FilterI* color_filter = MakeColorFilter(colors[0], colors[1], liblas::FilterI::eExclusion);
+            filters.push_back(color_filter);
+        }
+
+
         if (vm.count("offset")) 
         {
             std::string offset_string = vm["offset"].as< string >();
@@ -649,6 +712,9 @@ int main(int argc, char* argv[])
         }
         if (thin > 0) 
         {
+            if (verbose)
+                std::cout << "Thining file by keeping every "<<thin<<"'th point "  << std::endl;
+                
             liblas::ThinFilter* thin_filter = new ThinFilter(thin);
             filters.push_back(thin_filter);    
         }
