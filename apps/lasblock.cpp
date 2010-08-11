@@ -21,16 +21,41 @@
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
 #endif
 
+#include <boost/program_options.hpp>
 
-void usage() {
-    std::cout << "----------------------------------------------------------\n";
-    std::cout << "    lasblock (version ) usage:\n";
-    std::cout << "----------------------------------------------------------\n";
-    
-    std::cout << " lasblock filename.las -c 1000 \n";
-    std::cout << "--capacity: (-c)  capacity of the blocks\n";
-       
+namespace po = boost::program_options;
+
+bool term_progress(std::ostream& os, double complete)
+{
+    static int lastTick = -1;
+    int tick = static_cast<int>(complete * 40.0);
+
+    tick = std::min(40, std::max(0, tick));
+
+    // Have we started a new progress run?  
+    if (tick < lastTick && lastTick >= 39)
+        lastTick = -1;
+
+    if (tick <= lastTick)
+        return true;
+
+    while (tick > lastTick)
+    {
+        lastTick++;
+        if (lastTick % 4 == 0)
+            os << (lastTick / 4) * 10;
+        else
+            os << ".";
+    }
+
+    if( tick == 40 )
+        os << " - done.\n";
+    else
+        os.flush();
+
+    return true;
 }
+
 
 using namespace liblas;
 
@@ -40,87 +65,82 @@ int main(int argc, char* argv[])
     std::string input;
     std::string output;
     
-    long capacity = 10000;
+    long capacity = 3000;
+    long precision = 8;
+    bool verbose = false;
 
+
+    po::options_description desc("Allowed lasblock options");
+    po::positional_options_description p;
+    p.add("input", 1);
+    p.add("output", 1);
+
+    desc.add_options()
+        ("help,h", "Produce this help message")
+        ("capacity,c", po::value<long>(&capacity)->default_value(3000), "Number of points to nominally put into each block (note that this number will not be exact)")
+        ("precision,p", po::value<long>(&precision)->default_value(8), "Number of decimal points to write for each bbox")
+        ("input,i", po::value< std::string >(), "input LAS file")
+        ("output,o", po::value< std::string >(&output)->default_value(""), "The output .kdx file (defaults to input filename + .kdx)")
+        ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Verbose message output")
+
+    ;
     
-    for (int i = 1; i < argc; i++)
+    po::variables_map vm;        
+    po::store(po::command_line_parser(argc, argv).
+      options(desc).positional(p).run(), vm);
+
+    po::notify(vm);
+
+    if (vm.count("help")) 
     {
-        if (    std::strcmp(argv[i],"-h") == 0 ||
-                std::strcmp(argv[i],"--help") == 0
-            )
-        {
-            usage();
-            exit(0);
-        }
-        else if (   std::strcmp(argv[i],"--input") == 0  ||
-                    std::strcmp(argv[i],"-input") == 0   ||
-                    std::strcmp(argv[i],"-i") == 0       ||
-                    std::strcmp(argv[i],"-in") == 0
-                )
-        {
-            i++;
-            input = std::string(argv[i]);
-        }
-
-        else if (   strcmp(argv[i],"--output") == 0  ||
-                    strcmp(argv[i],"--out") == 0     ||
-                    strcmp(argv[i],"-out") == 0     ||
-                    strcmp(argv[i],"-o") == 0       
-                )
-        {
-            i++;
-            output = std::string(argv[i]) + ".kdx";
-        }
-                
-        else if (   std::strcmp(argv[i],"--capacity") == 0  ||
-                    std::strcmp(argv[i],"-cap") == 0     ||
-                    std::strcmp(argv[i],"-c") == 0       
-                )
-        {
-            i++;
-            capacity = atoi(argv[i]);
-        }
-
-        else if (input.empty())
-        {
-            input = std::string(argv[i]);
-        }
-
-        else if (output.empty())
-        {
-            output = std::string(input) + ".kdx";
-        }
-
-        else 
-        {
-            usage();
-            exit(1);
-        }
+        std::cout << desc << "\n";
+        return 1;
     }
+        
+    if (vm.count("input")) 
+    {
+        input = vm["input"].as< std::string >();
+        std::ifstream ifs;
+
+        if (!liblas::Open(ifs, input.c_str()))
+        {
+            std::cerr << "Cannot open file '" << input << "'for read.  Exiting...";
+            return 1;
+        }
+    } 
     
-    if (input.empty()) {
-        usage();
-        exit(-1);
-    }
 
     if (output.empty())
     {
         output = std::string(input) + ".kdx";
     }
 
-    std::ifstream in(input.c_str());
+    std::ifstream in;
+    if (!liblas::Open(in, input.c_str()))
+    {
+        std::cerr << "Cannot open " << input << "for read.  Exiting...";
+        return 1;
+    }
+            
     std::ofstream out(output.c_str());
     
     liblas::Reader reader( in );
     
     liblas::chipper::Chipper c(&reader, capacity);
-    c.Chip();
 
-    std::cout << "Blocking " << input<< " to " << output <<std::endl;
+    if (verbose)
+        std::cout << "Blocking " << input<< " to " << output <<std::endl;
+
+    c.Chip();
+    
 
     boost::uint32_t num_blocks = c.GetBlockCount();
     
-    std::cout << "Block count: " << num_blocks << std::endl;
+    if (verbose)
+        std::cout << "Writing " << num_blocks << " blocks to " << output << std::endl;
+
+    boost::uint32_t prog = 0;
+    
     for ( boost::uint32_t i = 0; i < num_blocks; ++i )
     {
         const liblas::chipper::Block& b = c.GetBlock(i);
@@ -128,18 +148,23 @@ int main(int argc, char* argv[])
         std::vector<boost::uint32_t> ids = b.GetIDs();
         out << i << " " << ids.size() << " ";
         
-        out.setf(std::ios::dec, std::ios::floatfield);
-        out.precision(8);
-        
-        out << b.GetXmin() << " " << b.GetYmin() << " " << b.GetXmax() << " " <<  b.GetYmax()<< " " ;
+        out.setf(std::ios::fixed,std::ios::floatfield);
+        out.precision(precision);
+        liblas::Bounds<double> const& bnd = b.GetBounds();
+        out << bnd.min(0) << " " << bnd.min(1) << " " << bnd.max(0) << " " <<  bnd.max(1) << " " ;
         
         for ( boost::uint32_t pi = 0; pi < ids.size(); ++pi )
         {
             out << ids[pi] << " ";
         }
 
-        liblas::Bounds<double> bds(b.GetXmin(), b.GetYmin(), b.GetXmax(), b.GetYmax());
-
         out << std::endl;
+
+        // Set back to writing decimals
+        out.setf(std::ios::dec);
+
+        if (verbose)
+            term_progress(std::cout, (prog + 1) / static_cast<double>(num_blocks));
+        prog++;
     }
 }

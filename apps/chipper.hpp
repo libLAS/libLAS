@@ -69,21 +69,24 @@ private:
     RefList *m_list_p;
     boost::uint32_t m_left;
     boost::uint32_t m_right;
-    double m_xmin;
-    double m_ymin;
-    double m_xmax;
-    double m_ymax;
+    liblas::Bounds<double> m_bounds;
+    // double m_xmin;
+    // double m_ymin;
+    // double m_xmax;
+    // double m_ymax;
 
 public:
     std::vector<boost::uint32_t> GetIDs() const; 
-    double GetXmin() const
-        { return m_xmin; }
-    double GetYmin() const
-        { return m_ymin; }
-    double GetXmax() const
-        { return m_xmax; }
-    double GetYmax() const
-        { return m_ymax; }
+    liblas::Bounds<double> const& GetBounds() const {return m_bounds;} 
+    void SetBounds(liblas::Bounds<double> const& bounds) {m_bounds = bounds;}
+    // double GetXmin() const
+    //     { return m_xmin; }
+    // double GetYmin() const
+    //     { return m_ymin; }
+    // double GetXmax() const
+    //     { return m_xmax; }
+    // double GetYmax() const
+    //     { return m_ymax; }
 };
 
 class Chipper

@@ -117,7 +117,7 @@ endif()
 if(LASBLOCK)
     set(LASBLOCK_SRC lasblock.cpp chipper.cpp chipper.hpp)
     add_executable(${LASBLOCK} ${LASBLOCK_SRC})
-    target_link_libraries(${LASBLOCK} ${APPS_CPP_DEPENDENCIES})
+    target_link_libraries(${LASBLOCK} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
 endif()
 
 # Build las2ogr

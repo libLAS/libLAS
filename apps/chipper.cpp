@@ -285,17 +285,25 @@ void Chipper::Emit(RefList& wide, uint32_t widemin, uint32_t widemax,
     Block b;
 
     b.m_list_p = &wide;
-    if (wide.m_dir == DIR_X) {
-        b.m_xmin = wide[widemin].m_pos;
-        b.m_xmax = wide[widemax].m_pos;
-        b.m_ymin = narrow[narrowmin].m_pos;
-        b.m_ymax = narrow[narrowmax].m_pos;
+    if (wide.m_dir == DIR_X) { 
+        
+        // minx, miny, maxx, maxy
+        liblas::Bounds<double> bnd(wide[widemin].m_pos, narrow[narrowmin].m_pos, wide[widemax].m_pos,  narrow[narrowmax].m_pos);
+        b.SetBounds(bnd);
+
+        // b.m_xmin = wide[widemin].m_pos;
+        // b.m_xmax = wide[widemax].m_pos;
+        // b.m_ymin = narrow[narrowmin].m_pos;
+        // b.m_ymax = narrow[narrowmax].m_pos;
     }
     else {
-        b.m_xmin = narrow[narrowmin].m_pos;
-        b.m_xmax = narrow[narrowmax].m_pos;
-        b.m_ymin = wide[widemin].m_pos;
-        b.m_ymax = wide[widemax].m_pos;
+        liblas::Bounds<double> bnd(narrow[narrowmin].m_pos, wide[widemin].m_pos, narrow[narrowmax].m_pos, wide[widemax].m_pos);
+        b.SetBounds(bnd);
+
+        // b.m_xmin = narrow[narrowmin].m_pos;
+        // b.m_xmax = narrow[narrowmax].m_pos;
+        // b.m_ymin = wide[widemin].m_pos;
+        // b.m_ymax = wide[widemax].m_pos;
     }
     b.m_left = widemin;
     b.m_right = widemax;

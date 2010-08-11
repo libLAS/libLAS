@@ -27,9 +27,12 @@ Usage
 ------------------------------------------------------------------------------
 
 
+Block a file, and write out blocks with 6 decimals of precision with 
+a nominal capacity of 3000 points per block:
+
 ::
 
-    $ lasblock -c 3000 myfile.las
+    $ lasblock -c 3000  -p 6 myfile.las
 
 .. note::
     If no capacity is specified with ``-c``, 10000 is assumed.  
@@ -37,6 +40,23 @@ Usage
 .. note::
     lasblock will always write out a myfile.las.kdx file name by default, 
     but you can override the output name with a ``-o`` command-line switch.
+
+Arguments
+------------------------------------------------------------------------------
+
+::
+
+    Allowed lasblock options:
+      -h [ --help ]                 Produce this help message
+      -c [ --capacity ] arg (=3000) Number of points to nominally put into each 
+                                    block (note that this number will not be exact)
+      -p [ --precision ] arg (=8)   Number of decimal points to write for each bbox
+      -i [ --input ] arg            input LAS file
+      -o [ --output ] arg           The output .kdx file (defaults to input 
+                                    filename + .kdx)
+      -v [ --verbose ]              Verbose message output
+
+
 
 
 .. figure:: ../images/lasblock_small.png
