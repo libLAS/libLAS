@@ -88,7 +88,7 @@ if(LAS2LAS)
 endif()
 
 if(LAS2LAS2)
-    add_executable(${LAS2LAS2} las2las2.cpp)
+    add_executable(${LAS2LAS2} las2las2.cpp laskernel.cpp)
     target_link_libraries(${LAS2LAS2} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
 endif()
 
@@ -128,8 +128,8 @@ endif()
 
 # Build las2oci
 if(LAS2OCI)
-    add_executable(${LAS2OCI} las2oci.cpp oci_wrapper.cpp kdx_util.cpp oci_util.cpp)
-    target_link_libraries(${LAS2OCI} ${APPS_CPP_DEPENDENCIES})
+    add_executable(${LAS2OCI} las2oci.cpp oci_wrapper.cpp kdx_util.cpp oci_util.cpp laskernel.cpp)
+    target_link_libraries(${LAS2OCI} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
 endif()
 
 if (BIGFILE_TEST)
