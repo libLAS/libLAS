@@ -1,7 +1,7 @@
 #include "las2oci.hpp"
 
 
-
+#include <liblas/detail/utility.hpp>
 
 
 
@@ -749,7 +749,10 @@ long CreatePCEntry( OWConnection* connection,
                     int blk_capacity,
                     long precision,
                     bool bUseSolidGeometry,
-                    bool bUse3d)
+                    bool bUse3d,
+                    bool bInsertHeaderBlob,
+                    std::string const& header_blob_column,
+                    std::vector<uint8_t> const& header_data)
 {
     ostringstream oss;
 
@@ -762,6 +765,7 @@ long CreatePCEntry( OWConnection* connection,
     std::string pcTableName_u = to_upper(pcTableName);
     std::string cloudColumnName_u = to_upper(cloudColumnName);
     std::string aux_columns_u = to_upper(aux_columns);
+    std::string header_blob_column_u = to_upper(header_blob_column);
 
     ostringstream columns;
     ostringstream values;
@@ -773,6 +777,11 @@ long CreatePCEntry( OWConnection* connection,
     } else {
         columns << cloudColumnName_u;
         values << "pc";
+    }
+    
+    if (!header_blob_column_u.empty()){
+        columns << "," << header_blob_column_u;
+        values <<", :2";
     }
 
 
@@ -871,6 +880,13 @@ oss << "declare\n"
     long output = 0;
     statement = connection->CreateStatement(oss.str().c_str());
     statement->Bind(&pc_id);
+    if (bInsertHeaderBlob) {
+        OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
+        statement->Define( locator, 1 ); 
+
+        statement->Bind((char*)&(header_data[0]),(long)header_data.size());
+    
+    }
     if (statement->Execute() == false) {
 
         std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
@@ -911,6 +927,19 @@ void usage() {
     fprintf(stderr,"----------------------------------------------------------\n");    
 }
 
+std::vector<uint8_t> GetHeaderData(std::string const& filename, uint32_t offset)
+{
+    
+    std::istream* in = OpenInput(filename, false);
+    
+
+    std::vector<uint8_t> data(offset);
+
+    liblas::detail::read_n(data.front(), *in, offset);
+
+    return data;
+    
+}
 
 // select sdo_pc_pkg.to_geometry(a.points, a.num_points, 3, 4326) from NACHES_BAREEARTH_BLOCK1 a where a.obj_id= 8907
 int main(int argc, char* argv[])
@@ -924,6 +953,7 @@ int main(int argc, char* argv[])
     std::string point_cloud_name("CLOUD");
     std::string base_table_name("HOBU");
     std::string block_table_name("");
+    std::string header_blob_column("");
     
     std::string pre_sql("");
     std::string post_sql("");
@@ -936,6 +966,7 @@ int main(int argc, char* argv[])
     bool bDropTable = false;
     bool bUseSolidGeometry = false;
     bool bUse3d = false;
+    bool bInsertHeaderBlob = false;
     
     uint32_t nCapacity = 10000;
 
@@ -1084,6 +1115,13 @@ int main(int argc, char* argv[])
         {
             bUse3d=true;
         }
+        else if (   strcmp(argv[i],"--header-blob-column") == 0  
+                )
+        {
+            bInsertHeaderBlob=true;
+            i++;
+            header_blob_column = std::string(argv[i]);
+        }        
         else if (   strcmp(argv[i],"--xmin") == 0  ||
                     strcmp(argv[i],"-xmin") == 0
                 )
@@ -1257,6 +1295,7 @@ int main(int argc, char* argv[])
     istrm2 = OpenInput(input, false);
     liblas::Reader* reader2 = new liblas::Reader(*istrm2);
     
+    std::vector<uint8_t> header_data = GetHeaderData(input, reader2->GetHeader().GetDataOffset());
 
     long pc_id = CreatePCEntry(  con, 
                     query, 
@@ -1270,7 +1309,10 @@ int main(int argc, char* argv[])
                     nCapacity,
                     precision,
                     bUseSolidGeometry,
-                    bUse3d);
+                    bUse3d,
+                    bInsertHeaderBlob,
+                    header_blob_column,
+                    header_data);
                     
     
     std::cout << "Writing " << results.size() << " blocks ..." << std::endl;
