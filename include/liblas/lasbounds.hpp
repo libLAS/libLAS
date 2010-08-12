@@ -267,8 +267,7 @@ bool intersects(Bounds const& other) const
     return true;
 }
 
-private:
-    
+
 void verify()
 {
     for (size_type d = 0; d < dimension(); ++d)
