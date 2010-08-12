@@ -89,7 +89,7 @@ BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy )
     m_2d = true;
 }
 
-BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy, double minz, double maxz ) : FilterI(eInclusion)
+BoundsFilter::BoundsFilter( double minx, double miny, double minz, double maxx, double maxy, double maxz ) : FilterI(eInclusion)
 {
     mins[0] = minx;
     mins[1] = miny;

@@ -88,9 +88,9 @@ Bounds(Bounds const& other)
 
 Bounds( T minx, 
         T miny, 
+        T minz, 
         T maxx, 
         T maxy, 
-        T minz, 
         T maxz)
 {
     mins.resize(3);

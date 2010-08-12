@@ -91,7 +91,7 @@ class BoundsFilter: public FilterI
 public:
     
     BoundsFilter(double minx, double miny, double maxx, double maxy);
-    BoundsFilter(double minx, double miny, double maxx, double maxy, double minz, double maxz);
+    BoundsFilter(double minx, double miny, double minz, double maxx, double maxy, double maxz);
     BoundsFilter(Bounds<double> const& bounds);
     bool filter(const Point& point);
 
