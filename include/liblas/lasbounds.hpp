@@ -225,7 +225,7 @@ size_type dimension() const
     return mins.size();
 }
 
-void dimension(Bounds::size_type d)
+void dimension(size_type d)
 {
     if (maxs.size() < d) {
         maxs.resize(d);
