@@ -116,11 +116,6 @@ LAS_C_START
 #endif
 
 
-#ifdef HAVE_SPATIALINDEX
-#include <spatialindex/Version.h>
-#endif
-
-
 // Error stuff
 
 
@@ -166,10 +161,6 @@ LAS_DLL int LAS_IsGDALEnabled(void) {
 
 LAS_DLL int LAS_IsLibGeoTIFFEnabled(void) {
     return IsLibGeoTIFFEnabled();
-}
-
-LAS_DLL int LAS_IsLibSpatialIndexEnabled(void) {
-    return IsLibSpatialIndexEnabled();
 }
 
 LAS_DLL void LASError_Reset(void) {
@@ -1572,44 +1563,11 @@ LAS_DLL void LASError_Print(const char* message) {
 }
 
 LAS_DLL char* LAS_GetVersion() {
-
-//    output << LIBLAS_VERSION_MAJOR;
-//    output << "." << LIBLAS_VERSION_MINOR;
-//    output << "." << LIBLAS_VERSION_REV;
-//    output << "." << LIBLAS_VERSION_BUILD;
-    char const* version = LIBLAS_RELEASE_NAME;
-    return strdup(version);
+    return strdup(liblas::GetVersion().c_str());
 }
 
 LAS_DLL char* LAS_GetFullVersion(void) {
-
-    std::ostringstream os;
-#ifdef HAVE_LIBGEOTIFF
-    os << " GeoTIFF "
-       << (LIBGEOTIFF_VERSION / 1000) << '.'
-       << (LIBGEOTIFF_VERSION / 100 % 10) << '.'
-       << (LIBGEOTIFF_VERSION % 100 / 10);
-#endif
-#ifdef HAVE_GDAL
-    os << " GDAL " << GDALVersionInfo("RELEASE_NAME");
-#endif
-#ifdef HAVE_SPATIALINDEX
-    os << " SpatialIndex "
-       << SIDX_VERSION_MAJOR << '.'
-       << SIDX_VERSION_MINOR << '.'
-       << SIDX_VERSION_REV;
-#endif
-
-    std::string info(os.str());
-    os.str("");
-    os << "libLAS " << LIBLAS_RELEASE_NAME;
-    if (!info.empty())
-    {
-        os << " with" << info;
-    }
-
-
-    return strdup(os.str().c_str());
+    return strdup(liblas::GetFullVersion().c_str());
 }
 
 

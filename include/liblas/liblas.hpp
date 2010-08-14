@@ -65,6 +65,8 @@
 #include <liblas/laswriter.hpp>
 #include <liblas/detail/endian.hpp>
 #include <liblas/detail/utility.hpp>
+#include <liblas/capi/las_version.h>
+
 // booost
 #include <boost/array.hpp>
 #include <boost/concept_check.hpp>
@@ -134,14 +136,35 @@ inline bool IsLibGeoTIFFEnabled()
 #endif
 }
 
-/// Check if libspatialindex support has been built in to libLAS.
-inline bool IsLibSpatialIndexEnabled()
-{
-#ifdef HAVE_SPATIALINDEX
-    return true;
-#else
-    return false;
+/// Tell the user a bit about libLAS' compilation
+inline std::string  GetFullVersion(void) {
+
+    std::ostringstream os;
+#ifdef HAVE_LIBGEOTIFF
+    os << " GeoTIFF "
+       << (LIBGEOTIFF_VERSION / 1000) << '.'
+       << (LIBGEOTIFF_VERSION / 100 % 10) << '.'
+       << (LIBGEOTIFF_VERSION % 100 / 10);
 #endif
+#ifdef HAVE_GDAL
+    os << " GDAL " << GDALVersionInfo("RELEASE_NAME");
+#endif
+
+    std::string info(os.str());
+    os.str("");
+    os << "libLAS " << LIBLAS_RELEASE_NAME;
+    if (!info.empty())
+    {
+        os << " with" << info;
+    }
+
+
+    return os.str();
+}
+
+/// Tell the user our dotted release name.
+inline std::string GetVersion() {
+    return std::string(LIBLAS_RELEASE_NAME);
 }
 
 class ReaderI
