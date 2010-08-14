@@ -182,17 +182,23 @@ bool process(   std::string const& input,
     
     return true;
 }
+
+std::string GetInvocationHeader()
+{
+    ostringstream oss;
+    oss << "--------------------------------------------------------------------\n";
+    oss << "    las2las (" << GetFullVersion() << ")\n";
+    oss << "--------------------------------------------------------------------\n";
+    return oss.str();    
+}
+
 int main(int argc, char* argv[])
 {
 
     uint32_t split_size;
-    // uint32_t thin;
     std::string input;
     std::string output;
     
-    // bool last_return_only;
-    // bool first_return_only;
-    // bool valid_only;
     bool verbose = false;
     std::vector<liblas::FilterI*> filters;
     std::vector<liblas::TransformI*> transforms;
@@ -230,7 +236,7 @@ int main(int argc, char* argv[])
 
         if (vm.count("help")) 
         {
-            std::cout << file_options<<transform_options<<filtering_options<<"\n";
+            std::cout << GetInvocationHeader()<<file_options<<transform_options<<filtering_options<<"\n";
             return 1;
         }
 

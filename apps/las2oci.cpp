@@ -2,9 +2,18 @@
 
 
 #include <liblas/detail/utility.hpp>
+#include "laskernel.hpp"
 
 
 
+
+
+typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+
+namespace po = boost::program_options;
+
+using namespace liblas;
+using namespace std;
 
 
 
@@ -304,41 +313,6 @@ bool InsertBlocks(
     long blocks_left= 0;
     long to_fill = 0;
     
-    
-    // for (j = 0; j < total_blocks; j+=commit_interval) {
-    //      blocks_left = total_blocks - blocks_written;
-    //      if (blocks_left < commit_interval) {
-    //          // only fill to this level
-    //          to_fill = blocks_left;
-    //      } else {
-    //          to_fill = commit_interval;
-    //      }
-    //      
-    //      
-    //      for (int t = 0; t< to_fill; t++) {
-    //          FillBlock(statement,
-    //                          results[t], 
-    //                          reader2,
-    //                          b,
-    //                          t,
-    //                          srid, 
-    //                           pc_id,
-    //                           GetGType(bUse3d, bUseSolidGeometry),
-    //                           bUseSolidGeometry,
-    //                           bUse3d,
-    //                           nDimensions
-    //                           );
-    // 
-    // 
-    //          t++;
-    //      
-    //      
-    //      }
-    //      
-    //      
-    //      
-    //      blocks_written = blocks_written + to_fill;
-    //  }
 
 
     for (i=results.begin(); i!=results.end(); i++)
@@ -358,310 +332,6 @@ bool InsertBlocks(
     }
     return inserted;
 }
-
-
-// bool ArrayInsert( OWConnection* connection,
-//         const char* insertStatement,
-//         int* panObjId,
-//         int* panBlockId,
-//         int* panNumPoints,
-//         double** ppfdBuffer,
-//         int nArrayCols,
-//         int nRowsToInsert)
-// {
-//     OWStatement* statement = connection->CreateStatement( insertStatement );
-// 
-//     statement->Bind( panObjId );
-//     statement->Bind( panBlockId );
-//     statement->Bind( panNumPoints );
-//     statement->BindArray( ppfdBuffer, nArrayCols );
-// 
-//     if (statement->Execute(nRowsToInsert) == false) {
-//         delete statement;
-//         return false;
-//     }
-// 
-//     delete statement;
-//     return true;
-// }
-
-// bool InsertBlocks(OWConnection* connection,
-//                   IndexResult& result,
-//                   int srid,
-//                   liblas::Reader* reader,
-//                   const char* tableName,
-//                   long precision,
-//                   long pc_id,
-//                   bool bUseSolidGeometry,
-//                   bool bUse3d,
-//                   int max_points_per_row)
-// {
-//     ostringstream oss;
-//     IDVector const& ids = result.GetIDs();
-//     liblas::Bounds b = result.GetBounds();
-//     uint32_t num_points =ids.size();
-//     ostringstream oss_geom;
-// 
-//     ostringstream s_srid;
-//     ostringstream s_gtype;
-//     ostringstream s_eleminfo;
-//     bool bGeographic = false;
-// 
-//     if (srid == 0) {
-//         s_srid << "NULL";
-//         // bUse3d = true;
-//         // bUseSolidGeometry = true;
-//         }
-//     else if (srid == 4326) {
-//         // bUse3d = true;
-//         // bUseSolidGeometry = true;
-//         bGeographic = true;
-//         s_srid << srid;
-//         // s_srid << "NULL";
-//     }
-//     else {
-//         s_srid << srid;
-//         // bUse3d = false;
-//         // If the user set an srid and set it to solid, we're still 3d
-//         // if (bUseSolidGeometry == true)
-//         //     bUse3d = true;
-//     }
-// 
-//     if (bUse3d) {
-//         if (bUseSolidGeometry == true) {
-//             s_gtype << "3008";
-//             s_eleminfo << "(1,1007,3)";
-// 
-//         } else {
-//             s_gtype << "3003";
-//             s_eleminfo  << "(1,1003,3)";
-// 
-//         }
-//     } else {
-//         if (bUseSolidGeometry == true) {
-//             s_gtype << "2008";
-//             s_eleminfo << "(1,1007,3)";
-// 
-//         } else {
-//             s_gtype << "2003";
-//             s_eleminfo  << "(1,1003,3)";
-// 
-//         }
-//     }
-// 
-//     double x0, x1, y0, y1, z0, z1;
-//     double tolerance = 0.05;
-// 
-// 
-//     x0 = b.min(0);
-//     x1 = b.max(0);
-//     y0 = b.min(1);
-//     y1 = b.max(1);
-// 
-//     if (bUse3d) {
-// 
-//         z0 = b.min(2);
-//         z1 = b.max(2);
-// 
-//     } else if (bGeographic) {
-//         x0 = -180.0;
-//         x1 = 180.0;
-//         y0 = -90.0;
-//         y1 = 90.0;
-//         z0 = 0.0;
-//         z1 = 20000.0;
-//         tolerance = 0.000000005;
-//     } else {
-//         z0 = 0.0;
-//         z1 = 20000.0;
-//     }
-// 
-// 
-//     // std::cout << "use 3d?: " << bUse3d << " srid: " << s_srid.str() << std::endl;
-//     oss_geom.setf(std::ios_base::fixed, std::ios_base::floatfield);
-//     oss_geom.precision(precision);
-// 
-//     oss_geom << "mdsys.sdo_geometry(" << s_gtype.str() << ", " << s_srid.str() << ", null, "
-//         "mdsys.sdo_elem_info_array" << s_eleminfo.str() << ", "
-//         "mdsys.sdo_ordinate_array( ";
-// 
-//     oss_geom << x0 << ", " << y0 << ", ";
-// 
-//     if (bUse3d) {
-//         oss_geom << z0 << ", ";
-//     }
-// 
-//     oss_geom << x1 << ", " << y1 << "";
-// 
-//     if (bUse3d) {
-//         oss_geom << ", ";
-//         oss_geom << z1;
-//     }
-// 
-//     oss_geom << "))";
-// 
-//     oss << "INSERT INTO " << tableName << " (" <<
-//         "OBJ_ID, "
-//         "BLK_ID, "
-//         "BLK_EXTENT, "
-//         "BLK_DOMAIN, "
-//         "PCBLK_MIN_RES, "
-//         "PCBLK_MAX_RES, "
-//         "NUM_POINTS, "
-//         "NUM_UNSORTED_POINTS, "
-//         "PT_SORT_DIM, "
-//         "POINTS) "
-//         "VALUES (:1, :2, " << oss_geom.str() << ", NULL, 1, 1, :3, 0, 1, :4)";
-// 
-//     std::vector<uint8_t> data;
-// 
-//     result.GetData(reader, data);
-// 
-// 
-//     /*
-//      *  Assuming 3 Dimensions data
-//      */
-// 
-//     int nDims = 3;
-// 
-//     /*
-//      *  Allocate fixed width buffer dimensions
-//      */
-// 
-//     double** ppfdBuffer = NULL;
-// 
-//     int nPoints = num_points;
-//     int nFizedRows = nPoints / max_points_per_row;
-//     int nFixedCols = min(nPoints, max_points_per_row) * nDims;
-// 
-//     ppfdBuffer = (double**) malloc( sizeof(double*) * nFizedRows );
-// 
-//     if( ppfdBuffer == NULL )
-//         throw std::runtime_error("unable to allocate memory");
-// 
-//     for( int i = 0; i < nFizedRows; i++ )
-//     {
-//         ppfdBuffer[i] = (double*) malloc( sizeof(double) * nFixedCols );
-//         
-//         if( ppfdBuffer[i] == NULL )
-//             throw std::runtime_error("unable to allocate memory");
-//     }
-// 
-//     /*
-//      *  Allocate buffer for extra row
-//      *
-//      *  That row could be the last row, or the only row. In both
-//      *  case it should be also smaller than MAX_POINTS_PER_ROW.
-//      */
-// 
-//     int nExtraPoints = num_points - (nFizedRows * max_points_per_row);
-//     int nExtraCols = nExtraPoints * nDims;
-// 
-//     double* ppfdExtra[1];
-//     
-//     if( nExtraPoints > 0 )
-//     {
-//         ppfdExtra[0] = (double*) malloc( sizeof(double) * nExtraCols );
-//     }
-// 
-//     /*
-//      *  Load points data swapping words as nedded
-//      */
-// 
-//     int index = 0;
-// 
-//     for( int i = 0; i < nFizedRows; i++)
-//     {
-//         for( int j = 0; j < nFixedCols; j++)
-//         {
-//             ppfdBuffer[i][j] = data.at(index++);
-//         }
-// 
-//         GDALSwapWords( ppfdBuffer[i], sizeof(double), nFixedCols, sizeof(double) );
-//     }
-// 
-//     if( nExtraPoints > 0 )
-//     {
-//         for( int i = 0; i < nExtraCols; i++)
-//         {
-//             ppfdExtra[0][i] = data.at(index++);
-//         }
-//         
-//         GDALSwapWords( ppfdExtra[0], sizeof(double), nExtraCols, sizeof(double) );
-//     }
-// 
-//     /*
-//      *  Create array for each other column
-//      */
-// 
-//     int  nRows = max(nFizedRows,1); /* it could be just one "extra" row */
-// 
-//     int* panObjId = (int*) malloc( sizeof(long) * nRows );
-//     int* panBlockId = (int*) malloc( sizeof(long) * nRows );
-//     int* panNumPoints = (int*) malloc( sizeof(long) * nRows );
-// 
-//     for( int i = 0; i < nRows; i++ )
-//     {
-//         panObjId[i] = pc_id;
-//         panBlockId[i] = result.GetID();
-//         panNumPoints[i] = max_points_per_row;
-//     }
-// 
-//     /*
-//      *  Insert nFizedRows at once
-//      */
-// 
-//     if( nFizedRows > 0 )
-//     {
-//         if( ArrayInsert( connection,
-//                 oss.str().c_str(),
-//                 panObjId,
-//                 panBlockId,
-//                 panNumPoints,
-//                 ppfdBuffer,
-//                 nFixedCols,
-//                 nFizedRows ) == false )
-//         {
-//             throw std::runtime_error("error writing blocks.");
-//         }
-//     }
-// 
-//     /*
-//      *  Insert one extra row
-//      */
-// 
-//     if( nExtraPoints > 0 )
-//     {
-//         panNumPoints[0] = nExtraPoints;
-// 
-//         if( ArrayInsert( connection,
-//                 oss.str().c_str(),
-//                 panObjId,
-//                 panBlockId,
-//                 panNumPoints,
-//                 ppfdExtra,
-//                 nExtraCols, 1 ) == false )
-//         {
-//             throw std::runtime_error("error writing single block.");
-//         }
-//     }
-// 
-//     connection->Commit();
-// 
-//     free( panObjId );
-//     free( panBlockId );
-//     free( panNumPoints );
-//     for( int i = 0; i < nFizedRows; i++ )
-//     {
-//         free( ppfdBuffer[i] );
-//     }
-//     free( ppfdBuffer );
-//     if( ppfdExtra[0] != NULL)
-//     {
-//         free( ppfdExtra[0] );
-//     }
-//     return true;
-// }
 
 bool CreateSDOEntry(    OWConnection* connection, 
                         const char* tableName, 
@@ -898,6 +568,15 @@ oss << "declare\n"
     return output;
 }
 
+std::string GetInvocationHeader()
+{
+    ostringstream oss;
+    oss << "--------------------------------------------------------------------\n";
+    oss << "    las2oci (" << GetFullVersion() << ")\n";
+    oss << "--------------------------------------------------------------------\n";
+    return oss.str();    
+}
+
 void usage() {
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr,"    las2oci (version ) usage:\n");
@@ -929,18 +608,56 @@ void usage() {
 
 std::vector<uint8_t> GetHeaderData(std::string const& filename, uint32_t offset)
 {
-    
     std::istream* in = OpenInput(filename, false);
-    
-
     std::vector<uint8_t> data(offset);
-
     liblas::detail::read_n(data.front(), *in, offset);
-
     return data;
-    
 }
 
+po::options_description GetFileOptions()
+{
+po::options_description file_options("las2oci options");
+
+
+
+file_options.add_options()
+    ("help,h", "produce help message")
+    ("input,i", po::value< string >(), "input LAS file")
+    ("connection,c", po::value< string >(), "OCI connection string")
+    ("verbose,v", po::value<bool>()->zero_tokens(), "Verbose message output")
+    ("base-table-name", po::value< string >()->default_value("HOBU"), "The table name in which to put the point cloud object.  This table must have a column of type SDO_PC, with the name to be specified with --cloud-column-name")
+    ("block-table-name", po::value< string >(), "The table name in which to put the block data.  This table must be of type SDO_PC.BLK_TABLE.  This table will be created using the filename of the input LAS file if not specified.  Use -d to delete the table if it already exists.")
+    ("cloud-column-name", po::value< string >()->default_value("CLOUD"), "The column name that contains the point cloud object in the base table")
+    ("header-blob-column", po::value< string >(), "Blob column name in the base table in which to insert the contents of the input file's header.")
+    ("overwrite,d", po::value<bool>()->zero_tokens(), "Drop block table before inserting data.")
+    ("block-capacity", po::value<uint32_t>()->default_value(3000), "Maximum number of points to be inserted into each block")
+    ("precision,p", po::value<uint32_t>()->default_value(8), "Number of decimal points to write into SQL for point coordinate data.  Used in user_sdo_geom_metadata entry and defining the PC_EXTENT for the point cloud object.")
+    ("srid,s", po::value<uint32_t>(), "Oracle numerical SRID value to use to define point cloud.")
+    ("pre-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run before executing the point cloud creation process.")
+    ("pre-block-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run before executing the insertion of block data.")
+    ("post-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run after inserting block data.")
+    ("aux-columns", po::value< string >(), "Quoted, comma-separated list of columns to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
+    ("aux-values", po::value< string >(), "Quoted, comma-separated list of values to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
+    ("solid", po::value<bool>()->zero_tokens(), "Define the point cloud's PC_EXTENT geometry gtype as (1,1007,3) instead of the normal (1,1003,3), and use gtype 3008/2008 vs 3003/2003 for BLK_EXTENT geometry values.")
+    ("3d", po::value<bool>()->zero_tokens(), "Use Z values for insertion of all extent (PC_EXTENT, BLK_EXTENT, USER_SDO_GEOM_METADATA) entries")
+    ("global-extent", po::value< string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated list, for example, \n  --global-extent minx, miny, maxx, maxy\n  or \n  --global-extent minx, miny, minz, maxx, maxy, maxz")
+
+
+;
+
+po::options_description hidden_options("hidden options");
+hidden_options.add_options()
+    ("help,h", "produce help message")
+    ("xmin", po::value< double >(), "global-extent minx value")
+    ("ymin", po::value< double >(), "global-extent miny value")
+    ("zmin", po::value< double >(), "global-extent minz value")
+    ("xmax", po::value< double >(), "global-extent maxx value")
+    ("ymax", po::value< double >(), "global-extent maxy value")
+    ("zmax", po::value< double >(), "global-extent maxz value")
+;
+
+return file_options.add(hidden_options);
+}
 // select sdo_pc_pkg.to_geometry(a.points, a.num_points, 3, 4326) from NACHES_BAREEARTH_BLOCK1 a where a.obj_id= 8907
 int main(int argc, char* argv[])
 {
@@ -978,6 +695,309 @@ int main(int argc, char* argv[])
     bool bSetExtents = false;
     
     int nCommitInterval = 100;
+    
+    
+    bool verbose = false;
+    std::vector<liblas::FilterI*> filters;
+    std::vector<liblas::TransformI*> transforms;
+    
+    liblas::Header header;
+
+
+    try {
+
+        po::options_description file_options = GetFileOptions();
+        po::options_description filtering_options = GetFilteringOptions();
+        po::options_description transform_options = GetTransformationOptions() ;
+        po::positional_options_description p;
+        p.add("input", 1);
+        p.add("connection", 1);
+        
+
+        
+
+        po::variables_map vm;
+        po::options_description options;
+        options.add(file_options).add(transform_options).add(filtering_options);
+        po::store(po::command_line_parser(argc, argv).
+        options(options).positional(p).run(), vm);
+
+        po::notify(vm);
+
+        if (vm.count("help")) 
+        {
+            std::cout << GetInvocationHeader()<<file_options;//<<transform_options<<filtering_options<<"\n";
+            return 1;
+        }
+
+        if (vm.count("verbose")) 
+        {
+            verbose = vm["verbose"].as< bool >();
+        }
+
+        if (vm.count("input")) 
+        {
+            input = vm["input"].as< string >();
+            std::ifstream ifs;
+            if (verbose)
+                std::cout << "Opening " << input << " to fetch Header" << std::endl;
+            if (!liblas::Open(ifs, input.c_str()))
+            {
+                std::cerr << "Cannot open " << input << "for read.  Exiting...";
+                return 1;
+            }
+            liblas::Reader reader(ifs);
+            header = reader.GetHeader();
+        } else {
+            std::cerr << "Input LAS file not specified!\n";
+            return 1;
+        }
+
+        if (vm.count("connection")) 
+        {
+            connection = vm["connection"].as< string >();
+            string::size_type slash_pos = connection.find("/",0);
+            username = connection.substr(0,slash_pos);
+            string::size_type at_pos = connection.find("@",slash_pos);
+
+            password = connection.substr(slash_pos+1, at_pos-slash_pos-1);
+            instance = connection.substr(at_pos+1);
+            if (verbose)
+                std::cout << "Connecting with username: " << username << 
+                             " password: "<< password<< 
+                             " instance: " << instance << std::endl;    
+
+        } else {
+            std::cerr << "Connection string not specified!\n";
+            return 1;
+        }
+        
+
+
+        if (vm.count("overwrite")) 
+        {
+            bDropTable = vm["overwrite"].as< bool >();
+        }
+
+        if (vm.count("base-table-name")) 
+        {
+            base_table_name = vm["base-table-name"].as< string >();
+            if (verbose)
+                std::cout << "Setting output base table to: " << base_table_name << std::endl;
+        }
+        if (vm.count("block-table-name")) 
+        {
+            block_table_name = vm["block-table-name"].as< string >();
+            if (verbose)
+                std::cout << "Setting output block table to: " << block_table_name << std::endl;
+        }
+        if (vm.count("cloud-column-name")) 
+        {
+            point_cloud_name = vm["cloud-column-name"].as< string >();
+            if (verbose)
+                std::cout << "Setting output point cloud column to: " << point_cloud_name << std::endl;
+        }
+        if (vm.count("header-blob-column")) 
+        {
+            header_blob_column = vm["header-blob-column"].as< string >();
+            bInsertHeaderBlob=true;
+            if (verbose)
+                std::cout << "Setting header blob column to: " << header_blob_column << std::endl;
+        }        
+        if (vm.count("aux-columns")) 
+        {
+            aux_columns = vm["aux-columns"].as< string >();
+            if (verbose)
+                std::cout << "Setting aux-columns to:" << aux_columns << std::endl;
+
+        }
+        if (vm.count("aux-values")) 
+        {
+            aux_values = vm["aux-values"].as< string >();
+            if (verbose)
+                std::cout << "Setting aux-values to:" << aux_columns << std::endl;
+
+        }
+
+        if (vm.count("block-capacity")) 
+        {
+            nCapacity = vm["block-capacity"].as< uint32_t >();
+            if (verbose)
+                std::cout << "Setting block capacity to: " << nCapacity << std::endl;
+        }
+        
+        if (vm.count("precision")) 
+        {
+            precision = vm["precision"].as< uint32_t >();
+            if (verbose)
+                std::cout << "Setting precision to:" << precision << std::endl;
+
+        }
+        
+        if (vm.count("srid")) 
+        {
+            srid = vm["srid"].as< uint32_t >();
+            if (verbose)
+                std::cout << "Setting output Oracle SRID to: " << srid << std::endl;
+        }
+        
+        if (vm.count("pre-sql")) 
+        {
+            std::string sql = vm["pre-sql"].as< string >();
+            bool used_file = false;
+            try {
+                pre_sql = ReadSQLData(sql);
+                used_file = true;
+            } catch (std::runtime_error const& e) {
+                pre_sql = std::string(sql);
+                used_file = false;
+            }
+            if (verbose)
+                if (!used_file)
+                    std::cout << "Setting output pre-sql to: " << pre_sql << std::endl;
+                else
+                    std::cout << "Setting output pre-sql to: " << sql << std::endl; // Tell filename instead
+        }
+        if (vm.count("post-sql")) 
+        {
+            std::string sql = vm["post-sql"].as< string >();
+            bool used_file = false;
+            try {
+                post_sql = ReadSQLData(sql);
+                used_file = true;
+            } catch (std::runtime_error const& e) {
+                post_sql = std::string(sql);
+                used_file = false;
+            }
+            if (verbose)
+                if (!used_file)
+                    std::cout << "Setting output post-sql to: " << pre_sql << std::endl;
+                else
+                    std::cout << "Setting output post-sql to: " << sql << std::endl; // Tell filename instead
+        }
+        if (vm.count("pre-block-sql")) 
+        {
+            std::string sql = vm["pre-block-sql"].as< string >();
+            bool used_file = false;
+            try {
+                pre_block_sql = ReadSQLData(sql);
+                used_file = true;
+            } catch (std::runtime_error const& e) {
+                pre_block_sql = std::string(sql);
+                used_file = false;
+            }
+            if (verbose)
+                if (!used_file)
+                    std::cout << "Setting output pre-block-sql to: " << pre_sql << std::endl;
+                else
+                    std::cout << "Setting output pre-block-sql to: " << sql << std::endl; // Tell filename instead
+        }
+
+        if (vm.count("solid")) 
+        {
+            bUseSolidGeometry = vm["solid"].as< bool >();
+            if (verbose)
+                std::cout << "Storing solid geometries... " << std::endl;
+        }
+        if (vm.count("3d")) 
+        {
+            bUse3d = vm["3d"].as< bool >();
+            if (verbose)
+                std::cout << "Storing 3D geometries... " << std::endl;
+        }
+        if (vm.count("global-extent")) 
+        {
+            std::string extent = vm["global-extent"].as< string >();
+            boost::char_separator<char> sep(SEPARATORS);
+            std::vector<double> vbounds;
+            tokenizer tokens(extent, sep);
+            liblas::Bounds<double> bounds;
+            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+                vbounds.push_back(atof((*t).c_str()));
+            }
+            if (vbounds.size() == 4) 
+            {
+                global_extent = liblas::Bounds<double>(vbounds[0], 
+                                        vbounds[1], 
+                                        vbounds[2], 
+                                        vbounds[3]);
+            } else if (vbounds.size() == 6)
+            {
+                global_extent = liblas::Bounds<double>(vbounds[0], 
+                                        vbounds[1], 
+                                        vbounds[2], 
+                                        vbounds[3], 
+                                        vbounds[4], 
+                                        vbounds[5]);
+            } else {
+                ostringstream oss;
+                oss << "Bounds must be specified as a 4-tuple or "
+                       "6-tuple, not a "<< vbounds.size()<<"-tuple" << "\n";
+                std::cerr << oss.str();
+            }            
+            if (verbose)
+                std::cout << "Storing 3D geometries... " << std::endl;
+        }
+
+        if (vm.count("xmin")) 
+        {
+            double xmin = vm["xmin"].as< double >();
+            global_extent.min(0, xmin);
+            if (verbose)
+                std::cout << "Setting xmin to:" << xmin << std::endl;
+        }
+        if (vm.count("ymin")) 
+        {
+            double ymin = vm["ymin"].as< double >();
+            global_extent.min(1, ymin);
+            if (verbose)
+                std::cout << "Setting ymin to:" << ymin << std::endl;
+        }
+        if (vm.count("zmin")) 
+        {
+            double zmin = vm["zmin"].as< double >();
+            global_extent.min(2, zmin);
+            if (verbose)
+                std::cout << "Setting zmin to:" << zmin << std::endl;
+        }
+        if (vm.count("xmax")) 
+        {
+            double xmax = vm["xmax"].as< double >();
+            global_extent.max(0, xmax);
+            if (verbose)
+                std::cout << "Setting xmax to:" << xmax << std::endl;
+        }
+        if (vm.count("ymax")) 
+        {
+            double ymax = vm["ymax"].as< double >();
+            global_extent.max(1, ymax);
+            if (verbose)
+                std::cout << "Setting ymax to:" << ymax << std::endl;
+        }
+        if (vm.count("zmax")) 
+        {
+            double zmax = vm["zmax"].as< double >();
+            global_extent.max(2, zmax);
+            if (verbose)
+                std::cout << "Setting zmax to:" << zmax << std::endl;
+        }
+        filters = GetFilters(vm, verbose);
+        
+        // Transforms alter our header as well.  Setting scales, offsets, etc.
+        transforms = GetTransforms(vm, verbose, header);
+        
+        
+    }
+    catch(std::exception& e) {
+        std::cerr << "error: " << e.what() << "\n";
+        return 1;
+    }
+    catch(...) {
+        std::cerr << "Exception of unknown type!\n";
+    }
+    
+    return 0;
+
     
     for (int i = 1; i < argc; i++)
     {
@@ -1335,19 +1355,7 @@ int main(int argc, char* argv[])
         oss.str("");
         con->Commit();     
     }
-                // 
-                // OWConnection* con, 
-                // KDXIndexSummary* summary,
-                // liblas::Reader* reader2, 
-                // const std::string& table_name, 
-                // long nCommitInterval, 
-                // int srid, 
-                // long precision,
-                // long pc_id,
-                // bool bUseSolidGeometry,
-                // bool bUse3d,
 
-                // long nDimensions    
 
     InsertBlocks(con,
                  query,
