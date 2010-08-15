@@ -3,6 +3,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <liblas/liblas.hpp>
+#include "chipper.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -48,7 +49,8 @@ typedef std::vector<IndexResult> ResultsVector;
 class KDXIndexSummary
 {
 public:
-    KDXIndexSummary(std::istream& input);    
+    KDXIndexSummary(std::istream& input);
+    KDXIndexSummary(liblas::Reader& reader, boost::uint32_t capacity, bool verbose);
     boost::shared_ptr<liblas::Bounds<double > > bounds;
     ResultsVector& GetResults() { return m_results; }
 private:

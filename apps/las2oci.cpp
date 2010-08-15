@@ -1110,10 +1110,19 @@ int main(int argc, char* argv[])
 
         }
 
+
+
+        std::istream* istrm2;
+        istrm2 = OpenInput(input, false);
+        liblas::Reader* reader2 = new liblas::Reader(*istrm2);
+
+        std::vector<uint8_t> header_data = GetHeaderData(input, reader2->GetHeader().GetDataOffset());
+
         KDXIndexSummary* query = 0;
         if (!KDTreeIndexExists(input)) {
-            std::cout << "KDTree .kdx file does not exist for file, unable to proceed" << std::endl;
-            exit(1);  
+            if (verbose)
+                std::cout << "Chipping data for loading into Oracle with " << nCapacity<< " block capacity" << std::endl;
+            query = new KDXIndexSummary(*reader2, nCapacity, verbose);
         } else {
             std::cout << "Using kdtree ... " << std::endl;
             std::ostringstream os;
@@ -1126,12 +1135,6 @@ int main(int argc, char* argv[])
         ResultsVector& results = query->GetResults();
 
         ResultsVector::iterator i;
-
-        std::istream* istrm2;
-        istrm2 = OpenInput(input, false);
-        liblas::Reader* reader2 = new liblas::Reader(*istrm2);
-
-        std::vector<uint8_t> header_data = GetHeaderData(input, reader2->GetHeader().GetDataOffset());
 
         long pc_id = CreatePCEntry(  con, 
                         query, 

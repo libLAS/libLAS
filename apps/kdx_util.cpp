@@ -1,6 +1,56 @@
 #include "kdx_util.hpp"
 
+KDXIndexSummary::KDXIndexSummary(liblas::Reader& reader, boost::uint32_t capacity, bool verbose)
+{
+    liblas::chipper::Chipper c(&reader, capacity);
 
+    if (verbose)
+        std::cout << "Blocking" <<std::endl;
+
+    c.Chip();
+
+
+   double mins[2];
+   double maxs[2];
+   
+   bool first = true;
+   
+   boost::uint32_t num_blocks = c.GetBlockCount();
+   
+   if (verbose)
+       std::cout << "Writing " << num_blocks << " blocks to "  << std::endl;
+
+   boost::uint32_t prog = 0;
+   
+   for ( boost::uint32_t i = 0; i < num_blocks; ++i )
+   {
+        const liblas::chipper::Block& b = c.GetBlock(i);
+
+        std::vector<uint32_t> ids = b.GetIDs();       
+        liblas::Bounds<double> const& bnd = b.GetBounds();
+       if (first) {
+           mins[0] = bnd.min(0);
+           mins[1] = bnd.min(1);
+           maxs[0] = bnd.max(0);
+           maxs[1] = bnd.max(1);
+           first = false;
+       }
+       
+       mins[0] = std::min(mins[0], bnd.min(0));
+       mins[1] = std::min(mins[1], bnd.min(1));
+       
+       maxs[0] = std::max(maxs[0], bnd.max(0));
+       maxs[1] = std::max(maxs[1], bnd.max(1));
+
+       IndexResult result(static_cast<uint32_t>(i));
+       result.SetIDs(ids);
+       result.SetBounds(bnd);
+       m_results.push_back(result);
+   }
+
+   bounds = boost::shared_ptr<liblas::Bounds<double > >(new liblas::Bounds<double>(mins[0], mins[1], maxs[0], maxs[1]));
+
+}
 
 KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
 {
@@ -42,8 +92,7 @@ KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
             ids.push_back(i);
         }
         liblas::Bounds<double> b(low[0], low[1], high[0],high[1]);
-        // SpatialIndex::Region* pr = new SpatialIndex::Region(low, high, 2);
-        // printf("Ids size: %d %.3f\n", ids.size(), pr->getLow(0));
+
         IndexResult result(static_cast<uint32_t>(id));
         result.SetIDs(ids);
         result.SetBounds(b);
