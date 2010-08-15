@@ -625,6 +625,7 @@ file_options.add_options()
     ("input,i", po::value< string >(), "input LAS file")
     ("connection,c", po::value< string >(), "OCI connection string")
     ("verbose,v", po::value<bool>()->zero_tokens(), "Verbose message output")
+    ("debug", po::value<bool>()->zero_tokens(), "Enable debugging")
     ("base-table-name", po::value< string >()->default_value("HOBU"), "The table name in which to put the point cloud object.  This table must have a column of type SDO_PC, with the name to be specified with --cloud-column-name")
     ("block-table-name", po::value< string >(), "The table name in which to put the block data.  This table must be of type SDO_PC.BLK_TABLE.  This table will be created using the filename of the input LAS file if not specified.  Use -d to delete the table if it already exists.")
     ("cloud-column-name", po::value< string >()->default_value("CLOUD"), "The column name that contains the point cloud object in the base table")
@@ -647,7 +648,6 @@ file_options.add_options()
 
 po::options_description hidden_options("hidden options");
 hidden_options.add_options()
-    ("help,h", "produce help message")
     ("xmin", po::value< double >(), "global-extent minx value")
     ("ymin", po::value< double >(), "global-extent miny value")
     ("zmin", po::value< double >(), "global-extent minz value")
@@ -656,7 +656,23 @@ hidden_options.add_options()
     ("zmax", po::value< double >(), "global-extent maxz value")
 ;
 
-return file_options.add(hidden_options);
+return file_options;
+}
+
+po::options_description GetHiddenOptions()
+{
+    po::options_description hidden_options("hidden options");
+hidden_options.add_options()
+    ("xmin", po::value< double >(), "global-extent minx value")
+    ("ymin", po::value< double >(), "global-extent miny value")
+    ("zmin", po::value< double >(), "global-extent minz value")
+    ("xmax", po::value< double >(), "global-extent maxx value")
+    ("ymax", po::value< double >(), "global-extent maxy value")
+    ("zmax", po::value< double >(), "global-extent maxz value")
+;
+
+
+return hidden_options;
 }
 // select sdo_pc_pkg.to_geometry(a.points, a.num_points, 3, 4326) from NACHES_BAREEARTH_BLOCK1 a where a.obj_id= 8907
 int main(int argc, char* argv[])
@@ -685,6 +701,7 @@ int main(int argc, char* argv[])
     bool bUse3d = false;
     bool bInsertHeaderBlob = false;
     
+    
     uint32_t nCapacity = 10000;
 
     int srid = 0;
@@ -698,6 +715,7 @@ int main(int argc, char* argv[])
     
     
     bool verbose = false;
+    bool debug = false;
     std::vector<liblas::FilterI*> filters;
     std::vector<liblas::TransformI*> transforms;
     
@@ -709,6 +727,7 @@ int main(int argc, char* argv[])
         po::options_description file_options = GetFileOptions();
         po::options_description filtering_options = GetFilteringOptions();
         po::options_description transform_options = GetTransformationOptions() ;
+        po::options_description hidden_options = GetHiddenOptions();
         po::positional_options_description p;
         p.add("input", 1);
         p.add("connection", 1);
@@ -718,7 +737,7 @@ int main(int argc, char* argv[])
 
         po::variables_map vm;
         po::options_description options;
-        options.add(file_options).add(transform_options).add(filtering_options);
+        options.add(file_options).add(transform_options).add(filtering_options).add(hidden_options);
         po::store(po::command_line_parser(argc, argv).
         options(options).positional(p).run(), vm);
 
@@ -726,15 +745,26 @@ int main(int argc, char* argv[])
 
         if (vm.count("help")) 
         {
-            std::cout << GetInvocationHeader()<<file_options;//<<transform_options<<filtering_options<<"\n";
-            return 1;
+            std::cout << GetInvocationHeader()<<file_options<<transform_options<<filtering_options<<"\n";
+            return 0;
         }
 
         if (vm.count("verbose")) 
         {
             verbose = vm["verbose"].as< bool >();
         }
-
+        if (vm.count("debug")) 
+        {
+            debug = vm["debug"].as< bool >();
+            verbose = true; // implies verbose too
+            const char* gdal_debug = getenv("CPL_DEBUG");
+            if (gdal_debug == 0)
+            {
+                char d[20] = "CPL_DEBUG=ON";
+                putenv(d);
+            }
+            
+        }
         if (vm.count("input")) 
         {
             input = vm["input"].as< string >();
@@ -808,14 +838,14 @@ int main(int argc, char* argv[])
         {
             aux_columns = vm["aux-columns"].as< string >();
             if (verbose)
-                std::cout << "Setting aux-columns to:" << aux_columns << std::endl;
+                std::cout << "Setting aux-columns to: " << aux_columns << std::endl;
 
         }
         if (vm.count("aux-values")) 
         {
             aux_values = vm["aux-values"].as< string >();
             if (verbose)
-                std::cout << "Setting aux-values to:" << aux_columns << std::endl;
+                std::cout << "Setting aux-values to: " << aux_values << std::endl;
 
         }
 
@@ -830,7 +860,7 @@ int main(int argc, char* argv[])
         {
             precision = vm["precision"].as< uint32_t >();
             if (verbose)
-                std::cout << "Setting precision to:" << precision << std::endl;
+                std::cout << "Setting precision to: " << precision << std::endl;
 
         }
         
@@ -944,48 +974,257 @@ int main(int argc, char* argv[])
             double xmin = vm["xmin"].as< double >();
             global_extent.min(0, xmin);
             if (verbose)
-                std::cout << "Setting xmin to:" << xmin << std::endl;
+                std::cout << "Setting xmin to: " << xmin << std::endl;
         }
         if (vm.count("ymin")) 
         {
             double ymin = vm["ymin"].as< double >();
             global_extent.min(1, ymin);
             if (verbose)
-                std::cout << "Setting ymin to:" << ymin << std::endl;
+                std::cout << "Setting ymin to: " << ymin << std::endl;
         }
         if (vm.count("zmin")) 
         {
             double zmin = vm["zmin"].as< double >();
             global_extent.min(2, zmin);
             if (verbose)
-                std::cout << "Setting zmin to:" << zmin << std::endl;
+                std::cout << "Setting zmin to: " << zmin << std::endl;
         }
         if (vm.count("xmax")) 
         {
             double xmax = vm["xmax"].as< double >();
             global_extent.max(0, xmax);
             if (verbose)
-                std::cout << "Setting xmax to:" << xmax << std::endl;
+                std::cout << "Setting xmax to: " << xmax << std::endl;
         }
         if (vm.count("ymax")) 
         {
             double ymax = vm["ymax"].as< double >();
             global_extent.max(1, ymax);
             if (verbose)
-                std::cout << "Setting ymax to:" << ymax << std::endl;
+                std::cout << "Setting ymax to: " << ymax << std::endl;
         }
         if (vm.count("zmax")) 
         {
             double zmax = vm["zmax"].as< double >();
             global_extent.max(2, zmax);
             if (verbose)
-                std::cout << "Setting zmax to:" << zmax << std::endl;
+                std::cout << "Setting zmax to: " << zmax << std::endl;
         }
         filters = GetFilters(vm, verbose);
         
         // Transforms alter our header as well.  Setting scales, offsets, etc.
         transforms = GetTransforms(vm, verbose, header);
         
+
+
+
+
+        if (connection.empty() || input.empty()) {
+            if (input.empty())
+                std::cerr << "Input .las file not specified!" << std::endl;
+            if (connection.empty())
+                std::cerr << "Oracle connection string empty!" << std::endl;
+
+            std::cout << GetInvocationHeader()<<file_options<<transform_options<<filtering_options<<"\n";
+            return 1;
+
+        }
+
+        if (block_table_name.size() == 0) {
+            // change filename foo.las -> foo for an appropriate
+            // block tablename for oracle... must be less than 30 characters
+            // and no extraneous characters.
+            string::size_type dot_pos = input.find_first_of(".");
+            block_table_name = input.substr(0,dot_pos);
+        } else {
+            block_table_name = block_table_name;
+        }
+        string::size_type slash_pos = connection.find("/",0);
+        username = connection.substr(0,slash_pos);
+        string::size_type at_pos = connection.find("@",slash_pos);
+    //    std::cout <<"slash_pos: " << slash_pos << " at_pos: " << at_pos<<std::endl;
+        password = connection.substr(slash_pos+1, at_pos-slash_pos-1);
+        instance = connection.substr(at_pos+1);
+        std::cout << "Connecting with username: " << username << " password: "<< password<< " instance: " << instance << std::endl;    
+
+        std::cout << "Base table name " << base_table_name << " cloud column: " << point_cloud_name <<" block table: " << block_table_name << std::endl;
+        // OCI_SUCCESS_WITH_INFO error, which according to google relates to 
+        // a warning related to expired or expiring passwords needs to be 
+        // handled in the oracle wrapper.
+
+        // Create the index before connecting to Oracle.  That way we don't heartbeat
+        // the server while we're cruising through the file(s).
+
+        // OS X RAMDISK configuration
+        // http://www.macosxhints.com/article.php?story=20090222092827145
+
+        // Obj_id is serial for each row in the block table
+        // blk_id is the index leaf node id (this is currently being written incorrectly)
+        OWConnection* con = new OWConnection(username.c_str(),password.c_str(),instance.c_str());
+        if (con->Succeeded()) {
+            std::cout <<"Oracle connection succeded" << std::endl;
+        } else {
+            std::cout <<"Oracle connection failed" << std::endl; exit(1);
+        }
+
+        // std::istream* istrm;
+        // try {
+        //         istrm = OpenInput(input, false);
+        // } catch (std::exception const& e)
+        // {
+        //     std::cout << e.what() << std::endl;
+        //     std::cout << "exiting..." << std::endl;
+        //     exit(-1);
+        // }
+
+
+        con->StartTransaction();
+
+        if (bDropTable) {
+            std::cout << "dropping existing tables..." << std::endl;
+
+            WipeBlockTable(con, block_table_name, base_table_name, point_cloud_name);
+        }
+
+        if (!pre_sql.empty()) {
+            std::cout << "running pre-sql ..." << std::endl;
+            ostringstream oss;
+            oss << pre_sql;
+            OWStatement* statement = 0;
+            statement = RunSQL(con, oss);
+            if (statement != 0) {
+                delete statement; 
+            }
+            else {
+                std::cout << "pre-sql execution failed.." << std::endl;
+                return false;
+            }
+            oss.str("");        
+        }
+        if (!BlockTableExists(con, block_table_name.c_str()))
+            CreateBlockTable(con, block_table_name);
+        else {
+            bUseExistingBlockTable = true;
+            std::cout << "Using existing block table ... " << std::endl;
+
+        }
+
+        KDXIndexSummary* query = 0;
+        if (!KDTreeIndexExists(input)) {
+            std::cout << "KDTree .kdx file does not exist for file, unable to proceed" << std::endl;
+            exit(1);  
+        } else {
+            std::cout << "Using kdtree ... " << std::endl;
+            std::ostringstream os;
+            os << input << ".kdx" ;
+
+            std::istream* kdx = OpenInput(os.str(), false);
+            query = new KDXIndexSummary(*kdx);
+        }
+
+        ResultsVector& results = query->GetResults();
+
+        ResultsVector::iterator i;
+
+        std::istream* istrm2;
+        istrm2 = OpenInput(input, false);
+        liblas::Reader* reader2 = new liblas::Reader(*istrm2);
+
+        std::vector<uint8_t> header_data = GetHeaderData(input, reader2->GetHeader().GetDataOffset());
+
+        long pc_id = CreatePCEntry(  con, 
+                        query, 
+                        block_table_name,
+                        base_table_name,
+                        point_cloud_name,
+                        aux_columns,
+                        aux_values,
+                        3, // we're assuming 3d for now
+                        srid,
+                        nCapacity,
+                        precision,
+                        bUseSolidGeometry,
+                        bUse3d,
+                        bInsertHeaderBlob,
+                        header_blob_column,
+                        header_data);
+
+
+        std::cout << "Writing " << results.size() << " blocks ..." << std::endl;
+
+
+        if (!pre_block_sql.empty()) {
+            std::cout << "running pre-block-sql ..." << std::endl;
+
+            ostringstream oss;
+            oss << pre_block_sql;
+            OWStatement* statement = 0;
+            statement = RunSQL(con, oss);
+            if (statement != 0) {
+                delete statement; 
+            }
+            else {
+                std::cout << " pre-block-sql execution failed.." << std::endl;
+                return false;
+            }
+            oss.str("");
+            con->Commit();     
+        }
+
+
+        InsertBlocks(con,
+                     query,
+                     reader2,
+                     block_table_name,
+                     nCommitInterval,
+                     srid,
+                     precision,
+                     pc_id,
+                     bUseSolidGeometry,
+                     bUse3d,
+                     nCapacity);
+
+
+        if (!bUseExistingBlockTable) {
+            std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
+            CreateSDOEntry( con, 
+                            block_table_name.c_str(), 
+                            query, 
+                            srid , 
+                            precision, 
+                            bUseSolidGeometry,
+                            bUse3d,
+                            bSetExtents,
+                            global_extent);
+
+            CreateBlockIndex(   con, 
+                                block_table_name.c_str(), 
+                                srid,  
+                                bUse3d);
+        }
+
+
+
+
+        if (!post_sql.empty()) {
+            std::cout << "running post-sql ..." << std::endl;
+
+            ostringstream oss;
+            oss << post_sql;
+            OWStatement* statement = 0;
+            statement = RunSQL(con, oss);
+            if (statement != 0) {
+                delete statement; 
+            }
+            else {
+                std::cout << "post-sql execution failed.." << std::endl;
+                return false;
+            }
+            oss.str("");        
+        }
+
+        con->Commit();
         
     }
     catch(std::exception& e) {
@@ -998,417 +1237,6 @@ int main(int argc, char* argv[])
     
     return 0;
 
-    
-    for (int i = 1; i < argc; i++)
-    {
-        if (    strcmp(argv[i],"-h") == 0 ||
-                strcmp(argv[i],"--help") == 0
-            )
-        {
-            usage();
-            exit(0);
-        }
-        else if (   strcmp(argv[i],"--input") == 0  ||
-                    strcmp(argv[i],"-input") == 0   ||
-                    strcmp(argv[i],"-i") == 0       ||
-                    strcmp(argv[i],"-in") == 0
-                )
-        {
-            i++;
-            input = std::string(argv[i]);
-        }
-        else if (   strcmp(argv[i],"--overwrite") == 0  ||
-                    strcmp(argv[i],"-drop") == 0   ||
-                    strcmp(argv[i],"-d") == 0 
-                )
-        {
-            bDropTable=true;
-        }
-        else if (   strcmp(argv[i],"--blk_capacity") == 0  ||
-                    strcmp(argv[i],"--capacity") == 0   ||
-                    strcmp(argv[i],"-c") == 0 
-                )
-        {
-            i++;
-            nCapacity=atoi(argv[i]);
-        }
-        else if (   strcmp(argv[i],"--srid") == 0  ||
-                    strcmp(argv[i],"-srid") == 0   ||
-                    strcmp(argv[i],"-s") == 0 
-                )
-        {
-            i++;
-            srid=atoi(argv[i]);
-        }
-
-        else if (   strcmp(argv[i],"--cloud-column-name") == 0  ||
-                    strcmp(argv[i],"-cn") == 0  
-                )
-        {
-            i++;
-            point_cloud_name = std::string(argv[i]);
-        }
-        else if (   strcmp(argv[i],"--base-table-name") == 0  ||
-                    strcmp(argv[i],"-bn") == 0  
-                )
-        {
-            i++;
-            base_table_name = std::string(argv[i]);
-        }
-        else if (   strcmp(argv[i],"--block-table-name") == 0  ||
-                    strcmp(argv[i],"-bk") == 0  
-                )
-        {
-            i++;
-            block_table_name = std::string(argv[i]);
-        }
-        else if (   strcmp(argv[i],"--pre-sql") == 0  ||
-                    strcmp(argv[i],"-prs") == 0  
-                )
-        {
-            i++;
-            try {
-                pre_sql = ReadSQLData(argv[i]);
-            } catch (std::runtime_error const& e) {
-                pre_sql = std::string(argv[i]);
-            }
-        }
-        else if (   strcmp(argv[i],"--post-sql") == 0  ||
-                    strcmp(argv[i],"-pos") == 0  
-                )
-        {
-            i++;
-            try {
-                post_sql = ReadSQLData(argv[i]);
-            } catch (std::runtime_error const& e) {
-                post_sql = std::string(argv[i]);
-            }
-        }
-        else if (   strcmp(argv[i],"--pre-block-sql") == 0  ||
-                    strcmp(argv[i],"-pbs") == 0  
-                )
-        {
-            i++;
-            try {
-                pre_block_sql = ReadSQLData(argv[i]);
-            } catch (std::runtime_error const& e) {
-                pre_block_sql = std::string(argv[i]);
-            }
-        }
-        else if (   strcmp(argv[i],"--aux-columns") == 0  ||
-                    strcmp(argv[i],"-ac") == 0  
-                )
-        {
-            i++;
-            aux_columns = std::string(argv[i]);
-        }
-        else if (   strcmp(argv[i],"--aux-values") == 0  ||
-                    strcmp(argv[i],"-av") == 0  
-                )
-        {
-            i++;
-            aux_values = std::string(argv[i]);
-        }
-        else if (   strcmp(argv[i],"--precision") == 0  ||
-                    strcmp(argv[i],"-p") == 0  
-                )
-        {
-            i++;
-            precision = atoi(argv[i]);
-        }
-        else if (   strcmp(argv[i],"--commit-interval") == 0  ||
-                    strcmp(argv[i],"-ci") == 0  
-                )
-        {
-            i++;
-            nCommitInterval = atoi(argv[i]);
-        }
-        else if (   strcmp(argv[i],"--solid") == 0 ||
-                    strcmp(argv[i],"-solid") == 0
-                )
-        {
-            bUseSolidGeometry=true;
-        }
-        else if (   strcmp(argv[i],"--3d") == 0  ||
-                    strcmp(argv[i],"-3d") == 0
-                )
-        {
-            bUse3d=true;
-        }
-        else if (   strcmp(argv[i],"--header-blob-column") == 0  
-                )
-        {
-            bInsertHeaderBlob=true;
-            i++;
-            header_blob_column = std::string(argv[i]);
-        }        
-        else if (   strcmp(argv[i],"--xmin") == 0  ||
-                    strcmp(argv[i],"-xmin") == 0
-                )
-        {
-            i++;
-            global_extent.min(0, atof(argv[i]));
-            bSetExtents = true;
-        }
-
-        else if (   strcmp(argv[i],"--xmax") == 0  ||
-                    strcmp(argv[i],"-xmax") == 0
-                )
-        {
-            i++;
-            global_extent.max(0, atof(argv[i]));
-            bSetExtents = true;
-        }
-
-        else if (   strcmp(argv[i],"--ymin") == 0  ||
-                    strcmp(argv[i],"-ymin") == 0
-                )
-        {
-            i++;
-            global_extent.min(1, atof(argv[i]));
-            bSetExtents = true;
-        }
-
-        else if (   strcmp(argv[i],"--ymax") == 0  ||
-                    strcmp(argv[i],"-ymax") == 0
-                )
-        {
-            i++;
-            global_extent.max(1, atof(argv[i]));
-            bSetExtents = true;
-        }
-        else if (   strcmp(argv[i],"--zmin") == 0  ||
-                    strcmp(argv[i],"-zmin") == 0
-                )
-        {
-            i++;
-            global_extent.min(2, atof(argv[i]));
-            bSetExtents = true;
-        }
-
-        else if (   strcmp(argv[i],"--zmax") == 0  ||
-                    strcmp(argv[i],"-zmax") == 0
-                )
-        {
-            i++;
-            global_extent.max(2, atof(argv[i]));
-            bSetExtents = true;
-        }
-        else if (input.empty())
-        {
-            input = std::string(argv[i]);
-        }
-        else if (connection.empty())
-        {
-            connection = std::string(argv[i]);
-        }
-        else 
-        {
-            usage();
-            exit(1);
-        }
-    }
-
-    
-    if (connection.empty() || input.empty()) {
-        usage();
-        exit(1);
-    }
-
-    if (block_table_name.size() == 0) {
-        // change filename foo.las -> foo for an appropriate
-        // block tablename for oracle... must be less than 30 characters
-        // and no extraneous characters.
-        string::size_type dot_pos = input.find_first_of(".");
-        block_table_name = input.substr(0,dot_pos);
-    } else {
-        block_table_name = block_table_name;
-    }
-    string::size_type slash_pos = connection.find("/",0);
-    username = connection.substr(0,slash_pos);
-    string::size_type at_pos = connection.find("@",slash_pos);
-//    std::cout <<"slash_pos: " << slash_pos << " at_pos: " << at_pos<<std::endl;
-    password = connection.substr(slash_pos+1, at_pos-slash_pos-1);
-    instance = connection.substr(at_pos+1);
-    std::cout << "Connecting with username: " << username << " password: "<< password<< " instance: " << instance << std::endl;    
-
-    std::cout << "Base table name " << base_table_name << " cloud column: " << point_cloud_name <<" block table: " << block_table_name << std::endl;
-    // OCI_SUCCESS_WITH_INFO error, which according to google relates to 
-    // a warning related to expired or expiring passwords needs to be 
-    // handled in the oracle wrapper.
-    
-    // Create the index before connecting to Oracle.  That way we don't heartbeat
-    // the server while we're cruising through the file(s).
-    
-    // OS X RAMDISK configuration
-    // http://www.macosxhints.com/article.php?story=20090222092827145
-    
-    // Obj_id is serial for each row in the block table
-    // blk_id is the index leaf node id (this is currently being written incorrectly)
-    OWConnection* con = new OWConnection(username.c_str(),password.c_str(),instance.c_str());
-    if (con->Succeeded()) {
-        std::cout <<"Oracle connection succeded" << std::endl;
-    } else {
-        std::cout <<"Oracle connection failed" << std::endl; exit(1);
-    }
-
-    // std::istream* istrm;
-    // try {
-    //         istrm = OpenInput(input, false);
-    // } catch (std::exception const& e)
-    // {
-    //     std::cout << e.what() << std::endl;
-    //     std::cout << "exiting..." << std::endl;
-    //     exit(-1);
-    // }
-
-    
-    con->StartTransaction();
-
-    if (bDropTable) {
-        std::cout << "dropping existing tables..." << std::endl;
-
-        WipeBlockTable(con, block_table_name, base_table_name, point_cloud_name);
-    }
-    
-    if (!pre_sql.empty()) {
-        std::cout << "running pre-sql ..." << std::endl;
-        ostringstream oss;
-        oss << pre_sql;
-        OWStatement* statement = 0;
-        statement = RunSQL(con, oss);
-        if (statement != 0) {
-            delete statement; 
-        }
-        else {
-            std::cout << "pre-sql execution failed.." << std::endl;
-            return false;
-        }
-        oss.str("");        
-    }
-    if (!BlockTableExists(con, block_table_name.c_str()))
-        CreateBlockTable(con, block_table_name);
-    else {
-        bUseExistingBlockTable = true;
-        std::cout << "Using existing block table ... " << std::endl;
-
-    }
-
-    KDXIndexSummary* query = 0;
-    if (!KDTreeIndexExists(input)) {
-        std::cout << "KDTree .kdx file does not exist for file, unable to proceed" << std::endl;
-        exit(1);  
-    } else {
-        std::cout << "Using kdtree ... " << std::endl;
-        std::ostringstream os;
-        os << input << ".kdx" ;
-        
-        std::istream* kdx = OpenInput(os.str(), false);
-        query = new KDXIndexSummary(*kdx);
-    }
-
-    ResultsVector& results = query->GetResults();
-    
-    ResultsVector::iterator i;
-    
-    std::istream* istrm2;
-    istrm2 = OpenInput(input, false);
-    liblas::Reader* reader2 = new liblas::Reader(*istrm2);
-    
-    std::vector<uint8_t> header_data = GetHeaderData(input, reader2->GetHeader().GetDataOffset());
-
-    long pc_id = CreatePCEntry(  con, 
-                    query, 
-                    block_table_name,
-                    base_table_name,
-                    point_cloud_name,
-                    aux_columns,
-                    aux_values,
-                    3, // we're assuming 3d for now
-                    srid,
-                    nCapacity,
-                    precision,
-                    bUseSolidGeometry,
-                    bUse3d,
-                    bInsertHeaderBlob,
-                    header_blob_column,
-                    header_data);
-                    
-    
-    std::cout << "Writing " << results.size() << " blocks ..." << std::endl;
-
-
-    if (!pre_block_sql.empty()) {
-        std::cout << "running pre-block-sql ..." << std::endl;
-
-        ostringstream oss;
-        oss << pre_block_sql;
-        OWStatement* statement = 0;
-        statement = RunSQL(con, oss);
-        if (statement != 0) {
-            delete statement; 
-        }
-        else {
-            std::cout << " pre-block-sql execution failed.." << std::endl;
-            return false;
-        }
-        oss.str("");
-        con->Commit();     
-    }
-
-
-    InsertBlocks(con,
-                 query,
-                 reader2,
-                 block_table_name,
-                 nCommitInterval,
-                 srid,
-                 precision,
-                 pc_id,
-                 bUseSolidGeometry,
-                 bUse3d,
-                 nCapacity);
- 
-    
-    if (!bUseExistingBlockTable) {
-        std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
-        CreateSDOEntry( con, 
-                        block_table_name.c_str(), 
-                        query, 
-                        srid , 
-                        precision, 
-                        bUseSolidGeometry,
-                        bUse3d,
-                        bSetExtents,
-                        global_extent);
-                        
-        CreateBlockIndex(   con, 
-                            block_table_name.c_str(), 
-                            srid,  
-                            bUse3d);
-    }
-
-
-
-
-    if (!post_sql.empty()) {
-        std::cout << "running post-sql ..." << std::endl;
-
-        ostringstream oss;
-        oss << post_sql;
-        OWStatement* statement = 0;
-        statement = RunSQL(con, oss);
-        if (statement != 0) {
-            delete statement; 
-        }
-        else {
-            std::cout << "post-sql execution failed.." << std::endl;
-            return false;
-        }
-        oss.str("");        
-    }
-
-    con->Commit();
 }
 // 
 // select t.x, t.y, t.id from (
