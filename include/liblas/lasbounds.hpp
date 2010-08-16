@@ -168,7 +168,7 @@ Bounds( Vector const& low, Vector const& high)
 T min(std::size_t const& index) const
 {
     if (mins.size() <= index) {
-        return 0.0;
+        return 0;
     }
     return mins[index];
 }
@@ -198,6 +198,13 @@ void max(std::size_t const& index, T v)
     }
     maxs[index] = v;
 }
+
+T minx() const { if (mins.size() == 0) return 0; return mins[0]; }
+T miny() const { if (mins.size() < 2) return 0; return mins[1]; }
+T minz() const { if (mins.size() < 3) return 0; return mins[2]; }
+T maxx() const { if (maxs.size() == 0) return 0; return maxs[0]; }
+T maxy() const { if (maxs.size() < 2) return 0; return maxs[1]; }
+T maxz() const { if (maxs.size() < 3) return 0; return maxs[2]; }
 
 inline bool operator==(Bounds<T> const& rhs) const
 {
