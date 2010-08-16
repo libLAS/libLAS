@@ -164,7 +164,6 @@ version = get_version()
 
 las.LAS_IsGDALEnabled.restype = ctypes.c_int
 las.LAS_IsLibGeoTIFFEnabled.restype = ctypes.c_int
-las.LAS_IsLibSpatialIndexEnabled.restype = ctypes.c_int
 
 las.LAS_GetVersion.restype = ctypes.POINTER(ctypes.c_char)
 las.LAS_GetVersion.errcheck = free_returned_char_p
