@@ -4,8 +4,6 @@ KDXIndexSummary::KDXIndexSummary(liblas::Reader& reader, boost::uint32_t capacit
 {
     liblas::chipper::Chipper c(&reader, capacity);
 
-    if (verbose)
-        std::cout << "Blocking" <<std::endl;
 
     c.Chip();
 
@@ -17,10 +15,7 @@ KDXIndexSummary::KDXIndexSummary(liblas::Reader& reader, boost::uint32_t capacit
    
    boost::uint32_t num_blocks = c.GetBlockCount();
    
-   if (verbose)
-       std::cout << "Writing " << num_blocks << " blocks to "  << std::endl;
-
-   boost::uint32_t prog = 0;
+   // boost::uint32_t prog = 0;
    
    for ( boost::uint32_t i = 0; i < num_blocks; ++i )
    {
