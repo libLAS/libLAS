@@ -43,6 +43,7 @@
 #include <liblas/lasversion.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/detail/reader/reader.hpp>
+#include <liblas/detail/reader/cachedreader.hpp>
 
 // std
 #include <stdexcept>
@@ -69,6 +70,18 @@ Reader::Reader(std::istream& ifs) :
     Init();
 }
 
+Reader::Reader(std::istream& ifs, uint32_t cache_size) :
+    m_pimpl(new detail::CachedReaderImpl(ifs,cache_size)),
+    m_header(HeaderPtr()),
+    m_point(0),
+    m_empty_point(new Point()),
+    bCustomHeader(false),
+    m_filters(0),
+    m_transforms(0),
+    m_reprojection_transform(TransformPtr())
+{
+    Init();
+}
 Reader::Reader(ReaderI* reader) :
     m_pimpl(reader),
     m_header(HeaderPtr()),
@@ -83,7 +96,7 @@ Reader::Reader(ReaderI* reader) :
 }
 
 Reader::Reader(std::istream& ifs, Header& header) :
-    m_pimpl(new detail::CachedReaderImpl(ifs,3)),
+    m_pimpl(new detail::CachedReaderImpl(ifs,20)),
     m_header(HeaderPtr( )),    
     m_point(0),
     m_empty_point(new Point()),

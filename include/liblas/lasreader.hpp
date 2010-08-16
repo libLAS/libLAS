@@ -68,6 +68,7 @@ public:
     /// @param ifs - stream used as source of LAS records.
     /// @excepion std::runtime_error - on failure state of the input stream.
     Reader(std::istream& ifs);
+    Reader(std::istream& ifs, uint32_t cache_size);
 
     Reader(ReaderI* reader);
     
