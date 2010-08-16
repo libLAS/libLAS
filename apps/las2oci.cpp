@@ -628,11 +628,11 @@ file_options.add_options()
     ("input,i", po::value< string >(), "input LAS file")
     ("connection,c", po::value< string >(), "OCI connection string")
     ("verbose,v", po::value<bool>()->zero_tokens(), "Verbose message output")
-    ("debug", po::value<bool>()->zero_tokens(), "Enable debugging")
+    ("debug", po::value<bool>()->zero_tokens(), "Enable debug messages (SQL calls)")
     ("base-table-name", po::value< string >()->default_value("HOBU"), "The table name in which to put the point cloud object.  This table must have a column of type SDO_PC, with the name to be specified with --cloud-column-name")
     ("block-table-name", po::value< string >(), "The table name in which to put the block data.  This table must be of type SDO_PC.BLK_TABLE.  This table will be created using the filename of the input LAS file if not specified.  Use -d to delete the table if it already exists.")
     ("cloud-column-name", po::value< string >()->default_value("CLOUD"), "The column name that contains the point cloud object in the base table")
-    ("header-blob-column", po::value< string >(), "Blob column name in the base table in which to insert the contents of the input file's header.")
+    ("header-blob-column", po::value< string >(), "Blob column name in the base table in which to optionally insert the contents of the input file's header.")
     ("overwrite,d", po::value<bool>()->zero_tokens(), "Drop block table before inserting data.")
     ("block-capacity", po::value<uint32_t>()->default_value(3000), "Maximum number of points to be inserted into each block")
     ("precision,p", po::value<uint32_t>()->default_value(8), "Number of decimal points to write into SQL for point coordinate data.  Used in user_sdo_geom_metadata entry and defining the PC_EXTENT for the point cloud object.")
@@ -645,6 +645,7 @@ file_options.add_options()
     ("solid", po::value<bool>()->zero_tokens(), "Define the point cloud's PC_EXTENT geometry gtype as (1,1007,3) instead of the normal (1,1003,3), and use gtype 3008/2008 vs 3003/2003 for BLK_EXTENT geometry values.")
     ("3d", po::value<bool>()->zero_tokens(), "Use Z values for insertion of all extent (PC_EXTENT, BLK_EXTENT, USER_SDO_GEOM_METADATA) entries")
     ("global-extent", po::value< string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated list, for example, \n  --global-extent minx, miny, maxx, maxy\n  or \n  --global-extent minx, miny, minz, maxx, maxy, maxz")
+    ("cached", po::value<bool>()->zero_tokens(), "Cache the entire file on the first read")
 
 
 ;
@@ -695,7 +696,7 @@ int main(int argc, char* argv[])
     bool bUseSolidGeometry = false;
     bool bUse3d = false;
     bool bInsertHeaderBlob = false;
-    
+    bool bCachedReader = false;
     
     uint32_t nCapacity = 10000;
 
@@ -765,7 +766,7 @@ int main(int argc, char* argv[])
             input = vm["input"].as< string >();
             std::ifstream ifs;
             if (verbose)
-                std::cout << "Opening " << input << " to fetch Header" << std::endl;
+                std::cout << "Opening " << input << " to fetch header" << std::endl;
             if (!liblas::Open(ifs, input.c_str()))
             {
                 std::cerr << "Cannot open " << input << "for read.  Exiting...";
@@ -787,11 +788,6 @@ int main(int argc, char* argv[])
 
             password = connection.substr(slash_pos+1, at_pos-slash_pos-1);
             instance = connection.substr(at_pos+1);
-            if (verbose)
-                std::cout << "Connecting with username: " << username << 
-                             " password: "<< password<< 
-                             " instance: " << instance << std::endl;    
-
         } else {
             std::cerr << "Connection string not specified!\n";
             return 1;
@@ -1022,6 +1018,13 @@ int main(int argc, char* argv[])
             if (verbose)
                 std::cout << "Setting zmax to: " << zmax << std::endl;
         }
+        if (vm.count("cached")) 
+        {
+            bool bCachedReader = vm["cached"].as< bool >();
+            if (verbose)
+                std::cout << "Caching entire file... " << std::endl;
+        }        
+
         filters = GetFilters(vm, verbose);
         
         // Transforms alter our header as well.  Setting scales, offsets, etc.
@@ -1116,7 +1119,12 @@ int main(int argc, char* argv[])
 
         std::istream* istrm2;
         istrm2 = OpenInput(input, false);
-        liblas::Reader* reader2 = new liblas::Reader(*istrm2);
+        
+        liblas::Reader* reader2 = 0;
+        if (bCachedReader)
+            reader2 = new liblas::Reader(*istrm2,0);
+        else
+            reader2 = new liblas::Reader(*istrm2);
         reader2->SetFilters(&filters);
         reader2->SetTransforms(&transforms);
 
