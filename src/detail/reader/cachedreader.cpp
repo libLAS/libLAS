@@ -127,7 +127,7 @@ void CachedReaderImpl::CacheData(boost::uint32_t position, HeaderPtr header)
     }
 }
 
-PointPtr CachedReaderImpl::ReadCachedPoint(boost::uint32_t position, HeaderPtr header) {
+liblas::Point const& CachedReaderImpl::ReadCachedPoint(boost::uint32_t position, HeaderPtr header) {
     
     int32_t cache_position = position - m_cache_start_position ;
 
@@ -179,16 +179,17 @@ PointPtr CachedReaderImpl::ReadCachedPoint(boost::uint32_t position, HeaderPtr h
     }
 }
 
-PointPtr CachedReaderImpl::ReadNextPoint(HeaderPtr header)
+liblas::Point const& CachedReaderImpl::ReadNextPoint(HeaderPtr header)
 {
     if (m_cache_read_position == m_size )
     {
         throw std::out_of_range("file has no more points to read, end of file reached");
     }
     
-    PointPtr ptr = ReadCachedPoint(m_cache_read_position, header);
+    // PointPtr ptr = ReadCachedPoint(m_cache_read_position, header);
+    liblas::Point const& point = ReadCachedPoint(m_cache_read_position, header);
     ++m_cache_read_position;
-    return ptr;
+    return point;
 }
 
 liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, HeaderPtr header)
@@ -206,16 +207,9 @@ liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, HeaderPtr head
         throw std::runtime_error(out);
     }
 
-    PointPtr ptr = ReadCachedPoint(n, header);
-    if (ptr.get() == 0 ) {
-        std::ostringstream output;
-        output << "unable to fetch point from cache at position : " 
-               << n;
-        std::string out(output.str());
-        throw std::runtime_error(out);
-    }
+    liblas::Point const& p = ReadCachedPoint(n, header);
     m_cache_read_position = n;
-    return *ptr;
+    return p;
 }
 
 void CachedReaderImpl::Reset(HeaderPtr header)

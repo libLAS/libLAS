@@ -65,7 +65,7 @@ public:
     ~ReaderImpl();
 
     HeaderPtr ReadHeader();
-    PointPtr ReadNextPoint(HeaderPtr header);
+    liblas::Point const& ReadNextPoint(HeaderPtr header);
     liblas::Point const& ReadPointAt(std::size_t n, HeaderPtr header);
     void Seek(std::size_t n, HeaderPtr header);
     

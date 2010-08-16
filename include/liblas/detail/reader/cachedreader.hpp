@@ -63,7 +63,7 @@ public:
     // ~CachedReaderImpl();
 
     HeaderPtr ReadHeader();
-    PointPtr ReadNextPoint(HeaderPtr header);
+    liblas::Point const& ReadNextPoint(HeaderPtr header);
     liblas::Point const& ReadPointAt(std::size_t n, HeaderPtr header);
     // void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
 
@@ -77,7 +77,7 @@ private:
     // Blocked copying operations, declared but not defined.
     CachedReaderImpl(CachedReaderImpl const& other);
     CachedReaderImpl& operator=(CachedReaderImpl const& rhs);
-    PointPtr ReadCachedPoint(boost::uint32_t position, HeaderPtr header);
+    liblas::Point const& ReadCachedPoint(boost::uint32_t position, HeaderPtr header);
     
     void CacheData(boost::uint32_t position, HeaderPtr header);
 
@@ -87,7 +87,7 @@ private:
     cache_mask_type::size_type m_cache_start_position;
     cache_mask_type::size_type m_cache_read_position;
 
-    typedef std::vector<PointPtr> cache_type;
+    typedef std::vector<liblas::Point> cache_type;
     cache_type m_cache;
 };
 

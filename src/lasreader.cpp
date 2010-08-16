@@ -58,7 +58,7 @@ namespace liblas
 {
 
 Reader::Reader(std::istream& ifs) :
-    m_pimpl(new detail::CachedReaderImpl(ifs,3)),
+    m_pimpl(new detail::ReaderImpl(ifs)),
     m_header(HeaderPtr()),
     m_point(0),
     m_empty_point(new Point()),
@@ -96,7 +96,7 @@ Reader::Reader(ReaderI* reader) :
 }
 
 Reader::Reader(std::istream& ifs, Header& header) :
-    m_pimpl(new detail::CachedReaderImpl(ifs,20)),
+    m_pimpl(new detail::ReaderImpl(ifs)),
     m_header(HeaderPtr( )),    
     m_point(0),
     m_empty_point(new Point()),
@@ -148,7 +148,8 @@ bool Reader::ReadNextPoint()
     }
     
     try {
-        m_point = m_pimpl->ReadNextPoint(m_header).get();
+        // m_point = m_pimpl->ReadNextPoint(m_header).get();
+        m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
         if (bHaveFilters) {
         if (m_filters->size() != 0) {
             // We have filters, filter this point.  All filters must 
@@ -264,7 +265,7 @@ void Reader::Init()
         custom_header = *m_header;
     }
 
-    m_header = HeaderPtr(m_pimpl->ReadHeader());
+    m_header = m_pimpl->ReadHeader();
 
         // throw std::runtime_error("public header block reading failure");
 
