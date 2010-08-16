@@ -14,9 +14,7 @@ KDXIndexSummary::KDXIndexSummary(liblas::Reader& reader, boost::uint32_t capacit
    bool first = true;
    
    boost::uint32_t num_blocks = c.GetBlockCount();
-   
-   // boost::uint32_t prog = 0;
-   
+      
    for ( boost::uint32_t i = 0; i < num_blocks; ++i )
    {
         const liblas::chipper::Block& b = c.GetBlock(i);
