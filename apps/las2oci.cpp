@@ -19,6 +19,13 @@ using namespace std;
 
 
 
+void OCIGDALErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
+{
+    ostringstream oss;
+    oss <<"GDAL Error #" << err_no << ": " << msg;
+    throw std::runtime_error(oss.str());
+}
+
 
 
 
@@ -301,7 +308,6 @@ bool InsertBlocks(
             ", 1, 0, 1)";
           
     OWStatement* statement = 0;
-    // OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1000 );
 
     statement = con->CreateStatement(oss.str().c_str());
     long j = 0;
@@ -345,7 +351,7 @@ bool CreateSDOEntry(    OWConnection* connection,
 {
     ostringstream oss;
     OWStatement* statement = 0;
-    // SpatialIndex::Region* b = query->bounds;
+
     ostringstream oss_geom;
     
     oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
@@ -376,9 +382,6 @@ bool CreateSDOEntry(    OWConnection* connection,
 
     if (bSetExtents){
         e = bounds;
-        // e->x0 = bounds.min(0); e->x1 = bounds.max(0);
-        // e->y0 = bounds.min(1); e->y1 = bounds.max(1);
-        // e->z0 = bounds.min(2); e->z1 = bounds.max(2);
     }     
 
      
@@ -637,23 +640,13 @@ file_options.add_options()
     ("pre-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run before executing the point cloud creation process.")
     ("pre-block-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run before executing the insertion of block data.")
     ("post-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run after inserting block data.")
-    ("aux-columns", po::value< string >(), "Quoted, comma-separated list of columns to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
-    ("aux-values", po::value< string >(), "Quoted, comma-separated list of values to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
+    ("base-table-aux-columns", po::value< string >(), "Quoted, comma-separated list of columns to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
+    ("base-table-aux-values", po::value< string >(), "Quoted, comma-separated list of values to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
     ("solid", po::value<bool>()->zero_tokens(), "Define the point cloud's PC_EXTENT geometry gtype as (1,1007,3) instead of the normal (1,1003,3), and use gtype 3008/2008 vs 3003/2003 for BLK_EXTENT geometry values.")
     ("3d", po::value<bool>()->zero_tokens(), "Use Z values for insertion of all extent (PC_EXTENT, BLK_EXTENT, USER_SDO_GEOM_METADATA) entries")
     ("global-extent", po::value< string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated list, for example, \n  --global-extent minx, miny, maxx, maxy\n  or \n  --global-extent minx, miny, minz, maxx, maxy, maxz")
 
 
-;
-
-po::options_description hidden_options("hidden options");
-hidden_options.add_options()
-    ("xmin", po::value< double >(), "global-extent minx value")
-    ("ymin", po::value< double >(), "global-extent miny value")
-    ("zmin", po::value< double >(), "global-extent minz value")
-    ("xmax", po::value< double >(), "global-extent maxx value")
-    ("ymax", po::value< double >(), "global-extent maxy value")
-    ("zmax", po::value< double >(), "global-extent maxz value")
 ;
 
 return file_options;
@@ -669,6 +662,8 @@ hidden_options.add_options()
     ("xmax", po::value< double >(), "global-extent maxx value")
     ("ymax", po::value< double >(), "global-extent maxy value")
     ("zmax", po::value< double >(), "global-extent maxz value")
+    ("aux-columns", po::value< string >(), "Quoted, comma-separated list of columns to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
+    ("aux-values", po::value< string >(), "Quoted, comma-separated list of values to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
 ;
 
 
@@ -720,7 +715,7 @@ int main(int argc, char* argv[])
     std::vector<liblas::TransformI*> transforms;
     
     liblas::Header header;
-
+    
 
     try {
 
@@ -745,7 +740,7 @@ int main(int argc, char* argv[])
 
         if (vm.count("help")) 
         {
-            std::cout << GetInvocationHeader()<<file_options<<transform_options<<filtering_options<<"\n";
+            std::cout << GetInvocationHeader()<<file_options<<"\n"<<transform_options<<"\n"<<filtering_options<<"\n";
             return 0;
         }
 
@@ -833,19 +828,35 @@ int main(int argc, char* argv[])
             bInsertHeaderBlob=true;
             if (verbose)
                 std::cout << "Setting header blob column to: " << header_blob_column << std::endl;
-        }        
+        }    
+
+        if (vm.count("base-table-aux-columns")) 
+        {
+            aux_columns = vm["base-table-aux-columns"].as< string >();
+            if (verbose)
+                std::cout << "Setting base-table-aux-columns to: " << aux_columns << std::endl;
+
+        }
+        if (vm.count("base-table-aux-values")) 
+        {
+            aux_values = vm["base-table-aux-values"].as< string >();
+            if (verbose)
+                std::cout << "Setting base-table-aux-values to: " << aux_values << std::endl;
+
+        }
+            
         if (vm.count("aux-columns")) 
         {
             aux_columns = vm["aux-columns"].as< string >();
             if (verbose)
-                std::cout << "Setting aux-columns to: " << aux_columns << std::endl;
+                std::cout << "Setting base-table-aux-columns to: " << aux_columns << std::endl;
 
         }
         if (vm.count("aux-values")) 
         {
             aux_values = vm["aux-values"].as< string >();
             if (verbose)
-                std::cout << "Setting aux-values to: " << aux_values << std::endl;
+                std::cout << "Setting base-table-aux-values to: " << aux_values << std::endl;
 
         }
 
@@ -1016,10 +1027,6 @@ int main(int argc, char* argv[])
         // Transforms alter our header as well.  Setting scales, offsets, etc.
         transforms = GetTransforms(vm, verbose, header);
         
-
-
-
-
         if (connection.empty() || input.empty()) {
             if (input.empty())
                 std::cerr << "Input .las file not specified!" << std::endl;
@@ -1046,8 +1053,9 @@ int main(int argc, char* argv[])
     //    std::cout <<"slash_pos: " << slash_pos << " at_pos: " << at_pos<<std::endl;
         password = connection.substr(slash_pos+1, at_pos-slash_pos-1);
         instance = connection.substr(at_pos+1);
-        std::cout << "Connecting with username: " << username << " password: "<< password<< " instance: " << instance << std::endl;    
-
+        if (verbose)
+            std::cout << "Connecting with username: " << username << " password: "<< password<< " instance: " << instance << std::endl;    
+        if (verbose)
         std::cout << "Base table name " << base_table_name << " cloud column: " << point_cloud_name <<" block table: " << block_table_name << std::endl;
         // OCI_SUCCESS_WITH_INFO error, which according to google relates to 
         // a warning related to expired or expiring passwords needs to be 
@@ -1063,26 +1071,19 @@ int main(int argc, char* argv[])
         // blk_id is the index leaf node id (this is currently being written incorrectly)
         OWConnection* con = new OWConnection(username.c_str(),password.c_str(),instance.c_str());
         if (con->Succeeded()) {
-            std::cout <<"Oracle connection succeded" << std::endl;
+            if (verbose)
+                std::cout <<"Oracle connection succeded" << std::endl;
         } else {
-            std::cout <<"Oracle connection failed" << std::endl; exit(1);
+            std::cerr <<"Oracle connection failed" << std::endl; return(1);
         }
 
-        // std::istream* istrm;
-        // try {
-        //         istrm = OpenInput(input, false);
-        // } catch (std::exception const& e)
-        // {
-        //     std::cout << e.what() << std::endl;
-        //     std::cout << "exiting..." << std::endl;
-        //     exit(-1);
-        // }
 
 
-        con->StartTransaction();
+        // con->StartTransaction();
 
         if (bDropTable) {
-            std::cout << "dropping existing tables..." << std::endl;
+            if (verbose)
+                std::cout << "dropping existing tables..." << std::endl;
 
             WipeBlockTable(con, block_table_name, base_table_name, point_cloud_name);
         }
@@ -1097,8 +1098,8 @@ int main(int argc, char* argv[])
                 delete statement; 
             }
             else {
-                std::cout << "pre-sql execution failed.." << std::endl;
-                return false;
+                std::cerr << "pre-sql execution failed.." << std::endl;
+                return 1;
             }
             oss.str("");        
         }
@@ -1106,7 +1107,8 @@ int main(int argc, char* argv[])
             CreateBlockTable(con, block_table_name);
         else {
             bUseExistingBlockTable = true;
-            std::cout << "Using existing block table ... " << std::endl;
+            if (verbose)
+                std::cout << "Using existing block table ... " << std::endl;
 
         }
 
@@ -1115,6 +1117,8 @@ int main(int argc, char* argv[])
         std::istream* istrm2;
         istrm2 = OpenInput(input, false);
         liblas::Reader* reader2 = new liblas::Reader(*istrm2);
+        reader2->SetFilters(&filters);
+        reader2->SetTransforms(&transforms);
 
         std::vector<uint8_t> header_data = GetHeaderData(input, reader2->GetHeader().GetDataOffset());
 
@@ -1124,9 +1128,11 @@ int main(int argc, char* argv[])
                 std::cout << "Chipping data for loading into Oracle with " << nCapacity<< " block capacity" << std::endl;
             query = new KDXIndexSummary(*reader2, nCapacity, verbose);
         } else {
-            std::cout << "Using kdtree ... " << std::endl;
             std::ostringstream os;
             os << input << ".kdx" ;
+            if (verbose)
+                std::cout << "Using existing "<<os<<" chip file ... " << std::endl;
+
 
             std::istream* kdx = OpenInput(os.str(), false);
             query = new KDXIndexSummary(*kdx);
@@ -1154,11 +1160,9 @@ int main(int argc, char* argv[])
                         header_data);
 
 
-        std::cout << "Writing " << results.size() << " blocks ..." << std::endl;
-
-
         if (!pre_block_sql.empty()) {
-            std::cout << "running pre-block-sql ..." << std::endl;
+            if (verbose)
+                std::cout << "running pre-block-sql ..." << std::endl;
 
             ostringstream oss;
             oss << pre_block_sql;
@@ -1168,13 +1172,15 @@ int main(int argc, char* argv[])
                 delete statement; 
             }
             else {
-                std::cout << " pre-block-sql execution failed.." << std::endl;
-                return false;
+                std::cerr << " pre-block-sql execution failed.." << std::endl;
+                return 1;
             }
             oss.str("");
             con->Commit();     
         }
 
+        if (verbose)
+            std::cout << "Inserting " << results.size() << " blocks ..." << std::endl;
 
         InsertBlocks(con,
                      query,
@@ -1190,7 +1196,8 @@ int main(int argc, char* argv[])
 
 
         if (!bUseExistingBlockTable) {
-            std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
+            if (verbose)
+                std::cout << "Creating new block table user_sdo_geom_metadata entries and index ..." << std::endl;
             CreateSDOEntry( con, 
                             block_table_name.c_str(), 
                             query, 
@@ -1211,7 +1218,8 @@ int main(int argc, char* argv[])
 
 
         if (!post_sql.empty()) {
-            std::cout << "running post-sql ..." << std::endl;
+            if (verbose)
+                std::cout << "running post-sql ..." << std::endl;
 
             ostringstream oss;
             oss << post_sql;
@@ -1221,8 +1229,8 @@ int main(int argc, char* argv[])
                 delete statement; 
             }
             else {
-                std::cout << "post-sql execution failed.." << std::endl;
-                return false;
+                std::cerr << "post-sql execution failed.." << std::endl;
+                return 1;
             }
             oss.str("");        
         }
