@@ -39,8 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED
-#define LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED
+#ifndef LIBLAS_DETAIL_CACHEDREADERIMPL_HPP_INCLUDED
+#define LIBLAS_DETAIL_CACHEDREADERIMPL_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/reader/point.hpp>
@@ -54,56 +54,44 @@
 
 namespace liblas { namespace detail { 
 
-typedef boost::shared_ptr< reader::Point > PointReaderPtr;
-typedef boost::shared_ptr< reader::Header > HeaderReaderPtr;
 
-class ReaderImpl : public ReaderI
+class CachedReaderImpl : public ReaderImpl
 {
 public:
 
-    ReaderImpl(std::istream& ifs);
-    ~ReaderImpl();
+    CachedReaderImpl(std::istream& ifs, std::size_t cache_size);
+    // ~CachedReaderImpl();
 
     HeaderPtr ReadHeader();
     PointPtr ReadNextPoint(HeaderPtr header);
     liblas::Point const& ReadPointAt(std::size_t n, HeaderPtr header);
+    // void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
+
     void Seek(std::size_t n, HeaderPtr header);
-    
-    std::istream& GetStream() const;
-    
     void Reset(HeaderPtr header);
 
 protected:
-    void CreateTransform();
-
-    typedef std::istream::off_type off_type;
-    typedef std::istream::pos_type pos_type;
-    
-    std::istream& m_ifs;
-    boost::uint32_t m_size;
-    boost::uint32_t m_current;
-    
-    PointReaderPtr m_point_reader;
-    HeaderReaderPtr m_header_reader;
 
 private:
 
     // Blocked copying operations, declared but not defined.
-    ReaderImpl(ReaderImpl const& other);
-    ReaderImpl& operator=(ReaderImpl const& rhs);
+    CachedReaderImpl(CachedReaderImpl const& other);
+    CachedReaderImpl& operator=(CachedReaderImpl const& rhs);
+    PointPtr ReadCachedPoint(boost::uint32_t position, HeaderPtr header);
+    
+    void CacheData(boost::uint32_t position, HeaderPtr header);
+
+    typedef std::vector<boost::uint8_t> cache_mask_type;
+    cache_mask_type m_mask;
+    cache_mask_type::size_type m_cache_size;    
+    cache_mask_type::size_type m_cache_start_position;
+    cache_mask_type::size_type m_cache_read_position;
+
+    typedef std::vector<PointPtr> cache_type;
+    cache_type m_cache;
 };
-
-
-// class ReaderFactory
-// {
-// public:
-// 
-//     // TODO: prototypes
-//     static ReaderImpl* Create(std::istream& ifs);
-//     static void Destroy(ReaderImpl* p);
-// };
 
 
 }} // namespace liblas::detail
 
-#endif // LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED
+#endif // LIBLAS_DETAIL_CACHEDREADERIMPL_HPP_INCLUDED
