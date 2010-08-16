@@ -236,7 +236,7 @@ int main(int argc, char* argv[])
 
         if (vm.count("help")) 
         {
-            std::cout << GetInvocationHeader()<<file_options<<transform_options<<filtering_options<<"\n";
+            std::cout << GetInvocationHeader()<<file_options<<"\n"<<transform_options<<"\n"<<filtering_options<<"\n";
             return 1;
         }
 
