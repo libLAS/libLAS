@@ -43,7 +43,6 @@
 #define LIBLAS_LASTRANSFORM_HPP_INCLUDED
 
 #include <liblas/lasversion.hpp>
-#include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasspatialreference.hpp>
 // boost
