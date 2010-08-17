@@ -363,6 +363,13 @@ void Header::readvlrs()
 {
     VLRHeader vlrh = { 0 };
 
+    if (m_ifs.eof()) {
+        // if we hit the end of the file already, it's because 
+        // we don't have any points.  We still want to read the VLRs 
+        // in that case.
+        m_ifs.clear();  
+    }
+
     // seek to the start of the VLRs
     m_ifs.seekg(m_header->GetHeaderSize(), std::ios::beg);
 
