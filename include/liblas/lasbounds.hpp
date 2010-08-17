@@ -44,6 +44,7 @@
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/laspoint.hpp>
+#include <liblas/lastransform.hpp>
 #include <liblas/detail/utility.hpp>
 
 // boost
@@ -60,6 +61,7 @@
 
 namespace liblas {
 
+    
 template <typename T>
 class Bounds
 {
@@ -199,6 +201,18 @@ void max(std::size_t const& index, T v)
     maxs[index] = v;
 }
 
+liblas::Point min() {
+    liblas::Point p;
+    p.SetCoordinates(mins(0), mins(1), mins(2));
+    return p;
+}
+
+liblas::Point max() {
+    liblas::Point p;
+    p.SetCoordinates(max(0), max(1), maxs(2));
+    return p;
+}
+
 T minx() const { if (mins.size() == 0) return 0; return mins[0]; }
 T miny() const { if (mins.size() < 2) return 0; return mins[1]; }
 T minz() const { if (mins.size() < 3) return 0; return mins[2]; }
@@ -294,6 +308,16 @@ void verify()
     }
 }
 
+Bounds<T> project(liblas::SpatialReference const& in_ref, liblas::SpatialReference const& out_ref)
+{
+    liblas::ReprojectionTransform trans(in_ref, out_ref);
+    
+    liblas::Point minimum = min();
+    liblas::Point maximum = max();
+    trans.transform(minimum);
+    trans.transform(maximum);
+    return Bounds<T>(minimum, maximum);
+}
 
 };
 } // namespace liblas
