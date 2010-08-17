@@ -58,7 +58,7 @@ namespace liblas { namespace detail { namespace reader {
 Point::Point(std::istream& ifs, HeaderPtr header)
     : m_ifs(ifs)
     , m_header(header)
-    , m_point(new liblas::Point())
+
 {
     setup();
 }
@@ -75,16 +75,16 @@ std::istream& Point::GetStream() const
 void Point::fill(PointRecord& record) 
 {
 
-    m_point->SetX(record.x);
-    m_point->SetY(record.y);
-    m_point->SetZ(record.z);
+    m_point.SetX(record.x);
+    m_point.SetY(record.y);
+    m_point.SetZ(record.z);
 
-    m_point->SetIntensity(record.intensity);
-    m_point->SetScanFlags(record.flags);
-    m_point->SetClassification((record.classification));
-    m_point->SetScanAngleRank(record.scan_angle_rank);
-    m_point->SetUserData(record.user_data);
-    m_point->SetPointSourceID(record.point_source_id);
+    m_point.SetIntensity(record.intensity);
+    m_point.SetScanFlags(record.flags);
+    m_point.SetClassification((record.classification));
+    m_point.SetScanAngleRank(record.scan_angle_rank);
+    m_point.SetUserData(record.user_data);
+    m_point.SetPointSourceID(record.point_source_id);
 }
 
 void Point::read()
@@ -101,7 +101,7 @@ void Point::read()
     // Set the header for the point early because 
     // SetCoordinates will use it later to scale the 
     // point
-    m_point->SetHeader(m_header);
+    m_point.SetHeader(m_header);
     
     try
     {
@@ -125,13 +125,13 @@ void Point::read()
     memcpy(&record.point_source_id, &(m_raw_data[i]), sizeof(uint16_t)); i+=sizeof(uint16_t);
    
     fill(record);
-    m_point->SetCoordinates(m_point->GetX(), m_point->GetY(), m_point->GetZ());
+    m_point.SetCoordinates(m_point.GetX(), m_point.GetY(), m_point.GetZ());
 
     if (m_header->GetSchema().HasTime()) 
     {
         memcpy(&gpst, &(m_raw_data[i]), sizeof(double));
         
-        m_point->SetTime(gpst);
+        m_point.SetTime(gpst);
         i += sizeof(double);
         
         if (m_header->GetSchema().HasColor()) 
@@ -141,7 +141,7 @@ void Point::read()
             memcpy(&blue, &(m_raw_data[i]), sizeof(uint16_t));
     
             liblas::Color color(red, green, blue);
-            m_point->SetColor(color);
+            m_point.SetColor(color);
             
             i += 3 * sizeof(uint16_t);
         }
@@ -153,7 +153,7 @@ void Point::read()
             memcpy(&blue, &(m_raw_data[i]), sizeof(uint16_t));
     
             liblas::Color color(red, green, blue);
-            m_point->SetColor(color);
+            m_point.SetColor(color);
             
             i += 3 * sizeof(uint16_t);
         }        
@@ -168,7 +168,7 @@ void Point::read()
         data.resize(bytesleft);
         
         memcpy(&(data.front()), &(m_raw_data[i]), bytesleft);
-        m_point->SetExtraData(data); 
+        m_point.SetExtraData(data); 
         
         i = i + bytesleft;
     }
@@ -184,7 +184,7 @@ void Point::read()
     }
 
     // Put the data on the point
-    m_point->SetData(m_raw_data);
+    m_point.SetData(m_raw_data);
 }
 
 void Point::setup()
