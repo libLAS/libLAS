@@ -457,6 +457,10 @@ std::vector<liblas::TransformI*> GetTransforms(po::variables_map vm, bool verbos
         // made the transformation, and this SRS will be used to 
         // write the new file(s)
         header.SetSRS(out_ref);
+        
+        liblas::Bounds<double> b = header.GetExtent();
+        b.project(in_ref, out_ref);
+        header.SetExtent(b);
         liblas::TransformI* srs_transform = new liblas::ReprojectionTransform(in_ref, out_ref);
         transforms.push_back(srs_transform);
     }
