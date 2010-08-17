@@ -47,7 +47,7 @@
 // Forward declarations
 namespace liblas {
 
-template<typename T>class Bounds;
+template<typename T> class Bounds;
 class Classification;
 class Color;
 class FilterI;
