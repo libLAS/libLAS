@@ -163,6 +163,7 @@ private:
     Reader& operator=(Reader const& rhs);
 
     void Init(); // throws on error
+    bool KeepPoint(liblas::Point const& p);
 
     const std::auto_ptr<ReaderI> m_pimpl;
 

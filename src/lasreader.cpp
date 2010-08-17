@@ -149,44 +149,47 @@ Point const& Reader::GetPoint() const
     return *m_point;
 }
 
-bool Reader::ReadNextPoint()
+bool Reader::KeepPoint(liblas::Point const& p)
 {
     std::vector<liblas::FilterI*>::const_iterator fi;
+    
+    // If there's no filters on this reader, we keep 
+    // the point no matter what.
+    if (m_filters == 0 ) {
+        return true;
+    }
+
+    for (fi = m_filters->begin(); fi != m_filters->end(); ++fi) {
+        liblas::FilterI* filter = *fi;
+        if (!filter->filter(p)){
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Reader::ReadNextPoint()
+{
     std::vector<liblas::TransformI*>::const_iterator ti;
     bool bHaveTransforms = false;
-    bool bHaveFilters = false;
     
     if (m_transforms != 0 ) {
         bHaveTransforms = true;
     }
     
-    if (m_filters != 0 ) {
-        bHaveFilters = true;
-    }
+
     
     try {
         // m_point = m_pimpl->ReadNextPoint(m_header).get();
         m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-        if (bHaveFilters) {
-        if (m_filters->size() != 0) {
-            // We have filters, filter this point.  All filters must 
-            // return true for us to keep it.
-            bool keep = false;
-            for (fi = m_filters->begin(); fi != m_filters->end(); ++fi) {
-                liblas::FilterI* filter = *fi;
-                if (filter->filter(*m_point)){
-                    // if ->filter() is true, we keep the point
-                    keep = true;
-                } else {
-                    keep = false;
-                    break;
-                }
-                
+        
+        // Filter the points and continue reading until we either find 
+        // one to keep or throw an exception.
+        if (!KeepPoint(*m_point)) {
+            m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
+            while (!KeepPoint(*m_point)) {
+                m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
             }
-            if (!keep) {
-                return ReadNextPoint();
-            }
-        }
         }
         
         if (bHaveTransforms) {
