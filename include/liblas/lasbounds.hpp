@@ -203,13 +203,13 @@ void max(std::size_t const& index, T v)
 
 liblas::Point min() {
     liblas::Point p;
-    p.SetCoordinates(mins(0), mins(1), mins(2));
+    p.SetCoordinates(min(0), min(1), min(2));
     return p;
 }
 
 liblas::Point max() {
     liblas::Point p;
-    p.SetCoordinates(max(0), max(1), maxs(2));
+    p.SetCoordinates(max(0), max(1), max(2));
     return p;
 }
 
