@@ -1023,7 +1023,7 @@ int main(int argc, char* argv[])
             bool bCachedReader = vm["cached"].as< bool >();
             if (verbose)
                 std::cout << "Caching entire file... " << std::endl;
-        }        
+        }
 
         filters = GetFilters(vm, verbose);
         
@@ -1122,9 +1122,9 @@ int main(int argc, char* argv[])
         
         liblas::Reader* reader2 = 0;
         if (bCachedReader)
-            reader2 = new liblas::Reader(*istrm2,0);
+            reader2 = new liblas::Reader(*istrm2,0, header);
         else
-            reader2 = new liblas::Reader(*istrm2);
+            reader2 = new liblas::Reader(*istrm2, header);
         reader2->SetFilters(&filters);
         reader2->SetTransforms(&transforms);
 
@@ -1139,7 +1139,7 @@ int main(int argc, char* argv[])
             std::ostringstream os;
             os << input << ".kdx" ;
             if (verbose)
-                std::cout << "Using existing "<<os<<" chip file ... " << std::endl;
+                std::cout << "Using existing "<<os.str()<<" chip file ... " << std::endl;
 
 
             std::istream* kdx = OpenInput(os.str(), false);
