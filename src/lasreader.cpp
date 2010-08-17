@@ -176,9 +176,7 @@ bool Reader::ReadNextPoint()
     if (m_transforms != 0 ) {
         bHaveTransforms = true;
     }
-    
-
-    
+  
     try {
         // m_point = m_pimpl->ReadNextPoint(m_header).get();
         m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
@@ -193,22 +191,20 @@ bool Reader::ReadNextPoint()
         }
         
         if (bHaveTransforms) {
-        if (m_transforms->size() != 0) {
-            // Apply the transforms to each point
+            if (!m_transforms->empty()) {
+                // Apply the transforms to each point
 
-            for (ti = m_transforms->begin(); ti != m_transforms->end(); ++ti) {
-                liblas::TransformI* transform = *ti;
-                transform->transform(*m_point);
-
-            }            
-        }
+                for (ti = m_transforms->begin(); ti != m_transforms->end(); ++ti) {
+                    liblas::TransformI* transform = *ti;
+                    transform->transform(*m_point);
+                }            
+            }
         }
         return true;
     } catch (std::out_of_range) {
         m_point = 0;
         return false;
     }
-
 }
 
 bool Reader::ReadPointAt(std::size_t n)
@@ -228,21 +224,18 @@ bool Reader::ReadPointAt(std::size_t n)
     try {
         m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
         if (bHaveTransforms) {
-        if (m_transforms->size() != 0) {
-
-            for (ti = m_transforms->begin(); ti != m_transforms->end(); ++ti) {
-                liblas::TransformI* transform = *ti;
-                transform->transform(*m_point);
-
-            }            
-        }
+            if (!m_transforms->empty()) {
+                for (ti = m_transforms->begin(); ti != m_transforms->end(); ++ti) {
+                    liblas::TransformI* transform = *ti;
+                    transform->transform(*m_point);
+                }            
+            }
         }
         return true;
     } catch (std::out_of_range) {
         m_point = 0;
         return false;
     }
-
 }
 
 bool Reader::seek(std::size_t n)
@@ -349,10 +342,8 @@ bool Reader::SetOutputSRS(const SpatialReference& srs)
     // list if *that* isn't there).
     TransformI* possible_reprojection_transform = 0;
     
-    if (m_transforms != 0) {
-        if (m_transforms->size() > 0) {
-            possible_reprojection_transform = m_transforms->at(0);
-        }
+   if (m_transforms != 0 && !m_transforms->empty()) {
+        possible_reprojection_transform = m_transforms->at(0);
     }
     
     if (m_reprojection_transform.get() == possible_reprojection_transform && m_reprojection_transform.get() != 0) {
@@ -365,7 +356,7 @@ bool Reader::SetOutputSRS(const SpatialReference& srs)
     m_reprojection_transform = TransformPtr(new ReprojectionTransform(m_in_srs, m_out_srs));
     
     if (m_transforms != 0) {
-        if (m_transforms->size() > 0) {
+        if (!m_transforms->empty()) {
             // Insert the new reprojection transform to the beginning of the 
             // vector there are already transforms there.
             m_transforms->insert(m_transforms->begin(), m_reprojection_transform.get());
