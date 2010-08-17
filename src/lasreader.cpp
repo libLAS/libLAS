@@ -71,7 +71,7 @@ Reader::Reader(std::istream& ifs) :
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size) :
-    m_pimpl(new detail::CachedReaderImpl(ifs,cache_size)),
+    m_pimpl(new detail::CachedReaderImpl(ifs, cache_size)),
     m_header(HeaderPtr()),
     m_point(0),
     m_empty_point(new Point()),
@@ -82,6 +82,23 @@ Reader::Reader(std::istream& ifs, uint32_t cache_size) :
 {
     Init();
 }
+
+Reader::Reader(std::istream& ifs, uint32_t cache_size, Header& header) :
+    m_pimpl(new detail::CachedReaderImpl(ifs, cache_size)),
+    m_header(HeaderPtr( )),    
+    m_point(0),
+    m_empty_point(new Point()),
+    bCustomHeader(true),
+    m_filters(0),
+    m_transforms(0),
+    m_reprojection_transform(TransformPtr())
+{
+    // if we have a custom header, create a slot for it and then copy 
+    // the header we were given
+    m_header = HeaderPtr(new Header(header));
+    Init();
+}
+
 Reader::Reader(ReaderI* reader) :
     m_pimpl(reader),
     m_header(HeaderPtr()),
