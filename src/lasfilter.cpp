@@ -46,6 +46,8 @@
 // std
 #include <vector>
 
+using namespace boost;
+
 namespace liblas { 
 
 ClassificationFilter::ClassificationFilter( std::vector<boost::uint8_t> classes )

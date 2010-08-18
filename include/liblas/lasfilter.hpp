@@ -128,7 +128,7 @@ class ThinFilter: public liblas::FilterI
 {
 public:
 
-    ThinFilter(uint32_t thin);
+    ThinFilter(boost::uint32_t thin);
     bool filter(const liblas::Point& point);
 
 
@@ -137,8 +137,8 @@ private:
     ThinFilter(ThinFilter const& other);
     ThinFilter& operator=(ThinFilter const& rhs);
     
-    uint32_t thin_amount;
-    uint32_t thin_count;
+    boost::uint32_t thin_amount;
+    boost::uint32_t thin_count;
 };
 
 
