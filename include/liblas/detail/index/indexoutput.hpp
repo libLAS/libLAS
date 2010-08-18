@@ -43,7 +43,6 @@
 #ifndef LIBLAS_DETAIL_INDEXOUTPUT_HPP_INCLUDED
 #define LIBLAS_DETAIL_INDEXOUTPUT_HPP_INCLUDED
 
-#include <boost/cstdint.hpp>
 #include <liblas/lasindex.hpp>
 #include <liblas/detail/index/indexcell.hpp>
 
@@ -59,8 +58,8 @@ private:
 	liblas::Index *m_index;
 	liblas::VariableRecord m_indexVLRHeaderRecord, m_indexVLRCellRecord;
 	IndexVLRData m_indexVLRHeaderData, m_indexVLRCellPointData, m_indexVLRTempData;
-	uint32_t m_VLRCommonDataSize, m_VLRDataSizeLocation, m_FirstCellLocation, m_LastCellLocation, m_DataRecordSize,
-		m_TempWritePos;
+	uint32_t m_VLRCommonDataSize, m_VLRDataSizeLocation, m_FirstCellLocation, m_LastCellLocation;
+	uint32_t  m_DataRecordSize, m_TempWritePos;
 	bool m_FirstCellInVLR, m_SomeDataReadyToWrite;
 	
 protected:
@@ -70,6 +69,54 @@ protected:
 	bool FinalizeOutput(void);
 	
 };
+
+template <typename T, typename Q>
+inline void WriteVLRData_n(IndexVLRData& dest, T src, Q& pos)
+{
+    // Fix little-endian
+    LIBLAS_SWAP_BYTES_N(&src, sizeof(T));
+    // error if writing past array end
+    if (static_cast<size_t>(pos) + sizeof(T) > dest.size())
+		throw std::out_of_range("liblas::detail::WriteVLRData_n: array index out of range");
+	// copy sizeof(T) bytes to destination
+    memcpy(&dest[pos], &src, sizeof(T));
+    // increment the write position to end of written data
+    pos += sizeof(T);
+}
+
+template <typename T, typename Q>
+inline void WriteVLRDataNoInc_n(IndexVLRData& dest, T src, Q const& pos)
+{
+    // Fix little-endian
+    LIBLAS_SWAP_BYTES_N(&src, sizeof(T));
+    // error if writing past array end
+    if (static_cast<size_t>(pos) + sizeof(T) > dest.size())
+		throw std::out_of_range("liblas::detail::WriteVLRDataNoInc_n: array index out of range");
+	// copy sizeof(T) bytes to destination
+    memcpy(&dest[pos], &src, sizeof(T));
+}
+
+template <typename T, typename Q>
+inline void WriteVLRData_str(IndexVLRData& dest, char * const src, T const srclen, Q& pos)
+{
+ 	// copy srclen bytes to destination
+	memcpy(&dest[pos], src, srclen);
+    // error if writing past array end
+    if (static_cast<size_t>(pos) + static_cast<size_t>(srclen) > dest.size())
+		throw std::out_of_range("liblas::detail::WriteVLRData_str: array index out of range");
+    // increment the write position to end of written data
+    pos += srclen;
+}
+
+template <typename T, typename Q>
+inline void WriteVLRDataNoInc_str(IndexVLRData& dest, char * const src, T const srclen, Q pos)
+{
+    // error if writing past array end
+    if (static_cast<size_t>(pos) + static_cast<size_t>(srclen) > dest.size())
+		throw std::out_of_range("liblas::detail::WriteVLRDataNoInc_str: array index out of range");
+ 	// copy srclen bytes to destination
+	memcpy(&dest[pos], src, srclen);
+}
 
 }} // namespace liblas::detail
 
