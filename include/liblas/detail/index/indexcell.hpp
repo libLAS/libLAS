@@ -43,7 +43,7 @@
 #ifndef LIBLAS_DETAIL_INDEXCELL_HPP_INCLUDED
 #define LIBLAS_DETAIL_INDEXCELL_HPP_INCLUDED
 
-#include <boost/cstdint.hpp>
+
 #include <map>
 
 namespace liblas { namespace detail {
