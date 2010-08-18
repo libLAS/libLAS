@@ -59,8 +59,15 @@ following compilers are known to work:
 `Boost`_
 ------------------------------------------------------------------------------
 
-`Boost`_ is required to build libLAS 1.6.  Set ``BOOST_INCLUDEDIR`` if 
-cmake cannot find it in a default location.
+`Boost`_ is required to build libLAS 1.6.  Set ``Boost_INCLUDE_DIR`` if 
+CMake cannot find it in a default location.  Additionally, set ``Boost_LIBRARY_DIRS`` 
+if it cannot find your libraries.
+
+.. note::
+
+    If you are building on Windows, http://www.boostpro.com/download/ has 
+    an excellent installer.  Make sure to select the program_options 
+    library to install when prompted.
 
 
 .. _optional_libraries:
