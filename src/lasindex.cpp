@@ -44,6 +44,10 @@
 #include <liblas/detail/index/indexoutput.hpp>
 #include <liblas/detail/index/indexcell.hpp>
 #include <liblas/detail/writer/writer.hpp>
+// boost
+#include <boost/cstdint.hpp>
+
+using namespace boost;
 
 namespace liblas
 {

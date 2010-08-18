@@ -41,8 +41,12 @@
  ****************************************************************************/
 
 #include <liblas/detail/index/indexoutput.hpp>
+// boost
+#include <boost/cstdint.hpp>
+// std
 #include <limits>
 
+using namespace boost;
 using namespace std;
 
 namespace liblas { namespace detail {

@@ -48,7 +48,8 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lastransform.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <cstddef>
 #include <iosfwd>
@@ -68,8 +69,8 @@ public:
     /// @param ifs - stream used as source of LAS records.
     /// @excepion std::runtime_error - on failure state of the input stream.
     Reader(std::istream& ifs);
-    Reader(std::istream& ifs, uint32_t cache_size);
-    Reader(std::istream& ifs, uint32_t cache_size, Header& header);
+    Reader(std::istream& ifs, boost::uint32_t cache_size);
+    Reader(std::istream& ifs, boost::uint32_t cache_size, Header& header);
     Reader(ReaderI* reader);
     
     

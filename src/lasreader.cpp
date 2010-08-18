@@ -44,7 +44,8 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/detail/reader/reader.hpp>
 #include <liblas/detail/reader/cachedreader.hpp>
-
+// boost
+#include <boost/cstdint.hpp>
 // std
 #include <stdexcept>
 #include <fstream>
@@ -53,6 +54,7 @@
 #include <cassert>
 #include <iostream>
 
+using namespace boost;
 
 namespace liblas
 {
