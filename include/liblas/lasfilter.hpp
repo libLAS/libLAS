@@ -49,6 +49,7 @@
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/function.hpp>
+#include <boost/lexical_cast.hpp>
 // std
 #include <vector>
 #include <functional>
@@ -277,7 +278,8 @@ public:
         }
 
         out = filter_string.substr(pos, filter_string.size());
-        value = atoi(out.c_str());
+        
+        value =  boost::lexical_cast<T>(out);
         // std::cout << "Value is: " << value << " pos " << pos << " out " << out << std::endl;
 
 
