@@ -126,6 +126,10 @@ if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
+# make these available for the user to set.
+mark_as_advanced(CLEAR Boost_INCLUDE_DIR) 
+mark_as_advanced(CLEAR Boost_LIBRARY_DIRS) 
+
 # libxml2 support - optional, default=ON
 set(WITH_LIBXML2 FALSE CACHE BOOL "Choose if libxml2 support should be built ")
 
