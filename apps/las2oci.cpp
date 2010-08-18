@@ -297,7 +297,7 @@ bool InsertBlocks(
 {
     ResultsVector::iterator i;
 
-    long commit_interval = 1000;
+
     blocks* b = CreateBlock(nCommitInterval);
 
     ostringstream oss;
@@ -313,12 +313,7 @@ bool InsertBlocks(
     long j = 0;
     bool inserted = false;
     ResultsVector& results = summary->GetResults();
-    
-    long total_blocks = results.size();
-    long blocks_written = 0;
-    long blocks_left= 0;
-    long to_fill = 0;
-    
+        
 
 
     for (i=results.begin(); i!=results.end(); i++)
@@ -1020,7 +1015,7 @@ int main(int argc, char* argv[])
         }
         if (vm.count("cached")) 
         {
-            bool bCachedReader = vm["cached"].as< bool >();
+            bCachedReader = vm["cached"].as< bool >();
             if (verbose)
                 std::cout << "Caching entire file... " << std::endl;
         }
@@ -1125,8 +1120,9 @@ int main(int argc, char* argv[])
             reader2 = new liblas::Reader(*istrm2,0, header);
         else
             reader2 = new liblas::Reader(*istrm2, header);
-        reader2->SetFilters(&filters);
-        reader2->SetTransforms(&transforms);
+
+        reader2->SetFilters(filters);
+        reader2->SetTransforms(transforms);
 
         std::vector<uint8_t> header_data = GetHeaderData(input, reader2->GetHeader().GetDataOffset());
 

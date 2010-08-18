@@ -157,11 +157,11 @@ bool Reader::KeepPoint(liblas::Point const& p)
     
     // If there's no filters on this reader, we keep 
     // the point no matter what.
-    if (m_filters == 0 ) {
+    if (m_filters.empty() ) {
         return true;
     }
 
-    for (fi = m_filters->begin(); fi != m_filters->end(); ++fi) {
+    for (fi = m_filters.begin(); fi != m_filters.end(); ++fi) {
         liblas::FilterI* filter = *fi;
         if (!filter->filter(p)){
             return false;
@@ -173,11 +173,6 @@ bool Reader::KeepPoint(liblas::Point const& p)
 bool Reader::ReadNextPoint()
 {
     std::vector<liblas::TransformI*>::const_iterator ti;
-    bool bHaveTransforms = false;
-    
-    if (m_transforms != 0 ) {
-        bHaveTransforms = true;
-    }
   
     try {
         // m_point = m_pimpl->ReadNextPoint(m_header).get();
@@ -192,16 +187,15 @@ bool Reader::ReadNextPoint()
             }
         }
         
-        if (bHaveTransforms) {
-            if (!m_transforms->empty()) {
-                // Apply the transforms to each point
+        if (!m_transforms.empty()) {
+            // Apply the transforms to each point
 
-                for (ti = m_transforms->begin(); ti != m_transforms->end(); ++ti) {
-                    liblas::TransformI* transform = *ti;
-                    transform->transform(*m_point);
-                }            
-            }
+            for (ti = m_transforms.begin(); ti != m_transforms.end(); ++ti) {
+                liblas::TransformI* transform = *ti;
+                transform->transform(*m_point);
+            }            
         }
+
         return true;
     } catch (std::out_of_range) {
         m_point = 0;
@@ -212,27 +206,20 @@ bool Reader::ReadNextPoint()
 bool Reader::ReadPointAt(std::size_t n)
 {
     std::vector<liblas::TransformI*>::const_iterator ti;
-    bool bHaveTransforms = false;
 
     if (m_header->GetPointRecordsCount() <= n)
     {
         throw std::out_of_range("point subscript out of range");
     }
-        
-    if (m_transforms != 0 ) {
-        bHaveTransforms = true;
-    }
     
     try {
         m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
-        if (bHaveTransforms) {
-            if (!m_transforms->empty()) {
-                for (ti = m_transforms->begin(); ti != m_transforms->end(); ++ti) {
-                    liblas::TransformI* transform = *ti;
-                    transform->transform(*m_point);
-                }            
+        if (!m_transforms.empty()) {
+            for (ti = m_transforms.begin(); ti != m_transforms.end(); ++ti) {
+                liblas::TransformI* transform = *ti;
+                transform->transform(*m_point);
+            }            
             }
-        }
         return true;
     } catch (std::out_of_range) {
         m_point = 0;
@@ -344,35 +331,28 @@ bool Reader::SetOutputSRS(const SpatialReference& srs)
     // list if *that* isn't there).
     TransformI* possible_reprojection_transform = 0;
     
-   if (m_transforms != 0 && !m_transforms->empty()) {
-        possible_reprojection_transform = m_transforms->at(0);
+   if (!m_transforms.empty()) {
+        possible_reprojection_transform = m_transforms.at(0);
     }
     
     if (m_reprojection_transform.get() == possible_reprojection_transform && m_reprojection_transform.get() != 0) {
         // remove it from the transforms list
-        std::vector<TransformI*>::iterator i = m_transforms->begin();
-        m_transforms->erase(i);
+        std::vector<TransformI*>::iterator i = m_transforms.begin();
+        m_transforms.erase(i);
     }
     
     // overwrite our reprojection transform
     m_reprojection_transform = TransformPtr(new ReprojectionTransform(m_in_srs, m_out_srs));
     
-    if (m_transforms != 0) {
-        if (!m_transforms->empty()) {
-            // Insert the new reprojection transform to the beginning of the 
-            // vector there are already transforms there.
-            m_transforms->insert(m_transforms->begin(), m_reprojection_transform.get());
-            
-        } else {
-            // List exists, but its size is 0
-            m_transforms->push_back(m_reprojection_transform.get());
-        }
+    if (!m_transforms.empty()) {
+        // Insert the new reprojection transform to the beginning of the 
+        // vector there are already transforms there.
+        m_transforms.insert(m_transforms.begin(), m_reprojection_transform.get());
+        
     } else {
-        // transforms don't exist yet, make a new one and put our 
-        // reprojection transform on it.
-        m_transforms = new std::vector<liblas::TransformI*>;
-        m_transforms->push_back(m_reprojection_transform.get());
-    }
+        // List exists, but its size is 0
+        m_transforms.push_back(m_reprojection_transform.get());
+    } 
     return true;
 }
 

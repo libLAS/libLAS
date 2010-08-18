@@ -113,8 +113,8 @@ bool process(   std::string const& input,
     }
     liblas::Reader reader(ifs);
     
-    reader.SetFilters(&filters);
-    reader.SetTransforms(&transforms);
+    reader.SetFilters(filters);
+    reader.SetTransforms(transforms);
 
     std::ofstream* ofs = new std::ofstream;
     std::string out = output;
