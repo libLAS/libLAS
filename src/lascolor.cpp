@@ -54,7 +54,7 @@ Color::Color()
 
 Color::Color(value_type red, value_type green, value_type blue)
 {
-    if (red > 255 || green > 255 || blue > 255)
+    if (red > 65536 || green > 65536 || blue > 65536)
         throw_invalid_color_component();
 
     m_color[0] = red;
@@ -64,7 +64,7 @@ Color::Color(value_type red, value_type green, value_type blue)
 
 Color::Color(boost::array<value_type, 3> const& color)
 {
-    if (color[0] > 255 || color[1] > 255 || color[2] > 255)
+    if (color[0] > 65536 || color[1] > 65536 || color[2] > 65536)
         throw_invalid_color_component();
 
     m_color = color;
@@ -91,7 +91,7 @@ void Color::throw_index_out_of_range() const
 
 void Color::throw_invalid_color_component() const
 {
-    throw std::invalid_argument("color component value too large");
+    throw std::invalid_argument("Color component value is too large.  It must be less than 65536");
 }
 
 } // namespace liblas
