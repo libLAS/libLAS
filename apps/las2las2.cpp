@@ -172,6 +172,14 @@ bool process(   std::string const& input,
     if (verbose)
         std::cout << std::endl;
     
+    // reader.Reset();
+    // boost::property_tree::ptree pts = SummarizePoints(reader);
+    // boost::property_tree::ptree hdr = SummarizeHeader(reader.GetHeader());
+    // boost::property_tree::ptree top;
+    // top.add_child("summary.header",hdr);
+    // top.add_child("summary.points",pts);
+    // boost::property_tree::write_xml("junk.xml", top);
+
     delete writer;
     delete ofs;
     
