@@ -16,7 +16,7 @@ liblas::FilterI*  MakeReturnFilter(std::string return_string, liblas::FilterI::F
 {
     boost::char_separator<char> sep(SEPARATORS);
 
-    std::vector<uint16_t> returns;
+    std::vector<boost::uint16_t> returns;
     tokenizer tokens(return_string, sep);
     for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
         returns.push_back(atoi((*t).c_str()));
@@ -32,7 +32,7 @@ liblas::FilterI*  MakeClassFilter(std::string class_string, liblas::FilterI::Fil
 {
     boost::char_separator<char> sep(SEPARATORS);
 
-    std::vector<uint8_t> classes;
+    std::vector<boost::uint8_t> classes;
     tokenizer tokens(class_string, sep);
     for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
         classes.push_back(atoi((*t).c_str()));
@@ -79,8 +79,8 @@ liblas::FilterI*  MakeBoundsFilter(std::string bounds_string, liblas::FilterI::F
 
 liblas::FilterI*  MakeIntensityFilter(std::string intensities, liblas::FilterI::FilterType ftype) 
 {
-    liblas::ContinuousValueFilter<uint16_t>::filter_func f = &liblas::Point::GetIntensity;
-    liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, intensities);
+    liblas::ContinuousValueFilter<boost::uint16_t>::filter_func f = &liblas::Point::GetIntensity;
+    liblas::ContinuousValueFilter<boost::uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<boost::uint16_t>(f, intensities);
     intensity_filter->SetType(ftype);
     return intensity_filter;
 }
@@ -95,8 +95,8 @@ liblas::FilterI*  MakeTimeFilter(std::string times, liblas::FilterI::FilterType 
 
 liblas::FilterI*  MakeScanAngleFilter(std::string intensities, liblas::FilterI::FilterType ftype) 
 {
-    liblas::ContinuousValueFilter<int8_t>::filter_func f = &liblas::Point::GetScanAngleRank;
-    liblas::ContinuousValueFilter<int8_t>* intensity_filter = new liblas::ContinuousValueFilter<int8_t>(f, intensities);
+    liblas::ContinuousValueFilter<boost::int8_t>::filter_func f = &liblas::Point::GetScanAngleRank;
+    liblas::ContinuousValueFilter<boost::int8_t>* intensity_filter = new liblas::ContinuousValueFilter<boost::int8_t>(f, intensities);
     intensity_filter->SetType(ftype);
     return intensity_filter;
 }
@@ -115,7 +115,7 @@ po::options_description filtering_options("Filtering options");
 
 filtering_options.add_options()
     ("extent,e", po::value< string >(), "Extent window that points must fall within to keep.\nUse a comma-separated list, for example, \n  -e minx, miny, maxx, maxy\n  or \n  -e minx, miny, minz, maxx, maxy, maxz")
-    ("thin,t", po::value<uint32_t>()->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
+    ("thin,t", po::value<boost::uint32_t>()->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
     ("last_return_only", po::value<bool>()->zero_tokens(), "Keep last returns (cannot be used with --first_return_only)")
     ("first_return_only", po::value<bool>()->zero_tokens(), "Keep first returns (cannot be used with --last_return_only")
     ("keep-returns", po::value< string >(), "A comma-separated list of return numbers to keep in the output file: \n--keep-returns 1,2,3")
@@ -333,7 +333,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
             std::vector<liblas::Color::value_type> rgb;
             for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
             {
-                rgb.push_back(atof((*c).c_str()));
+                rgb.push_back(atoi((*c).c_str()));
             }
             liblas::Color color(rgb[0], rgb[1], rgb[2]);
             colors.push_back(color);
@@ -359,7 +359,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
             std::vector<liblas::Color::value_type> rgb;
             for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
             {
-                rgb.push_back(atof((*c).c_str()));
+                rgb.push_back(atoi((*c).c_str()));
             }
             liblas::Color color(rgb[0], rgb[1], rgb[2]);
             colors.push_back(color);
@@ -543,7 +543,7 @@ std::vector<liblas::TransformI*> GetTransforms(po::variables_map vm, bool verbos
             oss << "Format version must dotted -- ie, '1.0' or '1.2', not " << format_string;
             throw std::runtime_error(oss.str());
         }
-        header.SetVersionMinor(static_cast<uint8_t>(minor)); 
+        header.SetVersionMinor(static_cast<boost::uint8_t>(minor)); 
     }
     if (vm.count("pad-header")) 
     {

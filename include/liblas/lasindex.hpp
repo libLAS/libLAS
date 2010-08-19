@@ -50,23 +50,22 @@
 // boost
 #include <boost/cstdint.hpp>
 // std
+#include <cstddef> // std::size_t
+#include <cstdio>
+#include <iostream>
 #include <stdexcept> // std::out_of_range
-#include <cstdio>	// file io
-#include <iostream>	// file io
-#include <cstdlib> // std::size_t
 #include <vector> // std::vector
 
 namespace liblas {
 
-#define LIBLAS_INDEX_MAXMEMDEFAULT	10000000	// 10 megs default
-#define LIBLAS_INDEX_VERSIONMAJOR	1
-#define LIBLAS_INDEX_VERSIONMINOR	0
+std::size_t const LIBLAS_INDEX_MAXMEMDEFAULT = 10 * 1024 * 1024; // 10 megs default
+int const LIBLAS_INDEX_VERSIONMAJOR = 1;
+int const LIBLAS_INDEX_VERSIONMINOR = 0;
 
 typedef std::vector<boost::uint8_t> IndexVLRData;
 typedef std::vector<liblas::detail::IndexCell> IndexCellRow;
 typedef std::vector<IndexCellRow>	IndexCellDataBlock;
 
-class liblas::detail::IndexCell;
 class IndexData;
 
 /// Point data record composed with X, Y, Z coordinates and attributes.

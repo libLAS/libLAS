@@ -46,7 +46,7 @@ public:
         { return m_vec.begin(); }
     std::vector<PtRef>::iterator end()
         { return m_vec.end(); }
-    PtRef& operator[](uint32_t pos)
+    PtRef& operator[](boost::uint32_t pos)
         { return m_vec[pos]; }
     std::string Dir()
     {
