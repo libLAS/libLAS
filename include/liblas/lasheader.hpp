@@ -150,7 +150,7 @@ public:
     void SetVersionMajor(boost::uint8_t v);
 
     /// Get minor component of version of LAS format.
-    /// \return Valid values are 1 or 0.
+    /// \return Valid values are 0, 1, 2, 3.
     boost::uint8_t GetVersionMinor() const;
 
     /// Set minor component of version of LAS format.
