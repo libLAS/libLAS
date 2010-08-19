@@ -137,25 +137,29 @@ void Point::read()
         if (m_header->GetSchema().HasColor()) 
         {
             memcpy(&red, &(m_raw_data[i]), sizeof(uint16_t));
+            i += sizeof(uint16_t);
             memcpy(&green, &(m_raw_data[i]), sizeof(uint16_t));
+            i += sizeof(uint16_t);
             memcpy(&blue, &(m_raw_data[i]), sizeof(uint16_t));
+            i += sizeof(uint16_t);
     
             liblas::Color color(red, green, blue);
             m_point.SetColor(color);
             
-            i += 3 * sizeof(uint16_t);
         }
     } else {
         if (m_header->GetSchema().HasColor()) 
         {
             memcpy(&red, &(m_raw_data[i]), sizeof(uint16_t));
+            i += sizeof(uint16_t);
             memcpy(&green, &(m_raw_data[i]), sizeof(uint16_t));
+            i += sizeof(uint16_t);
             memcpy(&blue, &(m_raw_data[i]), sizeof(uint16_t));
+            i += sizeof(uint16_t);
     
             liblas::Color color(red, green, blue);
             m_point.SetColor(color);
             
-            i += 3 * sizeof(uint16_t);
         }        
     }
     
