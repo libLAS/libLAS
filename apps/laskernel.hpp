@@ -85,6 +85,6 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose);
 std::vector<liblas::TransformI*> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header);
 
 boost::property_tree::ptree SummarizePoints(liblas::Reader& reader );
-boost::property_tree::ptree SummarizeHeader(liblas::Header const& header );
+// boost::property_tree::ptree SummarizeHeader(liblas::Header const& header );
 
 #endif // LIBLAS_ITERATOR_HPP_INCLUDED

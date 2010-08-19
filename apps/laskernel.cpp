@@ -678,51 +678,13 @@ boost::property_tree::ptree SummarizePoints(liblas::Reader& reader )
         read = reader.ReadNextPoint();
     }
 
-    pt.put("bounds.minx", min.GetX());
-    pt.put("bounds.miny", min.GetY());
-    pt.put("bounds.minz", min.GetZ());
-    pt.put("bounds.maxx", max.GetX());
-    pt.put("bounds.maxy", max.GetY());
-    pt.put("bounds.maxz", max.GetZ());
+    ptree pmin = min.GetPTree();
+    ptree pmax = max.GetPTree();
     
-    pt.put("time.min", min.GetTime());
-    pt.put("time.max", max.GetTime());
-    
-    pt.put("intensity.min", min.GetIntensity());
-    pt.put("intensity.max", max.GetIntensity());
-    
-    pt.put("returnnumber.min", min.GetReturnNumber());
-    pt.put("returnnumber.max", max.GetReturnNumber());
-    
-    pt.put("numberofreturns.min", min.GetNumberOfReturns());
-    pt.put("numberofreturns.max", max.GetNumberOfReturns());
-    
-    pt.put("scandirection.min", min.GetScanDirection());
-    pt.put("scandirection.max", max.GetScanDirection());
-    
-    pt.put("scanangle.min", min.GetScanAngleRank());
-    pt.put("scanangle.max", max.GetScanAngleRank());
-    
-    pt.put("flightlineedge.min", min.GetFlightLineEdge());
-    pt.put("flightlineedge.max", max.GetFlightLineEdge());
-    
-    pt.put("userdata.min", min.GetUserData());
-    pt.put("userdata.max", max.GetUserData());
-    
-    pt.put("pointsourceid.min", min.GetPointSourceID());
-    pt.put("pointsourceid.max", max.GetPointSourceID());
-    
-    ptree colors;
-    liblas::Color const& c = min.GetColor();
-    colors.put("min.red", c.GetRed());
-    colors.put("min.green", c.GetGreen());
-    colors.put("min.blue", c.GetBlue());
-    liblas::Color const& d = max.GetColor();
-    colors.put("max.red", d.GetRed());
-    if (d.GetGreen() == 57) std::cout << "hey it's 57!" << std::endl;
-    colors.put("max.green", d.GetGreen());
-    colors.put("max.blue", d.GetBlue());
-    pt.add_child("color", colors);
+
+     
+    pt.add_child("minimum", pmin);
+    pt.add_child("maximum", pmax);
     
     ptree klasses;
     
@@ -769,83 +731,5 @@ boost::property_tree::ptree SummarizePoints(liblas::Reader& reader )
     return pt;
 }
 
-boost::property_tree::ptree SummarizeHeader(liblas::Header const& header )
-{
-    using boost::property_tree::ptree;
-    ptree pt;
-    
-    pt.put("filesignature", header.GetFileSignature());
-    pt.put("projectdid", header.GetProjectId());
-    pt.put("systemid", header.GetSystemId());
-    pt.put("softwareid", header.GetSoftwareId());
-    
-    
-    ostringstream version;
-    version << static_cast<int>(header.GetVersionMajor());
-    version <<".";
-    version << static_cast<int>(header.GetVersionMinor());
-    pt.put("version", version.str());
-    
-    pt.put("filesourceid", header.GetFileSourceId());
-    pt.put("reserved", header.GetReserved());
 
-#ifdef HAVE_GDAL
-    pt.put("srs", header.GetSRS().GetWKT());
-#else
-#ifdef HAVE_LIBGEOTIFF
-    pt.put("proj4", header.GetSRS().GetProj4());
-#endif
-#endif
-    
-    ostringstream date;
-    date << header.GetCreationDOY() << "/" << header.GetCreationYear();
-    pt.put("date", date.str());
-    
-    pt.put("size", header.GetHeaderSize());
-    pt.put("offset", header.GetDataOffset());
-
-    
-    pt.put("count", header.GetPointRecordsCount());
-    pt.put("dataformatid", header.GetDataFormatId());
-    pt.put("datarecordlength", header.GetDataRecordLength());
-    
-    ptree return_count;
-    liblas::Header::RecordsByReturnArray returns = header.GetPointRecordsByReturnCount();
-    for (boost::uint32_t i=0; i< 5; i++){
-        ptree r;
-        r.put("id", i);
-        r.put("count", returns[i]);
-        return_count.add_child("return", r);
-    }
-    pt.add_child("returns", return_count);
-    
-    pt.put("scale.x", header.GetScaleX());
-    pt.put("scale.y", header.GetScaleY());
-    pt.put("scale.z", header.GetScaleZ());
-    
-    pt.put("offset.x", header.GetOffsetX());
-    pt.put("offset.y", header.GetOffsetY());
-    pt.put("offset.z", header.GetOffsetZ());
-    
-    pt.put("min.x", header.GetMinX());
-    pt.put("min.y", header.GetMinY());
-    pt.put("min.z", header.GetMinZ());
-    
-    pt.put("max.x", header.GetMaxX());
-    pt.put("max.y", header.GetMaxY());
-    pt.put("max.z", header.GetMaxZ());
-
-    
-    ptree vlr;
-    for (boost::uint32_t i=0; i< header.GetRecordsCount(); i++) {
-        liblas::VariableRecord const& r = header.GetVLR(i);
-        vlr.put("userid", r.GetUserId(false));
-        vlr.put("description", r.GetDescription(false));
-        vlr.put("length", r.GetRecordLength());
-        vlr.put("id", r.GetRecordId());
-        pt.add_child("vlr", vlr);
-    }    
-    
-    return pt;
-}
 

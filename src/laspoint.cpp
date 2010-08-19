@@ -46,6 +46,8 @@
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/property_tree/ptree.hpp>
+
 // std
 #include <cstring>
 #include <stdexcept>
@@ -284,9 +286,55 @@ HeaderPtr Point::GetHeaderPtr() const
     return m_header;
 }
 
+boost::property_tree::ptree Point::GetPTree() const
+{
+    using boost::property_tree::ptree;
+    ptree pt;
+
+    pt.put("x", GetX());
+    pt.put("y", GetY());
+    pt.put("z", GetZ());
+
+    pt.put("time", GetTime());
+    pt.put("intensity", GetIntensity());
+    pt.put("returnnumber", GetReturnNumber());
+    pt.put("numberofreturns", GetNumberOfReturns());
+    pt.put("scandirection", GetScanDirection());
+    
+    pt.put("scanangle", GetScanAngleRank());
+    pt.put("flightlineedge", GetFlightLineEdge());
+
+    pt.put("userdata", GetUserData());
+    pt.put("pointsourceid", GetPointSourceID());
+
+    ptree klasses;
+    
+    liblas::Classification const& c = GetClassification();
+    std::string name = c.GetClassName();
+
+    klasses.put("name", name);
+    klasses.put("id", c.GetClass());
+    klasses.put("withheld", c.IsWithheld());
+    klasses.put("keypoint", c.IsKeyPoint());
+    klasses.put("synthetic", c.IsSynthetic());
+
+    pt.add_child("classification",klasses);
+
+    ptree colors;
+    liblas::Color const& clr = GetColor();
+
+    colors.put("red", clr.GetRed());
+    colors.put("green", clr.GetGreen());
+    colors.put("blue", clr.GetBlue());
+    pt.add_child("color", colors);
+    
+    return pt;
+}
+
 void Point::throw_out_of_range() const
 {
     throw std::out_of_range("coordinate subscript out of range");
 }
+
 
 } // namespace liblas

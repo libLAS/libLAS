@@ -99,7 +99,7 @@ bool process(   std::string const& input,
                 liblas::Header const& header,
                 std::vector<liblas::FilterI*>& filters,
                 std::vector<liblas::TransformI*>& transforms,
-                boost::uint32_t split_size,
+                uint32_t split_size,
                 bool verbose)
 {
 
@@ -172,13 +172,12 @@ bool process(   std::string const& input,
     if (verbose)
         std::cout << std::endl;
     
-    // reader.Reset();
-    // boost::property_tree::ptree pts = SummarizePoints(reader);
-    // boost::property_tree::ptree hdr = SummarizeHeader(reader.GetHeader());
-    // boost::property_tree::ptree top;
-    // top.add_child("summary.header",hdr);
-    // top.add_child("summary.points",pts);
-    // boost::property_tree::write_xml("junk.xml", top);
+    reader.Reset();
+    boost::property_tree::ptree pts = SummarizePoints(reader);
+    boost::property_tree::ptree top;
+    top.add_child("summary.header",reader.GetHeader().GetPTree());
+    top.add_child("summary.points",pts);
+    boost::property_tree::write_xml("junk.xml", top);
 
     delete writer;
     delete ofs;
@@ -203,7 +202,7 @@ std::string GetInvocationHeader()
 int main(int argc, char* argv[])
 {
 
-    boost::uint32_t split_size;
+    uint32_t split_size;
     std::string input;
     std::string output;
     
@@ -225,7 +224,7 @@ int main(int argc, char* argv[])
 
         file_options.add_options()
             ("help,h", "produce help message")
-            ("split,s", po::value<boost::uint32_t>(&split_size)->default_value(0), "Split file into multiple files with each being this size in MB or less. If this value is 0, no splitting is done")
+            ("split,s", po::value<uint32_t>(&split_size)->default_value(0), "Split file into multiple files with each being this size in MB or less. If this value is 0, no splitting is done")
             ("input,i", po::value< string >(), "input LAS file")
             ("output,o", po::value< string >(&output)->default_value("output.las"), "output LAS file")
             ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Verbose message output")

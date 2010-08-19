@@ -759,6 +759,85 @@ void Header::SetSchema(const Schema& format)
     m_format = format;
 
 } 
+
+boost::property_tree::ptree Header::GetPTree( ) const
+{
+    using boost::property_tree::ptree;
+    ptree pt;
     
+    pt.put("filesignature", GetFileSignature());
+    pt.put("projectdid", GetProjectId());
+    pt.put("systemid", GetSystemId());
+    pt.put("softwareid", GetSoftwareId());
+    
+    
+    std::ostringstream version;
+    version << static_cast<int>(GetVersionMajor());
+    version <<".";
+    version << static_cast<int>(GetVersionMinor());
+    pt.put("version", version.str());
+    
+    pt.put("filesourceid", GetFileSourceId());
+    pt.put("reserved", GetReserved());
+
+#ifdef HAVE_GDAL
+    pt.put("srs", GetSRS().GetWKT());
+#else
+#ifdef HAVE_LIBGEOTIFF
+    pt.put("proj4", GetSRS().GetProj4());
+#endif
+#endif
+    
+    std::ostringstream date;
+    date << GetCreationDOY() << "/" << GetCreationYear();
+    pt.put("date", date.str());
+    
+    pt.put("size", GetHeaderSize());
+    pt.put("dataoffset", GetDataOffset());
+
+    
+    pt.put("count", GetPointRecordsCount());
+    pt.put("dataformatid", GetDataFormatId());
+    pt.put("datarecordlength", GetDataRecordLength());
+    
+    ptree return_count;
+    liblas::Header::RecordsByReturnArray returns = GetPointRecordsByReturnCount();
+    for (boost::uint32_t i=0; i< 5; i++){
+        ptree r;
+        r.put("id", i);
+        r.put("count", returns[i]);
+        return_count.add_child("return", r);
+    }
+    pt.add_child("returns", return_count);
+    
+    pt.put("scale.x", GetScaleX());
+    pt.put("scale.y", GetScaleY());
+    pt.put("scale.z", GetScaleZ());
+    
+    pt.put("offset.x", GetOffsetX());
+    pt.put("offset.y", GetOffsetY());
+    pt.put("offset.z", GetOffsetZ());
+    
+    pt.put("minimum.x", GetMinX());
+    pt.put("minimum.y", GetMinY());
+    pt.put("minimum.z", GetMinZ());
+    
+    pt.put("maximum.x", GetMaxX());
+    pt.put("maximum.y", GetMaxY());
+    pt.put("maximum.z", GetMaxZ());
+
+    
+    ptree vlr;
+    for (boost::uint32_t i=0; i< GetRecordsCount(); i++) {
+        liblas::VariableRecord const& r = GetVLR(i);
+        vlr.put("userid", r.GetUserId(false));
+        vlr.put("description", r.GetDescription(false));
+        vlr.put("length", r.GetRecordLength());
+        vlr.put("id", r.GetRecordId());
+        pt.add_child("vlr", vlr);
+    }    
+    
+    return pt;
+}
     
 } // namespace liblas

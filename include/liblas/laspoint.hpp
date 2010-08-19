@@ -50,10 +50,13 @@
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/property_tree/ptree.hpp>
+
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
 #include <vector> // std::vector
+
 
 namespace liblas {
 
@@ -192,7 +195,8 @@ public:
     
     void SetHeader(HeaderPtr header);
     HeaderPtr GetHeaderPtr() const;
-
+    
+    boost::property_tree::ptree GetPTree() const;
 private:
 
     detail::PointRecord m_record;
@@ -361,6 +365,8 @@ inline double const& Point::operator[](std::size_t const& index) const
 
     return m_coords[index];
 }
+
+
 
 } // namespace liblas
 

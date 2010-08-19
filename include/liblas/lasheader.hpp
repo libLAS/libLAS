@@ -52,10 +52,13 @@
 #include <liblas/lasversion.hpp>
 // boost
 #include <boost/cstdint.hpp>
+#include <boost/property_tree/ptree.hpp>
+
 //std
 #include <cstddef>
 #include <string>
 #include <vector>
+#include <sstream>
 
 namespace liblas {
 
@@ -326,6 +329,8 @@ public:
 
     const Bounds<double>& GetExtent() const;
     void SetExtent(Bounds<double> const& extent);
+
+    boost::property_tree::ptree GetPTree() const;
 
 private:
     
