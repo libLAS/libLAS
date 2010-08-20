@@ -197,6 +197,7 @@ public:
     HeaderPtr GetHeaderPtr() const;
     
     boost::property_tree::ptree GetPTree() const;
+
 private:
 
     detail::PointRecord m_record;
@@ -366,6 +367,8 @@ inline double const& Point::operator[](std::size_t const& index) const
     return m_coords[index];
 }
 
+
+std::ostream& operator<<(std::ostream& os, liblas::Point const&);
 
 
 } // namespace liblas

@@ -53,6 +53,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <iosfwd>
 
 using namespace boost;
 
@@ -329,6 +330,40 @@ boost::property_tree::ptree Point::GetPTree() const
     pt.add_child("color", colors);
     
     return pt;
+}
+
+std::ostream& operator<<(std::ostream& os, liblas::Point const& p)
+{
+    using boost::property_tree::ptree;
+    ptree tree = p.GetPTree();
+
+    os << "---------------------------------------------------------" << std::endl;
+    
+    os.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    os.precision(6);
+
+    os << "  X: \t\t\t" << tree.get<double>("x") << std::endl;
+    os << "  Y: \t\t\t" << tree.get<double>("y") << std::endl;
+    os << "  Z: \t\t\t" << tree.get<double>("z") << std::endl;
+    os << "  Time: \t\t" << tree.get<double>("time") << std::endl;
+    os.unsetf(std::ios_base::fixed);
+    os.unsetf(std::ios_base::floatfield);
+    os << "  Return Number: \t" << tree.get<boost::uint32_t>("returnnumber") << std::endl;
+    os << "  Return Count: \t" << tree.get<boost::uint32_t>("numberofreturns") << std::endl;
+    os << "  Flightline Edge: \t" << tree.get<boost::uint32_t>("flightlineedge") << std::endl;
+    os << "  Intensity: \t\t" << tree.get<boost::uint32_t>("intensity") << std::endl;
+    os << "  Scan Direction: \t" << tree.get<boost::uint32_t>("scandirection") << std::endl;
+    os << "  Scan Angle Rank: \t" << tree.get<boost::int32_t>("scanangle") << std::endl;
+    os << "  Classification: \t" << tree.get<std::string>("classification.name") << std::endl;
+    os << "         witheld: \t" << tree.get<std::string>("classification.withheld") << std::endl;
+    os << "        keypoint: \t" << tree.get<std::string>("classification.keypoint") << std::endl;
+    os << "       synthetic: \t" << tree.get<std::string>("classification.synthetic") << std::endl;
+    os << "  RGB Color: \t\t" << tree.get<boost::uint32_t>("color.red") << " " 
+                              << tree.get<boost::uint32_t>("color.green") << " "
+                              << tree.get<boost::uint32_t>("color.blue") << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
+
+    return os;
 }
 
 void Point::throw_out_of_range() const
