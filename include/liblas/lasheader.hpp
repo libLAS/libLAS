@@ -53,12 +53,14 @@
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/foreach.hpp>
 
 //std
 #include <cstddef>
 #include <string>
 #include <vector>
 #include <sstream>
+#include <cmath>
 
 namespace liblas {
 
@@ -389,6 +391,8 @@ private:
     SpatialReference m_srs;
     Schema m_format;
 };
+
+std::ostream& operator<<(std::ostream& os, liblas::Header const&);
 
 } // namespace liblas
 

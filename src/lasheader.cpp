@@ -781,10 +781,10 @@ boost::property_tree::ptree Header::GetPTree( ) const
     pt.put("reserved", GetReserved());
 
 #ifdef HAVE_GDAL
-    pt.put("srs", GetSRS().GetWKT());
+    pt.put("srs", GetSRS().GetWKT(liblas::SpatialReference::eHorizontalOnly, true));
 #else
 #ifdef HAVE_LIBGEOTIFF
-    pt.put("proj4", GetSRS().GetProj4());
+    pt.put("srs", GetSRS().GetProj4());
 #endif
 #endif
     
@@ -834,10 +834,100 @@ boost::property_tree::ptree Header::GetPTree( ) const
         vlr.put("description", r.GetDescription(false));
         vlr.put("length", r.GetRecordLength());
         vlr.put("id", r.GetRecordId());
-        pt.add_child("vlr", vlr);
+        pt.add_child("vlrs.vlr", vlr);
     }    
     
     return pt;
 }
+
+std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
+{
+    using boost::property_tree::ptree;
+    ptree tree = h.GetPTree();
     
+    
+    os << "---------------------------------------------------------" << std::endl;
+    os << "  Header Summary" << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
+
+    os << "  Version:                     " << tree.get<std::string>("version") << std::endl;
+    os << "  Source ID:                   " << tree.get<boost::uint32_t>("filesourceid") << std::endl;
+    os << "  Reserved:                    " << tree.get<std::string>("reserved") << std::endl;
+    os << "  Project ID/GUID:             '" << tree.get<std::string>("projectdid") << "'" << std::endl;
+    os << "  System ID:                   '" << tree.get<std::string>("systemid") << "'" << std::endl;
+    os << "  Generating Software:         '" << tree.get<std::string>("softwareid") << "'" << std::endl;
+    os << "  File Creation Day/Year:      " << tree.get<std::string>("date") << std::endl;
+    os << "  Header Byte Size             " << tree.get<boost::uint32_t>("size") << std::endl;
+    os << "  Data Offset:                 " << tree.get<std::string>("dataoffset") << std::endl;
+    os << "  Number Var. Length Records:  " << tree.get_child("vlrs").size() << std::endl;
+    os << "  Point Data Format:           " << tree.get<boost::uint32_t>("dataformatid") << std::endl;
+    os << "  Number of Point Records:     " << tree.get<boost::uint32_t>("count") << std::endl;
+    
+    std::ostringstream returns_oss;
+    BOOST_FOREACH(ptree::value_type &v,
+            tree.get_child("returns"))
+    {
+            returns_oss << v.second.get<std::string>("count")<< " ";
+        
+    }        
+ 
+    os << "  Number of Points by Return:  " << returns_oss.str() << std::endl;
+
+    os.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    double scale = tree.get<double>("scale.x");
+    
+    double frac = 0;
+    double integer = 0;
+    frac = std::modf(scale, &integer);
+    
+    boost::uint32_t prec = std::fabs(std::floor(std::log10(frac)));
+    os.precision(prec);
+        
+    os << "  Scale Factor X Y Z:          " 
+       << tree.get<double>("scale.x") << " " 
+       << tree.get<double>("scale.y") << " " 
+       << tree.get<double>("scale.x") << std::endl;
+
+    os << "  Offset X Y Z:                " 
+       << tree.get<double>("offset.x") << " " 
+       << tree.get<double>("offset.y") << " " 
+       << tree.get<double>("offset.x") << std::endl;
+
+    os << "  Min X Y Z:                   " 
+       << tree.get<double>("minimum.x") << " " 
+       << tree.get<double>("minimum.y") << " " 
+       << tree.get<double>("minimum.x") << std::endl;
+
+    os << "  Max X Y Z:                   " 
+       << tree.get<double>("minimum.x") << " " 
+       << tree.get<double>("minimum.y") << " " 
+       << tree.get<double>("minimum.x") << std::endl;         
+    
+    os << "  Spatial Reference:  " << std::endl;
+    os << tree.get<std::string>("srs") << std::endl;
+   
+    os << "---------------------------------------------------------" << std::endl;
+    os << "  VLR Summary" << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
+
+    std::ostringstream vlrs_oss;
+    BOOST_FOREACH(ptree::value_type &v,
+            tree.get_child("vlrs"))
+    {
+            vlrs_oss << "    User: '" 
+                     << v.second.get<std::string>("userid")
+                     << "' - Description: '"
+                     << v.second.get<std::string>("description") 
+                     <<"'" 
+                     << std::endl;
+            vlrs_oss << "    ID: " << v.second.get<boost::uint32_t>("id")
+                     << " Length: " <<v.second.get<boost::uint32_t>("length")
+                     << std::endl;
+    }
+    
+    os << vlrs_oss.str();
+    
+    return os;
+    
+}
 } // namespace liblas
