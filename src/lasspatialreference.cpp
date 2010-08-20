@@ -367,8 +367,13 @@ const GTIF* SpatialReference::GetGTIF()
 #endif
 }
 
+std::string SpatialReference::GetWKT( WKTModeFlag mode_flag) const 
+{
+    return GetWKT(mode_flag, false);
+}
+
 /// Fetch the SRS as WKT
-std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const 
+std::string SpatialReference::GetWKT( WKTModeFlag mode_flag , bool bPretty) const 
 {
 #ifndef HAVE_GDAL
 	boost::ignore_unused_variable_warning(mode_flag);
@@ -385,6 +390,17 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const
     {
         pszWKT = GTIFGetOGISDefn( m_gtiff, &sGTIFDefn );
 
+            if (bPretty) {
+                OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
+                char *pszOrigWKT = pszWKT;
+                poSRS->importFromWkt( &pszOrigWKT );
+
+                CPLFree( pszWKT );
+                pszWKT = NULL;
+                poSRS->exportToPrettyWkt(&pszWKT, false);
+                delete poSRS;
+            }
+                
         // Older versions of GDAL lack StripVertical(), but should never
         // actually return COMPD_CS anyways.
 #if (GDAL_VERSION_NUM >= 1700) && (GDAL_RELEASE_DATE >= 20100110)
@@ -400,12 +416,15 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const
             pszWKT = NULL;
 
             poSRS->StripVertical();
-            poSRS->exportToWkt( &pszWKT );
+            if (bPretty) 
+                poSRS->exportToPrettyWkt(&pszWKT, false);
+            else
+                poSRS->exportToWkt( &pszWKT );
             
             delete poSRS;
         }
 #else
-		boost::ignore_unused_variable_warning(mode_flag);
+        boost::ignore_unused_variable_warning(mode_flag);
 #endif
 
 
