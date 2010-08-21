@@ -47,6 +47,7 @@
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/property_tree/ptree.hpp>
 // std
 #include <string>
 #include <vector>
@@ -121,6 +122,8 @@ public:
 
     /// Get the total size of the VLR in bytes
     std::size_t GetTotalSize() const;
+    
+    boost::property_tree::ptree GetPTree() const;    
 
 private:
 
