@@ -780,13 +780,16 @@ boost::property_tree::ptree Header::GetPTree( ) const
     pt.put("filesourceid", GetFileSourceId());
     pt.put("reserved", GetReserved());
 
-#ifdef HAVE_GDAL
-    pt.put("srs", GetSRS().GetWKT(liblas::SpatialReference::eHorizontalOnly, true));
-#else
-#ifdef HAVE_LIBGEOTIFF
-    pt.put("srs", GetSRS().GetProj4());
-#endif
-#endif
+// #ifdef HAVE_GDAL
+//     pt.put("srs", GetSRS().GetWKT(liblas::SpatialReference::eHorizontalOnly, true));
+// #else
+// #ifdef HAVE_LIBGEOTIFF
+//     pt.put("srs", GetSRS().GetProj4());
+// #endif
+// #endif
+    
+    ptree srs = GetSRS().GetPTree();
+    pt.add_child("srs", srs);
     
     std::ostringstream date;
     date << GetCreationDOY() << "/" << GetCreationYear();
@@ -827,14 +830,8 @@ boost::property_tree::ptree Header::GetPTree( ) const
     pt.put("maximum.z", GetMaxZ());
 
     
-    ptree vlr;
     for (boost::uint32_t i=0; i< GetRecordsCount(); i++) {
-        liblas::VariableRecord const& r = GetVLR(i);
-        vlr.put("userid", r.GetUserId(false));
-        vlr.put("description", r.GetDescription(false));
-        vlr.put("length", r.GetRecordLength());
-        vlr.put("id", r.GetRecordId());
-        pt.add_child("vlrs.vlr", vlr);
+        pt.add_child("vlrs.vlr", GetVLR(i).GetPTree());
     }    
     
     return pt;
@@ -859,7 +856,16 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
     os << "  File Creation Day/Year:      " << tree.get<std::string>("date") << std::endl;
     os << "  Header Byte Size             " << tree.get<boost::uint32_t>("size") << std::endl;
     os << "  Data Offset:                 " << tree.get<std::string>("dataoffset") << std::endl;
-    os << "  Number Var. Length Records:  " << tree.get_child("vlrs").size() << std::endl;
+    
+    os << "  Number Var. Length Records:  ";
+    try {
+        os << tree.get_child("vlrs").size();
+    }
+    catch (boost::property_tree::ptree_bad_path const& e) {
+        os << "None";
+    }
+    os << std::endl;
+    
     os << "  Point Data Format:           " << tree.get<boost::uint32_t>("dataformatid") << std::endl;
     os << "  Number of Point Records:     " << tree.get<boost::uint32_t>("count") << std::endl;
     
@@ -904,29 +910,33 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
        << tree.get<double>("minimum.x") << std::endl;         
     
     os << "  Spatial Reference:  " << std::endl;
-    os << tree.get<std::string>("srs") << std::endl;
-   
+    os << tree.get<std::string>("srs.prettywkt") << std::endl;
+    os << tree.get<std::string>("srs.gtiff") << std::endl;   
+
     os << "---------------------------------------------------------" << std::endl;
     os << "  VLR Summary" << std::endl;
     os << "---------------------------------------------------------" << std::endl;
 
-    std::ostringstream vlrs_oss;
-    BOOST_FOREACH(ptree::value_type &v,
-            tree.get_child("vlrs"))
-    {
-            vlrs_oss << "    User: '" 
-                     << v.second.get<std::string>("userid")
-                     << "' - Description: '"
-                     << v.second.get<std::string>("description") 
-                     <<"'" 
-                     << std::endl;
-            vlrs_oss << "    ID: " << v.second.get<boost::uint32_t>("id")
-                     << " Length: " <<v.second.get<boost::uint32_t>("length")
-                     << std::endl;
+    try {
+        std::ostringstream vlrs_oss;
+        BOOST_FOREACH(ptree::value_type &v,
+                tree.get_child("vlrs"))
+        {
+                vlrs_oss << "    User: '" 
+                         << v.second.get<std::string>("userid")
+                         << "' - Description: '"
+                         << v.second.get<std::string>("description") 
+                         <<"'" 
+                         << std::endl;
+                vlrs_oss << "    ID: " << v.second.get<boost::uint32_t>("id")
+                         << " Length: " <<v.second.get<boost::uint32_t>("length")
+                         << std::endl;
+        }
+    
+        os << vlrs_oss.str();
     }
-    
-    os << vlrs_oss.str();
-    
+    catch (boost::property_tree::ptree_bad_path const& e) {
+    }
     return os;
     
 }
