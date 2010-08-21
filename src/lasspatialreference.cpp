@@ -652,5 +652,47 @@ void SpatialReference::SetProj4(std::string const& v)
     ResetVLRs();
 }
 
+boost::property_tree::ptree SpatialReference::GetPTree( ) const
+{
+    using boost::property_tree::ptree;
+    ptree srs;
+
+    srs.put("proj4", GetProj4());
+    srs.put("prettywkt", GetWKT(liblas::SpatialReference::eHorizontalOnly, true));
+    srs.put("wkt", GetWKT(liblas::SpatialReference::eHorizontalOnly, false));
+    srs.put("compoundwkt", GetWKT(eCompoundOK, false));
+    srs.put("prettycompoundwkt", GetWKT(eCompoundOK, true));
+    srs.put("gtiff", GetGTIFFText());
+    
+    return srs;
+    
+}
+
+std::string SpatialReference::GetGTIFFText() const
+{
+    std::ostringstream oss;
+    char buffer [L_tmpnam];
+    char * pointer;
+    tmpnam (buffer);
+    FILE* f = fopen(buffer, "wb");
+    GTIFPrint((GTIF*)m_gtiff, 0, f);
+    fclose(f);
+    
+    f = fopen(buffer, "rb");
+    boost::uint32_t file_size;
+    
+    fseek (f , 0 , SEEK_END);
+    file_size = ftell(f);
+    rewind(f);
+    
+    char* data = (char*) malloc(sizeof(char)*file_size);
+    size_t result = fread(data, 1, file_size, f);
+    fclose(f);
+    
+        std::string output(data);
+        free(data);
+        return output;
+}
+
 } // namespace liblas
 

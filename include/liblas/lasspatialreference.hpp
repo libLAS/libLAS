@@ -74,10 +74,16 @@
 #include <geovalues.h>
 #endif // HAVE_LIBGEOTIFF
 
+
+// boost
+#include <boost/property_tree/ptree.hpp>
+
+
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
 #include <string>
+#include <stdio.h>
 
 // Fake out the compiler if we don't have libgeotiff
 #if !defined(LIBGEOTIFF_VERSION) && !defined(HAVE_LIBGEOTIFF) 
@@ -184,6 +190,7 @@ public:
     /// Return a copy of the LASVLRs that SpatialReference maintains
     std::vector<VariableRecord> GetVLRs() const;
 
+    boost::property_tree::ptree GetPTree() const;    
 private:
 
     // FIXME: Define as shared_ptr<GTIF> with custom deleter to get rid of bloated mem management, unsafe anyway --mloskot
@@ -192,6 +199,7 @@ private:
 
     std::vector<VariableRecord> m_vlrs;
     bool IsGeoVLR(VariableRecord const& vlr) const;
+    std::string GetGTIFFText() const;
 
     /// Reset the VLRs of the SpatialReference using the existing GTIF* and ST_TIF*
     /// Until this method is called, 
