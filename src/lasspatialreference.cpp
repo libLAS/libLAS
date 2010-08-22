@@ -670,28 +670,65 @@ boost::property_tree::ptree SpatialReference::GetPTree( ) const
 
 std::string SpatialReference::GetGTIFFText() const
 {
-    std::ostringstream oss;
-    char buffer [L_tmpnam];
-    char * pointer;
-    tmpnam (buffer);
-    FILE* f = fopen(buffer, "wb");
+    std::string filename;
+    // FIXME: How do we do this with an ostream instead of having to 
+    // use temporary FILE* ?  -- hobu
+#ifdef _MSC_VER
+
+#ifndef L_tmpnam_s
+// MSVC 2003 doesn't have tmpnam_s, so we'll have to use the old functions
+
+    char* tmpName = NULL;
+    tmpName = tmpnam( NULL );
+    
+    if (tmpName == NULL)
+        throw std::runtime_error("Could not allocate temporary file name");
+     
+#else 
+    char tmpName[L_tmpnam_s];
+    errno_t err = tmpnam_s(tmpName, L_tmpnam_s);
+    if (err)
+        throw std::runtime_error("Could not allocate temporary file name");
+
+#endif
+    if (tmpName[0] == '\\')
+        filename = std::string(tmpName + 1);
+    else
+        filename = std::string(tmpName);
+
+#else
+    char tmpName[6] = "XXXXX";
+    if (mktemp(tmpName) == 0)
+        throw std::runtime_error("Could not allocate temporary file name");
+    filename = tmpName;
+#endif
+
+
+    FILE* f = fopen(filename.c_str(), "wb");
     GTIFPrint((GTIF*)m_gtiff, 0, f);
     fclose(f);
     
-    f = fopen(buffer, "rb");
-    boost::uint32_t file_size;
+    FILE* f2 = fopen(filename.c_str(), "rb");
+
     
-    fseek (f , 0 , SEEK_END);
-    file_size = ftell(f);
-    rewind(f);
+    fseek(f2, 0, SEEK_END);
+    long size = ftell(f2);
+    fseek(f2, 0, SEEK_SET);
     
-    char* data = (char*) malloc(sizeof(char)*file_size);
-    size_t result = fread(data, 1, file_size, f);
-    fclose(f);
+    char* data = NULL;
+    data = (char*) malloc((size_t)size+1);
+    if(!data) throw std::runtime_error("Could not allocate data!");
     
-        std::string output(data);
-        free(data);
-        return output;
+    size_t read = 0;
+    
+    read = fread(data, 1, (size_t)size, f2);
+    
+    data[read] = 0;
+    std::string output(data);
+
+    free(data);
+    fclose(f2);
+    return output;
 }
 
 } // namespace liblas
