@@ -154,15 +154,15 @@ if(WITH_GEOTIFF)
         # Confirm required API is available
         include(CheckFunctionExists) 
         set(CMAKE_REQUIRED_LIBRARIES ${GEOTIFF_LIBRARY})
-        check_function_exists(ST_Create HAVE_ST_CREATE)
+#       check_function_exists(ST_Create HAVE_ST_CREATE)
     
-        if(NOT HAVE_ST_CREATE)
-            set(GEOTIFF_FOUND) # Reset to NOT found for GeoTIFF
-            message(FATAL_ERROR "GeoTIFF support requires libgeotiff 1.2.5 or newer.")
-        else()
+#        if(NOT HAVE_ST_CREATE)
+#            set(GEOTIFF_FOUND) # Reset to NOT found for GeoTIFF
+#            message(FATAL_ERROR "GeoTIFF support requires libgeotiff 1.2.5 or newer.")
+#        else()
             include_directories(${GEOTIFF_INCLUDE_DIR})
             add_definitions(-DHAVE_LIBGEOTIFF=1)
-        endif()
+#        endif()
     endif()
 
     # Determine libTIFF availability, required
