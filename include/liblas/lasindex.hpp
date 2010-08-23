@@ -70,7 +70,7 @@ namespace liblas {
 // when saved and reloaded from index or las file.
 #define LIBLAS_INDEX_PADLASTVLR
 
-typedef std::vector<uint8_t> IndexVLRData;
+typedef std::vector<boost::uint8_t> IndexVLRData;
 typedef std::vector<liblas::detail::IndexCell> IndexCellRow;
 typedef std::vector<IndexCellRow>	IndexCellDataBlock;
 
@@ -108,7 +108,7 @@ class IndexData;
 //		the z dimension may be slower in that event but no less successful.
 
 // A filter operation is invoked with the command:
-//		const std::vector<uint32_t>& Filter(IndexData const& ParamSrc);
+//		const std::vector<boost::uint32_t>& Filter(IndexData const& ParamSrc);
 // The return value is a vector of point ID's. The points can be accessed from the LAS file in the standard way
 //		as the index in no way modifies them or their sequential order.
 // Currently only one, two or three dimensional spatial window filters are supported. See IndexData below for 
@@ -136,11 +136,11 @@ private:
 	Bounds<double> m_bounds;
 	bool m_indexBuilt, m_tempFileStarted, m_readerCreated, m_readOnly, m_writestandaloneindex, m_forceNewIndex;
 	int m_debugOutputLevel;
-    uint32_t m_pointRecordsCount, m_maxMemoryUsage, m_cellsX, m_cellsY, m_cellsZ, m_totalCells, 
+    boost::uint32_t m_pointRecordsCount, m_maxMemoryUsage, m_cellsX, m_cellsY, m_cellsZ, m_totalCells, 
 		m_tempFileWrittenBytes, m_DataVLR_ID;
-    int32_t m_LowXCellCompletelyIn, m_HighXCellCompletelyIn, m_LowYCellCompletelyIn, m_HighYCellCompletelyIn,
+    boost::int32_t m_LowXCellCompletelyIn, m_HighXCellCompletelyIn, m_LowYCellCompletelyIn, m_HighYCellCompletelyIn,
 		m_LowZCellCompletelyIn, m_HighZCellCompletelyIn;
-    int32_t m_LowXBorderCell, m_HighXBorderCell, m_LowYBorderCell, m_HighYBorderCell,
+    boost::int32_t m_LowXBorderCell, m_HighXBorderCell, m_LowYBorderCell, m_HighYBorderCell,
 		m_LowZBorderCell, m_HighZBorderCell;
     double m_rangeX, m_rangeY, m_rangeZ, m_cellSizeZ, m_cellSizeX, m_cellSizeY;
 	double m_filterMinXCell, m_filterMaxXCell, m_filterMinYCell, m_filterMaxYCell, m_filterMinZCell, m_filterMaxZCell,
@@ -149,7 +149,7 @@ private:
 	std::string m_indexAuthor;
 	std::string m_indexComment;
 	std::string m_indexDate;
-	std::vector<uint32_t> m_filterResult;
+	std::vector<boost::uint32_t> m_filterResult;
 	std::ostream *m_ofs;
     FILE *m_tempFile, *m_outputFile;
     FILE *m_debugger;
@@ -161,25 +161,25 @@ private:
 	bool Validate(void);
 	bool LoadIndexVLR(VariableRecord const& vlr);
 	void SetCellFilterBounds(IndexData const& ParamSrc);
-	bool FilterOneVLR(VariableRecord const& vlr, uint32_t& i, IndexData const& ParamSrc);
-	bool VLRInteresting(int32_t MinCellX, int32_t MinCellY, int32_t MaxCellX, int32_t MaxCellY, 
+	bool FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexData const& ParamSrc);
+	bool VLRInteresting(boost::int32_t MinCellX, boost::int32_t MinCellY, boost::int32_t MaxCellX, boost::int32_t MaxCellY, 
 		IndexData const& ParamSrc);
-	bool CellInteresting(int32_t x, int32_t y, IndexData const& ParamSrc);
-	bool SubCellInteresting(int32_t SubCellID, int32_t XCellID, int32_t YCellID, IndexData const& ParamSrc);
-	bool ZCellInteresting(int32_t ZCellID, IndexData const& ParamSrc);
-	bool FilterOnePoint(int32_t x, int32_t y, int32_t z, int32_t PointID, int32_t LastPointID, bool &LastPtRead,
+	bool CellInteresting(boost::int32_t x, boost::int32_t y, IndexData const& ParamSrc);
+	bool SubCellInteresting(boost::int32_t SubCellID, boost::int32_t XCellID, boost::int32_t YCellID, IndexData const& ParamSrc);
+	bool ZCellInteresting(boost::int32_t ZCellID, IndexData const& ParamSrc);
+	bool FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z, boost::int32_t PointID, boost::int32_t LastPointID, bool &LastPtRead,
 		IndexData const& ParamSrc);
 	// Determines what X/Y cell in the basic cell matrix a point falls in
-	bool IdentifyCell(Point const& CurPt, uint32_t& CurCellX, uint32_t& CurCellY) const;
+	bool IdentifyCell(Point const& CurPt, boost::uint32_t& CurCellX, boost::uint32_t& CurCellY) const;
 	// determines what Z cell a point falls in
-	bool IdentifyCellZ(Point const& CurPt, uint32_t& CurCellZ) const;
+	bool IdentifyCellZ(Point const& CurPt, boost::uint32_t& CurCellZ) const;
 	// Determines what quadrant sub-cell a point falls in
-	bool IdentifySubCell(Point const& CurPt, uint32_t x, uint32_t y, uint32_t& CurSubCell) const;
+	bool IdentifySubCell(Point const& CurPt, boost::uint32_t x, boost::uint32_t y, boost::uint32_t& CurSubCell) const;
 	// Offloads binned cell data while building Index when cell data in memory exceeds maximum set by user
 	bool PurgePointsToTempFile(IndexCellDataBlock& CellBlock);
 	// Reloads and examines one cell of data from temp file
 	bool LoadCellFromTempFile(liblas::detail::IndexCell *CellBlock, 
-		uint32_t CurCellX, uint32_t CurCellY);
+		boost::uint32_t CurCellX, boost::uint32_t CurCellY);
 	// temp file is used to store sorted data while building index
 	FILE *OpenTempFile(void);
 	// closes and removes the temp file
@@ -207,7 +207,7 @@ private:
 
 	// debugging
 	bool OutputCellStats(IndexCellDataBlock& CellBlock)  const;
-	bool OutputCellGraph(std::vector<uint32_t> CellPopulation, uint32_t MaxPointsPerCell)  const;
+	bool OutputCellGraph(std::vector<boost::uint32_t> CellPopulation, boost::uint32_t MaxPointsPerCell)  const;
 	
 public:
 	// IndexFailed and IndexReady can be used to tell if an Index is ready for a filter operation
@@ -216,7 +216,7 @@ public:
     // Prep takes the input data and initializes Index values and then either builds or examines the Index
     bool Prep(IndexData const& ParamSrc);
     // Filter performs a point filter using the bounds in ParamSrc
-    const std::vector<uint32_t>& Filter(IndexData const& ParamSrc);
+    const std::vector<boost::uint32_t>& Filter(IndexData const& ParamSrc);
     // Return the bounds of the current Index
 	double GetMinX(void) const	{return m_bounds.min(0);};
 	double GetMaxX(void) const	{return m_bounds.max(0);};
@@ -230,15 +230,15 @@ public:
 	double GetRangeZ(void) const	{return m_rangeZ;};
 	Bounds<double> const& GetBounds(void) const	{return m_bounds;};
 	// Return the number of points used to build the Index
-	uint32_t GetPointRecordsCount(void) const	{return m_pointRecordsCount;};
+	boost::uint32_t GetPointRecordsCount(void) const	{return m_pointRecordsCount;};
 	// Return the number of cells in the Index
-	uint32_t GetCellsX(void) const	{return m_cellsX;};
-	uint32_t GetCellsY(void) const	{return m_cellsY;};
+	boost::uint32_t GetCellsX(void) const	{return m_cellsX;};
+	boost::uint32_t GetCellsY(void) const	{return m_cellsY;};
 	// Return the number of Z-dimension cells in the Index. Value is 1 if no Z-cells were created during Index building
-	uint32_t GetCellsZ(void) const	{return m_cellsZ;};
+	boost::uint32_t GetCellsZ(void) const	{return m_cellsZ;};
 	// 42 is the ID for the Index header VLR and 43 is the normal ID for the Index data VLR's
 	// For future expansion, multiple indexes could assign data VLR ID's of their own choosing
-	uint32_t GetDataVLR_ID(void) const	{return m_DataVLR_ID;};
+	boost::uint32_t GetDataVLR_ID(void) const	{return m_DataVLR_ID;};
 	// Since the user can define a Z cell size it is useful to examine that for an existing index
 	double GetCellSizeZ(void) const	{return m_cellSizeZ;};
 	// Return values used in building or examining index
@@ -246,7 +246,7 @@ public:
 	bool GetReadOnly(void) const	{return m_readOnly;};
 	bool GetStandaloneIndex(void) const	{return m_writestandaloneindex;};
 	bool GetForceNewIndex(void) const	{return m_forceNewIndex;};
-	uint32_t GetMaxMemoryUsage(void) const	{return m_maxMemoryUsage;};
+	boost::uint32_t GetMaxMemoryUsage(void) const	{return m_maxMemoryUsage;};
 	int GetDebugOutputLevel(void) const {return m_debugOutputLevel;};
 	// Not sure if these are more useful than dangerous
 	Header *GetPointHeader(void) {return &m_pointheader;};
@@ -260,7 +260,7 @@ public:
 	const char *GetIndexDateStr(void)  const;
 	// Methods for setting values used when reading index from file to facilitate moving reading function into
 	// separate IndexInput object at a future time to provide symmetry with IndexOutput
-	void SetDataVLR_ID(uint32_t DataVLR_ID)	{m_DataVLR_ID = DataVLR_ID;};
+	void SetDataVLR_ID(boost::uint32_t DataVLR_ID)	{m_DataVLR_ID = DataVLR_ID;};
 	void SetIndexAuthorStr(const char *ias)	{m_indexAuthor = ias;};
 	void SetIndexCommentStr(const char *ics)	{m_indexComment = ics;};
 	void SetIndexDateStr(const char *ids)	{m_indexDate = ids;};
@@ -270,10 +270,10 @@ public:
 	void SetMaxY(double maxY)	{m_bounds.max(1, maxY);};
 	void SetMinZ(double minZ)	{m_bounds.min(2, minZ);};
 	void SetMaxZ(double maxZ)	{m_bounds.max(2, maxZ);};
-	void SetPointRecordsCount(uint32_t prc)	{m_pointRecordsCount = prc;};
-	void SetCellsX(uint32_t cellsX)	{m_cellsX = cellsX;};
-	void SetCellsY(uint32_t cellsY)	{m_cellsY = cellsY;};
-	void SetCellsZ(uint32_t cellsZ)	{m_cellsZ = cellsZ;};
+	void SetPointRecordsCount(boost::uint32_t prc)	{m_pointRecordsCount = prc;};
+	void SetCellsX(boost::uint32_t cellsX)	{m_cellsX = cellsX;};
+	void SetCellsY(boost::uint32_t cellsY)	{m_cellsY = cellsY;};
+	void SetCellsZ(boost::uint32_t cellsZ)	{m_cellsZ = cellsZ;};
 	
 }; 
 
@@ -347,18 +347,18 @@ public:
 	bool SetInitialValues(std::istream *ifs = 0, Reader *reader = 0, std::ostream *ofs = 0, Reader *idxreader = 0, 
 		const char *tmpfilenme = 0, const char *indexauthor = 0, 
 		const char *indexcomment = 0, const char *indexdate = 0, double zbinht = 0.0, 
-		uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, bool readonly = 0, 
+		boost::uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, bool readonly = 0, 
 		bool writestandaloneindex = 0, bool forcenewindex = 0, FILE *debugger = 0);
 
 	// set the values needed for building an index embedded in existing las file, overriding any existing index
 	bool SetBuildEmbedValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor = 0, 
 		const char *indexcomment = 0, const char *indexdate = 0, double zbinht = 0.0, 
-		uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, FILE *debugger = 0);
+		boost::uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, FILE *debugger = 0);
 
 	// set the values needed for building an index in a standalone file, overriding any existing index
 	bool SetBuildAloneValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor = 0, 
 		const char *indexcomment = 0, const char *indexdate = 0, double zbinht = 0.0, 
-		uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, FILE *debugger = 0);
+		boost::uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, FILE *debugger = 0);
 
 	// set the values needed for filtering with an existing index in an las file
 	bool SetReadEmbedValues(Reader *reader, int debugoutputlevel = 0, FILE *debugger = 0);
@@ -370,13 +370,13 @@ public:
 	// otherwise, prepare the existing index for filtering
 	bool SetReadOrBuildEmbedValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor = 0, 
 		const char *indexcomment = 0, const char *indexdate = 0, double zbinht = 0.0, 
-		uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, FILE *debugger = 0);
+		boost::uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, FILE *debugger = 0);
 
 	// set the values needed for building an index in a standalone file only if no index already exists in the las file
 	// otherwise, prepare the existing index for filtering
 	bool SetReadOrBuildAloneValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor = 0, 
 		const char *indexcomment = 0, const char *indexdate = 0, double zbinht = 0.0, 
-		uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, FILE *debugger = 0);
+		boost::uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, FILE *debugger = 0);
 	
 	// set the bounds for use in filtering
 	bool SetFilterValues(double LowFilterX, double HighFilterX, double LowFilterY, double HighFilterY, double LowFilterZ, double HighFilterZ);
@@ -403,7 +403,7 @@ protected:
 	const char *m_indexComment;
 	const char *m_indexDate;
 	double m_cellSizeZ;
-	uint32_t m_maxMemoryUsage;
+	boost::uint32_t m_maxMemoryUsage;
 	int m_debugOutputLevel;
 	bool m_noFilterX, m_noFilterY, m_noFilterZ, m_readOnly, m_writestandaloneindex, m_forceNewIndex, m_indexValid;
 	FILE *m_debugger;
@@ -414,7 +414,7 @@ public:
 	bool GetReadOnly(void) const	{return m_readOnly;};
 	bool GetStandaloneIndex(void) const	{return m_writestandaloneindex;};
 	bool GetForceNewIndex(void) const	{return m_forceNewIndex;};
-	uint32_t GetMaxMemoryUsage(void) const	{return m_maxMemoryUsage;};
+	boost::uint32_t GetMaxMemoryUsage(void) const	{return m_maxMemoryUsage;};
 	Reader *GetReader(void) const {return m_reader;};
 	int GetDebugOutputLevel(void) const {return m_debugOutputLevel;};
 	const char *GetTempFileName(void) const {return m_tempFileName;};
@@ -435,7 +435,7 @@ public:
 	void SetIndexComment(const char *indexcomment)	{m_indexComment = indexcomment;};
 	void SetIndexDate(const char *indexdate)	{m_indexDate = indexdate;};
 	void SetCellSizeZ(double cellsizez)	{m_cellSizeZ = cellsizez;};
-	void SetMaxMem(uint32_t maxmem)	{m_maxMemoryUsage = maxmem;};
+	void SetMaxMem(boost::uint32_t maxmem)	{m_maxMemoryUsage = maxmem;};
 	void SetDebugOutputLevel(int debugoutputlevel)	{m_debugOutputLevel = debugoutputlevel;};
 	void SetReadOnly(bool readonly)	{m_readOnly = readonly;};
 	void SetStandaloneIndex(bool writestandaloneindex)	{m_writestandaloneindex = writestandaloneindex;};
