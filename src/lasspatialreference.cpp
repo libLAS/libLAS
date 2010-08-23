@@ -673,6 +673,8 @@ std::string SpatialReference::GetGTIFFText() const
     std::string filename;
     // FIXME: How do we do this with an ostream instead of having to 
     // use temporary FILE* ?  -- hobu
+    // replace this with a custom buffer
+    // http://stackoverflow.com/questions/1231461/inheriting-stdistream-or-equivalent
 #ifdef _MSC_VER
 
 #ifndef L_tmpnam_s
