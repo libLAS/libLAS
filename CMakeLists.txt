@@ -320,7 +320,6 @@ list(APPEND CPACK_SOURCE_IGNORE_FILES "CMakeCache.txt")
 
 list(APPEND CPACK_SOURCE_IGNORE_FILES "CPackConfig.cmake")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "schemas")
-list(APPEND CPACK_SOURCE_IGNORE_FILES ".cmake")
 
 
 include(CPack)
