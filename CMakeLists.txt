@@ -289,9 +289,9 @@ else()
     endif()
 endif()
 
-if (WIN32)
-    include(BuildOSGeo4W)
-endif(WIN32)
+#if (WIN32)
+#    include(BuildOSGeo4W)
+#endif(WIN32)
 
 
 
