@@ -670,6 +670,9 @@ boost::property_tree::ptree SpatialReference::GetPTree( ) const
 
 std::string SpatialReference::GetGTIFFText() const
 {
+#ifndef HAVE_LIBGEOTIFF
+    return std::string("");
+#else    
     std::string filename;
     // FIXME: How do we do this with an ostream instead of having to 
     // use temporary FILE* ?  -- hobu
@@ -731,6 +734,7 @@ std::string SpatialReference::GetGTIFFText() const
     free(data);
     fclose(f2);
     return output;
+#endif
 }
 
 } // namespace liblas
