@@ -886,7 +886,7 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
     double integer = 0;
     frac = std::modf(scale, &integer);
     
-    boost::uint32_t prec = std::fabs(std::floor(std::log10(frac)));
+    boost::uint32_t prec = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
     os.precision(prec);
         
     os << "  Scale Factor X Y Z:          " 
