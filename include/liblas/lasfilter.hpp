@@ -242,7 +242,7 @@ public:
         bool lte = HasPredicate(filter_string, "<=");
         bool eq = HasPredicate(filter_string, "==");
 
-        std::string::size_type pos;
+        std::string::size_type pos=0;
         std::string out;
 
         if (gte) // >=
