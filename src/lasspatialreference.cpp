@@ -698,7 +698,7 @@ std::string SpatialReference::GetGTIFFText() const
 
 #else
     char tmpName[6] = "XXXXX";
-    if (mktemp(tmpName) == 0)
+    if (mkstemp(tmpName) == 0)
         throw std::runtime_error("Could not allocate temporary file name");
     filename = tmpName;
 #endif
