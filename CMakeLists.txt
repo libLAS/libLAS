@@ -255,7 +255,7 @@ set(LIBLAS_DATA_DIR ${LIBLAS_DATA_SUBDIR})
 ###############################################################################
 # Installation commands
 
-install(FILES AUTHORS ChangeLog COPYING INSTALL LICENSE.txt README.txt
+install(FILES AUTHORS COPYING INSTALL LICENSE.txt README.txt
     DESTINATION ${LIBLAS_DATA_DIR}/doc)
 
 ###############################################################################
@@ -315,8 +315,12 @@ list(APPEND CPACK_SOURCE_IGNORE_FILES ".zip")
 list(APPEND CPACK_SOURCE_IGNORE_FILES ".hg")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "README")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "HOWTORELEASE.txt")
-list(APPEND CPACK_SOURCE_IGNORE_FILES "cmake_install.cmake")
 
+list(APPEND CPACK_SOURCE_IGNORE_FILES "CMakeCache.txt")
+
+list(APPEND CPACK_SOURCE_IGNORE_FILES "CPackConfig.cmake")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "schemas")
+list(APPEND CPACK_SOURCE_IGNORE_FILES ".cmake")
 
 
 include(CPack)
