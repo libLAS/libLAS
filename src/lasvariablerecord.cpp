@@ -211,5 +211,17 @@ std::size_t VariableRecord::GetTotalSize() const
     return sum;
 }
 
+boost::property_tree::ptree VariableRecord::GetPTree( ) const
+{
+    using boost::property_tree::ptree;
+    ptree vlr;
+
+    vlr.put("userid", GetUserId(false));
+    vlr.put("description", GetDescription(false));
+    vlr.put("length", GetRecordLength());
+    vlr.put("id", GetRecordId());
+    return vlr;
+    
+}
 } // namespace liblas
 

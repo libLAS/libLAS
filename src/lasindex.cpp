@@ -44,10 +44,6 @@
 #include <liblas/detail/index/indexoutput.hpp>
 #include <liblas/detail/index/indexcell.hpp>
 #include <liblas/detail/writer/writer.hpp>
-// boost
-#include <boost/cstdint.hpp>
-
-using namespace boost;
 
 namespace liblas
 {
@@ -55,62 +51,31 @@ namespace liblas
 Index::Index()
 {
 	SetValues();
-	m_indexBuilt = IndexInit();
-} // Index::Index
-
-Index::Index(liblas::Reader *reader, std::ostream *ofs, const char *tmpfilenme, 
-	const char *indexauthor, const char *indexcomment, const char *indexdate, 
-	double zbinht, uint32_t maxmem,	int debugOutput, FILE *debugger)
-{
-	SetValues();
-	m_reader = reader;
-	m_ofs = ofs;
-    m_debugOutputLevel = debugOutput;
-	m_tempFileName = tmpfilenme ? tmpfilenme: "";
-	m_indexAuthor = indexauthor ? indexauthor: "";
-	m_indexComment = indexcomment ? indexcomment: "";
-	m_indexDate = indexdate ? indexdate: "";
-	m_cellSizeZ = zbinht;
-	m_debugger = debugger ? debugger: stderr;
-	if (maxmem > 0)
-		m_maxMemoryUsage = maxmem;
-	else
-		m_maxMemoryUsage = LIBLAS_INDEX_MAXMEMDEFAULT;
-	m_indexBuilt = IndexInit();
-} // Index::Index
-
-Index::Index(std::istream *ifs, std::ostream *ofs, const char *tmpfilenme, 
-	const char *indexauthor, const char *indexcomment, const char *indexdate, 
-	double zbinht, uint32_t maxmem,	int debugOutput, FILE *debugger)
-{
-	SetValues();
-	m_reader = new liblas::Reader(*ifs);
-	m_readerCreated = true;
-	m_ofs = ofs;
-    m_debugOutputLevel = debugOutput;
-	m_tempFileName = tmpfilenme ? tmpfilenme: "";
-	m_indexAuthor = indexauthor ? indexauthor: "";
-	m_indexComment = indexcomment ? indexcomment: "";
-	m_indexDate = indexdate ? indexdate: "";
-	m_cellSizeZ = zbinht;
-	m_debugger = debugger ? debugger: stderr;
-	if (maxmem > 0)
-		m_maxMemoryUsage = maxmem;	// 10 megs default
-	else
-		m_maxMemoryUsage = LIBLAS_INDEX_MAXMEMDEFAULT;
-	m_indexBuilt = IndexInit();
+	m_indexBuilt = false;
 } // Index::Index
 
 Index::Index(IndexData const& ParamSrc)
 {
 	SetValues();
+	Prep(ParamSrc);
+} // Index::Index
+
+bool Index::Prep(IndexData const& ParamSrc)
+{
+
 	m_reader = ParamSrc.m_reader;
 	m_idxreader = ParamSrc.m_idxreader;
  	m_readerCreated = false;
 	if (! m_reader)
 	{
-		m_reader = new liblas::Reader(*ParamSrc.m_ifs);
- 		m_readerCreated = true;
+		try {
+			// fails if input stream is invalid
+			m_reader = new liblas::Reader(*ParamSrc.m_ifs);
+ 			m_readerCreated = true;
+ 		} // try
+ 		catch (std::runtime_error) {
+ 			return (InputFileError("Index::Prep"));
+ 		} // catch
 	} // if
 	m_ofs = ParamSrc.m_ofs;
     m_debugOutputLevel = ParamSrc.m_debugOutputLevel;
@@ -127,8 +92,12 @@ Index::Index(IndexData const& ParamSrc)
 		m_maxMemoryUsage = ParamSrc.m_maxMemoryUsage;
 	else
 		m_maxMemoryUsage = LIBLAS_INDEX_MAXMEMDEFAULT;
+	if (m_maxMemoryUsage < LIBLAS_INDEX_MINMEMDEFAULT)
+		m_maxMemoryUsage = LIBLAS_INDEX_MINMEMDEFAULT;
 	m_indexBuilt = IndexInit();
-} // Index::Index
+	return (m_indexBuilt);
+	
+} // Index::Prep
 
 void Index::SetValues(void)
 {
@@ -210,8 +179,14 @@ bool Index::IndexInit(void)
 				if (m_debugOutputLevel > 1)
 					fprintf(m_debugger, "Old index removed.\n");
 			} // if
+			else if (! Validate())
+			{
+				IndexFound = false;
+				if (m_debugOutputLevel > 1)
+					fprintf(m_debugger, "Existing index out of date.\n");
+			} // else if failed index validation test
 			else
-				return true;
+				return (true);
 		} // if
 		if (! IndexFound)
 		{
@@ -227,7 +202,7 @@ bool Index::IndexInit(void)
 		} // if
 		return Success;
 	} // m_reader
-	return (InitError("IndexInit"));	
+	return (InitError("Index::IndexInit"));	
 } // Index::IndexInit
 
 void Index::ClearOldIndex(void)
@@ -260,6 +235,24 @@ void Index::ClearOldIndex(void)
 	
 } // Index::ClearOldIndex
 
+bool Index::Validate(void)
+{
+
+	// compare the index-stored values to the ones in the las file header
+	// Index needs to be current in order to be valid.
+	// The validity test cannot determine if points have been moved but if the number of points or the 
+	// bounds of the points has changed since the index was built then the index is deemed invalid and 
+	// not to be used for filtering.
+    Bounds<double> HeaderBounds(m_pointheader.GetMinX(), m_pointheader.GetMinY(), m_pointheader.GetMinZ(), m_pointheader.GetMaxX(), m_pointheader.GetMaxY(), m_pointheader.GetMaxZ());
+	if (m_bounds == HeaderBounds)
+	{
+		if (m_pointheader.GetPointRecordsCount() == GetPointRecordsCount())
+			return (true);
+	} // if
+	return (false);
+	
+} // Index::Validate
+
 const std::vector<uint32_t>& Index::Filter(IndexData const& ParamSrc)
 {
 
@@ -281,6 +274,12 @@ const std::vector<uint32_t>& Index::Filter(IndexData const& ParamSrc)
 					// Beyond the first record would be more VLR's with the actual index data
 					// some cells will fall completely inside, some outside and some straddling the filter bounds	
 					SetCellFilterBounds(ParamSrc);
+					if (! m_bounds.intersects(ParamSrc.m_filter))
+					{
+						if (m_debugOutputLevel > 1)
+							fprintf(m_debugger, "Index bounds do not intersect filter bounds.\n");
+						break;
+					} // if
 				} // if 42
 				else if (RecordID == m_DataVLR_ID)
 				{
@@ -299,12 +298,21 @@ void Index::SetCellFilterBounds(IndexData const& ParamSrc)
 {
 	double LowXCell, HighXCell, LowYCell, HighYCell, LowZCell, HighZCell;
 	// convert filter bounds into cell numbers
-	m_filterMinXCell = m_cellsX * (ParamSrc.GetMinFilterX() - GetMinX()) / m_rangeX;
-	m_filterMaxXCell = m_cellsX * (ParamSrc.GetMaxFilterX() - GetMinX()) / m_rangeX;
-	m_filterMinYCell = m_cellsY * (ParamSrc.GetMinFilterY() - GetMinY()) / m_rangeY;
-	m_filterMaxYCell = m_cellsY * (ParamSrc.GetMaxFilterY() - GetMinY()) / m_rangeY;
-	m_filterMinZCell = m_cellsZ * (ParamSrc.GetMinFilterZ() - GetMinZ()) / m_rangeZ;
-	m_filterMaxZCell = m_cellsZ * (ParamSrc.GetMaxFilterZ() - GetMinZ()) / m_rangeZ;
+	// X and Y range can not be 0 or the index would not have been built
+	m_filterMinXCell = m_cellsX * (ParamSrc.GetMinFilterX() - GetMinX()) / GetRangeX();
+	m_filterMaxXCell = m_cellsX * (ParamSrc.GetMaxFilterX() - GetMinX()) / GetRangeX();
+	m_filterMinYCell = m_cellsY * (ParamSrc.GetMinFilterY() - GetMinY()) / GetRangeY();
+	m_filterMaxYCell = m_cellsY * (ParamSrc.GetMaxFilterY() - GetMinY()) / GetRangeY();
+	// Z range however can be 0
+	if (GetRangeZ() > 0.0)
+	{
+		m_filterMinZCell = m_cellsZ * (ParamSrc.GetMinFilterZ() - GetMinZ()) / GetRangeZ();
+		m_filterMaxZCell = m_cellsZ * (ParamSrc.GetMaxFilterZ() - GetMinZ()) / GetRangeZ();
+	} // if
+	else
+	{
+		m_filterMinZCell = m_filterMaxZCell = 0;
+	} // else
 	LowXCell = ceil(m_filterMinXCell);
 	HighXCell = floor(m_filterMaxXCell) - 1.0;
 	LowYCell = ceil(m_filterMinYCell);
@@ -460,7 +468,7 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, uint32_t& i, IndexData const
 		if (VLRInteresting(MinCellX, MinCellY, MaxCellX, MaxCellY, ParamSrc))
 		{
 			// translate the data for this VLR
-			while (ReadPos < DataRecordSize)
+			while (ReadPos + sizeof (uint32_t) < DataRecordSize)
 			{
 				// current cell, x, y
 				uint32_t x, y, PtRecords, SubCellsXY, SubCellsZ;
@@ -490,6 +498,7 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, uint32_t& i, IndexData const
 						uint32_t PointID, LastPointID = static_cast<uint32_t>(~0);
 						bool LastPtRead = 0;
 						ReadVLRData_n(PointID, CompositeData, ReadPos);
+						assert(PointID < m_pointRecordsCount);
 						liblas::detail::ConsecPtAccumulator ConsecutivePts;
 						ReadVLRData_n(ConsecutivePts, CompositeData, ReadPos);
 						if (TestPointsInThisCell && ZCellInteresting(ZCellID, ParamSrc))
@@ -516,6 +525,7 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, uint32_t& i, IndexData const
 						uint32_t PointID, LastPointID = static_cast<uint32_t>(~0);
 						bool LastPtRead = 0;
 						ReadVLRData_n(PointID, CompositeData, ReadPos);
+						assert(PointID < m_pointRecordsCount);
 						liblas::detail::ConsecPtAccumulator ConsecutivePts;
 						ReadVLRData_n(ConsecutivePts, CompositeData, ReadPos);
 						if (TestPointsInThisCell && SubCellInteresting(SubCellID, x, y, ParamSrc))
@@ -537,6 +547,7 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, uint32_t& i, IndexData const
 						uint32_t PointID, LastPointID = static_cast<uint32_t>(~0);
 						bool LastPtRead = 0;
 						ReadVLRData_n(PointID, CompositeData, ReadPos);
+						assert(PointID < m_pointRecordsCount);
 						liblas::detail::ConsecPtAccumulator ConsecutivePts;
 						ReadVLRData_n(ConsecutivePts, CompositeData, ReadPos);
 						if (TestPointsInThisCell)
@@ -720,6 +731,7 @@ bool Index::FilterOnePoint(int32_t x, int32_t y, int32_t z, int32_t PointID, int
 		if (! PtRead)
 		{
 			// seek and read
+			assert(static_cast<uint32_t>(PointID) < m_pointRecordsCount);
 			PtRead = m_reader->ReadPointAt(PointID);
 		} // if
 		if (PtRead)
@@ -762,6 +774,7 @@ bool Index::FilterOnePoint(int32_t x, int32_t y, int32_t z, int32_t PointID, int
 				if (! PtRead)
 				{
 					// seek and read
+					assert(static_cast<uint32_t>(PointID) < m_pointRecordsCount);
 					PtRead = m_reader->ReadPointAt(PointID);
 				} // if
 				if (PtRead)
@@ -805,6 +818,7 @@ bool Index::FilterOnePoint(int32_t x, int32_t y, int32_t z, int32_t PointID, int
 				if (! PtRead)
 				{
 					// seek and read
+					assert(static_cast<uint32_t>(PointID) < m_pointRecordsCount);
 					PtRead = m_reader->ReadPointAt(PointID);
 				} // if
 				if (PtRead)
@@ -825,7 +839,7 @@ bool Index::FilterOnePoint(int32_t x, int32_t y, int32_t z, int32_t PointID, int
 bool Index::BuildIndex(void)
 {
 	// Build an array of two dimensions. Sort data points into
-	uint32_t MaximumCells = 250000;
+	uint32_t MaximumCells = LIBLAS_INDEX_MAXCELLS;
 	
 	// reset to beginning of point data records in case points had been examined before index is built
 	m_reader->Reset();
@@ -838,7 +852,7 @@ bool Index::BuildIndex(void)
 		m_bounds.verify();
 	} // try
 	catch (std::runtime_error) {
-		return (InputBoundsError("BuildIndex"));
+		return (InputBoundsError("Index::BuildIndex"));
 	} // catch
 	CalcRangeX();
 	CalcRangeY(); 
@@ -849,17 +863,17 @@ bool Index::BuildIndex(void)
 	else
 		m_cellsZ = 1;
 		
-	// under the conditions of one dimension being 0 or negative in size, no index is possible
+	// under the conditions of one dimension (x or y) being 0 or negative in size, no index is possible
 	if (m_bounds.max(0) <= m_bounds.min(0) || m_bounds.max(1) <= m_bounds.min(1))
 	{
-		return (PointBoundsError("BuildIndex"));
+		return (PointBoundsError("Index::BuildIndex"));
 	} // if
 			
 	// fix a cell size and number of cells in X and Y to begin the process of indexing
 	double XRatio = m_rangeX >= m_rangeY ? 1.0: m_rangeX / m_rangeY;
 	double YRatio = m_rangeY >= m_rangeX ? 1.0: m_rangeY / m_rangeX;
 	
-	m_totalCells = m_pointRecordsCount / 100;
+	m_totalCells = m_pointRecordsCount / LIBLAS_INDEX_OPTPTSPERCELL;
 	m_totalCells = static_cast<uint32_t>(sqrt((double)m_totalCells));
 	if (m_totalCells < 10)
 		m_totalCells = 10;	// let's set a minimum number of cells to make the effort worthwhile
@@ -931,7 +945,7 @@ bool Index::BuildIndex(void)
 					if (m_tempFileName.size() && PointsInMemory >= MaxPointsInMemory)
 					{
 						if (! PurgePointsToTempFile(IndexCellBlock))
-							return (FileError("BuildIndex"));
+							return (FileError("Index::BuildIndex"));
 						PointsInMemory = 0;
 					} // if
 					IndexCellBlock[CurCellX][CurCellY].AddPointRecord(PointID);
@@ -949,7 +963,7 @@ bool Index::BuildIndex(void)
 		if (m_tempFileName.size())
 		{
 			if (! PurgePointsToTempFile(IndexCellBlock))
-				return (FileError("BuildIndex"));
+				return (FileError("Index::BuildIndex"));
 		} // if using temp file
 
 		// print some statistics to the console
@@ -957,7 +971,7 @@ bool Index::BuildIndex(void)
 		{
 			if (! OutputCellStats(IndexCellBlock))
 			{
-				return (DebugOutputError("BuildIndex"));
+				return (DebugOutputError("Index::BuildIndex"));
 			} // if
 		} // if
 
@@ -982,7 +996,10 @@ bool Index::BuildIndex(void)
 					{
 						ZRange = IndexCellBlock[x][y].GetZRange();
 						// if Z-binning is specified, create Z sub-cells first
-						if ((m_cellsZ > 1 && ZRange > m_cellSizeZ) || IndexCellBlock[x][y].GetNumPoints() > 1000)
+						// otherwise, subdivide the cell by quadrants if the number of points in the cell 
+						// exceeds LIBLAS_INDEX_MAXPTSPERCELL
+						if ((m_cellsZ > 1 && ZRange > m_cellSizeZ) || 
+							(IndexCellBlock[x][y].GetNumPoints() > LIBLAS_INDEX_MAXPTSPERCELL))
 						{
 							// walk the points in this cell and divvy them up into Z - cells or quadtree cells
 							// create an iterator for the map
@@ -991,6 +1008,7 @@ bool Index::BuildIndex(void)
 							for (; MapIt != IndexCellBlock[x][y].GetEnd(); ++MapIt)
 							{
 								// get the actual point from the las file
+								assert(MapIt->first < m_pointRecordsCount);
 								if (m_reader->ReadPointAt(MapIt->first))
 								{
 									uint32_t FirstPt = 0, LastCellZ = static_cast<uint32_t>(~0);
@@ -998,6 +1016,7 @@ bool Index::BuildIndex(void)
 									for (liblas::detail::ConsecPtAccumulator PtsTested = 0; PtsTested < MapIt->second; )
 									{
 										Point const& CurPt = m_reader->GetPoint();
+										// Z cell subdivision takes precedence over sub-cell quadrant subdivision
 										if (m_cellsZ > 1 && ZRange > m_cellSizeZ)
 										{
 											// for the number of consecutive points, identify the Z cell
@@ -1033,20 +1052,20 @@ bool Index::BuildIndex(void)
 										if (PtsTested < MapIt->second)
 										{
 											if (! m_reader->ReadNextPoint())
-												return (FileError("BuildIndex"));
+												return (FileError("Index::BuildIndex"));
 										} // if
 									} // for
 								} // if
 								else
-									return (FileError("BuildIndex"));
+									return (FileError("Index::BuildIndex"));
 							} // for
 							IndexCellBlock[x][y].RemoveMainRecords();
 						} // if
-						// write the cell out to permanent file VLR
+						// sum the points for later debugging
 						PtsIndexed += IndexCellBlock[x][y].GetNumPoints();
-
+						// write the cell out to permanent file VLR
 						if (! IndexOut.OutputCell(&IndexCellBlock[x][y], x, y))
-							return (FileError("BuildIndex"));
+							return (FileError("Index::BuildIndex"));
 
 						// some statistical stuff for z bounds debugging
 						ZRangeSum += ZRange;
@@ -1057,12 +1076,14 @@ bool Index::BuildIndex(void)
 					} // if
 					else
 					{
-						return (FileError("BuildIndex"));
+						return (FileError("Index::BuildIndex"));
 					}  // else
 				} // for y
 			} // for x
+			// done with this baby
+			CloseTempFile();
 			if (! IndexOut.FinalizeOutput())
-				return (FileError("BuildIndex"));
+				return (FileError("Index::BuildIndex"));
 			if (m_debugOutputLevel)
 			{
 				if (PtsIndexed < m_pointRecordsCount)
@@ -1091,7 +1112,7 @@ bool Index::BuildIndex(void)
 	} // try
 	catch (std::bad_alloc) {
 		CloseTempFile();
-		return (MemoryError("BuildIndex"));
+		return (MemoryError("Index::BuildIndex"));
 	} // catch
 	
 	return true;
@@ -1109,7 +1130,7 @@ bool Index::IdentifyCell(Point const& CurPt, uint32_t& CurCellX, uint32_t& CurCe
 		CurCellX = m_cellsX - 1;
 	else
 	{
-		return (PointBoundsError("IdentifyCell"));
+		return (PointBoundsError("Index::IdentifyCell"));
 	} // else
 	
 	OffsetY = (CurPt.GetY() - m_bounds.min(1)) / m_rangeY;
@@ -1119,7 +1140,7 @@ bool Index::IdentifyCell(Point const& CurPt, uint32_t& CurCellX, uint32_t& CurCe
 		CurCellY = m_cellsY - 1;
 	else
 	{
-		return (PointBoundsError("IdentifyCell"));
+		return (PointBoundsError("Index::IdentifyCell"));
 	} // else
 	
 	return true;
@@ -1137,7 +1158,7 @@ bool Index::IdentifyCellZ(Point const& CurPt, uint32_t& CurCellZ) const
 		CurCellZ = m_cellsZ - 1;
 	else
 	{
-		return (PointBoundsError("IdentifyCellZ"));
+		return (PointBoundsError("Index::IdentifyCellZ"));
 	} // else
 
 	return true;
@@ -1190,7 +1211,7 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 			{
 				if (fwrite(&EmptyOffset, sizeof(uint32_t), 1, m_tempFile) < 1)
 				{
-					return (FileError("PurgePointsToTempFile"));
+					return (FileError("Index::PurgePointsToTempFile"));
 				} // if error
 			} // for
 			m_tempFileWrittenBytes = m_totalCells * sizeof(uint32_t);
@@ -1212,7 +1233,7 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 						LastWriteLocation = (x * m_cellsY + y) * sizeof(uint32_t);
 					fseek(m_tempFile, LastWriteLocation, SEEK_SET);
 					if (fwrite(&m_tempFileWrittenBytes, sizeof(uint32_t), 1, m_tempFile) < 1)
-						return (FileError("PurgePointsToTempFile"));
+						return (FileError("Index::PurgePointsToTempFile"));
 					CellBlock[x][y].SetFileOffset(m_tempFileWrittenBytes);
 
 					fseek(m_tempFile, 0, SEEK_END);
@@ -1221,11 +1242,11 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 						printf("file position error");
 					// write a blank space for later placement of next file block for this cell
 					if (fwrite(&EmptyOffset, sizeof(uint32_t), 1, m_tempFile) < 1)
-						return (FileError("PurgePointsToTempFile"));
+						return (FileError("Index::PurgePointsToTempFile"));
 					m_tempFileWrittenBytes += sizeof(uint32_t);
 					// write the number of records stored in this section
 					if (fwrite(&RecordsToWrite, sizeof(uint32_t), 1, m_tempFile) < 1)
-						return (FileError("PurgePointsToTempFile"));
+						return (FileError("Index::PurgePointsToTempFile"));
 					m_tempFileWrittenBytes += sizeof(uint32_t);
 
 					liblas::detail::IndexCellData::iterator MapIt = CellBlock[x][y].GetFirstRecord();
@@ -1236,9 +1257,9 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 						// write the number of consecutive points
 						liblas::detail::ConsecPtAccumulator ConsecutivePoints = MapIt->second;
 						if (fwrite(&PointID, sizeof(uint32_t), 1, m_tempFile) < 1)
-							return (FileError("PurgePointsToTempFile"));
+							return (FileError("Index::PurgePointsToTempFile"));
 						if (fwrite(&ConsecutivePoints, sizeof(liblas::detail::ConsecPtAccumulator), 1, m_tempFile) < 1)
-							return (FileError("PurgePointsToTempFile"));
+							return (FileError("Index::PurgePointsToTempFile"));
 						m_tempFileWrittenBytes += sizeof(uint32_t);
 						m_tempFileWrittenBytes += sizeof(liblas::detail::ConsecPtAccumulator);
 					} // for
@@ -1252,7 +1273,7 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 		return true;
 	} // if file
 
-	return (FileError("PurgePointsToTempFile"));
+	return (FileError("Index::PurgePointsToTempFile"));
 
 } // Index::PurgePointsToTempFile
 
@@ -1268,30 +1289,30 @@ bool Index::LoadCellFromTempFile(liblas::detail::IndexCell *CellBlock,
 	// load the cell as it was written
 	// read the first offset for this cell
 	if (fseek(m_tempFile, (CurCellX * m_cellsY + CurCellY) * sizeof (uint32_t), SEEK_SET))
-		return (FileError("LoadCellFromTempFile"));
+		return (FileError("Index::LoadCellFromTempFile"));
 	if (fread(&FileOffset, sizeof (uint32_t), 1, m_tempFile) < 1)
-		return (FileError("LoadCellFromTempFile"));
+		return (FileError("Index::LoadCellFromTempFile"));
 	while (FileOffset > 0)
 	{
 		// jump to the first block for this cell, read the next offset
 		if (fseek(m_tempFile, FileOffset, SEEK_SET))
-			return (FileError("LoadCellFromTempFile"));
+			return (FileError("Index::LoadCellFromTempFile"));
 		if (fread(&FileOffset, sizeof (uint32_t), 1, m_tempFile) < 1)
-			return (FileError("LoadCellFromTempFile"));
+			return (FileError("Index::LoadCellFromTempFile"));
 		// read the data for the cell in this block
 		// first is the number of items to read now
 		if (fread(&RecordsToRead, sizeof (uint32_t), 1, m_tempFile) < 1)
-			return (FileError("LoadCellFromTempFile"));
+			return (FileError("Index::LoadCellFromTempFile"));
 		for (uint32_t RecordNum = 0; RecordNum < RecordsToRead; ++RecordNum)
 		{
 			uint32_t PointID;
 			liblas::detail::ConsecPtAccumulator ConsecutivePoints;
 			// read the point ID
 			if (fread(&PointID, sizeof(uint32_t), 1, m_tempFile) < 1)
-				return (FileError("LoadCellFromTempFile"));
+				return (FileError("Index::LoadCellFromTempFile"));
 			// read the number of consecutive points
 			if (fread(&ConsecutivePoints, sizeof(liblas::detail::ConsecPtAccumulator), 1, m_tempFile) < 1)
-				return (FileError("LoadCellFromTempFile"));
+				return (FileError("Index::LoadCellFromTempFile"));
 			CellBlock->AddPointRecord(PointID, ConsecutivePoints);
 		} // for
 	} // while
@@ -1300,7 +1321,7 @@ bool Index::LoadCellFromTempFile(liblas::detail::IndexCell *CellBlock,
 	if (NewNumPts != FormerNumPts)
 	{
 		CloseTempFile();
-		return (PointCountError("LoadCellFromTempFile"));
+		return (PointCountError("Index::LoadCellFromTempFile"));
 	} // if
 	return (true);
 
@@ -1319,7 +1340,10 @@ void Index::CloseTempFile(void)
 {
 
 	if (m_tempFile)
+	{
 		fclose(m_tempFile);
+		remove(m_tempFileName.c_str());
+	} // if
 	m_tempFile = 0;
 	m_tempFileWrittenBytes = 0;
     
@@ -1334,11 +1358,11 @@ bool Index::SaveIndexInLASFile(void)
 		{
 			Point CurPt = m_reader->GetPoint();
 			if (! writer.WritePoint(CurPt))
-				return (OutputFileError("SaveIndexInLASFile"));
+				return (OutputFileError("Index::SaveIndexInLASFile"));
 		} // while
 	} // try
 	catch (std::runtime_error) {
-		return (OutputFileError("SaveIndexInLASFile"));
+		return (OutputFileError("Index::SaveIndexInLASFile"));
 	} // catch
 	return true;
 } // Index::SaveIndexInLASFile
@@ -1347,9 +1371,18 @@ bool Index::SaveIndexInStandAloneFile(void)
 {
 	try {
 		Writer writer(*m_ofs, m_idxheader);
+		/* test block - uncommenting this makes it just like above version with included points
+		m_reader->Reset();
+		while (m_reader->ReadNextPoint())
+		{
+			Point CurPt = m_reader->GetPoint();
+			if (! writer.WritePoint(CurPt))
+				return (OutputFileError("Index::SaveIndexInLASFile"));
+		} // while
+		*/
 	} // try
 	catch (std::runtime_error) {
-		return (OutputFileError("SaveIndexInLASFile"));
+		return (OutputFileError("Index::SaveIndexInStandAloneFile"));
 	} // catch
 	return true;
 } // Index::SaveIndexInStandAloneFile
@@ -1363,6 +1396,15 @@ bool Index::FileError(const char *Reporter)
 	return false;
 
 } // Index::FileError
+
+bool Index::InputFileError(const char *Reporter) const
+{
+
+	if (m_debugOutputLevel)
+		fprintf(m_debugger, "Input file i/o error, %s\n", Reporter);
+	return false;
+
+} // Index::InputFileError
 
 bool Index::OutputFileError(const char *Reporter) const
 {
@@ -1501,6 +1543,8 @@ IndexData::IndexData(Index const& index)
 {
 	SetValues();
 	m_reader = index.GetReader();
+	m_idxreader = index.GetIndexReader();
+	m_filter = index.GetBounds();
     m_debugOutputLevel = index.GetDebugOutputLevel();
 	m_tempFileName = index.GetTempFileName() ? index.GetTempFileName(): "";
 	m_indexAuthor = index.GetIndexAuthorStr() ? index.GetIndexAuthorStr(): "";
@@ -1514,12 +1558,15 @@ IndexData::IndexData(Index const& index)
 		m_maxMemoryUsage = index.GetMaxMemoryUsage();
 	else
 		m_maxMemoryUsage = LIBLAS_INDEX_MAXMEMDEFAULT;
+	if (m_maxMemoryUsage < LIBLAS_INDEX_MINMEMDEFAULT)
+		m_maxMemoryUsage = LIBLAS_INDEX_MINMEMDEFAULT;
 	m_indexValid = index.IndexReady();
 } // Index::Index
 
 void IndexData::SetValues(void)
 {
 	m_reader = 0;
+	m_idxreader = 0;
 	m_ifs = 0;
 	m_ofs = 0;
 	m_tempFileName = 0;
@@ -1530,6 +1577,7 @@ void IndexData::SetValues(void)
 	m_maxMemoryUsage = 0;
 	m_debugOutputLevel = 0;
 	m_readOnly = false;
+	m_writestandaloneindex = false;
 	m_forceNewIndex = false;
 	m_debugger = 0;
 	m_indexValid = false;
@@ -1562,6 +1610,128 @@ bool IndexData::SetInitialValues(std::istream *ifs, Reader *reader, std::ostream
 	return (m_reader || m_ifs);
 	
 } // IndexData::SetInitialValues
+
+bool IndexData::SetBuildEmbedValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor, 
+	const char *indexcomment, const char *indexdate, double zbinht, 
+	uint32_t maxmem, int debugoutputlevel, FILE *debugger)
+{
+
+	m_ifs = 0;
+	m_ofs = ofs;
+	m_reader = reader;
+	m_idxreader = 0;
+	m_tempFileName = tmpfilenme;
+	m_indexAuthor = indexauthor;
+	m_indexComment = indexcomment;
+	m_indexDate = indexdate;
+	m_cellSizeZ = zbinht;
+	m_maxMemoryUsage = maxmem;
+	m_debugOutputLevel = debugoutputlevel;
+	m_readOnly = false;
+	m_writestandaloneindex = false;
+	m_forceNewIndex = true;
+	m_debugger = debugger;
+	m_indexValid = false;
+	return (m_reader && m_ofs && m_tempFileName);
+	
+} // IndexData::SetBuildEmbedValues
+
+bool IndexData::SetBuildAloneValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor, 
+	const char *indexcomment, const char *indexdate, double zbinht, 
+	uint32_t maxmem, int debugoutputlevel, FILE *debugger)
+{
+
+	m_ifs = 0;
+	m_ofs = ofs;
+	m_reader = reader;
+	m_idxreader = 0;
+	m_tempFileName = tmpfilenme;
+	m_indexAuthor = indexauthor;
+	m_indexComment = indexcomment;
+	m_indexDate = indexdate;
+	m_cellSizeZ = zbinht;
+	m_maxMemoryUsage = maxmem;
+	m_debugOutputLevel = debugoutputlevel;
+	m_readOnly = false;
+	m_writestandaloneindex = true;
+	m_forceNewIndex = true;
+	m_debugger = debugger;
+	m_indexValid = false;
+	return (m_reader && m_ofs && m_tempFileName);
+	
+} // IndexData::SetBuildAloneValues
+
+bool IndexData::SetReadEmbedValues(Reader *reader, int debugoutputlevel, FILE *debugger)
+{
+
+	m_ifs = 0;
+	m_ofs = 0;
+	m_reader = reader;
+	m_idxreader = 0;
+	m_tempFileName = 0;
+	m_indexAuthor = 0;
+	m_indexComment = 0;
+	m_indexDate = 0;
+	m_cellSizeZ = 0.0;
+	m_maxMemoryUsage = 0;
+	m_debugOutputLevel = debugoutputlevel;
+	m_readOnly = true;
+	m_writestandaloneindex = false;
+	m_forceNewIndex = false;
+	m_debugger = debugger;
+	m_indexValid = false;
+	return (m_reader ? true: false);
+	
+} // IndexData::SetReadEmbedValues
+
+bool IndexData::SetReadAloneValues(Reader *reader, Reader *idxreader, int debugoutputlevel, FILE *debugger)
+{
+
+	m_ifs = 0;
+	m_ofs = 0;
+	m_reader = reader;
+	m_idxreader = idxreader;
+	m_tempFileName = 0;
+	m_indexAuthor = 0;
+	m_indexComment = 0;
+	m_indexDate = 0;
+	m_cellSizeZ = 0.0;
+	m_maxMemoryUsage = 0;
+	m_debugOutputLevel = debugoutputlevel;
+	m_readOnly = true;
+	m_writestandaloneindex = false;
+	m_forceNewIndex = false;
+	m_debugger = debugger;
+	m_indexValid = false;
+	return (m_reader && m_idxreader);
+	
+} // IndexData::SetReadAloneValues
+
+bool IndexData::SetReadOrBuildEmbedValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor, 
+	const char *indexcomment, const char *indexdate, double zbinht, 
+	uint32_t maxmem, int debugoutputlevel, FILE *debugger)
+{
+
+	SetBuildEmbedValues(reader, ofs, tmpfilenme, indexauthor, indexcomment, indexdate, zbinht, 
+		maxmem, debugoutputlevel, debugger);
+
+	m_forceNewIndex = false;
+	return (m_reader && m_ofs && m_tempFileName);
+	
+} // IndexData::SetBuildEmbedValues
+
+bool IndexData::SetReadOrBuildAloneValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor, 
+	const char *indexcomment, const char *indexdate, double zbinht, 
+	uint32_t maxmem, int debugoutputlevel, FILE *debugger)
+{
+
+	SetBuildAloneValues(reader, ofs, tmpfilenme, indexauthor, indexcomment, indexdate, zbinht, 
+		maxmem, debugoutputlevel, debugger);
+
+	m_forceNewIndex = false;
+	return (m_reader && m_ofs && m_tempFileName);
+	
+} // IndexData::SetBuildAloneValues
 
 bool IndexData::SetFilterValues(double LowFilterX, double HighFilterX, double LowFilterY, double HighFilterY, 
 	double LowFilterZ, double HighFilterZ)

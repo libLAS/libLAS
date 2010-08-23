@@ -63,6 +63,9 @@ following compilers are known to work:
 CMake cannot find it in a default location.  Additionally, set ``Boost_LIBRARY_DIRS`` 
 if it cannot find your libraries.
 
+.. warning::
+    You need Boost version 1.41.0 or higher to build libLAS 1.6.
+
 .. note::
 
     If you are building on Windows, http://www.boostpro.com/download/ has 

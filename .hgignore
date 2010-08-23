@@ -1,14 +1,12 @@
 syntax: glob
 *~
 *.bak
-*.bz2
 *.dll
 *.dll.manifest
 *.embed.manifest
 *.exe
 *.exe.manifest
 *.exp
-*.gz
 *.idb
 *.ilk
 *.intermediate.manifest

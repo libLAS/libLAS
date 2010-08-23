@@ -41,13 +41,9 @@
  ****************************************************************************/
 
 #include <liblas/detail/index/indexcell.hpp>
-// boost
-#include <boost/cstdint.hpp>
-// std
 #include <cmath>
 #include <limits>
 
-using namespace boost;
 using namespace std;
 
 namespace liblas { namespace detail {

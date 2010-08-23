@@ -46,11 +46,14 @@
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/property_tree/ptree.hpp>
+
 // std
 #include <cstring>
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <iosfwd>
 
 using namespace boost;
 
@@ -284,9 +287,89 @@ HeaderPtr Point::GetHeaderPtr() const
     return m_header;
 }
 
+boost::property_tree::ptree Point::GetPTree() const
+{
+    using boost::property_tree::ptree;
+    ptree pt;
+
+    pt.put("x", GetX());
+    pt.put("y", GetY());
+    pt.put("z", GetZ());
+
+    pt.put("time", GetTime());
+    pt.put("intensity", GetIntensity());
+    pt.put("returnnumber", GetReturnNumber());
+    pt.put("numberofreturns", GetNumberOfReturns());
+    pt.put("scandirection", GetScanDirection());
+    
+    pt.put("scanangle", GetScanAngleRank());
+    pt.put("flightlineedge", GetFlightLineEdge());
+
+    pt.put("userdata", GetUserData());
+    pt.put("pointsourceid", GetPointSourceID());
+
+    ptree klasses;
+    
+    liblas::Classification const& c = GetClassification();
+    std::string name = c.GetClassName();
+
+    klasses.put("name", name);
+    klasses.put("id", c.GetClass());
+    klasses.put("withheld", c.IsWithheld());
+    klasses.put("keypoint", c.IsKeyPoint());
+    klasses.put("synthetic", c.IsSynthetic());
+
+    pt.add_child("classification",klasses);
+
+    ptree colors;
+    liblas::Color const& clr = GetColor();
+
+    colors.put("red", clr.GetRed());
+    colors.put("green", clr.GetGreen());
+    colors.put("blue", clr.GetBlue());
+    pt.add_child("color", colors);
+    
+    return pt;
+}
+
+std::ostream& operator<<(std::ostream& os, liblas::Point const& p)
+{
+    using boost::property_tree::ptree;
+    ptree tree = p.GetPTree();
+
+    os << "---------------------------------------------------------" << std::endl;
+    
+    os.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    os.precision(6);
+
+    os << "  X: \t\t\t" << tree.get<double>("x") << std::endl;
+    os << "  Y: \t\t\t" << tree.get<double>("y") << std::endl;
+    os << "  Z: \t\t\t" << tree.get<double>("z") << std::endl;
+    os << "  Time: \t\t" << tree.get<double>("time") << std::endl;
+    os.unsetf(std::ios_base::fixed);
+    os.unsetf(std::ios_base::floatfield);
+    os << "  Return Number: \t" << tree.get<boost::uint32_t>("returnnumber") << std::endl;
+    os << "  Return Count: \t" << tree.get<boost::uint32_t>("numberofreturns") << std::endl;
+    os << "  Flightline Edge: \t" << tree.get<boost::uint32_t>("flightlineedge") << std::endl;
+    os << "  Intensity: \t\t" << tree.get<boost::uint32_t>("intensity") << std::endl;
+    os << "  Scan Direction: \t" << tree.get<boost::uint32_t>("scandirection") << std::endl;
+    os << "  Scan Angle Rank: \t" << tree.get<boost::int32_t>("scanangle") << std::endl;
+    os << "  Classification: \t" << tree.get<std::string>("classification.name") << std::endl;
+    os << "         witheld: \t" << tree.get<std::string>("classification.withheld") << std::endl;
+    os << "        keypoint: \t" << tree.get<std::string>("classification.keypoint") << std::endl;
+    os << "       synthetic: \t" << tree.get<std::string>("classification.synthetic") << std::endl;
+    os << "  RGB Color: \t\t" << tree.get<boost::uint32_t>("color.red") << " " 
+                              << tree.get<boost::uint32_t>("color.green") << " "
+                              << tree.get<boost::uint32_t>("color.blue") << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
+
+    return os;
+}
+
 void Point::throw_out_of_range() const
 {
     throw std::out_of_range("coordinate subscript out of range");
 }
+
 
 } // namespace liblas

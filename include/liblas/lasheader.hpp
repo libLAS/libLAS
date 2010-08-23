@@ -52,10 +52,15 @@
 #include <liblas/lasversion.hpp>
 // boost
 #include <boost/cstdint.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/foreach.hpp>
+
 //std
 #include <cstddef>
 #include <string>
 #include <vector>
+#include <sstream>
+#include <cmath>
 
 namespace liblas {
 
@@ -150,7 +155,7 @@ public:
     void SetVersionMajor(boost::uint8_t v);
 
     /// Get minor component of version of LAS format.
-    /// \return Valid values are 1 or 0.
+    /// \return Valid values are 0, 1, 2, 3.
     boost::uint8_t GetVersionMinor() const;
 
     /// Set minor component of version of LAS format.
@@ -327,6 +332,8 @@ public:
     const Bounds<double>& GetExtent() const;
     void SetExtent(Bounds<double> const& extent);
 
+    boost::property_tree::ptree GetPTree() const;
+
 private:
     
     typedef detail::Point<double> PointScales;
@@ -384,6 +391,8 @@ private:
     SpatialReference m_srs;
     Schema m_format;
 };
+
+std::ostream& operator<<(std::ostream& os, liblas::Header const&);
 
 } // namespace liblas
 

@@ -8,11 +8,6 @@
 # libLAS general settings
 project(libLAS)
 
-# Version information
-SET(CPACK_PACKAGE_VERSION_MAJOR "1")
-SET(CPACK_PACKAGE_VERSION_MINOR "6")
-SET(CPACK_PACKAGE_VERSION_PATCH "0")
-
 if(WIN32)
     # Name of C++ library
     set(LIBLAS_LIB_NAME liblas)
@@ -119,8 +114,8 @@ endif(APPLE)
 # Search for dependencies
 
 # Boost C++ Libraries support - required
-message(STATUS "Searching for Boost 1.38+ - done")
-find_package(Boost 1.38 COMPONENTS program_options REQUIRED)
+message(STATUS "Searching for Boost 1.41+ - done")
+find_package(Boost 1.41 COMPONENTS program_options REQUIRED)
 
 if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
@@ -154,15 +149,15 @@ if(WITH_GEOTIFF)
         # Confirm required API is available
         include(CheckFunctionExists) 
         set(CMAKE_REQUIRED_LIBRARIES ${GEOTIFF_LIBRARY})
-        check_function_exists(ST_Create HAVE_ST_CREATE)
+#       check_function_exists(ST_Create HAVE_ST_CREATE)
     
-        if(NOT HAVE_ST_CREATE)
-            set(GEOTIFF_FOUND) # Reset to NOT found for GeoTIFF
-            message(FATAL_ERROR "GeoTIFF support requires libgeotiff 1.2.5 or newer.")
-        else()
+#        if(NOT HAVE_ST_CREATE)
+#            set(GEOTIFF_FOUND) # Reset to NOT found for GeoTIFF
+#            message(FATAL_ERROR "GeoTIFF support requires libgeotiff 1.2.5 or newer.")
+#        else()
             include_directories(${GEOTIFF_INCLUDE_DIR})
             add_definitions(-DHAVE_LIBGEOTIFF=1)
-        endif()
+#        endif()
     endif()
 
     # Determine libTIFF availability, required
@@ -260,7 +255,7 @@ set(LIBLAS_DATA_DIR ${LIBLAS_DATA_SUBDIR})
 ###############################################################################
 # Installation commands
 
-install(FILES AUTHORS ChangeLog COPYING INSTALL LICENSE.txt README.txt
+install(FILES AUTHORS COPYING INSTALL LICENSE.txt README.txt
     DESTINATION ${LIBLAS_DATA_DIR}/doc)
 
 ###############################################################################
@@ -298,3 +293,36 @@ endif()
 #    include(BuildOSGeo4W)
 #endif(WIN32)
 
+
+
+# Version information
+SET(CPACK_PACKAGE_VERSION_MAJOR "1")
+SET(CPACK_PACKAGE_VERSION_MINOR "6")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+
+SET(CPACK_SOURCE_GENERATOR "TGZ;ZIP;TBZ2")
+SET(CPACK_CMAKE_GENERATOR "Unix Makefiles")
+
+
+set(CPACK_SOURCE_PACKAGE_FILE_NAME
+  "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+
+list(APPEND CPACK_SOURCE_IGNORE_FILES "/test/data/TO_core_last_zoom.las")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "_CPack_Packages")
+list(APPEND CPACK_SOURCE_IGNORE_FILES ".gz")
+list(APPEND CPACK_SOURCE_IGNORE_FILES ".bz2")
+list(APPEND CPACK_SOURCE_IGNORE_FILES ".zip")
+list(APPEND CPACK_SOURCE_IGNORE_FILES ".hg")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "README")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "HOWTORELEASE.txt")
+
+list(APPEND CPACK_SOURCE_IGNORE_FILES "CMakeCache.txt")
+
+list(APPEND CPACK_SOURCE_IGNORE_FILES "CPackConfig.cmake")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "schemas")
+
+
+include(CPack)
+
+
+add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)

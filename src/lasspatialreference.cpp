@@ -367,8 +367,13 @@ const GTIF* SpatialReference::GetGTIF()
 #endif
 }
 
+std::string SpatialReference::GetWKT( WKTModeFlag mode_flag) const 
+{
+    return GetWKT(mode_flag, false);
+}
+
 /// Fetch the SRS as WKT
-std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const 
+std::string SpatialReference::GetWKT( WKTModeFlag mode_flag , bool bPretty) const 
 {
 #ifndef HAVE_GDAL
 	boost::ignore_unused_variable_warning(mode_flag);
@@ -385,6 +390,17 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const
     {
         pszWKT = GTIFGetOGISDefn( m_gtiff, &sGTIFDefn );
 
+            if (bPretty) {
+                OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
+                char *pszOrigWKT = pszWKT;
+                poSRS->importFromWkt( &pszOrigWKT );
+
+                CPLFree( pszWKT );
+                pszWKT = NULL;
+                poSRS->exportToPrettyWkt(&pszWKT, false);
+                delete poSRS;
+            }
+                
         // Older versions of GDAL lack StripVertical(), but should never
         // actually return COMPD_CS anyways.
 #if (GDAL_VERSION_NUM >= 1700) && (GDAL_RELEASE_DATE >= 20100110)
@@ -400,12 +416,15 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag ) const
             pszWKT = NULL;
 
             poSRS->StripVertical();
-            poSRS->exportToWkt( &pszWKT );
+            if (bPretty) 
+                poSRS->exportToPrettyWkt(&pszWKT, false);
+            else
+                poSRS->exportToWkt( &pszWKT );
             
             delete poSRS;
         }
 #else
-		boost::ignore_unused_variable_warning(mode_flag);
+        boost::ignore_unused_variable_warning(mode_flag);
 #endif
 
 
@@ -631,6 +650,91 @@ void SpatialReference::SetProj4(std::string const& v)
 #endif
 #endif
     ResetVLRs();
+}
+
+boost::property_tree::ptree SpatialReference::GetPTree( ) const
+{
+    using boost::property_tree::ptree;
+    ptree srs;
+
+    srs.put("proj4", GetProj4());
+    srs.put("prettywkt", GetWKT(liblas::SpatialReference::eHorizontalOnly, true));
+    srs.put("wkt", GetWKT(liblas::SpatialReference::eHorizontalOnly, false));
+    srs.put("compoundwkt", GetWKT(eCompoundOK, false));
+    srs.put("prettycompoundwkt", GetWKT(eCompoundOK, true));
+    srs.put("gtiff", GetGTIFFText());
+    
+    return srs;
+    
+}
+
+std::string SpatialReference::GetGTIFFText() const
+{
+#ifndef HAVE_LIBGEOTIFF
+    return std::string("");
+#else    
+    std::string filename;
+    // FIXME: How do we do this with an ostream instead of having to 
+    // use temporary FILE* ?  -- hobu
+    // replace this with a custom buffer
+    // http://stackoverflow.com/questions/1231461/inheriting-stdistream-or-equivalent
+#ifdef _MSC_VER
+
+#ifndef L_tmpnam_s
+// MSVC 2003 doesn't have tmpnam_s, so we'll have to use the old functions
+
+    char* tmpName = NULL;
+    tmpName = tmpnam( NULL );
+    
+    if (tmpName == NULL)
+        throw std::runtime_error("Could not allocate temporary file name");
+     
+#else 
+    char tmpName[L_tmpnam_s];
+    errno_t err = tmpnam_s(tmpName, L_tmpnam_s);
+    if (err)
+        throw std::runtime_error("Could not allocate temporary file name");
+
+#endif
+    if (tmpName[0] == '\\')
+        filename = std::string(tmpName + 1);
+    else
+        filename = std::string(tmpName);
+
+#else
+    char tmpName[6] = "XXXXX";
+    if (mkstemp(tmpName) == 0)
+        throw std::runtime_error("Could not allocate temporary file name");
+    filename = tmpName;
+#endif
+
+
+    FILE* f = fopen(filename.c_str(), "wb");
+    GTIFPrint((GTIF*)m_gtiff, 0, f);
+    fclose(f);
+    
+    FILE* f2 = fopen(filename.c_str(), "rb");
+
+    
+    fseek(f2, 0, SEEK_END);
+    long size = ftell(f2);
+    fseek(f2, 0, SEEK_SET);
+    
+    char* data = NULL;
+    data = (char*) malloc((size_t)size+1);
+    if(!data) throw std::runtime_error("Could not allocate data!");
+    
+    size_t read = 0;
+    
+    read = fread(data, 1, (size_t)size, f2);
+    
+    data[read] = 0;
+    std::string output(data);
+
+    free(data);
+    fclose(f2);
+    return output;
+#endif
 }
 
 } // namespace liblas

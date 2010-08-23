@@ -41,12 +41,8 @@
  ****************************************************************************/
 
 #include <liblas/detail/index/indexoutput.hpp>
-// boost
-#include <boost/cstdint.hpp>
-// std
 #include <limits>
 
-using namespace boost;
 using namespace std;
 
 namespace liblas { namespace detail {
@@ -64,7 +60,7 @@ bool IndexOutput::InitiateOutput(void)
 {
 
 	uint8_t VersionMajor = LIBLAS_INDEX_VERSIONMAJOR, VersionMinor = LIBLAS_INDEX_VERSIONMINOR;
-	char DestStr[512];
+	char DestStr[LIBLAS_INDEX_MAXSTRLEN];
 	uint16_t StringLen;
 	uint16_t WritePos = 0;
 	
@@ -73,23 +69,26 @@ bool IndexOutput::InitiateOutput(void)
 		m_indexVLRHeaderData.resize(16000);
 		m_indexVLRHeaderRecord.SetUserId("liblas");
 		m_indexVLRHeaderRecord.SetRecordId(42);
-		m_indexVLRHeaderRecord.SetDescription("LASLIB Index Header");
+		m_indexVLRHeaderRecord.SetDescription("LibLAS Index Header");
 		// set the header data into the header data string
 		// Index file version
 		WriteVLRData_n(m_indexVLRHeaderData, VersionMajor, WritePos);
 		WriteVLRData_n(m_indexVLRHeaderData, VersionMinor, WritePos);
 		// creator		
-		strcpy(DestStr, m_index->GetIndexAuthorStr());
+		strncpy(DestStr, m_index->GetIndexAuthorStr(), LIBLAS_INDEX_MAXSTRLEN - 1);
+		DestStr[LIBLAS_INDEX_MAXSTRLEN - 1] = 0;
 		StringLen = static_cast<uint16_t>(strlen(DestStr) + 1);
 		WriteVLRData_n(m_indexVLRHeaderData, StringLen, WritePos);
 		WriteVLRData_str(m_indexVLRHeaderData, DestStr, StringLen, WritePos);
 		// comment
-		strcpy(DestStr, m_index->GetIndexCommentStr());
+		strncpy(DestStr, m_index->GetIndexCommentStr(), LIBLAS_INDEX_MAXSTRLEN - 1);
+		DestStr[LIBLAS_INDEX_MAXSTRLEN - 1] = 0;
 		StringLen = static_cast<uint16_t>(strlen(DestStr) + 1);
 		WriteVLRData_n(m_indexVLRHeaderData, StringLen, WritePos);
 		WriteVLRData_str(m_indexVLRHeaderData, DestStr, StringLen, WritePos);
 		// date	
-		strcpy(DestStr, m_index->GetIndexDateStr());
+		strncpy(DestStr, m_index->GetIndexDateStr(), LIBLAS_INDEX_MAXSTRLEN - 1);
+		DestStr[LIBLAS_INDEX_MAXSTRLEN - 1] = 0;
 		StringLen = static_cast<uint16_t>(strlen(DestStr) + 1);
 		WriteVLRData_n(m_indexVLRHeaderData, StringLen, WritePos);
 		WriteVLRData_str(m_indexVLRHeaderData, DestStr, StringLen, WritePos);
@@ -133,7 +132,7 @@ bool IndexOutput::InitiateOutput(void)
 		m_FirstCellInVLR = true;
 		m_indexVLRCellRecord.SetUserId("liblas");
 		m_indexVLRCellRecord.SetRecordId(43);
-		m_indexVLRCellRecord.SetDescription("LASLIB Index Data");
+		m_indexVLRCellRecord.SetDescription("LibLAS Index Data");
 		
 		return true;
 	}
@@ -164,7 +163,8 @@ bool IndexOutput::OutputCell(liblas::detail::IndexCell *CellBlock, uint32_t x, u
 		// or on the last cell in the index cell block
 		uint32_t SubCellsXY, SubCellsZ, NumPts, PtRecords;
 
-		if (NumPts = CellBlock->GetNumPoints())
+		NumPts = CellBlock->GetNumPoints();
+		if (NumPts)
 		{
 			// current cell, x, y
 			WriteVLRData_n(m_indexVLRTempData, x, m_TempWritePos);
@@ -200,6 +200,7 @@ bool IndexOutput::OutputCell(liblas::detail::IndexCell *CellBlock, uint32_t x, u
 						MyPointIt != MyCellIt->second.end(); ++MyPointIt)
 					{
 						uint32_t PointID = MyPointIt->first;
+						assert(PointID < m_index->GetPointRecordsCount());
 						WriteVLRData_n(m_indexVLRTempData, PointID, m_TempWritePos);
 						uint8_t ConsecutivePts = MyPointIt->second;
 						WriteVLRData_n(m_indexVLRTempData, ConsecutivePts, m_TempWritePos);
@@ -221,6 +222,7 @@ bool IndexOutput::OutputCell(liblas::detail::IndexCell *CellBlock, uint32_t x, u
 						MyPointIt != MyCellIt->second.end(); ++MyPointIt)
 					{
 						uint32_t PointID = MyPointIt->first;
+						assert(PointID < m_index->GetPointRecordsCount());
 						WriteVLRData_n(m_indexVLRTempData, PointID, m_TempWritePos);
 						uint8_t ConsecutivePts = MyPointIt->second;
 						WriteVLRData_n(m_indexVLRTempData, ConsecutivePts, m_TempWritePos);
@@ -233,6 +235,7 @@ bool IndexOutput::OutputCell(liblas::detail::IndexCell *CellBlock, uint32_t x, u
 					MyPointIt != CellBlock->GetEnd(); ++MyPointIt)
 				{
 					uint32_t PointID = MyPointIt->first;
+					assert(PointID < m_index->GetPointRecordsCount());
 					WriteVLRData_n(m_indexVLRTempData, PointID, m_TempWritePos);
 					uint8_t ConsecutivePts = MyPointIt->second;
 					WriteVLRData_n(m_indexVLRTempData, ConsecutivePts, m_TempWritePos);
@@ -360,6 +363,17 @@ bool IndexOutput::FinalizeOutput(void)
 		// if new cell data causes VLR data to exceed limit add VLR to header VLR list and start new VLR
 		if (m_SomeDataReadyToWrite)
 		{
+		#ifdef LIBLAS_INDEX_PADLASTVLR
+			uint32_t PadBytes = m_DataRecordSize % 4;
+			if (PadBytes && (m_DataRecordSize + PadBytes <= numeric_limits<unsigned short>::max()))
+			{
+				m_DataRecordSize += PadBytes;
+				for (uint32_t i = 0; i < PadBytes; ++i)
+				{
+					m_indexVLRCellPointData[m_DataRecordSize - i - 1] = 0;
+				} // for
+			} // if
+		#endif // LIBLAS_INDEX_PADLASTVLR
 			m_indexVLRCellPointData.resize(m_DataRecordSize);
 			m_indexVLRCellRecord.SetRecordLength(static_cast<uint16_t>(m_DataRecordSize));
 			m_indexVLRCellRecord.SetData(m_indexVLRCellPointData);
