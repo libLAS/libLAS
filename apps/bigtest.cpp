@@ -27,17 +27,17 @@ int main()
     {
       double percentDone = ((double)i)/NPOINTS * 100.0;
       if (i % 1000 == 0)
-         printf("\b\b\b\b\b\b\b%6.2f%%", percentDone, nMillionPoints);
+         printf("\b\b\b\b\b\b\b%6.2f%%", percentDone);
       
       LASPointH pt = LASPoint_Create();
       err = LASPoint_SetX(pt, 0);
-      if (err) printf ("For point %d, failed to set point value X\n", i);
+      if (err) printf ("For point %lu, failed to set point value X\n", i);
       err = LASPoint_SetY(pt, 0);
-      if (err) printf ("For point %d, failed to set point value Y\n", i);
+      if (err) printf ("For point %lu, failed to set point value Y\n", i);
       err = LASPoint_SetZ(pt, 0);
-      if (err) printf ("For point %d, failed to set point value Z\n", i);
+      if (err) printf ("For point %lu, failed to set point value Z\n", i);
       err = LASWriter_WritePoint(writer, pt);  
-      if (err) printf ("For point %d, failed to WritePoint\n", i);
+      if (err) printf ("For point %lu, failed to WritePoint\n", i);
       LASPoint_Destroy(pt);
     }
    err = LASHeader_SetPointRecordsCount(header, NPOINTS);
@@ -51,5 +51,5 @@ int main()
     reader = LASReader_Create(OutputName);
     header = LASReader_GetHeader(reader);
     unsigned long npoints = LASHeader_GetPointRecordsCount(header);
-    printf ("\n\nWrote %d, Read %d (testing %d Million (1024 x 1024) Points)\n", NPOINTS, npoints, nMillionPoints);
+    printf ("\n\nWrote %lu, Read %lu (testing %lu Million (1024 x 1024) Points)\n", NPOINTS, npoints, nMillionPoints);
 }
