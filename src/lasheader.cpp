@@ -880,7 +880,7 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
     os << "  Number of Points by Return:  " << returns_oss.str() << std::endl;
 
     os.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    double scale = tree.get<double>("scale.x");
+    double scale = tree.get<double>("scale.z");
     
     double frac = 0;
     double integer = 0;
