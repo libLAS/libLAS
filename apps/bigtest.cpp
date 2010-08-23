@@ -16,14 +16,14 @@ int main()
     LASError err;
     // Limitation about seeking past 4GB output size.  At 20 bytes / record, we
     // can successfully write 204 million records, but not 205.
-    const uint32_t nMillionPoints = 205;
-    const uint32_t NPOINTS = 1024*1024*nMillionPoints ;
+    const unsigned long nMillionPoints = 205;
+    const unsigned long NPOINTS = 1024*1024*nMillionPoints ;
     const char * OutputName = "Issue147.las";
 
     // Write a LAS file and after the points are in, update the header.
     header = LASHeader_Create();
     writer = LASWriter_Create(OutputName, header, LAS_MODE_WRITE);
-    for (uint32_t i = 0; i < NPOINTS; i++)
+    for (unsigned long i = 0; i < NPOINTS; i++)
     {
       double percentDone = ((double)i)/NPOINTS * 100.0;
       if (i % 1000 == 0)
@@ -50,6 +50,6 @@ int main()
    // Read the file we just wrote and check the header data.
     reader = LASReader_Create(OutputName);
     header = LASReader_GetHeader(reader);
-    uint32_t npoints = LASHeader_GetPointRecordsCount(header);
+    unsigned long npoints = LASHeader_GetPointRecordsCount(header);
     printf ("\n\nWrote %d, Read %d (testing %d Million (1024 x 1024) Points)\n", NPOINTS, npoints, nMillionPoints);
 }
