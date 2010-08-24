@@ -672,7 +672,7 @@ std::string SpatialReference::GetGTIFFText() const
 #else
 
     detail::geotiff_dir_printer geotiff_printer;
-    GTIFPrint(m_gtiff, detail::GeoTiffPrintMethod, &geotiff_printer);
+    GTIFPrint(m_gtiff, detail::libLASGeoTIFFPrint, &geotiff_printer);
     return geotiff_printer.output();
 #endif
 }

@@ -80,8 +80,9 @@ set(LIBLAS_CPP
   lasvariablerecord.cpp
   laswriter.cpp)
 
-set(LIBLAS_DETAIL_CPP) # Currently empty
-
+set(LIBLAS_DETAIL_CPP
+  detail/utility.cpp)
+  
 set(LIBLAS_DETAIL_INDEX_CPP
   detail/index/indexcell.cpp
   detail/index/indexoutput.cpp)

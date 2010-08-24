@@ -454,12 +454,7 @@ private:
     std::ostringstream m_oss;
 };
 
-extern "C" int GeoTiffPrintMethod(char* data, void* aux)
-{
-    geotiff_dir_printer* printer = reinterpret_cast<geotiff_dir_printer*>(aux);
-    (*printer)(data, 0);
-    return static_cast<int>(printer->size());
-}
+extern "C" int libLASGeoTIFFPrint(char* data, void* aux);
 
 }} // namespace liblas::detail
 
