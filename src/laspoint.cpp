@@ -46,7 +46,7 @@
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include <liblas/property_tree/ptree.hpp>
 
 // std
 #include <cstring>
@@ -287,9 +287,9 @@ HeaderPtr Point::GetHeaderPtr() const
     return m_header;
 }
 
-boost::property_tree::ptree Point::GetPTree() const
+liblas::property_tree::ptree Point::GetPTree() const
 {
-    using boost::property_tree::ptree;
+    using liblas::property_tree::ptree;
     ptree pt;
 
     pt.put("x", GetX());
@@ -334,7 +334,7 @@ boost::property_tree::ptree Point::GetPTree() const
 
 std::ostream& operator<<(std::ostream& os, liblas::Point const& p)
 {
-    using boost::property_tree::ptree;
+    using liblas::property_tree::ptree;
     ptree tree = p.GetPTree();
 
     os << "---------------------------------------------------------" << std::endl;

@@ -46,12 +46,11 @@
 #include <liblas/lascolor.hpp>
 #include <liblas/detail/pointrecord.hpp>
 #include <liblas/detail/fwd.hpp>
+#include <liblas/property_tree/ptree.hpp>
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/property_tree/ptree.hpp>
-
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
@@ -196,7 +195,7 @@ public:
     void SetHeader(HeaderPtr header);
     HeaderPtr GetHeaderPtr() const;
     
-    boost::property_tree::ptree GetPTree() const;
+    property_tree::ptree GetPTree() const;
 
 private:
 

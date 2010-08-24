@@ -50,9 +50,9 @@
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasversion.hpp>
+#include <liblas/property_tree/ptree.hpp>
 // boost
 #include <boost/cstdint.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <boost/foreach.hpp>
 
 //std
@@ -332,7 +332,7 @@ public:
     const Bounds<double>& GetExtent() const;
     void SetExtent(Bounds<double> const& extent);
 
-    boost::property_tree::ptree GetPTree() const;
+    liblas::property_tree::ptree GetPTree() const;
 
 private:
     

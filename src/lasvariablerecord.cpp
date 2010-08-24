@@ -211,9 +211,9 @@ std::size_t VariableRecord::GetTotalSize() const
     return sum;
 }
 
-boost::property_tree::ptree VariableRecord::GetPTree() const
+liblas::property_tree::ptree VariableRecord::GetPTree() const
 {
-    using boost::property_tree::ptree;
+    using liblas::property_tree::ptree;
     ptree vlr;
 
     vlr.put("userid", GetUserId(false));

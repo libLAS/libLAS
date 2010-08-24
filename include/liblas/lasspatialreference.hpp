@@ -44,11 +44,10 @@
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/utility.hpp>
-
 #include <liblas/lasvariablerecord.hpp>
-
 #include <liblas/exception.hpp>
 #include <liblas/capi/las_config.h>
+#include <liblas/property_tree/ptree.hpp>
 
 // GDAL OSR
 #ifdef HAVE_GDAL
@@ -73,11 +72,6 @@
 #include <geo_simpletags.h>
 #include <geovalues.h>
 #endif // HAVE_LIBGEOTIFF
-
-
-// boost
-#include <boost/property_tree/ptree.hpp>
-
 
 // std
 #include <stdexcept> // std::out_of_range
@@ -190,7 +184,7 @@ public:
     /// Return a copy of the LASVLRs that SpatialReference maintains
     std::vector<VariableRecord> GetVLRs() const;
 
-    boost::property_tree::ptree GetPTree() const;    
+    liblas::property_tree::ptree GetPTree() const;    
 private:
 
     // FIXME: Define as shared_ptr<GTIF> with custom deleter to get rid of bloated mem management, unsafe anyway --mloskot

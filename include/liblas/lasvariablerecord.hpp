@@ -44,10 +44,10 @@
 #define LIBLAS_LASVARIABLERECORD_HPP_INCLUDED
 
 #include <liblas/detail/utility.hpp>
+#include <liblas/property_tree/ptree.hpp>
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
-#include <boost/property_tree/ptree.hpp>
 // std
 #include <string>
 #include <vector>
@@ -123,7 +123,7 @@ public:
     /// Get the total size of the VLR in bytes
     std::size_t GetTotalSize() const;
     
-    boost::property_tree::ptree GetPTree() const;    
+    liblas::property_tree::ptree GetPTree() const;    
 
 private:
 

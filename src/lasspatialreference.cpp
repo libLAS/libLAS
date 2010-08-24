@@ -649,9 +649,9 @@ void SpatialReference::SetProj4(std::string const& v)
     ResetVLRs();
 }
 
-boost::property_tree::ptree SpatialReference::GetPTree( ) const
+liblas::property_tree::ptree SpatialReference::GetPTree( ) const
 {
-    using boost::property_tree::ptree;
+    using liblas::property_tree::ptree;
     ptree srs;
 
     srs.put("proj4", GetProj4());

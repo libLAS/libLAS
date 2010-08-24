@@ -760,9 +760,9 @@ void Header::SetSchema(const Schema& format)
 
 } 
 
-boost::property_tree::ptree Header::GetPTree( ) const
+liblas::property_tree::ptree Header::GetPTree( ) const
 {
-    using boost::property_tree::ptree;
+    using liblas::property_tree::ptree;
     ptree pt;
     
     pt.put("filesignature", GetFileSignature());
@@ -839,7 +839,7 @@ boost::property_tree::ptree Header::GetPTree( ) const
 
 std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
 {
-    using boost::property_tree::ptree;
+    using liblas::property_tree::ptree;
     ptree tree = h.GetPTree();
     
     
@@ -861,7 +861,8 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
     try {
         os << tree.get_child("vlrs").size();
     }
-    catch (boost::property_tree::ptree_bad_path const& e) {
+    catch (liblas::property_tree::ptree_bad_path const& e) {
+        ::boost::ignore_unused_variable_warning(e);
         os << "None";
     }
     os << std::endl;
@@ -935,7 +936,8 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
     
         os << vlrs_oss.str();
     }
-    catch (boost::property_tree::ptree_bad_path const& e) {
+    catch (liblas::property_tree::ptree_bad_path const& e) {
+        ::boost::ignore_unused_variable_warning(e);
     }
     return os;
     
