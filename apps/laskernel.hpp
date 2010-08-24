@@ -43,6 +43,8 @@
 #define LIBLAS_KERNEL_HPP_INCLUDED
 
 #include <liblas/liblas.hpp>
+#include <liblas/property_tree/ptree.hpp>
+#include <liblas/property_tree/xml_parser.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -55,8 +57,6 @@
 
 #include <boost/program_options.hpp>
 #include <boost/tokenizer.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
 #include <boost/array.hpp>
 #include <boost/foreach.hpp>
 
@@ -84,7 +84,7 @@ po::options_description GetTransformationOptions();
 std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose);
 std::vector<liblas::TransformI*> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header);
 
-boost::property_tree::ptree SummarizePoints(liblas::Reader& reader );
+// boost::property_tree::ptree SummarizePoints(liblas::Reader& reader );
 // boost::property_tree::ptree SummarizeHeader(liblas::Header const& header );
 
 #endif // LIBLAS_ITERATOR_HPP_INCLUDED

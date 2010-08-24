@@ -175,11 +175,11 @@ bool process(   std::string const& input,
         std::cout << std::endl;
     
     reader.Reset();
-    boost::property_tree::ptree pts = SummarizePoints(reader);
-    boost::property_tree::ptree top;
+    liblas::property_tree::ptree pts = reader.Summarize();
+    liblas::property_tree::ptree top;
     top.add_child("summary.header",reader.GetHeader().GetPTree());
     top.add_child("summary.points",pts);
-    boost::property_tree::write_xml("junk.xml", top);
+    liblas::property_tree::write_xml("junk.xml", top);
 
     delete writer;
     delete ofs;
