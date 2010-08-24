@@ -43,6 +43,7 @@ set(LIBLAS_HPP
 
 set(LIBLAS_DETAIL_HPP
   ${LIBLAS_HEADERS_DIR}/detail/endian.hpp
+  ${LIBLAS_HEADERS_DIR}/detail/file_ptr_stream.hpp
   ${LIBLAS_HEADERS_DIR}/detail/fwd.hpp
   ${LIBLAS_HEADERS_DIR}/detail/pointrecord.hpp
   ${LIBLAS_HEADERS_DIR}/detail/sha1.hpp
