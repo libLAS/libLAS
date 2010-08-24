@@ -48,6 +48,7 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lastransform.hpp>
+#include <liblas/property_tree/ptree.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std
@@ -157,6 +158,7 @@ public:
     /// the internal transform creation
     void SetTransforms(std::vector<liblas::TransformI*> const& transforms) {m_transforms = transforms;}
 
+    liblas::property_tree::ptree Summarize();
 private:
 
     // Blocked copying operations, declared but not defined.

@@ -195,9 +195,10 @@ namespace liblas { namespace property_tree
         std::advance(m_start, std::distance(o.m_value.begin(), o.cstart()));
         return *this;
     }
-
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4715)
+#endif
     template <typename String, typename Translator>
     typename Translator::external_type string_path<String, Translator>::reduce()
     {
@@ -211,13 +212,18 @@ namespace liblas { namespace property_tree
           ++m_start;
         }
 
+<<<<<<< local
+        if(boost::optional<key_type> key = m_tr.get_value(part)) {
+=======
         if(::boost::optional<key_type> key = m_tr.get_value(part)) {
+>>>>>>> other
             return *key;
         }
         BOOST_PROPERTY_TREE_THROW(ptree_bad_path("Path syntax error", *this));
     }
+#ifdef _MSC_VER
 #pragma warning(pop)
-
+#endif
     template <typename String, typename Translator> inline
     bool string_path<String, Translator>::empty() const
     {

@@ -35,7 +35,7 @@ namespace liblas { namespace property_tree
         typedef ::boost::multi_index_container<value_type,
             ::boost::multi_index::indexed_by<
                 ::boost::multi_index::sequenced<>,
-                ::boost::multi_index::ordered_non_unique<::boost::multi_index::tag<by_name>,
+                ::boost::multi_index::ordered_non_unique< ::boost::multi_index::tag<by_name>,
                     ::boost::multi_index::member_offset<value_type, const key_type,
                                         first_offset>,
                     key_compare
@@ -630,8 +630,10 @@ namespace liblas { namespace property_tree
         return parent.push_back(value_type(fragment, value))->second;
     }
 
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4715)
+#endif
     template<class K, class D, class C>
     template<class Type, class Translator>
     typename boost::enable_if<detail::is_translator<Translator>, Type>::type
@@ -644,8 +646,9 @@ namespace liblas { namespace property_tree
             std::string("conversion of data to type \"") +
             typeid(Type).name() + "\" failed", data()));
     }
+#ifdef _MSC_VER
 #pragma warning(pop)
-
+#endif
     template<class K, class D, class C>
     template<class Type> inline
     Type basic_ptree<K, D, C>::get_value() const
