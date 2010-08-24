@@ -41,17 +41,13 @@
  ****************************************************************************/
 
 #include <liblas/lasspatialreference.hpp>
-#include <liblas/detail/file_ptr_stream.hpp>
 #include <liblas/detail/utility.hpp>
 // boost
 #include <boost/concept_check.hpp>
-#include <boost/cstdint.hpp>
 // std
 #include <stdexcept>
 #include <string>
 #include <vector>
-
-using namespace boost;
 
 namespace liblas {
 
@@ -563,7 +559,8 @@ std::string SpatialReference::GetProj4() const
 
 // if we have libgeotiff but not GDAL, we'll use the 
 // simple method in libgeotiff
-#if defined(HAVE_LIBGEOTIFF) && !defined(HAVE_GDAL)
+#ifdef HAVE_LIBGEOTIFF
+#ifndef HAVE_GDAL
     GTIFDefn defn;
 
     if (m_gtiff && GTIFGetDefn(m_gtiff, &defn)) 
@@ -575,9 +572,14 @@ std::string SpatialReference::GetProj4() const
         return tmp;
     }
 #endif
+#endif
 
-    // By default or if we have neither GDAL nor proj.4, we can't do squat
+#ifndef HAVE_LIBGEOTIFF
+#ifndef HAVE_GDAL
+    // If we have neither GDAL nor proj.4, we can't do squat
     return std::string();
+#endif
+#endif
 }
 
 void SpatialReference::SetProj4(std::string const& v)
@@ -630,7 +632,9 @@ void SpatialReference::SetProj4(std::string const& v)
 
 // if we have libgeotiff but not GDAL, we'll use the 
 // simple method in libgeotiff
-#if defined(HAVE_LIBGEOTIFF) && !defined(HAVE_GDAL)
+#ifdef HAVE_LIBGEOTIFF
+#ifndef HAVE_GDAL
+
     int ret = 0;
     ret = GTIFSetFromProj4( m_gtiff, v.c_str());
     if (!ret) 
@@ -644,11 +648,11 @@ void SpatialReference::SetProj4(std::string const& v)
         throw std::runtime_error("The geotiff keys could not be written");
     }    
 #endif
-
+#endif
     ResetVLRs();
 }
 
-boost::property_tree::ptree SpatialReference::GetPTree() const
+boost::property_tree::ptree SpatialReference::GetPTree( ) const
 {
     using boost::property_tree::ptree;
     ptree srs;
@@ -661,6 +665,7 @@ boost::property_tree::ptree SpatialReference::GetPTree() const
     srs.put("gtiff", GetGTIFFText());
     
     return srs;
+    
 }
 
 std::string SpatialReference::GetGTIFFText() const
@@ -668,10 +673,67 @@ std::string SpatialReference::GetGTIFFText() const
 #ifndef HAVE_LIBGEOTIFF
     return std::string("");
 #else    
-  
-    detail::geotiff_dir_printer geotiff_printer;
-    GTIFPrint(m_gtiff, detail::GeoTiffPrintMethod, &geotiff_printer);
-    return geotiff_printer.output();
+    std::string filename;
+    // FIXME: How do we do this with an ostream instead of having to 
+    // use temporary FILE* ?  -- hobu
+    // replace this with a custom buffer
+    // http://stackoverflow.com/questions/1231461/inheriting-stdistream-or-equivalent
+#ifdef _MSC_VER
+
+#ifndef L_tmpnam_s
+// MSVC 2003 doesn't have tmpnam_s, so we'll have to use the old functions
+
+    char* tmpName = NULL;
+    tmpName = tmpnam( NULL );
+    
+    if (tmpName == NULL)
+        throw std::runtime_error("Could not allocate temporary file name");
+     
+#else 
+    char tmpName[L_tmpnam_s];
+    errno_t err = tmpnam_s(tmpName, L_tmpnam_s);
+    if (err)
+        throw std::runtime_error("Could not allocate temporary file name");
+
+#endif
+    if (tmpName[0] == '\\')
+        filename = std::string(tmpName + 1);
+    else
+        filename = std::string(tmpName);
+
+#else
+    char tmpName[6] = "XXXXX";
+    if (mkstemp(tmpName) == 0)
+        throw std::runtime_error("Could not allocate temporary file name");
+    filename = tmpName;
+#endif
+
+
+    FILE* f = fopen(filename.c_str(), "wb");
+    GTIFPrint((GTIF*)m_gtiff, 0, f);
+    fclose(f);
+    
+    FILE* f2 = fopen(filename.c_str(), "rb");
+
+    
+    fseek(f2, 0, SEEK_END);
+    long size = ftell(f2);
+    fseek(f2, 0, SEEK_SET);
+    
+    char* data = NULL;
+    data = (char*) malloc((size_t)size+1);
+    if(!data) throw std::runtime_error("Could not allocate data!");
+    
+    size_t read = 0;
+    
+    read = fread(data, 1, (size_t)size, f2);
+    
+    data[read] = 0;
+    std::string output(data);
+
+    free(data);
+    fclose(f2);
+    return output;
 #endif
 }
 
