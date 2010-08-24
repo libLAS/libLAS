@@ -114,8 +114,8 @@ endif(APPLE)
 # Search for dependencies
 
 # Boost C++ Libraries support - required
-message(STATUS "Searching for Boost 1.41+ - done")
-find_package(Boost 1.41 COMPONENTS program_options REQUIRED)
+message(STATUS "Searching for Boost 1.38+ - done")
+find_package(Boost 1.38 COMPONENTS program_options REQUIRED)
 
 if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
