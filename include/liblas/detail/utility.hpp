@@ -434,6 +434,33 @@ inline void write_n<std::string>(std::ostream& dest, std::string const& src, std
 # pragma warning(push)
 #endif
 
+// Utility functor with accompanying to print GeoTIFF directory.
+struct geotiff_dir_printer
+{
+    geotiff_dir_printer() {}
+
+    std::string output() const { return m_oss.str(); }
+    std::string::size_type size() const { return m_oss.str().size(); }
+
+    void operator()(char* data, void* aux)
+    {
+        if (0 != data)
+        {
+            m_oss << data;
+        }
+    }
+
+private:
+    std::ostringstream m_oss;
+};
+
+extern "C" int GeoTiffPrintMethod(char* data, void* aux)
+{
+    geotiff_dir_printer* printer = reinterpret_cast<geotiff_dir_printer*>(aux);
+    (*printer)(data, 0);
+    return static_cast<int>(printer->size());
+}
+
 }} // namespace liblas::detail
 
 #endif // LIBLAS_DETAIL_UTILITY_HPP_INCLUDED
