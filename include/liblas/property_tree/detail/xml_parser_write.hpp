@@ -113,7 +113,7 @@ namespace liblas { namespace property_tree { namespace xml_parser
                 stream << Ch('<') << key;
 
                 // Write attributes
-                if (optional<const Ptree &> attribs = pt.get_child_optional(xmlattr<Ch>()))
+                if (::boost::optional<const Ptree &> attribs = pt.get_child_optional(xmlattr<Ch>()))
                     for (It it = attribs.get().begin(); it != attribs.get().end(); ++it)
                         stream << Ch(' ') << it->first << Ch('=') << 
                                   Ch('"') << it->second.template get_value<std::basic_string<Ch> >() << Ch('"');
