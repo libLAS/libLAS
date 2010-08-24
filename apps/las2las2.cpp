@@ -12,6 +12,8 @@
 #include <liblas/liblas.hpp>
 #include "laskernel.hpp"
 
+#include <boost/cstdint.hpp>
+
 // #include <fstream>
 // #include <iostream>
 // #include <sstream>
@@ -99,7 +101,7 @@ bool process(   std::string const& input,
                 liblas::Header const& header,
                 std::vector<liblas::FilterI*>& filters,
                 std::vector<liblas::TransformI*>& transforms,
-                uint32_t split_size,
+                boost::uint32_t split_size,
                 bool verbose)
 {
 
@@ -202,7 +204,7 @@ std::string GetInvocationHeader()
 int main(int argc, char* argv[])
 {
 
-    uint32_t split_size;
+    boost::uint32_t split_size;
     std::string input;
     std::string output;
     
@@ -224,7 +226,7 @@ int main(int argc, char* argv[])
 
         file_options.add_options()
             ("help,h", "produce help message")
-            ("split,s", po::value<uint32_t>(&split_size)->default_value(0), "Split file into multiple files with each being this size in MB or less. If this value is 0, no splitting is done")
+            ("split,s", po::value<boost::uint32_t>(&split_size)->default_value(0), "Split file into multiple files with each being this size in MB or less. If this value is 0, no splitting is done")
             ("input,i", po::value< string >(), "input LAS file")
             ("output,o", po::value< string >(&output)->default_value("output.las"), "output LAS file")
             ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Verbose message output")
