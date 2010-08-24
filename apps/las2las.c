@@ -131,7 +131,7 @@ void usage()
     fprintf(stderr,"\n");
 
     fprintf(stderr, "\nFor more information, see the full documentation for las2las at:\n"
-                    " http://liblas.org/browser/trunk/doc/las2las.txt\n");
+                    " http://liblas.org/utilities/las2las.html\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
 }

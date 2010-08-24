@@ -94,6 +94,10 @@ int main(int argc, char* argv[])
     if (vm.count("help")) 
     {
         std::cout << desc << "\n";
+            std::cout <<"\nFor more information, see the full documentation for lasblock at:\n";
+            
+            std::cout << " http://liblas.org/utilities/block.html\n";
+            std::cout << "----------------------------------------------------------\n";
         return 1;
     }
         

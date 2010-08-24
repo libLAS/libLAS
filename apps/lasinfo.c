@@ -72,7 +72,7 @@ void usage()
     fprintf(stderr,"\n");
 
     fprintf(stderr, "\nFor more information, see the full documentation for lasinfo at:\n"
-                    " http://liblas.org/browser/trunk/doc/lasinfo.txt\n");
+                    " http://liblas.org/utilities/lasinfo.html\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 }
 

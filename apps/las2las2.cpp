@@ -246,6 +246,10 @@ int main(int argc, char* argv[])
         if (vm.count("help")) 
         {
             std::cout << GetInvocationHeader()<<file_options<<"\n"<<transform_options<<"\n"<<filtering_options<<"\n";
+            std::cout <<"\nFor more information, see the full documentation for las2las2 at:\n";
+            
+            std::cout << " http://liblas.org/utilities/las2las2.html\n";
+            std::cout << "----------------------------------------------------------\n";
             return 1;
         }
 

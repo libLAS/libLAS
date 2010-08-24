@@ -60,7 +60,7 @@ void usage()
     fprintf(stderr,"\n");
     
     fprintf(stderr, "For more information, see the full documentation for lasmerge at:\n"
-                    " http://liblas.org/browser/trunk/doc/lasmerge.txt\n");
+                    " http://liblas.org/utilities/lasmerge.html\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
 }
