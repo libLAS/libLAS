@@ -370,6 +370,7 @@ int main(int argc, char* argv[])
 				std::istream* idxstrm = NULL;
 				if (idxinfilenme)
 				{
+                    // FIXME: Is this assignment intentional or it should read '==' ? --mloskot
 					if (idxstrm = OpenInput(std::string(idxinfilenme)))
 					{
 						idxreader = new Reader(*idxstrm);
@@ -406,7 +407,7 @@ int main(int argc, char* argv[])
 										if (FilterResult.size())
 										{
 											// do something with the list of points
-											fprintf(debugger, "Points within filter area %d of %d, %s\n", FilterResult.size(), 
+											fprintf(debugger, "Points within filter area %zu of %d, %s\n", FilterResult.size(), 
 												index.GetPointRecordsCount(), "User-defined gilter bounds");
 										}
 										else
@@ -502,7 +503,7 @@ int main(int argc, char* argv[])
 											if (FilterResult.size())
 											{
 												// do something with the list of points
-												fprintf(debugger, "Points within filter area %d of %d, %s\n", FilterResult.size(), 
+												fprintf(debugger, "Points within filter area %zu of %d, %s\n", FilterResult.size(), 
 													index.GetPointRecordsCount(), CovgStr);
 											}
 											else
