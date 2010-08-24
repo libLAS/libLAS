@@ -1,12 +1,12 @@
 /******************************************************************************
- * $Id: lasspatialreference.hpp 1091 2009-03-10 20:17:35Z hobu $
+ * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS Spatial Reference class 
- * Author:   Howard Butler, hobu.inc@gmail.com
+ * Purpose:  Stream wrapper for FILE pointer.
+ * Author:   Mateusz Loskot <mateusz@loskot.net>
  *
  ******************************************************************************
- * Copyright (c) 2009, Howard Butler
+ * Copyright (c) 2010, Mateusz Loskot
  *
  * All rights reserved.
  * 
