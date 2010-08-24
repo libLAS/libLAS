@@ -115,11 +115,12 @@ if(GDAL_FOUND)
 endif()
 
 # Diable Visual C++ language extensions when building libLAS library
-if (WIN32)
-  if (MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Za")
-  endif()
-endif()
+# Need this enabled for boost to work -- hobu
+#if (WIN32)
+#  if (MSVC)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Za")
+#  endif()
+#endif()
 
 # Standard include directory of libLAS library
 include_directories(../include)
