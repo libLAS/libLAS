@@ -1,8 +1,6 @@
 // lasindex_test.cpp : Defines the entry point for the console application.
 //
 
-#include <boost/cstdint.hpp>
-
 #include <iosfwd>
 #include <iostream>
 #include <cstdio>
@@ -20,7 +18,6 @@
 #include <liblas/lasindex.hpp>
 
 using namespace liblas;
-using namespace boost;
 
 #ifdef _WIN32
 #define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
