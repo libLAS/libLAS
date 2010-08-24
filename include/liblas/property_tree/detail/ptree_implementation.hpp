@@ -43,10 +43,10 @@ namespace liblas { namespace property_tree
             >
         > base_container;
 #else
-        typedef multi_index_container<value_type,
+        typedef ::boost::multi_index_container<value_type,
             ::boost::multi_index::indexed_by<
                 ::boost::multi_index::sequenced<>,
-                ::boost::multi_index::ordered_non_unique<::boost::multi_index::tag<by_name>,
+                ::boost::multi_index::ordered_non_unique< ::boost::multi_index::tag<by_name>,
                     ::boost::multi_index::member<value_type, const key_type,
                                         &value_type::first>,
                     key_compare
@@ -583,7 +583,7 @@ namespace liblas { namespace property_tree
         path_type p(path);
         self_type *n = walk_path(p);
         if (!n) {
-            return optional<self_type&>();
+            return ::boost::optional<self_type&>();
         }
         return *n;
     }
@@ -595,7 +595,7 @@ namespace liblas { namespace property_tree
         path_type p(path);
         self_type *n = walk_path(p);
         if (!n) {
-            return optional<const self_type&>();
+            return ::boost::optional<const self_type&>();
         }
         return *n;
     }
@@ -772,11 +772,11 @@ namespace liblas { namespace property_tree
     ::boost::optional<Type> basic_ptree<K, D, C>::get_optional(const path_type &path,
                                                          Translator tr) const
     {
-        if (optional<const self_type&> child = get_child_optional(path))
+        if (::boost::optional<const self_type&> child = get_child_optional(path))
             return child.get().
                 BOOST_NESTED_TEMPLATE get_value_optional<Type>(tr);
         else
-            return optional<Type>();
+            return ::boost::optional<Type>();
     }
 
     template<class K, class D, class C>
@@ -784,17 +784,17 @@ namespace liblas { namespace property_tree
     ::boost::optional<Type> basic_ptree<K, D, C>::get_optional(
                                                 const path_type &path) const
     {
-        if (optional<const self_type&> child = get_child_optional(path))
+        if (::boost::optional<const self_type&> child = get_child_optional(path))
             return child.get().BOOST_NESTED_TEMPLATE get_value_optional<Type>();
         else
-            return optional<Type>();
+            return ::boost::optional<Type>();
     }
 
     template<class K, class D, class C>
     template<class Type, class Translator>
     void basic_ptree<K, D, C>::put_value(const Type &value, Translator tr)
     {
-        if(optional<data_type> o = tr.put_value(value)) {
+        if(::boost::optional<data_type> o = tr.put_value(value)) {
             data() = *o;
         } else {
             BOOST_PROPERTY_TREE_THROW(ptree_bad_data(
@@ -815,7 +815,7 @@ namespace liblas { namespace property_tree
     basic_ptree<K, D, C> & basic_ptree<K, D, C>::put(
         const path_type &path, const Type &value, Translator tr)
     {
-        if(optional<self_type &> child = get_child_optional(path)) {
+        if(::boost::optional<self_type &> child = get_child_optional(path)) {
             child.get().put_value(value, tr);
             return *child;
         } else {

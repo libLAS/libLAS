@@ -211,7 +211,7 @@ namespace liblas { namespace property_tree
           ++m_start;
         }
 
-        if(optional<key_type> key = m_tr.get_value(part)) {
+        if(::boost::optional<key_type> key = m_tr.get_value(part)) {
             return *key;
         }
         BOOST_PROPERTY_TREE_THROW(ptree_bad_path("Path syntax error", *this));
