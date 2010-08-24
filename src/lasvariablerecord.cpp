@@ -211,7 +211,7 @@ std::size_t VariableRecord::GetTotalSize() const
     return sum;
 }
 
-boost::property_tree::ptree VariableRecord::GetPTree( ) const
+boost::property_tree::ptree VariableRecord::GetPTree() const
 {
     using boost::property_tree::ptree;
     ptree vlr;

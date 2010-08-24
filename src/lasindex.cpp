@@ -520,7 +520,7 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 					// number of point records in subcell
 					boost::uint32_t SubCellNumRecords;
 					ReadVLRData_n(SubCellNumRecords, CompositeData, ReadPos);
-					for (uint32_t SubCellPt = 0; SubCellPt < SubCellNumRecords; ++SubCellPt)
+					for (boost::uint32_t SubCellPt = 0; SubCellPt < SubCellNumRecords; ++SubCellPt)
 					{
 						boost::uint32_t PointID, LastPointID = static_cast<boost::uint32_t>(~0);
 						bool LastPtRead = 0;
