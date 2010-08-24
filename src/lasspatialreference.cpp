@@ -562,8 +562,8 @@ std::string SpatialReference::GetProj4() const
 
 // if we have libgeotiff but not GDAL, we'll use the 
 // simple method in libgeotiff
-#ifdef HAVE_LIBGEOTIFF
-#ifndef HAVE_GDAL
+#if defined(HAVE_LIBGEOTIFF) && !defined(HAVE_GDAL)
+
     GTIFDefn defn;
 
     if (m_gtiff && GTIFGetDefn(m_gtiff, &defn)) 
@@ -575,14 +575,9 @@ std::string SpatialReference::GetProj4() const
         return tmp;
     }
 #endif
-#endif
 
-#ifndef HAVE_LIBGEOTIFF
-#ifndef HAVE_GDAL
-    // If we have neither GDAL nor proj.4, we can't do squat
+    // By default or if we have neither GDAL nor proj.4, we can't do squat
     return std::string();
-#endif
-#endif
 }
 
 void SpatialReference::SetProj4(std::string const& v)
@@ -635,8 +630,7 @@ void SpatialReference::SetProj4(std::string const& v)
 
 // if we have libgeotiff but not GDAL, we'll use the 
 // simple method in libgeotiff
-#ifdef HAVE_LIBGEOTIFF
-#ifndef HAVE_GDAL
+#if defined(HAVE_LIBGEOTIFF) && !defined(HAVE_GDAL)
 
     int ret = 0;
     ret = GTIFSetFromProj4( m_gtiff, v.c_str());
@@ -651,7 +645,7 @@ void SpatialReference::SetProj4(std::string const& v)
         throw std::runtime_error("The geotiff keys could not be written");
     }    
 #endif
-#endif
+
     ResetVLRs();
 }
 
