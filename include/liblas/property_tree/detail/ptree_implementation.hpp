@@ -15,8 +15,8 @@
 #include <boost/iterator/reverse_iterator.hpp>
 #include <memory>
 
-#if defined(BOOST_MSVC) && \
-    (_MSC_FULL_VER >= 160000000 && _MSC_FULL_VER < 170000000)
+#if defined(_MSC_VER) && \
+    (_MSC_VER >= 160000000 && _MSC_VER < 170000000)
 #define BOOST_PROPERTY_TREE_PAIR_BUG
 #endif
 
