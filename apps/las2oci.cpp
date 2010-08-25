@@ -69,79 +69,79 @@ void SetOrdinates(   OWStatement* statement,
 }
 
 
-bool FillBlock( OWStatement* statement,
-                IndexResult& result, 
-                liblas::Reader* reader,
-                blocks* b,
-                long index,
-                int srid, 
-                long pc_id,
-                long gtype,
-                bool bUseSolidGeometry,
-                bool bUse3d,
-                long nDimensions
-              )
-{
+// bool FillBlock( OWStatement* statement,
+//                 IndexResult& result, 
+//                 liblas::Reader* reader,
+//                 blocks* b,
+//                 long index,
+//                 int srid, 
+//                 long pc_id,
+//                 long gtype,
+//                 bool bUseSolidGeometry,
+//                 bool bUse3d,
+//                 long nDimensions
+//               )
+// {
+// 
+// 
+//     // list<SpatialIndex::id_type> const& ids = result.GetIDs();
+//     IDVector const& ids = result.GetIDs();
+//     
+//     b->pc_ids[index] = pc_id;
+//     b->srids[index] = (long)srid;
+//     b->block_ids[index] = result.GetID();
+//     b->num_points[index] = (long)ids.size();
+//     
+//     std::vector<uint8_t>* blob = new std::vector<uint8_t>;
+//     result.GetData(reader, *blob);
+// 
+//     
+//     b->blobs[index] = blob;
+//     // // FIXME: null srids not supported 
+//     b->srids[index] = srid;
+//     b->gtypes[index] = gtype;
+//     // 
+//     OCIArray* sdo_elem_info=0;
+//     statement->GetConnection()->CreateType(&sdo_elem_info, statement->GetConnection()->GetElemInfoType());
+//     SetElements(statement, sdo_elem_info, bUseSolidGeometry);
+//     // 
+//     b->element_arrays[index] = sdo_elem_info;
+//     
+//     OCIArray* sdo_ordinates=0;
+//     statement->GetConnection()->CreateType(&sdo_ordinates, statement->GetConnection()->GetOrdinateType());
+//     // 
+//     // 
+//     // 
+//     SetOrdinates(statement, sdo_ordinates, result.GetBounds());
+//     
+//     b->coordinate_arrays[index] = sdo_ordinates;
+//     
+// 
+//     return true;
+// }
 
 
-    // list<SpatialIndex::id_type> const& ids = result.GetIDs();
-    IDVector const& ids = result.GetIDs();
-    
-    b->pc_ids[index] = pc_id;
-    b->srids[index] = (long)srid;
-    b->block_ids[index] = result.GetID();
-    b->num_points[index] = (long)ids.size();
-    
-    std::vector<uint8_t>* blob = new std::vector<uint8_t>;
-    result.GetData(reader, *blob);
-
-    
-    b->blobs[index] = blob;
-    // // FIXME: null srids not supported 
-    b->srids[index] = srid;
-    b->gtypes[index] = gtype;
-    // 
-    OCIArray* sdo_elem_info=0;
-    statement->GetConnection()->CreateType(&sdo_elem_info, statement->GetConnection()->GetElemInfoType());
-    SetElements(statement, sdo_elem_info, bUseSolidGeometry);
-    // 
-    b->element_arrays[index] = sdo_elem_info;
-    
-    OCIArray* sdo_ordinates=0;
-    statement->GetConnection()->CreateType(&sdo_ordinates, statement->GetConnection()->GetOrdinateType());
-    // 
-    // 
-    // 
-    SetOrdinates(statement, sdo_ordinates, result.GetBounds());
-    
-    b->coordinate_arrays[index] = sdo_ordinates;
-    
-
-    return true;
-}
-
-
-blocks* CreateBlock(int size)
-{
-    blocks* b = (blocks*) malloc( sizeof(blocks));
-    
-    b->pc_ids = (long*) malloc( size * sizeof(long));
-    b->block_ids = (long*) malloc ( size * sizeof(long));
-    b->num_points = (long*) malloc ( size * sizeof(long));
-    b->blobs = (std::vector<uint8_t>**) malloc ( size * sizeof(std::vector<uint8_t>*));
-    b->locators =(OCILobLocator**) malloc( sizeof(OCILobLocator*) * size );
-
-    b->srids = (long*) malloc ( size * sizeof(long));
-    b->gtypes = (long*) malloc ( size * sizeof(long));
-
-    b->element_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
-
-    b->coordinate_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
-
-    b->size = size;
-    
-    return b;
-}
+// blocks* CreateBlock(int size)
+// {
+//     blocks* b = (blocks*) malloc( sizeof(blocks));
+//     
+//     b->pc_ids = (long*) malloc( size * sizeof(long));
+//     b->block_ids = (long*) malloc ( size * sizeof(long));
+//     b->num_points = (long*) malloc ( size * sizeof(long));
+//     b->blobs = (std::vector<uint8_t>**) malloc ( size * sizeof(std::vector<uint8_t>*));
+//     b->locators =(OCILobLocator**) malloc( sizeof(OCILobLocator*) * size );
+// 
+//     b->srids = (long*) malloc ( size * sizeof(long));
+//     b->gtypes = (long*) malloc ( size * sizeof(long));
+// 
+//     b->element_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
+// 
+//     b->coordinate_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
+// 
+//     b->size = size;
+//     
+//     return b;
+// }
 
 long GetGType(  bool bUse3d,
                 bool bUseSolidGeometry)
@@ -167,7 +167,6 @@ long GetGType(  bool bUse3d,
 
 bool InsertBlock(OWConnection* connection, 
                 IndexResult& result, 
-                blocks* block,
                 long block_index,
                 int srid, 
                 liblas::Reader* reader, 
@@ -306,7 +305,7 @@ bool InsertBlocks(
     ResultsVector::iterator i;
 
 
-    blocks* b = CreateBlock(nCommitInterval);
+    // blocks* b = CreateBlock(nCommitInterval);
 
     ostringstream oss;
     oss << "INSERT INTO "<< table_name << 
@@ -328,7 +327,6 @@ bool InsertBlocks(
     {        
         inserted = InsertBlock(con, 
                                     *i,
-                                    b,
                                     j, 
                                     srid, 
                                     reader2, 
@@ -1262,7 +1260,9 @@ int main(int argc, char* argv[])
         {
             delete *i;
         }
-    
+        
+        delete reader2;
+        delete istrm2;
         delete con;
     }
     catch(std::exception& e) {
