@@ -275,6 +275,14 @@ bool InsertBlock(OWConnection* connection,
     OWStatement::Free(locator, 1);
 
     delete statement;
+    if (p_pc_id != 0) free(p_pc_id);
+    if (p_result_id != 0) free(p_result_id);
+    if (p_num_points != 0) free(p_num_points);
+    if (p_gtype != 0) free(p_gtype);
+    if (p_srid != 0) free(p_srid);    
+
+    connection->DestroyType(&sdo_elem_info);
+    connection->DestroyType(&sdo_ordinates);
     
     return true;
 
