@@ -82,6 +82,13 @@ if(WIN32)
             add_definitions(-D_CRT_NONSTDC_NO_WARNING)
             add_definitions(-D_SCL_SECURE_NO_WARNINGS)
         endif()
+        
+        if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+            string(REGEX REPLACE "/W[0-4]" "/W4"
+                   CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+        else()
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+        endif()
 
         # Generate dot-user file with user-specific settings for Visual Studio project
         set(MSVC_ENVIRONMENT_PATH "" CACHE STRING
