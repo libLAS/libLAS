@@ -252,6 +252,13 @@ OWConnection::~OWConnection()
 
     if( hSession )
         OCIHandleFree((dvoid *) hSession, (ub4) OCI_HTYPE_SESSION);
+    
+    if (pszUser)
+        CPLFree(pszUser);
+    if (pszPassword)
+        CPLFree(pszPassword);
+    if (pszServer)
+        CPLFree(pszServer);
 }
 
 OCIType* OWConnection::DescribeType( char *pszTypeName )
@@ -1742,7 +1749,7 @@ bool CheckError( sword nStatus, OCIError* hError )
         }
 
         CPLError( CE_Failure, CPLE_AppDefined, "%.*s",
-            sizeof(szMsg), szMsg );
+            (ub4) sizeof(szMsg), szMsg );
         break;
 
     default:
@@ -1758,7 +1765,7 @@ bool CheckError( sword nStatus, OCIError* hError )
                 (ub4) sizeof(szMsg), OCI_HTYPE_ERROR);
 
             CPLError( CE_Failure, CPLE_AppDefined, "%.*s",
-                sizeof(szMsg), szMsg );
+               (ub4) sizeof(szMsg), szMsg );
             break;
 
     }
