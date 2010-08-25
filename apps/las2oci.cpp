@@ -615,6 +615,7 @@ std::vector<uint8_t> GetHeaderData(std::string const& filename, uint32_t offset)
     std::istream* in = OpenInput(filename, false);
     std::vector<uint8_t> data(offset);
     liblas::detail::read_n(data.front(), *in, offset);
+    delete in;
     return data;
 }
 
