@@ -45,6 +45,7 @@
 #include <boost/cstdint.hpp>
 // std
 #include <cstddef>
+#include <limits>
 #include <string>
 
 using namespace boost;
@@ -91,11 +92,11 @@ static std::string g_class_names[] =
 
 namespace liblas {
 
-std::size_t const Classification::class_table_size = detail::static_array_size(g_class_names);
+uint32_t const Classification::class_table_size = detail::static_array_size(g_class_names);
 
 std::string Classification::GetClassName() const
 {
-    std::size_t const index = GetClass();
+    uint32_t const index = GetClass();
     check_class_index(index);
     
     return g_class_names[index];
@@ -121,13 +122,14 @@ uint8_t Classification::GetClass() const
 #endif
     bits &= mask;
 
-    uint8_t const index = static_cast<uint8_t>(bits.to_ulong());
+    uint32_t const index = static_cast<uint32_t>(bits.to_ulong());
     assert(index < class_table_size);
+    assert(index <= std::numeric_limits<uint8_t>::max());
 
-    return index;
+    return static_cast<uint8_t>(index);
 }
 
-void Classification::SetClass(uint8_t index)
+void Classification::SetClass(uint32_t index)
 {
     check_class_index(index);
 
@@ -139,4 +141,16 @@ void Classification::SetClass(uint8_t index)
     m_flags &= ~mask;
     m_flags |= mask & binval;
 }
+
+void Classification::check_class_index(boost::uint32_t index) const
+{
+    if (index > class_table_size - 1 || !(index <= std::numeric_limits<uint8_t>::max()))
+    {
+        std::ostringstream msg;
+        msg << "given index is " << index
+            << ", but must fit between 0 and " << (class_table_size - 1);
+        throw std::out_of_range(msg.str());
+    }
+}
+
 } // namespace liblas

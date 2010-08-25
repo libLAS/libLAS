@@ -70,7 +70,7 @@ public:
     /// @note Currently, libLAS does not support classification based on table
     /// stored in variable-length record. Only Standard ASPRS classification
     /// table is supported.
-    static std::size_t const class_table_size;
+    static boost::uint32_t const class_table_size;
 
     /// Values of indexes in the set of bit flags.
     enum BitPosition
@@ -106,7 +106,7 @@ public:
     /// @param k [in] - If set, this point is considered to be a model keypoint and
     /// thus generally should not be withheld in a thinning algorithm.
     /// @param w [in] - If set, this point should not be included in processing.
-    Classification(boost::uint8_t cls, bool s, bool k, bool w)
+    Classification(boost::uint32_t cls, bool s, bool k, bool w)
     {
         SetClass(cls);
         SetSynthetic(s);
@@ -123,7 +123,7 @@ public:
     /// Assignment operator.
     Classification& operator=(Classification const& rhs)
     {
-        if (&rhs != this )
+        if (&rhs != this)
         {    
             m_flags = rhs.m_flags;
         }
@@ -155,7 +155,7 @@ public:
     /// table is supported.
     /// @exception Theoretically, may throw std::out_of_range in case index 
     /// value is not in range between 0 and class_table_size - 1.
-    void SetClass(boost::uint8_t index);
+    void SetClass(boost::uint32_t index);
 
     /// Sets if this point was created by a technique other than LIDAR
     /// collection such as digitized from a photogrammetric stereo model.
@@ -207,16 +207,7 @@ private:
 
     bitset_type m_flags;
 
-    void check_class_index(std::size_t index) const
-    {
-        if (index > (class_table_size - 1))
-        {
-            std::ostringstream msg;
-            msg << "given index is " << index
-                << ", but must fit between 0 and " << (class_table_size - 1);
-            throw std::out_of_range(msg.str());
-        }
-    }
+    void check_class_index(boost::uint32_t index) const;
 };
 
 /// Equal-to operator implemented in terms of Classification::equal.
