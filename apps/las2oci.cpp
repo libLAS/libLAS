@@ -1252,7 +1252,18 @@ int main(int argc, char* argv[])
         }
 
         con->Commit();
-        
+
+        for(std::vector<liblas::FilterI*>::iterator i=filters.begin(); i!=filters.end(); i++)
+        {
+            delete *i;
+        }
+            
+        for(std::vector<liblas::TransformI*>::iterator i=transforms.begin(); i!=transforms.end(); i++)
+        {
+            delete *i;
+        }
+    
+        delete con;
     }
     catch(std::exception& e) {
         std::cerr << "error: " << e.what() << "\n";

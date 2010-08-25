@@ -104,6 +104,7 @@ bool IsGeographic(OWConnection* connection, long srid)
     }
 
     free(kind);
+    free(p_srid);
 
     return false;
 }
