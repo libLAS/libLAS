@@ -95,11 +95,13 @@ bool IsGeographic(OWConnection* connection, long srid)
     if (compare_no_case(kind, "GEOGRAPHIC2D",12) == 0) {
         delete statement;
         free(kind);
+        free(p_srid);
         return true;
     }
     if (compare_no_case(kind, "GEOGRAPHIC3D",12) == 0) {
         delete statement;
         free(kind);
+        free(p_srid);
         return true;
     }
 
