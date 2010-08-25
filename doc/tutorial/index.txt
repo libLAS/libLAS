@@ -14,3 +14,4 @@ Tutorials
    boo
    ironpython
    vbnet
+   ASPRS NOAA Workshop (Python) <http://trac.liblas.org/raw-attachment/wiki/WikiStart/ASPRS-Workshop-NOAA-Demo.pdf>
