@@ -70,13 +70,21 @@ public:
         eInclusion = 1 ///< Filter keeps point that meet the criteria of filter(const Point& point)
     };
     
+    /// Function called by liblas::Reader::ReadNextPoint to apply the (list)
+    /// of filter to the point.  If the function returns true, the point 
+    /// passes the filter and is kept.
     virtual bool filter(const Point& point) = 0;
     
+    /// Sets whether the filter is one that keeps data that matches 
+    /// construction criteria or rejects them.
     void SetType(FilterType t) {m_type = t;}
+
+    /// Gets the type of filter.
     FilterType GetType() const {return m_type; }
 
     virtual ~FilterI() {};
 
+    /// Base constructor.  Initializes the FilterType
     FilterI(FilterType t) : m_type(t) {}
     
 private:
