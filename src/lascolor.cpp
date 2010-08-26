@@ -55,9 +55,9 @@ Color::Color()
 
 Color::Color(boost::uint32_t red, boost::uint32_t green, boost::uint32_t blue)
 {
-    if (red > std::numeric_limits<uint16_t>::max() || 
-        green > std::numeric_limits<uint16_t>::max() || 
-        blue > std::numeric_limits<uint16_t>::max())
+    if (red > std::numeric_limits<boost::uint16_t>::max() || 
+        green > std::numeric_limits<boost::uint16_t>::max() || 
+        blue > std::numeric_limits<boost::uint16_t>::max())
         throw_invalid_color_component();
 
     m_color[0] = red;
@@ -67,9 +67,9 @@ Color::Color(boost::uint32_t red, boost::uint32_t green, boost::uint32_t blue)
 
 Color::Color(boost::array<value_type, 3> const& color)
 {
-    if (color[0] > std::numeric_limits<uint16_t>::max() || 
-        color[1] > std::numeric_limits<uint16_t>::max() || 
-        color[2] > std::numeric_limits<uint16_t>::max())
+    if (color[0] > std::numeric_limits<boost::uint16_t>::max() || 
+        color[1] > std::numeric_limits<boost::uint16_t>::max() || 
+        color[2] > std::numeric_limits<boost::uint16_t>::max())
         throw_invalid_color_component();
     m_color = color;
 }
