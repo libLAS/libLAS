@@ -376,10 +376,12 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag) const
 }
 
 /// Fetch the SRS as WKT
-std::string SpatialReference::GetWKT( WKTModeFlag mode_flag , bool bPretty) const 
+std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const 
 {
 #ifndef HAVE_GDAL
 	boost::ignore_unused_variable_warning(mode_flag);
+    boost::ignore_unused_variable_warning(pretty);
+
     return std::string();
 #else
     GTIFDefn sGTIFDefn;
@@ -393,7 +395,7 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag , bool bPretty) cons
     {
         pszWKT = GTIFGetOGISDefn( m_gtiff, &sGTIFDefn );
 
-            if (bPretty) {
+            if (pretty) {
                 OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
                 char *pszOrigWKT = pszWKT;
                 poSRS->importFromWkt( &pszOrigWKT );
@@ -419,7 +421,7 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag , bool bPretty) cons
             pszWKT = NULL;
 
             poSRS->StripVertical();
-            if (bPretty) 
+            if (pretty) 
                 poSRS->exportToPrettyWkt(&pszWKT, false);
             else
                 poSRS->exportToWkt( &pszWKT );
