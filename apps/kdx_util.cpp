@@ -19,7 +19,7 @@ KDXIndexSummary::KDXIndexSummary(liblas::Reader& reader, boost::uint32_t capacit
    {
         const liblas::chipper::Block& b = c.GetBlock(i);
 
-        std::vector<uint32_t> ids = b.GetIDs();       
+        std::vector<boost::uint32_t> ids = b.GetIDs();       
         liblas::Bounds<double> const& bnd = b.GetBounds();
        if (first) {
            mins[0] = bnd.min(0);
@@ -35,7 +35,7 @@ KDXIndexSummary::KDXIndexSummary(liblas::Reader& reader, boost::uint32_t capacit
        maxs[0] = std::max(maxs[0], bnd.max(0));
        maxs[1] = std::max(maxs[1], bnd.max(1));
 
-       IndexResult result(static_cast<uint32_t>(i));
+       IndexResult result(static_cast<boost::uint32_t>(i));
        result.SetIDs(ids);
        result.SetBounds(bnd);
        m_results.push_back(result);
@@ -86,7 +86,7 @@ KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
         }
         liblas::Bounds<double> b(low[0], low[1], high[0],high[1]);
 
-        IndexResult result(static_cast<uint32_t>(id));
+        IndexResult result(static_cast<boost::uint32_t>(id));
         result.SetIDs(ids);
         result.SetBounds(b);
         m_results.push_back(result);
@@ -97,7 +97,7 @@ KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
 
 bool GetPointData(  liblas::Point const& p, 
                     // bool bTime, 
-                    std::vector<uint8_t>& point_data)
+                    std::vector<boost::uint8_t>& point_data)
 {
     // This function returns an array of bytes describing the 
     // x,y,z and optionally time values for the point.  
@@ -109,9 +109,9 @@ bool GetPointData(  liblas::Point const& p,
     double z = p.GetZ();
     // double t = p.GetTime();
 
-    uint8_t* x_b =  reinterpret_cast<uint8_t*>(&x);
-    uint8_t* y_b =  reinterpret_cast<uint8_t*>(&y);
-    uint8_t* z_b =  reinterpret_cast<uint8_t*>(&z);
+    boost::uint8_t* x_b =  reinterpret_cast<boost::uint8_t*>(&x);
+    boost::uint8_t* y_b =  reinterpret_cast<boost::uint8_t*>(&y);
+    boost::uint8_t* z_b =  reinterpret_cast<boost::uint8_t*>(&z);
 
     // liblas::uint8_t* t_b =  reinterpret_cast<liblas::uint8_t*>(&t);
 
@@ -149,7 +149,7 @@ bool GetPointData(  liblas::Point const& p,
     return true;
 }
 
-void IndexResult::GetData(liblas::Reader* reader, std::vector<uint8_t>& data)
+void IndexResult::GetData(liblas::Reader* reader, std::vector<boost::uint8_t>& data)
 {
     IDVector const& ids = GetIDs();
 
@@ -162,15 +162,15 @@ void IndexResult::GetData(liblas::Reader* reader, std::vector<uint8_t>& data)
     data.clear(); 
     
     IDVector::const_iterator i;
-    std::vector<uint8_t>::iterator pi;
+    std::vector<boost::uint8_t>::iterator pi;
     
-    uint32_t block_id = GetID();
+    boost::uint32_t block_id = GetID();
 
-    std::vector<uint8_t> point_data;
+    std::vector<boost::uint8_t> point_data;
     
     for (i=ids.begin(); i!=ids.end(); ++i) 
     {
-        uint32_t id = *i;
+        boost::uint32_t id = *i;
 
         bool doRead = reader->ReadPointAt(id);
         if (doRead) {
@@ -182,21 +182,21 @@ void IndexResult::GetData(liblas::Reader* reader, std::vector<uint8_t>& data)
             bool gotdata = GetPointData(p, point_data);
             
             if (!gotdata) { throw std::runtime_error("Unable to fetch Point Data"); exit(1);}
-            std::vector<uint8_t>::const_iterator d;
+            std::vector<boost::uint8_t>::const_iterator d;
             for (d = point_data.begin(); d!=point_data.end(); ++d) {
                 data.push_back(*d);
             }
 
-            uint8_t* id_b = reinterpret_cast<uint8_t*>(&id);
-            uint8_t* block_b = reinterpret_cast<uint8_t*>(&block_id);
+            boost::uint8_t* id_b = reinterpret_cast<boost::uint8_t*>(&id);
+            boost::uint8_t* block_b = reinterpret_cast<boost::uint8_t*>(&block_id);
             
             // 4-byte big-endian integer for the BLK_ID value
-            for (int i =  sizeof(uint32_t) - 1; i >= 0; i--) {
+            for (int i =  sizeof(boost::uint32_t) - 1; i >= 0; i--) {
                 data.push_back(block_b[i]);
             }
             
             // 4-byte big-endian integer for the PT_ID value
-            for (int i =  sizeof(uint32_t) - 1; i >= 0; i--) {
+            for (int i =  sizeof(boost::uint32_t) - 1; i >= 0; i--) {
                 data.push_back(id_b[i]);
             }
             

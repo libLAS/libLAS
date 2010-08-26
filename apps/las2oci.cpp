@@ -180,7 +180,7 @@ bool InsertBlock(OWConnection* connection,
 
     IDVector const& ids = result.GetIDs();
     // const SpatialIndex::Region* b = result.GetBounds();
-    uint32_t num_points = ids.size();
+    boost::uint32_t num_points = ids.size();
 
 
     // EnableTracing(connection);
@@ -223,7 +223,7 @@ bool InsertBlock(OWConnection* connection,
     // :4
     statement->Define( locator, 1 ); 
 
-    std::vector<uint8_t> data;
+    std::vector<boost::uint8_t> data;
     result.GetData(reader, data);
         
     // std::vector<liblas::uint8_t> data;
@@ -426,7 +426,7 @@ long CreatePCEntry( OWConnection* connection,
                     bool bUse3d,
                     bool bInsertHeaderBlob,
                     std::string const& header_blob_column,
-                    std::vector<uint8_t> const& header_data)
+                    std::vector<boost::uint8_t> const& header_data)
 {
     ostringstream oss;
 
@@ -610,10 +610,10 @@ void usage() {
     fprintf(stderr,"----------------------------------------------------------\n");    
 }
 
-std::vector<uint8_t> GetHeaderData(std::string const& filename, uint32_t offset)
+std::vector<boost::uint8_t> GetHeaderData(std::string const& filename, boost::uint32_t offset)
 {
     std::istream* in = OpenInput(filename, false);
-    std::vector<uint8_t> data(offset);
+    std::vector<boost::uint8_t> data(offset);
     liblas::detail::read_n(data.front(), *in, offset);
     delete in;
     return data;
@@ -636,9 +636,9 @@ file_options.add_options()
     ("cloud-column-name", po::value< string >()->default_value("CLOUD"), "The column name that contains the point cloud object in the base table")
     ("header-blob-column", po::value< string >(), "Blob column name in the base table in which to optionally insert the contents of the input file's header.")
     ("overwrite,d", po::value<bool>()->zero_tokens(), "Drop block table before inserting data.")
-    ("block-capacity", po::value<uint32_t>()->default_value(3000), "Maximum number of points to be inserted into each block")
-    ("precision,p", po::value<uint32_t>()->default_value(8), "Number of decimal points to write into SQL for point coordinate data.  Used in user_sdo_geom_metadata entry and defining the PC_EXTENT for the point cloud object.")
-    ("srid,s", po::value<uint32_t>(), "Oracle numerical SRID value to use to define point cloud.")
+    ("block-capacity", po::value<boost::uint32_t>()->default_value(3000), "Maximum number of points to be inserted into each block")
+    ("precision,p", po::value<boost::uint32_t>()->default_value(8), "Number of decimal points to write into SQL for point coordinate data.  Used in user_sdo_geom_metadata entry and defining the PC_EXTENT for the point cloud object.")
+    ("srid,s", po::value<boost::uint32_t>(), "Oracle numerical SRID value to use to define point cloud.")
     ("pre-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run before executing the point cloud creation process.")
     ("pre-block-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run before executing the insertion of block data.")
     ("post-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run after inserting block data.")
@@ -700,7 +700,7 @@ int main(int argc, char* argv[])
     bool bInsertHeaderBlob = false;
     bool bCachedReader = false;
     
-    uint32_t nCapacity = 10000;
+    boost::uint32_t nCapacity = 10000;
 
     int srid = 0;
     long precision = 8;
@@ -864,14 +864,14 @@ int main(int argc, char* argv[])
 
         if (vm.count("block-capacity")) 
         {
-            nCapacity = vm["block-capacity"].as< uint32_t >();
+            nCapacity = vm["block-capacity"].as< boost::uint32_t >();
             if (verbose)
                 std::cout << "Setting block capacity to: " << nCapacity << std::endl;
         }
         
         if (vm.count("precision")) 
         {
-            precision = vm["precision"].as< uint32_t >();
+            precision = vm["precision"].as< boost::uint32_t >();
             if (verbose)
                 std::cout << "Setting precision to: " << precision << std::endl;
 
@@ -879,7 +879,7 @@ int main(int argc, char* argv[])
         
         if (vm.count("srid")) 
         {
-            srid = vm["srid"].as< uint32_t >();
+            srid = vm["srid"].as< boost::uint32_t >();
             if (verbose)
                 std::cout << "Setting output Oracle SRID to: " << srid << std::endl;
         }
@@ -1135,7 +1135,7 @@ int main(int argc, char* argv[])
         reader2->SetFilters(filters);
         reader2->SetTransforms(transforms);
 
-        std::vector<uint8_t> header_data = GetHeaderData(input, reader2->GetHeader().GetDataOffset());
+        std::vector<boost::uint8_t> header_data = GetHeaderData(input, reader2->GetHeader().GetDataOffset());
 
         KDXIndexSummary* query = 0;
         if (!KDTreeIndexExists(input)) {

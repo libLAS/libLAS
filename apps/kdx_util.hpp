@@ -14,22 +14,22 @@
 
 
 
-typedef std::vector<uint32_t> IDVector;
+typedef std::vector<boost::uint32_t> IDVector;
 typedef boost::shared_ptr< IDVector > IDVectorPtr;
 
 class IndexResult 
 {
 public:
-    IndexResult(uint32_t id) : bounds(), m_id(id) {}
+    IndexResult(boost::uint32_t id) : bounds(), m_id(id) {}
 
     IDVector const& GetIDs() const { return ids; }
     void SetIDs(IDVector& v) {ids = v;}
     const liblas::Bounds<double> GetBounds() const { return bounds; }
     void SetBounds(const liblas::Bounds<double> b) {bounds = b;}
-    uint32_t GetID() const {return m_id;}
-    void SetID(uint32_t v) {m_id = v;}
+    boost::uint32_t GetID() const {return m_id;}
+    void SetID(boost::uint32_t v) {m_id = v;}
     
-    void GetData(liblas::Reader* reader, std::vector<uint8_t>& data);
+    void GetData(liblas::Reader* reader, std::vector<boost::uint8_t>& data);
 
 private:
 
@@ -41,7 +41,7 @@ private:
     
     IDVector ids;
     liblas::Bounds<double> bounds;
-    uint32_t m_id;
+    boost::uint32_t m_id;
 
 };
 

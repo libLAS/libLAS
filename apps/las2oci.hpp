@@ -11,6 +11,7 @@
 
 
 #include <liblas/liblas.hpp>
+#include <boost/cstdint.hpp>
 
 #include <string>
 #include <sstream>
@@ -39,7 +40,7 @@ using namespace liblas;
 #include <boost/array.hpp>
 #include <boost/shared_ptr.hpp>
 
-typedef std::vector<uint32_t> IDVector;
+typedef std::vector<boost::uint32_t> IDVector;
 typedef boost::shared_ptr< IDVector > IDVectorPtr;
 
 typedef struct
@@ -49,7 +50,7 @@ typedef struct
     long* num_points;
     OCILobLocator** locators; // =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
 
-    std::vector<uint8_t>** blobs;
+    std::vector<boost::uint8_t>** blobs;
 
     long* srids;
     long* gtypes;

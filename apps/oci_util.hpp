@@ -9,7 +9,9 @@
 #include <sstream>
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
 
+#include <boost/cstdint.hpp>
 
 std::istream* OpenInput(std::string filename, bool bEnd);
 std::string ReadSQLData(std::string filename);
