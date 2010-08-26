@@ -87,6 +87,8 @@ private:
     FilterType m_type;
 };
 
+/// A filter for keeping or rejecting points that fall within a 
+/// specified bounds.
 class BoundsFilter: public FilterI
 {
 public:
@@ -106,7 +108,7 @@ private:
     BoundsFilter& operator=(BoundsFilter const& rhs);
 };
 
-
+/// A filter for keeping or rejecting a list of classification ids
 class ClassificationFilter: public FilterI
 {
 public:
@@ -124,11 +126,12 @@ private:
     ClassificationFilter& operator=(ClassificationFilter const& rhs);
 };
 
-
+/// A filter simple decimation
 class ThinFilter: public liblas::FilterI
 {
 public:
-
+    
+    /// Default constructor.  Keep every thin'th point.
     ThinFilter(boost::uint32_t thin);
     bool filter(const liblas::Point& point);
 
@@ -143,6 +146,7 @@ private:
 };
 
 
+/// A filter for keeping or rejecting a list of return ids.
 class ReturnFilter: public FilterI
 {
 public:
@@ -176,64 +180,78 @@ private:
 };
 
 
-
-
+/// A templated class that allows you 
+/// to create complex filters using functions that are callable 
+/// from the liblas::Point class.  See laskernel.cpp for examples 
+/// how to use it for filtering intensity and time values.  
 template <typename T>
 class ContinuousValueFilter: public FilterI
 {
-    // A ContinuousValueFilter is a templated class that allows you 
-    // to create complexe filters using functions that are callable 
-    // from the liblas::Point class.  See las2las2 for examples 
-    // how to use it for filtering intensity and time values.  
     
-    
-    // To use this we must take in a filtering function that returns 
-    // us a value from the point, and a binary_predicate comparator
-    // (ie, std::less, std::greater, std::equal_to, etc).  
-    
-    // Example:
-    // GetIntensity returns a uint16_t, so we use that for our template 
-    // value.  This filter would keep all points with intensities that are 
-    // less than 100.
-    
-    // liblas::ContinuousValueFilter<uint16_t>::compare_func c = std::less<uint16_t>();
-    // liblas::ContinuousValueFilter<uint16_t>::filter_func f = &liblas::Point::GetIntensity;
-    // liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, 100, c);
-    // intensity_filter->SetType(liblas::FilterI::eInclusion);
-    
-    
-    // In addition to explicitly setting your comparator function, you can 
-    // also use the constructor that takes in a simple expression string 
-    // and constructs the basic comparators.  See the source code or las2las2 
-    // help output for the forms that are supported.  This may be 
-    // improved in the future.
-    
-    // std::string intensities("<100")
-    // liblas::ContinuousValueFilter<uint16_t>::filter_func f = &liblas::Point::GetIntensity;
-    // liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, intensities);
-    // intensity_filter->SetType(liblas::FilterI::eInclusion);
+
     // 
 public:
     typedef boost::function<T (const Point*)> filter_func;
     typedef boost::function<bool(T, T)> compare_func;
+
+    /// Construct the filter with a filter_func, a comparison value, 
+    /// and a compare_func.  To use this we must take in a filtering function that returns 
+    ///  us a value from the point, and a binary_predicate comparator
+    /// (ie, std::less, std::greater, std::equal_to, etc).  
+    /// \param f - The function to compare with from the liblas::Point.  It 
+    /// must be one of the functions that returns an integer type or double type
+    /// \param value - The value to use for one-way comparison
+    /// \param c - the std::binary_predicate to use for comparison
+
+    /// To use this we must take in a filtering function that returns 
+    /// us a value from the point, and a binary_predicate comparator
+    /// (ie, std::less, std::greater, std::equal_to, etc).  
     
+    /// Example:
+    /// GetIntensity returns a uint16_t, so we use that for our template 
+    /// value.  This filter would keep all points with intensities that are 
+    /// less than 100.
+    
+    /// liblas::ContinuousValueFilter<uint16_t>::compare_func c = std::less<uint16_t>();
+    /// liblas::ContinuousValueFilter<uint16_t>::filter_func f = &liblas::Point::GetIntensity;
+    /// liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, 100, c);
+    /// intensity_filter->SetType(liblas::FilterI::eInclusion);
     ContinuousValueFilter(filter_func f, T value, compare_func c) :
         liblas::FilterI(eInclusion), f(f), c(c),value(value)
             {};
-            
+
+
+        
+    /// Construct the filter with a filter_func and a simple 
+    /// expression.  
+    /// \param f - The function to compare with from the liblas::Point.  It 
+    /// must be one of the functions that returns an integer type or double type
+    /// \param filter_string - A string to use for the filter.  Supports taking 
+    /// in a simple expression and turning it into 
+    /// a comparator we can use.  We support dead simple stuff:
+    /// >200
+    /// ==150
+    /// >=32
+    /// <=150
+    /// <100
+    
+    /// We don't strip whitespace, and we don't support complex 
+    /// comparisons (ie, two function  10<x<300)
+    
+    /// In addition to explicitly setting your comparator function, you can 
+    /// also use the constructor that takes in a simple expression string 
+    /// and constructs the basic comparators.  See the source code or las2las2 
+    /// help output for the forms that are supported.  This may be 
+    /// improved in the future.
+    
+    /// std::string intensities("<100")
+    /// liblas::ContinuousValueFilter<uint16_t>::filter_func f = &liblas::Point::GetIntensity;
+    /// liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, intensities);
+    /// intensity_filter->SetType(liblas::FilterI::eInclusion);
+    
     ContinuousValueFilter(filter_func f, std::string const& filter_string) :
         liblas::FilterI(eInclusion), f(f) 
     {
-        // Support taking in a simple expression and turning it into 
-        // a comparator we can use.  We support dead simple stuff:
-        // >200
-        // ==150
-        // >=32
-        // <=150
-        // <100
-        
-        // We don't strip whitespace, and we don't support complex 
-        // comparisons (ie, two function  10<x<300)
         compare_func compare;
 
         bool gt = HasPredicate(filter_string, ">");
@@ -341,7 +359,7 @@ private:
 
 };
 
-
+/// A filter for color ranges
 class ColorFilter: public FilterI
 {
 public:
