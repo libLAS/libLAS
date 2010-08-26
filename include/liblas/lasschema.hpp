@@ -44,8 +44,11 @@
 
 // boost
 #include <boost/cstdint.hpp>
+#include <boost/any.hpp>
 // std
 #include <iosfwd>
+#include <limits>
+#include <string>
 
 namespace liblas {  
 
@@ -98,6 +101,69 @@ private:
     boost::uint16_t calculate_base_size();
 };
 
+class Dimension
+{
+public:
+    Dimension(std::string const& name) : m_name(name) {};
+    
+    std::string const& GetName() { return m_name; }
+    
+    /// bits, logical size of point record
+    virtual std::size_t GetSize() const = 0;
+    
+    /// bytes, physical/serialisation size of record
+    virtual std::size_t GetByteSize() const = 0;
+private:
+        
+    std::string m_name;
+};
+
+template <typename T>
+class NumericDimension : public Dimension
+{
+public:
+
+    NumericDimension(T type, std::string const& name ) : Dimension(name),
+        m_max(std::numeric_limits<T>::max()),
+        m_min(std::numeric_limits<T>::min()),
+        m_type(type)
+    {
+        
+    };
+
+    NumericDimension& operator=(NumericDimension const& rhs);
+    NumericDimension(Dimension const& other);
+    
+    ~NumericDimension() {};
+
+    
+    T const& GetMin() { return m_min; }
+    void SetMax(T const& max) { m_max = max; }
+    
+    T const& GetMax() { return m_max; }
+    void SetMin(T const& min) { m_min = min; }
+
+    /// bits, logical size of point record
+    std::size_t GetSize() const 
+    {
+        return sizeof(m_type) * 8;
+    }
+    
+    /// bytes, physical/serialisation size of record
+    std::size_t GetByteSize() const 
+    {
+        return sizeof(m_type);
+    }    
+ 
+
+private:
+
+    T m_min;
+    T m_max;
+
+    
+    T m_type;
+};    
 } // namespace liblas
 
 #endif // LIBLAS_SCHEMA_HPP_INCLUDED
