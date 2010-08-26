@@ -106,3 +106,12 @@ using libLAS :ref:`reader and iterator <cpptutorial>`:
  ofs << std::setiosflags(std::ios::fixed) << std::setprecision(6);
  std::copy(liblas::lasreader_iterator(reader), liblas::lasreader_iterator(),
            std::ostream_iterator<liblas::LASPoint>(ofs, "\n"));
+
+
+Other hull information sources
+------------------------------------------------------------------------------
+
+* http://www.netlib.org/voronoi/hull.html
+* http://netlib.sandia.gov/voronoi/
+* http://code.flickr.com/blog/2008/10/30/the-shape-of-alpha/
+* http://gis.stackexchange.com/questions/1200/concave-hull-definition-algorithms-and-practical-solutions
