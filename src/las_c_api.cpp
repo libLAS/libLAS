@@ -187,7 +187,7 @@ LAS_DLL char* LASError_GetLastErrorMsg(void){
         return NULL;
     else {
         liblas::Error err = errors.top();
-        return strdup(err.GetMessage().c_str());
+        return LASCopyString(err.GetMessage().c_str());
     }
 }
 
@@ -196,7 +196,7 @@ LAS_DLL char* LASError_GetLastErrorMethod(void){
         return NULL;
     else {
         liblas::Error err = errors.top();
-        return strdup(err.GetMethod().c_str());
+        return LASCopyString(err.GetMethod().c_str());
     }
 }
 
@@ -839,7 +839,7 @@ LAS_DLL char* LASHeader_GetFileSignature(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetFileSignature", NULL);
     
     std::string signature = ((liblas::Header*) hHeader)->GetFileSignature();
-    return strdup(signature.c_str());
+    return LASCopyString(signature.c_str());
 }
 
 LAS_DLL boost::uint16_t LASHeader_GetFileSourceId(const LASHeaderH hHeader) {
@@ -873,7 +873,7 @@ LAS_DLL char* LASHeader_GetProjectId(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetProjectId", 0);
     
     liblas::guid id = ((liblas::Header*) hHeader)->GetProjectId();
-    return strdup(id.to_string().c_str());
+    return LASCopyString(id.to_string().c_str());
 }
 
 LAS_DLL LASErrorEnum LASHeader_SetProjectId(LASHeaderH hHeader, const char* value) {
@@ -940,7 +940,7 @@ LAS_DLL char* LASHeader_GetSystemId(const LASHeaderH hHeader) {
 
     // caller owns it
     std::string sysid = ((liblas::Header*) hHeader)->GetSystemId();
-    return strdup(sysid.c_str());
+    return LASCopyString(sysid.c_str());
 }
 
 LAS_DLL LASErrorEnum LASHeader_SetSystemId(LASHeaderH hHeader, const char* value) {
@@ -962,7 +962,7 @@ LAS_DLL char* LASHeader_GetSoftwareId(const LASHeaderH hHeader) {
 
     // caller owns it
     std::string softid = ((liblas::Header*) hHeader)->GetSoftwareId();
-    return strdup(softid.c_str());
+    return LASCopyString(softid.c_str());
 }
 
 LAS_DLL LASErrorEnum LASHeader_SetSoftwareId(LASHeaderH hHeader, const char* value) {
@@ -1563,11 +1563,11 @@ LAS_DLL void LASError_Print(const char* message) {
 }
 
 LAS_DLL char* LAS_GetVersion() {
-    return strdup(liblas::GetVersion().c_str());
+    return LASCopyString(liblas::GetVersion().c_str());
 }
 
 LAS_DLL char* LAS_GetFullVersion(void) {
-    return strdup(liblas::GetFullVersion().c_str());
+    return LASCopyString(liblas::GetFullVersion().c_str());
 }
 
 
@@ -1585,7 +1585,7 @@ LAS_DLL void LASVLR_Destroy(LASVLRH hVLR){
 LAS_DLL char* LASVLR_GetUserId(const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetUserId", 0);
     liblas::VariableRecord* vlr = (liblas::VariableRecord*)hVLR;
-    return strdup(vlr->GetUserId(true).c_str());
+    return LASCopyString(vlr->GetUserId(true).c_str());
 }
 
 LAS_DLL LASErrorEnum LASVLR_SetUserId(LASVLRH hVLR, const char* value) {
@@ -1605,7 +1605,7 @@ LAS_DLL LASErrorEnum LASVLR_SetUserId(LASVLRH hVLR, const char* value) {
 LAS_DLL char* LASVLR_GetDescription(const LASVLRH hVLR) {
     VALIDATE_LAS_POINTER1(hVLR, "LASVLR_GetDescription", 0);
     liblas::VariableRecord* vlr = (liblas::VariableRecord*)hVLR;
-    return strdup(vlr->GetDescription(true).c_str());
+    return LASCopyString(vlr->GetDescription(true).c_str());
 }
 
 LAS_DLL LASErrorEnum LASVLR_SetDescription(LASVLRH hVLR, const char* value) {
@@ -1756,7 +1756,7 @@ LAS_DLL int LASGuid_Equals(LASGuidH hId1, LASGuidH hId2) {
 LAS_DLL char* LASGuid_AsString(LASGuidH hId) {
     VALIDATE_LAS_POINTER1(hId, "LASGuid_AsString", 0);
     liblas::guid* id= (liblas::guid*)hId;
-    return strdup(id->to_string().c_str());
+    return LASCopyString(id->to_string().c_str());
 }
 
 
@@ -1908,7 +1908,7 @@ LAS_DLL char* LASSRS_GetProj4(LASSRSH hSRS)
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetProj4", NULL);
     liblas::SpatialReference* srs = (liblas::SpatialReference*)hSRS;
 
-    return strdup((srs)->GetProj4().c_str());
+    return LASCopyString((srs)->GetProj4().c_str());
     
 }
 
@@ -1933,7 +1933,7 @@ LAS_DLL char* LASSRS_GetWKT(LASSRSH hSRS)
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetWKT", NULL);
     liblas::SpatialReference* srs = (liblas::SpatialReference*)hSRS;
 
-    return strdup((srs)->GetWKT(liblas::SpatialReference::eHorizontalOnly).c_str());
+    return LASCopyString((srs)->GetWKT(liblas::SpatialReference::eHorizontalOnly).c_str());
     
 }
 
@@ -1942,7 +1942,7 @@ LAS_DLL char* LASSRS_GetWKT_CompoundOK(LASSRSH hSRS)
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetWKT_CompoundOK", NULL);
     liblas::SpatialReference* srs = (liblas::SpatialReference*)hSRS;
 
-    return strdup((srs)->GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
+    return LASCopyString((srs)->GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
     
 }
 
