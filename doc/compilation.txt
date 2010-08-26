@@ -173,6 +173,7 @@ for libLAS on Mac OS X.
     
     $ cd liblas
     $ mkdir makefiles
+    $ cd makefiles
 
 Configure base library
 ------------------------------------------------------------------------------
