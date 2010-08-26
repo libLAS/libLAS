@@ -330,8 +330,8 @@ int main(int argc, char* argv[])
         //
         // Translation of points cloud to features set
         //
-        uint32_t i = 0;
-        uint32_t const size = reader.GetHeader().GetPointRecordsCount();
+        boost::uint32_t i = 0;
+        boost::uint32_t const size = reader.GetHeader().GetPointRecordsCount();
 
         std::cout << "Translating " << size << " points:\n";
 
