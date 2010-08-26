@@ -66,8 +66,7 @@ set(APPS_CPP_DEPENDENCIES
     ${TIFF_LIBRARY}
     ${GEOTIFF_LIBRARY}
     ${GDAL_LIBRARY}
-    ${SPATIALINDEX_LIBRARY}
-    ${ORACLE_LIBRARY})
+    ${SPATIALINDEX_LIBRARY})
 
 link_directories(${Boost_LIBRARY_DIRS})
 
@@ -127,7 +126,7 @@ endif()
 # Build las2oci
 if(LAS2OCI)
     add_executable(${LAS2OCI} las2oci.cpp oci_wrapper.cpp kdx_util.cpp oci_util.cpp laskernel.cpp chipper.cpp)
-    target_link_libraries(${LAS2OCI} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
+    target_link_libraries(${LAS2OCI} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES} ${ORACLE_LIBRARY})
 endif()
 
 if(BIGFILE_TEST)
