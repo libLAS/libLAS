@@ -205,8 +205,7 @@ target_link_libraries(${LIBLAS_C_LIB_NAME}
   ${TIFF_LIBRARY}
   ${GEOTIFF_LIBRARY}
   ${GDAL_LIBRARY}
-  ${SPATIALINDEX_LIBRARY}
-  ${LIBXML2_LIBRARIES})
+  ${SPATIALINDEX_LIBRARY})
 
 ###############################################################################
 # Targets installation
