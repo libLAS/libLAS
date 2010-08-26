@@ -151,9 +151,10 @@ ThinFilter::ThinFilter( uint32_t thin ) :
 
 bool ThinFilter::filter(const liblas::Point& p)
 {
+    // FIXME: why p is not used? --mloskot
+    boost::ignore_unused_variable_warning(p);
 
-    // If thin_amount == thin_count, we throw this one 
-    // out.
+    // If thin_amount == thin_count, we throw this one out.
     bool output = false;
     if (thin_amount == thin_count)
     {
