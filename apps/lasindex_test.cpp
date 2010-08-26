@@ -207,6 +207,13 @@ int main(int argc, char* argv[])
 		 "-n", "C:\\LibLAS\\Samples\\N1440375_idx.ldx", "-r"};
 	argc = 6;
 	*/
+	
+	/*const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\N1440375.tmp",
+		 "-i", "C:\\LibLAS\\Samples\\N1440375.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
+		 "-o", "C:\\LibLAS\\Samples\\N1440375_idx.las",
+		 "-x", "1443000.00", "1444000.00", "-y", "376000.02", "379000.00", "-z", "850.00", "950.00"};
+	argc = 22;
+	*/	
 	/*---------------------Serpent Mound Model LAS Data-----------------------*/
 	/*----------------------------build index-----------------------------------
 	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\Serpent Mound Model LAS Data.tmp",
