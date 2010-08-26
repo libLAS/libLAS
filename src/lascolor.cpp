@@ -44,6 +44,7 @@
 #include <boost/cstdint.hpp>
 // std
 #include <stdexcept>
+#include <limits>
 
 namespace liblas {
 
@@ -52,8 +53,13 @@ Color::Color()
     m_color.assign(0);
 }
 
-Color::Color(value_type red, value_type green, value_type blue)
+Color::Color(boost::uint32_t red, boost::uint32_t green, boost::uint32_t blue)
 {
+    if (red > std::numeric_limits<uint16_t>::max() || 
+        green > std::numeric_limits<uint16_t>::max() || 
+        blue > std::numeric_limits<uint16_t>::max())
+        throw_invalid_color_component();
+
     m_color[0] = red;
     m_color[1] = green;
     m_color[2] = blue;
@@ -61,6 +67,10 @@ Color::Color(value_type red, value_type green, value_type blue)
 
 Color::Color(boost::array<value_type, 3> const& color)
 {
+    if (color[0] > std::numeric_limits<uint16_t>::max() || 
+        color[1] > std::numeric_limits<uint16_t>::max() || 
+        color[2] > std::numeric_limits<uint16_t>::max())
+        throw_invalid_color_component();
     m_color = color;
 }
 
@@ -85,7 +95,7 @@ void Color::throw_index_out_of_range() const
 
 void Color::throw_invalid_color_component() const
 {
-    throw std::invalid_argument("color component value too large");
+    throw std::invalid_argument("Color component value too large.  Each must be less than 65536");
 }
 
 } // namespace liblas

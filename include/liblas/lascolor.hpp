@@ -63,7 +63,7 @@ public:
     /// User-defined constructor.
     /// Initializes object with given RGB values.
     /// \exception std::invalid_argument if color component value is out of range of unsigned 8-bit integer.
-    Color(value_type red, value_type green, value_type blue);
+    Color(boost::uint32_t red, boost::uint32_t green, boost::uint32_t blue);
 
     /// User-defined constructor.
     /// Initializes colour components based on values of 3-element array.
