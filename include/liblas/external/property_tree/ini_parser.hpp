@@ -11,9 +11,9 @@
 #ifndef BOOST_PROPERTY_TREE_INI_PARSER_HPP_INCLUDED
 #define BOOST_PROPERTY_TREE_INI_PARSER_HPP_INCLUDED
 
-#include <liblas/property_tree/ptree.hpp>
-#include <liblas/property_tree/detail/ptree_utils.hpp>
-#include <liblas/property_tree/detail/file_parser_error.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/detail/ptree_utils.hpp>
+#include <liblas/external/property_tree/detail/file_parser_error.hpp>
 #include <fstream>
 #include <string>
 #include <sstream>

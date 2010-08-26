@@ -12,11 +12,11 @@
 #ifndef BOOST_PROPERTY_TREE_PTREE_HPP_INCLUDED
 #define BOOST_PROPERTY_TREE_PTREE_HPP_INCLUDED
 
-#include <liblas/property_tree/ptree_fwd.hpp>
-#include <liblas/property_tree/string_path.hpp>
-#include <liblas/property_tree/stream_translator.hpp>
-#include <liblas/property_tree/exceptions.hpp>
-#include <liblas/property_tree/detail/ptree_utils.hpp>
+#include <liblas/external/property_tree/ptree_fwd.hpp>
+#include <liblas/external/property_tree/string_path.hpp>
+#include <liblas/external/property_tree/stream_translator.hpp>
+#include <liblas/external/property_tree/exceptions.hpp>
+#include <liblas/external/property_tree/detail/ptree_utils.hpp>
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/indexed_by.hpp>
@@ -512,6 +512,6 @@ namespace liblas { namespace property_tree
 
 }}
 
-#include <liblas/property_tree/detail/ptree_implementation.hpp>
+#include <liblas/external/property_tree/detail/ptree_implementation.hpp>
 
 #endif

@@ -10,11 +10,11 @@
 #ifndef BOOST_PROPERTY_TREE_DETAIL_XML_PARSER_READ_RAPIDXML_HPP_INCLUDED
 #define BOOST_PROPERTY_TREE_DETAIL_XML_PARSER_READ_RAPIDXML_HPP_INCLUDED
 
-#include <liblas/property_tree/ptree.hpp>
-#include <liblas/property_tree/detail/xml_parser_error.hpp>
-#include <liblas/property_tree/detail/xml_parser_flags.hpp>
-#include <liblas/property_tree/detail/xml_parser_utils.hpp>
-#include <liblas/property_tree/detail/rapidxml.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/detail/xml_parser_error.hpp>
+#include <liblas/external/property_tree/detail/xml_parser_flags.hpp>
+#include <liblas/external/property_tree/detail/xml_parser_utils.hpp>
+#include <liblas/external/property_tree/detail/rapidxml.hpp>
 #include <vector>
 
 namespace liblas { namespace property_tree { namespace xml_parser

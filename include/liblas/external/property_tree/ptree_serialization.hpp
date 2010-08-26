@@ -10,7 +10,7 @@
 #ifndef BOOST_PROPERTY_TREE_PTREE_SERIALIZATION_HPP_INCLUDED
 #define BOOST_PROPERTY_TREE_PTREE_SERIALIZATION_HPP_INCLUDED
 
-#include <liblas/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
 
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/collections_save_imp.hpp>

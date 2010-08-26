@@ -48,7 +48,7 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lastransform.hpp>
-#include <liblas/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std

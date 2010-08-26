@@ -47,7 +47,7 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/exception.hpp>
 #include <liblas/capi/las_config.h>
-#include <liblas/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
 
 // GDAL OSR
 #ifdef HAVE_GDAL

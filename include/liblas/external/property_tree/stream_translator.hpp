@@ -11,7 +11,7 @@
 #ifndef BOOST_PROPERTY_TREE_STREAM_TRANSLATOR_HPP_INCLUDED
 #define BOOST_PROPERTY_TREE_STREAM_TRANSLATOR_HPP_INCLUDED
 
-#include <liblas/property_tree/ptree_fwd.hpp>
+#include <liblas/external/property_tree/ptree_fwd.hpp>
 
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>

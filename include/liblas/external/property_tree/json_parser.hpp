@@ -10,10 +10,10 @@
 #ifndef BOOST_PROPERTY_TREE_JSON_PARSER_HPP_INCLUDED
 #define BOOST_PROPERTY_TREE_JSON_PARSER_HPP_INCLUDED
 
-#include <liblas/property_tree/ptree.hpp>
-#include <liblas/property_tree/detail/json_parser_read.hpp>
-#include <liblas/property_tree/detail/json_parser_write.hpp>
-#include <liblas/property_tree/detail/json_parser_error.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/detail/json_parser_read.hpp>
+#include <liblas/external/property_tree/detail/json_parser_write.hpp>
+#include <liblas/external/property_tree/detail/json_parser_error.hpp>
 
 #include <fstream>
 #include <string>

@@ -7,24 +7,23 @@
 //
 // For more information, see www.boost.org
 // ----------------------------------------------------------------------------
-#ifndef BOOST_PROPERTY_TREE_DETAIL_JSON_PARSER_ERROR_HPP_INCLUDED
-#define BOOST_PROPERTY_TREE_DETAIL_JSON_PARSER_ERROR_HPP_INCLUDED
+#ifndef BOOST_PROPERTY_TREE_DETAIL_INFO_PARSER_ERROR_HPP_INCLUDED
+#define BOOST_PROPERTY_TREE_DETAIL_INFO_PARSER_ERROR_HPP_INCLUDED
 
-#include <liblas/property_tree/detail/file_parser_error.hpp>
+#include <liblas/external/property_tree/detail/file_parser_error.hpp>
 #include <string>
 
-namespace liblas { namespace property_tree { namespace json_parser
+namespace liblas { namespace property_tree { namespace info_parser
 {
 
-    //! Json parser error
-    class json_parser_error: public file_parser_error
+    class info_parser_error: public file_parser_error
     {
     public:
-        json_parser_error(const std::string &message, 
-                          const std::string &filename, 
-                          unsigned long line): 
+        info_parser_error(const std::string &message,
+                          const std::string &filename,
+                          unsigned long line) :
             file_parser_error(message, filename, line)
-        { 
+        {
         }
     };
 

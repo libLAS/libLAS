@@ -41,39 +41,41 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/liblas.hpp
   ${LIBLAS_HEADERS_DIR}/version.hpp)
 
-set(LIBLAS_PROPERTY_TREE_HPP
-  ${LIBLAS_HEADERS_DIR}/property_tree/exceptions.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/id_translator.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/info_parser.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/ini_parser.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/json_parser.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/ptree.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/ptree_fwd.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/ptree_serialization.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/stream_translator.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/string_path.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/xml_parser.hpp)
+set(LIBLAS_EXTERNAL_HPP)
 
-set(LIBLAS_PROPERTY_TREE_DETAIL_HPP
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/exception_implementation.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/file_parser_error.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/info_parser_error.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/info_parser_read.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/info_parser_utils.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/info_parser_write.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/info_parser_writer_settings.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/json_parser_error.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/json_parser_read.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/json_parser_write.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/ptree_implementation.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/ptree_utils.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/rapidxml.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/xml_parser_error.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/xml_parser_flags.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/xml_parser_read_rapidxml.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/xml_parser_utils.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/xml_parser_write.hpp
-  ${LIBLAS_HEADERS_DIR}/property_tree/detail/xml_parser_writer_settings.hpp)
+set(LIBLAS_EXTERNAL_PROPERTY_TREE_HPP
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/exceptions.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/id_translator.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/info_parser.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/ini_parser.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/json_parser.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/ptree.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/ptree_fwd.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/ptree_serialization.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/stream_translator.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/string_path.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/xml_parser.hpp)
+
+set(LIBLAS_EXTERNAL_PROPERTY_TREE_DETAIL_HPP
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/exception_implementation.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/file_parser_error.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/info_parser_error.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/info_parser_read.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/info_parser_utils.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/info_parser_write.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/info_parser_writer_settings.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/json_parser_error.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/json_parser_read.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/json_parser_write.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/ptree_implementation.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/ptree_utils.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/rapidxml.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/xml_parser_error.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/xml_parser_flags.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/xml_parser_read_rapidxml.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/xml_parser_utils.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/xml_parser_write.hpp
+  ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/xml_parser_writer_settings.hpp)
 
 set(LIBLAS_DETAIL_HPP
   ${LIBLAS_HEADERS_DIR}/detail/endian.hpp
@@ -136,8 +138,9 @@ set(LIBLAS_DETAIL_WRITER_CPP
 # Group source files for IDE source explorers (e.g. Visual Studio)
 source_group("CMake Files" FILES CMakeLists.txt)
 source_group("Header Files" FILES ${LIBLAS_HPP})
-source_group("Header Files\\property_tree" FILES ${LIBLAS_PROPERTY_TREE_HPP})
-source_group("Header Files\\property_tree\\detail" FILES ${LIBLAS_PROPERTY_TREE_DETAIL_HPP})
+source_group("Header Files\\external" FILES ${LIBLAS_EXTERNAL_HPP})
+source_group("Header Files\\external\\property_tree" FILES ${LIBLAS_EXTERNAL_PROPERTY_TREE_HPP})
+source_group("Header Files\\external\\property_tree\\detail" FILES ${LIBLAS_EXTERNAL_PROPERTY_TREE_DETAIL_HPP})
 source_group("Header Files\\detail" FILES ${LIBLAS_DETAIL_HPP})
 source_group("Header Files\\detail\\index" FILES ${LIBLAS_DETAIL_INDEX_HPP})
 source_group("Header Files\\detail\\reader" FILES ${LIBLAS_DETAIL_READER_HPP})
@@ -166,8 +169,9 @@ include_directories(../include)
 
 set(LIBLAS_SOURCES
   ${LIBLAS_HPP}
-  ${LIBLAS_PROPERTY_TREE_HPP}
-  ${LIBLAS_PROPERTY_TREE_DETAIL_HPP}
+  ${LIBLAS_EXTERNAL_HPP}
+  ${LIBLAS_EXTERNAL_PROPERTY_TREE_HPP}
+  ${LIBLAS_EXTERNAL_PROPERTY_TREE_DETAIL_HPP}
   ${LIBLAS_DETAIL_HPP}
   ${LIBLAS_DETAIL_READER_HPP}
   ${LIBLAS_DETAIL_WRITER_HPP}

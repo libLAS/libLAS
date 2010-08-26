@@ -12,9 +12,9 @@
 
 //#define BOOST_SPIRIT_DEBUG
 
-#include <liblas/property_tree/ptree.hpp>
-#include <liblas/property_tree/detail/ptree_utils.hpp>
-#include <liblas/property_tree/detail/json_parser_error.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/detail/ptree_utils.hpp>
+#include <liblas/external/property_tree/detail/json_parser_error.hpp>
 #include <boost/spirit/include/classic.hpp>
 #include <boost/limits.hpp>
 #include <string>

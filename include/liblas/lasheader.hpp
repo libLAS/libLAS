@@ -50,7 +50,7 @@
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasversion.hpp>
-#include <liblas/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>

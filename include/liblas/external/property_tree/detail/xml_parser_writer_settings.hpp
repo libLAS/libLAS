@@ -12,7 +12,7 @@
 #define BOOST_PROPERTY_TREE_DETAIL_XML_PARSER_WRITER_SETTINGS_HPP_INCLUDED
 
 #include <string>
-#include <liblas/property_tree/detail/ptree_utils.hpp>
+#include <liblas/external/property_tree/detail/ptree_utils.hpp>
 
 namespace liblas { namespace property_tree { namespace xml_parser
 {

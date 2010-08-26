@@ -11,12 +11,12 @@
 #ifndef BOOST_PROPERTY_TREE_XML_PARSER_HPP_INCLUDED
 #define BOOST_PROPERTY_TREE_XML_PARSER_HPP_INCLUDED
 
-#include <liblas/property_tree/ptree.hpp>
-#include <liblas/property_tree/detail/xml_parser_write.hpp>
-#include <liblas/property_tree/detail/xml_parser_error.hpp>
-#include <liblas/property_tree/detail/xml_parser_writer_settings.hpp>
-#include <liblas/property_tree/detail/xml_parser_flags.hpp>
-#include <liblas/property_tree/detail/xml_parser_read_rapidxml.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/detail/xml_parser_write.hpp>
+#include <liblas/external/property_tree/detail/xml_parser_error.hpp>
+#include <liblas/external/property_tree/detail/xml_parser_writer_settings.hpp>
+#include <liblas/external/property_tree/detail/xml_parser_flags.hpp>
+#include <liblas/external/property_tree/detail/xml_parser_read_rapidxml.hpp>
 
 #include <fstream>
 #include <string>

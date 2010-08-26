@@ -46,7 +46,7 @@
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
-#include <liblas/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
 
 // std
 #include <cstring>

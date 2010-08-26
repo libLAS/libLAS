@@ -44,7 +44,7 @@
 #define LIBLAS_LASVARIABLERECORD_HPP_INCLUDED
 
 #include <liblas/detail/utility.hpp>
-#include <liblas/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>

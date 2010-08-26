@@ -11,10 +11,10 @@
 #ifndef BOOST_PROPERTY_TREE_STRING_PATH_HPP_INCLUDED
 #define BOOST_PROPERTY_TREE_STRING_PATH_HPP_INCLUDED
 
-#include <liblas/property_tree/ptree_fwd.hpp>
-#include <liblas/property_tree/id_translator.hpp>
-#include <liblas/property_tree/exceptions.hpp>
-#include <liblas/property_tree/detail/ptree_utils.hpp>
+#include <liblas/external/property_tree/ptree_fwd.hpp>
+#include <liblas/external/property_tree/id_translator.hpp>
+#include <liblas/external/property_tree/exceptions.hpp>
+#include <liblas/external/property_tree/detail/ptree_utils.hpp>
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>

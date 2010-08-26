@@ -10,11 +10,11 @@
 #ifndef BOOST_PROPERTY_TREE_INFO_PARSER_HPP_INCLUDED
 #define BOOST_PROPERTY_TREE_INFO_PARSER_HPP_INCLUDED
 
-#include <liblas/property_tree/ptree.hpp>
-#include <liblas/property_tree/detail/info_parser_error.hpp>
-#include <liblas/property_tree/detail/info_parser_writer_settings.hpp>
-#include <liblas/property_tree/detail/info_parser_read.hpp>
-#include <liblas/property_tree/detail/info_parser_write.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/detail/info_parser_error.hpp>
+#include <liblas/external/property_tree/detail/info_parser_writer_settings.hpp>
+#include <liblas/external/property_tree/detail/info_parser_read.hpp>
+#include <liblas/external/property_tree/detail/info_parser_write.hpp>
 #include <istream>
 
 namespace liblas { namespace property_tree { namespace info_parser
