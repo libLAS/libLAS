@@ -578,8 +578,10 @@ std::string SpatialReference::GetProj4() const
     }
 #endif
 
+#ifndef HAVE_GDAL
     // By default or if we have neither GDAL nor proj.4, we can't do squat
     return std::string();
+#endif
 }
 
 void SpatialReference::SetProj4(std::string const& v)
