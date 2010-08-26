@@ -325,13 +325,26 @@ public:
     
     /// Set the georeference
     void SetSRS(SpatialReference& srs);
-
+    
+    /// Returns the schema.
     Schema GetSchema() const;
+
+    /// Sets the schema
     void SetSchema(const Schema& format);
 
+    /// Return the liblas::Bounds.  This is a 
+    /// combination of the GetMax and GetMin 
+    /// (or GetMinX, GetMaxY, etc) data.
     const Bounds<double>& GetExtent() const;
+
+    /// Set the liblas::Bounds.  This is a 
+    /// combination of the GetMax and GetMin 
+    /// (or GetMinX, GetMaxY, etc) data, and it is equivalent to setting 
+    /// all of these values.
     void SetExtent(Bounds<double> const& extent);
 
+    /// Returns a property_tree that contains 
+    /// all of the header data in a structured format.
     liblas::property_tree::ptree GetPTree() const;
 
 private:
