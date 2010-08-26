@@ -100,7 +100,7 @@ template <typename T, typename Q>
 inline void WriteVLRData_str(IndexVLRData& dest, char * const src, T const srclen, Q& pos)
 {
  	// copy srclen bytes to destination
-	memcpy(&dest[pos], src, srclen);
+    std::memcpy(&dest[pos], src, srclen);
     // error if writing past array end
     if (static_cast<size_t>(pos) + static_cast<size_t>(srclen) > dest.size())
 		throw std::out_of_range("liblas::detail::WriteVLRData_str: array index out of range");

@@ -443,7 +443,9 @@ struct geotiff_dir_printer
     std::string::size_type size() const { return m_oss.str().size(); }
 
     void operator()(char* data, void* aux)
-    {
+    {     
+        ::boost::ignore_unused_variable_warning(aux);
+
         if (0 != data)
         {
             m_oss << data;

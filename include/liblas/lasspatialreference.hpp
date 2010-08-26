@@ -127,8 +127,8 @@ public:
     /// eCompoundOK indicating the the returned WKT may be a compound 
     /// coordinate system if there is vertical coordinate system info 
     /// available.
-    std::string GetWKT( WKTModeFlag mode_flag = eHorizontalOnly ) const;
-    std::string GetWKT( WKTModeFlag mode_flag, bool bPretty) const;
+    std::string GetWKT(WKTModeFlag mode_flag = eHorizontalOnly) const;
+    std::string GetWKT(WKTModeFlag mode_flag, bool pretty) const;
     
     /// Sets the SRS using GDAL's OGC WKT. If GDAL is not linked, this 
     /// operation has no effect.
