@@ -60,17 +60,15 @@ Color::Color(boost::uint32_t red, boost::uint32_t green, boost::uint32_t blue)
         blue > std::numeric_limits<boost::uint16_t>::max())
         throw_invalid_color_component();
 
-    m_color[0] = red;
-    m_color[1] = green;
-    m_color[2] = blue;
+    using boost::uint16_t;
+
+    m_color[0] = static_cast<uint16_t>(red);
+    m_color[1] = static_cast<uint16_t>(green);
+    m_color[2] = static_cast<uint16_t>(blue);
 }
 
 Color::Color(boost::array<value_type, 3> const& color)
 {
-    if (color[0] > std::numeric_limits<boost::uint16_t>::max() || 
-        color[1] > std::numeric_limits<boost::uint16_t>::max() || 
-        color[2] > std::numeric_limits<boost::uint16_t>::max())
-        throw_invalid_color_component();
     m_color = color;
 }
 
