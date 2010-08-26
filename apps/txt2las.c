@@ -20,6 +20,8 @@
 #define LAS_FORMAT_11 1
 #define LAS_FORMAT_12 2
 
+
+
 void usage()
 {
 
@@ -536,7 +538,7 @@ int main(int argc, char *argv[])
     if (file_name_out == NULL && file_name_in != NULL)
     {
         int len = (int)strlen(file_name_in);
-        file_name_out = strdup(file_name_in);
+        file_name_out = LASCopyString(file_name_in);
 
         while (len > 0 && file_name_out[len] != '.')
         {
@@ -567,7 +569,7 @@ int main(int argc, char *argv[])
     }
 
     /* create a cheaper parse string that only looks for 'x' 'y' 'z' and 'r' */
-    parse_less = strdup(parse_string);
+    parse_less = LASCopyString(parse_string);
     for (i = 0; i < (int)strlen(parse_string); i++)
     {
         if (parse_less[i] != 'x' && 

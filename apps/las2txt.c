@@ -316,7 +316,7 @@ int main(int argc, char *argv[])
             }
 
             len = (int)strlen(file_name_in);
-            file_name_out = strdup(file_name_in);
+            file_name_out = LASCopyString(file_name_in);
             if (file_name_out[len-3] == '.' && file_name_out[len-2] == 'g' && file_name_out[len-1] == 'z')
             {
                 len = len - 4;
