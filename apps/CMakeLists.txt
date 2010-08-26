@@ -31,13 +31,10 @@ if (NOT CMAKE_BUILD_TYPE )
 set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-
-
 # Utilities depending on 3rd-pary libraries
 if(GDAL_FOUND)
     set(LAS2OGR las2ogr)
 endif()
-
 
 if(ORACLE_FOUND AND GDAL_FOUND)
     set(LAS2OCI las2oci)
@@ -72,6 +69,8 @@ set(APPS_CPP_DEPENDENCIES
     ${SPATIALINDEX_LIBRARY}
     ${ORACLE_LIBRARY}
     ${LIBXML2_LIBRARIES})
+
+link_directories(${Boost_LIBRARY_DIRS})
 
 # Build lasinfo
 if(LASINFO)

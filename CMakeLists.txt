@@ -23,7 +23,6 @@ else()
 
 endif()
 
-
 # Name of test suite runner
 set(LIBLAS_UNIT_TEST liblas_test)
 
@@ -122,6 +121,9 @@ endif(APPLE)
 
 # Boost C++ Libraries support - required
 message(STATUS "Searching for Boost 1.38+ - done")
+
+set(Boost_USE_STATIC_LIBS   ON)
+set(Boost_USE_MULTITHREADED ON)
 find_package(Boost 1.38 COMPONENTS program_options REQUIRED)
 
 if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
