@@ -363,7 +363,8 @@ liblas::property_tree::ptree Reader::Summarize()
     using liblas::property_tree::ptree;
     ptree pt;
     
-    boost::array<boost::uint32_t, 32> classes;
+    typedef boost::array<boost::uint32_t, 32> classes_type;
+    classes_type classes;
     boost::uint32_t synthetic = 0;
     boost::uint32_t withheld = 0;
     boost::uint32_t keypoint = 0;
@@ -482,10 +483,12 @@ liblas::property_tree::ptree Reader::Summarize()
     
     ptree klasses;
     
-    for (boost::array<boost::uint32_t,32>::size_type i=0; i < classes.size(); i++) {
-        if (classes[i] != 0) {
-            liblas::Classification c = liblas::Classification(i, false, false, false);
-            std::string name = c.GetClassName();
+    for (classes_type::size_type i=0; i < classes.size(); i++)
+    {
+        if (classes[i] != 0)
+        {
+            liblas::Classification c(i, false, false, false);
+            std::string const& name = c.GetClassName();
 
             klasses.put("name", name);
             klasses.put("count", classes[i]);
