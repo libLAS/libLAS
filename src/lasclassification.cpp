@@ -106,20 +106,7 @@ uint8_t Classification::GetClass() const
 {
     bitset_type bits(m_flags);
     
-    // MSVC 2010 changed this to an unsigned long long, but did not 
-    // provide the old constructor for merely an unsigned long.  AFAIK
-    // there is only std::bitset<_Bits>::bitset(_ULonglong) and 
-    // std::bitset<_Bits>::bitset(int) here.  As an aside, I see no reason
-    // to have a mask any larger than std::bitset<_Bits>::bitset(int)
-#ifdef WIN32 
-#if (_MSC_VER >= 1600)
-    bitset_type const mask(static_cast<unsigned long long>(class_table_size) - 1);
-#else
     bitset_type const mask(static_cast<unsigned long>(class_table_size) - 1);
-#endif
-#else
-    bitset_type const mask(static_cast<unsigned long>(class_table_size) - 1);
-#endif
     bits &= mask;
 
     uint32_t const index = static_cast<uint32_t>(bits.to_ulong());
