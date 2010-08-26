@@ -129,11 +129,11 @@ uint8_t Classification::GetClass() const
     return static_cast<uint8_t>(index);
 }
 
-void Classification::SetClass(uint32_t index)
+void Classification::SetClass(boost::uint32_t index)
 {
     check_class_index(index);
 
-    bitset_type binval(index);
+    bitset_type binval(static_cast<boost::uint64_t>(index));
     binval <<= 0;
 
     // Store value in bits 0,1,2,3,4
