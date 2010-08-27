@@ -43,8 +43,8 @@
 #define LIBLAS_KERNEL_HPP_INCLUDED
 
 #include <liblas/liblas.hpp>
-#include <liblas/property_tree/ptree.hpp>
-#include <liblas/property_tree/xml_parser.hpp>
+#include <liblas/external/property_tree/ptree.hpp>
+#include <liblas/external/property_tree/xml_parser.hpp>
 
 #include <fstream>
 #include <iostream>
