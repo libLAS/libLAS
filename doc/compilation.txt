@@ -64,13 +64,15 @@ CMake cannot find it in a default location.  Additionally, set ``Boost_LIBRARY_D
 if it cannot find your libraries.
 
 .. warning::
-    You need Boost version 1.41.0 or higher to build libLAS 1.6.
+    You need Boost version 1.38.0 or higher to build libLAS 1.6.
 
 .. note::
 
     If you are building on Windows, http://www.boostpro.com/download/ has 
     an excellent installer.  Make sure to select the program_options 
-    library to install when prompted.
+    library, and select static + multithreaded as the types.  If you want to 
+    link in a different way, you will have to change your CMakeLists.txt 
+    file accordingly.
 
 
 .. _optional_libraries:
@@ -135,6 +137,9 @@ location so the CMake configuration can find your install.
         ln -s libclntsh.so.10.1 libclntsh.so
         ln -s libociei.so.10.1 libociei.so
 
+.. note::
+    MSVC should only require the oci.lib and oci.dll library and dlls.
+    
 * Oracle 11g is recommended, but OCI for 10g will work.
 
 .. _`libgeotiff`: http://www.remotesensing.org/geotiff/geotiff.html
