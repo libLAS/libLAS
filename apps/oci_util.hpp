@@ -12,6 +12,7 @@
 #include <algorithm>
 
 #include <boost/cstdint.hpp>
+#include <boost/concept_check.hpp>
 
 std::istream* OpenInput(std::string filename, bool bEnd);
 std::string ReadSQLData(std::string filename);

@@ -2,6 +2,7 @@
 
 KDXIndexSummary::KDXIndexSummary(liblas::Reader& reader, boost::uint32_t capacity, bool verbose)
 {
+    boost::ignore_unused_variable_warning(verbose);    
     liblas::chipper::Chipper c(&reader, capacity);
 
 
@@ -181,7 +182,7 @@ void IndexResult::GetData(liblas::Reader* reader, std::vector<boost::uint8_t>& d
             
             bool gotdata = GetPointData(p, point_data);
             
-            if (!gotdata) { throw std::runtime_error("Unable to fetch Point Data"); exit(1);}
+            if (!gotdata) { throw std::runtime_error("Unable to fetch Point Data"); }
             std::vector<boost::uint8_t>::const_iterator d;
             for (d = point_data.begin(); d!=point_data.end(); ++d) {
                 data.push_back(*d);

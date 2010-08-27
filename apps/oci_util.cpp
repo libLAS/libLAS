@@ -21,7 +21,6 @@ std::istream* OpenInput(std::string filename, bool bEnd)
     {
         delete istrm;
         throw std::runtime_error("Reading stream was not able to be created");
-        exit(1);
     }
     return istrm;
 }
@@ -198,6 +197,7 @@ bool CreateBlockIndex(  OWConnection* connection,
                         long srid, 
                         bool bUse3d)
 {
+    boost::ignore_unused_variable_warning(srid);    
     std::ostringstream oss;
     OWStatement* statement = 0;
     

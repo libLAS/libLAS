@@ -2,7 +2,11 @@
 #define KDX_UTIL_HPP_INCLUDED
 
 #include <boost/shared_ptr.hpp>
+#include <boost/cstdint.hpp>
+#include <boost/concept_check.hpp>
+
 #include <liblas/liblas.hpp>
+#include <liblas/detail/fwd.hpp>
 #include "chipper.hpp"
 
 #include <fstream>
