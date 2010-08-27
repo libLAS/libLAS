@@ -217,8 +217,8 @@ int main(int argc, char* argv[])
     try {
 
         po::options_description file_options("las2las2 options");
-        po::options_description filtering_options = GetFilteringOptions();
-        po::options_description transform_options = GetTransformationOptions() ;
+        po::options_description* filtering_options = GetFilteringOptions();
+        po::options_description* transform_options = GetTransformationOptions() ;
 
         po::positional_options_description p;
         p.add("input", 1);
@@ -237,7 +237,7 @@ int main(int argc, char* argv[])
 
         po::variables_map vm;
         po::options_description options;
-        options.add(file_options).add(transform_options).add(filtering_options);
+        options.add(file_options).add(*transform_options).add(*filtering_options);
         po::store(po::command_line_parser(argc, argv).
           options(options).positional(p).run(), vm);
 
@@ -289,6 +289,9 @@ int main(int argc, char* argv[])
         if (!op) {
             return (1);
         }
+        
+        delete filtering_options;
+        delete transform_options;
     }
     catch(std::exception& e) {
         std::cerr << "error: " << e.what() << "\n";

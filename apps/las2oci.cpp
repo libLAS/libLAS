@@ -611,13 +611,13 @@ std::vector<boost::uint8_t> GetHeaderData(std::string const& filename, boost::ui
     return data;
 }
 
-po::options_description GetFileOptions()
+po::options_description* GetFileOptions()
 {
-po::options_description file_options("las2oci options");
+po::options_description* file_options = new po::options_description("las2oci options");
 
 
 
-file_options.add_options()
+file_options->add_options()
     ("help,h", "produce help message")
     ("input,i", po::value< string >(), "input LAS file")
     ("connection,c", po::value< string >(), "OCI connection string")
@@ -647,10 +647,10 @@ file_options.add_options()
 return file_options;
 }
 
-po::options_description GetHiddenOptions()
+po::options_description* GetHiddenOptions()
 {
-    po::options_description hidden_options("hidden options");
-hidden_options.add_options()
+    po::options_description* hidden_options = new po::options_description("hidden options");
+hidden_options->add_options()
     ("xmin", po::value< double >(), "global-extent minx value")
     ("ymin", po::value< double >(), "global-extent miny value")
     ("zmin", po::value< double >(), "global-extent minz value")
@@ -699,10 +699,7 @@ int main(int argc, char* argv[])
     
     liblas::Bounds<double> global_extent;
     
-    bool bSetExtents = false;
-    
-    int nCommitInterval = 100;
-    
+    bool bSetExtents = false;    
     
     bool verbose = false;
     bool debug = false;
@@ -714,10 +711,10 @@ int main(int argc, char* argv[])
 
     try {
 
-        po::options_description file_options = GetFileOptions();
-        po::options_description filtering_options = GetFilteringOptions();
-        po::options_description transform_options = GetTransformationOptions() ;
-        po::options_description hidden_options = GetHiddenOptions();
+        po::options_description* file_options = GetFileOptions();
+        po::options_description* filtering_options = GetFilteringOptions();
+        po::options_description* transform_options = GetTransformationOptions() ;
+        po::options_description* hidden_options = GetHiddenOptions();
         po::positional_options_description p;
         p.add("input", 1);
         p.add("connection", 1);
@@ -727,7 +724,7 @@ int main(int argc, char* argv[])
 
         po::variables_map vm;
         po::options_description options;
-        options.add(file_options).add(transform_options).add(filtering_options).add(hidden_options);
+        options.add(*file_options).add(*transform_options).add(*filtering_options).add(*hidden_options);
         po::store(po::command_line_parser(argc, argv).
         options(options).positional(p).run(), vm);
 
@@ -735,7 +732,7 @@ int main(int argc, char* argv[])
 
         if (vm.count("help")) 
         {
-            std::cout << GetInvocationHeader()<<file_options<<"\n"<<transform_options<<"\n"<<filtering_options<<"\n";
+            std::cout << GetInvocationHeader()<<*file_options<<"\n"<<*transform_options<<"\n"<<*filtering_options<<"\n";
             std::cout <<"\nFor more information, see the full documentation for las2oci at:\n";
             
             std::cout << " http://liblas.org/utilities/las2oci.html\n";
@@ -1256,6 +1253,10 @@ int main(int argc, char* argv[])
         delete reader2;
         delete istrm2;
         delete con;
+        delete filtering_options;
+        delete transform_options;
+        delete file_options;
+        delete hidden_options;
     }
     catch(std::exception& e) {
         std::cerr << "error: " << e.what() << "\n";
