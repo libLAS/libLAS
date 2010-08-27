@@ -291,12 +291,10 @@ bool InsertBlocks(
                 KDXIndexSummary* summary,
                 liblas::Reader* reader2, 
                 const std::string& table_name, 
-                long nCommitInterval, 
                 int srid, 
                 long pc_id,
                 bool bUseSolidGeometry,
-                bool bUse3d,
-                long nDimensions
+                bool bUse3d
                 )
 {
     ResultsVector::iterator i;
@@ -1198,12 +1196,10 @@ int main(int argc, char* argv[])
                      query,
                      reader2,
                      block_table_name,
-                     nCommitInterval,
                      srid,
                      pc_id,
                      bUseSolidGeometry,
-                     bUse3d,
-                     nCapacity);
+                     bUse3d);
 
 
         if (!bUseExistingBlockTable) {
