@@ -19,12 +19,45 @@ using namespace std;
 
 
 
+
+void OCIGDALDebugErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
+{
+    ostringstream oss;
+    
+    if (eErrClass == CE_Failure || eErrClass == CE_Fatal) {
+        oss <<"GDAL Failure number=" << err_no << ": " << msg;
+        throw std::runtime_error(oss.str());
+    } else if (eErrClass == CE_Debug) {
+        std::cout <<"GDAL Debug: " << msg << std::endl;
+    } else {
+        return;
+    }
+}
+
 void OCIGDALErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
 {
     ostringstream oss;
-    oss <<"GDAL Error: type=" << eErrClass << " no=" << err_no << ": " << msg;
-    throw std::runtime_error(oss.str());
+    
+    if (eErrClass == CE_Failure || eErrClass == CE_Fatal) {
+        oss <<"GDAL Failure number=" << err_no << ": " << msg;
+        throw std::runtime_error(oss.str());
+    } else {
+        return;
+    }
 }
+
+
+void SetGDALErrorHandler(bool debug)
+{
+    CPLPopErrorHandler();
+    if (verbose)
+        CPLPushErrorHandler(OCIGDALDebugErrorHandler);
+    else
+        CPLPushErrorHandler(OCIGDALErrorHandler);
+
+}
+
+
 
 
 
@@ -260,9 +293,13 @@ bool InsertBlock(OWConnection* connection,
     SetOrdinates(statement, sdo_ordinates, result.GetBounds());
     statement->Bind(&sdo_ordinates, connection->GetOrdinateType());
     
-    if (statement->Execute() == false) {
+    try {
+        statement->Execute();
+    } catch (std::runtime_error const& e) {
         delete statement;
-        return false;
+        ostringstream oss;
+        oss << "Failed to insert block # into '" << tableName << "' table. Does the table exist? "  << std::endl << e.what() << std::endl;
+        throw std::runtime_error(oss.str());
     }
     
     delete statement; statement = 0;
@@ -553,11 +590,12 @@ oss << "declare\n"
         statement->Bind((char*)&(header_data[0]),(long)header_data.size());
     
     }
-    if (statement->Execute() == false) {
-
-        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
-        delete statement;
-        return 0;
+    try {
+        statement->Execute();
+    } catch (std::runtime_error const& e) {
+        ostringstream oss;
+        oss << "Failed at creating Point Cloud entry into " << pcTableName << " table. Does the table exist? "  << e.what();
+        throw std::runtime_error(oss.str());
     }
     output = pc_id;
 
@@ -1022,6 +1060,8 @@ int main(int argc, char* argv[])
             if (verbose)
                 std::cout << "Caching entire file... " << std::endl;
         }
+
+        SetGDALErrorHandler(debug);
 
         filters = GetFilters(vm, verbose);
         

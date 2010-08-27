@@ -59,11 +59,13 @@ bool EnableTracing(OWConnection* connection)
     
     statement = connection->CreateStatement(oss.str().c_str());
     
-    if (statement->Execute() == false) {
-        
-        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
+    try {
+        statement->Execute();
+    } catch (std::runtime_error const& e) {
         delete statement;
-        return 0;
+        std::ostringstream oss;
+        oss << "Failed to Enable tracing "  << std::endl << e.what() << std::endl;
+        throw std::runtime_error(oss.str());
     }    
     
     return true;
@@ -84,12 +86,15 @@ bool IsGeographic(OWConnection* connection, long srid)
     
     statement->Bind(p_srid);
     statement->Define(kind);    
-    if (statement->Execute() == false) {
-        
-        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
+    
+    try {
+        statement->Execute();
+    } catch (std::runtime_error const& e) {
         delete statement;
-        return false;
-    }
+        std::ostringstream oss;
+        oss << "Failed to fetch geographicness of srid " << srid << std::endl << e.what() << std::endl;
+        throw std::runtime_error(oss.str());
+    }  
     
     if (compare_no_case(kind, "GEOGRAPHIC2D",12) == 0) {
         delete statement;
@@ -115,13 +120,14 @@ OWStatement* RunSQL(OWConnection* connection, std::ostringstream& command)
     OWStatement* statement = 0;
     statement = connection->CreateStatement(command.str().c_str());
     
-    if (statement->Execute() == false) {
-        
-        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
+    try {
+        statement->Execute();
+    } catch (std::runtime_error const& e) {
         delete statement;
-        return 0;
-    }
-    
+        std::ostringstream oss;
+        oss << "Failed to run SQL:" << command.str() << std::endl << e.what() << std::endl;
+        throw std::runtime_error(oss.str());
+    }      
     return statement;    
 }
 
@@ -181,12 +187,15 @@ bool BlockTableExists(OWConnection* connection, std::string tableName)
     statement = connection->CreateStatement(oss.str().c_str());
     statement->Define(szTable);
     
-    if (statement->Execute() == false) {
-        
-        std::cout << "statement execution failed "  << CPLGetLastErrorMsg() << std::endl;
+    try {
+        statement->Execute();
+    } catch (std::runtime_error const& e) {
         delete statement;
-        return false;
-    }
+        std::ostringstream oss;
+        oss << "Failed select if block table "<< tableName << " exists.  Do you have rights to select?"  
+            << std::endl << e.what() << std::endl;
+        throw std::runtime_error(oss.str());
+    }  
     
     return true;
         
