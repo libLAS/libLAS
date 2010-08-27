@@ -12,6 +12,7 @@
 
 #include <liblas/liblas.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/concept_check.hpp>
 
 #include <string>
 #include <sstream>

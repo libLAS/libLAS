@@ -22,7 +22,7 @@ using namespace std;
 void OCIGDALErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
 {
     ostringstream oss;
-    oss <<"GDAL Error #" << err_no << ": " << msg;
+    oss <<"GDAL Error: type=" << eErrClass << " no=" << err_no << ": " << msg;
     throw std::runtime_error(oss.str());
 }
 
@@ -167,11 +167,9 @@ long GetGType(  bool bUse3d,
 
 bool InsertBlock(OWConnection* connection, 
                 IndexResult& result, 
-                long block_index,
                 int srid, 
                 liblas::Reader* reader, 
-                const char* tableName, 
-                long precision,
+                const char* tableName,
                 long pc_id,
                 bool bUseSolidGeometry,
                 bool bUse3d)
@@ -295,7 +293,6 @@ bool InsertBlocks(
                 const std::string& table_name, 
                 long nCommitInterval, 
                 int srid, 
-                long precision,
                 long pc_id,
                 bool bUseSolidGeometry,
                 bool bUse3d,
@@ -327,11 +324,9 @@ bool InsertBlocks(
     {        
         inserted = InsertBlock(con, 
                                     *i,
-                                    j, 
                                     srid, 
                                     reader2, 
                                     table_name.c_str(), 
-                                    precision, 
                                     pc_id, 
                                     bUseSolidGeometry, 
                                     bUse3d);
@@ -345,7 +340,6 @@ bool CreateSDOEntry(    OWConnection* connection,
                         KDXIndexSummary* query, 
                         long srid, 
                         long precision,
-                        bool bUseSolidGeometry,
                         bool bUse3d,
                         bool bSetExtents,
                         liblas::Bounds<double> const& bounds)
@@ -892,6 +886,7 @@ int main(int argc, char* argv[])
                 pre_sql = ReadSQLData(sql);
                 used_file = true;
             } catch (std::runtime_error const& e) {
+                boost::ignore_unused_variable_warning(e);
                 pre_sql = std::string(sql);
                 used_file = false;
             }
@@ -909,6 +904,7 @@ int main(int argc, char* argv[])
                 post_sql = ReadSQLData(sql);
                 used_file = true;
             } catch (std::runtime_error const& e) {
+                boost::ignore_unused_variable_warning(e);
                 post_sql = std::string(sql);
                 used_file = false;
             }
@@ -926,6 +922,7 @@ int main(int argc, char* argv[])
                 pre_block_sql = ReadSQLData(sql);
                 used_file = true;
             } catch (std::runtime_error const& e) {
+                boost::ignore_unused_variable_warning(e);
                 pre_block_sql = std::string(sql);
                 used_file = false;
             }
@@ -1203,7 +1200,6 @@ int main(int argc, char* argv[])
                      block_table_name,
                      nCommitInterval,
                      srid,
-                     precision,
                      pc_id,
                      bUseSolidGeometry,
                      bUse3d,
@@ -1218,7 +1214,6 @@ int main(int argc, char* argv[])
                             query, 
                             srid , 
                             precision, 
-                            bUseSolidGeometry,
                             bUse3d,
                             bSetExtents,
                             global_extent);
