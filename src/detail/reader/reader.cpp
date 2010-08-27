@@ -110,20 +110,17 @@ liblas::Point const& ReaderImpl::ReadNextPoint(HeaderPtr header)
     {
         m_ifs.clear();
         m_ifs.seekg(header->GetDataOffset(), std::ios::beg);
+        
+        m_point_reader->read();
+        ++m_current;
+        return m_point_reader->GetPoint();        
 
     }
 
     if (m_current < m_size)
     {
         m_point_reader->read();
-        
-        // PointPtr ptr = PointPtr(new liblas::Point(m_point_reader->GetPoint()));
-        // if (ptr.get() == 0) {
-        //     throw std::runtime_error("Unable to fetch point from reader");
-        // }
-        
         ++m_current;
-        // return ptr;
         return m_point_reader->GetPoint();
 
     } else if (m_current == m_size ){
@@ -170,7 +167,7 @@ void ReaderImpl::Seek(std::size_t n, HeaderPtr header)
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
     
-    m_current = n+1;
+    m_current = n;
 }
 
 // ReaderImpl* ReaderFactory::Create(std::istream& ifs)

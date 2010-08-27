@@ -62,7 +62,7 @@ namespace liblas
 {
 
 Reader::Reader(std::istream& ifs) :
-    m_pimpl(new detail::ReaderImpl(ifs)),
+    m_pimpl(new detail::CachedReaderImpl(ifs,3)),
     m_header(HeaderPtr()),
     m_point(0),
     m_empty_point(new Point()),
