@@ -104,7 +104,7 @@ private:
 class Dimension
 {
 public:
-    Dimension(std::string const& name) : m_name(name) {};
+    Dimension(std::string const& name, uint32_t size_in_bits) : m_name(name), m_bitsize(size_in_bits) {};
     
     std::string const& GetName() { return m_name; }
     
@@ -113,9 +113,14 @@ public:
     
     /// bytes, physical/serialisation size of record
     virtual std::size_t GetByteSize() const = 0;
+    
+    virtual bool IsRequired() const = 0;
+    
+    virtual void IsRequired(bool bRequired) = 0;
 private:
         
     std::string m_name;
+    boost::uint32_t m_bitsize;
 };
 
 template <typename T>

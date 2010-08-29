@@ -50,7 +50,7 @@ void OCIGDALErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
 void SetGDALErrorHandler(bool debug)
 {
     CPLPopErrorHandler();
-    if (verbose)
+    if (debug)
         CPLPushErrorHandler(OCIGDALDebugErrorHandler);
     else
         CPLPushErrorHandler(OCIGDALErrorHandler);
