@@ -741,8 +741,8 @@ int main(int argc, char* argv[])
     
     bool verbose = false;
     bool debug = false;
-    std::vector<liblas::FilterI*> filters;
-    std::vector<liblas::TransformI*> transforms;
+    std::vector<liblas::FilterPtr> filters;
+    std::vector<liblas::TransformPtr> transforms;
     
     liblas::Header header;
     
@@ -1279,16 +1279,6 @@ int main(int argc, char* argv[])
         }
 
         con->Commit();
-
-        for(std::vector<liblas::FilterI*>::iterator i=filters.begin(); i!=filters.end(); i++)
-        {
-            delete *i;
-        }
-            
-        for(std::vector<liblas::TransformI*>::iterator i=transforms.begin(); i!=transforms.end(); i++)
-        {
-            delete *i;
-        }
         
         delete reader2;
         delete istrm2;

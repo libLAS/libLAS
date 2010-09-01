@@ -50,6 +50,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/shared_ptr.hpp>
 // std
 #include <vector>
 #include <functional>
@@ -94,6 +95,8 @@ private:
 
     FilterType m_type;
 };
+
+typedef boost::shared_ptr<FilterI> FilterPtr;
 
 /// A filter for keeping or rejecting points that fall within a 
 /// specified bounds.

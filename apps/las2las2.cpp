@@ -99,8 +99,8 @@ liblas::Writer* start_writer(   std::ofstream* strm,
 bool process(   std::string const& input,
                 std::string const& output,
                 liblas::Header const& header,
-                std::vector<liblas::FilterI*>& filters,
-                std::vector<liblas::TransformI*>& transforms,
+                std::vector<liblas::FilterPtr>& filters,
+                std::vector<liblas::TransformPtr>& transforms,
                 boost::uint32_t split_size,
                 bool verbose)
 {
@@ -184,10 +184,6 @@ bool process(   std::string const& input,
     delete writer;
     delete ofs;
     
-    for(std::vector<liblas::FilterI*>::iterator i=filters.begin(); i!=filters.end(); i++)
-    {
-        delete *i;
-    }
     
     return true;
 }
@@ -209,8 +205,8 @@ int main(int argc, char* argv[])
     std::string output;
     
     bool verbose = false;
-    std::vector<liblas::FilterI*> filters;
-    std::vector<liblas::TransformI*> transforms;
+    std::vector<liblas::FilterPtr> filters;
+    std::vector<liblas::TransformPtr> transforms;
     
     liblas::Header header;
 

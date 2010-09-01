@@ -12,7 +12,7 @@ if (dash != std::string::npos) {
 return false;
 }
 
-liblas::FilterI*  MakeReturnFilter(std::string return_string, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr  MakeReturnFilter(std::string return_string, liblas::FilterI::FilterType ftype) 
 {
     boost::char_separator<char> sep(SEPARATORS);
 
@@ -24,11 +24,11 @@ liblas::FilterI*  MakeReturnFilter(std::string return_string, liblas::FilterI::F
 
     liblas::ReturnFilter* return_filter = new liblas::ReturnFilter(returns, false);
     return_filter->SetType(ftype);
-    return return_filter;
+    return liblas::FilterPtr(return_filter);
 }
 
 
-liblas::FilterI*  MakeClassFilter(std::string class_string, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr  MakeClassFilter(std::string class_string, liblas::FilterI::FilterType ftype) 
 {
     boost::char_separator<char> sep(SEPARATORS);
 
@@ -40,10 +40,10 @@ liblas::FilterI*  MakeClassFilter(std::string class_string, liblas::FilterI::Fil
 
     liblas::ClassificationFilter* class_filter = new liblas::ClassificationFilter(classes); 
     class_filter->SetType(ftype);
-    return class_filter;
+    return liblas::FilterPtr(class_filter);
 }
 
-liblas::FilterI*  MakeBoundsFilter(std::string bounds_string, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr  MakeBoundsFilter(std::string bounds_string, liblas::FilterI::FilterType ftype) 
 {
     boost::char_separator<char> sep(SEPARATORS);
     std::vector<double> vbounds;
@@ -74,38 +74,38 @@ liblas::FilterI*  MakeBoundsFilter(std::string bounds_string, liblas::FilterI::F
     }
     liblas::BoundsFilter* bounds_filter = new liblas::BoundsFilter(bounds);
     bounds_filter->SetType(ftype);
-    return bounds_filter;
+    return liblas::FilterPtr(bounds_filter);
 }
 
-liblas::FilterI*  MakeIntensityFilter(std::string intensities, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr  MakeIntensityFilter(std::string intensities, liblas::FilterI::FilterType ftype) 
 {
     liblas::ContinuousValueFilter<boost::uint16_t>::filter_func f = &liblas::Point::GetIntensity;
     liblas::ContinuousValueFilter<boost::uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<boost::uint16_t>(f, intensities);
     intensity_filter->SetType(ftype);
-    return intensity_filter;
+    return liblas::FilterPtr(intensity_filter);
 }
 
-liblas::FilterI*  MakeTimeFilter(std::string times, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeTimeFilter(std::string times, liblas::FilterI::FilterType ftype) 
 {
     liblas::ContinuousValueFilter<double>::filter_func f = &liblas::Point::GetTime;
     liblas::ContinuousValueFilter<double>* time_filter = new liblas::ContinuousValueFilter<double>(f, times);
     time_filter->SetType(ftype);
-    return time_filter;
+    return liblas::FilterPtr(time_filter);
 }
 
-liblas::FilterI*  MakeScanAngleFilter(std::string intensities, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeScanAngleFilter(std::string intensities, liblas::FilterI::FilterType ftype) 
 {
     liblas::ContinuousValueFilter<boost::int8_t>::filter_func f = &liblas::Point::GetScanAngleRank;
     liblas::ContinuousValueFilter<boost::int8_t>* intensity_filter = new liblas::ContinuousValueFilter<boost::int8_t>(f, intensities);
     intensity_filter->SetType(ftype);
-    return intensity_filter;
+    return liblas::FilterPtr(intensity_filter);
 }
 
-liblas::FilterI* MakeColorFilter(liblas::Color const& low, liblas::Color const& high, liblas::FilterI::FilterType ftype)
+liblas::FilterPtr MakeColorFilter(liblas::Color const& low, liblas::Color const& high, liblas::FilterI::FilterType ftype)
 {
     liblas::ColorFilter* filter = new liblas::ColorFilter(low, high);
     filter->SetType(ftype);
-    return filter;
+    return liblas::FilterPtr(filter);
 }
 
 po::options_description* GetFilteringOptions() 
@@ -152,9 +152,9 @@ po::options_description* GetTransformationOptions()
     return transform_options;
 }
 
-std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
+std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
 {
-    std::vector<liblas::FilterI*> filters;
+    std::vector<liblas::FilterPtr> filters;
     
     if (vm.count("keep-classes")) 
     {
@@ -162,7 +162,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
         if (verbose)
             std::cout << "Keeping classes with the values: " << classes << std::endl;
             
-        liblas::FilterI* class_filter = MakeClassFilter(  classes, 
+        liblas::FilterPtr class_filter = MakeClassFilter(  classes, 
                                                           liblas::FilterI::eInclusion);
         filters.push_back(class_filter); 
     }
@@ -173,7 +173,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
         if (verbose)
             std::cout << "Dropping classes with the values: " << classes << std::endl;
             
-        liblas::FilterI* class_filter = MakeClassFilter(  classes, 
+        liblas::FilterPtr class_filter = MakeClassFilter(  classes, 
                                                             liblas::FilterI::eExclusion);
         filters.push_back(class_filter);
     }
@@ -184,7 +184,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
         if (verbose)
             std::cout << "Keeping returns with the values: " << returns << std::endl;
             
-        liblas::FilterI* return_filter = MakeReturnFilter(  returns, 
+        liblas::FilterPtr return_filter = MakeReturnFilter(  returns, 
                                                             liblas::FilterI::eInclusion);
         filters.push_back(return_filter); 
     }
@@ -195,7 +195,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
         if (verbose)
             std::cout << "Dropping returns with the values: " << returns << std::endl;
             
-        liblas::FilterI* return_filter = MakeReturnFilter(  returns, 
+        liblas::FilterPtr return_filter = MakeReturnFilter(  returns, 
                                                             liblas::FilterI::eExclusion);
         filters.push_back(return_filter); 
     }
@@ -205,7 +205,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
         std::string bounds = vm["extent"].as< string >();
         if (verbose)
             std::cout << "Clipping file to the extent : " << bounds << std::endl;
-        liblas::FilterI* bounds_filter = MakeBoundsFilter(bounds, liblas::FilterI::eInclusion);
+        liblas::FilterPtr bounds_filter = MakeBoundsFilter(bounds, liblas::FilterI::eInclusion);
         filters.push_back(bounds_filter);
         
     }
@@ -221,12 +221,12 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
             std::string low = intensities.substr(0,dash);
             std::string high = intensities.substr(dash+1, intensities.size());
 
-            liblas::FilterI* lt_filter = MakeIntensityFilter(">="+low, liblas::FilterI::eInclusion);
+            liblas::FilterPtr lt_filter = MakeIntensityFilter(">="+low, liblas::FilterI::eInclusion);
             filters.push_back(lt_filter);
-            liblas::FilterI* gt_filter = MakeIntensityFilter("<="+high, liblas::FilterI::eInclusion);
+            liblas::FilterPtr gt_filter = MakeIntensityFilter("<="+high, liblas::FilterI::eInclusion);
             filters.push_back(gt_filter);                
         } else {
-            liblas::FilterI* intensity_filter = MakeIntensityFilter(intensities, liblas::FilterI::eInclusion);
+            liblas::FilterPtr intensity_filter = MakeIntensityFilter(intensities, liblas::FilterI::eInclusion);
             filters.push_back(intensity_filter);
             
         }
@@ -240,7 +240,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
         if (IsDualRangeFilter(intensities)) {
             throw std::runtime_error("Range filters are not supported for drop-intensity");
         } else {
-            liblas::FilterI* intensity_filter = MakeIntensityFilter(intensities, liblas::FilterI::eExclusion);
+            liblas::FilterPtr intensity_filter = MakeIntensityFilter(intensities, liblas::FilterI::eExclusion);
             filters.push_back(intensity_filter);   
         }
     }
@@ -256,12 +256,12 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
             std::string low = angles.substr(0,dash);
             std::string high = angles.substr(dash+1, angles.size());
 
-            liblas::FilterI* lt_filter = MakeScanAngleFilter(">="+low, liblas::FilterI::eInclusion);
+            liblas::FilterPtr lt_filter = MakeScanAngleFilter(">="+low, liblas::FilterI::eInclusion);
             filters.push_back(lt_filter);
-            liblas::FilterI* gt_filter = MakeScanAngleFilter("<="+high, liblas::FilterI::eInclusion);
+            liblas::FilterPtr gt_filter = MakeScanAngleFilter("<="+high, liblas::FilterI::eInclusion);
             filters.push_back(gt_filter);                
         } else {
-            liblas::FilterI* angle_filter = MakeScanAngleFilter(angles, liblas::FilterI::eInclusion);
+            liblas::FilterPtr angle_filter = MakeScanAngleFilter(angles, liblas::FilterI::eInclusion);
             filters.push_back(angle_filter);
             
         }
@@ -275,7 +275,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
         if (IsDualRangeFilter(angles)) {
             throw std::runtime_error("Range filters are not supported for drop-scan-angle");
         } else {
-            liblas::FilterI* angle_filter = MakeScanAngleFilter(angles, liblas::FilterI::eExclusion);
+            liblas::FilterPtr angle_filter = MakeScanAngleFilter(angles, liblas::FilterI::eExclusion);
             filters.push_back(angle_filter);   
         }
     }
@@ -292,12 +292,12 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
             std::string low = times.substr(0,dash);
             std::string high = times.substr(dash+1, times.size());
 
-            liblas::FilterI* lt_filter = MakeTimeFilter(">="+low, liblas::FilterI::eInclusion);
+            liblas::FilterPtr lt_filter = MakeTimeFilter(">="+low, liblas::FilterI::eInclusion);
             filters.push_back(lt_filter);
-            liblas::FilterI* gt_filter = MakeTimeFilter("<="+high, liblas::FilterI::eInclusion);
+            liblas::FilterPtr gt_filter = MakeTimeFilter("<="+high, liblas::FilterI::eInclusion);
             filters.push_back(gt_filter);                
         } else {
-            liblas::FilterI* time_filter = MakeTimeFilter(times, liblas::FilterI::eInclusion);
+            liblas::FilterPtr time_filter = MakeTimeFilter(times, liblas::FilterI::eInclusion);
             filters.push_back(time_filter);
             
         }
@@ -311,7 +311,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
         if (IsDualRangeFilter(times)) {
             throw std::runtime_error("Range filters are not supported for drop-time");
         } else {
-            liblas::FilterI* time_filter = MakeTimeFilter(times, liblas::FilterI::eExclusion);
+            liblas::FilterPtr time_filter = MakeTimeFilter(times, liblas::FilterI::eExclusion);
             filters.push_back(time_filter);   
         }
     }
@@ -339,7 +339,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
             colors.push_back(color);
         }
         
-        liblas::FilterI* color_filter = MakeColorFilter(colors[0], colors[1], liblas::FilterI::eInclusion);
+        liblas::FilterPtr color_filter = MakeColorFilter(colors[0], colors[1], liblas::FilterI::eInclusion);
         filters.push_back(color_filter);
     }
     if (vm.count("drop-color")) 
@@ -365,7 +365,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
             colors.push_back(color);
         }
         
-        liblas::FilterI* color_filter = MakeColorFilter(colors[0], colors[1], liblas::FilterI::eExclusion);
+        liblas::FilterPtr color_filter = MakeColorFilter(colors[0], colors[1], liblas::FilterI::eExclusion);
         filters.push_back(color_filter);
     }
 
@@ -376,7 +376,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
             if (verbose)
                 std::cout << "Thining file by keeping every "<<thin<<"'th point "  << std::endl;
             
-            liblas::ThinFilter* thin_filter = new liblas::ThinFilter(thin);
+            liblas::FilterPtr thin_filter = liblas::FilterPtr(new liblas::ThinFilter(thin));
             filters.push_back(thin_filter);    
         }
     }
@@ -392,7 +392,7 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
         if (verbose)
             std::cout << "Keeping last returns only."  << std::endl;
         std::vector<boost::uint16_t> returns;
-        liblas::ReturnFilter* last_filter = new liblas::ReturnFilter(returns, true);
+        liblas::FilterPtr last_filter = liblas::FilterPtr(new liblas::ReturnFilter(returns, true));
         filters.push_back(last_filter);
     }
 
@@ -401,23 +401,23 @@ std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose)
             std::cout << "Keeping first returns only."  << std::endl;
         std::vector<boost::uint16_t> returns;
         returns.push_back(1);
-        liblas::ReturnFilter* return_filter = new liblas::ReturnFilter(returns, false);
+        liblas::FilterPtr return_filter = liblas::FilterPtr(new liblas::ReturnFilter(returns, false));
         filters.push_back(return_filter);
     }
     
     if (vm.count("valid_only")){
         if (verbose)
             std::cout << "Keeping valid points only."  << std::endl;
-        liblas::ValidationFilter* valid_filter = new liblas::ValidationFilter();
+        liblas::FilterPtr valid_filter = liblas::FilterPtr(new liblas::ValidationFilter());
         filters.push_back(valid_filter);            
     }
 
     return filters;
 }
 
-std::vector<liblas::TransformI*> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header)
+std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header)
 {
-    std::vector<liblas::TransformI*> transforms;
+    std::vector<liblas::TransformPtr> transforms;
 
     if (vm.count("a_srs")) 
     {
@@ -461,7 +461,7 @@ std::vector<liblas::TransformI*> GetTransforms(po::variables_map vm, bool verbos
         liblas::Bounds<double> b = header.GetExtent();
         b.project(in_ref, out_ref);
         header.SetExtent(b);
-        liblas::TransformI* srs_transform = new liblas::ReprojectionTransform(in_ref, out_ref);
+        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref));
         transforms.push_back(srs_transform);
     }
 

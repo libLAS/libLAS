@@ -48,6 +48,7 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lastransform.hpp>
+#include <liblas/lasfilter.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 // boost
 #include <boost/cstdint.hpp>
@@ -141,12 +142,12 @@ public:
     /// @excepion may throw std::exception
     Point const& operator[](std::size_t n);
     
-    /// Sets filters that are used to determine wither or not to 
+    /// Sets filters that are used to determine whether or not to 
     /// keep a point that was read from the file.  Filters have *no* 
     /// effect for reading data at specific locations in the file.  
     /// They only affect reading ReadNextPoint-style operations
     /// Filters are applied *before* transforms.
-    void SetFilters(std::vector<liblas::FilterI*> const& filters) {m_filters = filters;}
+    void SetFilters(std::vector<liblas::FilterPtr> const& filters) {m_filters = filters;}
 
     /// Sets transforms to apply to points.  Points are transformed in 
     /// place *in the order* of the transform list.
@@ -156,7 +157,7 @@ public:
     /// special case.  You can define your own reprojection transforms and add 
     /// it to the list, but be sure to not issue a SetOutputSRS to trigger 
     /// the internal transform creation
-    void SetTransforms(std::vector<liblas::TransformI*> const& transforms) {m_transforms = transforms;}
+    void SetTransforms(std::vector<liblas::TransformPtr> const& transforms) {m_transforms = transforms;}
 
     liblas::property_tree::ptree Summarize();
 private:
@@ -179,8 +180,8 @@ private:
     // read from the istream
     bool bCustomHeader;
     
-    std::vector<liblas::FilterI*> m_filters;
-    std::vector<liblas::TransformI*> m_transforms;
+    std::vector<liblas::FilterPtr> m_filters;
+    std::vector<liblas::TransformPtr> m_transforms;
 
     TransformPtr m_reprojection_transform;
 

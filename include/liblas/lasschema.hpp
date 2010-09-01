@@ -57,56 +57,6 @@
 
 namespace liblas {  
 
-// class Schema
-// {
-// public:
-// 
-//     Schema(boost::uint8_t major, boost::uint8_t minor, boost::uint16_t size);
-//     Schema(boost::uint8_t major, boost::uint8_t minor, boost::uint16_t size, bool bColor, bool bTime);
-// 
-//     Schema& operator=(Schema const& rhs);
-//     Schema(Schema const& other);
-//     
-//     ~Schema() {};
-// 
-//     /// Fetch byte size
-//     boost::uint16_t GetByteSize() const;
-// 
-//     /// Set the total byte size of the point record
-//     void SetByteSize(boost::uint16_t const& value);
-// 
-//     /// Get the base size (only accounting for Time, Color, etc )
-//     /// This is equivalent to the point format's base byte size
-//     boost::uint16_t GetBaseByteSize() const;
-//     
-//     boost::uint8_t GetVersionMajor() const; 
-//     void SetVersionMajor(boost::uint8_t const& value);
-//     
-//     boost::uint8_t GetVersionMinor() const;
-//     void SetVersionMinor(boost::uint8_t const& value);
-// 
-//     bool HasColor() const;
-//     void Color(bool const& bColor); // updatesize(); }
-//     bool HasTime() const; 
-//     void Time(bool const& bTime); // {m_hasTime = bTime; updatesize(); }
-//   
-// protected:
-//     
-//     boost::uint16_t m_size;
-//     boost::uint8_t m_versionminor;
-//     boost::uint8_t m_versionmajor;
-// 
-//     bool m_hasColor;
-//     bool m_hasTime;
-//     
-//     boost::uint16_t m_base_size;
-// 
-// private:
-//     void updatesize();
-//     void updatesize(boost::uint16_t new_size);
-//     boost::uint16_t calculate_base_size();
-// };
-
 class DimensionI;
 typedef boost::shared_ptr<DimensionI> DimensionPtr;
 

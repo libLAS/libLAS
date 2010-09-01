@@ -69,20 +69,20 @@ typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
 bool IsDualRangeFilter(std::string parse_string) ;
 
-liblas::FilterI* MakeReturnFilter(std::string return_string, liblas::FilterI::FilterType ftype) ;
-liblas::FilterI* MakeClassFilter(std::string class_string, liblas::FilterI::FilterType ftype) ;
-liblas::FilterI* MakeBoundsFilter(std::string bounds_string, liblas::FilterI::FilterType ftype) ;
-liblas::FilterI* MakeIntensityFilter(std::string intensities, liblas::FilterI::FilterType ftype) ;
-liblas::FilterI* MakeTimeFilter(std::string times, liblas::FilterI::FilterType ftype) ;
-liblas::FilterI* MakeScanAngleFilter(std::string intensities, liblas::FilterI::FilterType ftype) ;
-liblas::FilterI* MakeColorFilter(liblas::Color const& low, liblas::Color const& high, liblas::FilterI::FilterType ftype); 
+liblas::FilterPtr MakeReturnFilter(std::string return_string, liblas::FilterI::FilterType ftype) ;
+liblas::FilterPtr MakeClassFilter(std::string class_string, liblas::FilterI::FilterType ftype) ;
+liblas::FilterPtr MakeBoundsFilter(std::string bounds_string, liblas::FilterI::FilterType ftype) ;
+liblas::FilterPtr MakeIntensityFilter(std::string intensities, liblas::FilterI::FilterType ftype) ;
+liblas::FilterPtr MakeTimeFilter(std::string times, liblas::FilterI::FilterType ftype) ;
+liblas::FilterPtr MakeScanAngleFilter(std::string intensities, liblas::FilterI::FilterType ftype) ;
+liblas::FilterPtr MakeColorFilter(liblas::Color const& low, liblas::Color const& high, liblas::FilterI::FilterType ftype); 
 
 
 po::options_description* GetFilteringOptions();
 po::options_description* GetTransformationOptions();
 
-std::vector<liblas::FilterI*> GetFilters(po::variables_map vm, bool verbose);
-std::vector<liblas::TransformI*> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header);
+std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose);
+std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header);
 
 // boost::property_tree::ptree SummarizePoints(liblas::Reader& reader );
 // boost::property_tree::ptree SummarizeHeader(liblas::Header const& header );
