@@ -1069,19 +1069,19 @@ LAS_DLL boost::uint16_t LASHeader_GetDataRecordLength(const LASHeaderH hHeader) 
     return value;
 }
 
-LAS_DLL LASErrorEnum LASHeader_SetDataRecordLength(const LASHeaderH hHeader, boost::uint16_t value){
-    VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetDataRecordLength", LE_Failure);
-
-    try {
-        ((liblas::Header*) hHeader)->SetDataRecordLength(value);    
-    } catch (std::exception const& e)
-    {
-        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetDataRecordLength");
-        return LE_Failure;
-    }
- 
-    return LE_None;    
-}
+// LAS_DLL LASErrorEnum LASHeader_SetDataRecordLength(const LASHeaderH hHeader, boost::uint16_t value){
+//     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetDataRecordLength", LE_Failure);
+// 
+//     try {
+//         ((liblas::Header*) hHeader)->SetDataRecordLength(value);    
+//     } catch (std::exception const& e)
+//     {
+//         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetDataRecordLength");
+//         return LE_Failure;
+//     }
+//  
+//     return LE_None;    
+// }
 
 
 LAS_DLL boost::uint32_t LASHeader_GetPointRecordsByReturnCount(const LASHeaderH hHeader, int index) {
@@ -2061,153 +2061,153 @@ LAS_DLL void LASString_Free(char* string) {
 }
 
 
-LAS_DLL LASSchemaH LASSchema_Create(  boost::uint8_t version_major,
-                                                boost::uint8_t version_minor,
-                                                boost::uint16_t size,
-                                                boost::uint8_t bHasColor,
-                                                boost::uint8_t bHasTime) {
-    liblas::Schema* schema = new liblas::Schema(version_major, 
-                                                version_minor, 
-                                                size, 
-                                                bHasColor != 0, 
-                                                bHasTime != 0 );
-    return (LASSchemaH) schema;
-}
-
-LAS_DLL boost::uint8_t LASSchema_GetVersionMinor( LASSchemaH hFormat)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_GetVersionMinor", 0);
-    
-    return ((liblas::Schema*) hFormat)->GetVersionMinor();    
-}
-
-LAS_DLL LASErrorEnum LASSchema_SetVersionMinor( LASSchemaH hFormat, boost::uint8_t nMinor)
-{
-
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_SetVersionMinor", LE_Failure);
-
-    try {
-        liblas::Schema* format = ((liblas::Schema*) hFormat);
-        format->SetVersionMinor(nMinor);
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASSchema_SetVersionMinor");
-        return LE_Failure;
-    }
-    
-    return LE_None;
-}
-
-LAS_DLL boost::uint8_t LASSchema_GetVersionMajor( LASSchemaH hFormat)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_GetVersionMajor", 0);
-    
-    return ((liblas::Schema*) hFormat)->GetVersionMajor();    
-}
-
-LAS_DLL LASErrorEnum LASSchema_SetVersionMajor( LASSchemaH hFormat, boost::uint8_t nMajor)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_SetVersionMajor", LE_Failure);
-
-    try {
-        liblas::Schema* format = ((liblas::Schema*) hFormat);
-        format->SetVersionMajor(nMajor);
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASSchema_SetVersionMajor");
-        return LE_Failure;
-    }
-    
-    return LE_None;
-}
-
-LAS_DLL boost::uint8_t LASSchema_HasColor( LASSchemaH hFormat)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_HasColor", 0);
-    
-    return static_cast<int>(((liblas::Schema*) hFormat)->HasColor());    
-}
-
-LAS_DLL LASErrorEnum LASSchema_SetColor( LASSchemaH hFormat, boost::uint8_t bColor)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_SetColor", LE_Failure);
-
-    try {
-        liblas::Schema* format = ((liblas::Schema*) hFormat);
-        format->Color(bColor != 0);
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASSchema_SetColor");
-        return LE_Failure;
-    }
-    
-    return LE_None;
-}
-
-LAS_DLL boost::uint8_t LASSchema_HasTime( LASSchemaH hFormat)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_HasTime", 0);
-    
-    return static_cast<int>(((liblas::Schema*) hFormat)->HasTime());    
-}
-
-LAS_DLL LASErrorEnum LASSchema_SetTime( LASSchemaH hFormat, boost::uint8_t bTime)
-{
-
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_SetTime", LE_Failure);
-
-    try {
-        liblas::Schema* format = ((liblas::Schema*) hFormat);
-        format->Time(bTime != 0);
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASSchema_SetTime");
-        return LE_Failure;
-    }
-    
-    return LE_None;
-
-}
-
-LAS_DLL boost::uint16_t LASSchema_GetByteSize( LASSchemaH hFormat)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_GetByteSize", 0);
-    
-    liblas::Schema* format = ((liblas::Schema*) hFormat);
-    return format->GetByteSize();    
-}
-
-LAS_DLL LASErrorEnum LASSchema_SetByteSize( LASSchemaH hFormat, boost::uint16_t size)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_SetByteSize", LE_Failure);
-
-    try {
-        liblas::Schema* format = ((liblas::Schema*) hFormat);
-        format->SetByteSize(size);
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASSchema_SetByteSize");
-        return LE_Failure;
-    }
-    
-    return LE_None;
-
-}
-
-LAS_DLL boost::uint16_t LASSchema_GetBaseByteSize( LASSchemaH hFormat)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_GetBaseByteSize", 0);
-    
-    liblas::Schema* format = ((liblas::Schema*) hFormat);
-    return format->GetBaseByteSize();    
-}
-
-
-LAS_DLL void LASSchema_Destroy(LASSchemaH hFormat) {
-    VALIDATE_LAS_POINTER0(hFormat, "LASSchema_Destroy");
-    delete (liblas::Schema*) hFormat;
-    hFormat = NULL;    
-}
+// LAS_DLL LASSchemaH LASSchema_Create(  boost::uint8_t version_major,
+//                                                 boost::uint8_t version_minor,
+//                                                 boost::uint16_t size,
+//                                                 boost::uint8_t bHasColor,
+//                                                 boost::uint8_t bHasTime) {
+//     liblas::Schema* schema = new liblas::Schema(version_major, 
+//                                                 version_minor, 
+//                                                 size, 
+//                                                 bHasColor != 0, 
+//                                                 bHasTime != 0 );
+//     return (LASSchemaH) schema;
+// }
+// 
+// LAS_DLL boost::uint8_t LASSchema_GetVersionMinor( LASSchemaH hFormat)
+// {
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_GetVersionMinor", 0);
+//     
+//     return ((liblas::Schema*) hFormat)->GetVersionMinor();    
+// }
+// 
+// LAS_DLL LASErrorEnum LASSchema_SetVersionMinor( LASSchemaH hFormat, boost::uint8_t nMinor)
+// {
+// 
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_SetVersionMinor", LE_Failure);
+// 
+//     try {
+//         liblas::Schema* format = ((liblas::Schema*) hFormat);
+//         format->SetVersionMinor(nMinor);
+//     }
+//     catch (std::exception const& e) {
+//         LASError_PushError(LE_Failure, e.what(), "LASSchema_SetVersionMinor");
+//         return LE_Failure;
+//     }
+//     
+//     return LE_None;
+// }
+// 
+// LAS_DLL boost::uint8_t LASSchema_GetVersionMajor( LASSchemaH hFormat)
+// {
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_GetVersionMajor", 0);
+//     
+//     return ((liblas::Schema*) hFormat)->GetVersionMajor();    
+// }
+// 
+// LAS_DLL LASErrorEnum LASSchema_SetVersionMajor( LASSchemaH hFormat, boost::uint8_t nMajor)
+// {
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_SetVersionMajor", LE_Failure);
+// 
+//     try {
+//         liblas::Schema* format = ((liblas::Schema*) hFormat);
+//         format->SetVersionMajor(nMajor);
+//     }
+//     catch (std::exception const& e) {
+//         LASError_PushError(LE_Failure, e.what(), "LASSchema_SetVersionMajor");
+//         return LE_Failure;
+//     }
+//     
+//     return LE_None;
+// }
+// 
+// LAS_DLL boost::uint8_t LASSchema_HasColor( LASSchemaH hFormat)
+// {
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_HasColor", 0);
+//     
+//     return static_cast<int>(((liblas::Schema*) hFormat)->HasColor());    
+// }
+// 
+// LAS_DLL LASErrorEnum LASSchema_SetColor( LASSchemaH hFormat, boost::uint8_t bColor)
+// {
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_SetColor", LE_Failure);
+// 
+//     try {
+//         liblas::Schema* format = ((liblas::Schema*) hFormat);
+//         format->Color(bColor != 0);
+//     }
+//     catch (std::exception const& e) {
+//         LASError_PushError(LE_Failure, e.what(), "LASSchema_SetColor");
+//         return LE_Failure;
+//     }
+//     
+//     return LE_None;
+// }
+// 
+// LAS_DLL boost::uint8_t LASSchema_HasTime( LASSchemaH hFormat)
+// {
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_HasTime", 0);
+//     
+//     return static_cast<int>(((liblas::Schema*) hFormat)->HasTime());    
+// }
+// 
+// LAS_DLL LASErrorEnum LASSchema_SetTime( LASSchemaH hFormat, boost::uint8_t bTime)
+// {
+// 
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_SetTime", LE_Failure);
+// 
+//     try {
+//         liblas::Schema* format = ((liblas::Schema*) hFormat);
+//         format->Time(bTime != 0);
+//     }
+//     catch (std::exception const& e) {
+//         LASError_PushError(LE_Failure, e.what(), "LASSchema_SetTime");
+//         return LE_Failure;
+//     }
+//     
+//     return LE_None;
+// 
+// }
+// 
+// LAS_DLL boost::uint16_t LASSchema_GetByteSize( LASSchemaH hFormat)
+// {
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_GetByteSize", 0);
+//     
+//     liblas::Schema* format = ((liblas::Schema*) hFormat);
+//     return format->GetByteSize();    
+// }
+// 
+// LAS_DLL LASErrorEnum LASSchema_SetByteSize( LASSchemaH hFormat, boost::uint16_t size)
+// {
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_SetByteSize", LE_Failure);
+// 
+//     try {
+//         liblas::Schema* format = ((liblas::Schema*) hFormat);
+//         format->SetByteSize(size);
+//     }
+//     catch (std::exception const& e) {
+//         LASError_PushError(LE_Failure, e.what(), "LASSchema_SetByteSize");
+//         return LE_Failure;
+//     }
+//     
+//     return LE_None;
+// 
+// }
+// 
+// LAS_DLL boost::uint16_t LASSchema_GetBaseByteSize( LASSchemaH hFormat)
+// {
+//     VALIDATE_LAS_POINTER1(hFormat, "LASSchema_GetBaseByteSize", 0);
+//     
+//     liblas::Schema* format = ((liblas::Schema*) hFormat);
+//     return format->GetBaseByteSize();    
+// }
+// 
+// 
+// LAS_DLL void LASSchema_Destroy(LASSchemaH hFormat) {
+//     VALIDATE_LAS_POINTER0(hFormat, "LASSchema_Destroy");
+//     delete (liblas::Schema*) hFormat;
+//     hFormat = NULL;    
+// }
 
 LAS_DLL LASSchemaH LASHeader_GetSchema( LASHeaderH hHeader )
 {
