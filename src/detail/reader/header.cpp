@@ -190,7 +190,13 @@ void Header::read()
     
     // 18. Point Data Record Length
     read_n(n2, m_ifs, sizeof(n2));
-    m_header->SetDataRecordLength(n2);
+    // FIXME: We currently only use the DataFormatId, this needs to 
+    // adjust the schema based on the difference between the DataRecordLength
+    // and the base size of the pointformat.  If we have an XML schema in the 
+    // form of a VLR in the file, we'll use that to apportion the liblas::Schema.
+    // Otherwise, all bytes after the liblas::Schema::GetBaseByteSize will be 
+    // a simple uninterpreted byte field. 
+    // m_header->SetDataRecordLength(n2);
 
     // 19. Number of point records
     read_n(n4, m_ifs, sizeof(n4));

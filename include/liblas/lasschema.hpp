@@ -42,102 +42,191 @@
 #ifndef LIBLAS_SCHEMA_HPP_INCLUDED
 #define LIBLAS_SCHEMA_HPP_INCLUDED
 
+#include <liblas/lasversion.hpp>
+
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/any.hpp>
+#include <boost/shared_ptr.hpp>
+
 // std
 #include <iosfwd>
 #include <limits>
 #include <string>
+#include <vector>
 
 namespace liblas {  
+
+// class Schema
+// {
+// public:
+// 
+//     Schema(boost::uint8_t major, boost::uint8_t minor, boost::uint16_t size);
+//     Schema(boost::uint8_t major, boost::uint8_t minor, boost::uint16_t size, bool bColor, bool bTime);
+// 
+//     Schema& operator=(Schema const& rhs);
+//     Schema(Schema const& other);
+//     
+//     ~Schema() {};
+// 
+//     /// Fetch byte size
+//     boost::uint16_t GetByteSize() const;
+// 
+//     /// Set the total byte size of the point record
+//     void SetByteSize(boost::uint16_t const& value);
+// 
+//     /// Get the base size (only accounting for Time, Color, etc )
+//     /// This is equivalent to the point format's base byte size
+//     boost::uint16_t GetBaseByteSize() const;
+//     
+//     boost::uint8_t GetVersionMajor() const; 
+//     void SetVersionMajor(boost::uint8_t const& value);
+//     
+//     boost::uint8_t GetVersionMinor() const;
+//     void SetVersionMinor(boost::uint8_t const& value);
+// 
+//     bool HasColor() const;
+//     void Color(bool const& bColor); // updatesize(); }
+//     bool HasTime() const; 
+//     void Time(bool const& bTime); // {m_hasTime = bTime; updatesize(); }
+//   
+// protected:
+//     
+//     boost::uint16_t m_size;
+//     boost::uint8_t m_versionminor;
+//     boost::uint8_t m_versionmajor;
+// 
+//     bool m_hasColor;
+//     bool m_hasTime;
+//     
+//     boost::uint16_t m_base_size;
+// 
+// private:
+//     void updatesize();
+//     void updatesize(boost::uint16_t new_size);
+//     boost::uint16_t calculate_base_size();
+// };
+
+class DimensionI;
+typedef boost::shared_ptr<DimensionI> DimensionPtr;
 
 class Schema
 {
 public:
-
-    Schema(boost::uint8_t major, boost::uint8_t minor, boost::uint16_t size);
-    Schema(boost::uint8_t major, boost::uint8_t minor, boost::uint16_t size, bool bColor, bool bTime);
-
+    
+    // Schema();
+    Schema(PointFormatName data_format_id);
     Schema& operator=(Schema const& rhs);
     Schema(Schema const& other);
+
     
     ~Schema() {};
 
     /// Fetch byte size
-    boost::uint16_t GetByteSize() const;
+    boost::uint32_t GetByteSize() const;
 
-    /// Set value of the red image channel 
-    void SetByteSize(boost::uint16_t const& value);
+    boost::uint32_t GetSize() const;
 
     /// Get the base size (only accounting for Time, Color, etc )
-    boost::uint16_t GetBaseByteSize() const;
-    
-    boost::uint8_t GetVersionMajor() const; 
-    void SetVersionMajor(boost::uint8_t const& value);
-    
-    boost::uint8_t GetVersionMinor() const;
-    void SetVersionMinor(boost::uint8_t const& value);
+    boost::uint32_t GetBaseByteSize() const;
 
+
+    PointFormatName GetDataFormatId() const { return m_data_format_id; }
+    void SetDataFormatId(PointFormatName const& value);//{ m_data_format_id = value; }
+    
     bool HasColor() const;
-    void Color(bool const& bColor); // updatesize(); }
+    // void Color(bool const& bColor); 
     bool HasTime() const; 
-    void Time(bool const& bTime); // {m_hasTime = bTime; updatesize(); }
+    // void Time(bool const& bTime);
+    
+    void AddDimension(boost::shared_ptr<DimensionI> dim);
+    boost::shared_ptr<DimensionI> GetDimension(std::string const& name) const;
+    void RemoveDimension(DimensionPtr dim);
+    
+    std::vector<std::string> GetDimensionNames() const;
   
 protected:
     
     boost::uint16_t m_size;
-    boost::uint8_t m_versionminor;
-    boost::uint8_t m_versionmajor;
-
-    bool m_hasColor;
-    bool m_hasTime;
-    
-    boost::uint16_t m_base_size;
+    PointFormatName m_data_format_id;
 
 private:
-    void updatesize();
-    void updatesize(boost::uint16_t new_size);
-    boost::uint16_t calculate_base_size();
+
+
+    
+    std::vector<DimensionPtr> m_dimensions;    
+    
+    
+    void add_record0_dimensions();
+    void add_time();
+    void add_color();
+    void update_required_dimensions(PointFormatName data_format_id);
 };
 
-class Dimension
+
+class DimensionI
 {
 public:
-    Dimension(std::string const& name, uint32_t size_in_bits) : m_name(name), m_bitsize(size_in_bits) {};
+    DimensionI(std::string const& name, boost::uint32_t size_in_bits) : 
+        m_name(name), 
+        m_bitsize(size_in_bits) 
+    {};
     
+    virtual ~DimensionI() {};
+        
     std::string const& GetName() { return m_name; }
     
     /// bits, logical size of point record
-    virtual std::size_t GetSize() const = 0;
+    std::size_t GetSize() const 
+    {
+        return m_bitsize;
+    }
     
     /// bytes, physical/serialisation size of record
-    virtual std::size_t GetByteSize() const = 0;
+    std::size_t GetByteSize() const 
+    {
+        return m_bitsize / 8;
+    }    
     
-    virtual bool IsRequired() const = 0;
+    /// Is this dimension required by PointFormatName
+    bool IsRequired() const { return m_required; }
+    void IsRequired(bool v) { m_required = v; }
+
+    bool IsActive() const { return m_active; }
+    void IsActive(bool v) { m_active = v; }
+
+    std::string GetDescription() const { return m_description; }
+    void SetDescription(std::string const& v) { m_description = v; }
+
+
     
-    virtual void IsRequired(bool bRequired) = 0;
 private:
         
     std::string m_name;
     boost::uint32_t m_bitsize;
+    bool m_required;
+    bool m_active;
+    std::string m_description;
 };
 
 template <typename T>
-class NumericDimension : public Dimension
+class NumericDimension : public DimensionI
 {
 public:
 
-    NumericDimension(T type, std::string const& name ) : Dimension(name),
-        m_max(std::numeric_limits<T>::max()),
+    NumericDimension(std::string const& name, 
+                     T type, 
+                     boost::uint32_t size_in_bits ) : 
+        DimensionI(name, size_in_bits),
         m_min(std::numeric_limits<T>::min()),
+        m_max(std::numeric_limits<T>::max()),
         m_type(type)
     {
         
     };
 
     NumericDimension& operator=(NumericDimension const& rhs);
-    NumericDimension(Dimension const& other);
+    NumericDimension(DimensionI const& other);
     
     ~NumericDimension() {};
 
@@ -148,17 +237,7 @@ public:
     T const& GetMax() { return m_max; }
     void SetMin(T const& min) { m_min = min; }
 
-    /// bits, logical size of point record
-    std::size_t GetSize() const 
-    {
-        return sizeof(m_type) * 8;
-    }
-    
-    /// bytes, physical/serialisation size of record
-    std::size_t GetByteSize() const 
-    {
-        return sizeof(m_type);
-    }    
+
  
 
 private:
@@ -168,7 +247,25 @@ private:
 
     
     T m_type;
+};
+
+
+class ByteDimension : public DimensionI
+{
+public:
+
+    ByteDimension(std::string const& name, 
+                     boost::uint32_t size_in_bits ) : 
+        DimensionI(name, size_in_bits)
+    {
+        
+    };
+
+    ByteDimension& operator=(ByteDimension const& rhs);
+    ByteDimension(DimensionI const& other);
+    
 };    
+
 } // namespace liblas
 
 #endif // LIBLAS_SCHEMA_HPP_INCLUDED

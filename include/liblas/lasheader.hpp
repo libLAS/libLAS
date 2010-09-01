@@ -45,7 +45,6 @@
 
 #include <liblas/guid.hpp>
 #include <liblas/lasbounds.hpp>
-#include <liblas/lasheader.hpp>
 #include <liblas/lasschema.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lasvariablerecord.hpp>
@@ -237,10 +236,10 @@ public:
     /// \todo To be documented
     boost::uint16_t GetDataRecordLength() const;
 
-    /// Set the length of the point format.  Evidently, there are 
-    /// LAS files in the wild that contain point formats of sizes that 
-    /// are different than the prescribed set specified in the specification.
-    void SetDataRecordLength(boost::uint16_t v);
+    // /// Set the length of the point format.  Evidently, there are 
+    // /// LAS files in the wild that contain point formats of sizes that 
+    // /// are different than the prescribed set specified in the specification.
+    // void SetDataRecordLength(boost::uint16_t v);
     
     /// Get total number of point records stored in the LAS file.
     boost::uint32_t GetPointRecordsCount() const;
@@ -372,7 +371,7 @@ private:
     //
     void Init();
     void ClearGeoKeyVLRs();
-    void UpdateSchema();
+    // void UpdateSchema();
 
     //
     // Private data members
@@ -393,8 +392,8 @@ private:
     boost::uint16_t m_headerSize;
     boost::uint32_t m_dataOffset;
     boost::uint32_t m_recordsCount;
-    boost::uint8_t m_dataFormatId;
-    boost::uint16_t m_dataRecordLen;
+    // PointFormatName m_dataFormatId;
+    // boost::uint16_t m_dataRecordLen;
     boost::uint32_t m_pointRecordsCount;
     RecordsByReturnArray m_pointRecordsByReturn;
     PointScales m_scales;

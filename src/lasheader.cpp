@@ -65,7 +65,7 @@ char const* const Header::FileSignature = "LASF";
 char const* const Header::SystemIdentifier = "libLAS";
 char const* const Header::SoftwareIdentifier = "libLAS 1.2";
 
-Header::Header() : m_format(1,2,0, false, false)
+Header::Header() : m_format(ePointFormat0)
 {
     Init();
 }
@@ -83,8 +83,8 @@ Header::Header(Header const& other) :
     m_headerSize(other.m_headerSize),
     m_dataOffset(other.m_dataOffset),
     m_recordsCount(other.m_recordsCount),
-    m_dataFormatId(other.m_dataFormatId),
-    m_dataRecordLen(other.m_dataRecordLen),
+    // m_dataFormatId(other.m_dataFormatId),
+    // m_dataRecordLen(other.m_dataRecordLen),
     m_pointRecordsCount(other.m_pointRecordsCount),
     m_scales(other.m_scales),
     m_offsets(other.m_offsets),
@@ -135,8 +135,8 @@ Header& Header::operator=(Header const& rhs)
         m_dataOffset = rhs.m_dataOffset;
         m_recordsCount = rhs.m_recordsCount;
 //        m_recordsCount = 0;
-        m_dataFormatId = rhs.m_dataFormatId;
-        m_dataRecordLen = rhs.m_dataRecordLen;
+        // m_dataFormatId = rhs.m_dataFormatId;
+        // m_dataRecordLen = rhs.m_dataRecordLen;
         m_pointRecordsCount = rhs.m_pointRecordsCount;
         
         std::vector<uint32_t>(rhs.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
@@ -173,8 +173,8 @@ bool Header::operator==(Header const& other) const
     if (m_headerSize != other.m_headerSize) return false;
     if (m_dataOffset != other.m_dataOffset) return false;
     if (m_recordsCount != other.m_recordsCount) return false;
-    if (m_dataFormatId != other.m_dataFormatId) return false;
-    if (m_dataRecordLen != other.m_dataRecordLen) return false;
+    // if (m_dataFormatId != other.m_dataFormatId) return false;
+    // if (m_dataRecordLen != other.m_dataRecordLen) return false;
     if (m_pointRecordsCount != other.m_pointRecordsCount) return false;
     if (m_pointRecordsByReturn != other.m_pointRecordsByReturn) return false;
     if (m_scales != other.m_scales) return false;
@@ -234,7 +234,7 @@ void Header::SetProjectId(guid const& v)
 
 uint8_t Header::GetVersionMajor() const
 {
-    return m_format.GetVersionMajor();
+    return m_versionMajor;
 }
 
 void Header::SetVersionMajor(uint8_t v)
@@ -242,12 +242,12 @@ void Header::SetVersionMajor(uint8_t v)
     if (eVersionMajorMin > v || v > eVersionMajorMax)
         throw std::out_of_range("version major out of range");
 
-    m_format.SetVersionMajor(v);
+    m_versionMajor = v;
 }
 
 uint8_t Header::GetVersionMinor() const
 {
-    return m_format.GetVersionMinor();
+    return m_versionMinor;
 }
 
 void Header::SetVersionMinor(uint8_t v)
@@ -255,7 +255,7 @@ void Header::SetVersionMinor(uint8_t v)
     if (v > eVersionMinorMax)
         throw std::out_of_range("version minor out of range");
     
-    m_format.SetVersionMinor(v);
+    m_versionMinor = v;
 
 
 }
@@ -381,32 +381,36 @@ void Header::SetRecordsCount(uint32_t v)
 
 liblas::PointFormatName Header::GetDataFormatId() const
 {
-    if (ePointFormat0 == m_dataFormatId)
-        return ePointFormat0;
-    else if (ePointFormat1 == m_dataFormatId)
-        return ePointFormat1;
-    else if (ePointFormat2 == m_dataFormatId)
-        return ePointFormat2;
-    else
-        return ePointFormat3;
+    return m_format.GetDataFormatId();
+    // if (ePointFormat0 == m_dataFormatId)
+    //     return ePointFormat0;
+    // else if (ePointFormat1 == m_dataFormatId)
+    //     return ePointFormat1;
+    // else if (ePointFormat2 == m_dataFormatId)
+    //     return ePointFormat2;
+    // else
+    //     return ePointFormat3;
 }
 
 void Header::SetDataFormatId(liblas::PointFormatName v)
 {
-    m_dataFormatId = static_cast<uint8_t>(v);
-
-    UpdateSchema();
+    m_format.SetDataFormatId(v);
     
-    if (ePointFormat0 == m_dataFormatId)
-        SetDataRecordLength(ePointSize0);
-    else if (ePointFormat1 == m_dataFormatId) 
-        SetDataRecordLength(ePointSize1);
-    else if (ePointFormat2 == m_dataFormatId)
-        SetDataRecordLength(ePointSize2);
-    else if (ePointFormat3 == m_dataFormatId)
-        SetDataRecordLength(ePointSize3);
-    else
-        SetDataRecordLength(ePointSize3);
+    // m_dataFormatId = static_cast<uint8_t>(v);
+    
+    
+    // UpdateSchema();
+    // 
+    // if (ePointFormat0 == m_dataFormatId)
+    //     SetDataRecordLength(ePointSize0);
+    // else if (ePointFormat1 == m_dataFormatId) 
+    //     SetDataRecordLength(ePointSize1);
+    // else if (ePointFormat2 == m_dataFormatId)
+    //     SetDataRecordLength(ePointSize2);
+    // else if (ePointFormat3 == m_dataFormatId)
+    //     SetDataRecordLength(ePointSize3);
+    // else
+    //     SetDataRecordLength(ePointSize3);
 
 
 }
@@ -416,10 +420,10 @@ uint16_t Header::GetDataRecordLength() const
     return m_format.GetByteSize();
 }
 
-void Header::SetDataRecordLength( uint16_t v )
-{
-    m_format.SetByteSize(v);
-}
+// void Header::SetDataRecordLength( uint16_t v )
+// {
+//     // m_format.SetByteSize(v);
+// }
 uint32_t Header::GetPointRecordsCount() const
 {
     return m_pointRecordsCount;
@@ -575,8 +579,8 @@ void Header::Init()
 
     m_versionMajor = 1;
     m_versionMinor = 2;
-    m_dataFormatId = ePointFormat0;
-    m_dataRecordLen = ePointSize0;
+    // m_dataFormatId = ePointFormat0;
+    // m_dataRecordLen = ePointSize0;
     
     m_createDOY = m_createYear = 0;
     std::time_t now;
@@ -615,7 +619,7 @@ void Header::Init()
     // Zero scale value is useless, so we need to use a small value.
     SetScale(0.01, 0.01, 0.01);
 
-    
+    m_format = Schema(ePointFormat0);
 }
 
 void Header::ClearGeoKeyVLRs()
@@ -710,19 +714,20 @@ Schema Header::GetSchema() const
     return m_format;
 }
 
-void Header::UpdateSchema()
-{
-    if (GetDataFormatId() == liblas::ePointFormat3) {
-        m_format.Color(true);
-        m_format.Time(true);
-    } else if (GetDataFormatId() == liblas::ePointFormat2) {
-        m_format.Color(true);
-        m_format.Time(false);
-    } else if (GetDataFormatId() == liblas::ePointFormat1) {
-        m_format.Color(false);
-        m_format.Time(true);
-    }
-}
+// void Header::UpdateSchema()
+// {
+//     m_format
+//     // if (GetDataFormatId() == liblas::ePointFormat3) {
+//     //     m_format.Color(true);
+//     //     m_format.Time(true);
+//     // } else if (GetDataFormatId() == liblas::ePointFormat2) {
+//     //     m_format.Color(true);
+//     //     m_format.Time(false);
+//     // } else if (GetDataFormatId() == liblas::ePointFormat1) {
+//     //     m_format.Color(false);
+//     //     m_format.Time(true);
+//     // }
+// }
 
 void Header::SetSchema(const Schema& format)
 {
@@ -730,31 +735,30 @@ void Header::SetSchema(const Schema& format)
     // // A user can use the set the header's version information and 
     // // format information and sizes by using a PointFormat instance
     // // in addition to setting all the settings individually by hand
-    // SetVersionMinor(format.GetVersionMinor());
-    // SetVersionMajor(format.GetVersionMajor());
-    // 
+
     // // The DataRecordLength will be set to the max of either the format's 
     // // byte size or the pointformat's specified size according to whether 
     // // or not it has color or time (FIXME: or waveform packets once we get to 1.3 )
     // // The extra space that is available can be used to store LASPoint::GetExtraData.
     // // We trim the format size to uint16_t because that's what the header stores 
-    if (format.HasColor() && format.HasTime()) {
-        SetDataFormatId(liblas::ePointFormat3);
-        SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize3),
-                                        static_cast<uint16_t>(format.GetByteSize())));
-    } else if (format.HasColor()  && !format.HasTime()) {
-        SetDataFormatId(liblas::ePointFormat2);
-        SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize2),
-                                        static_cast<uint16_t>(format.GetByteSize())));
-    } else if (!format.HasColor()  && format.HasTime()) {
-        SetDataFormatId(liblas::ePointFormat1);
-        SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize1),
-                                        static_cast<uint16_t>(format.GetByteSize())));
-    } else {
-        SetDataFormatId(liblas::ePointFormat0);
-        SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize0),
-                                        static_cast<uint16_t>(format.GetByteSize())));
-    }
+
+    // if (format.HasColor() && format.HasTime()) {
+    //     SetDataFormatId(liblas::ePointFormat3);
+    //     SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize3),
+    //                                     static_cast<uint16_t>(format.GetByteSize())));
+    // } else if (format.HasColor()  && !format.HasTime()) {
+    //     SetDataFormatId(liblas::ePointFormat2);
+    //     SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize2),
+    //                                     static_cast<uint16_t>(format.GetByteSize())));
+    // } else if (!format.HasColor()  && format.HasTime()) {
+    //     SetDataFormatId(liblas::ePointFormat1);
+    //     SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize1),
+    //                                     static_cast<uint16_t>(format.GetByteSize())));
+    // } else {
+    //     SetDataFormatId(liblas::ePointFormat0);
+    //     SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize0),
+    //                                     static_cast<uint16_t>(format.GetByteSize())));
+    // }
 
     m_format = format;
 
