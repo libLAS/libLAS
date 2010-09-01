@@ -382,37 +382,12 @@ void Header::SetRecordsCount(uint32_t v)
 liblas::PointFormatName Header::GetDataFormatId() const
 {
     return m_format.GetDataFormatId();
-    // if (ePointFormat0 == m_dataFormatId)
-    //     return ePointFormat0;
-    // else if (ePointFormat1 == m_dataFormatId)
-    //     return ePointFormat1;
-    // else if (ePointFormat2 == m_dataFormatId)
-    //     return ePointFormat2;
-    // else
-    //     return ePointFormat3;
+
 }
 
 void Header::SetDataFormatId(liblas::PointFormatName v)
 {
     m_format.SetDataFormatId(v);
-    
-    // m_dataFormatId = static_cast<uint8_t>(v);
-    
-    
-    // UpdateSchema();
-    // 
-    // if (ePointFormat0 == m_dataFormatId)
-    //     SetDataRecordLength(ePointSize0);
-    // else if (ePointFormat1 == m_dataFormatId) 
-    //     SetDataRecordLength(ePointSize1);
-    // else if (ePointFormat2 == m_dataFormatId)
-    //     SetDataRecordLength(ePointSize2);
-    // else if (ePointFormat3 == m_dataFormatId)
-    //     SetDataRecordLength(ePointSize3);
-    // else
-    //     SetDataRecordLength(ePointSize3);
-
-
 }
 
 uint16_t Header::GetDataRecordLength() const
@@ -420,10 +395,6 @@ uint16_t Header::GetDataRecordLength() const
     return m_format.GetByteSize();
 }
 
-// void Header::SetDataRecordLength( uint16_t v )
-// {
-//     // m_format.SetByteSize(v);
-// }
 uint32_t Header::GetPointRecordsCount() const
 {
     return m_pointRecordsCount;

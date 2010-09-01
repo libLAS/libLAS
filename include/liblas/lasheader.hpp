@@ -233,13 +233,14 @@ public:
     /// Set identifier of point data (record) format.
     void SetDataFormatId(PointFormatName v);
 
-    /// \todo To be documented
+    /// The length in bytes of each point.  All points in the file are 
+    /// considered to be fixed in size, and the PointFormatName is used 
+    /// to determine the fixed portion of the dimensions in the point.  Any 
+    /// other byte space in the point record beyond the liblas::Schema::GetBaseByteSize() 
+    /// can be used for other, optional, dimensions.  If no schema is 
+    /// available for the file in the form of a liblas.org VLR schema record,
+    /// These extra bytes are available via liblas::Point::GetExtraData().
     boost::uint16_t GetDataRecordLength() const;
-
-    // /// Set the length of the point format.  Evidently, there are 
-    // /// LAS files in the wild that contain point formats of sizes that 
-    // /// are different than the prescribed set specified in the specification.
-    // void SetDataRecordLength(boost::uint16_t v);
     
     /// Get total number of point records stored in the LAS file.
     boost::uint32_t GetPointRecordsCount() const;
