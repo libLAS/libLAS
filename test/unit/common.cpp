@@ -132,32 +132,32 @@ void test_file10_header(liblas::Header const& h)
 
     liblas::guid g;
     ensure(g.is_null());
-    ensure_equals(h.GetProjectId(), g);
+    ensure_equals("wrong ProjectId", h.GetProjectId(), g);
 
-    ensure_equals(h.GetVersionMajor(), 1);
-    ensure_equals(h.GetVersionMinor(), 0);
-    ensure_equals(h.GetSystemId(), std::string(""));
-    ensure_equals(h.GetSoftwareId(), std::string("TerraScan"));
-    ensure_equals(h.GetCreationDOY(), 0);
-    ensure_equals(h.GetCreationYear(), 0);
-    ensure_equals(h.GetHeaderSize(), boost::uint16_t(227));
-    ensure_equals(h.GetDataOffset(), boost::uint32_t(229));
-    ensure_equals(h.GetRecordsCount(), boost::uint32_t(0));
-    ensure_equals(h.GetDataFormatId(), liblas::ePointFormat1);
-    ensure_equals(h.GetDataRecordLength(), liblas::ePointSize1);
-    ensure_equals(h.GetPointRecordsCount(), boost::uint32_t(8));
-    ensure_equals(h.GetScaleX(), double(0.01));
-    ensure_equals(h.GetScaleY(), double(0.01));
-    ensure_equals(h.GetScaleZ(), double(0.01));
-    ensure_equals(h.GetOffsetX(), double(-0));
-    ensure_equals(h.GetOffsetY(), double(-0));
-    ensure_equals(h.GetOffsetZ(), double(-0));
-    ensure_equals(h.GetMinX(), double(630262.3));
-    ensure_equals(h.GetMaxX(), double(630346.83));
-    ensure_equals(h.GetMinY(), double(4834500));
-    ensure_equals(h.GetMaxY(), double(4834500));
-    ensure_equals(h.GetMinZ(), double(50.9));
-    ensure_equals(h.GetMaxZ(), double(55.26));
+    ensure_equals("wrong VersionMajor", h.GetVersionMajor(), 1);
+    ensure_equals("wrong VersionMinor", h.GetVersionMinor(), 0);
+    ensure_equals("wrong GetSystemId", h.GetSystemId(), std::string(""));
+    ensure_equals("wrong GetSoftwareId", h.GetSoftwareId(), std::string("TerraScan"));
+    ensure_equals("Wrong GetCreationDOY", h.GetCreationDOY(), 0);
+    ensure_equals("Wrong GetCreationYear", h.GetCreationYear(), 0);
+    ensure_equals("Wrong GetHeaderSize", h.GetHeaderSize(), boost::uint16_t(227));
+    ensure_equals("Wrong GetDataOffset", h.GetDataOffset(), boost::uint32_t(229));
+    ensure_equals("Wrong GetRecordsCount", h.GetRecordsCount(), boost::uint32_t(0));
+    ensure_equals("Wrong GetDataFormatId", h.GetDataFormatId(), liblas::ePointFormat1);
+    ensure_equals("Wrong GetDataRecordLength", h.GetDataRecordLength(), liblas::ePointSize1);
+    ensure_equals("Wrong GetPointRecordsCount", h.GetPointRecordsCount(), boost::uint32_t(8));
+    ensure_equals("Wrong GetScaleX", h.GetScaleX(), double(0.01));
+    ensure_equals("Wrong GetScaleY", h.GetScaleY(), double(0.01));
+    ensure_equals("Wrong GetScaleZ", h.GetScaleZ(), double(0.01));
+    ensure_equals("Wrong GetOffsetX", h.GetOffsetX(),double(-0));
+    ensure_equals("Wrong GetOffsetY", h.GetOffsetY(), double(-0));
+    ensure_equals("Wrong GetOffsetZ", h.GetOffsetZ(), double(-0));
+    ensure_equals("Wrong GetMinX", h.GetMinX(), double(630262.3));
+    ensure_equals("Wrong GetMaxX", h.GetMaxX(), double(630346.83));
+    ensure_equals("Wrong GetMinY", h.GetMinY(), double(4834500));
+    ensure_equals("Wrong GetMaxY", h.GetMaxY(), double(4834500));
+    ensure_equals("Wrong GetMinZ", h.GetMinZ(), double(50.9));
+    ensure_equals("Wrong GetMaxZ", h.GetMaxZ(), double(55.26));
 }
 
 void test_file10_point1(liblas::Point const& p)
