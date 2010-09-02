@@ -107,6 +107,13 @@ void Header::write()
         GetStream().seekp(0, ios::beg);
     }
 
+    // If we have a custom schema, add the VLR and write it into the 
+    // file.  
+    if (m_header.GetSchema().IsCustom()) {
+        VariableRecord v = m_header.GetSchema().GetVLR();
+        m_header.AddVLR(v);
+    }
+    
     // 1. File Signature
     std::string const filesig(m_header.GetFileSignature());
     assert(filesig.size() == 4);
@@ -251,8 +258,7 @@ void Header::write()
     // offset is not large enough to contain the VLRs.  The value 
     // it returns is the number of bytes we must increase the header
     // by in order for it to contain the VLRs.
-    
-    m_header.AddVLR(m_header.GetSchema().GetVLR());
+
     int32_t difference = WriteVLRs();
     if (difference < 0) {
         m_header.SetDataOffset(m_header.GetDataOffset() + abs(difference) );
