@@ -120,7 +120,7 @@ void Classification::SetClass(boost::uint32_t index)
 {
     check_class_index(index);
 
-    bitset_type binval(static_cast<unsigned long>(index));
+    bitset_type binval(static_cast<boost::uint64_t>(index));
     binval <<= 0;
 
     // Store value in bits 0,1,2,3,4
