@@ -106,7 +106,7 @@ uint8_t Classification::GetClass() const
 {
     bitset_type bits(m_flags);
     
-    bitset_type const mask(static_cast<unsigned long>(class_table_size) - 1);
+    bitset_type const mask(static_cast<boost::uint64_t>(class_table_size) - 1);
     bits &= mask;
 
     uint32_t const index = static_cast<uint32_t>(bits.to_ulong());
