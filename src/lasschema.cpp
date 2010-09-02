@@ -340,6 +340,41 @@ Schema& Schema::operator=(Schema const& rhs)
     
     return *this;
 }
+Schema::Schema(std::vector<VariableRecord> const& vlrs)
+{
+    bool have_schema = false;
+    std::vector<VariableRecord>::const_iterator it;
+    for (it = vlrs.begin(); it != vlrs.end(); ++it)
+    {
+        VariableRecord const& vlr = *it;
+        if (IsSchemaVLR(vlr))
+        {
+            have_schema = true;
+            break;
+        }
+    }
+    if (!have_schema) 
+    {
+        throw std::runtime_error("No LASSchema VLR record found!");
+    }
+    
+    
+    
+}
+
+bool Schema::IsSchemaVLR(VariableRecord const& vlr)
+{
+    std::string const uid("liblas");
+    
+    // UID liblas and ID == 7 is Schema 1.0
+    if (uid == vlr.GetUserId(true).c_str() && 17 == vlr.GetRecordId())
+    {
+        return true;
+    }
+    
+    return false;
+    
+}
 
 boost::uint32_t Schema::GetSize() const
 {

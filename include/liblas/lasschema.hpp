@@ -44,6 +44,7 @@
 
 #include <liblas/lasversion.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
+#include <liblas/lasvariablerecord.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/any.hpp>
@@ -66,7 +67,7 @@ public:
     
     // Schema();
     Schema(PointFormatName data_format_id);
-    Schema(VariableRecord const& vlr);
+    Schema(std::vector<VariableRecord> const& vlrs);
     Schema& operator=(Schema const& rhs);
     Schema(Schema const& other);
     
@@ -82,12 +83,10 @@ public:
 
 
     PointFormatName GetDataFormatId() const { return m_data_format_id; }
-    void SetDataFormatId(PointFormatName const& value);//{ m_data_format_id = value; }
+    void SetDataFormatId(PointFormatName const& value);
     
     bool HasColor() const;
-    // void Color(bool const& bColor); 
     bool HasTime() const; 
-    // void Time(bool const& bTime);
     
     void AddDimension(boost::shared_ptr<DimensionI> dim);
     boost::shared_ptr<DimensionI> GetDimension(std::string const& name) const;
@@ -110,6 +109,7 @@ private:
     void add_time();
     void add_color();
     void update_required_dimensions(PointFormatName data_format_id);
+    bool IsSchemaVLR(VariableRecord const& vlr);
 };
 
 
