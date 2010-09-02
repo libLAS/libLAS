@@ -37,7 +37,7 @@ std::string ReadSQLData(std::string filename)
         infile->read (data, size);
         // infile->close();
 
-        std::string output = std::string(data);
+        std::string output = std::string(data, (std::size_t) size);
         delete[] data;
         delete infile;
         return output;
