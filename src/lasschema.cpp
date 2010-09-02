@@ -41,6 +41,7 @@
 
 #include <liblas/lasschema.hpp>
 #include <liblas/detail/utility.hpp>
+#include <liblas/external/property_tree/xml_parser.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std
@@ -376,6 +377,21 @@ bool Schema::IsSchemaVLR(VariableRecord const& vlr)
     
 }
 
+bool Schema::IsCustom() const
+{
+    // A custom schema has no fields that are required by the PointFormatName
+    // This must mean a user has added them themselves.  We only write VLR 
+    // schema definitions to files that have custom schemas.
+    std::vector<DimensionPtr>::const_iterator i;
+
+    for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+    {
+        DimensionPtr t = *i;
+        if ( t->IsRequired() == false)
+            return true;
+    }
+    return false;
+}
 boost::uint32_t Schema::GetSize() const
 {
     std::vector<DimensionPtr>::const_iterator i;
@@ -563,4 +579,25 @@ liblas::property_tree::ptree Schema::GetPTree() const
     return pt;
 }
 
+VariableRecord const& Schema::GetVLR() const
+{
+    VariableRecord vlr;
+    std::vector<boost::uint8_t> data;
+    vlr.SetUserId("liblas");
+    vlr.SetRecordId(7);
+    
+    std::ostringstream oss;
+    liblas::property_tree::ptree tree = GetPTree();
+    liblas::property_tree::write_xml(oss, tree);
+    
+    std::string s(oss.str());
+    std::string::const_iterator i;
+    for (i = s.begin(); i != s.end(); ++i)
+    {
+        data.push_back(*i);
+    }
+    vlr.SetData(data);
+    vlr.SetRecordLength(data.size());
+    return vlr;
+}
 } // namespace liblas

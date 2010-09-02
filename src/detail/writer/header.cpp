@@ -252,6 +252,7 @@ void Header::write()
     // it returns is the number of bytes we must increase the header
     // by in order for it to contain the VLRs.
     
+    m_header.AddVLR(m_header.GetSchema().GetVLR());
     int32_t difference = WriteVLRs();
     if (difference < 0) {
         m_header.SetDataOffset(m_header.GetDataOffset() + abs(difference) );

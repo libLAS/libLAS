@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
     
     liblas::Header header;
 
-    try {
+    // try {
 
         po::options_description file_options("las2las2 options");
         po::options_description* filtering_options = GetFilteringOptions();
@@ -289,14 +289,14 @@ int main(int argc, char* argv[])
         
         delete filtering_options;
         delete transform_options;
-    }
-    catch(std::exception& e) {
-        std::cerr << "error: " << e.what() << "\n";
-        return 1;
-    }
-    catch(...) {
-        std::cerr << "Exception of unknown type!\n";
-    }
+    // }
+    // catch(std::exception& e) {
+    //     std::cerr << "error: " << e.what() << "\n";
+    //     return 1;
+    // }
+    // catch(...) {
+    //     std::cerr << "Exception of unknown type!\n";
+    // }
     
     return 0;
 

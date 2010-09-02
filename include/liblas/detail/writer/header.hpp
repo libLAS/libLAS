@@ -68,6 +68,7 @@ private:
     
     boost::int32_t WriteVLRs();
     void WriteLAS10PadSignature();
+    
     liblas::Header m_header;
 };
 

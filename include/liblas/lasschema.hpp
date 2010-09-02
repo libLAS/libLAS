@@ -95,6 +95,9 @@ public:
     std::vector<std::string> GetDimensionNames() const;
   
     liblas::property_tree::ptree GetPTree() const;
+    
+    bool IsCustom() const;
+    VariableRecord const& GetVLR() const;
 
 protected:
     
