@@ -379,7 +379,7 @@ std::string SpatialReference::GetWKT( WKTModeFlag mode_flag) const
 std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const 
 {
 #ifndef HAVE_GDAL
-	boost::ignore_unused_variable_warning(mode_flag);
+    boost::ignore_unused_variable_warning(mode_flag);
     boost::ignore_unused_variable_warning(pretty);
 
     return std::string();
