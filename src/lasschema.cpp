@@ -51,181 +51,6 @@ using namespace boost;
 
 namespace liblas { 
 
-// void Schema::updatesize(boost::uint16_t new_size) {
-//         
-//     // if the difference between the new size we're given 
-//     // and our existing size is 0, do nothing.
-//     if ((new_size - m_size) != 0)
-//     {
-//         // Use the larger of either our base size (accounting for 
-//         // color, time, etc) and the size we were given.
-//         m_size = std::max(new_size, m_base_size);
-//     }    
-// }
-// 
-// boost::uint16_t Schema::calculate_base_size() {
-// 
-//     boost::uint16_t new_base_size = sizeof(detail::PointRecord);
-//     
-//     if (HasColor()) {
-//         new_base_size += 3 * sizeof(boost::uint16_t);
-//     }
-//     
-//     if (HasTime()) {
-//         new_base_size += sizeof(double);
-//     }
-//     return new_base_size;
-//     
-// }
-// void Schema::updatesize() {
-//     boost::uint16_t new_base_size = calculate_base_size();
-//     
-//     // Set to the base if we haven't set it at all yet
-//     if (m_size == 0) {
-//         m_size = new_base_size;
-//         m_base_size = new_base_size;
-//     }
-//     
-//     // Expand or contract the size based on our old difference
-//     else {
-//         
-//         long base_difference = m_base_size - new_base_size;
-//         
-//         if (base_difference == 0) {
-//             return;
-//         }
-//         else if (base_difference > 0) {
-//             // Expand m_size to include new_base_size
-//             m_size = m_size + static_cast<boost::uint16_t>(base_difference);
-//             m_base_size = new_base_size;
-//         }
-//         else {
-//             m_size = m_size - static_cast<boost::uint16_t>(base_difference);
-//             m_base_size = new_base_size;
-//         }
-//         
-//     }
-// }
-// 
-// Schema::Schema( boost::uint8_t major, 
-//                 boost::uint8_t minor, 
-//                 boost::uint16_t size) :
-//     m_size(size),
-//     m_versionminor(minor), 
-//     m_versionmajor(major),
-//     m_hasColor(false),
-//     m_hasTime(false),
-//     m_base_size(0)
-// {
-//     updatesize();
-// }
-// 
-// 
-// Schema::Schema( boost::uint8_t major, 
-//                 boost::uint8_t minor, 
-//                 boost::uint16_t size,
-//                 bool bColor,
-//                 bool bTime) :
-//     m_size(size),
-//     m_versionminor(minor), 
-//     m_versionmajor(major),
-//     m_hasColor(bColor),
-//     m_hasTime(bTime),
-//     m_base_size(0)
-// {
-//     updatesize();
-// }
-// 
-// // copy constructor
-// Schema::Schema(Schema const& other) :
-//     m_size(other.m_size),
-//     m_versionminor(other.m_versionminor),
-//     m_versionmajor(other.m_versionmajor),
-//     m_hasColor(other.m_hasColor),
-//     m_hasTime(other.m_hasTime),
-//     m_base_size(other.m_base_size)
-// {
-//     updatesize();
-// }
-// 
-// // assignment constructor
-// Schema& Schema::operator=(Schema const& rhs)
-// {
-//     if (&rhs != this)
-//     {
-//         m_size = rhs.m_size;
-//         m_versionminor = rhs.m_versionminor;
-//         m_versionmajor = rhs.m_versionmajor;
-//         m_hasColor = rhs.m_hasColor;
-//         m_hasTime = rhs.m_hasTime;
-//         m_base_size = rhs.m_base_size;
-// 
-//     }
-//     
-//     return *this;
-// }
-// 
-// uint16_t Schema::GetByteSize() const
-// {
-//     return m_size;
-// }
-// 
-// void Schema::SetByteSize(uint16_t const& value)
-// {
-//     updatesize(value);
-// }
-// 
-// uint8_t Schema::GetVersionMajor() const
-// {
-//     return m_versionmajor;
-// }
-// 
-// void Schema::SetVersionMajor(uint8_t const& value)
-// {
-//     m_versionmajor = value;
-// 
-// }
-// 
-// uint8_t Schema::GetVersionMinor() const
-// {
-//     return m_versionminor;
-// }
-// 
-// void Schema::SetVersionMinor(uint8_t const& value)
-// {
-//     m_versionminor = value;
-// }
-// 
-// bool Schema::HasColor() const
-// {
-//     return m_hasColor;
-// }
-// 
-// void Schema::Color(bool const& value)
-// {
-//     m_hasColor = value;
-//     updatesize();
-// }
-// 
-// bool Schema::HasTime() const
-// {
-//     return m_hasTime;
-// }
-// 
-// void Schema::Time(bool const& value)
-// {
-//     m_hasTime = value;
-//     updatesize();
-// }
-// 
-// uint16_t Schema::GetBaseByteSize() const
-// {
-//     return m_base_size;
-// }
-// 
-
-/*************************************************************************/
-
 
 Schema::Schema(PointFormatName data_format_id):
     m_size(0),
@@ -236,37 +61,46 @@ Schema::Schema(PointFormatName data_format_id):
 
 void Schema::add_record0_dimensions()
 {
-    boost::uint32_t aulong = 0;
-    boost::uint16_t aushort = 0;
-    boost::int8_t ashortint = 0;
     std::ostringstream text;
     
-    DimensionPtr x = DimensionPtr(new NumericDimension<boost::uint32_t>("X", aulong, 32));
+    DimensionPtr x = DimensionPtr(new DimensionI("X", 32));
     text << "x coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
     x->SetDescription(text.str()); 
+    x->IsInteger(true);
+    x->IsNumeric(true);
+    x->IsSigned(true);
     AddDimension(x);
     text.str("");
 
-    DimensionPtr y = DimensionPtr(new NumericDimension<boost::uint32_t>("Y", aulong, 32));
+    DimensionPtr y = DimensionPtr(new DimensionI("Y", 32));
     text << "y coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
     y->SetDescription(text.str()); 
+    y->IsInteger(true);
+    y->IsNumeric(true);
+    y->IsSigned(true);
     AddDimension(y);
     text.str("");
     
-    DimensionPtr z = DimensionPtr(new NumericDimension<boost::uint32_t>("Z", aulong, 32));
+    DimensionPtr z = DimensionPtr(new DimensionI("Z", 32));
     text << "z coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
     z->SetDescription(text.str()); 
+    z->IsInteger(true);
+    z->IsNumeric(true);
+    z->IsSigned(true);
     AddDimension(z);
     text.str("");
 
-    DimensionPtr intensity = DimensionPtr(new NumericDimension<boost::uint16_t>("Intensity", aushort, 16));
+    DimensionPtr intensity = DimensionPtr(new DimensionI("Intensity", 16));
     text << "The intensity value is the integer representation of the pulse" 
             "return magnitude. This value is optional and system specific. "
             "However, it should always be included if available.";
     intensity->SetDescription(text.str());
+    intensity->IsInteger(true);
+    intensity->IsNumeric(true);
+    
     AddDimension(intensity);
     text.str("");
 
@@ -277,6 +111,8 @@ void Schema::add_record0_dimensions()
             "return will have a Return Number of one, the second a Return "
             "Number of two, and so on up to five returns.";
     return_no->SetDescription(text.str());
+    return_no->IsNumeric(true);
+    return_no->IsInteger(true);
     AddDimension(return_no);
     text.str("");
     
@@ -286,6 +122,8 @@ void Schema::add_record0_dimensions()
             "a laser data point may be return two (Return Number) within a "
             "total number of five returns.";
     no_returns->SetDescription(text.str());
+    no_returns->IsNumeric(true);
+    no_returns->IsInteger(true);
     AddDimension(no_returns);
     text.str("");
     
@@ -297,6 +135,8 @@ void Schema::add_record0_dimensions()
             "is a scan moving from the left side of the in-track direction to "
             "the right side and negative the opposite). ";
     scan_dir->SetDescription(text.str());
+    scan_dir->IsNumeric(true);
+    scan_dir->IsInteger(true);
     AddDimension(scan_dir);
     text.str("");
     
@@ -305,6 +145,8 @@ void Schema::add_record0_dimensions()
             "the point is at the end of a scan. It is the last point on "
             "a given scan line before it changes direction.";
     edge->SetDescription(text.str());
+    edge->IsNumeric(true);
+    edge->IsInteger(true);
     AddDimension(edge);
     text.str("");
 
@@ -322,7 +164,7 @@ void Schema::add_record0_dimensions()
     text.str("");
 
     
-    DimensionPtr scan_angle = DimensionPtr(new NumericDimension<boost::int8_t>("Scan Angle Rank", ashortint, 8));
+    DimensionPtr scan_angle = DimensionPtr(new DimensionI("Scan Angle Rank", 8));
     text << "The Scan Angle Rank is a signed one-byte number with a "
             "valid range from -90 to +90. The Scan Angle Rank is the "
             "angle (rounded to the nearest integer in the absolute "
@@ -333,6 +175,9 @@ void Schema::add_record0_dimensions()
             "and –90 degrees to the left side of the aircraft in the "
             "direction of flight.";
     scan_angle->SetDescription(text.str());
+    scan_angle->IsSigned(true);
+    scan_angle->IsInteger(true);
+    scan_angle->IsNumeric(true);
     AddDimension(scan_angle);
     text.str("");
     
@@ -342,7 +187,7 @@ void Schema::add_record0_dimensions()
     AddDimension(user_data);
     text.str("");
     
-    DimensionPtr point_source_id = DimensionPtr(new NumericDimension<boost::uint16_t>("Point Source ID", aushort, 16));
+    DimensionPtr point_source_id = DimensionPtr(new DimensionI("Point Source ID", 16));
     text << "This value indicates the file from which this point originated. "
             "Valid values for this field are 1 to 65,535 inclusive with zero "
             "being used for a special case discussed below. The numerical value "
@@ -353,6 +198,8 @@ void Schema::add_record0_dimensions()
             "ID equal to the File Source ID of the file containing this point "
             "at some time during processing. ";
     point_source_id->SetDescription(text.str());
+    point_source_id->IsInteger(true);
+    point_source_id->IsNumeric(true);
     AddDimension(point_source_id);    
     text.str("");
 
@@ -369,30 +216,35 @@ void Schema::add_record0_dimensions()
 
 void Schema::add_color()
 {
-    boost::uint16_t aushort = 0;
     std::ostringstream text;
     
-    DimensionPtr red = DimensionPtr(new NumericDimension<boost::uint32_t>("Red", aushort, 16));
+    DimensionPtr red = DimensionPtr(new DimensionI("Red", 16));
     text << "The red image channel value associated with this point";
     red->SetDescription(text.str()); 
     red->IsRequired(true);
     red->IsActive(true);
+    red->IsInteger(true);
+    red->IsNumeric(true);
     AddDimension(red);
     text.str("");
 
-    DimensionPtr green = DimensionPtr(new NumericDimension<boost::uint32_t>("Green", aushort, 16));
+    DimensionPtr green = DimensionPtr(new DimensionI("Green", 16));
     text << "The green image channel value associated with this point";
     green->SetDescription(text.str()); 
     green->IsRequired(true);
     green->IsActive(true);
+    green->IsInteger(true);
+    green->IsNumeric(true);
     AddDimension(green);
     text.str("");
 
-    DimensionPtr blue = DimensionPtr(new NumericDimension<boost::uint32_t>("Blue", aushort, 16));
+    DimensionPtr blue = DimensionPtr(new DimensionI("Blue", 16));
     text << "The blue image channel value associated with this point";
     blue->SetDescription(text.str()); 
     blue->IsRequired(true);
     blue->IsActive(true);
+    blue->IsInteger(true);
+    blue->IsNumeric(true);
     AddDimension(blue);
     text.str("");
     
@@ -400,10 +252,9 @@ void Schema::add_color()
 
 void Schema::add_time()
 {
-    double adouble = 0;
     std::ostringstream text;
     
-    DimensionPtr t = DimensionPtr(new NumericDimension<double>("Time", adouble, 64));
+    DimensionPtr t = DimensionPtr(new DimensionI("Time", 64));
     text << "The GPS Time is the double floating point time tag value at "
             "which the point was acquired. It is GPS Week Time if the "
             "Global Encoding low bit is clear and Adjusted Standard GPS "
@@ -412,6 +263,7 @@ void Schema::add_time()
     t->SetDescription(text.str()); 
     t->IsRequired(true);
     t->IsActive(true);
+    t->IsNumeric(true);
     AddDimension(t);
     text.str("");
     
@@ -513,7 +365,6 @@ void Schema::SetDataFormatId(PointFormatName const& value)
 {
     update_required_dimensions(value);
     m_data_format_id = value;
-    printf("Setting m_data_format_id to %d\n", static_cast<boost::uint32_t>(m_data_format_id));
 }
 
 void Schema::RemoveDimension(DimensionPtr dim)
@@ -640,23 +491,41 @@ bool Schema::HasTime() const
     return true;
     
 }
-// 
-// void Schema::Color(bool const& value)
-// {
-//     m_hasColor = value;
-//     updatesize();
-// }
-// 
-// bool Schema::HasTime() const
-// {
-//     return m_hasTime;
-// }
-// 
-// void Schema::Time(bool const& value)
-// {
-//     m_hasTime = value;
-//     updatesize();
-// }
 
+liblas::property_tree::ptree Schema::GetPTree() const
+{
+    using liblas::property_tree::ptree;
+    ptree pt;
+    
+    std::vector<DimensionPtr>::const_iterator i;
+    
+    boost::uint32_t position = 0;
+    for(i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+    {
+        ptree dim;
+        DimensionPtr t = *i;
+        dim.put("name", t->GetName());
+        dim.put("description", t->GetDescription());
+        dim.put("position", position);
+        dim.put("active", static_cast<boost::uint32_t>(t->IsActive()));
+        dim.put("size", t->GetSize());
+        dim.put("integer", static_cast<boost::uint32_t>(t->IsInteger()));
+        dim.put("signed", static_cast<boost::uint32_t>(t->IsSigned()));
+
+       if (t->IsNumeric()) {
+           if (t->GetMinimum() != t->GetMaximum() && t->GetMaximum() != 0) 
+           {
+               dim.put("minimum", t->GetMinimum());
+               dim.put("maximum", t->GetMaximum());
+           }
+        }
+
+        pt.add_child("LASSchema.dimension", dim);
+        
+        position++;
+    } 
+
+    return pt;
+}
 
 } // namespace liblas

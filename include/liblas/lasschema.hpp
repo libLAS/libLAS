@@ -43,7 +43,7 @@
 #define LIBLAS_SCHEMA_HPP_INCLUDED
 
 #include <liblas/lasversion.hpp>
-
+#include <liblas/external/property_tree/ptree.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/any.hpp>
@@ -66,9 +66,9 @@ public:
     
     // Schema();
     Schema(PointFormatName data_format_id);
+    Schema(VariableRecord const& vlr);
     Schema& operator=(Schema const& rhs);
     Schema(Schema const& other);
-
     
     ~Schema() {};
 
@@ -95,6 +95,8 @@ public:
     
     std::vector<std::string> GetDimensionNames() const;
   
+    liblas::property_tree::ptree GetPTree() const;
+
 protected:
     
     boost::uint16_t m_size;
@@ -102,10 +104,7 @@ protected:
 
 private:
 
-
-    
     std::vector<DimensionPtr> m_dimensions;    
-    
     
     void add_record0_dimensions();
     void add_time();
@@ -119,7 +118,15 @@ class DimensionI
 public:
     DimensionI(std::string const& name, boost::uint32_t size_in_bits) : 
         m_name(name), 
-        m_bitsize(size_in_bits) 
+        m_bitsize(size_in_bits),
+        m_required(false),
+        m_active(false),
+        m_description(std::string("")),
+        m_min(0),
+        m_max(0),
+        m_numeric(false),
+        m_signed(false),
+        m_integer(false)
     {};
     
     virtual ~DimensionI() {};
@@ -142,14 +149,39 @@ public:
     bool IsRequired() const { return m_required; }
     void IsRequired(bool v) { m_required = v; }
 
+    /// Is this dimension being used.  A dimension with 
+    /// IsActive false may exist as a placeholder in PointFormatName-specified
+    /// dimensions, but have their IsActive flag set to false.  In this 
+    /// case, those values may be disregarded.
     bool IsActive() const { return m_active; }
     void IsActive(bool v) { m_active = v; }
 
     std::string GetDescription() const { return m_description; }
     void SetDescription(std::string const& v) { m_description = v; }
 
+    /// Is this dimension a numeric dimension.  Dimensions with IsNumeric == false
+    /// are considered generic bit/byte fields/
+    bool IsNumeric() const { return m_numeric ; }
+    void IsNumeric(bool v) { m_numeric = v; }
 
+    /// Does this dimension have a sign?  Only applicable to dimensions with 
+    /// IsNumeric == true.
+    bool IsSigned() const { return m_signed; }
+    void IsSigned(bool v) { m_signed = v; }
+
+    /// Does this dimension interpret to an integer?  Only applicable to dimensions 
+    /// with IsNumeric == true.
+    bool IsInteger() const { return m_integer; }
+    void IsInteger(bool v) { m_integer = v; }
+
+    /// The minimum value of this dimension as a double
+    double GetMinimum() { return m_min; }
+    void SetMinimum(double min) { m_min = min; }
     
+    /// The maximum value of this dimension as a double
+    double GetMaximum() { return m_max; }
+    void SetMaximum(double max) { m_max = max; }
+        
 private:
         
     std::string m_name;
@@ -157,64 +189,13 @@ private:
     bool m_required;
     bool m_active;
     std::string m_description;
+    double m_min;
+    double m_max;
+    bool m_numeric;
+    bool m_signed;
+    bool m_integer;
 };
 
-template <typename T>
-class NumericDimension : public DimensionI
-{
-public:
-
-    NumericDimension(std::string const& name, 
-                     T type, 
-                     boost::uint32_t size_in_bits ) : 
-        DimensionI(name, size_in_bits),
-        m_min(std::numeric_limits<T>::min()),
-        m_max(std::numeric_limits<T>::max()),
-        m_type(type)
-    {
-        
-    };
-
-    NumericDimension& operator=(NumericDimension const& rhs);
-    NumericDimension(DimensionI const& other);
-    
-    ~NumericDimension() {};
-
-    
-    T const& GetMin() { return m_min; }
-    void SetMax(T const& max) { m_max = max; }
-    
-    T const& GetMax() { return m_max; }
-    void SetMin(T const& min) { m_min = min; }
-
-
- 
-
-private:
-
-    T m_min;
-    T m_max;
-
-    
-    T m_type;
-};
-
-
-class ByteDimension : public DimensionI
-{
-public:
-
-    ByteDimension(std::string const& name, 
-                     boost::uint32_t size_in_bits ) : 
-        DimensionI(name, size_in_bits)
-    {
-        
-    };
-
-    ByteDimension& operator=(ByteDimension const& rhs);
-    ByteDimension(DimensionI const& other);
-    
-};    
 
 } // namespace liblas
 

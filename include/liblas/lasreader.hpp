@@ -159,6 +159,8 @@ public:
     /// the internal transform creation
     void SetTransforms(std::vector<liblas::TransformPtr> const& transforms) {m_transforms = transforms;}
 
+    /// Summarize the file represented by the reader in the form of a 
+    /// property_tree.  
     liblas::property_tree::ptree Summarize();
 private:
 

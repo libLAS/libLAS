@@ -393,8 +393,6 @@ private:
     boost::uint16_t m_headerSize;
     boost::uint32_t m_dataOffset;
     boost::uint32_t m_recordsCount;
-    // PointFormatName m_dataFormatId;
-    // boost::uint16_t m_dataRecordLen;
     boost::uint32_t m_pointRecordsCount;
     RecordsByReturnArray m_pointRecordsByReturn;
     PointScales m_scales;

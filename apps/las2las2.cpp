@@ -180,6 +180,7 @@ bool process(   std::string const& input,
     top.add_child("summary.header",reader.GetHeader().GetPTree());
     top.add_child("summary.points",pts);
     liblas::property_tree::write_xml("junk.xml", top);
+    liblas::property_tree::write_xml("schema.xml", reader.GetHeader().GetSchema().GetPTree());
 
     delete writer;
     delete ofs;
