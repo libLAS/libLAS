@@ -408,6 +408,25 @@ void Header::readvlrs()
 
     liblas::SpatialReference srs(m_header->GetVLRs());    
     m_header->SetSRS(srs);
+    
+    // Go fetch the schema from the VLRs if we've got one.
+    try {
+        liblas::Schema schema(m_header->GetVLRs());
+        m_header->SetSchema(schema);
+
+    } catch (std::runtime_error const& e) 
+    {
+        // Create one from the PointFormat if we don't have
+        // one in the VLRs.  Create a custom dimension on the schema 
+        // That comprises the rest of the bytes after the end of the 
+        // required dimensions.
+        liblas::Schema schema(m_header->GetDataFormatId());
+        
+        // FIXME: handle custom bytes here.
+        m_header->SetSchema(schema);
+        boost::ignore_unused_variable_warning(e);
+        
+    }
 
 }
 

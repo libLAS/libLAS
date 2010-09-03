@@ -49,6 +49,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/foreach.hpp>
 
 // std
 #include <iosfwd>
@@ -58,8 +59,8 @@
 
 namespace liblas {  
 
-class DimensionI;
-typedef boost::shared_ptr<DimensionI> DimensionPtr;
+class Dimension;
+typedef boost::shared_ptr<Dimension> DimensionPtr;
 
 class Schema
 {
@@ -88,8 +89,8 @@ public:
     bool HasColor() const;
     bool HasTime() const; 
     
-    void AddDimension(boost::shared_ptr<DimensionI> dim);
-    boost::shared_ptr<DimensionI> GetDimension(std::string const& name) const;
+    void AddDimension(boost::shared_ptr<Dimension> dim);
+    boost::shared_ptr<Dimension> GetDimension(std::string const& name) const;
     void RemoveDimension(DimensionPtr dim);
     
     std::vector<std::string> GetDimensionNames() const;
@@ -97,13 +98,13 @@ public:
     liblas::property_tree::ptree GetPTree() const;
     
     bool IsCustom() const;
-    VariableRecord const& GetVLR() const;
+    VariableRecord GetVLR() const;
 
 protected:
     
     boost::uint16_t m_size;
     PointFormatName m_data_format_id;
-
+    boost::uint32_t m_nextpos;
 private:
 
     std::vector<DimensionPtr> m_dimensions;    
@@ -113,13 +114,16 @@ private:
     void add_color();
     void update_required_dimensions(PointFormatName data_format_id);
     bool IsSchemaVLR(VariableRecord const& vlr);
+    liblas::property_tree::ptree LoadPTree(VariableRecord const& v);
+    std::vector<DimensionPtr> LoadDimensions(liblas::property_tree::ptree tree);
+
 };
 
 
-class DimensionI
+class Dimension
 {
 public:
-    DimensionI(std::string const& name, boost::uint32_t size_in_bits) : 
+    Dimension(std::string const& name, boost::uint32_t size_in_bits) : 
         m_name(name), 
         m_bitsize(size_in_bits),
         m_required(false),
@@ -129,10 +133,11 @@ public:
         m_max(0),
         m_numeric(false),
         m_signed(false),
-        m_integer(false)
+        m_integer(false),
+        m_position(0)
     {};
     
-    virtual ~DimensionI() {};
+    virtual ~Dimension() {};
         
     std::string const& GetName() { return m_name; }
     
@@ -184,7 +189,14 @@ public:
     /// The maximum value of this dimension as a double
     double GetMaximum() { return m_max; }
     void SetMaximum(double max) { m_max = max; }
-        
+    
+    boost::uint32_t GetPosition() const { return m_position; }
+    void SetPosition(boost::uint32_t v) { m_position = v; }
+    
+    bool operator < (Dimension const& dim) const 
+    {
+        return m_position < dim.m_position;
+    }
 private:
         
     std::string m_name;
@@ -197,6 +209,7 @@ private:
     bool m_numeric;
     bool m_signed;
     bool m_integer;
+    boost::uint32_t m_position;
 };
 
 

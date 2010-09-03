@@ -55,7 +55,8 @@ namespace liblas {
 
 Schema::Schema(PointFormatName data_format_id):
     m_size(0),
-    m_data_format_id(data_format_id)
+    m_data_format_id(data_format_id),
+    m_nextpos(0)
 {
     update_required_dimensions(data_format_id);
 }
@@ -64,48 +65,51 @@ void Schema::add_record0_dimensions()
 {
     std::ostringstream text;
     
-    DimensionPtr x = DimensionPtr(new DimensionI("X", 32));
+    DimensionPtr x = DimensionPtr(new Dimension("X", 32));
     text << "x coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
     x->SetDescription(text.str()); 
     x->IsInteger(true);
     x->IsNumeric(true);
     x->IsSigned(true);
+    x->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(x);
     text.str("");
 
-    DimensionPtr y = DimensionPtr(new DimensionI("Y", 32));
+    DimensionPtr y = DimensionPtr(new Dimension("Y", 32));
     text << "y coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
     y->SetDescription(text.str()); 
     y->IsInteger(true);
     y->IsNumeric(true);
     y->IsSigned(true);
+    y->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(y);
     text.str("");
     
-    DimensionPtr z = DimensionPtr(new DimensionI("Z", 32));
+    DimensionPtr z = DimensionPtr(new Dimension("Z", 32));
     text << "z coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
     z->SetDescription(text.str()); 
     z->IsInteger(true);
     z->IsNumeric(true);
     z->IsSigned(true);
+    z->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(z);
     text.str("");
 
-    DimensionPtr intensity = DimensionPtr(new DimensionI("Intensity", 16));
-    text << "The intensity value is the integer representation of the pulse" 
+    DimensionPtr intensity = DimensionPtr(new Dimension("Intensity", 16));
+    text << "The intensity value is the integer representation of the pulse " 
             "return magnitude. This value is optional and system specific. "
             "However, it should always be included if available.";
     intensity->SetDescription(text.str());
     intensity->IsInteger(true);
     intensity->IsNumeric(true);
-    
+    intensity->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(intensity);
     text.str("");
 
-    DimensionPtr return_no = DimensionPtr(new DimensionI("Return Number", 3));
+    DimensionPtr return_no = DimensionPtr(new Dimension("Return Number", 3));
     text << "Return Number: The Return Number is the pulse return number for "
             "a given output pulse. A given output laser pulse can have many "
             "returns, and they must be marked in sequence of return. The first "
@@ -114,10 +118,11 @@ void Schema::add_record0_dimensions()
     return_no->SetDescription(text.str());
     return_no->IsNumeric(true);
     return_no->IsInteger(true);
+    return_no->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(return_no);
     text.str("");
     
-    DimensionPtr no_returns = DimensionPtr(new DimensionI("Number of Returns", 3));
+    DimensionPtr no_returns = DimensionPtr(new Dimension("Number of Returns", 3));
     text << "Number of Returns (for this emitted pulse): The Number of Returns "
             "is the total number of returns for a given pulse. For example, "
             "a laser data point may be return two (Return Number) within a "
@@ -125,10 +130,11 @@ void Schema::add_record0_dimensions()
     no_returns->SetDescription(text.str());
     no_returns->IsNumeric(true);
     no_returns->IsInteger(true);
+    no_returns->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(no_returns);
     text.str("");
     
-    DimensionPtr scan_dir = DimensionPtr(new DimensionI("Scan Direction", 1));
+    DimensionPtr scan_dir = DimensionPtr(new Dimension("Scan Direction", 1));
     text << "The Scan Direction Flag denotes the direction at which the "
             "scanner mirror was traveling at the time of the output pulse. "
             "A bit value of 1 is a positive scan direction, and a bit value "
@@ -138,20 +144,22 @@ void Schema::add_record0_dimensions()
     scan_dir->SetDescription(text.str());
     scan_dir->IsNumeric(true);
     scan_dir->IsInteger(true);
+    scan_dir->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(scan_dir);
     text.str("");
     
-    DimensionPtr edge = DimensionPtr(new DimensionI("Flightline Edge", 1));
+    DimensionPtr edge = DimensionPtr(new Dimension("Flightline Edge", 1));
     text << "The Edge of Flight Line data bit has a value of 1 only when "
             "the point is at the end of a scan. It is the last point on "
             "a given scan line before it changes direction.";
     edge->SetDescription(text.str());
     edge->IsNumeric(true);
     edge->IsInteger(true);
+    edge->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(edge);
     text.str("");
 
-    DimensionPtr classification = DimensionPtr(new DimensionI("Classification", 8));
+    DimensionPtr classification = DimensionPtr(new Dimension("Classification", 8));
     text << "Classification in LAS 1.0 was essentially user defined and optional. "
             "LAS 1.1 defines a standard set of ASPRS classifications. In addition, "
             "the field is now mandatory. If a point has never been classified, this "
@@ -161,11 +169,12 @@ void Schema::add_record0_dimensions()
             "bit encoded field with the lower five bits used for class and the "
             "three high bits used for flags.";
     classification->SetDescription(text.str());
+    classification->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(classification);
     text.str("");
 
     
-    DimensionPtr scan_angle = DimensionPtr(new DimensionI("Scan Angle Rank", 8));
+    DimensionPtr scan_angle = DimensionPtr(new Dimension("Scan Angle Rank", 8));
     text << "The Scan Angle Rank is a signed one-byte number with a "
             "valid range from -90 to +90. The Scan Angle Rank is the "
             "angle (rounded to the nearest integer in the absolute "
@@ -179,16 +188,18 @@ void Schema::add_record0_dimensions()
     scan_angle->IsSigned(true);
     scan_angle->IsInteger(true);
     scan_angle->IsNumeric(true);
+    scan_angle->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(scan_angle);
     text.str("");
     
-    DimensionPtr user_data = DimensionPtr(new DimensionI("User Data", 8));
+    DimensionPtr user_data = DimensionPtr(new Dimension("User Data", 8));
     text << "This field may be used at the user’s discretion";
     user_data->SetDescription(text.str());
+    user_data->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(user_data);
     text.str("");
     
-    DimensionPtr point_source_id = DimensionPtr(new DimensionI("Point Source ID", 16));
+    DimensionPtr point_source_id = DimensionPtr(new Dimension("Point Source ID", 16));
     text << "This value indicates the file from which this point originated. "
             "Valid values for this field are 1 to 65,535 inclusive with zero "
             "being used for a special case discussed below. The numerical value "
@@ -201,6 +212,7 @@ void Schema::add_record0_dimensions()
     point_source_id->SetDescription(text.str());
     point_source_id->IsInteger(true);
     point_source_id->IsNumeric(true);
+    point_source_id->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(point_source_id);    
     text.str("");
 
@@ -208,7 +220,7 @@ void Schema::add_record0_dimensions()
 
     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        boost::shared_ptr<DimensionI> t = *i;
+        boost::shared_ptr<Dimension> t = *i;
         t->IsRequired(true);
         t->IsActive(true);
     }
@@ -219,33 +231,36 @@ void Schema::add_color()
 {
     std::ostringstream text;
     
-    DimensionPtr red = DimensionPtr(new DimensionI("Red", 16));
+    DimensionPtr red = DimensionPtr(new Dimension("Red", 16));
     text << "The red image channel value associated with this point";
     red->SetDescription(text.str()); 
     red->IsRequired(true);
     red->IsActive(true);
     red->IsInteger(true);
     red->IsNumeric(true);
+    red->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(red);
     text.str("");
 
-    DimensionPtr green = DimensionPtr(new DimensionI("Green", 16));
+    DimensionPtr green = DimensionPtr(new Dimension("Green", 16));
     text << "The green image channel value associated with this point";
     green->SetDescription(text.str()); 
     green->IsRequired(true);
     green->IsActive(true);
     green->IsInteger(true);
     green->IsNumeric(true);
+    green->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(green);
     text.str("");
 
-    DimensionPtr blue = DimensionPtr(new DimensionI("Blue", 16));
+    DimensionPtr blue = DimensionPtr(new Dimension("Blue", 16));
     text << "The blue image channel value associated with this point";
     blue->SetDescription(text.str()); 
     blue->IsRequired(true);
     blue->IsActive(true);
     blue->IsInteger(true);
     blue->IsNumeric(true);
+    blue->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(blue);
     text.str("");
     
@@ -255,7 +270,7 @@ void Schema::add_time()
 {
     std::ostringstream text;
     
-    DimensionPtr t = DimensionPtr(new DimensionI("Time", 64));
+    DimensionPtr t = DimensionPtr(new Dimension("Time", 64));
     text << "The GPS Time is the double floating point time tag value at "
             "which the point was acquired. It is GPS Week Time if the "
             "Global Encoding low bit is clear and Adjusted Standard GPS "
@@ -265,6 +280,7 @@ void Schema::add_time()
     t->IsRequired(true);
     t->IsActive(true);
     t->IsNumeric(true);
+    t->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(t);
     text.str("");
     
@@ -317,7 +333,10 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
     for (i = user_dims.begin(); i != user_dims.end(); ++i)
     {
         m_dimensions.push_back(*i);
-    }        
+    }
+
+    std::sort(m_dimensions.begin(), m_dimensions.end());  
+    m_nextpos = 0;
 
 }
 /// copy constructor
@@ -341,6 +360,108 @@ Schema& Schema::operator=(Schema const& rhs)
     
     return *this;
 }
+
+liblas::property_tree::ptree Schema::LoadPTree(VariableRecord const& v) 
+{
+    std::ostringstream oss;
+    std::vector<boost::uint8_t> data = v.GetData();
+
+    std::vector<boost::uint8_t>::const_iterator i;
+    for (i = data.begin(); i != data.end(); ++i)
+    {
+        oss << *i;
+    }
+    
+    std::istringstream iss (oss.str(),std::istringstream::in);
+    using liblas::property_tree::ptree;
+    ptree pt;
+    
+    liblas::property_tree::read_xml(iss, pt, 0);
+    // liblas::property_tree::write_xml("schema-output.xml", pt);        
+    return pt;    
+}
+std::vector<DimensionPtr> Schema::LoadDimensions(liblas::property_tree::ptree tree)
+{
+    std::vector<DimensionPtr> dimensions;
+    
+    using liblas::property_tree::ptree;
+    ptree::const_iterator i;
+    ptree dims = tree.get_child("LASSchema.dimensions");
+    for (i = dims.begin(); i != dims.end(); ++i)
+    {
+        ptree v = (*i).second;
+        boost::uint32_t size = v.get<boost::uint32_t>("size");
+        std::string name = v.get<std::string>("name");
+        std::string description = v.get<std::string>("description");
+        bool issigned = v.get<bool>("signed");
+        bool isinteger = v.get<bool>("integer");
+        bool isactive = v.get<bool>("active");
+        bool isrequired = v.get<bool>("required");
+        boost::uint32_t position = v.get<boost::uint32_t>("position");
+        double min;
+        double max;
+        try {
+            min = v.get<double>("minimum");
+            max = v.get<double>("maximum");
+        }
+        catch (liblas::property_tree::ptree_bad_path const& e) {
+            ::boost::ignore_unused_variable_warning(e);
+        }
+        
+        DimensionPtr d = DimensionPtr(new Dimension(name, size));
+        d->SetDescription(description);
+        d->IsActive(isactive);
+        d->IsInteger(isinteger);
+        d->IsSigned(issigned);
+        d->IsRequired(isrequired);
+        d->SetPosition(position);
+        if (min != max && min != 0 & max != 0) {
+            d->SetMinimum(min);
+            d->SetMaximum(max);
+        }
+        
+        dimensions.push_back(d);
+    }
+    
+    // Sort the list by position
+    std::sort(dimensions.begin(), dimensions.end());  
+    return dimensions;
+}
+
+liblas::property_tree::ptree Schema::GetPTree() const
+{
+    using liblas::property_tree::ptree;
+    ptree pt;
+    
+    std::vector<DimensionPtr>::const_iterator i;
+    
+    for(i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+    {
+        ptree dim;
+        DimensionPtr t = *i;
+        dim.put("name", t->GetName());
+        dim.put("description", t->GetDescription());
+        dim.put("position", t->GetPosition());
+        dim.put("active", static_cast<boost::uint32_t>(t->IsActive()));
+        dim.put("size", t->GetSize());
+        dim.put("integer", static_cast<boost::uint32_t>(t->IsInteger()));
+        dim.put("signed", static_cast<boost::uint32_t>(t->IsSigned()));
+        dim.put("required", static_cast<boost::uint32_t>(t->IsRequired()));
+
+       if (t->IsNumeric()) {
+           if (t->GetMinimum() != t->GetMaximum() && t->GetMaximum() != 0) 
+           {
+               dim.put("minimum", t->GetMinimum());
+               dim.put("maximum", t->GetMaximum());
+           }
+        }
+
+        pt.add_child("LASSchema.dimensions.dimension", dim);
+        
+    } 
+
+    return pt;
+}
 Schema::Schema(std::vector<VariableRecord> const& vlrs)
 {
     bool have_schema = false;
@@ -360,7 +481,10 @@ Schema::Schema(std::vector<VariableRecord> const& vlrs)
     }
     
     
-    
+    VariableRecord s = *it;
+    liblas::property_tree::ptree pt = LoadPTree(s);
+    m_dimensions = LoadDimensions(pt);
+
 }
 
 bool Schema::IsSchemaVLR(VariableRecord const& vlr)
@@ -368,13 +492,14 @@ bool Schema::IsSchemaVLR(VariableRecord const& vlr)
     std::string const uid("liblas");
     
     // UID liblas and ID == 7 is Schema 1.0
-    if (uid == vlr.GetUserId(true).c_str() && 17 == vlr.GetRecordId())
+    if (uid.compare(vlr.GetUserId(false)) == 0)
     {
-        return true;
+        if (7 == vlr.GetRecordId())
+        {
+            return true;
+        }
     }
-    
     return false;
-    
 }
 
 bool Schema::IsCustom() const
@@ -383,7 +508,8 @@ bool Schema::IsCustom() const
     // This must mean a user has added them themselves.  We only write VLR 
     // schema definitions to files that have custom schemas.
     std::vector<DimensionPtr>::const_iterator i;
-
+    
+    return true; // For now, we'll always say we're  custom
     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
         DimensionPtr t = *i;
@@ -448,7 +574,7 @@ boost::uint32_t Schema::GetBaseByteSize() const
     
     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        boost::shared_ptr<DimensionI> t = *i;
+        boost::shared_ptr<Dimension> t = *i;
         if ( t->IsRequired() == true)
             size += t->GetSize();
     }
@@ -482,7 +608,7 @@ boost::uint32_t Schema::GetBaseByteSize() const
     return byte_size;
 }
 
-void Schema::AddDimension(boost::shared_ptr<DimensionI> d)
+void Schema::AddDimension(DimensionPtr d)
 {
     m_dimensions.push_back(d);
 }
@@ -543,43 +669,9 @@ bool Schema::HasTime() const
     
 }
 
-liblas::property_tree::ptree Schema::GetPTree() const
-{
-    using liblas::property_tree::ptree;
-    ptree pt;
-    
-    std::vector<DimensionPtr>::const_iterator i;
-    
-    boost::uint32_t position = 0;
-    for(i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
-    {
-        ptree dim;
-        DimensionPtr t = *i;
-        dim.put("name", t->GetName());
-        dim.put("description", t->GetDescription());
-        dim.put("position", position);
-        dim.put("active", static_cast<boost::uint32_t>(t->IsActive()));
-        dim.put("size", t->GetSize());
-        dim.put("integer", static_cast<boost::uint32_t>(t->IsInteger()));
-        dim.put("signed", static_cast<boost::uint32_t>(t->IsSigned()));
 
-       if (t->IsNumeric()) {
-           if (t->GetMinimum() != t->GetMaximum() && t->GetMaximum() != 0) 
-           {
-               dim.put("minimum", t->GetMinimum());
-               dim.put("maximum", t->GetMaximum());
-           }
-        }
 
-        pt.add_child("LASSchema.dimension", dim);
-        
-        position++;
-    } 
-
-    return pt;
-}
-
-VariableRecord const& Schema::GetVLR() const
+VariableRecord Schema::GetVLR() const
 {
     VariableRecord vlr;
     std::vector<boost::uint8_t> data;
@@ -591,13 +683,23 @@ VariableRecord const& Schema::GetVLR() const
     liblas::property_tree::write_xml(oss, tree);
     
     std::string s(oss.str());
+    vlr.SetRecordLength(s.size());
+
     std::string::const_iterator i;
     for (i = s.begin(); i != s.end(); ++i)
     {
         data.push_back(*i);
     }
+    if (data.size() > std::numeric_limits<boost::uint16_t>::max()) {
+        std::ostringstream oss;
+        oss << "This schema with length " << data.size() << " does" 
+            << " not fit within the maximum VLR size of " 
+            << std::numeric_limits<boost::uint16_t>::max();
+        throw std::runtime_error(oss.str());
+    }
     vlr.SetData(data);
-    vlr.SetRecordLength(data.size());
+    vlr.SetDescription("http://liblas.org/schema/");
+
     return vlr;
 }
 } // namespace liblas
