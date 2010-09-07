@@ -428,15 +428,11 @@ class Header(object):
     def get_datarecordlength(self):
         return core.las.LASHeader_GetDataRecordLength(self.handle)
 
-    def set_datarecordlength(self, value):
-        """Don't use this if ya know what's good for ya ;)
-        """
-        return core.las.LASHeader_SetDataRecordLength(self.handle, value)
     doc = """The length in bytes of the point format. Use
     :class:`liblas.schema.Schema` and \ the :obj:`liblas.header.Header.schema`
     instead of manipulating this directly"""
     data_record_length = property(get_datarecordlength,
-                                  set_datarecordlength,
+                                  None,
                                   None,
                                   doc)
 
