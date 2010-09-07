@@ -400,7 +400,7 @@ private:
     Bounds<double> m_extent;
     std::vector<VariableRecord> m_vlrs;
     SpatialReference m_srs;
-    Schema m_format;
+    Schema m_schema;
 };
 
 std::ostream& operator<<(std::ostream& os, liblas::Header const&);

@@ -65,7 +65,7 @@ char const* const Header::FileSignature = "LASF";
 char const* const Header::SystemIdentifier = "libLAS";
 char const* const Header::SoftwareIdentifier = "libLAS 1.2";
 
-Header::Header() : m_format(ePointFormat0)
+Header::Header() : m_schema(ePointFormat0)
 {
     Init();
 }
@@ -90,7 +90,7 @@ Header::Header(Header const& other) :
     m_offsets(other.m_offsets),
     m_extent(other.m_extent),
     m_srs(other.m_srs),
-    m_format(other.m_format)
+    m_schema(other.m_schema)
 {
     void* p = 0;
 
@@ -147,7 +147,7 @@ Header& Header::operator=(Header const& rhs)
         m_offsets = rhs.m_offsets;
         m_extent = rhs.m_extent;
         m_srs = rhs.m_srs;
-        m_format = rhs.m_format;
+        m_schema = rhs.m_schema;
 
     }
     return *this;
@@ -381,18 +381,18 @@ void Header::SetRecordsCount(uint32_t v)
 
 liblas::PointFormatName Header::GetDataFormatId() const
 {
-    return m_format.GetDataFormatId();
+    return m_schema.GetDataFormatId();
 
 }
 
 void Header::SetDataFormatId(liblas::PointFormatName v)
 {
-    m_format.SetDataFormatId(v);
+    m_schema.SetDataFormatId(v);
 }
 
 uint16_t Header::GetDataRecordLength() const
 {
-    return m_format.GetByteSize();
+    return m_schema.GetByteSize();
 }
 
 uint32_t Header::GetPointRecordsCount() const
@@ -589,8 +589,6 @@ void Header::Init()
 
     // Zero scale value is useless, so we need to use a small value.
     SetScale(0.01, 0.01, 0.01);
-
-    m_format = Schema(ePointFormat0);
 }
 
 void Header::ClearGeoKeyVLRs()
@@ -682,21 +680,21 @@ void Header::SetSRS(SpatialReference& srs)
 Schema Header::GetSchema() const
 {
     
-    return m_format;
+    return m_schema;
 }
 
 // void Header::UpdateSchema()
 // {
-//     m_format
+//     m_schema
 //     // if (GetDataFormatId() == liblas::ePointFormat3) {
-//     //     m_format.Color(true);
-//     //     m_format.Time(true);
+//     //     m_schema.Color(true);
+//     //     m_schema.Time(true);
 //     // } else if (GetDataFormatId() == liblas::ePointFormat2) {
-//     //     m_format.Color(true);
-//     //     m_format.Time(false);
+//     //     m_schema.Color(true);
+//     //     m_schema.Time(false);
 //     // } else if (GetDataFormatId() == liblas::ePointFormat1) {
-//     //     m_format.Color(false);
-//     //     m_format.Time(true);
+//     //     m_schema.Color(false);
+//     //     m_schema.Time(true);
 //     // }
 // }
 
@@ -731,7 +729,7 @@ void Header::SetSchema(const Schema& format)
     //                                     static_cast<uint16_t>(format.GetByteSize())));
     // }
 
-    m_format = format;
+    m_schema = format;
 
 } 
 
