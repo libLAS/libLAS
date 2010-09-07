@@ -343,6 +343,7 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
 Schema::Schema(Schema const& other) :
     m_size(other.m_size),
     m_data_format_id(other.m_data_format_id),
+    m_nextpos(other.m_nextpos),
     m_dimensions(other.m_dimensions)
 {
 
@@ -355,6 +356,7 @@ Schema& Schema::operator=(Schema const& rhs)
     {
         m_size = rhs.m_size;
         m_data_format_id = rhs.m_data_format_id;
+        m_nextpos = rhs.m_nextpos;
         m_dimensions = rhs.m_dimensions;
     }
     
@@ -458,9 +460,50 @@ liblas::property_tree::ptree Schema::GetPTree() const
 
         pt.add_child("LASSchema.dimensions.dimension", dim);
         
-    } 
-
+    }
+    
+    pt.put("LASSchema.version", "1.0");
+    pt.put("LASSchema.liblas", GetVersion());
+    pt.put("LASSchema.formatid", GetDataFormatId());
+    
     return pt;
+}
+
+std::ostream& operator<<(std::ostream& os, liblas::Schema const& s)
+{
+    using liblas::property_tree::ptree;
+    ptree tree = s.GetPTree();
+
+    os << "---------------------------------------------------------" << std::endl;
+    os << "  Schema Summary" << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
+
+    ptree::const_iterator i;
+    
+    std::string custom("false");
+    BOOST_FOREACH(ptree::value_type &v,
+            tree.get_child("LASSchema.dimensions"))
+    {
+        // The first non-required dimension in the 
+        // schema means that the user added it themselves.
+        if (v.second.get<bool>("required") == false)
+        {
+            custom = "true"; 
+            break;
+        }
+    }   
+
+    ptree dims = tree.get_child("LASSchema.dimensions");
+    os << "  Point Format ID:             " << tree.get<std::string>("LASSchema.formatid") << std::endl;
+    os << "  Number of dimensions:        " << dims.size() << std::endl;
+    os << "  Custom schema?:              " << custom;
+
+    
+    for (i = dims.begin(); i != dims.end(); ++i)
+    {
+    }
+    
+    return os;
 }
 Schema::Schema(std::vector<VariableRecord> const& vlrs)
 {
@@ -491,7 +534,7 @@ bool Schema::IsSchemaVLR(VariableRecord const& vlr)
 {
     std::string const uid("liblas");
     
-    // UID liblas and ID == 7 is Schema 1.0
+    // UID liblas and ID == 7 is LASSchema 1.0
     if (uid.compare(vlr.GetUserId(false)) == 0)
     {
         if (7 == vlr.GetRecordId())

@@ -45,6 +45,7 @@
 #include <liblas/lasversion.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/lasvariablerecord.hpp>
+#include <liblas/lasversion.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/any.hpp>
@@ -211,6 +212,8 @@ private:
     bool m_integer;
     boost::uint32_t m_position;
 };
+
+std::ostream& operator<<(std::ostream& os, liblas::Schema const&);
 
 
 } // namespace liblas
