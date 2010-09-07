@@ -68,12 +68,16 @@ if it cannot find your libraries.
 
 .. note::
 
-    If you are building on Windows, http://www.boostpro.com/download/ has 
-    an excellent installer.  Make sure to select the program_options 
-    library, and select static + multithreaded as the types.  If you want to 
-    link in a different way, you will have to change your CMakeLists.txt 
-    file accordingly.
+    If you are building on Windows, http://www.boostpro.com/download/ has an
+    excellent installer. The boost installer defaults are not enough, however,
+    and you will need to scroll down and select "Boost ProgramOptions" and
+    "Boost Serialization" components, and select static + multithreaded as the
+    types. If you want to link in a different way, you will have to change
+    your CMake cache variables ``Boost_USE_STATIC_LIBS`` and ``Boost_USE_MULTITHREADED`` 
+    accordingly.
 
+    .. figure:: ./images/boostpro-options.png
+        :alt: Selecting program_options with the Boostpro.com installer
 
 .. _optional_libraries:
 
