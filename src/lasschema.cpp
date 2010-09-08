@@ -492,12 +492,26 @@ std::ostream& operator<<(std::ostream& os, liblas::Schema const& s)
             break;
         }
     }   
+    
+    boost::uint32_t byte_size = 0;
+    boost::uint32_t bit_size = 0;
+    BOOST_FOREACH(ptree::value_type &v,
+            tree.get_child("LASSchema.dimensions"))
+    {
+        bit_size = bit_size + v.second.get<boost::uint32_t>("size");
+    }  
+    
+    byte_size = bit_size / 8;
+
 
     ptree dims = tree.get_child("LASSchema.dimensions");
     os << "  Point Format ID:             " << tree.get<std::string>("LASSchema.formatid") << std::endl;
     os << "  Number of dimensions:        " << dims.size() << std::endl;
-    os << "  Custom schema?:              " << custom;
-
+    os << "  Custom schema?:              " << custom << std::endl;
+    os << "  Size in bytes:               " << byte_size << std::endl;
+    if (bit_size % 8 != 0) {
+        os << "  Bit size is unaligned to byte boundaries" << std::endl;
+    }
     
     for (i = dims.begin(); i != dims.end(); ++i)
     {
@@ -552,7 +566,7 @@ bool Schema::IsCustom() const
     // schema definitions to files that have custom schemas.
     std::vector<DimensionPtr>::const_iterator i;
     
-    return true; // For now, we'll always say we're  custom
+    // return true; // For now, we'll always say we're  custom
     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
         DimensionPtr t = *i;
