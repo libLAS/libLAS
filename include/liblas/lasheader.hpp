@@ -316,6 +316,7 @@ public:
 
     /// Removes a VLR from the the header.
     void DeleteVLR(boost::uint32_t index);
+    void DeleteVLR(std::string const& name, boost::uint16_t id);
 
     /// Rewrite variable-length record with georeference infomation, if available.
     void SetGeoreference();
@@ -346,7 +347,7 @@ public:
     /// Returns a property_tree that contains 
     /// all of the header data in a structured format.
     liblas::property_tree::ptree GetPTree() const;
-
+    
 private:
     
     typedef detail::Point<double> PointScales;
@@ -371,8 +372,6 @@ private:
     // Private function members
     //
     void Init();
-    void ClearGeoKeyVLRs();
-    // void UpdateSchema();
 
     //
     // Private data members

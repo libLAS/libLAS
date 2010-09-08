@@ -591,9 +591,10 @@ void Header::Init()
     SetScale(0.01, 0.01, 0.01);
 }
 
-void Header::ClearGeoKeyVLRs()
+void Header::DeleteVLR(std::string const& name, boost::uint16_t id)
 {
-    std::string const uid("LASF_Projection");
+    // std::string const uid("LASF_Projection");
+    // 34735 34736 34737
 
     std::vector<VariableRecord> vlrs = m_vlrs;
     std::vector<VariableRecord>::const_iterator i;
@@ -603,37 +604,11 @@ void Header::ClearGeoKeyVLRs()
     {
         VariableRecord record = *i;
 
-        if (record.GetUserId(false) == uid)
+        if (record.GetUserId(false) == name)
         {
-            uint16_t const id = record.GetRecordId();
-            if (34735 == id)
+            if (record.GetRecordId() == id)
             {
-                // Geotiff SHORT key
                 for(j = vlrs.begin(); j != vlrs.end(); ++j)
-                {
-                    if (*j == *i)
-                    {
-                        vlrs.erase(j);
-                        break;
-                    }
-                }
-            }
-            else if (34736 == id)
-            {
-                // Geotiff DOUBLE key
-                for (j = vlrs.begin(); j != vlrs.end(); ++j)
-                {
-                    if (*j == *i)
-                    {
-                        vlrs.erase(j);
-                        break;
-                    }
-                }
-            }        
-            else if (34737 == id)
-            {
-                // Geotiff ASCII key
-                for (j = vlrs.begin(); j != vlrs.end(); ++j)
                 {
                     if (*j == *i)
                     {
@@ -652,12 +627,15 @@ void Header::ClearGeoKeyVLRs()
 }
 
 
+
 void Header::SetGeoreference() 
 {    
     std::vector<VariableRecord> vlrs = m_srs.GetVLRs();
 
     // Wipe the GeoTIFF-related VLR records off of the Header
-    ClearGeoKeyVLRs();
+    DeleteVLR("LASF_Projection", 34735);
+    DeleteVLR("LASF_Projection", 34736);
+    DeleteVLR("LASF_Projection", 34737);
 
     std::vector<VariableRecord>::const_iterator i;
 
@@ -728,7 +706,7 @@ void Header::SetSchema(const Schema& format)
     //     SetDataRecordLength(std::max(   static_cast<uint16_t>(ePointSize0),
     //                                     static_cast<uint16_t>(format.GetByteSize())));
     // }
-
+    
     m_schema = format;
 
 } 
