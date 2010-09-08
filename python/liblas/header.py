@@ -196,14 +196,12 @@ class Header(object):
     def get_majorversion(self):
         """Returns the major version for the file. Expect this value to always
         be 1"""
-        return self.schema.major
+        return core.las.LASHeader_GetVersionMajor(self.handle)
 
     def set_majorversion(self, value):
         """Sets the major version for the file. Only the value 1 is accepted
         at this time"""
-        f = self.schema
-        f.major = value
-        self.schema = f
+        return core.las.LASHeader_SetVersionMajor(self.handle, value)
     doc = """Major version number for the file.  For all practical purposes, \
     this is always '1'"""
     major_version = property(get_majorversion, set_majorversion, None, doc)
@@ -213,14 +211,12 @@ class Header(object):
     def get_minorversion(self):
         """Returns the minor version of the file. Expect this value to always
         be 0, 1, or 2"""
-        return self.schema.minor
+        return core.las.LASHeader_GetVersionMinor(self.handle)
 
     def set_minorversion(self, value):
         """Sets the minor version of the file. The value should be 0 for 1.0
         LAS files, 1 for 1.1 LAS files ..."""
-        f = self.schema
-        f.minor = value
-        self.schema = f
+        return core.las.LASHeader_SetVersionMinor(self.handle, value)
     doc = """Minor version for the file. [0, 1, 2] are currently supported."""
     minor_version = property(get_minorversion, set_minorversion, None, doc)
     version_minor = minor_version

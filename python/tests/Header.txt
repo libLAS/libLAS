@@ -119,12 +119,3 @@
   >>> h.data_record_length
   34
   
-Can't be smaller than the dataformat needs
-
-  >>> h.data_record_length = 24
-  >>> h.data_record_length
-  34
-
-  >>> h.data_record_length = 40
-  >>> h.data_record_length
-  40

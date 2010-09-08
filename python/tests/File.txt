@@ -141,6 +141,14 @@ Test Reading different locations and proper internal overwriting of the file
   >>> f.header
 
   >>> del f
+  
+Go read the new header we've written.  It might be out of date because what 
+was written in mode='w' might not equal what was passed in as the header= paramete
+
+  >>> f2 = file.File('junk.las')
+  >>> h = f2.header
+  >>> f2.close()
+  
   >>> f = file.File('junk.las', mode='w+', header=h)
   
   >>> for i in points:
@@ -297,69 +305,70 @@ header after you subtract the VLRs
   630280.89
 
 
-The following tests writing out point data that are larger in size than 
-the base point format, allowing you to store extra data.  
-
-  >>> f6 = file.File('../test/data/TO_core_last_clip.las')
-  >>> p2 = f6.read(6)
-  >>> p2.x, p2.y, p2.z
-  (630320.95999999996, 4834500.0, 55.009999999999998)
-
-  >>> h6 = f6.header
-  >>> f = h6.schema
-  >>> f.time = True
-  >>> f.color = True
-  >>> f.size = 52
-  >>> h6.schema = f
-  >>> h6.data_record_length
-  52
-
-  
-f.size - f.base_size will be 16 bytes of space (h6.data_record_length - 34 bytes for point format 3)
-
->>> import ctypes
- 
-  >>> d = (ctypes.c_ubyte * (f.size - f.base_size))() 
-  >>> d[10]
-  0
-  >>> d[0] = 13
-
-  >>> d2 = (ctypes.c_ubyte * 6)() 
-  >>> d2[0] = 11
-    
-  >>> f7 = file.File('junk5.las',mode='w', header=h6)
-  >>> i = 0
-  >>> for p in points:
-  ...     if i == 0:
-  ...         p.data = d
-  ...     if i == 1:
-  ...         p.data = d2
-  ...     i = i + 1
-  ...     f7.write(p)
-  >>> f7.close()
-  >>> del f7
-  
-  >>> f8 = file.File('junk5.las')
-  >>> f8.header.data_record_length
-  52
-
-  >>> p = f8[0].data[0]
-  >>> p
-  13
-  >>> p = f8[0].data[15]
-  >>> p
-  0
-  
-  >>> p = f8[1].data[0]
-  >>> p
-  11
+# The following tests writing out point data that are larger in size than 
+# the base point format, allowing you to store extra data.  
+# 
+#   >>> f6 = file.File('../test/data/TO_core_last_clip.las')
+#   >>> p2 = f6.read(6)
+#   >>> p2.x, p2.y, p2.z
+#   (630320.95999999996, 4834500.0, 55.009999999999998)
+# 
+#   >>> h6 = f6.header
+#   >>> f = h6.schema
+#   >>> f.time = True
+#   >>> f.color = True
+#   >>> f.size = 52
+#   >>> h6.schema = f
+#   >>> h6.data_record_length
+#   52
+# 
+#   
+# f.size - f.base_size will be 16 bytes of space (h6.data_record_length - 34 bytes for point format 3)
+# 
+# >>> import ctypes
+#  
+#   >>> d = (ctypes.c_ubyte * (f.size - f.base_size))() 
+#   >>> d[10]
+#   0
+#   >>> d[0] = 13
+# 
+#   >>> d2 = (ctypes.c_ubyte * 6)() 
+#   >>> d2[0] = 11
+#     
+#   >>> f7 = file.File('junk5.las',mode='w', header=h6)
+#   >>> i = 0
+#   >>> for p in points:
+#   ...     if i == 0:
+#   ...         p.data = d
+#   ...     if i == 1:
+#   ...         p.data = d2
+#   ...     i = i + 1
+#   ...     f7.write(p)
+#   >>> f7.close()
+#   >>> del f7
+#   
+#   >>> f8 = file.File('junk5.las')
+#   >>> f8.header.data_record_length
+#   52
+# 
+#   >>> p = f8[0].data[0]
+#   >>> p
+#   13
+#   >>> p = f8[0].data[15]
+#   >>> p
+#   0
+#   
+#   >>> p = f8[1].data[0]
+#   >>> p
+#   11
   
   >>> import os
   >>> os.remove('junk.las')
   >>> os.remove('junk2.las')
   >>> os.remove('junk3.las')
   >>> os.remove('junk4.las')
-  >>> os.remove('junk5.las')
+
+# >>> os.remove('junk5.las')
        
   >>> f = file.File('junk.las', mode="w", header=h)
   >>> import liblas.core

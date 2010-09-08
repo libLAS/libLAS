@@ -12,26 +12,14 @@
   False
   >>> f.time
   False
-  >>> f.major, f.minor
-  (1, 2)
+
   
-  >>> f.size = 40
-  >>> f.size
-  40
-  
-  >>> f.color = True
-  >>> f.size
-  46
-  
-  >>> f.size = 14
-  >>> f.size
-  26
 
   >>> h = f2.header
   >>> f = h.schema
   
-  >>> f.major, f.minor
-  (1, 0)
+  >>> h.version
+  '1.0'
   
   >>> f.size
   28
@@ -49,20 +37,13 @@
   >>> f.size
   20
 
-  >>> f.major
-  1
-
   >>> f.time
   False  
     
-  >>> f.minor = 2
- 
-  >>> f.size = 40
+
 
   >>> h.schema = f
   
   >>> h.data_record_length
-  40
-  
-  >>> f.base_size 
   20
+  

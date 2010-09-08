@@ -45,15 +45,11 @@ import core
 
 
 class Schema(object):
-    """:class:`liblas.format.Format` is an object that keeps track of the
+    """:class:`liblas.schema.Schema` is an object that keeps track of the
     point format sizes and what data elements the point formats have (color,
     time, etc), as well as accounting for their size in bytes. """
 
-    def __init__(self,  major=1,
-                        minor=2,
-                        time=False,
-                        color=False,
-                        size=0,
+    def __init__(self,  point_format=0,
                         handle=None):
         """
         :keyword major: Major version value (always 1 for libLAS)
@@ -88,33 +84,13 @@ class Schema(object):
         if handle:
             self.handle = handle
         else:
-            self.handle = core.las.LASSchema_Create(major,
-                                                         minor,
-                                                         size,
-                                                         time,
-                                                         color)
+            self.handle = core.las.LASSchema_Create(point_format)
 
     def __del__(self):
         if self.handle and core:
             core.las.LASSchema_Destroy(self.handle)
 
-    def get_major(self):
-        return core.las.LASSchema_GetVersionMajor(self.handle)
 
-    def set_major(self, value):
-        return core.las.LASSchema_SetVersionMajor(self.handle, int(value))
-
-    doc = """Major version for the format.  Always 1 for libLAS."""
-    major = property(get_major, set_major, None, doc)
-
-    def get_minor(self):
-        return core.las.LASSchema_GetVersionMinor(self.handle)
-
-    def set_minor(self, value):
-        return core.las.LASSchema_SetVersionMinor(self.handle, int(value))
-
-    doc = """Minor version for the format. Can be 0, 1, 2, 3. No validation"""
-    minor = property(get_minor, set_minor, None, doc)
 
     def get_size(self):
         return core.las.LASSchema_GetByteSize(self.handle)
@@ -125,26 +101,15 @@ class Schema(object):
     doc = """Size in bytes of the format.  """
     size = property(get_size, set_size, None, doc)
 
-    def get_base_size(self):
-        return core.las.LASSchema_GetBaseByteSize(self.handle)
-
-    doc = """Base size in bytes of the format. (only accounting for time,
-    color, etc.)"""
-    base_size = property(get_base_size, None, None, doc)
 
     def get_color(self):
         return bool(core.las.LASSchema_HasColor(self.handle))
 
-    def set_color(self, value):
-        return core.las.LASSchema_SetColor(self.handle, bool(value))
-
     doc = """Does this format have color information"""
-    color = property(get_color, set_color, None, doc)
+    color = property(get_color, None, None, doc)
 
     def get_time(self):
         return bool(core.las.LASSchema_HasTime(self.handle))
 
-    def set_time(self, value):
-        return core.las.LASSchema_SetTime(self.handle, bool(value))
     doc = """Does this format have time information"""
-    time = property(get_time, set_time, None, doc)
+    time = property(get_time, None, None, doc)

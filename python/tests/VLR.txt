@@ -101,6 +101,8 @@
   
   >>> f = file.File('../test/data/srs.las')
   >>> h = f.header
+  >>> f.header.data_offset
+  759L
   >>> f2 = file.File('junk_srs.las',mode='w',header=h)
   >>> for p in f:
   ...     f2.write(p)
