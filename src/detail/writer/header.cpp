@@ -76,10 +76,14 @@ void Header::write()
     uint16_t n2 = 0;
     uint32_t n4 = 0;
 
-    // Rewrite the georeference VLR entries if they exist
-    m_header.SetGeoreference();
-    
+
     // Figure out how many points we already have.  
+    // Figure out if we're in append mode.  If we are, we can't rewrite 
+    // any of the VLRs including the Schema and SpatialReference ones.
+    bool bAppendMode = false;
+
+    // This test should only be true if we were opened in both 
+    // std::ios::in *and* std::ios::out
 
     // Seek to the beginning
     GetStream().seekp(0, ios::beg);
@@ -88,31 +92,53 @@ void Header::write()
     // Seek to the end
     GetStream().seekp(0, ios::end);
     ios::pos_type end = GetStream().tellp();
-    // std::ios::off_type size = end - beginning;
-     
-    ios::off_type count = 
-        (end - static_cast<ios::off_type>(m_header.GetDataOffset()))
-            / static_cast<ios::off_type>(m_header.GetDataRecordLength());
-    
-    // This test should only be true if we were opened in both 
-    // std::ios::in *and* std::ios::out, otherwise it should return false 
-    // and we won't adjust the point count.
-    
     if ((begin != end) && (end != static_cast<ios::pos_type>(0))) {
+        bAppendMode = true;
+    }
+
+    // If we are in append mode, we are not touching *any* VLRs. 
+    if (bAppendMode) 
+    {
+        // We're opened in append mode
+        
+        ios::off_type points = end - static_cast<ios::off_type>(m_header.GetDataOffset());
+        ios::off_type count = points / static_cast<ios::off_type>(m_header.GetDataRecordLength());
+        
+        if (points < 0) {
+            std::ostringstream oss;
+            oss << "The header's data offset," << m_header.GetDataOffset() 
+                <<", is much larger than the size of the file, " << end
+                <<", and something is amiss.  Did you use the right header"
+                <<" offset value?";
+            throw std::runtime_error(oss.str());
+        }
+
         uint32_t& cnt =  GetPointCount();
         cnt = static_cast<uint32_t>(count);
         SetPointCount(cnt);
 
         // Position to the beginning of the file to start writing the header
         GetStream().seekp(0, ios::beg);
+
+    } 
+    else 
+    {
+        // Rewrite the georeference VLR entries if they exist
+        m_header.SetGeoreference();
+
+        // If we have a custom schema, add the VLR and write it into the 
+        // file.  
+        if (m_header.GetSchema().IsCustom()) {
+            
+            // Wipe any schema-related VLRs we might have, as this is now out of date.
+            m_header.DeleteVLR("liblas", 7);
+        
+            VariableRecord v = m_header.GetSchema().GetVLR();
+            std::cout <<  m_header.GetSchema()<< std::endl;
+            m_header.AddVLR(v);
+        }
     }
 
-    // If we have a custom schema, add the VLR and write it into the 
-    // file.  
-    if (m_header.GetSchema().IsCustom()) {
-        VariableRecord v = m_header.GetSchema().GetVLR();
-        m_header.AddVLR(v);
-    }
     
     // 1. File Signature
     std::string const filesig(m_header.GetFileSignature());
@@ -257,25 +283,29 @@ void Header::write()
     // If WriteVLR returns a value, it is because the header's 
     // offset is not large enough to contain the VLRs.  The value 
     // it returns is the number of bytes we must increase the header
-    // by in order for it to contain the VLRs.
+    // by in order for it to contain the VLRs.  We do not touch VLRs if we 
+    // are in append mode.
 
-    int32_t difference = WriteVLRs();
-    if (difference < 0) {
-        m_header.SetDataOffset(m_header.GetDataOffset() + abs(difference) );
-        WriteVLRs();
+    if (!bAppendMode) 
+    {
+        int32_t difference = WriteVLRs();
+        if (difference < 0) {
+            m_header.SetDataOffset(m_header.GetDataOffset() + abs(difference) );
+            WriteVLRs();
         
-        // Make sure to rewrite the dataoffset in the header portion now that
-        // we've changed it.
-        std::streamsize const current_pos = GetStream().tellp();
-        std::streamsize const offset_pos = 96; 
-        GetStream().seekp(offset_pos, std::ios::beg);
-        detail::write_n(GetStream(), m_header.GetDataOffset() , sizeof(m_header.GetDataOffset()));
-        GetStream().seekp(current_pos, std::ios::beg);      
-    }
+            // Make sure to rewrite the dataoffset in the header portion now that
+            // we've changed it.
+            std::streamsize const current_pos = GetStream().tellp();
+            std::streamsize const offset_pos = 96; 
+            GetStream().seekp(offset_pos, std::ios::beg);
+            detail::write_n(GetStream(), m_header.GetDataOffset() , sizeof(m_header.GetDataOffset()));
+            GetStream().seekp(current_pos, std::ios::beg);      
+        }
 
-    // Write the 1.0 pad signature if we need to.
-    WriteLAS10PadSignature(); 
-           
+
+        // Write the 1.0 pad signature if we need to.
+        WriteLAS10PadSignature(); 
+    }           
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
     if (GetPointCount() != 0)
