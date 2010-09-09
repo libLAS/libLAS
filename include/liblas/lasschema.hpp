@@ -78,7 +78,7 @@ public:
     /// Fetch byte size
     boost::uint32_t GetByteSize() const;
 
-    boost::uint32_t GetSize() const;
+    boost::uint32_t GetBitSize() const;
 
     /// Get the base size (only accounting for Time, Color, etc )
     boost::uint32_t GetBaseByteSize() const;
@@ -143,7 +143,7 @@ public:
     std::string const& GetName() { return m_name; }
     
     /// bits, logical size of point record
-    std::size_t GetSize() const 
+    std::size_t GetBitSize() const 
     {
         return m_bitsize;
     }

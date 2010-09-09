@@ -445,7 +445,7 @@ liblas::property_tree::ptree Schema::GetPTree() const
         dim.put("description", t->GetDescription());
         dim.put("position", t->GetPosition());
         dim.put("active", static_cast<boost::uint32_t>(t->IsActive()));
-        dim.put("size", t->GetSize());
+        dim.put("size", t->GetBitSize());
         dim.put("integer", static_cast<boost::uint32_t>(t->IsInteger()));
         dim.put("signed", static_cast<boost::uint32_t>(t->IsSigned()));
         dim.put("required", static_cast<boost::uint32_t>(t->IsRequired()));
@@ -575,14 +575,15 @@ bool Schema::IsCustom() const
     }
     return false;
 }
-boost::uint32_t Schema::GetSize() const
+
+boost::uint32_t Schema::GetBitSize() const
 {
     std::vector<DimensionPtr>::const_iterator i;
     boost::uint32_t size=0;
     
     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        size += (*i)->GetSize();
+        size += (*i)->GetBitSize();
     }
 
     if (size % 8 != 0) {
@@ -620,7 +621,7 @@ void Schema::RemoveDimension(DimensionPtr dim)
 boost::uint32_t Schema::GetByteSize() const
 {
     
-    return GetSize() / 8;
+    return GetBitSize() / 8;
 }
 
 boost::uint32_t Schema::GetBaseByteSize() const
@@ -633,7 +634,7 @@ boost::uint32_t Schema::GetBaseByteSize() const
     {
         boost::shared_ptr<Dimension> t = *i;
         if ( t->IsRequired() == true)
-            size += t->GetSize();
+            size += t->GetBitSize();
     }
 
 
