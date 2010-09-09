@@ -10,6 +10,7 @@ SET(LIBLAS_UNIT_TEST liblas_test)
 SET(LIBLAS_UNIT_TEST_SRC
     common.cpp
     guid_test.cpp
+    lasbounds_test.cpp
     laserror_test.cpp
     lasheader_test.cpp
     laspoint_test.cpp

@@ -61,30 +61,137 @@
 
 namespace liblas {
 
+template <typename T>
+class Range
+{
+public:
+    T min;
+    T max;
+    
+    Range(T mmin=std::numeric_limits<T>::max(), T mmax=std::numeric_limits<T>::min())
+        : min(mmin), max(mmax) {};
+    
+
+    Range(Range const& other)
+        : min(other.min)
+        , max(other.max)
+    {
+    }
+
+    Range& operator=(Range<T> const& rhs)
+    {
+        if (&rhs != this)
+        {
+            min = rhs.min;
+            max = rhs.max;
+        }
+        return *this;
+    }
+    
+    bool operator==(Range<T> const& rhs) const
+    {
+        return equal(rhs);
+    }
+    
+    bool operator!=(Range const& rhs) const
+    {
+        return !(equal(rhs));
+    }
+    
+    bool equal(Range const& other) const
+    {
+        
+        if    (!(detail::compare_distance(min, other.min))  
+            || !(detail::compare_distance(max, other.max))) 
+        {
+            return false;
+        }
+    
+        return true;
+    }
+    
+    bool overlaps(Range const& r) const 
+    {
+        return min <= r.max && max >= r.min;
+    }
+
+    bool contains(Range const& r) const
+    {
+        return min <= r.min && r.max <= max;
+    }
+    
+    bool contains(T v) const
+    {
+        return min <= v && v <= max;
+    }
+    
+    bool empty(void) const 
+    {
+        return min==std::numeric_limits<T>::max() && max==std::numeric_limits<T>::min();
+    }
+    
+    void shift(T v) 
+    {
+        min += v;
+        max += v;
+    }
+    
+    void scale(T v) 
+    {
+        min *= v;
+        max *= v;
+    }
+    
+    void clip(Range const& r)
+    {
+        if (r.min > min)
+            min = r.min;
+        if (r.max < max)
+            max = r.max;
+    }
+    
+    void grow(T v) 
+    {
+        if (v < min) 
+            min = v;
+        if (v > max)
+            max = v;
+    }
+    T length() const
+    {
+        return max - min;
+    }
+};
     
 template <typename T>
 class Bounds
 {
 public:
 
-    typedef typename std::vector<T> Vector;
-    typedef typename std::vector<T>::size_type size_type;
-        
-private:
-    Vector mins;
-    Vector maxs;
 
+    typedef typename std::vector< Range<T> >::size_type size_type;
+    
+    typedef typename std::vector< Range<T> > RangeVec;
+private:
+
+    RangeVec ranges;
+    
 public:
 
 Bounds<T>()
 {
-    mins.resize(0);
-    maxs.resize(0);
+    ranges.resize(0);
 }
 
 Bounds(Bounds const& other)
-    : mins(other.mins)
-    , maxs(other.maxs)
+    : 
+    ranges(other.ranges)
+{
+}
+
+Bounds(RangeVec const& rngs)
+    : 
+    ranges(rngs)
 {
 }
 
@@ -95,15 +202,15 @@ Bounds( T minx,
         T maxy, 
         T maxz)
 {
-    mins.resize(3);
-    maxs.resize(3);
+    ranges.resize(3);
     
-    mins[0] = minx;
-    mins[1] = miny;
-    mins[2] = minz;
-    maxs[0] = maxx;
-    maxs[1] = maxy;
-    maxs[2] = maxz;
+    ranges[0].min = minx;
+    ranges[1].min = miny;
+    ranges[2].min = minz;
+
+    ranges[0].max = maxx;
+    ranges[1].max = maxy;
+    ranges[2].max = maxz;
     
 #ifdef DEBUG
     verify();
@@ -116,12 +223,14 @@ Bounds( T minx,
         T maxx, 
         T maxy)
 {
-    mins.resize(2);
-    maxs.resize(2);
-    mins[0] = minx;
-    mins[1] = miny;
-    maxs[0] = maxx;
-    maxs[1] = maxy;
+
+    ranges.resize(2);
+
+    ranges[0].min = minx;
+    ranges[1].min = miny;
+
+    ranges[0].max = maxx;
+    ranges[1].max = maxy;
     
 #ifdef DEBUG
     verify();
@@ -131,94 +240,119 @@ Bounds( T minx,
 
 Bounds( const Point& min, const Point& max)
 {
-    mins.resize(3);
-    maxs.resize(3);
+    ranges.resize(3);
     
-    mins[0] = min.GetX();
-    mins[1] = min.GetY();
-    mins[2] = min.GetZ();
-    maxs[0] = max.GetX();
-    maxs[1] = max.GetY();
-    maxs[2] = max.GetZ();
-    
-#ifdef DEBUG
-    verify();
-#endif
+    ranges[0].min = min.GetX();
+    ranges[1].min = min.GetY();
+    ranges[2].min = min.GetZ();
 
-}
-
-
-Bounds( Vector const& low, Vector const& high)
-{
-    if (low.size() != high.size() ) {
-        std::ostringstream msg; 
-        msg << "Bounds dimensions are not equal.  Low bounds dimensions are " << low.size()
-            << " and the high bounds are " << high.size();
-        throw std::runtime_error(msg.str());                
-    }
-    mins.resize(low.size());
-    
-    mins = low;
-    maxs = high;
+    ranges[0].max = max.GetX();
+    ranges[1].max = max.GetY();
+    ranges[2].max = max.GetZ();
     
 #ifdef DEBUG
     verify();
 #endif
 
 }
+
+
+// Bounds( Vector const& low, Vector const& high)
+// {
+//     if (low.size() != high.size() ) {
+//         std::ostringstream msg; 
+//         msg << "Bounds dimensions are not equal.  Low bounds dimensions are " << low.size()
+//             << " and the high bounds are " << high.size();
+//         throw std::runtime_error(msg.str());                
+//     }
+//     mins.resize(low.size());
+//     
+//     mins = low;
+//     maxs = high;
+//     
+// #ifdef DEBUG
+//     verify();
+// #endif
+// 
+// }
 
 T min(std::size_t const& index) const
 {
-    if (mins.size() <= index) {
+    if (ranges.size() <= index) {
+        // std::ostringstream msg; 
+        // msg << "Bounds dimensions, " << ranges.size() <<", is less "
+        //     << "than the given index, " << index;
+        // throw std::runtime_error(msg.str());                
         return 0;
     }
-    return mins[index];
+    return ranges[index].min;
 }
 
 void min(std::size_t const& index, T v)
 {
-    if (mins.size() <= index) {
-        mins.resize(index + 1);
-        maxs.resize(index + 1);
+    if (ranges.size() <= index) {
+        ranges.resize(index + 1);
     }
-    mins[index] = v;
+    ranges[index].min = v;
 }
 
 T max(std::size_t const& index) const
 {
-    if (maxs.size() <= index) {
-        return 0.0;
+    if (ranges.size() <= index) {
+        // std::ostringstream msg; 
+        // msg << "Bounds dimensions, " << ranges.size() <<", is less "
+        //     << "than the given index, " << index;
+        // throw std::runtime_error(msg.str());    
+        return 0;
     }
-        return maxs[index];
+    return ranges[index].max;
 }
 
 void max(std::size_t const& index, T v)
 {
-    if (maxs.size() <= index) {
-        maxs.resize(index + 1);
-        mins.resize(index + 1);
+    if (ranges.size() <= index) {
+        ranges.resize(index + 1);
     }
-    maxs[index] = v;
+    ranges[index].max = v;
 }
 
 liblas::Point min() {
     liblas::Point p;
-    p.SetCoordinates(min(0), min(1), min(2));
+    try 
+    {
+        p.SetCoordinates(ranges[0].min, ranges[1].min, ranges[2].min);
+    } 
+    catch (std::runtime_error const& e)
+    {
+        ::boost::ignore_unused_variable_warning(e);
+        p.SetCoordinates(ranges[0].min, ranges[1].min, 0);
+        
+    }
+
     return p;
 }
 
 liblas::Point max() {
     liblas::Point p;
-    p.SetCoordinates(max(0), max(1), max(2));
+    try 
+    {
+        p.SetCoordinates(ranges[0].max, ranges[1].max, ranges[2].max);
+    } 
+    catch (std::runtime_error const& e)
+    {
+        ::boost::ignore_unused_variable_warning(e);
+        p.SetCoordinates(ranges[0].max, ranges[1].max, 0);
+        
+    }
     return p;
 }
 
-T minx() const { if (mins.size() == 0) return 0; return mins[0]; }
-T miny() const { if (mins.size() < 2) return 0; return mins[1]; }
-T minz() const { if (mins.size() < 3) return 0; return mins[2]; }
-T maxx() const { if (maxs.size() == 0) return 0; return maxs[0]; }
-T maxy() const { if (maxs.size() < 2) return 0; return maxs[1]; }
-T maxz() const { if (maxs.size() < 3) return 0; return maxs[2]; }
+T minx() const { if (ranges.size() == 0) return 0; return ranges[0].min; }
+T miny() const { if (ranges.size() < 2) return 0; return ranges[1].min; }
+T minz() const { if (ranges.size() < 3) return 0; return ranges[2].min; }
+T maxx() const { if (ranges.size() == 0) return 0; return ranges[0].max; }
+T maxy() const { if (ranges.size() < 2) return 0; return ranges[1].max; }
+T maxz() const { if (ranges.size() < 3) return 0; return ranges[2].max; }
 
 inline bool operator==(Bounds<T> const& rhs) const
 {
@@ -235,59 +369,147 @@ Bounds<T>& operator=(Bounds<T> const& rhs)
 {
     if (&rhs != this)
     {
-        mins = rhs.mins;
-        maxs = rhs.maxs;
+        ranges = rhs.ranges;
     }
     return *this;
 }
 
+/// The vector of Range<T> for the Bounds
+RangeVec const& dims () const { return ranges; }
+
+/// The number of dimensions of the Bounds
 size_type dimension() const
 {
-    return mins.size();
+    return ranges.size();
 }
 
+/// Resize the dimensionality of the Bounds to d
 void dimension(size_type d)
 {
-    if (maxs.size() < d) {
-        maxs.resize(d);
+    if (ranges.size() < d) {
+        ranges.resize(d);
     }    
-    if (mins.size() < d){
-        mins.resize(d);
-    }
 }
 
-
+/// Is this Bounds equal to other?
 bool equal(Bounds<T> const& other) const
 {
     for (size_type i = 0; i < dimension(); i++) {
-        
-        if    (!(detail::compare_distance(min(i), other.min(i)))  
-            || !(detail::compare_distance(max(i), other.max(i)))) 
-        {
+        if ( ranges[i] != other.ranges[i] )
             return false;
-        }
     }
     return true;
 }
 
+/// Does this Bounds intersect other?
 bool intersects(Bounds const& other) const
 {
-    
-    if (other.dimension() != dimension())
-    {
-        std::ostringstream msg; 
-        msg << "Bounds dimensions are not equal.  Comparison dimension is " << other.dimension()
-            << " and this dimension is " << dimension();
-        throw std::runtime_error(msg.str());        
-    }
 
-    for (size_type i = 0; i < dimension(); i++){
-        if (min(i) > other.max(i) || max(i) < other.min(i)) return false;
+    for (size_type i = 0; i < dimension(); i++) {
+        if ( ranges[i].overlaps(other.ranges[i]) )
+            return true;
     }
     
+    return false;
+
+}
+
+/// Synonym for intersects for now
+bool overlaps(Bounds const& other) const
+{
+    return intersects(other);
+}
+
+/// Does this Bounds contain other?
+bool contains(Bounds const& other) const
+{
+    for (size_type i = 0; i < dimension(); i++) {
+        if ( ranges[i].contains(other.ranges[i]) )
+            return true;
+    }
     return true;
 }
 
+/// Shift each dimension by a vector of detlas
+void shift(std::vector<T> deltas)
+{
+    typedef typename std::vector< T >::size_type size_type;
+
+    size_type i;
+    if( dimension() <= deltas.size()) 
+    {
+        std::ostringstream msg; 
+        msg << "liblas::Bounds::shift: Delta vector size, " << deltas.size()
+            << ", is larger than the dimensionality of the bounds, "<< dimension() << ".";
+        throw std::runtime_error(msg.str());
+    }
+    for (i = 0; i < deltas.size(); ++i){
+        ranges[i].shift(deltas[i]);
+    }
+}
+
+/// Scale each dimension by a vector of deltas
+void scale(std::vector<T> deltas)
+{
+    typedef typename std::vector< T >::size_type size_type;
+
+    size_type i;
+    if( dimension() <= deltas.size()) 
+    {
+        std::ostringstream msg; 
+        msg << "liblas::Bounds::scale: Delta vector size, " << deltas.size()
+            << ", is larger than the dimensionality of the bounds, "<< dimension() << ".";
+        throw std::runtime_error(msg.str());
+    }
+    for (i = 0; i < deltas.size(); ++i){
+        ranges[i].scale(deltas[i]);
+    }
+}
+
+/// Clip this Bounds to the extent of r
+void clip(Bounds const& r)
+{
+    RangeVec ds = r.dims();
+    for (size_type i = 0; i < dimension(); ++i){
+        ranges[i].clip(ds[i]);
+    }    
+}
+
+/// Grow to the union of two liblas::Bounds
+void grow(Bounds const& r)
+{
+    RangeVec ds = r.dims();
+    for (size_type i = 0; i < dimension(); ++i){
+        ranges[i].grow(ds[i]);
+    }    
+}
+
+/// Expand the liblas::Bounds to include this point
+void grow(Point const& p)
+{
+    ranges[0].grow(p.GetX());
+    ranges[1].grow(p.GetY());
+    ranges[2].grow(p.GetZ());
+}
+
+T volume() const
+{
+    T output;
+    for (size_type i = 0; i < dimension(); i++) {
+        output = output * ranges[i].length();
+    }
+    
+    return output;
+}
+
+bool empty() const
+{
+    for (size_type i = 0; i < dimension(); i++) {
+        if (ranges[i].empty())
+            return true;
+    }
+    return false;
+}
 
 void verify()
 {
