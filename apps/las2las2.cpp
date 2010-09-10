@@ -182,6 +182,7 @@ bool process(   std::string const& input,
     liblas::property_tree::write_xml("junk.xml", top);
     liblas::property_tree::write_xml("schema.xml", reader.GetHeader().GetSchema().GetPTree());
 
+    std::cout <<  reader.GetHeader().GetSchema() << std::endl;
     delete writer;
     delete ofs;
     
@@ -214,8 +215,8 @@ int main(int argc, char* argv[])
     // try {
 
         po::options_description file_options("las2las2 options");
-        po::options_description* filtering_options = GetFilteringOptions();
-        po::options_description* transform_options = GetTransformationOptions() ;
+        po::options_description filtering_options = GetFilteringOptions();
+        po::options_description transform_options = GetTransformationOptions() ;
 
         po::positional_options_description p;
         p.add("input", 1);
@@ -234,7 +235,7 @@ int main(int argc, char* argv[])
 
         po::variables_map vm;
         po::options_description options;
-        options.add(file_options).add(*transform_options).add(*filtering_options);
+        options.add(file_options).add(transform_options).add(filtering_options);
         po::store(po::command_line_parser(argc, argv).
           options(options).positional(p).run(), vm);
 
@@ -287,8 +288,6 @@ int main(int argc, char* argv[])
             return (1);
         }
         
-        delete filtering_options;
-        delete transform_options;
     // }
     // catch(std::exception& e) {
     //     std::cerr << "error: " << e.what() << "\n";

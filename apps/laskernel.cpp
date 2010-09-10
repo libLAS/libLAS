@@ -108,12 +108,12 @@ liblas::FilterPtr MakeColorFilter(liblas::Color const& low, liblas::Color const&
     return liblas::FilterPtr(filter);
 }
 
-po::options_description* GetFilteringOptions() 
+po::options_description GetFilteringOptions() 
 {
 
-po::options_description* filtering_options = new po::options_description("Filtering options");
+po::options_description filtering_options("Filtering options");
 
-filtering_options->add_options()
+filtering_options.add_options()
     ("extent,e", po::value< string >(), "Extent window that points must fall within to keep.\nUse a comma-separated list, for example, \n  -e minx, miny, maxx, maxy\n  or \n  -e minx, miny, minz, maxx, maxy, maxz")
     ("thin,t", po::value<boost::uint32_t>()->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
     ("last_return_only", po::value<bool>()->zero_tokens(), "Keep last returns (cannot be used with --first_return_only)")
@@ -135,11 +135,11 @@ filtering_options->add_options()
 return filtering_options;    
 }
 
-po::options_description* GetTransformationOptions() 
+po::options_description GetTransformationOptions() 
 {
-    po::options_description* transform_options= new po::options_description("Transformation options");
+    po::options_description transform_options("Transformation options");
 
-    transform_options->add_options()
+    transform_options.add_options()
         ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
         ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")   
         ("offset", po::value< string >(), "A comma-separated list of offsets to set on the output file: \n--offset 0,0,0 \n--offset  min,min,min")

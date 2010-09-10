@@ -78,8 +78,8 @@ liblas::FilterPtr MakeScanAngleFilter(std::string intensities, liblas::FilterI::
 liblas::FilterPtr MakeColorFilter(liblas::Color const& low, liblas::Color const& high, liblas::FilterI::FilterType ftype); 
 
 
-po::options_description* GetFilteringOptions();
-po::options_description* GetTransformationOptions();
+po::options_description GetFilteringOptions();
+po::options_description GetTransformationOptions();
 
 std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose);
 std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header);
