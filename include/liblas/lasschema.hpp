@@ -57,6 +57,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 namespace liblas {  
 
@@ -90,12 +91,12 @@ public:
     bool HasColor() const;
     bool HasTime() const; 
     
-    void AddDimension(boost::shared_ptr<Dimension> dim);
-    boost::shared_ptr<Dimension> GetDimension(std::string const& name) const;
+    void AddDimension(DimensionPtr dim);
+    DimensionPtr GetDimension(std::string const& name) const;
     void RemoveDimension(DimensionPtr dim);
     
     std::vector<std::string> GetDimensionNames() const;
-  
+    std::vector<DimensionPtr> GetDimensions() const { return m_dimensions; }
     liblas::property_tree::ptree GetPTree() const;
     
     bool IsCustom() const;
@@ -151,6 +152,13 @@ public:
     /// bytes, physical/serialisation size of record
     std::size_t GetByteSize() const 
     {
+        if (m_bitsize % 8 != 0) {
+            std::ostringstream oss;
+            oss << m_name << "'s bit size, " << m_bitsize 
+                << ", is not a multiple of 8 and " 
+                << "cannot be expressed as a single byte value";
+            throw std::range_error(oss.str());
+        }
         return m_bitsize / 8;
     }    
     
@@ -194,6 +202,15 @@ public:
     boost::uint32_t GetPosition() const { return m_position; }
     void SetPosition(boost::uint32_t v) { m_position = v; }
     
+    double GetScale() const { return m_scale; }
+    void SetScale(double v) { m_scale = v; }
+    
+    double GetOffset() const { return m_offset; }
+    void SetOffset(double v) { m_offset = v; }
+    
+    bool IsFinitePrecision() const { return m_precise; }
+    void IsFinitePrecision(bool v) { m_precise = v; }
+    
     bool operator < (Dimension const& dim) const 
     {
         return m_position < dim.m_position;
@@ -211,6 +228,10 @@ private:
     bool m_signed;
     bool m_integer;
     boost::uint32_t m_position;
+    double m_scale;
+    bool m_precise;
+    double m_offset;
+    
 };
 
 std::ostream& operator<<(std::ostream& os, liblas::Schema const&);

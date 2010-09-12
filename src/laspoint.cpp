@@ -41,6 +41,7 @@
 
 #include <liblas/laspoint.hpp>
 #include <liblas/lasheader.hpp>
+#include <liblas/lasschema.hpp>
 #include <liblas/exception.hpp>
 #include <liblas/detail/pointrecord.hpp>
 // boost
@@ -54,6 +55,7 @@
 #include <string>
 #include <vector>
 #include <iosfwd>
+#include <algorithm>
 
 using namespace boost;
 
@@ -371,5 +373,57 @@ void Point::throw_out_of_range() const
     throw std::out_of_range("coordinate subscript out of range");
 }
 
+boost::any Point::GetValue(DimensionPtr d) const
+{
+    typedef std::vector<DimensionPtr> Dimensions;
+    boost::any output;
+    
+    // If we don't have a header for the point, we can't return 
+    // anything because we don't have a schema to go along with it.
+    // Use the other method Point::GetValue(DimensionPtr d, liblas::Schema const& schema).
+    if (m_header.get() == 0) {
+        return output;
+    }
+    
+    liblas::Schema const& schema = m_header->GetSchema();
+
+    
+    if (m_format_data.size() + m_extra_data.size() != d->GetByteSize()) {
+        std::ostringstream oss;
+        oss << "The size of the required_data," << m_format_data.size()
+            << ", plus the size of the extra_data," << m_extra_data.size()
+            << ", does not equal the schema's byte size, " << d->GetByteSize();
+        throw std::runtime_error(oss.str());
+    }
+    
+    Dimensions dimensions = schema.GetDimensions();
+    
+    
+    std::vector<boost::uint32_t>::size_type i;
+    boost::uint32_t dim_pos = d->GetPosition();
+    boost::uint32_t byte_pos = 0;
+    
+    for (Dimensions::const_iterator i = dimensions.begin(); i != dimensions.end(); ++i)
+    {
+        DimensionPtr t = *i;
+        if (t->GetBitSize() == 0) {
+            std::ostringstream oss;
+            oss << "The bit size of the dimension is 0, the schema is invalid.";
+            throw std::runtime_error(oss.str());
+        }
+
+        // If it is already-byte aligned, we'll count that directly.  If it 
+        // is not, we will cumulate until we are byte aligned.  If we never 
+        // be come byte aligned, we're going to throw an error.
+        if (t->GetBitSize() % 8 == 0) 
+        {
+            
+        } else 
+        {
+            
+        }
+    }
+    return output;
+}
 
 } // namespace liblas

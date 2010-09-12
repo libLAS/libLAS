@@ -177,6 +177,8 @@ private:
     Point* m_point;
     PointPtr m_empty_point;
     
+    void SummarizeSchema(liblas::property_tree::ptree& tree);
+    
     
     // Set if the user provides a header to override the header as 
     // read from the istream

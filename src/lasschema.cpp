@@ -346,7 +346,7 @@ Schema::Schema(Schema const& other) :
     m_nextpos(other.m_nextpos),
     m_dimensions(other.m_dimensions)
 {
-
+    std::sort(m_dimensions.begin(), m_dimensions.end());
 }
 // 
 // // assignment constructor
@@ -360,6 +360,7 @@ Schema& Schema::operator=(Schema const& rhs)
         m_dimensions = rhs.m_dimensions;
     }
     
+    std::sort(m_dimensions.begin(), m_dimensions.end());
     return *this;
 }
 
@@ -513,12 +514,17 @@ std::ostream& operator<<(std::ostream& os, liblas::Schema const& s)
         os << "  Bit size is unaligned to byte boundaries" << std::endl;
     }
     
+    os << "  ";
     for (i = dims.begin(); i != dims.end(); ++i)
     {
+        std::string name = (*i).second.get<std::string>("name");
+        os << name << " ";
     }
+    os << std::endl;
     
     return os;
 }
+
 Schema::Schema(std::vector<VariableRecord> const& vlrs)
 {
     bool have_schema = false;

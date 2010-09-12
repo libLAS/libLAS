@@ -47,10 +47,12 @@
 #include <liblas/detail/pointrecord.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
+#include <liblas/lasschema.hpp>
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/any.hpp>
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
@@ -196,6 +198,8 @@ public:
     HeaderPtr GetHeaderPtr() const;
     
     property_tree::ptree GetPTree() const;
+    
+    boost::any GetValue(DimensionPtr d) const;
 
 private:
 
@@ -228,12 +232,6 @@ inline bool operator!=(Point const& lhs, Point const& rhs)
     return (!(lhs == rhs));
 }
 
-// inline void Point::SetCoordinates(double const& x, double const& y, double const& z)
-// {
-//     m_coords[0] = x;
-//     m_coords[1] = y;
-//     m_coords[2] = z;
-// }
 
 inline double Point::GetX() const
 {
