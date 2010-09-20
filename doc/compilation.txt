@@ -137,9 +137,9 @@ location so the CMake configuration can find your install.
     them::
         
         cd $ORACLE_HOME
-        ln -s libocci.so.10.1 libocci.so
-        ln -s libclntsh.so.10.1 libclntsh.so
-        ln -s libociei.so.10.1 libociei.so
+        ln -s libocci.so.11.1 libocci.so
+        ln -s libclntsh.so.11.1 libclntsh.so
+        ln -s libociei.so.11.1 libociei.so
 
 .. note::
     MSVC should only require the oci.lib and oci.dll library and dlls.
