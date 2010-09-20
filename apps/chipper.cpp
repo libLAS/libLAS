@@ -105,7 +105,7 @@ void Chipper::Load(RefList& xvec, RefList& yvec, RefList& spare )
     count = m_reader->GetHeader().GetPointRecordsCount();
     xvec.reserve(count);
     yvec.reserve(count);
-    spare.reserve(count);
+    spare.resize(count);
 
     count = 0;
     while (m_reader->ReadNextPoint()) {

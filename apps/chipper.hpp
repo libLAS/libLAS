@@ -40,6 +40,8 @@ public:
         { return m_vec.size(); }
     void reserve(std::vector<PtRef>::size_type n)
         { m_vec.reserve(n); }
+    void resize(std::vector<PtRef>::size_type n)
+        { m_vec.resize(n); }
     void push_back(const PtRef& ref)
         { m_vec.push_back(ref); }
     std::vector<PtRef>::iterator begin()
@@ -98,9 +100,9 @@ public:
     {}
 
     void Chip();
-    boost::uint32_t GetBlockCount()
+    std::vector<Block>::size_type GetBlockCount()
         { return m_blocks.size(); }
-    const Block& GetBlock(boost::uint32_t i)
+    const Block& GetBlock(std::vector<Block>::size_type i)
         { return m_blocks[i]; }
 
 private:
