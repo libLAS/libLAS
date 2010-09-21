@@ -63,21 +63,38 @@ namespace liblas {
 
 Point::Point()
     : m_extra_data(0)
-    , m_format_data(0)
     , m_gps_time(0)
     , m_intensity(0)
     , m_source_id(0)
     , m_flags(0)
     , m_user_data(0)
     , m_angle_rank(0)
+    , m_header(HeaderPtr())
 {
-    m_coords.assign(0);
+    m_double_coords_cache.assign(0);
+    m_format_data.resize(ePointSize3);
+    m_format_data.assign(ePointSize3, 0);
+}
+
+Point::Point(HeaderPtr hdr)
+    : m_extra_data(0)
+    , m_gps_time(0)
+    , m_intensity(0)
+    , m_source_id(0)
+    , m_flags(0)
+    , m_user_data(0)
+    , m_angle_rank(0)
+    , m_header(hdr)
+{
+    m_double_coords_cache.assign(0);
+    m_format_data.resize(ePointSize3);
+    m_format_data.assign(ePointSize3, 0);
 }
 
 Point::Point(Point const& other)
     : m_extra_data(other.m_extra_data)
     , m_format_data(other.m_format_data)
-    , m_coords(other.m_coords)
+    , m_double_coords_cache(other.m_double_coords_cache)
     , m_color(other.m_color)
     , m_gps_time(other.m_gps_time)
     , m_intensity(other.m_intensity)
@@ -96,7 +113,7 @@ Point& Point::operator=(Point const& rhs)
     {
         m_extra_data = rhs.m_extra_data;
         m_format_data = rhs.m_format_data;
-        m_coords = rhs.m_coords;
+        m_double_coords_cache = rhs.m_double_coords_cache;
         m_color = rhs.m_color;
         m_gps_time = rhs.m_gps_time;
         m_class = rhs.m_class;
@@ -110,26 +127,12 @@ Point& Point::operator=(Point const& rhs)
     return *this;
 }
 
-// void Point::SetCoordinates(Header const& header, double x, double y, double z)
-// {
-//     double const cx = (x * header.GetScaleX()) + header.GetOffsetX();
-//     double const cy = (y * header.GetScaleY()) + header.GetOffsetY();
-//     double const cz = (z * header.GetScaleZ()) + header.GetOffsetZ();
-// 
-//     SetCoordinates(cx, cy, cz);
-// }
 
 void Point::SetCoordinates(double const& x, double const& y, double const& z)
 {
-    if (m_header.get() != 0 ) {
-        m_coords[0] = (x * m_header->GetScaleX()) + m_header->GetOffsetX();
-        m_coords[1] = (y * m_header->GetScaleY()) + m_header->GetOffsetY();
-        m_coords[2] = (z * m_header->GetScaleZ()) + m_header->GetOffsetZ();   
-    } else {
-        m_coords[0] = x;
-        m_coords[1] = y;
-        m_coords[2] = z;
-    }
+    SetX(x);
+    SetY(y);
+    SetZ(z);
 }
 
 
@@ -202,9 +205,9 @@ bool Point::equal(Point const& other) const
     //double const epsilon = std::numeric_limits<double>::epsilon(); 
     double const epsilon = 0.00001;
 
-    double const dx = m_coords[0] - other.m_coords[0];
-    double const dy = m_coords[1] - other.m_coords[1];
-    double const dz = m_coords[2] - other.m_coords[2];
+    double const dx = GetX() - other.GetX();
+    double const dy = GetY() - other.GetY();
+    double const dz = GetZ() - other.GetZ();
 
     // TODO: Should we compare other data members, besides the coordinates?
 
@@ -373,6 +376,148 @@ void Point::throw_out_of_range() const
     throw std::out_of_range("coordinate subscript out of range");
 }
 
+
+
+double Point::GetX() const
+{
+    boost::int32_t v = GetRawX();
+    
+    double output = 0;
+    
+    if (m_header.get() != 0 ) 
+    { 
+        // Scale it
+        output  = (v * m_header->GetScaleX()) + m_header->GetOffsetX();
+    } else {
+        output = m_double_coords_cache[0];
+    }
+    
+    return output;
+}
+
+
+void Point::SetX( double const& value ) 
+{
+    boost::int32_t v = static_cast<boost::int32_t>(value);
+    if (m_header.get() != 0 ) 
+    {
+        // descale the value given our scale/offset
+        v = static_cast<boost::int32_t>(
+                             detail::sround(((value - m_header->GetOffsetX()) / 
+                                              m_header->GetScaleX())));
+    } else 
+    {
+        m_double_coords_cache[0] = value;
+    }
+    // What to do about points with no header?  Cook up a default scale?
+    // Given a double determine the maximum amount of precision required to 
+    // 
+    std::vector<boost::uint8_t>::size_type pos = 0;
+    detail::intToBits(v, m_format_data, pos);
+}
+
+boost::int32_t Point::GetRawX() const
+{
+
+    boost::int32_t output;
+    std::vector<boost::uint8_t>::size_type pos = 0;
+    output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
+
+    return output;
+}
+
+
+double Point::GetY() const
+{
+    boost::int32_t v = GetRawY();
+    
+    double output = 0;
+    
+    if (m_header.get() != 0 ) 
+    { 
+        // Scale it
+        output  = (v * m_header->GetScaleY()) + m_header->GetOffsetY();
+    } else {
+        output = m_double_coords_cache[1];
+        // output = static_cast<double>(v);
+    }
+    
+    return output;
+}
+
+void Point::SetY( double const& value ) 
+{
+    boost::int32_t v = static_cast<boost::int32_t>(value);
+    if (m_header.get() != 0 ) 
+    {
+        // descale the value given our scale/offset
+        v = static_cast<boost::int32_t>(
+                             detail::sround(((value - m_header->GetOffsetY()) / 
+                                              m_header->GetScaleY())));
+    } else 
+    {
+        m_double_coords_cache[1] = value;
+    }
+    
+    std::vector<boost::uint8_t>::size_type pos = 4;
+    detail::intToBits(v, m_format_data, pos);
+}
+
+boost::int32_t Point::GetRawY() const
+{
+    boost::int32_t output;
+    std::vector<boost::uint8_t>::size_type pos = 4;
+    output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
+
+    return output;
+}
+
+
+double Point::GetZ() const
+{
+    boost::int32_t v = GetRawZ();
+    
+    double output = 0;
+    
+    if (m_header.get() != 0 ) 
+    { 
+        // Scale it
+        output  = (v * m_header->GetScaleZ()) + m_header->GetOffsetZ();
+    } else {
+        output = m_double_coords_cache[2];
+        // output = static_cast<double>(v);
+    }
+    
+    return output;
+}
+void Point::SetZ( double const& value ) 
+{
+    boost::int32_t v = static_cast<boost::int32_t>(value);
+    if (m_header.get() != 0 ) 
+    {
+        // descale the value given our scale/offset
+        v = static_cast<boost::int32_t>(
+                             detail::sround(((value - m_header->GetOffsetZ()) / 
+                                              m_header->GetScaleZ())));
+    } else
+    {
+        m_double_coords_cache[2] = value;
+    }
+    
+    std::vector<boost::uint8_t>::size_type pos = 8;
+    detail::intToBits(v, m_format_data, pos);
+}
+
+
+boost::int32_t Point::GetRawZ() const
+{
+    boost::int32_t output;
+    std::vector<boost::uint8_t>::size_type pos = 8;
+    output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
+
+    return output;
+}
+
 boost::any Point::GetValue(DimensionPtr d) const
 {
     typedef std::vector<DimensionPtr> Dimensions;
@@ -388,41 +533,101 @@ boost::any Point::GetValue(DimensionPtr d) const
     liblas::Schema const& schema = m_header->GetSchema();
 
     
-    if (m_format_data.size() + m_extra_data.size() != d->GetByteSize()) {
+    if (m_format_data.size() + m_extra_data.size() != schema.GetByteSize()) {
         std::ostringstream oss;
-        oss << "The size of the required_data," << m_format_data.size()
-            << ", plus the size of the extra_data," << m_extra_data.size()
-            << ", does not equal the schema's byte size, " << d->GetByteSize();
+        oss << "The size of the required_data, " << m_format_data.size()
+            << ", plus the size of the extra_data, " << m_extra_data.size()
+            << ", does not equal the schema's byte size, " << schema.GetByteSize();
         throw std::runtime_error(oss.str());
     }
     
     Dimensions dimensions = schema.GetDimensions();
     
     
-    std::vector<boost::uint32_t>::size_type i;
-    boost::uint32_t dim_pos = d->GetPosition();
-    boost::uint32_t byte_pos = 0;
+    boost::uint32_t wanted_dim_pos = d->GetPosition();
+    std::size_t byte_pos = 0;
+    boost::uint32_t bit_pos = 0;
+    boost::uint32_t dim_pos = 0;
+    
+    std::vector<boost::uint8_t> data;
     
     for (Dimensions::const_iterator i = dimensions.begin(); i != dimensions.end(); ++i)
     {
         DimensionPtr t = *i;
-        if (t->GetBitSize() == 0) {
+        
+        if (t->GetPosition() != dim_pos) {
             std::ostringstream oss;
-            oss << "The bit size of the dimension is 0, the schema is invalid.";
+            oss << "The dimensions are not properly sorted.  '"<< t->GetName()<<"'s "
+                << "position is " << t->GetPosition() << " while the next expected "
+                << "position is " << dim_pos;
             throw std::runtime_error(oss.str());
+            
         }
 
+
+
+        
+        // we're here
+        if (t->GetPosition() == d->GetPosition()) {            // 
+                    // std::cout << "Position: " << t->GetPosition() << std::endl;
+                    // std::cout << "byte_pos: " << byte_pos << std::endl;
+                    // std::cout << "bit_pos: " << bit_pos << std::endl;
+            
+            // Get a value that's at least 1byte in size
+                if (byte_pos > m_format_data.size()) {
+                    // fetch from extra data
+                } else {
+                    std::vector<boost::uint8_t>::size_type i;
+                    for(i=byte_pos; i != byte_pos+d->GetByteSize(); i++)
+                    {
+                        data.push_back(m_format_data[i]);
+                    }
+                    
+                    if (d->IsInteger()) 
+                    {
+                        if (d->IsSigned()) {
+                            
+                            // std::cout << "data size:" <<  data.size();
+                            boost::int32_t dx = 0;
+                            double scaled_x = 0;
+                            dx = liblas::detail::bitsToInt<boost::int32_t>(dx, data, byte_pos);
+                            
+                            double scale = m_header->GetScaleX();
+                            double offset = m_header->GetOffsetX();
+                            // liblas::Scaled<boost::int32_t> s(dx, m_header->GetScaleX(), &offset);
+                            double const ax = (dx * m_header->GetScaleX()) + m_header->GetOffsetX();
+                            output = dx;
+                            // std::cout << "dx: " <<  dx  <<" Real X: " << GetX() <<std::endl;
+                            return output;
+                        } else {
+                            
+                        }
+                    } else {
+                        
+                    }
+                    return output;
+                }
+            }
+            else {
+                // Do some shifting magic to get our value
+            }
+            
         // If it is already-byte aligned, we'll count that directly.  If it 
         // is not, we will cumulate until we are byte aligned.  If we never 
         // be come byte aligned, we're going to throw an error.
         if (t->GetBitSize() % 8 == 0) 
         {
-            
+            byte_pos += t->GetByteSize();
         } else 
         {
-            
+            bit_pos += t->GetBitSize();
         }
+        dim_pos++;
+                    
     }
+
+
+    
     return output;
 }
 

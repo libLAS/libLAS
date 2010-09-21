@@ -46,8 +46,10 @@
 #include <liblas/lascolor.hpp>
 #include <liblas/detail/pointrecord.hpp>
 #include <liblas/detail/fwd.hpp>
+#include <liblas/detail/utility.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/lasschema.hpp>
+
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
@@ -60,6 +62,50 @@
 
 
 namespace liblas {
+
+// template <typename T>
+// class Scaled
+// {
+// 
+// public:
+//     Scaled(T value, double* scale, double* offset)
+//         : m_value(value), m_scale(scale), m_offset(offset) {};    
+// 
+//     Scaled(Scaled const& other)
+//         : m_value(other.m_value)
+//         , m_scale(other.m_scale)
+//         , m_offset(other.m_offset)
+//     {
+//     }
+// 
+//     Scaled& operator=(Scaled<T> const& rhs)
+//     {
+//         if (&rhs != this)
+//         {
+//             m_value = rhs.m_value;
+//             m_scale = rhs.m_scale;
+//             m_offset = rhs.m_scale;
+//         }
+//         return *this;
+//     }
+//     
+//     operator double() const 
+//     {
+//         double output = (m_value * *m_scale) + *m_offset;
+//             std::cout << "double(): " << output << " m_value: " << m_value << " m_scale: " << *m_scale << " m_offset: " << *m_offset << std::endl;
+//         return (m_value * *m_scale) + *m_offset;
+//     }
+//     
+//     operator T() const
+//     {
+//         return m_value;
+//     }
+//     
+// private:
+//     T m_value;
+//     double* m_scale;
+//     double* m_offset;
+// };
 
 /// Point data record composed with X, Y, Z coordinates and attributes.
 class Point
@@ -102,19 +148,28 @@ public:
     };
 
     Point();
+    Point(HeaderPtr header);
     Point(Point const& other);
     Point& operator=(Point const& rhs);
 
     double GetX() const;
     double GetY() const;
     double GetZ() const;
+    
+    boost::int32_t GetRawX() const;
+    boost::int32_t GetRawY() const;
+    boost::int32_t GetRawZ() const;
+        
     void SetCoordinates(double const& x, double const& y, double const& z);
-    // void SetCoordinates(Header const& header, double x, double y, double z);
     
     void SetX(double const& value);
     void SetY(double const& value);
     void SetZ(double const& value);
 
+    void SetRawX(boost::int32_t const& value);
+    void SetRawY(boost::int32_t const& value);
+    void SetRawZ(boost::int32_t const& value);
+    
     boost::uint16_t GetIntensity() const;
     void SetIntensity(boost::uint16_t const& intensity);
 
@@ -172,15 +227,10 @@ public:
     double GetTime() const;
     void SetTime(double const& time);
 
-    /// Index operator providing access to XYZ coordinates of point record.
-    /// Valid index values are 0, 1 or 2.
-    /// \exception std::out_of_range if requested index is out of range (> 2).
-    double& operator[](std::size_t const& index);
-
     /// Const version of index operator providing access to XYZ coordinates of point record.
     /// Valid index values are 0, 1 or 2.
     /// \exception std::out_of_range if requested index is out of range (> 2).
-    double const& operator[](std::size_t const& index) const;
+    double operator[](std::size_t const& index) const;
 
     /// \todo TODO: Should we compare other data members, but not only coordinates?
     bool equal(Point const& other) const;
@@ -206,7 +256,14 @@ private:
     detail::PointRecord m_record;
     std::vector<boost::uint8_t> m_extra_data;
     std::vector<boost::uint8_t> m_format_data;
-    boost::array<double, 3> m_coords;
+
+    // If we don't have a header, we have no way to scale the data.
+    // We're going to cache the value until the user sets the header for the point
+    // This means that the raw data is *out of sync* with the real data
+    // until there is a header attached to the point and the writer 
+    // must account for this.    
+    boost::array<double, 3> m_double_coords_cache;
+    
     Color m_color;
     double m_gps_time;
     boost::uint16_t m_intensity;
@@ -230,37 +287,6 @@ inline bool operator==(Point const& lhs, Point const& rhs)
 inline bool operator!=(Point const& lhs, Point const& rhs)
 {
     return (!(lhs == rhs));
-}
-
-
-inline double Point::GetX() const
-{
-    return m_coords[0];
-}
-
-inline void Point::SetX( double const& value ) 
-{
-    m_coords[0] = value;
-}
-
-inline double Point::GetY() const
-{
-    return m_coords[1];
-}
-
-inline void Point::SetY( double const& value ) 
-{
-    m_coords[1] = value;
-}
-
-inline double Point::GetZ() const
-{
-    return m_coords[2];
-}
-
-inline void Point::SetZ( double const& value ) 
-{
-    m_coords[2] = value;
 }
 
 inline boost::uint16_t Point::GetIntensity() const
@@ -348,20 +374,18 @@ inline void Point::SetColor(Color const& value)
     m_color = value;
 }
 
-inline double& Point::operator[](std::size_t const& index)
+inline double Point::operator[](std::size_t const& index) const
 {
-    if (index > m_coords.size() - 1)
-        throw_out_of_range();
+    
+    if (index == 0) 
+        return GetX();
+    if (index == 1) 
+        return GetY();
+    if (index == 2)
+        return GetZ();
 
-    return m_coords[index];
-}
-
-inline double const& Point::operator[](std::size_t const& index) const
-{
-    if (index > m_coords.size() - 1)
-        throw_out_of_range();
-
-    return m_coords[index];
+    throw_out_of_range();
+    
 }
 
 
