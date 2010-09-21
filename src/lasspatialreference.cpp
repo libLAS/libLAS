@@ -545,7 +545,7 @@ std::string SpatialReference::GetProj4() const
 {
 #ifdef HAVE_GDAL
     
-    std::string wkt = GetWKT();
+    std::string wkt = GetWKT(eCompoundOK);
     const char* poWKT = wkt.c_str();
     
     OGRSpatialReference srs(NULL);

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: gt_wkt_srs.cpp 18562 2010-01-16 04:56:05Z warmerdam $
+ * $Id: gt_wkt_srs.cpp 20480 2010-08-28 21:20:15Z rouault $
  *
  * Project:  GeoTIFF Driver
  * Purpose:  Implements translation between GeoTIFF normalized projection
@@ -42,15 +42,9 @@
 #include "xtiffio.h"
 #include "cpl_multiproc.h"
 
-CPL_CVSID("$Id: gt_wkt_srs.cpp 18562 2010-01-16 04:56:05Z warmerdam $")
-
-#if defined(WIN32) 
-#  define EQUALN(a,b,n)           (_strnicmp(a,b,n)==0)
-#  define EQUAL(a,b)              (_stricmp(a,b)==0)
-#endif
+CPL_CVSID("$Id: gt_wkt_srs.cpp 20480 2010-08-28 21:20:15Z rouault $")
 
 CPL_C_START
-void GTiffOneTimeInit();
 int CPL_DLL VSIFCloseL( FILE * );
 int CPL_DLL VSIUnlink( const char * );
 FILE CPL_DLL *VSIFileFromMemBuffer( const char *pszFilename, 
@@ -185,11 +179,11 @@ static void WKTMassageDatum( char ** ppszDatum )
 /************************************************************************/
 
 /* For example:
-   GTCitationGeoKey (Ascii,215): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 18562 $ $Date: 2010-01-15 23:56:05 -0500 (Fri, 15 Jan 2010) $\nProjection Name = UTM\nUnits = meters\nGeoTIFF Units = meters"
+   GTCitationGeoKey (Ascii,215): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 20480 $ $Date: 2010-08-28 17:20:15 -0400 (Sat, 28 Aug 2010) $\nProjection Name = UTM\nUnits = meters\nGeoTIFF Units = meters"
 
-   GeogCitationGeoKey (Ascii,267): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 18562 $ $Date: 2010-01-15 23:56:05 -0500 (Fri, 15 Jan 2010) $\nUnable to match Ellipsoid (Datum) to a GeographicTypeGeoKey value\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
+   GeogCitationGeoKey (Ascii,267): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 20480 $ $Date: 2010-08-28 17:20:15 -0400 (Sat, 28 Aug 2010) $\nUnable to match Ellipsoid (Datum) to a GeographicTypeGeoKey value\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
 
-   PCSCitationGeoKey (Ascii,214): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 18562 $ $Date: 2010-01-15 23:56:05 -0500 (Fri, 15 Jan 2010) $\nUTM Zone 10N\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
+   PCSCitationGeoKey (Ascii,214): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 20480 $ $Date: 2010-08-28 17:20:15 -0400 (Sat, 28 Aug 2010) $\nUTM Zone 10N\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
  
 */
 
@@ -656,6 +650,8 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
     const char *pszFilename = NULL;
     const char *pszValue;
     char szSearchKey[128];
+    bool bNeedManualVertCS = false;
+    char citation[2048];
 
     // Don't do anything if there is no apparent vertical information.
     GTIFKeyGet( hGTIF, VerticalCSTypeGeoKey, &verticalCSType, 0, 1 );
@@ -665,8 +661,6 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
     if( (verticalCSType != -1 || verticalDatum != -1 || verticalUnits != -1)
         && (oSRS.IsGeographic() || oSRS.IsProjected() || oSRS.IsLocal()) )
     {
-        char citation[2048];
-        
         if( !GTIFKeyGet( hGTIF, VerticalCitationGeoKey, &citation, 
                          0, sizeof(citation) ) )
             strcpy( citation, "unknown" );
@@ -709,11 +703,30 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
         oSRS.Clear();
         oSRS.SetNode( "COMPD_CS", "unknown" );
         oSRS.GetRoot()->AddChild( poOldRoot );
-        
+
+/* -------------------------------------------------------------------- */
+/*      If we have the vertical cs, try to look it up using the         */
+/*      vertcs.csv file, and use the definition provided by that.       */
+/* -------------------------------------------------------------------- */
+        bNeedManualVertCS = true;
+
+        if( verticalCSType != KvUserDefined && verticalCSType > 0 )
+        {
+            OGRSpatialReference oVertSRS;
+            if( oVertSRS.importFromEPSG( verticalCSType ) == OGRERR_NONE )
+            {
+                oSRS.GetRoot()->AddChild( oVertSRS.GetRoot()->Clone() );
+                bNeedManualVertCS = false;
+            }
+        }
+    }
+
 /* -------------------------------------------------------------------- */
 /*      Collect some information from the VerticalCS if not provided    */
 /*      via geokeys.                                                    */
 /* -------------------------------------------------------------------- */
+    if( bNeedManualVertCS )
+    {
         if( verticalCSType > 0 && verticalCSType != KvUserDefined )
         {
             pszFilename = CSVFilename( "coordinate_reference_system.csv" );
