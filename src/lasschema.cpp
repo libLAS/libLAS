@@ -335,7 +335,7 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
         m_dimensions.push_back(*i);
     }
 
-    std::sort(m_dimensions.begin(), m_dimensions.end());  
+    std::sort(m_dimensions.begin(), m_dimensions.end(), sort_dimensions);  
     m_nextpos = 0;
 
 }
@@ -346,7 +346,7 @@ Schema::Schema(Schema const& other) :
     m_nextpos(other.m_nextpos),
     m_dimensions(other.m_dimensions)
 {
-    std::sort(m_dimensions.begin(), m_dimensions.end());
+    std::sort(m_dimensions.begin(), m_dimensions.end(), sort_dimensions);  
 }
 // 
 // // assignment constructor
@@ -360,7 +360,7 @@ Schema& Schema::operator=(Schema const& rhs)
         m_dimensions = rhs.m_dimensions;
     }
     
-    std::sort(m_dimensions.begin(), m_dimensions.end());
+    std::sort(m_dimensions.begin(), m_dimensions.end(), sort_dimensions);  
     return *this;
 }
 
@@ -427,7 +427,7 @@ std::vector<DimensionPtr> Schema::LoadDimensions(liblas::property_tree::ptree tr
     }
     
     // Sort the list by position
-    std::sort(dimensions.begin(), dimensions.end());  
+    std::sort(m_dimensions.begin(), m_dimensions.end(), sort_dimensions);  
     return dimensions;
 }
 
@@ -688,6 +688,20 @@ DimensionPtr Schema::GetDimension(std::string const& name) const
     }
     std::ostringstream oss;
     oss << "Dimension with name '" << name << "' not found.";
+    throw std::runtime_error(oss.str());
+}
+
+DimensionPtr Schema::GetDimension(std::size_t index) const
+{
+    std::vector<DimensionPtr>::const_iterator i;
+    for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+    {
+        if ((*i)->GetPosition() == index) {
+            return *i;
+        }
+    }
+    std::ostringstream oss;
+    oss << "Dimension with index '" << index << "' not found.";
     throw std::runtime_error(oss.str());
 }
 

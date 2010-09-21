@@ -64,6 +64,8 @@ namespace liblas {
 class Dimension;
 typedef boost::shared_ptr<Dimension> DimensionPtr;
 
+
+
 class Schema
 {
 public:
@@ -93,6 +95,7 @@ public:
     
     void AddDimension(DimensionPtr dim);
     DimensionPtr GetDimension(std::string const& name) const;
+    DimensionPtr GetDimension(std::size_t index) const;
     void RemoveDimension(DimensionPtr dim);
     
     std::vector<std::string> GetDimensionNames() const;
@@ -122,6 +125,7 @@ private:
 };
 
 
+
 class Dimension
 {
 public:
@@ -137,7 +141,13 @@ public:
         m_signed(false),
         m_integer(false),
         m_position(0)
-    {};
+    {
+         if (size_in_bits == 0) {
+            std::ostringstream oss;
+            oss << "The bit size of the dimension is 0, the dimension is invalid.";
+            throw std::runtime_error(oss.str());
+        }
+    };
     
     virtual ~Dimension() {};
         
@@ -233,6 +243,12 @@ private:
     double m_offset;
     
 };
+
+bool inline sort_dimensions(DimensionPtr i, DimensionPtr j) 
+{ 
+    
+    return (*i) < (*j); 
+}
 
 std::ostream& operator<<(std::ostream& os, liblas::Schema const&);
 
