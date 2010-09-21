@@ -73,7 +73,7 @@ ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, cons
     m_in_ref = OSRNewSpatialReference(0);
     m_out_ref = OSRNewSpatialReference(0);
     
-    int result = OSRSetFromUserInput(m_in_ref, inSRS.GetWKT().c_str());
+    int result = OSRSetFromUserInput(m_in_ref, inSRS.GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
     if (result != OGRERR_NONE) 
     {
         std::ostringstream msg; 
@@ -83,7 +83,7 @@ ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, cons
         throw std::runtime_error(msg.str());
     }
     
-    result = OSRSetFromUserInput(m_out_ref, outSRS.GetWKT().c_str());
+    result = OSRSetFromUserInput(m_out_ref, outSRS.GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
     if (result != OGRERR_NONE) 
     {
         std::ostringstream msg; 
