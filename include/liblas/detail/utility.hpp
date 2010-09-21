@@ -57,6 +57,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <cmath>
+#include <vector>
 
 /// Defines utilities for internal use in libLAS.
 /// The liblas::detail elements do not belong to the public
@@ -367,6 +368,37 @@ inline void read_n<std::string>(std::string& dest, std::istream& src, std::strea
     assert(dest.size() == static_cast<std::string::size_type>(num));
     check_stream_state(src);
 }
+
+// adapted from http://www.cplusplus.com/forum/beginner/3076/
+template <typename IntegerType>
+inline IntegerType bitsToInt(   IntegerType& result, 
+                                std::vector<boost::uint8_t> const& data, 
+                                std::size_t index)
+{
+    result = 0;
+
+#if defined(LIBLAS_BIG_ENDIAN)
+        for (boost::uint32_t n = 0; n < sizeof( result ); n++)
+#else
+        for (boost::int32_t n = sizeof( result ); n >= 0; n--)
+#endif    
+            result = (result << 8) +data[ n + index ];
+        return result;
+}
+
+template <typename IntegerType>
+inline void intToBits(   IntegerType value, 
+                         std::vector<boost::uint8_t> & data, 
+                         std::size_t index )
+{
+#if defined(LIBLAS_BIG_ENDIAN)
+        for (boost::int32_t n = sizeof( value ); n >= 0; n--)
+#else
+        for (boost::uint32_t n = 0; n < sizeof( value ); n++)
+#endif   
+            data[index+n] = (boost::uint8_t) ((value >> n*8) & 0xFF);
+}
+
 
 template <typename T>
 inline void write_n(std::ostream& dest, T const& src, std::streamsize const& num)
