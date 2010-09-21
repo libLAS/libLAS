@@ -468,23 +468,23 @@ class Point(object):
         """
     color = property(get_color, set_color, None, doc)
 
-    def descale(self, header):
-        """Descales the point with a given :obj:`liblas.header.Header` instance
-
-        :param header: A header with :obj:`liblas.header.Header.offset` and \
-                       :obj:`liblas.header.Header.scale` values set"""
-        self.x = (self.x - header.offset[0]) / header.scale[0]
-        self.y = (self.y - header.offset[1]) / header.scale[1]
-        self.z = (self.z - header.offset[2]) / header.scale[2]
-
-    def scale(self, header):
-        """Scales the point with a given :obj:`liblas.header.Header` instance
-
-        :param header: A header with :obj:`liblas.header.Header.offset` and \
-                       :obj:`liblas.header.Header.scale` values set"""
-        self.x = (self.x * header.scale[0]) + header.offset[0]
-        self.y = (self.y * header.scale[1]) + header.offset[1]
-        self.z = (self.z * header.scale[2]) + header.offset[2]
+    # def descale(self, header):
+    #     """Descales the point with a given :obj:`liblas.header.Header` instance
+    # 
+    #     :param header: A header with :obj:`liblas.header.Header.offset` and \
+    #                    :obj:`liblas.header.Header.scale` values set"""
+    #     self.x = (self.x - header.offset[0]) / header.scale[0]
+    #     self.y = (self.y - header.offset[1]) / header.scale[1]
+    #     self.z = (self.z - header.offset[2]) / header.scale[2]
+    # 
+    # def scale(self, header):
+    #     """Scales the point with a given :obj:`liblas.header.Header` instance
+    # 
+    #     :param header: A header with :obj:`liblas.header.Header.offset` and \
+    #                    :obj:`liblas.header.Header.scale` values set"""
+    #     self.x = (self.x * header.scale[0]) + header.offset[0]
+    #     self.y = (self.y * header.scale[1]) + header.offset[1]
+    #     self.z = (self.z * header.scale[2]) + header.offset[2]
 
     def get_data(self):
         l = ctypes.pointer(ctypes.c_int())
