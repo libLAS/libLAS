@@ -14,14 +14,21 @@
 #include <bitset>
 #include <stdexcept>
 #include <vector>
+#include <fstream>
 
 #include "common.hpp"
+#include "liblas_test.hpp"
 
 namespace tut
 { 
     struct laspoint_data
     {
         liblas::Point m_default;
+        std::string file10_;
+
+        laspoint_data()
+            : file10_(g_test_data_path + "//TO_core_last_clip.las")
+        {}
     };
 
     typedef test_group<laspoint_data> tg;
@@ -420,7 +427,7 @@ namespace tut
         
     }
 
-    // Test Get/SetColor
+    // Test Get/SetExtraData
     template<>
     template<>
     void to::test<17>()
@@ -438,13 +445,56 @@ namespace tut
 
         m_default.SetExtraData(data);
 
-        ensure_equals("invalid set red color",
+        ensure_equals("invalid set extra data size",
             m_default.GetExtraData().size(), 3u);
 
-        ensure_equals("invalid set green color",
+        ensure_equals("invalid set extra data value",
             m_default.GetExtraData()[1], 254);
 
               
+        
+    }
+
+    template<>
+    template<>
+    void to::test<18>()
+    {
+        std::ifstream ifs;
+        ifs.open(file10_.c_str(), std::ios::in | std::ios::binary);
+        liblas::Reader reader(ifs);
+        
+        reader.ReadPointAt(0);
+        liblas::Point p = reader.GetPoint();
+        
+        liblas::Schema schema = reader.GetHeader().GetSchema();
+
+        liblas::DimensionPtr x;
+        try {
+            x = schema.GetDimension("X");
+        } catch (std::runtime_error const& e) {
+            boost::ignore_unused_variable_warning(e);
+        }
+        
+        boost::any d = p.GetValue(x);
+    
+        ensure_equals("invalid GetRawY value",
+            (int) p.GetRawY(), 483450000);
+                
+        // Scale is 0.01 for this file
+        p.SetX(123456);
+        boost::int32_t x2 = p.GetRawX();
+        ensure_equals("invalid raw x value",
+            (int) x2, 12345600);
+
+        p.SetY(123456);
+        x2 = p.GetRawY();
+        ensure_equals("invalid raw y value",
+            (int) x2, 12345600);      
+
+        p.SetZ(123456);
+        x2 = p.GetRawZ();
+        ensure_equals("invalid raw z value",
+            (int) x2, 12345600);          
         
     }
 }
