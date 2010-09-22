@@ -56,7 +56,9 @@ namespace liblas {
 Schema::Schema(PointFormatName data_format_id):
     m_size(0),
     m_data_format_id(data_format_id),
-    m_nextpos(0)
+    m_nextpos(0),
+    m_bit_size(0),
+    m_base_bit_size(0)
 {
     update_required_dimensions(data_format_id);
 }
@@ -216,11 +218,11 @@ void Schema::add_record0_dimensions()
     AddDimension(point_source_id);    
     text.str("");
 
-    std::vector<DimensionPtr>::iterator i;
+    DimensionMap::iterator i;
 
     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        boost::shared_ptr<Dimension> t = *i;
+        boost::shared_ptr<Dimension> t = (*i).second;
         t->IsRequired(true);
         t->IsActive(true);
     }
@@ -288,8 +290,8 @@ void Schema::add_time()
 
 void Schema::update_required_dimensions(PointFormatName data_format_id)
 {
-    std::vector<DimensionPtr> user_dims;
-    std::vector<DimensionPtr>::const_iterator i;
+    DimensionMap user_dims;
+    DimensionMap::const_iterator i;
     
     if (m_dimensions.size() > 0)
     {
@@ -297,9 +299,10 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
         // and add them back to the list of dimensions
         for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
         {
-            DimensionPtr t = *i;
+            DimensionPtr t = (*i).second;
+            std::string name = (*i).first;
             if ( t->IsRequired() == false)
-                user_dims.push_back(t);
+                user_dims[name] = t;
         }
     }
     
@@ -332,21 +335,22 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
     // required by the PointFormatName
     for (i = user_dims.begin(); i != user_dims.end(); ++i)
     {
-        m_dimensions.push_back(*i);
+        m_dimensions[(*i).first] = (*i).second;
     }
 
-    std::sort(m_dimensions.begin(), m_dimensions.end(), sort_dimensions);  
     m_nextpos = 0;
-
+    
+    CalculateSizes();
 }
 /// copy constructor
 Schema::Schema(Schema const& other) :
     m_size(other.m_size),
     m_data_format_id(other.m_data_format_id),
     m_nextpos(other.m_nextpos),
+    m_bit_size(other.m_bit_size),
+    m_base_bit_size(other.m_base_bit_size),
     m_dimensions(other.m_dimensions)
 {
-    std::sort(m_dimensions.begin(), m_dimensions.end(), sort_dimensions);  
 }
 // 
 // // assignment constructor
@@ -358,9 +362,10 @@ Schema& Schema::operator=(Schema const& rhs)
         m_data_format_id = rhs.m_data_format_id;
         m_nextpos = rhs.m_nextpos;
         m_dimensions = rhs.m_dimensions;
+        m_base_bit_size = rhs.m_base_bit_size;
+        m_bit_size = rhs.m_bit_size;
     }
     
-    std::sort(m_dimensions.begin(), m_dimensions.end(), sort_dimensions);  
     return *this;
 }
 
@@ -383,9 +388,10 @@ liblas::property_tree::ptree Schema::LoadPTree(VariableRecord const& v)
     // liblas::property_tree::write_xml("schema-output.xml", pt);        
     return pt;    
 }
-std::vector<DimensionPtr> Schema::LoadDimensions(liblas::property_tree::ptree tree)
+
+DimensionMap Schema::LoadDimensions(liblas::property_tree::ptree tree)
 {
-    std::vector<DimensionPtr> dimensions;
+    DimensionMap dimensions;
     
     using liblas::property_tree::ptree;
     ptree::const_iterator i;
@@ -423,11 +429,9 @@ std::vector<DimensionPtr> Schema::LoadDimensions(liblas::property_tree::ptree tr
             d->SetMaximum(max);
         }
         
-        dimensions.push_back(d);
+        dimensions[name] = d;
     }
-    
-    // Sort the list by position
-    std::sort(m_dimensions.begin(), m_dimensions.end(), sort_dimensions);  
+
     return dimensions;
 }
 
@@ -436,12 +440,12 @@ liblas::property_tree::ptree Schema::GetPTree() const
     using liblas::property_tree::ptree;
     ptree pt;
     
-    std::vector<DimensionPtr>::const_iterator i;
+    DimensionMap::const_iterator i;
     
     for(i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
         ptree dim;
-        DimensionPtr t = *i;
+        DimensionPtr t = i->second;
         dim.put("name", t->GetName());
         dim.put("description", t->GetDescription());
         dim.put("position", t->GetPosition());
@@ -570,148 +574,136 @@ bool Schema::IsCustom() const
     // A custom schema has no fields that are required by the PointFormatName
     // This must mean a user has added them themselves.  We only write VLR 
     // schema definitions to files that have custom schemas.
-    std::vector<DimensionPtr>::const_iterator i;
+    DimensionMap::const_iterator i;
     
     // return true; // For now, we'll always say we're  custom
     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        DimensionPtr t = *i;
+        DimensionPtr t = (*i).second;
         if ( t->IsRequired() == false)
             return true;
     }
     return false;
 }
 
-boost::uint32_t Schema::GetBitSize() const
+void Schema::CalculateSizes() 
 {
-    std::vector<DimensionPtr>::const_iterator i;
-    boost::uint32_t size=0;
+    DimensionMap::const_iterator i;
+
+    m_bit_size = 0;
+    m_base_bit_size = 0;
     
     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        size += (*i)->GetBitSize();
+        m_bit_size += i->second->GetBitSize();
+        if ( i->second->IsRequired() == true)
+            m_base_bit_size += i->second->GetBitSize();
     }
 
-    if (size % 8 != 0) {
-        std::ostringstream oss;
-        oss << "The summed size in bits, " << size << ", is not a multiple of 8.";
-        oss << " The sum of the sizes of all dimensions must be a multiple ";
-        oss << " of 8";
-        throw std::runtime_error(oss.str());
-    }
-    return size;
+    // if (m_bit_size % 8 != 0) {
+    //     std::ostringstream oss;
+    //     oss << "The summed size in bits, " << m_bit_size << ", is not a multiple of 8.";
+    //     oss << " The sum of the sizes of all dimensions must be a multiple ";
+    //     oss << " of 8";
+    //     throw std::runtime_error(oss.str());
+    // }
+    // if (m_base_bit_size % 8 != 0) {
+    //     std::ostringstream oss;
+    //     oss << "The summed size in bits, " << m_base_bit_size << ", is not a multiple of 8.";
+    //     oss << " The sum of the sizes of the required dimensions must be a multiple ";
+    //     oss << " of 8";
+    //     throw std::runtime_error(oss.str());
+    // }
+    // 
+    // std::size_t byte_size = m_base_bit_size / 8 ;
+    // switch (byte_size)
+    // {
+    //     case ePointSize0:
+    //     case ePointSize1:
+    //     case ePointSize2:
+    //     case ePointSize3:
+    //         break;
+    // 
+    //     // FIXME: We don't account for extended LAS 1.3 point formats yet.
+    //     default:
+    //         std::ostringstream oss;
+    //         oss << "The sum of the required dimensions, " << byte_size << ", is";
+    //         oss << " not a recognized value.  ";
+    //         throw std::runtime_error(oss.str());
+    // }
+}
+
+
+std::size_t Schema::GetBaseByteSize() const
+{
+    return m_base_bit_size / 8;
+}
+
+std::size_t Schema::GetBitSize() const
+{
+    return m_bit_size;
 }
 
 void Schema::SetDataFormatId(PointFormatName const& value)
 {
     update_required_dimensions(value);
     m_data_format_id = value;
+    CalculateSizes();
 }
 
 void Schema::RemoveDimension(DimensionPtr dim)
 {
-    std::vector<DimensionPtr>::iterator i;
+    m_dimensions.erase(dim->GetName());
     
-    bool erase = false;
-    for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
-    {
-        if ((*i).get() == dim.get()) {
-            erase = true;
-            break;
-        }
-    }    
-    
-    if (erase)
-        m_dimensions.erase(i);
+    CalculateSizes();
 }
-boost::uint32_t Schema::GetByteSize() const
+
+std::size_t Schema::GetByteSize() const
 {
     
     return GetBitSize() / 8;
 }
 
-boost::uint32_t Schema::GetBaseByteSize() const
-{
-    std::vector<DimensionPtr>::const_iterator i;
-    boost::uint32_t size=0;
-    boost::uint32_t byte_size = 0;
-    
-    for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
-    {
-        boost::shared_ptr<Dimension> t = *i;
-        if ( t->IsRequired() == true)
-            size += t->GetBitSize();
-    }
-
-
-
-    if (size % 8 != 0) {
-        std::ostringstream oss;
-        oss << "The summed size in bits, " << size << ", is not a multiple of 8.";
-        oss << " The sum of the sizes of the required dimensions must be a multiple ";
-        oss << " of 8";
-        throw std::runtime_error(oss.str());
-    }
-    
-    byte_size = size / 8 ;
-    switch (byte_size)
-    {
-        case ePointSize0:
-        case ePointSize1:
-        case ePointSize2:
-        case ePointSize3:
-            break;
-
-        // FIXME: We don't account for extended LAS 1.3 point formats yet.
-        default:
-            std::ostringstream oss;
-            oss << "The sum of the required dimensions, " << byte_size << ", is";
-            oss << " not a recognized value.  ";
-            throw std::runtime_error(oss.str());
-    }
-    return byte_size;
-}
-
 void Schema::AddDimension(DimensionPtr d)
 {
-    m_dimensions.push_back(d);
+    m_dimensions[d->GetName()] =d;
+    CalculateSizes();
 }
 
 DimensionPtr Schema::GetDimension(std::string const& name) const
 {
-    std::vector<DimensionPtr>::const_iterator i;
-    for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+    DimensionMap::const_iterator i = m_dimensions.find(name);
+    if (i != m_dimensions.end())
     {
-        if ((*i)->GetName().compare(name) == 0) {
-            return *i;
-        }
+        return i->second;
     }
+
     std::ostringstream oss;
     oss << "Dimension with name '" << name << "' not found.";
     throw std::runtime_error(oss.str());
 }
 
-DimensionPtr Schema::GetDimension(std::size_t index) const
-{
-    std::vector<DimensionPtr>::const_iterator i;
-    for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
-    {
-        if ((*i)->GetPosition() == index) {
-            return *i;
-        }
-    }
-    std::ostringstream oss;
-    oss << "Dimension with index '" << index << "' not found.";
-    throw std::runtime_error(oss.str());
-}
+// DimensionPtr Schema::GetDimension(std::size_t index) const
+// {
+//     std::vector<DimensionPtr>::const_iterator i;
+//     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+//     {
+//         if ((*i)->GetPosition() == index) {
+//             return *i;
+//         }
+//     }
+//     std::ostringstream oss;
+//     oss << "Dimension with index '" << index << "' not found.";
+//     throw std::runtime_error(oss.str());
+// }
 
 std::vector<std::string> Schema::GetDimensionNames() const
 {
     std::vector<std::string> output;
-    std::vector<DimensionPtr>::const_iterator i;
+    DimensionMap::const_iterator i;
     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        output.push_back((*i)->GetName());
+        output.push_back(i->first);
     }
     return output;
 }

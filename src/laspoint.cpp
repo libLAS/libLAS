@@ -520,13 +520,14 @@ boost::int32_t Point::GetRawZ() const
 
 boost::any Point::GetValue(DimensionPtr d) const
 {
-    typedef std::vector<DimensionPtr> Dimensions;
+
     boost::any output;
     
     // If we don't have a header for the point, we can't return 
     // anything because we don't have a schema to go along with it.
     // Use the other method Point::GetValue(DimensionPtr d, liblas::Schema const& schema).
     if (m_header.get() == 0) {
+    std::cout << "GetValue: have no header!" << std::endl;
         return output;
     }
     
@@ -541,7 +542,7 @@ boost::any Point::GetValue(DimensionPtr d) const
         throw std::runtime_error(oss.str());
     }
     
-    Dimensions dimensions = schema.GetDimensions();
+    DimensionMap const& dimensions = schema.GetDimensions();
     
     
     boost::uint32_t wanted_dim_pos = d->GetPosition();
@@ -550,10 +551,21 @@ boost::any Point::GetValue(DimensionPtr d) const
     boost::uint32_t dim_pos = 0;
     
     std::vector<boost::uint8_t> data;
+
+    DimensionPtr t;
     
-    for (Dimensions::const_iterator i = dimensions.begin(); i != dimensions.end(); ++i)
+    std::vector<DimensionPtr> positions;
+    for (DimensionMap::const_iterator i = dimensions.begin(); i != dimensions.end(); ++i)
     {
-        DimensionPtr t = *i;
+        positions.push_back((*i).second);
+    }
+    
+    std::sort(positions.begin(), positions.end(), sort_dimensions);
+    
+    
+    for (std::vector<DimensionPtr>::const_iterator i = positions.begin(); i != positions.end(); ++i)
+    {
+        DimensionPtr t = (*i);
         
         if (t->GetPosition() != dim_pos) {
             std::ostringstream oss;

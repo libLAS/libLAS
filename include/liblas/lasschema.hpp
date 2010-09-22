@@ -58,11 +58,13 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 namespace liblas {  
 
 class Dimension;
 typedef boost::shared_ptr<Dimension> DimensionPtr;
+typedef std::map<std::string, DimensionPtr> DimensionMap;
 
 
 
@@ -79,12 +81,13 @@ public:
     ~Schema() {};
 
     /// Fetch byte size
-    boost::uint32_t GetByteSize() const;
+    std::size_t GetByteSize() const;
 
-    boost::uint32_t GetBitSize() const;
+    std::size_t GetBitSize() const;
+    void CalculateSizes();
 
     /// Get the base size (only accounting for Time, Color, etc )
-    boost::uint32_t GetBaseByteSize() const;
+    std::size_t GetBaseByteSize() const;
 
 
     PointFormatName GetDataFormatId() const { return m_data_format_id; }
@@ -95,11 +98,11 @@ public:
     
     void AddDimension(DimensionPtr dim);
     DimensionPtr GetDimension(std::string const& name) const;
-    DimensionPtr GetDimension(std::size_t index) const;
+    // DimensionPtr GetDimension(std::size_t index) const;
     void RemoveDimension(DimensionPtr dim);
     
     std::vector<std::string> GetDimensionNames() const;
-    std::vector<DimensionPtr> GetDimensions() const { return m_dimensions; }
+    DimensionMap const& GetDimensions() const { return m_dimensions; }
     liblas::property_tree::ptree GetPTree() const;
     
     bool IsCustom() const;
@@ -110,9 +113,12 @@ protected:
     boost::uint16_t m_size;
     PointFormatName m_data_format_id;
     boost::uint32_t m_nextpos;
+    std::size_t m_bit_size;
+    std::size_t m_base_bit_size;
+    
 private:
 
-    std::vector<DimensionPtr> m_dimensions;    
+    DimensionMap m_dimensions;
     
     void add_record0_dimensions();
     void add_time();
@@ -120,7 +126,7 @@ private:
     void update_required_dimensions(PointFormatName data_format_id);
     bool IsSchemaVLR(VariableRecord const& vlr);
     liblas::property_tree::ptree LoadPTree(VariableRecord const& v);
-    std::vector<DimensionPtr> LoadDimensions(liblas::property_tree::ptree tree);
+    DimensionMap LoadDimensions(liblas::property_tree::ptree tree);
 
 };
 

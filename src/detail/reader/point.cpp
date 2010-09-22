@@ -58,6 +58,8 @@ namespace liblas { namespace detail { namespace reader {
 Point::Point(std::istream& ifs, HeaderPtr header)
     : m_ifs(ifs)
     , m_header(header)
+    , bColor(header->GetSchema().HasColor())
+    , bTime(header->GetSchema().HasTime())
 
 {
     setup();
@@ -127,14 +129,14 @@ void Point::read()
     fill(record);
     m_point.SetCoordinates(m_point.GetX(), m_point.GetY(), m_point.GetZ());
 
-    if (m_header->GetSchema().HasTime()) 
+    if (bTime) 
     {
         memcpy(&gpst, &(m_raw_data[i]), sizeof(double));
         
         m_point.SetTime(gpst);
         i += sizeof(double);
         
-        if (m_header->GetSchema().HasColor()) 
+        if (bColor) 
         {
             memcpy(&red, &(m_raw_data[i]), sizeof(uint16_t));
             i += sizeof(uint16_t);
@@ -148,7 +150,7 @@ void Point::read()
             
         }
     } else {
-        if (m_header->GetSchema().HasColor()) 
+        if (bColor) 
         {
             memcpy(&red, &(m_raw_data[i]), sizeof(uint16_t));
             i += sizeof(uint16_t);

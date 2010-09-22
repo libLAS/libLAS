@@ -328,7 +328,7 @@ public:
     void SetSRS(SpatialReference& srs);
     
     /// Returns the schema.
-    Schema GetSchema() const;
+    Schema const& GetSchema() const;
 
     /// Sets the schema
     void SetSchema(const Schema& format);

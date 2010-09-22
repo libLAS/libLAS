@@ -655,7 +655,7 @@ void Header::SetSRS(SpatialReference& srs)
     m_srs = srs;
 }
 
-Schema Header::GetSchema() const
+Schema const& Header::GetSchema() const
 {
     
     return m_schema;
