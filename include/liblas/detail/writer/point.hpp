@@ -87,7 +87,10 @@ private:
     Schema m_format;
     
     boost::uint8_t* m_blanks; // TODO: shared_ptr --mlosko
-    
+
+    bool bTime;
+    bool bColor;
+        
     void setup();
     void fill();
 };

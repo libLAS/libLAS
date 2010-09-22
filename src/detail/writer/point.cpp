@@ -62,6 +62,8 @@ Point::Point(std::ostream& ofs, uint32_t& count, const liblas::Header& header)
     , m_point(liblas::Point())
     , m_format(header.GetSchema())
     , m_blanks(0)
+    , bTime(header.GetSchema().HasTime())
+    , bColor(header.GetSchema().HasColor())
 {
     setup();
 }
@@ -100,7 +102,7 @@ void Point::write(const liblas::Point& point)
     uint16_t red = 0;
     uint16_t blue = 0;
     uint16_t green = 0;
-    liblas::Color color;
+    
     
     std::size_t byteswritten(0);
     
@@ -110,16 +112,16 @@ void Point::write(const liblas::Point& point)
     detail::write_n(m_ofs, m_record, sizeof(m_record));
     byteswritten += sizeof(PointRecord);
 
-    if (m_format.HasTime()) 
+    if (bTime) 
     {
 
         t = point.GetTime();
         detail::write_n(m_ofs, t, sizeof(double));
         byteswritten += sizeof(double);
         
-        if (m_format.HasColor()) 
+        if (bColor) 
         {
-            color = point.GetColor();
+            liblas::Color const& color = point.GetColor();
             red = color.GetRed();
             green = color.GetGreen();
             blue = color.GetBlue();
@@ -130,9 +132,9 @@ void Point::write(const liblas::Point& point)
             
         }
     } else {
-        if (m_format.HasColor()) 
+        if (bColor) 
         {
-            color = point.GetColor();
+            liblas::Color const& color = point.GetColor();
             red = color.GetRed();
             green = color.GetGreen();
             blue = color.GetBlue();
