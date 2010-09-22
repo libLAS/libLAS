@@ -6,14 +6,14 @@
   >>> s = srs.SRS()
   >>> s.proj4
   ''
-  >>> s.proj4 = '+proj=utm +zone=15 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
-  >>> s.proj4 == '+proj=utm +zone=15 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
+  >>> s.proj4 = '+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs'
+  >>> s.proj4 == '+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs '
   True
   
   >>> s = srs.SRS()
   >>> s.set_userinput('EPSG:4326')
   True
-  >>> s.proj4 == '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs '
+  >>> s.proj4 == '+proj=longlat +datum=WGS84 +no_defs '
   True
   
   >>> from liblas import file
@@ -87,14 +87,21 @@
   >>> f.set_srs(s_dd)
   True
   >>> p = f.read(0)
+
+We only get truncated values because our header scale 
+values are 0.01
+
   >>> p.x, p.y
-  (-93.351562590199833, 41.577148395415108)
+  (-93.350000000000009, 41.579999999999998)
+
+#real values
+#  (-93.351562590199833, 41.577148395415108)
   
   
 
   >>> f_project = file.File('junk_srs_project.las',mode='w',header=dd_header)
   >>> dd_header.srs.proj4
-  '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs '
+  '+proj=longlat +datum=WGS84 +no_defs '
   >>> f_project.write(p);f_project.write(p);f_project.write(p)
   >>> f_project.close()
   >>> del f_project
