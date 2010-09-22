@@ -392,7 +392,8 @@ void Header::SetDataFormatId(liblas::PointFormatName v)
 
 uint16_t Header::GetDataRecordLength() const
 {
-    return m_schema.GetByteSize();
+    // No matter what the schema says, this must be a a short in size.
+    return static_cast<boost::uint16_t>(m_schema.GetByteSize());
 }
 
 uint32_t Header::GetPointRecordsCount() const

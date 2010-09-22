@@ -407,8 +407,8 @@ DimensionMap Schema::LoadDimensions(liblas::property_tree::ptree tree)
         bool isactive = v.get<bool>("active");
         bool isrequired = v.get<bool>("required");
         boost::uint32_t position = v.get<boost::uint32_t>("position");
-        double min;
-        double max;
+        double min=0;
+        double max=0;
         try {
             min = v.get<double>("minimum");
             max = v.get<double>("maximum");
@@ -424,7 +424,7 @@ DimensionMap Schema::LoadDimensions(liblas::property_tree::ptree tree)
         d->IsSigned(issigned);
         d->IsRequired(isrequired);
         d->SetPosition(position);
-        if (min != max && min != 0 & max != 0) {
+        if (min != max && min != 0 && max != 0) {
             d->SetMinimum(min);
             d->SetMaximum(max);
         }
@@ -753,7 +753,7 @@ VariableRecord Schema::GetVLR() const
     liblas::property_tree::write_xml(oss, tree);
     
     std::string s(oss.str());
-    vlr.SetRecordLength(s.size());
+    vlr.SetRecordLength(static_cast<boost::uint16_t>(s.size()));
 
     std::string::const_iterator i;
     for (i = s.begin(); i != s.end(); ++i)
