@@ -190,13 +190,19 @@ bool process(   std::string const& input,
     return true;
 }
 
-std::string GetInvocationHeader()
+void OutputHelp( std::ostream & oss, po::options_description const& options)
 {
-    ostringstream oss;
     oss << "--------------------------------------------------------------------\n";
     oss << "    las2las (" << GetFullVersion() << ")\n";
     oss << "--------------------------------------------------------------------\n";
-    return oss.str();    
+
+    oss << options;
+
+    oss <<"\nFor more information, see the full documentation for las2las2 at:\n";
+    
+    oss << " http://liblas.org/utilities/las2las2.html\n";
+    oss << "----------------------------------------------------------\n";
+
 }
 
 int main(int argc, char* argv[])
@@ -243,11 +249,7 @@ int main(int argc, char* argv[])
 
         if (vm.count("help")) 
         {
-            std::cout << GetInvocationHeader()<<file_options<<"\n"<<transform_options<<"\n"<<filtering_options<<"\n";
-            std::cout <<"\nFor more information, see the full documentation for las2las2 at:\n";
-            
-            std::cout << " http://liblas.org/utilities/las2las2.html\n";
-            std::cout << "----------------------------------------------------------\n";
+            OutputHelp(std::cout, options);
             return 1;
         }
 
@@ -267,6 +269,7 @@ int main(int argc, char* argv[])
             header = reader.GetHeader();
         } else {
             std::cerr << "Input LAS file not specified!\n";
+            OutputHelp(std::cout, options);
             return 1;
         }
         
