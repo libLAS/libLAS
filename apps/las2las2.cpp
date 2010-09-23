@@ -13,17 +13,8 @@
 #include "laskernel.hpp"
 
 #include <boost/cstdint.hpp>
+#include <boost/foreach.hpp>
 
-// #include <fstream>
-// #include <iostream>
-// #include <sstream>
-// #include <string>
-// #include <vector>
-// #include <string>
-// #include <functional>
-// 
-// #include <boost/program_options.hpp>
-// #include <boost/tokenizer.hpp>
 
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
@@ -37,8 +28,6 @@ using namespace std;
 #else
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
 #endif
-
-// #define SEPARATORS ",|"
 
 bool term_progress(std::ostream& os, double complete)
 {
@@ -72,29 +61,85 @@ bool term_progress(std::ostream& os, double complete)
 }
 
 
-
-
-
-
-
-
-
-
 liblas::Writer* start_writer(   std::ofstream* strm, 
                                 std::string const& output, 
                                 liblas::Header const& header)
 {
     
     if (!liblas::Create(*strm, output.c_str()))
-{
-        std::cerr << "Cannot create " << output << "for write.  Exiting...";
-    
+    {
+        std::ostringstream oss;
+        oss << "Cannot create " << output << "for write.  Exiting...";
+        throw std::runtime_error(oss.str());
     }        
     liblas::Writer* writer = new liblas::Writer(*strm, header);
     return writer;
     
 }
 
+
+void RepairHeader(liblas::Summary const& summary, std::string const& filename)
+{
+    std::ifstream ifs;
+    if (!liblas::Open(ifs, filename.c_str()))
+    {
+        std::ostringstream oss;
+        oss << "Cannot open " << filename << "for read.  Exiting...";
+        throw std::runtime_error(oss.str());
+    }
+    liblas::Reader reader(ifs);
+    liblas::Header header = reader.GetHeader();
+    ifs.close();
+
+    for (boost::uint32_t i = 0; i < 5; i++)
+    {
+        header.SetPointRecordsByReturnCount(i, 0);
+    }    
+
+    std::ios::openmode m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
+
+    // Write a blank header first
+    std::ofstream ofs(filename.c_str(), m);
+    liblas::Writer writer(ofs, header);
+    ofs.close();
+    
+    liblas::property_tree::ptree tree = summary.GetPTree();
+    
+    try
+    {
+        header.SetMin(tree.get<double>("minimum.x"),
+                      tree.get<double>("minimum.y"),
+                      tree.get<double>("minimum.x"));
+    
+        header.SetMax(tree.get<double>("maximum.x"),
+                      tree.get<double>("maximum.y"),
+                      tree.get<double>("maximum.x"));
+
+        for (boost::uint32_t i = 0; i < 5; i++)
+        {
+            header.SetPointRecordsByReturnCount(i, 0);
+        }
+    
+        BOOST_FOREACH(ptree::value_type &v,
+                tree.get_child("points_by_return"))
+        {
+            boost::uint32_t i = v.second.get<boost::uint32_t>("id");
+            boost::uint32_t count = v.second.get<boost::uint32_t>("count");
+            header.SetPointRecordsByReturnCount(i-1, count);        
+        } 
+        
+    }     catch (liblas::property_tree::ptree_bad_path const& e) 
+    {
+        std::cerr << "Unable to write summarized header info.  Does the outputted file have any points?";
+        return;
+    }
+    
+    // Write our updated header with summary info
+    std::ofstream ofs2(filename.c_str(), m);
+    liblas::Writer writer2(ofs2, header);
+    ofs2.close();
+    
+}
 
 bool process(   std::string const& input,
                 std::string const& output,
@@ -114,6 +159,7 @@ bool process(   std::string const& input,
         return false;
     }
     liblas::Reader reader(ifs);
+    liblas::Summary summary;
     
     reader.SetFilters(filters);
     reader.SetTransforms(transforms);
@@ -146,7 +192,8 @@ bool process(   std::string const& input,
 
     while (reader.ReadNextPoint())
     {
-        liblas::Point const& p = reader.GetPoint(); 
+        liblas::Point const& p = reader.GetPoint();
+        summary.AddPoint(p);
         writer->WritePoint(p);
         if (verbose)
             term_progress(std::cout, (i + 1) / static_cast<double>(size));
@@ -175,7 +222,7 @@ bool process(   std::string const& input,
         std::cout << std::endl;
     
     reader.Reset();
-    liblas::property_tree::ptree pts = reader.Summarize();
+    liblas::property_tree::ptree pts = summary.GetPTree();
     liblas::property_tree::ptree top;
     top.add_child("summary.header",reader.GetHeader().GetPTree());
     top.add_child("summary.points",pts);
@@ -186,6 +233,7 @@ bool process(   std::string const& input,
     delete writer;
     delete ofs;
     
+    RepairHeader(summary, output);
     
     return true;
 }
@@ -235,9 +283,6 @@ int main(int argc, char* argv[])
             ("output,o", po::value< string >(&output)->default_value("output.las"), "output LAS file")
             ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Verbose message output")
         ;
-        
-
-        
 
         po::variables_map vm;
         po::options_description options;
@@ -252,7 +297,6 @@ int main(int argc, char* argv[])
             OutputHelp(std::cout, options);
             return 1;
         }
-
 
         if (vm.count("input")) 
         {
