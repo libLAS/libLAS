@@ -61,7 +61,6 @@ Point::Point(std::ostream& ofs, uint32_t& count, const liblas::Header& header)
     , m_header(header)
     , m_point(liblas::Point())
     , m_format(header.GetSchema())
-    , m_blanks(0)
     , bTime(header.GetSchema().HasTime())
     , bColor(header.GetSchema().HasColor())
 {
@@ -70,8 +69,7 @@ Point::Point(std::ostream& ofs, uint32_t& count, const liblas::Header& header)
 
 Point::~Point()
 {
-    if (m_blanks != 0) 
-        delete[] m_blanks; 
+
 }
 
 void Point::setup()
@@ -89,10 +87,8 @@ void Point::setup()
             throw std::runtime_error("ByteSize of format was less than BaseByteSize, this cannot happen!");
         }
         
-        m_blanks = new uint8_t[size]; // FIXME: RAII for m_blanks!!! --mloskot
-        for (std::size_t i=0; i < size; ++i) {
-            m_blanks[i] = 0;
-        }
+        m_blanks.resize(size);
+        m_blanks.assign(size, 0);
     }
 }
 
@@ -162,13 +158,13 @@ void Point::write(const liblas::Point& point)
         
         if (data.size() == 0) {
 
-            detail::write_n(GetStream(), *m_blanks, static_cast<std::streamsize>(size));
+            detail::write_n(GetStream(), m_blanks.front(), static_cast<std::streamsize>(size));
             
         } else if (data.size() < size){ 
             // size can be casted now that we have already checked if it is less than 0
             int16_t difference = static_cast<uint16_t>(size) - static_cast<uint16_t>(data.size());
             detail::write_n(GetStream(), data.front(), data.size());
-            detail::write_n(GetStream(), *m_blanks, static_cast<std::streamsize>(difference));
+            detail::write_n(GetStream(), m_blanks.front(), static_cast<std::streamsize>(difference));
 
         } else {
             detail::write_n(GetStream(), data.front(), static_cast<std::streamsize>(size));
