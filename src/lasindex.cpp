@@ -732,7 +732,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 		{
 			// seek and read
 			assert(static_cast<boost::uint32_t>(PointID) < m_pointRecordsCount);
-			PtRead = m_reader->ReadPointAt(PointID);
+			PtRead = (m_reader->seek(PointID) && m_reader->ReadNextPoint());
 		} // if
 		if (PtRead)
 		{
@@ -775,7 +775,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 				{
 					// seek and read
 					assert(static_cast<boost::uint32_t>(PointID) < m_pointRecordsCount);
-					PtRead = m_reader->ReadPointAt(PointID);
+					PtRead = (m_reader->seek(PointID) && m_reader->ReadNextPoint());
 				} // if
 				if (PtRead)
 				{
@@ -819,7 +819,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 				{
 					// seek and read
 					assert(static_cast<boost::uint32_t>(PointID) < m_pointRecordsCount);
-					PtRead = m_reader->ReadPointAt(PointID);
+					PtRead = (m_reader->seek(PointID) && m_reader->ReadNextPoint());
 				} // if
 				if (PtRead)
 				{
@@ -1009,7 +1009,7 @@ bool Index::BuildIndex(void)
 							{
 								// get the actual point from the las file
 								assert(MapIt->first < m_pointRecordsCount);
-								if (m_reader->ReadPointAt(MapIt->first))
+								if (m_reader->seek(MapIt->first) && m_reader->ReadNextPoint())
 								{
 									boost::uint32_t FirstPt = 0, LastCellZ = static_cast<boost::uint32_t>(~0);
 									boost::uint32_t LastSubCell = static_cast<boost::uint32_t>(~0);
@@ -1236,10 +1236,8 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 						return (FileError("Index::PurgePointsToTempFile"));
 					CellBlock[x][y].SetFileOffset(m_tempFileWrittenBytes);
 
+					// seek to end of file where next block of data will be written
 					fseek(m_tempFile, 0, SEEK_END);
-					boost::uint32_t FilePos = ftell(m_tempFile);
-					if (FilePos < 19600)
-						printf("file position error");
 					// write a blank space for later placement of next file block for this cell
 					if (fwrite(&EmptyOffset, sizeof(boost::uint32_t), 1, m_tempFile) < 1)
 						return (FileError("Index::PurgePointsToTempFile"));

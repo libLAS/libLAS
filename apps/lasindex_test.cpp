@@ -380,8 +380,8 @@ int main(int argc, char* argv[])
 				std::istream* idxstrm = NULL;
 				if (idxinfilenme)
 				{
-                    // FIXME: Is this assignment intentional or it should read '==' ? --mloskot
-					if (idxstrm = OpenInput(std::string(idxinfilenme)))
+					idxstrm = OpenInput(std::string(idxinfilenme));
+					if (idxstrm)
 					{
 						idxreader = new Reader(*idxstrm);
 					} // if
