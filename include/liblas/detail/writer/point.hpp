@@ -50,8 +50,10 @@
 #include <liblas/detail/fwd.hpp>
 // boost
 #include <boost/cstdint.hpp>
+
 // std
 #include <iosfwd>
+#include <vector>
 
 namespace liblas { namespace detail { namespace writer {
 
@@ -86,7 +88,7 @@ private:
     
     Schema m_format;
     
-    boost::uint8_t* m_blanks; // TODO: shared_ptr --mlosko
+    std::vector<boost::uint8_t> m_blanks; 
 
     bool bTime;
     bool bColor;
