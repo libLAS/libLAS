@@ -39,6 +39,7 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/lasversion.hpp
   ${LIBLAS_HEADERS_DIR}/laswriter.hpp
   ${LIBLAS_HEADERS_DIR}/liblas.hpp
+  ${LIBLAS_HEADERS_DIR}/utility.hpp
   ${LIBLAS_HEADERS_DIR}/version.hpp)
 
 set(LIBLAS_EXTERNAL_HPP)
@@ -113,6 +114,7 @@ set(LIBLAS_CPP
   lasspatialreference.cpp
   lasschema.cpp
   lastransform.cpp
+  utility.cpp
   lasvariablerecord.cpp
   laswriter.cpp)
 
