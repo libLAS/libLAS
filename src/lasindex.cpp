@@ -43,7 +43,6 @@
 #include <liblas/laswriter.hpp>
 #include <liblas/detail/index/indexoutput.hpp>
 #include <liblas/detail/index/indexcell.hpp>
-#include <liblas/detail/writer/writer.hpp>
 
 namespace liblas
 {
