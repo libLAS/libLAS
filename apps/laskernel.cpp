@@ -142,11 +142,13 @@ po::options_description GetTransformationOptions()
     transform_options.add_options()
         ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
         ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")   
+        ("a_vertcs", po::value< std::vector<string> >()->multitoken(), "Override vertical coordinate system information.  Use --a_vertcs \"verticalCSType [citation [verticalDatum [verticalUnits]]]\"\nFor example: --a_vertcs 5703 \"North American Vertical Datum of 1988 (NAVD88)\" 5103 9001")   
         ("offset", po::value< string >(), "A comma-separated list of offsets to set on the output file: \n--offset 0,0,0")
         ("scale", po::value< string >(), "A comma-separated list of scales to set on the output file: \n--scale 0.1,0.1,0.00001")
         ("format,f", po::value< string >(), "Set the LAS format of the new file (only 1.0-1.2 supported at this time): \n--format 1.2\n-f 1.1")
         ("pad-header", po::value< string >(), "Add extra bytes to the existing header")
         ("min-offset", po::value<bool>()->zero_tokens(), "Set the offset of the header to the minimums of all values in the file.  Note that this requires multiple read passes through the file to achieve.")
+
     ;
     
     return transform_options;
@@ -428,6 +430,66 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             std::cout << "Setting input SRS to " << input_srs << std::endl;
         in_ref.SetFromUserInput(input_srs);
         header.SetSRS(in_ref);
+    }
+
+    if (vm.count("a_vertcs"))
+    {
+        liblas::SpatialReference vert_ref = header.GetSRS();
+
+        std::vector<std::string> vertical_vec = vm["a_vertcs"].as< std::vector<std::string> >();
+        if (vertical_vec.size() > 4) {
+            ostringstream oss;
+            oss << "Too many arguments were given to a_vertcs. "
+                << "--a_vertcs verticalCSType citation verticalDatum verticalUnits  "
+                << "All except verticalCSType are optional, but they are "
+                << "applied in order, so if you want to set verticalUnits, "
+                << "you must set all the others";
+
+            throw std::runtime_error(oss.str());
+        }
+        if (vertical_vec.size() < 1) {
+            ostringstream oss;
+            oss << "At least verticalCSType must be given to a_vertcs. "
+                << "--a_vertcs verticalCSType citation verticalDatum verticalUnits  "
+                << "All except verticalCSType are optional, but they are "
+                << "applied in order, so if you want to set verticalUnits, "
+                << "you must set all the others";
+
+            throw std::runtime_error(oss.str());
+        }
+        
+        if (verbose)
+        {
+            ostringstream oss;
+            for (std::vector<std::string>::const_iterator i = vertical_vec.begin();
+                 i != vertical_vec.end();
+                 i++) 
+                {
+                    oss << *i << " ";
+                }
+                std::cout << "Setting vertical info to: " << oss.str() << std::endl;
+        }
+            
+        boost::int32_t verticalCSType = boost::lexical_cast<boost::int32_t>(vertical_vec[0]);
+        
+        std::string citation;
+        int verticalDatum = -1;
+        int verticalUnits = 9001;
+        
+        if (vertical_vec.size() > 1) {
+            citation = boost::lexical_cast<std::string>(vertical_vec[1]);
+        }
+        
+        if (vertical_vec.size() > 2) {
+            verticalDatum = boost::lexical_cast<boost::int32_t>(vertical_vec[2]);
+        }
+
+        if (vertical_vec.size() > 3) {
+            verticalUnits = boost::lexical_cast<boost::int32_t>(vertical_vec[3]);
+        }
+        
+        vert_ref.SetVerticalCS(verticalCSType, citation, verticalDatum, verticalUnits);
+        header.SetSRS(vert_ref);      
     }
     
     if (vm.count("t_srs")) 
