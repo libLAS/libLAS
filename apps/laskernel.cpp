@@ -142,11 +142,11 @@ po::options_description GetTransformationOptions()
     transform_options.add_options()
         ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
         ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")   
-        ("offset", po::value< string >(), "A comma-separated list of offsets to set on the output file: \n--offset 0,0,0 \n--offset  min,min,min")
+        ("offset", po::value< string >(), "A comma-separated list of offsets to set on the output file: \n--offset 0,0,0")
         ("scale", po::value< string >(), "A comma-separated list of scales to set on the output file: \n--scale 0.1,0.1,0.00001")
         ("format,f", po::value< string >(), "Set the LAS format of the new file (only 1.0-1.2 supported at this time): \n--format 1.2\n-f 1.1")
         ("pad-header", po::value< string >(), "Add extra bytes to the existing header")
-
+        ("min-offset", po::value<bool>()->zero_tokens(), "Set the offset of the header to the minimums of all values in the file.  Note that this requires multiple read passes through the file to achieve.")
     ;
     
     return transform_options;

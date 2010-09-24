@@ -109,11 +109,11 @@ void RepairHeader(liblas::Summary const& summary, std::string const& filename)
     {
         header.SetMin(tree.get<double>("minimum.x"),
                       tree.get<double>("minimum.y"),
-                      tree.get<double>("minimum.x"));
+                      tree.get<double>("minimum.z"));
     
         header.SetMax(tree.get<double>("maximum.x"),
                       tree.get<double>("maximum.y"),
-                      tree.get<double>("maximum.x"));
+                      tree.get<double>("maximum.z"));
 
         for (boost::uint32_t i = 0; i < 5; i++)
         {
@@ -141,13 +141,26 @@ void RepairHeader(liblas::Summary const& summary, std::string const& filename)
     
 }
 
+void SetStreamPrecision(std::ostream& os, double scale)
+{
+    os.setf(std::ios_base::fixed, std::ios_base::floatfield);
+
+    double frac = 0;
+    double integer = 0;
+    frac = std::modf(scale, &integer);
+
+    boost::uint32_t prec = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
+    os.precision(prec);    
+}
+
 bool process(   std::string const& input,
                 std::string const& output,
-                liblas::Header const& header,
+                liblas::Header & header,
                 std::vector<liblas::FilterPtr>& filters,
                 std::vector<liblas::TransformPtr>& transforms,
                 boost::uint32_t split_size,
-                bool verbose)
+                bool verbose,
+                bool min_offset)
 {
 
 
@@ -163,6 +176,39 @@ bool process(   std::string const& input,
     
     reader.SetFilters(filters);
     reader.SetTransforms(transforms);
+
+    if (min_offset) 
+    {
+        
+        liblas::property_tree::ptree tree = reader.Summarize();
+    
+        try
+        {
+            header.SetOffset(tree.get<double>("minimum.x"),
+                             tree.get<double>("minimum.y"),
+                             tree.get<double>("minimum.z"));
+    
+                              
+        }     catch (liblas::property_tree::ptree_bad_path const& e) 
+        {
+            std::cerr << "Unable to write minimum header info.  Does the outputted file have any points?";
+            return false;
+        }
+        if (verbose) 
+        {
+            
+    
+            std::cout << "Using minimum offsets ";
+            SetStreamPrecision(std::cout, header.GetScaleX());
+            std::cout << header.GetOffsetX() << " ";
+            SetStreamPrecision(std::cout, header.GetScaleY());
+            std::cout << header.GetOffsetY() << " ";
+            SetStreamPrecision(std::cout, header.GetScaleZ());
+            std::cout << header.GetOffsetZ() << " ";
+            std::cout << std::endl;
+        }
+        reader.Reset();
+    }
 
     std::ofstream* ofs = new std::ofstream;
     std::string out = output;
@@ -261,6 +307,8 @@ int main(int argc, char* argv[])
     std::string output;
     
     bool verbose = false;
+    bool bMinOffset = false;
+    
     std::vector<liblas::FilterPtr> filters;
     std::vector<liblas::TransformPtr> transforms;
     
@@ -316,7 +364,11 @@ int main(int argc, char* argv[])
             OutputHelp(std::cout, options);
             return 1;
         }
-        
+
+        if (vm.count("min-offset")) 
+        {
+            bMinOffset = true;
+        } 
 
         filters = GetFilters(vm, verbose);
         
@@ -329,7 +381,8 @@ int main(int argc, char* argv[])
                             filters,
                             transforms,
                             split_size,
-                            verbose
+                            verbose,
+                            bMinOffset
                             );
         if (!op) {
             return (1);
