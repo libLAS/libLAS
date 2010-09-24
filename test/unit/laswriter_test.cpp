@@ -211,6 +211,9 @@ namespace tut
             header.SetOffset(4.321, 5.321, 6.321);
 
             writer.WriteHeader(header);
+            liblas::Header const& written_header = writer.GetHeader();
+            ensure_equals("written_header fileSource id", written_header.GetFileSourceId(), 65535);
+
         }
 
         // read and check updated header block

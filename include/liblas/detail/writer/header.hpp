@@ -61,7 +61,7 @@ public:
 
     Header(std::ostream& ofs, boost::uint32_t& count, liblas::Header const& header );
 
-    const liblas::Header& GetHeader() const { return m_header; }
+    liblas::Header const& GetHeader() const { return m_header; }
     void write();
 
 private:

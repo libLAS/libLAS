@@ -63,7 +63,7 @@ public:
     
     typedef WriterBase Base;
     
-    Point(std::ostream& ofs, boost::uint32_t& count, liblas::Header const& header);
+    Point(std::ostream& ofs, boost::uint32_t& count, HeaderPtr header);
     virtual ~Point();
 
     const liblas::Point& GetPoint() const { return m_point; }
@@ -81,7 +81,7 @@ private:
     Point& operator=(Point const& rhs);
     
     std::ostream& m_ofs;
-    const liblas::Header& m_header;
+    HeaderPtr m_header;
     liblas::Point m_point;
         
     PointRecord m_record;

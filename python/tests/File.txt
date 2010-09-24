@@ -266,7 +266,7 @@ header after you subtract the VLRs
   >>> f4 = file.File('junk4.las',mode='w',header=h2)
 
   >>> f4.header.data_offset
-  227L
+  229L
 
   >>> for i in points:
   ...    f4.write(i)

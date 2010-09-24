@@ -116,7 +116,7 @@ private:
 
     const std::auto_ptr<WriterI> m_pimpl;
 
-    Header m_header;
+    HeaderPtr m_header;
     detail::PointRecord m_record;
 
     std::vector<liblas::FilterI*>* m_filters;

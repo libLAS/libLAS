@@ -64,7 +64,7 @@ public:
     LASVersion GetVersion() const;
     liblas::Header const& WriteHeader(liblas::Header const& header);
     void UpdateHeader(liblas::Header const& header);
-    void WritePoint(liblas::Point const& record, const liblas::Header& header);
+    void WritePoint(liblas::Point const& record, HeaderPtr header);
 
     std::ostream& GetStream() const;
 

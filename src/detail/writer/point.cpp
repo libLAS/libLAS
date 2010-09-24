@@ -55,14 +55,14 @@ using namespace boost;
 
 namespace liblas { namespace detail { namespace writer {
 
-Point::Point(std::ostream& ofs, uint32_t& count, const liblas::Header& header)
+Point::Point(std::ostream& ofs, uint32_t& count, HeaderPtr header)
     : Base(ofs, count)
     , m_ofs(ofs)
     , m_header(header)
     , m_point(liblas::Point())
-    , m_format(header.GetSchema())
-    , bTime(header.GetSchema().HasTime())
-    , bColor(header.GetSchema().HasColor())
+    , m_format(header->GetSchema())
+    , bTime(header->GetSchema().HasTime())
+    , bColor(header->GetSchema().HasColor())
 {
     setup();
 }
@@ -101,6 +101,12 @@ void Point::write(const liblas::Point& point)
     
     
     std::size_t byteswritten(0);
+
+    // We need to remember to properly scale the raw xyz data in 
+    // accordance with what the user is setting for values in the header
+    // they are writing to the file.  FIXME: this needs to be done
+    // when the point writer turns into just a simple writer of the 
+    // liblas::Point::m_format_data + m_extra data
     
     m_point = point;
     fill();
@@ -176,10 +182,10 @@ void Point::fill()
 {
     liblas::Point& p = m_point;
 
-    m_record.x = static_cast<int32_t>(detail::sround(((p.GetX() - m_header.GetOffsetX()) / m_header.GetScaleX())));
-    m_record.y = static_cast<int32_t>(detail::sround(((p.GetY() - m_header.GetOffsetY()) / m_header.GetScaleY())));
-    m_record.z = static_cast<int32_t>(detail::sround(((p.GetZ() - m_header.GetOffsetZ()) / m_header.GetScaleZ())));
-        
+    m_record.x = static_cast<int32_t>(detail::sround(((p.GetX() - m_header->GetOffsetX()) / m_header->GetScaleX())));
+    m_record.y = static_cast<int32_t>(detail::sround(((p.GetY() - m_header->GetOffsetY()) / m_header->GetScaleY())));
+    m_record.z = static_cast<int32_t>(detail::sround(((p.GetZ() - m_header->GetOffsetZ()) / m_header->GetScaleZ())));
+
     Classification::bitset_type clsflags(p.GetClassification());
     m_record.classification = static_cast<uint8_t>(clsflags.to_ulong());
 

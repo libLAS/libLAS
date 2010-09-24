@@ -69,11 +69,6 @@ liblas::Header const&  WriterImpl::WriteHeader(liblas::Header const& header)
 {
     m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs,m_pointCount, header) );
     
-    if (m_header_writer == 0) {
-        m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs,m_pointCount, header) );
-    } else {
-        m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs,m_pointCount, header) );
-    }
     m_header_writer->write();
     return m_header_writer->GetHeader();
 }
@@ -89,7 +84,7 @@ void WriterImpl::UpdateHeader(liblas::Header const& header)
     }
 }
 
-void WriterImpl::WritePoint(liblas::Point const& point, const liblas::Header& header)
+void WriterImpl::WritePoint(liblas::Point const& point, HeaderPtr header)
 {
     if (m_point_writer == 0) {
         m_point_writer = PointWriterPtr(new writer::Point(m_ofs, m_pointCount, header));

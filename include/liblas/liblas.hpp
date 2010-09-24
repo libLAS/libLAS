@@ -137,9 +137,9 @@ class WriterI
 {
 public:
 
-    virtual Header const& WriteHeader(const Header& header) = 0;
-    virtual void UpdateHeader(const Header& header) = 0;
-    virtual void WritePoint(const Point& point, const Header& header) = 0;
+    virtual Header const& WriteHeader(Header const& header) = 0;
+    virtual void UpdateHeader(Header const& header) = 0;
+    virtual void WritePoint(const Point& point, HeaderPtr header) = 0;
 
     virtual std::ostream& GetStream() const = 0;
 

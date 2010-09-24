@@ -54,28 +54,29 @@ namespace liblas
 {
 
 Writer::Writer(std::ostream& ofs, Header const& header) :
-    m_pimpl(detail::WriterFactory::Create(ofs)), m_header(header), 
+    m_pimpl(detail::WriterFactory::Create(ofs)), m_header(HeaderPtr(new liblas::Header(header))), 
     m_filters(0),
     m_transforms(0),
     m_reprojection_transform(TransformPtr())
 {
-    m_pimpl->WriteHeader(m_header);
+    liblas::Header const& h = m_pimpl->WriteHeader(*m_header);
+    m_header = HeaderPtr(new liblas::Header(h));
 
     // Copy our input SRS.  If the user issues SetInputSRS, it will 
     // be overwritten
-    m_in_srs = m_header.GetSRS();
+    m_in_srs = m_header->GetSRS();
 }
 
 Writer::~Writer()
 {
     assert(0 != m_pimpl.get());
 
-    m_pimpl->UpdateHeader(m_header);
+    m_pimpl->UpdateHeader(*m_header);
 }
 
 Header const& Writer::GetHeader() const
 {
-    return m_header;
+    return *m_header;
 }
 
 bool Writer::WritePoint(Point const& point)
@@ -155,7 +156,8 @@ void Writer::WriteHeader(Header& header)
 {
     // The writer may update our header as part of its 
     // writing process (change VLRs for SRS's, for instance).
-    m_header = m_pimpl->WriteHeader(header);
+    liblas::Header const& h = m_pimpl->WriteHeader(header);
+    m_header = HeaderPtr(new liblas::Header(h));
 }
 
 bool Writer::SetSRS(const SpatialReference& srs)
