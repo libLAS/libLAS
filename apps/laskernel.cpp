@@ -12,15 +12,8 @@ if (dash != std::string::npos) {
 return false;
 }
 
-liblas::FilterPtr  MakeReturnFilter(std::string return_string, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr  MakeReturnFilter(std::vector<boost::uint16_t> const& returns, liblas::FilterI::FilterType ftype) 
 {
-    boost::char_separator<char> sep(SEPARATORS);
-
-    std::vector<boost::uint16_t> returns;
-    tokenizer tokens(return_string, sep);
-    for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-        returns.push_back(atoi((*t).c_str()));
-    }
 
     liblas::ReturnFilter* return_filter = new liblas::ReturnFilter(returns, false);
     return_filter->SetType(ftype);
@@ -28,15 +21,8 @@ liblas::FilterPtr  MakeReturnFilter(std::string return_string, liblas::FilterI::
 }
 
 
-liblas::FilterPtr  MakeClassFilter(std::string class_string, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr  MakeClassFilter(std::vector<liblas::Classification> const& classes, liblas::FilterI::FilterType ftype) 
 {
-    boost::char_separator<char> sep(SEPARATORS);
-
-    std::vector<boost::uint8_t> classes;
-    tokenizer tokens(class_string, sep);
-    for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-        classes.push_back(atoi((*t).c_str()));
-    }
 
     liblas::ClassificationFilter* class_filter = new liblas::ClassificationFilter(classes); 
     class_filter->SetType(ftype);
@@ -118,11 +104,11 @@ filtering_options.add_options()
     ("thin,t", po::value<boost::uint32_t>()->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
     ("last_return_only", po::value<bool>()->zero_tokens(), "Keep last returns (cannot be used with --first_return_only)")
     ("first_return_only", po::value<bool>()->zero_tokens(), "Keep first returns (cannot be used with --last_return_only")
-    ("keep-returns", po::value< string >(), "A comma-separated list of return numbers to keep in the output file: \n--keep-returns 1,2,3")
-    ("drop-returns", po::value< string >(), "Return numbers to drop.\nUse a comma-separated list, for example, --drop-returns 2,3,4,5")
+    ("keep-returns", po::value< std::vector<boost::uint16_t> >()->multitoken(), "A list of return numbers to keep in the output file: \n--keep-returns 1 2 3")
+    ("drop-returns", po::value< std::vector<boost::uint16_t> >()->multitoken(), "Return numbers to drop.\nFor example, --drop-returns 2 3 4 5")
     ("valid_only", po::value<bool>()->zero_tokens(), "Keep only valid points")
-    ("keep-classes", po::value< string >(), "A comma-separated list of classifications to keep:\n--keep-classes 2,4,12\n--keep-classes 2")
-    ("drop-classes", po::value< string >(), "A comma-separated list of classifications to drop:\n--drop-classes 1,7,8\n--drop-classes 2")
+    ("keep-classes", po::value< std::vector<boost::uint32_t > >()->multitoken(), "A list of classifications to keep:\n--keep-classes 2 4 12\n--keep-classes 2")
+    ("drop-classes", po::value< std::vector<boost::uint32_t > >()->multitoken(), "A comma-separated list of classifications to drop:\n--drop-classes 1,7,8\n--drop-classes 2")
     ("keep-intensity", po::value< string >(), "Range in which to keep intensity.\nThe following expression types are supported:  \n--keep-intensity 0-100 \n--keep-intensity <200 \n--keep-intensity >400 \n--keep-intensity >=200")
     ("drop-intensity", po::value< string >(), "Range in which to drop intensity.\nThe following expression types are supported:  \n--drop-intensity <200 \n--drop-intensity >400 \n--drop-intensity >=200")
     ("keep-time", po::value< string >(), "Range in which to keep time.\nThe following expression types are supported:  \n--keep-time 413665.2336-414092.8462 \n--keep-time <414094.8462 \n--keep-time >413665.2336 \n--keep-time >=413665.2336")
@@ -160,32 +146,73 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
     
     if (vm.count("keep-classes")) 
     {
-        std::string classes = vm["keep-classes"].as< string >();
+        std::vector<boost::uint32_t> classes = vm["keep-classes"].as< std::vector<boost::uint32_t> >();
+        
+        std::vector<liblas::Classification> klasses;
+
+        ostringstream oss;
+        
+        for (std::vector<boost::uint32_t>::const_iterator i = classes.begin();
+             i != classes.end();
+             i++) 
+            {
+                oss << *i << " ";
+                klasses.push_back(liblas::Classification(*i, false, false, false));
+            }
         if (verbose)
-            std::cout << "Keeping classes with the values: " << classes << std::endl;
+        {
+
+                std::cout << "Keeping classes with the values: " << oss.str() << std::endl;
+        }
+        
             
-        liblas::FilterPtr class_filter = MakeClassFilter(  classes, 
+        liblas::FilterPtr class_filter = MakeClassFilter(  klasses, 
                                                           liblas::FilterI::eInclusion);
         filters.push_back(class_filter); 
     }
 
     if (vm.count("drop-classes")) 
     {
-        std::string classes = vm["drop-classes"].as< string >();
+        std::vector<boost::uint32_t> classes = vm["drop-classes"].as< std::vector<boost::uint32_t> >();
+
+        std::vector<liblas::Classification> klasses;
+
+        ostringstream oss;
+        
+        for (std::vector<boost::uint32_t>::const_iterator i = classes.begin();
+             i != classes.end();
+             i++) 
+            {
+                oss << *i << " ";
+                klasses.push_back(liblas::Classification(*i,false, false, false));
+            }
         if (verbose)
-            std::cout << "Dropping classes with the values: " << classes << std::endl;
-            
-        liblas::FilterPtr class_filter = MakeClassFilter(  classes, 
+        {
+
+                std::cout << "Dropping classes with the values: " << oss.str() << std::endl;
+        }
+        liblas::FilterPtr class_filter = MakeClassFilter(  klasses, 
                                                             liblas::FilterI::eExclusion);
         filters.push_back(class_filter);
     }
 
     if (vm.count("keep-returns")) 
     {
-        std::string returns = vm["keep-returns"].as< string >();
+        std::vector<boost::uint16_t> returns = vm["keep-returns"].as< std::vector<boost::uint16_t> >();
+
+
         if (verbose)
-            std::cout << "Keeping returns with the values: " << returns << std::endl;
-            
+        {
+            ostringstream oss;
+            for (std::vector<boost::uint16_t>::const_iterator i = returns.begin();
+                 i != returns.end();
+                 i++) 
+                {
+                    oss << *i << " ";
+                }
+                std::cout << "Keeping returns with the values: " << oss.str() << std::endl;
+        }
+
         liblas::FilterPtr return_filter = MakeReturnFilter(  returns, 
                                                             liblas::FilterI::eInclusion);
         filters.push_back(return_filter); 
@@ -193,10 +220,20 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
 
     if (vm.count("drop-returns")) 
     {
-        std::string returns = vm["drop-returns"].as< string >();
+        std::vector<boost::uint16_t> returns = vm["keep-returns"].as< std::vector<boost::uint16_t> >();
+
         if (verbose)
-            std::cout << "Dropping returns with the values: " << returns << std::endl;
-            
+        {
+            ostringstream oss;
+            for (std::vector<boost::uint16_t>::const_iterator i = returns.begin();
+                 i != returns.end();
+                 i++) 
+                {
+                    oss << *i << " ";
+                }
+                std::cout << "Dropping returns with the values: " << oss.str() << std::endl;
+        }
+
         liblas::FilterPtr return_filter = MakeReturnFilter(  returns, 
                                                             liblas::FilterI::eExclusion);
         filters.push_back(return_filter); 

@@ -69,8 +69,8 @@ typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
 bool IsDualRangeFilter(std::string parse_string) ;
 
-liblas::FilterPtr MakeReturnFilter(std::string return_string, liblas::FilterI::FilterType ftype) ;
-liblas::FilterPtr MakeClassFilter(std::string class_string, liblas::FilterI::FilterType ftype) ;
+liblas::FilterPtr MakeReturnFilter(std::vector<boost::uint16_t> const& returns, liblas::FilterI::FilterType ftype) ;
+liblas::FilterPtr MakeClassFilter(std::vector<liblas::Classification> const& classes, liblas::FilterI::FilterType ftype) ;
 liblas::FilterPtr MakeBoundsFilter(std::string bounds_string, liblas::FilterI::FilterType ftype) ;
 liblas::FilterPtr MakeIntensityFilter(std::string intensities, liblas::FilterI::FilterType ftype) ;
 liblas::FilterPtr MakeTimeFilter(std::string times, liblas::FilterI::FilterType ftype) ;

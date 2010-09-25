@@ -124,7 +124,7 @@ class ClassificationFilter: public FilterI
 {
 public:
     
-    typedef std::vector<boost::uint8_t> class_list_type;
+    typedef std::vector<liblas::Classification> class_list_type;
 
     ClassificationFilter(class_list_type classes);
     bool filter(const Point& point);

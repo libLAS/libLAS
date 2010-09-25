@@ -50,7 +50,7 @@ using namespace boost;
 
 namespace liblas { 
 
-ClassificationFilter::ClassificationFilter( std::vector<boost::uint8_t> classes )
+ClassificationFilter::ClassificationFilter( std::vector<liblas::Classification> classes )
     : FilterI(eInclusion)
     , m_classes(classes) 
 {
@@ -65,8 +65,8 @@ bool ClassificationFilter::filter(const Point& p)
     // we're going to return true regardless
     bool output = true;
     for (class_list_type::const_iterator it = m_classes.begin(); it != m_classes.end(); ++it) {
-        
-        if (cls == *it) {
+        liblas::Classification kls = *it;
+        if (c == *it) {
             if (GetType() == eInclusion) {
                 output = true;
             } else {
