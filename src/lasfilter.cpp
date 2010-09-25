@@ -59,13 +59,11 @@ ClassificationFilter::ClassificationFilter( std::vector<liblas::Classification> 
 bool ClassificationFilter::filter(const Point& p)
 {
     Classification c = p.GetClassification();
-    boost::uint8_t cls = c.GetClass();
     
     // If the user gave us an empty set of classes to filter
     // we're going to return true regardless
     bool output = true;
     for (class_list_type::const_iterator it = m_classes.begin(); it != m_classes.end(); ++it) {
-        liblas::Classification kls = *it;
         if (c == *it) {
             if (GetType() == eInclusion) {
                 output = true;
@@ -82,60 +80,21 @@ bool ClassificationFilter::filter(const Point& p)
 
 BoundsFilter::BoundsFilter( double minx, double miny, double maxx, double maxy ) : FilterI(eInclusion)
 {
-    mins[0] = minx;
-    mins[1] = miny;
-    mins[2] = 0;
-    maxs[0] = maxx;
-    maxs[1] = maxy;
-    maxs[2] = 0;
-    m_2d = true;
+    bounds = Bounds<double>(minx, miny, maxx, maxy);
 }
 
 BoundsFilter::BoundsFilter( double minx, double miny, double minz, double maxx, double maxy, double maxz ) : FilterI(eInclusion)
 {
-    mins[0] = minx;
-    mins[1] = miny;
-    mins[2] = minz;
-    maxs[0] = maxx;
-    maxs[1] = maxy;
-    maxs[2] = maxz;
-    m_2d = false;
+    bounds = Bounds<double>(minx, miny, minz, maxx, maxy, maxz);
 }
 
-BoundsFilter::BoundsFilter( Bounds<double> const& bounds) : FilterI(eInclusion)
+BoundsFilter::BoundsFilter( Bounds<double> const& b) : FilterI(eInclusion)
 {
-    mins[0] = bounds.min(0);
-    mins[1] = bounds.min(1);
-    maxs[0] = bounds.max(0);
-    maxs[1] = bounds.max(1);
-
-    if (bounds.dimension() > 2)
-        mins[2] = bounds.min(2);
-        maxs[2] = bounds.max(2);
-        m_2d = false;
+    bounds = b;
 }
 bool BoundsFilter::filter(const Point& p)
 {
-    bool output = false;
-    
-    double x = p.GetX();
-    double y = p.GetY();
-    double z = p.GetZ();
-    
-    if (! m_2d) {
-        if (x > mins[0] && y > mins[1] && z > mins[2]) {
-            if (x < maxs[0] && y < maxs[1] && z < maxs[2]) {
-                output = true;
-            }
-        }
-    } else {
-        if (x > mins[0] && y > mins[1]) {
-            if (x < maxs[0] && y < maxs[1]) {
-                output = true;
-            }
-        }
-    }
-    return output;
+    return bounds.contains(p);
 }
 
 

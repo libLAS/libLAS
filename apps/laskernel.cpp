@@ -29,35 +29,8 @@ liblas::FilterPtr  MakeClassFilter(std::vector<liblas::Classification> const& cl
     return liblas::FilterPtr(class_filter);
 }
 
-liblas::FilterPtr  MakeBoundsFilter(std::string bounds_string, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr  MakeBoundsFilter(liblas::Bounds<double> const& bounds, liblas::FilterI::FilterType ftype) 
 {
-    boost::char_separator<char> sep(SEPARATORS);
-    std::vector<double> vbounds;
-    tokenizer tokens(bounds_string, sep);
-    liblas::Bounds<double> bounds;
-    for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-        vbounds.push_back(atof((*t).c_str()));
-    }
-    if (vbounds.size() == 4) 
-    {
-        bounds = liblas::Bounds<double>(vbounds[0], 
-                                vbounds[1], 
-                                vbounds[2], 
-                                vbounds[3]);
-    } else if (vbounds.size() == 6)
-    {
-        bounds = liblas::Bounds<double>(vbounds[0], 
-                                vbounds[1], 
-                                vbounds[2], 
-                                vbounds[3], 
-                                vbounds[4], 
-                                vbounds[5]);
-    } else {
-        ostringstream oss;
-        oss << "Bounds must be specified as a 4-tuple or "
-               "6-tuple, not a "<< vbounds.size()<<"-tuple" << "\n";
-        throw std::runtime_error(oss.str());
-    }
     liblas::BoundsFilter* bounds_filter = new liblas::BoundsFilter(bounds);
     bounds_filter->SetType(ftype);
     return liblas::FilterPtr(bounds_filter);
@@ -100,7 +73,7 @@ po::options_description GetFilteringOptions()
 po::options_description filtering_options("Filtering options");
 
 filtering_options.add_options()
-    ("extent,e", po::value< string >(), "Extent window that points must fall within to keep.\nUse a comma-separated list, for example, \n  -e minx, miny, maxx, maxy\n  or \n  -e minx, miny, minz, maxx, maxy, maxz")
+    ("extent,e", po::value< std::vector<double> >()->multitoken(), "Extent window that points must fall within to keep.\nFor example, \n  -e minx miny maxx maxy\n  or \n  -e minx miny minz maxx maxy maxz")
     ("thin,t", po::value<boost::uint32_t>()->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
     ("last_return_only", po::value<bool>()->zero_tokens(), "Keep last returns (cannot be used with --first_return_only)")
     ("first_return_only", po::value<bool>()->zero_tokens(), "Keep first returns (cannot be used with --last_return_only")
@@ -241,9 +214,52 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             
     if (vm.count("extent")) 
     {
-        std::string bounds = vm["extent"].as< string >();
+
+        std::vector<double> vbounds = vm["extent"].as< std::vector<double> >();
+
+        liblas::Bounds<double> bounds;
+
+        if (vbounds.size() == 4) 
+        {
+            bounds = liblas::Bounds<double>(vbounds[0], 
+                                    vbounds[1], 
+                                    vbounds[2], 
+                                    vbounds[3]);
+        } else if (vbounds.size() == 6)
+        {
+            bounds = liblas::Bounds<double>(vbounds[0], 
+                                    vbounds[1], 
+                                    vbounds[2], 
+                                    vbounds[3], 
+                                    vbounds[4], 
+                                    vbounds[5]);
+        } else {
+            ostringstream oss;
+            oss << "Bounds must be specified as a 4-tuple or "
+                   "6-tuple, not a "<< vbounds.size()<<"-tuple" << "\n";
+            throw std::runtime_error(oss.str());
+        }
+    
         if (verbose)
-            std::cout << "Clipping file to the extent : " << bounds << std::endl;
+        {
+            std::cout << "---------------------------------------------------------" << std::endl;
+            std::cout << " Clipping file to the extent" << std::endl;
+            std::cout << "---------------------------------------------------------" << std::endl;
+
+            std::cout.setf(std::ios_base::fixed, std::ios_base::floatfield);
+            std::cout.precision(6);
+    
+            std::cout << " minx: " << bounds.minx() 
+                      << " miny: " << bounds.miny() 
+                      << " minz: " << bounds.minz() 
+                      << std::endl;
+            std::cout << " maxx: " << bounds.maxx() 
+                      << " maxy: " << bounds.maxy() 
+                      << " maxz: " << bounds.maxz() 
+                      << std::endl;
+            std::cout << "---------------------------------------------------------" << std::endl;
+        }
+
         liblas::FilterPtr bounds_filter = MakeBoundsFilter(bounds, liblas::FilterI::eInclusion);
         filters.push_back(bounds_filter);
         

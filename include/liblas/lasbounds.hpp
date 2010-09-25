@@ -430,6 +430,36 @@ bool contains(Bounds const& other) const
     return true;
 }
 
+/// Does this Bounds this point other?
+bool contains(Point const& point) const
+{
+    // std::cout << ranges[0].length() << std::endl;
+    // std::cout << "x contain: " << ranges[0].contains(point.GetX()) 
+    //           << " r.x.min: " << ranges[0].min 
+    //           << " r.x.max: " << ranges[0].max 
+    //           << " p.x: " << point.GetX() << std::endl;
+    // std::cout << "y contain: " << ranges[1].contains(point.GetY()) 
+    //           << " r.y.min: " << ranges[1].min 
+    //           << " r.y.max: " << ranges[1].max 
+    //           << " p.y: " << point.GetY() << std::endl;
+    // std::cout << "z contain: " << ranges[2].contains(point.GetZ()) 
+    //           << " r.z.min: " << ranges[2].min 
+    //           << " r.z.max: " << ranges[2].max 
+    //           << " p.z: " << point.GetZ() << std::endl;
+    if (!ranges[0].contains(point.GetX()))
+        return false;
+    if (!ranges[1].contains(point.GetY()))
+        return false;
+        
+    // If our z bounds has no length, we'll say it's contained anyway.
+    if (!ranges[2].contains(point.GetZ())) 
+    {
+        if (detail::compare_distance(ranges[2].length(), 0.0))
+            return true;
+        return false;
+    }
+    return true;
+}
 /// Shift each dimension by a vector of detlas
 void shift(std::vector<T> deltas)
 {
@@ -541,7 +571,11 @@ Bounds<T> project(liblas::SpatialReference const& in_ref, liblas::SpatialReferen
     return Bounds<T>(minimum, maximum);
 }
 
+
+
 };
+
+
 } // namespace liblas
 
 #endif // ndef LIBLAS_LASBOUNDS_HPP_INCLUDED

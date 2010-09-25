@@ -106,14 +106,12 @@ public:
     
     BoundsFilter(double minx, double miny, double maxx, double maxy);
     BoundsFilter(double minx, double miny, double minz, double maxx, double maxy, double maxz);
-    BoundsFilter(Bounds<double> const& bounds);
+    BoundsFilter(Bounds<double> const& b);
     bool filter(const Point& point);
 
 private:
-    double mins[3]; // TODO: use Bounds directly or array<double, 3> --mloskot
-    double maxs[3];
     
-    bool m_2d;
+    liblas::Bounds<double> bounds;
 
     BoundsFilter(BoundsFilter const& other);
     BoundsFilter& operator=(BoundsFilter const& rhs);
