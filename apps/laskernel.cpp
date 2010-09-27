@@ -112,11 +112,12 @@ po::options_description GetHeaderOptions()
     transform_options.add_options()
         ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
         ("a_vertcs", po::value< std::vector<string> >()->multitoken(), "Override vertical coordinate system information.  Use --a_vertcs \"verticalCSType [citation [verticalDatum [verticalUnits]]]\"\nFor example: --a_vertcs 5703 \"North American Vertical Datum of 1988 (NAVD88)\" 5103 9001")   
-        ("offset", po::value< string >(), "A comma-separated list of offsets to set on the output file: \n--offset 0,0,0")
-        ("scale", po::value< string >(), "A comma-separated list of scales to set on the output file: \n--scale 0.1,0.1,0.00001")
+        ("offset", po::value< std::vector<double> >()->multitoken(), "A list of offsets to set on the output file: \n--offset 0 0 0")
+        ("scale", po::value< std::vector<double> >()->multitoken(), "A list of scales to set on the output file: \n--scale 0.1 0.1 0.00001")
         ("format,f", po::value< string >(), "Set the LAS format of the new file (only 1.0-1.2 supported at this time): \n--format 1.2\n-f 1.1")
         ("pad-header", po::value< string >(), "Add extra bytes to the existing header")
         ("min-offset", po::value<bool>()->zero_tokens(), "Set the offset of the header to the minimums of all values in the file.  Note that this requires multiple read passes through the file to achieve.")
+        ("file-creation", po::value< std::vector<string> >()->multitoken(), "Set the header's day/year.  Specify either as \"1 2010\" for the first day of 2010, or as \"now\" to specify the current day/year")
 
     ;
     
@@ -594,52 +595,61 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 
     if (vm.count("offset")) 
     {
-        std::string offset_string = vm["offset"].as< string >();
-        if (verbose)
-            std::cout << "Setting offsets to: " << offset_string << std::endl;
-        boost::char_separator<char> sep(SEPARATORS);
-        std::vector<double> offsets;
-        tokenizer tokens(offset_string, sep);
-        bool mins = false;
-        std::string m("min");
-        for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-            // Check if the user set --offset min,min,min
-            // FIXME: make this so the user could do --offset min,min,20.00
-            if (!(*t).compare(m))
-            {   
-                mins = true;
-                continue;
-            }
-            else
-            {
-                mins = false;
-                offsets.push_back(atof((*t).c_str()));
-            }
-        }
-        if (offsets.size() != 3) 
-        {
-            throw std::runtime_error("All three values for setting the offset must be floats");
 
+        std::vector<double> offsets = vm["offset"].as< std::vector<double> >();
+        if (offsets.size() != 3) {
+            ostringstream oss;
+            oss << "Three arguments must be given to offset. "
+                << "--offset x y z";
+
+            throw std::runtime_error(oss.str());
         }
+
+        
+        if (verbose)
+        {
+            ostringstream oss;
+            for (std::vector<double>::const_iterator i = offsets.begin();
+                 i != offsets.end();
+                 i++) 
+                {
+                    oss << *i << " ";
+                }
+                std::cout << "Setting offsets to: " << oss.str() << std::endl;
+        }
+
         header.SetOffset(offsets[0], offsets[1], offsets[2]);
     }
 
     if (vm.count("scale")) 
     {
-        std::string scale_string = vm["scale"].as< string >();
-        if (verbose)
-            std::cout << "Setting scales to: " << scale_string << std::endl;
+        std::vector<double> scales = vm["scale"].as< std::vector<double> >();
 
-        boost::char_separator<char> sep(SEPARATORS);
-        std::vector<double> scales;
-        tokenizer tokens(scale_string, sep);
-        std::string m("min");
-        for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-            scales.push_back(atof((*t).c_str()));
+        if (scales.size() != 3) {
+            ostringstream oss;
+            oss << "Three arguments must be given to scale. "
+                << "--scale x y z";
+
+            throw std::runtime_error(oss.str());
         }
+
+        
+        if (verbose)
+        {
+            ostringstream oss;
+            for (std::vector<double>::const_iterator i = scales.begin();
+                 i != scales.end();
+                 i++) 
+                {
+                    oss << *i << " ";
+                }
+                std::cout << "Setting scales to: " << oss.str() << std::endl;
+        }
+
 
         header.SetScale(scales[0], scales[1], scales[2]);
     }
+    
     if (vm.count("format")) 
     {
         std::string format_string = vm["format"].as< string >();
@@ -684,178 +694,56 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         }
         header.SetDataOffset(atoi(header_pad.c_str()));
     }
+
+    if (vm.count("file-creation"))
+    {
+        std::vector<std::string> creation = vm["file-creation"].as< std::vector<std::string> >();
+
+        if (verbose)
+        {
+            ostringstream oss;
+            for (std::vector<std::string>::const_iterator i = creation.begin();
+                 i != creation.end();
+                 i++) 
+                {
+                    oss << *i << " ";
+                }
+                std::cout << "Setting file creation to " << oss.str() << std::endl;
+        }
+            
+        std::string m("now");
+        bool now = false;
+        if (creation.size() == 1 ) 
+        {
+            if (!(creation[0].compare(m))) 
+            {
+                now = true;
+            }            
+        }
+        
+        boost::uint32_t day = 0;
+        boost::uint32_t year = 0;
+        
+        
+        if (creation.size() == 2) 
+        {
+            day = atoi(creation[0].c_str());
+            year = atoi(creation[1].c_str());
+        }
+        
+        if (now == true) 
+        {
+            liblas::Header h;
+            header.SetCreationDOY(h.GetCreationDOY());
+            header.SetCreationYear(h.GetCreationYear());
+        } else {
+            header.SetCreationDOY(day);
+            header.SetCreationYear(year);
+            
+        }
+    }
     
     return transforms;
 }
-
-
-// boost::property_tree::ptree SummarizePoints(liblas::Reader& reader )
-// {
-//     using boost::property_tree::ptree;
-//     ptree pt;
-//     
-//     boost::array<boost::uint32_t, 32> classes;
-//     boost::uint32_t synthetic = 0;
-//     boost::uint32_t withheld = 0;
-//     boost::uint32_t keypoint = 0;
-//     boost::uint32_t count = 0;
-//     boost::array<boost::uint32_t, 8> points_by_return; 
-//     boost::array<boost::uint32_t, 8> returns_of_given_pulse; 
-//     
-//     classes.assign(0);
-//     points_by_return.assign(0);
-//     returns_of_given_pulse.assign(0);
-//         
-//     bool read = reader.ReadNextPoint();
-//     if (!read)
-//     {
-//         throw std::runtime_error("Unable to read any points from file.");
-//     }
-//     
-//     bool first = true;
-//     liblas::Point min;
-//     liblas::Point max;
-//     
-//     while (read) 
-//     {
-// 
-//         count++;
-//         liblas::Point const& p = reader.GetPoint();
-// 
-//         if (first) {
-//             min = p;
-//             max = p;
-//             first = false;
-//         }
-//         
-//         min.SetX(std::min(p.GetX(), min.GetX()));
-//         max.SetX(std::max(p.GetX(), max.GetX()));
-// 
-//         min.SetY(std::min(p.GetY(), min.GetY()));
-//         max.SetY(std::max(p.GetY(), max.GetY()));        
-// 
-//         min.SetZ(std::min(p.GetZ(), min.GetZ()));
-//         max.SetZ(std::max(p.GetZ(), max.GetZ()));
-// 
-//         min.SetIntensity(std::min(p.GetIntensity(), min.GetIntensity()));
-//         max.SetIntensity(std::max(p.GetIntensity(), max.GetIntensity()));
-// 
-//         min.SetTime(std::min(p.GetTime(), min.GetTime()));
-//         max.SetTime(std::max(p.GetTime(), max.GetTime()));
-// 
-//         min.SetReturnNumber(std::min(p.GetReturnNumber(), min.GetReturnNumber()));
-//         max.SetReturnNumber(std::max(p.GetReturnNumber(), max.GetReturnNumber()));
-// 
-//         min.SetNumberOfReturns(std::min(p.GetNumberOfReturns(), min.GetNumberOfReturns()));
-//         max.SetNumberOfReturns(std::max(p.GetNumberOfReturns(), max.GetNumberOfReturns()));
-// 
-//         min.SetScanDirection(std::min(p.GetScanDirection(), min.GetScanDirection()));
-//         max.SetScanDirection(std::max(p.GetScanDirection(), max.GetScanDirection()));
-// 
-//         min.SetFlightLineEdge(std::min(p.GetFlightLineEdge(), min.GetFlightLineEdge()));
-//         max.SetFlightLineEdge(std::max(p.GetFlightLineEdge(), max.GetFlightLineEdge()));
-// 
-//         min.SetScanAngleRank(std::min(p.GetScanAngleRank(), min.GetScanAngleRank()));
-//         max.SetScanAngleRank(std::max(p.GetScanAngleRank(), max.GetScanAngleRank()));
-// 
-//         min.SetUserData(std::min(p.GetUserData(), min.GetUserData()));
-//         max.SetUserData(std::max(p.GetUserData(), max.GetUserData()));
-// 
-//         min.SetPointSourceID(std::min(p.GetPointSourceID(), min.GetPointSourceID()));
-//         max.SetPointSourceID(std::max(p.GetPointSourceID(), max.GetPointSourceID()));
-//         
-//         liblas::Classification const& cls = p.GetClassification();
-//         
-//         boost::uint8_t minc = std::min(cls.GetClass(), min.GetClassification().GetClass());
-//         boost::uint8_t maxc = std::max(cls.GetClass(), max.GetClassification().GetClass());
-//         
-//         classes[cls.GetClass()]++;
-//         
-//         if (cls.IsWithheld()) withheld++;
-//         if (cls.IsKeyPoint()) keypoint++;
-//         if (cls.IsSynthetic()) synthetic++;
-//         
-//         min.SetClassification(liblas::Classification(minc));
-//         max.SetClassification(liblas::Classification(maxc));
-//         
-//         liblas::Color const& color = p.GetColor();
-//         
-//         liblas::Color::value_type red;
-//         liblas::Color::value_type green;
-//         liblas::Color::value_type blue;
-//         
-//         red = std::min(color.GetRed(), min.GetColor().GetRed());
-//         green = std::min(color.GetGreen(), min.GetColor().GetGreen());
-//         blue = std::min(color.GetBlue(), min.GetColor().GetBlue());
-//         
-//         min.SetColor(liblas::Color(red, green, blue));
-//         
-//         red = std::max(color.GetRed(), max.GetColor().GetRed());
-//         green = std::max(color.GetGreen(), max.GetColor().GetGreen());
-//         blue = std::max(color.GetBlue(), max.GetColor().GetBlue());        
-// 
-//         max.SetColor(liblas::Color(red, green, blue));
-// 
-//         points_by_return[p.GetReturnNumber()]++;
-//         returns_of_given_pulse[p.GetNumberOfReturns()]++;
-//         
-//         read = reader.ReadNextPoint();
-//     }
-// 
-//     ptree pmin = min.GetPTree();
-//     ptree pmax = max.GetPTree();
-//     
-// 
-//      
-//     pt.add_child("minimum", pmin);
-//     pt.add_child("maximum", pmax);
-//     
-//     ptree klasses;
-//     
-//     for (boost::array<boost::uint32_t,32>::size_type i=0; i < classes.size(); i++) {
-//         if (classes[i] != 0) {
-//             liblas::Classification c = liblas::Classification(i, false, false, false);
-//             std::string name = c.GetClassName();
-// 
-//             klasses.put("name", name);
-//             klasses.put("count", classes[i]);
-//             klasses.put("id", i);
-//             pt.add_child("classification.classification",klasses);            
-//         }
-//     }
-//     pt.put("classification.withheld", withheld);
-//     pt.put("classification.keypoint", keypoint);
-//     pt.put("classification.synthetic", synthetic);
-//     
-//     ptree returns;
-//     for (boost::array<boost::uint32_t,8>::size_type i=0; i < points_by_return.size(); i++) {
-//         if (i == 0) continue;
-// 
-//         if (points_by_return[i] != 0)
-//         {
-//             returns.put("id", i);
-//             returns.put("count", points_by_return[i]);
-//             pt.add_child("points_by_return.return", returns);
-//             
-//         }
-//     }
-//     
-//     ptree pulses;
-//     for (boost::array<boost::uint32_t,8>::size_type i=0; i < returns_of_given_pulse.size(); i++) {
-//         if (returns_of_given_pulse[i] != 0) {
-//             pulses.put("id",i);
-//             pulses.put("count", returns_of_given_pulse[i]);
-//             pt.add_child("returns_of_given_pulse.pulse", pulses);
-//         }
-//     }
-//     
-//     pt.put("count", count);
-//     
-//     std::cout << min;
-//     std::cout << reader.GetHeader();
-//     
-//     return pt;
-// }
-
 
 
