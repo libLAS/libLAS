@@ -750,6 +750,7 @@ int main(int argc, char* argv[])
     try {
 
         po::options_description file_options = GetFileOptions();
+        po::options_description header_options = GetHeaderOptions();        
         po::options_description filtering_options = GetFilteringOptions();
         po::options_description transform_options = GetTransformationOptions() ;
         po::options_description hidden_options = GetHiddenOptions();
@@ -762,7 +763,7 @@ int main(int argc, char* argv[])
 
         po::variables_map vm;
         po::options_description options;
-        options.add(file_options).add(transform_options).add(filtering_options).add(hidden_options);
+        options.add(file_options).add(header_options).add(transform_options).add(filtering_options).add(hidden_options);
         po::store(po::command_line_parser(argc, argv).
         options(options).positional(p).run(), vm);
 

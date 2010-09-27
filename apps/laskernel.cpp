@@ -99,8 +99,18 @@ po::options_description GetTransformationOptions()
     po::options_description transform_options("Transformation options");
 
     transform_options.add_options()
+        ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")
+    ;
+    
+    return transform_options;
+}
+
+po::options_description GetHeaderOptions() 
+{
+    po::options_description transform_options("Header modification options");
+
+    transform_options.add_options()
         ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
-        ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")   
         ("a_vertcs", po::value< std::vector<string> >()->multitoken(), "Override vertical coordinate system information.  Use --a_vertcs \"verticalCSType [citation [verticalDatum [verticalUnits]]]\"\nFor example: --a_vertcs 5703 \"North American Vertical Datum of 1988 (NAVD88)\" 5103 9001")   
         ("offset", po::value< string >(), "A comma-separated list of offsets to set on the output file: \n--offset 0,0,0")
         ("scale", po::value< string >(), "A comma-separated list of scales to set on the output file: \n--scale 0.1,0.1,0.00001")
@@ -112,7 +122,6 @@ po::options_description GetTransformationOptions()
     
     return transform_options;
 }
-
 std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
 {
     std::vector<liblas::FilterPtr> filters;

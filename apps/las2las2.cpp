@@ -98,7 +98,7 @@ void RepairHeader(liblas::Summary const& summary, std::string const& filename)
 
     std::ios::openmode m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
 
-    // Write a blank header first
+    // Write a blank PointRecordsByReturnCount first
     std::ofstream ofs(filename.c_str(), m);
     liblas::Writer writer(ofs, header);
     ofs.close();
@@ -114,6 +114,15 @@ void RepairHeader(liblas::Summary const& summary, std::string const& filename)
         header.SetMax(tree.get<double>("maximum.x"),
                       tree.get<double>("maximum.y"),
                       tree.get<double>("maximum.z"));
+        
+    }     catch (liblas::property_tree::ptree_bad_path const& e) 
+    {
+        std::cerr << "Unable to write header bounds info.  Does the outputted file have any points?";
+        return;
+    }
+
+    try
+    {
 
         for (boost::uint32_t i = 0; i < 5; i++)
         {
@@ -130,9 +139,10 @@ void RepairHeader(liblas::Summary const& summary, std::string const& filename)
         
     }     catch (liblas::property_tree::ptree_bad_path const& e) 
     {
-        std::cerr << "Unable to write summarized header info.  Does the outputted file have any points?";
+        std::cerr << "Unable to write header point return count info.  Does the outputted file have any points?";
         return;
     }
+    
     
     // Write our updated header with summary info
     std::ofstream ofs2(filename.c_str(), m);
@@ -158,7 +168,8 @@ bool process(   std::string const& input,
                 liblas::Header & header,
                 std::vector<liblas::FilterPtr>& filters,
                 std::vector<liblas::TransformPtr>& transforms,
-                boost::uint32_t split_size,
+                boost::uint32_t split_mb,
+                boost::uint32_t split_pts,
                 bool verbose,
                 bool min_offset)
 {
@@ -172,7 +183,7 @@ bool process(   std::string const& input,
         return false;
     }
     liblas::Reader reader(ifs);
-    liblas::Summary summary;
+    liblas::Summary* summary = new liblas::Summary;
     
     reader.SetFilters(filters);
     reader.SetTransforms(transforms);
@@ -213,7 +224,7 @@ bool process(   std::string const& input,
     std::ofstream* ofs = new std::ofstream;
     std::string out = output;
     liblas::Writer* writer = 0;
-    if (!split_size) {
+    if (!split_mb && !split_pts) {
         writer = start_writer(ofs, output, header);
         
     } else {
@@ -233,25 +244,27 @@ bool process(   std::string const& input,
     boost::uint32_t i = 0;
     boost::uint32_t const size = header.GetPointRecordsCount();
     
-    boost::int32_t split_bytes_count = 1024*1024*split_size;
+    boost::int32_t split_bytes_count = 1024*1024*split_mb;
+    boost::uint32_t split_points_count = 0;
     int fileno = 2;
 
     while (reader.ReadNextPoint())
     {
+        
         liblas::Point const& p = reader.GetPoint();
-        summary.AddPoint(p);
+        summary->AddPoint(p);
         writer->WritePoint(p);
         if (verbose)
             term_progress(std::cout, (i + 1) / static_cast<double>(size));
         i++;
+        split_points_count++;
 
         split_bytes_count = split_bytes_count - header.GetSchema().GetByteSize();        
-        if (split_bytes_count < 0 && split_size > 0) {
+        if (split_bytes_count < 0 && split_mb > 0 && ! split_pts) {
             // The user specifies a split size in mb, and we keep counting 
             // down until we've written that many points into the file.  
             // After that point, we make a new file and start writing into 
             // that.  
-            // FIXME. No header accounting is done at this time.
             delete writer;
             delete ofs;
             
@@ -260,15 +273,48 @@ bool process(   std::string const& input,
             oss << out << "-"<< fileno <<".las";
 
             writer = start_writer(ofs, oss.str(), header);
+
+            ostringstream old_filename;
+            old_filename << out << "-" << fileno - 1 << ".las";
+
+            RepairHeader(*summary, old_filename.str());
+            delete summary;
+            summary =  new liblas::Summary; 
             fileno++;
-            split_bytes_count = 1024*1024*split_size;
+            split_bytes_count = 1024*1024*split_mb;
         }
+
+        if (split_pts > 0 && ! split_mb && split_points_count == split_pts) {
+            // The user specifies a split size in pts, and we keep counting 
+            // down until we've written that many points into the file.  
+            // After that point, we make a new file and start writing into 
+            // that.  
+
+            delete writer;
+            delete ofs;
+            
+            ofs = new std::ofstream;
+            ostringstream oss;
+            oss << out << "-"<< fileno <<".las";
+
+            writer = start_writer(ofs, oss.str(), header);
+
+            ostringstream old_filename;
+            old_filename << out << "-" << fileno - 1 << ".las";
+
+            RepairHeader(*summary, old_filename.str());
+            delete summary;
+            summary =  new liblas::Summary; 
+            fileno++;
+            split_points_count = 0;
+        }
+
     }
     if (verbose)
         std::cout << std::endl;
     
     reader.Reset();
-    liblas::property_tree::ptree pts = summary.GetPTree();
+    liblas::property_tree::ptree pts = summary->GetPTree();
     liblas::property_tree::ptree top;
     top.add_child("summary.header",reader.GetHeader().GetPTree());
     top.add_child("summary.points",pts);
@@ -279,7 +325,8 @@ bool process(   std::string const& input,
     delete writer;
     delete ofs;
     
-    RepairHeader(summary, output);
+    RepairHeader(*summary, output);
+    delete summary;
     
     return true;
 }
@@ -302,7 +349,8 @@ void OutputHelp( std::ostream & oss, po::options_description const& options)
 int main(int argc, char* argv[])
 {
 
-    boost::uint32_t split_size;
+    boost::uint32_t split_mb = 0;
+    boost::uint32_t split_pts = 0;
     std::string input;
     std::string output;
     
@@ -318,6 +366,7 @@ int main(int argc, char* argv[])
 
         po::options_description file_options("las2las2 options");
         po::options_description filtering_options = GetFilteringOptions();
+        po::options_description header_options = GetHeaderOptions();
         po::options_description transform_options = GetTransformationOptions() ;
 
         po::positional_options_description p;
@@ -326,7 +375,8 @@ int main(int argc, char* argv[])
 
         file_options.add_options()
             ("help,h", "produce help message")
-            ("split,s", po::value<boost::uint32_t>(&split_size)->default_value(0), "Split file into multiple files with each being this size in MB or less. If this value is 0, no splitting is done")
+            ("split-mb", po::value<boost::uint32_t>(&split_mb)->default_value(0), "Split file into multiple files with each being this size in MB or less. If this value is 0, no splitting is done")
+            ("split-pts", po::value<boost::uint32_t>(&split_pts)->default_value(0), "Split file into multiple files with each being this many points or less. If this value is 0, no splitting is done")
             ("input,i", po::value< string >(), "input LAS file")
             ("output,o", po::value< string >(&output)->default_value("output.las"), "output LAS file")
             ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Verbose message output")
@@ -334,7 +384,7 @@ int main(int argc, char* argv[])
 
         po::variables_map vm;
         po::options_description options;
-        options.add(file_options).add(transform_options).add(filtering_options);
+        options.add(file_options).add(header_options).add(transform_options).add(filtering_options);
         po::store(po::command_line_parser(argc, argv).
           options(options).positional(p).run(), vm);
 
@@ -343,6 +393,12 @@ int main(int argc, char* argv[])
         if (vm.count("help")) 
         {
             OutputHelp(std::cout, options);
+            return 1;
+        }
+
+        if (split_pts > 0 && split_mb > 0) 
+        {
+            std::cerr << "Both split-mb and split-pts cannot be used simultaneously." << std::endl; 
             return 1;
         }
 
@@ -380,7 +436,8 @@ int main(int argc, char* argv[])
                             header, 
                             filters,
                             transforms,
-                            split_size,
+                            split_mb,
+                            split_pts,
                             verbose,
                             bMinOffset
                             );

@@ -80,6 +80,7 @@ liblas::FilterPtr MakeColorFilter(liblas::Color const& low, liblas::Color const&
 
 po::options_description GetFilteringOptions();
 po::options_description GetTransformationOptions();
+po::options_description GetHeaderOptions();
 
 std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose);
 std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header);
