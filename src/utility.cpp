@@ -50,7 +50,12 @@ using namespace boost;
 namespace liblas { 
 
 Summary::Summary() :
+    synthetic(0),
+    withheld(0),
+    keypoint(0),
+    count(0),
     first(true)
+    
 {
     classes.assign(0);
     points_by_return.assign(0);
@@ -170,16 +175,25 @@ ptree Summary::GetPTree() const
     pt.put("classification.synthetic", synthetic);
     
     ptree returns;
+    bool have_returns = false;
     for (boost::array<boost::uint32_t,8>::size_type i=0; i < points_by_return.size(); i++) {
         if (i == 0) continue;
 
         if (points_by_return[i] != 0)
         {
+            have_returns = true;
             returns.put("id", i);
             returns.put("count", points_by_return[i]);
             pt.add_child("points_by_return.return", returns);
             
         }
+    }
+    
+    if (! have_returns) {
+        // Assume all points are first return
+        returns.put("id", 1);
+        returns.put("count", count);
+        pt.add_child("points_by_return.return", returns);        
     }
     
     ptree pulses;
