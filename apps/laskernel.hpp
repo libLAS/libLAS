@@ -85,7 +85,14 @@ po::options_description GetHeaderOptions();
 std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose);
 std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header);
 
-// boost::property_tree::ptree SummarizePoints(liblas::Reader& reader );
-// boost::property_tree::ptree SummarizeHeader(liblas::Header const& header );
+#ifdef _WIN32
+#define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
+#else
+#define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
+#endif
+
+std::istream* OpenInput(std::string filename, bool bEnd);
+std::string TryReadFileData(std::string filename);
+std::vector<char> TryReadRawFileData(std::string filename);
 
 #endif // LIBLAS_ITERATOR_HPP_INCLUDED

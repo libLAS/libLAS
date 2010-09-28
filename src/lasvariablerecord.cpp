@@ -223,5 +223,10 @@ liblas::property_tree::ptree VariableRecord::GetPTree() const
     return vlr;
     
 }
+
+bool liblas::VariableRecord::operator() (VariableRecord const& other) const
+{
+    return true;
+}
 } // namespace liblas
 

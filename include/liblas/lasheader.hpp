@@ -316,7 +316,7 @@ public:
 
     /// Removes a VLR from the the header.
     void DeleteVLR(boost::uint32_t index);
-    void DeleteVLR(std::string const& name, boost::uint16_t id);
+    void DeleteVLRs(std::string const& name, boost::uint16_t id);
 
     /// Rewrite variable-length record with georeference infomation, if available.
     void SetGeoreference();

@@ -14,8 +14,6 @@
 #include <boost/cstdint.hpp>
 #include <boost/concept_check.hpp>
 
-std::istream* OpenInput(std::string filename, bool bEnd);
-std::string ReadSQLData(std::string filename);
 
 bool EnableTracing(OWConnection* connection);
 bool IsGeographic(OWConnection* connection, long srid);

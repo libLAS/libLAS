@@ -1,6 +1,63 @@
 
 #include "laskernel.hpp"
 
+std::istream* OpenInput(std::string filename, bool bEnd) 
+{
+    std::ios::openmode mode = std::ios::in | std::ios::binary;
+    if (bEnd == true) {
+        mode = mode | std::ios::ate;
+    }
+    std::istream* istrm;
+    if (compare_no_case(filename.c_str(),"STDIN",5) == 0)
+    {
+        istrm = &std::cin;
+    }
+    else 
+    {
+        istrm = new std::ifstream(filename.c_str(), mode);
+    }
+    
+    if (!istrm->good())
+    {
+        delete istrm;
+        throw std::runtime_error("Reading stream was not able to be created");
+    }
+    return istrm;
+}
+
+std::string TryReadFileData(std::string filename)
+{
+    std::vector<char> data = TryReadRawFileData(filename);
+    return std::string(data.front(), (std::size_t) data.size());
+}
+
+std::vector<char> TryReadRawFileData(std::string filename)
+{
+    std::istream* infile = OpenInput(filename.c_str(), true);
+    std::ifstream::pos_type size;
+    // char* data;
+    std::vector<char> data;
+    if (infile->good()){
+        size = infile->tellg();
+        data.resize(size);
+        // data = new char [size];
+        infile->seekg (0, std::ios::beg);
+        infile->read (&data.front(), size);
+        // infile->close();
+
+        // delete[] data;
+        delete infile;
+        return data;
+    } 
+    else 
+    {   
+        delete infile;
+        return data;
+    }
+}
+
+
+
 bool IsDualRangeFilter(std::string parse_string) 
 {
 
@@ -119,6 +176,8 @@ po::options_description GetHeaderOptions()
         ("min-offset", po::value<bool>()->zero_tokens(), "Set the offset of the header to the minimums of all values in the file.  Note that this requires multiple read passes through the file to achieve.")
         ("file-creation", po::value< std::vector<string> >()->multitoken(), "Set the header's day/year.  Specify either as \"1 2010\" for the first day of 2010, or as \"now\" to specify the current day/year")
         ("add-schema", po::value<bool>()->zero_tokens(), "Add the liblas.org schema VLR record to the file.")
+        ("delete-vlr", po::value<std::vector<std::string> >()->multitoken(), "Removes VLRs with the given name and id combination. --delete-vlr LASF_Projection 34737")
+        ("add-vlr", po::value<std::vector<std::string> >()->multitoken(), "Add VLRs with the given name and id combination. --add-vlr hobu 1234 \"Description of the VLR\" \"filename.ext\"")
 
     ;
     
@@ -749,7 +808,110 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         liblas::VariableRecord vlr = header.GetSchema().GetVLR();
         header.AddVLR(vlr);
     }
-    
+
+    if (vm.count("delete-vlr")) 
+    {
+        std::vector<std::string> vlrs = vm["delete-vlr"].as< std::vector<std::string> >();
+        
+        
+        if (vlrs.size() % 2 != 0) {
+            ostringstream err;
+            err << "VLR descriptions must be in pairs of 2";
+            throw std::runtime_error(err.str());
+        }
+        ostringstream oss;
+        
+        for (std::vector<std::string>::const_iterator i = vlrs.begin();
+             i != vlrs.end();
+             i++) 
+            {
+                oss << *i << " ";
+            }
+        if (verbose)
+        {
+
+                std::cout << "Deleting VLRs with the values: " << oss.str() << std::endl;
+        }
+        
+        for (std::vector<std::string>::size_type i = 0; i < vlrs.size(); i=i+2)
+        {
+            header.DeleteVLRs(vlrs[i], atoi(vlrs[i+1].c_str()));
+        }
+    }
+
+    if (vm.count("add-vlr")) 
+    {
+        std::vector<std::string> vlrs = vm["add-vlr"].as< std::vector<std::string> >();
+        
+        
+        if (vlrs.size() < 3) {
+            ostringstream err;
+            err << "VLR additions must be at least 3 arguments -- --add-vlr NAME 42 \"filename.ext\"";
+            throw std::runtime_error(err.str());
+        }
+        if (vlrs.size() > 4)
+            throw std::runtime_error("Only one VLR may be added at a time");
+
+        ostringstream oss;
+        
+        for (std::vector<std::string>::const_iterator i = vlrs.begin();
+             i != vlrs.end();
+             i++) 
+            {
+                oss << *i << " ";
+            }
+
+        
+        liblas::VariableRecord v;
+        v.SetUserId(vlrs[0]);
+        v.SetRecordId(atoi(vlrs[1].c_str()));
+        
+        std::vector<boost::uint8_t> data;
+        
+        std::string data_or_filename;
+        if (vlrs.size() == 4){
+
+            v.SetDescription(vlrs[2]);
+            data_or_filename = vlrs[3];
+        } else {
+            data_or_filename = vlrs[2];
+        } 
+
+        try {
+            std::vector<char> d;
+            d = TryReadRawFileData(data_or_filename);
+            for (std::vector<char>::const_iterator i = d.begin(); i != d.end(); ++i) 
+            {
+                data.push_back(*i);
+            }
+            
+        } catch (std::runtime_error const& ) {
+            std::string::const_iterator i;
+            for (i = data_or_filename.begin(); i != data_or_filename.end(); ++i)
+            {
+                data.push_back(*i);
+            }
+        }    
+
+        if (data.size() > std::numeric_limits<boost::uint16_t>::max()) {
+            std::ostringstream oss;
+            oss << "This VLR with length " << data.size() << " does" 
+                << " not fit within the maximum VLR size of " 
+                << std::numeric_limits<boost::uint16_t>::max();
+            throw std::runtime_error(oss.str());
+        }
+
+        if (verbose)
+        {
+
+                std::cout << "Adding VLRs with the values: " << oss.str() << std::endl;
+        }
+
+
+        v.SetData(data);
+        v.SetRecordLength(data.size());
+        header.AddVLR(v);
+    }   
     return transforms;
 }
 

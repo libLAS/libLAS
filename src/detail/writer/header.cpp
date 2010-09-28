@@ -131,7 +131,7 @@ void Header::write()
         if (m_header.GetSchema().IsCustom()) {
             
             // Wipe any schema-related VLRs we might have, as this is now out of date.
-            m_header.DeleteVLR("liblas", 7);
+            m_header.DeleteVLRs("liblas", 7);
         
             VariableRecord v = m_header.GetSchema().GetVLR();
             std::cout <<  m_header.GetSchema()<< std::endl;

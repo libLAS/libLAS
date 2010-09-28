@@ -47,6 +47,7 @@
 #include <liblas/guid.hpp>
 // boost
 #include <boost/cstdint.hpp>
+#include <boost/lambda/lambda.hpp>
 //std
 #include <algorithm>
 #include <fstream>
@@ -64,6 +65,7 @@ namespace liblas {
 char const* const Header::FileSignature = "LASF";
 char const* const Header::SystemIdentifier = "libLAS";
 char const* const Header::SoftwareIdentifier = "libLAS 1.2";
+
 
 Header::Header() : m_schema(ePointFormat0)
 {
@@ -592,39 +594,27 @@ void Header::Init()
     SetScale(0.01, 0.01, 0.01);
 }
 
-void Header::DeleteVLR(std::string const& name, boost::uint16_t id)
+bool SameVLRs(std::string const& name, boost::uint16_t id, liblas::VariableRecord const& record)
 {
-    // std::string const uid("LASF_Projection");
-    // 34735 34736 34737
-
-    std::vector<VariableRecord> vlrs = m_vlrs;
-    std::vector<VariableRecord>::const_iterator i;
-    std::vector<VariableRecord>::iterator j;
-
-    for (i = m_vlrs.begin(); i != m_vlrs.end(); ++i)
-    {
-        VariableRecord record = *i;
-
-        if (record.GetUserId(false) == name)
-        {
-            if (record.GetRecordId() == id)
-            {
-                for(j = vlrs.begin(); j != vlrs.end(); ++j)
-                {
-                    if (*j == *i)
-                    {
-                        vlrs.erase(j);
-                        break;
-                    }
-                }
-            }
-        } // uid == user
+    if (record.GetUserId(false) == name) {
+        if (record.GetRecordId() == id) {
+            return true;
+        }
     }
+    return false;
+}
 
-    // Copy our list of surviving VLRs back to our member variable
-    // and update header information
-    m_vlrs = vlrs;
-    m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
+
+void Header::DeleteVLRs(std::string const& name, boost::uint16_t id)
+{
+
+    m_vlrs.erase( std::remove_if( m_vlrs.begin(), 
+                                  m_vlrs.end(),
+                                  boost::bind( &SameVLRs, name, id, _1 ) ),
+                  m_vlrs.end());
+
+    m_recordsCount = static_cast<uint32_t>(m_vlrs.size());        
+
 }
 
 
@@ -634,9 +624,9 @@ void Header::SetGeoreference()
     std::vector<VariableRecord> vlrs = m_srs.GetVLRs();
 
     // Wipe the GeoTIFF-related VLR records off of the Header
-    DeleteVLR("LASF_Projection", 34735);
-    DeleteVLR("LASF_Projection", 34736);
-    DeleteVLR("LASF_Projection", 34737);
+    DeleteVLRs("LASF_Projection", 34735);
+    DeleteVLRs("LASF_Projection", 34736);
+    DeleteVLRs("LASF_Projection", 34737);
 
     std::vector<VariableRecord>::const_iterator i;
 
