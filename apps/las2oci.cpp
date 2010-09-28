@@ -676,7 +676,7 @@ file_options.add_options()
     ("base-table-aux-values", po::value< string >(), "Quoted, comma-separated list of values to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
     ("solid", po::value<bool>()->zero_tokens(), "Define the point cloud's PC_EXTENT geometry gtype as (1,1007,3) instead of the normal (1,1003,3), and use gtype 3008/2008 vs 3003/2003 for BLK_EXTENT geometry values.")
     ("3d", po::value<bool>()->zero_tokens(), "Use Z values for insertion of all extent (PC_EXTENT, BLK_EXTENT, USER_SDO_GEOM_METADATA) entries")
-    ("global-extent", po::value< string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated list, for example, \n  --global-extent minx, miny, maxx, maxy\n  or \n  --global-extent minx, miny, minz, maxx, maxy, maxz")
+    ("global-extent", po::value< std::vector<double> >(), "Extent window to define for the PC_EXTENT.\nUse a list, for example, \n  --global-extent minx miny maxx maxy\n  or \n  --global-extent minx miny minz maxx maxy maxz")
     ("cached", po::value<bool>()->zero_tokens(), "Cache the entire file on the first read")
 
 
@@ -981,13 +981,20 @@ int main(int argc, char* argv[])
         }
         if (vm.count("global-extent")) 
         {
-            std::string extent = vm["global-extent"].as< string >();
-            boost::char_separator<char> sep(SEPARATORS);
-            std::vector<double> vbounds;
-            tokenizer tokens(extent, sep);
+            std::vector<double> vbounds = vm["global-extent"].as< std::vector<double> >();
+
             liblas::Bounds<double> bounds;
-            for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
-                vbounds.push_back(atof((*t).c_str()));
+            
+            if (verbose)
+            {
+                std::cout << "Setting global bounds to : ";
+
+                for (std::vector<double>::const_iterator t = vbounds.begin(); 
+                     t != vbounds.end(); 
+                     ++t) {
+                    std::cout << *t;
+                }
+                std::cout << std::endl;
             }
             if (vbounds.size() == 4) 
             {
