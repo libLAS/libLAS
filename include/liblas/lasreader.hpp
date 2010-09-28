@@ -69,7 +69,7 @@ public:
 
     /// Consructor initializes reader with input stream as source of LAS records.
     /// @param ifs - stream used as source of LAS records.
-    /// @excepion std::runtime_error - on failure state of the input stream.
+    /// @exception std::runtime_error - on failure state of the input stream.
     Reader(std::istream& ifs);
     Reader(std::istream& ifs, boost::uint32_t cache_size);
     Reader(std::istream& ifs, boost::uint32_t cache_size, Header& header);
@@ -78,68 +78,68 @@ public:
     
     /// User-defined consructor initializes reader with input stream and
     /// a header to override the values in the file
-    /// @excepion std::runtime_error - on failure state of the input stream.
+    /// @exception std::runtime_error - on failure state of the input stream.
     Reader(std::istream& ifs, Header& header);
     
     /// Destructor.
-    /// @excepion nothrow
+    /// @exception nothrow
     ~Reader();
     
     /// Provides read-only access to header of LAS file being read.
-    /// @excepion nothrow
+    /// @exception nothrow
     Header const& GetHeader() const;
 
     /// Provides read-only access to current point record.
-    /// @excepion nothrow
+    /// @exception nothrow
     Point const& GetPoint() const;
 
     /// Provides read-only access to collection of variable-length records.
-    /// @excepion nothrow
+    /// @exception nothrow
     std::vector<VariableRecord> const& GetVLRs() const;
 
     /// Allow fetching of the stream attached to the reader.
-    /// @excepion nothrow
+    /// @exception nothrow
     std::istream& GetStream() const;
 
     /// Checks if end-of-file has been reached.
     bool IsEOF() const;
 
     /// Fetches next point record in file.
-    /// @excepion may throw std::exception
+    /// @exception may throw std::exception
     bool ReadNextPoint();
 
     /// Fetches n-th point record from file.
-    /// @excepion may throw std::exception
+    /// @exception may throw std::exception
     bool ReadPointAt(std::size_t n);
 
     /// Reinitializes state of the reader.
-    /// @excepion may throw std::exception
+    /// @exception may throw std::exception
     void Reset();
 
     /// Move to the specified point to start 
     /// ReadNextPoint operations
-    /// @excepion may throw std::exception
+    /// @exception may throw std::exception
     bool seek(std::size_t n);
     
     /// Reproject data as they are written if the Reader's reference is
     /// different than the Header's.
-    /// @excepion may throw std::exception
+    /// @exception may throw std::exception
     bool SetSRS(const SpatialReference& ref);
     
     /// Override the spatial reference of the Reader's Header for 
     /// writing purposes.
-    /// @excepion may throw std::exception
+    /// @exception may throw std::exception
     bool SetInputSRS(const SpatialReference& ref);
 
     /// Override the spatial reference of the Reader's Header for 
     /// writing purposes.
-    /// @excepion may throw std::exception
+    /// @exception may throw std::exception
     bool SetOutputSRS(const SpatialReference& ref);
 
     /// Provides index-based access to point records.
     /// The operator is implemented in terms of ReadPointAt method
     /// and is not const-qualified because it updates file stream position.
-    /// @excepion may throw std::exception
+    /// @exception may throw std::exception
     Point const& operator[](std::size_t n);
     
     /// Sets filters that are used to determine whether or not to 

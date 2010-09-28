@@ -66,7 +66,7 @@ public:
     /// Consructor initializes reader with specified output stream and header specification.
     /// @param ofs - stream used as destination for LAS records.
     /// @param header - specifies obligatory properties of LAS file.
-    /// @excepion std::runtime_error - on failure state of the input stream.
+    /// @exception std::runtime_error - on failure state of the input stream.
     Writer(std::ostream& ofs, Header const& header);
 
     /// Destructor does not close file attached to the output stream
