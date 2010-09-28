@@ -118,6 +118,7 @@ po::options_description GetHeaderOptions()
         ("pad-header", po::value< string >(), "Add extra bytes to the existing header")
         ("min-offset", po::value<bool>()->zero_tokens(), "Set the offset of the header to the minimums of all values in the file.  Note that this requires multiple read passes through the file to achieve.")
         ("file-creation", po::value< std::vector<string> >()->multitoken(), "Set the header's day/year.  Specify either as \"1 2010\" for the first day of 2010, or as \"now\" to specify the current day/year")
+        ("add-schema", po::value<bool>()->zero_tokens(), "Add the liblas.org schema VLR record to the file.")
 
     ;
     
@@ -741,6 +742,12 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             header.SetCreationYear(year);
             
         }
+    }
+
+    if (vm.count("add-schema")) 
+    {
+        liblas::VariableRecord vlr = header.GetSchema().GetVLR();
+        header.AddVLR(vlr);
     }
     
     return transforms;
