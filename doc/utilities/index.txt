@@ -8,6 +8,7 @@
    :maxdepth: 1
 
    lasinfo
+   las2las2
    las2las
    las2txt
    lasmerge

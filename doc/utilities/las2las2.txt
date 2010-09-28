@@ -1,0 +1,241 @@
+
+.. raw:: pdf
+
+    PageBreak
+    
+.. _las2las2:
+    
+****************************************************************
+  las2las2: Advanced LAS filtering and manipulation
+****************************************************************
+
+:Author: Howard Butler
+:Contact: hobu.inc@gmail.com
+
+Description
+-----------
+
+:ref:`las2las2 <las2las2>` reads and writes LiDAR data in the ASPRS LAS 1.0, 1.1, and 1.2 formats while 
+modifying its contents. :ref:`las2las2 <las2las2>` is designed for filtering and 
+transformation operations of LAS files.  
+
+While `lasinfo` can do a few simple operations like 
+updating header information, more drastic changes, like removing points or 
+altering values, will require :ref:`las2las2 <las2las2>`.  :ref:`las2las` is expected to be used for 
+modifying single files at a time, and some :ref:`las2las` operations require multiple 
+read passes through the points.   Some examples of operations `las2las` can be 
+used for include:
+
+* clipping of points to those that lie within a certain region specified 
+  by a bounding box (--extent )
+* eliminating points that are the second return (--drop-return 2), 
+* eliminating points that have a scan angle 
+  above some threshold (--drop-scan-angle "<5")
+* eliminating points that have an intensity below some 
+  threshold (--drop-intensity "<15")
+* extracting only first (--first-only) or last (--last-only) returns
+* changing the format from LAS 1.0 to 1.1 or vice versa
+* eliminating points of a given classification (--eliminate class 2)
+
+:ref:`las2las2 <las2las2>` started a port of Martin Isenburg's :ref:`las2las` utility from `LASTools`_ 
+to the libLAS library.  It is much-improved from his version, however, and 
+provides a number of additional capabilities.
+
+* Text output describing the operation(s) is only provided when the --verbose (-v)
+  switch is provided.  Errors are reported to stderr.
+
+* Coordinate reprojection, including vertical datum transformation when compiled 
+  with the latest `GDAL`_.  
+
+* Coordinate system description and alteration.
+
+* Variable Length Records (VLRs) are carried forward by default.
+
+* VLR alteration, including adding your own VLRs with files and removal of VLRs
+
+* File splitting based on a specified file size (--split-mb) or points (--split-pts)
+
+* Ability to set coordinate offsets to minimum values of the existing coordinate space.
+
+* Color filtering
+  
+Usage
+-----
+
+Clipping with a rectangle
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las in.las --output out.las --extent 63025000 483450000 63050000 483475000
+
+clips points of in.las with x<=63025000 and y<=483450000 or x>=63050000
+and y>=483475000 and stores surviving points to out.las.
+
+::
+
+  $ las2las in.las --output out.las --extent 63025000 483450000 0 63050000 483475000 100
+
+clips points of in.las with x <= 63025000 and y <= 483450000 and z <= 100 or x >= 63050000
+and y >= 483475000 and z >= 0
+
+
+Eliminating specified returns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+  
+  $ las2las --input in.las --output out.las --drop-returns 1
+
+eliminates all points of in.las that are designated first returns by the 
+value in their return_number field and stores surviving points to out.las.
+
+::
+  
+  $ las2las --input in.las --output out.las --drop-returns 2 3 4 5
+
+eliminates all returns in the specified list.
+
+Limiting based on scan angle
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --keep-scan-angle "<=15"
+
+keeps all points of in.las whose scan angle is <= 15.
+
+Limiting based on intensity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --drop-intensity "<=1000" 
+  
+eliminates all points of in.las whose intensity is below 1000 and stores 
+surviving points to out.las.
+
+Extract last returns
+~~~~~~~~~~~~~~~~~~~~
+
+::
+  
+  $ las2las --input in.las --output out.las --last_return_only
+
+extracts all last return points from in.las and stores them to out.las.
+
+Throw out invalid data
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --valid-only
+
+removes invalid (according to the ASPRS LAS file format specification) points.
+This switch should only be required in a few special circumstances. Points
+that might be invalid include those with larger-than-required scan angles.
+
+Eliminate ground points
+~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --drop-classes 2
+
+removes points with that have a classification of 2. Points with a
+classification of 2 are conventionally called ground points, but that
+convention may not be followed for older LAS 1.0 files.
+
+Eliminate ground and unclassified points
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --drop-classes 1 2
+  
+removes points that have a classification of 1 or 2.
+  
+
+
+Convert to 1.1
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --format 1.1
+  
+converts the in.las file to a 1.1-formatted file.  For the most part, this 
+conversion is "in name only." 
+
+Alter vertical datum information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las in.las --a_vertcs 5703 "North American Vertical Datum of 1988 (NAVD88)" 5103 9001
+  
+sets the vertical datum information for the file to be NAVD88 with vertical 
+units of meters. 
+
+.. note::
+    This may not be relevant depending upon the circumstances of the coordinate 
+    system the file is already in.  This option only changes the *description* 
+    of the points.  It does not reproject them in any way.  Use a combination 
+    of --a_srs and --t_srs to do perform reprojection of the file
+
+File splitting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las in.las --split-mb 10
+
+splits the file into the required number of output-n.las files. Other filters
+or operations may also be applied to the operation in combination with
+splitting. Each outputted file will have its extents and point counts properly
+set.
+
+::
+
+  $ las2las in.las --split-pts 100000
+
+splits the file into the required number of output-n.las files with 100000
+points each in them. Other filters or operations may also be applied to the
+operation in combination with splitting. Each outputted file will have its
+extents and point counts properly set.
+  
+.. note::
+    --split-mb and --split-pts will not work exactly with --min-offset.  
+    --min-offset will take the minimum offsets of *the entire file*, not 
+    each individual file that is a result of the split.
+
+
+VLR addition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las in.las --add-vlr CUSTOM_VLR 42 "A VLR description" "myfile.ext"
+
+adds a new VLR with name CUSTOM_VLR and an ID of 42. "myfile.ext" can either 
+be a location to a file to read to write into the VLR, or properly escaped 
+text that will be inserted directly into the VLR.  
+
+.. warning::
+    VLRs have a size limitation of 65536 bytes.  Files that are read or 
+    escaped arguments that are larger than 64k in size will cause an error 
+    to be thrown.  Automatic truncation will not happen.
+
+
+VLR removal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las in.las --delete-vlr CUSTOM_VLR 42
+
+removes all VLRs from in.las when writing the new output.las file.   
+
+ 
+.. _`GDAL`: http://www.gdal.org
+.. _`LAStools`: http://www.cs.unc.edu/~isenburg/lastools/
