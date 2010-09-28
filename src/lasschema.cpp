@@ -54,11 +54,12 @@ namespace liblas {
 
 
 Schema::Schema(PointFormatName data_format_id):
-    m_size(0),
-    m_data_format_id(data_format_id),
-    m_nextpos(0),
-    m_bit_size(0),
-    m_base_bit_size(0)
+     m_size(0)
+    , m_data_format_id(data_format_id)
+    , m_nextpos(0)
+    , m_bit_size(0)
+    , m_base_bit_size(0)
+    , m_schemaversion(1)
 {
     update_required_dimensions(data_format_id);
 }
@@ -344,12 +345,13 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
 }
 /// copy constructor
 Schema::Schema(Schema const& other) :
-    m_size(other.m_size),
-    m_data_format_id(other.m_data_format_id),
-    m_nextpos(other.m_nextpos),
-    m_bit_size(other.m_bit_size),
-    m_base_bit_size(other.m_base_bit_size),
-    m_dimensions(other.m_dimensions)
+     m_size(other.m_size)
+    , m_data_format_id(other.m_data_format_id)
+    , m_nextpos(other.m_nextpos)
+    , m_bit_size(other.m_bit_size)
+    , m_base_bit_size(other.m_base_bit_size)
+    , m_schemaversion(other.m_schemaversion)
+    , m_dimensions(other.m_dimensions)
 {
 }
 // 
@@ -364,6 +366,7 @@ Schema& Schema::operator=(Schema const& rhs)
         m_dimensions = rhs.m_dimensions;
         m_base_bit_size = rhs.m_base_bit_size;
         m_bit_size = rhs.m_bit_size;
+        m_schemaversion = rhs.m_schemaversion;
     }
     
     return *this;
@@ -431,7 +434,13 @@ DimensionMap Schema::LoadDimensions(liblas::property_tree::ptree tree)
         
         dimensions[name] = d;
     }
-
+    
+    boost::uint32_t pf =tree.get<boost::uint32_t>("LASSchema.formatid");
+    boost::uint16_t version = tree.get<boost::uint16_t>("LASSchema.version");
+    
+    SetSchemaVersion(version);
+    SetDataFormatId(static_cast<liblas::PointFormatName>(pf));
+    CalculateSizes();
     return dimensions;
 }
 
@@ -551,6 +560,7 @@ Schema::Schema(std::vector<VariableRecord> const& vlrs)
     VariableRecord s = *it;
     liblas::property_tree::ptree pt = LoadPTree(s);
     m_dimensions = LoadDimensions(pt);
+    CalculateSizes();
 
 }
 
@@ -600,6 +610,7 @@ void Schema::CalculateSizes()
             m_base_bit_size += i->second->GetBitSize();
     }
 
+    // std::cout << "Calculated: " << m_bit_size << std::endl;
     // if (m_bit_size % 8 != 0) {
     //     std::ostringstream oss;
     //     oss << "The summed size in bits, " << m_bit_size << ", is not a multiple of 8.";
@@ -640,7 +651,7 @@ std::size_t Schema::GetBaseByteSize() const
 }
 
 std::size_t Schema::GetBitSize() const
-{
+{   
     return m_bit_size;
 }
 
