@@ -22,7 +22,7 @@ transformation operations of LAS files.
 While `lasinfo` can do a few simple operations like 
 updating header information, more drastic changes, like removing points or 
 altering values, will require :ref:`las2las2 <las2las2>`.  :ref:`las2las` is expected to be used for 
-modifying single files at a time, and some :ref:`las2las` operations require multiple 
+modifying single files at a time, and some :ref:`las2las2 <las2las2>` operations require multiple 
 read passes through the points.   Some examples of operations `las2las` can be 
 used for include:
 
@@ -236,6 +236,122 @@ VLR removal
 
 removes all VLRs from in.las when writing the new output.las file.   
 
+Help listing
+---------------
+
+::
+
+    --------------------------------------------------------------------
+        las2las (libLAS 1.6.0 with GeoTIFF 1.3.0 GDAL 1.8dev)
+    --------------------------------------------------------------------
+
+    las2las2 options:
+      -h [ --help ]                     produce help message
+      --split-mb arg (=0)               Split file into multiple files with each 
+                                        being this size in MB or less. If this 
+                                        value is 0, no splitting is done
+      --split-pts arg (=0)              Split file into multiple files with each 
+                                        being this many points or less. If this 
+                                        value is 0, no splitting is done
+      -i [ --input ] arg                input LAS file
+      -o [ --output ] arg (=output.las) output LAS file
+      -v [ --verbose ]                  Verbose message output
+
+    Header modification options:
+      --a_srs arg           Coordinate system to assign to input LAS file
+      --a_vertcs arg        Override vertical coordinate system information.  Use 
+                            --a_vertcs "verticalCSType [citation [verticalDatum 
+                            [verticalUnits]]]"
+                            For example: --a_vertcs 5703 "North American Vertical 
+                            Datum of 1988 (NAVD88)" 5103 9001
+      --offset arg          A list of offsets to set on the output file: 
+                            --offset 0 0 0
+      --scale arg           A list of scales to set on the output file: 
+                            --scale 0.1 0.1 0.00001
+      -f [ --format ] arg   Set the LAS format of the new file (only 1.0-1.2 
+                            supported at this time): 
+                            --format 1.2
+                            -f 1.1
+      --pad-header arg      Add extra bytes to the existing header
+      --min-offset          Set the offset of the header to the minimums of all 
+                            values in the file.  Note that this requires multiple 
+                            read passes through the file to achieve.
+      --file-creation arg   Set the header's day/year.  Specify either as "1 2010" 
+                            for the first day of 2010, or as "now" to specify the 
+                            current day/year
+      --add-schema          Add the liblas.org schema VLR record to the file.
+
+    Transformation options:
+      --t_srs arg           Coordinate system to reproject output LAS file to.  Use
+                            --a_srs or verify that your input LAS file has a 
+                            coordinate system according to lasinfo
+
+    Filtering options:
+      -e [ --extent ] arg    Extent window that points must fall within to keep.
+                             For example, 
+                               -e minx miny maxx maxy
+                               or 
+                               -e minx miny minz maxx maxy maxz
+      -t [ --thin ] arg (=0) Simple decimation-style thinning.
+                             Thin the file by removing every t'th point from the 
+                             file.
+      --last_return_only     Keep last returns (cannot be used with 
+                             --first_return_only)
+      --first_return_only    Keep first returns (cannot be used with 
+                             --last_return_only
+      --keep-returns arg     A list of return numbers to keep in the output file: 
+                             --keep-returns 1 2 3
+      --drop-returns arg     Return numbers to drop.
+                             For example, --drop-returns 2 3 4 5
+      --valid_only           Keep only valid points
+      --keep-classes arg     A list of classifications to keep:
+                             --keep-classes 2 4 12
+                             --keep-classes 2
+      --drop-classes arg     A comma-separated list of classifications to drop:
+                             --drop-classes 1,7,8
+                             --drop-classes 2
+      --keep-intensity arg   Range in which to keep intensity.
+                             The following expression types are supported:  
+                             --keep-intensity 0-100 
+                             --keep-intensity <200 
+                             --keep-intensity >400 
+                             --keep-intensity >=200
+      --drop-intensity arg   Range in which to drop intensity.
+                             The following expression types are supported:  
+                             --drop-intensity <200 
+                             --drop-intensity >400 
+                             --drop-intensity >=200
+      --keep-time arg        Range in which to keep time.
+                             The following expression types are supported:  
+                             --keep-time 413665.2336-414092.8462 
+                             --keep-time <414094.8462 
+                             --keep-time >413665.2336 
+                             --keep-time >=413665.2336
+      --drop-time arg        Range in which to drop time.
+                             The following expression types are supported:  
+                             --drop-time <413666.2336 
+                             --drop-time >413665.2336 
+                             --drop-time >=413665.2336
+      --keep-scan-angle arg  Range in which to keep scan angle.
+                             The following expression types are supported:  
+                             --keep-scan-angle 0-100 
+                             --keep-scan-angle <100
+                             --keep-scan-angle <=100
+      --drop-scan-angle arg  Range in which to drop scan angle.
+                             The following expression types are supported:  
+                             --drop-scan-angle <30 
+                             --drop-scan-angle >100 
+                             --drop-scan-angle >=100
+      --keep-color arg       Range in which to keep colors.
+                             Define colors as two 3-tuples (R,G,B-R,G,B):  
+                             --keep-color '0,0,0-125,125,125'
+      --drop-color arg       Range in which to drop colors.
+                             Define colors as two 3-tuples (R,G,B-R,G,B):  
+                             --drop-color '255,255,255-65536,65536,65536'
+
+    For more information, see the full documentation for las2las2 at:
+     http://liblas.org/utilities/las2las2.html
+    ----------------------------------------------------------
  
 .. _`GDAL`: http://www.gdal.org
 .. _`LAStools`: http://www.cs.unc.edu/~isenburg/lastools/
