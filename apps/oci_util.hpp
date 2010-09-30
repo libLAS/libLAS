@@ -4,6 +4,7 @@
 
 #include "oci_wrapper.h"
 
+
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -31,6 +32,8 @@ bool WipeBlockTable(   OWConnection* connection,
                     std::string cloudTableName, 
                     std::string cloudColumnName);
 std::string to_upper(const std::string&);
+std::string ReadSQLData(std::string filename);
+std::istream* OpenInput(std::string filename, bool bEnd) ;
 
 #ifdef _WIN32
 #define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )

@@ -917,7 +917,7 @@ int main(int argc, char* argv[])
             std::string sql = vm["pre-sql"].as< string >();
             bool used_file = false;
             try {
-                pre_sql = TryReadFileData(sql);
+                pre_sql = ReadSQLData(sql);
                 used_file = true;
             } catch (std::runtime_error const& e) {
                 boost::ignore_unused_variable_warning(e);
@@ -935,7 +935,7 @@ int main(int argc, char* argv[])
             std::string sql = vm["post-sql"].as< string >();
             bool used_file = false;
             try {
-                post_sql = TryReadFileData(sql);
+                post_sql = ReadSQLData(sql);
                 used_file = true;
             } catch (std::runtime_error const& e) {
                 boost::ignore_unused_variable_warning(e);
@@ -953,7 +953,7 @@ int main(int argc, char* argv[])
             std::string sql = vm["pre-block-sql"].as< string >();
             bool used_file = false;
             try {
-                pre_block_sql = TryReadFileData(sql);
+                pre_block_sql = ReadSQLData(sql);
                 used_file = true;
             } catch (std::runtime_error const& e) {
                 boost::ignore_unused_variable_warning(e);
