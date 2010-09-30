@@ -81,7 +81,7 @@ liblas.header.Header
                 header_length,
                 data_offset,
                 num_vlrs,
-                format,
+                schema,
                 data_format_id,
                 count, __len__, set_count,
                 return_count,
@@ -111,9 +111,7 @@ liblas.point.Point
                 user_data,
                 point_source_id,
                 color,
-                data,
-                descale,
-                scale
+                data
                 
 
 =============================================

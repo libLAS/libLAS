@@ -8,9 +8,7 @@ libLAS Documentation
     The entire documentation is also available as a single
     `PDF document <./pdf/libLAS.pdf>`__ |image|  and `ePub document <./libLAS.epub>`__
 
-.. include:: ./include/docnav.inc
-
-.. |image| image:: ./../_static/pdf.png
+.. |image| image:: ./_static/pdf.png
    :height: 15
    :width: 15
    :alt: PDF icon
