@@ -28,7 +28,7 @@ Usage
 :ref:`las2oci` is a command-line utility that allows you to ingest a 
 .las file into Oracle.  
 
-::
+.. code-block:: text
 
     --------------------------------------------------------------------
         las2oci (libLAS 1.6.0 with GeoTIFF 1.3.0 GDAL 1.8dev)
@@ -87,37 +87,24 @@ Usage
                                        (PC_EXTENT, BLK_EXTENT, 
                                        USER_SDO_GEOM_METADATA) entries
       --global-extent arg              Extent window to define for the PC_EXTENT.
-                                       Use a comma-separated list, for example, 
-                                         --global-extent minx, miny, maxx, maxy
+                                       Use a list, for example, 
+                                         --global-extent minx miny maxx maxy
                                          or 
-                                         --global-extent minx, miny, minz, maxx, 
-                                       maxy, maxz
+                                         --global-extent minx miny minz maxx maxy 
+                                       maxz
       --cached                         Cache the entire file on the first read
 
     Transformation options:
-      --a_srs arg           Coordinate system to assign to input LAS file
       --t_srs arg           Coordinate system to reproject output LAS file to.  Use
                             --a_srs or verify that your input LAS file has a 
                             coordinate system according to lasinfo
-      --offset arg          A comma-separated list of offsets to set on the output 
-                            file: 
-                            --offset 0,0,0 
-                            --offset  min,min,min
-      --scale arg           A comma-separated list of scales to set on the output 
-                            file: 
-                            --scale 0.1,0.1,0.00001
-      -f [ --format ] arg   Set the LAS format of the new file (only 1.0-1.2 
-                            supported at this time): 
-                            --format 1.2
-                            -f 1.1
-      --pad-header arg      Add extra bytes to the existing header
 
     Filtering options:
       -e [ --extent ] arg    Extent window that points must fall within to keep.
-                             Use a comma-separated list, for example, 
-                               -e minx, miny, maxx, maxy
+                             For example, 
+                               -e minx miny maxx maxy
                                or 
-                               -e minx, miny, minz, maxx, maxy, maxz
+                               -e minx miny minz maxx maxy maxz
       -t [ --thin ] arg (=0) Simple decimation-style thinning.
                              Thin the file by removing every t'th point from the 
                              file.
@@ -125,15 +112,13 @@ Usage
                              --first_return_only)
       --first_return_only    Keep first returns (cannot be used with 
                              --last_return_only
-      --keep-returns arg     A comma-separated list of return numbers to keep in 
-                             the output file: 
-                             --keep-returns 1,2,3
+      --keep-returns arg     A list of return numbers to keep in the output file: 
+                             --keep-returns 1 2 3
       --drop-returns arg     Return numbers to drop.
-                             Use a comma-separated list, for example, 
-                             --drop-returns 2,3,4,5
+                             For example, --drop-returns 2 3 4 5
       --valid_only           Keep only valid points
-      --keep-classes arg     A comma-separated list of classifications to keep:
-                             --keep-classes 2,4,12
+      --keep-classes arg     A list of classifications to keep:
+                             --keep-classes 2 4 12
                              --keep-classes 2
       --drop-classes arg     A comma-separated list of classifications to drop:
                              --drop-classes 1,7,8
@@ -176,6 +161,11 @@ Usage
       --drop-color arg       Range in which to drop colors.
                              Define colors as two 3-tuples (R,G,B-R,G,B):  
                              --drop-color '255,255,255-65536,65536,65536'
+
+
+    For more information, see the full documentation for las2oci at:
+     http://liblas.org/utilities/las2oci.html
+    ----------------------------------------------------------
 
 
 
