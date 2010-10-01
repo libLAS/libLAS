@@ -63,9 +63,9 @@ void test_default_header(liblas::Header const& h)
     ensure_equals("wrong default records count",
         h.GetRecordsCount(), boost::uint32_t(0));
     ensure_equals("wrong default data format id",
-        h.GetDataFormatId(), liblas::ePointFormat0);
+        h.GetDataFormatId(), liblas::ePointFormat3);
     ensure_equals("wrong default data record length",
-        h.GetDataRecordLength(), liblas::ePointSize0);
+        h.GetDataRecordLength(), liblas::ePointSize3);
     ensure_equals("wrong default point records count",
         h.GetPointRecordsCount(), boost::uint32_t(0));
 

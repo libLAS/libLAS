@@ -67,7 +67,7 @@ char const* const Header::SystemIdentifier = "libLAS";
 char const* const Header::SoftwareIdentifier = "libLAS 1.2";
 
 
-Header::Header() : m_schema(ePointFormat0)
+Header::Header() : m_schema(ePointFormat3)
 {
     Init();
 }
@@ -651,21 +651,6 @@ Schema const& Header::GetSchema() const
     
     return m_schema;
 }
-
-// void Header::UpdateSchema()
-// {
-//     m_schema
-//     // if (GetDataFormatId() == liblas::ePointFormat3) {
-//     //     m_schema.Color(true);
-//     //     m_schema.Time(true);
-//     // } else if (GetDataFormatId() == liblas::ePointFormat2) {
-//     //     m_schema.Color(true);
-//     //     m_schema.Time(false);
-//     // } else if (GetDataFormatId() == liblas::ePointFormat1) {
-//     //     m_schema.Color(false);
-//     //     m_schema.Time(true);
-//     // }
-// }
 
 void Header::SetSchema(const Schema& format)
 {
