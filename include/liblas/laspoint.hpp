@@ -63,49 +63,22 @@
 
 namespace liblas {
 
-// template <typename T>
-// class Scaled
-// {
-// 
-// public:
-//     Scaled(T value, double* scale, double* offset)
-//         : m_value(value), m_scale(scale), m_offset(offset) {};    
-// 
-//     Scaled(Scaled const& other)
-//         : m_value(other.m_value)
-//         , m_scale(other.m_scale)
-//         , m_offset(other.m_offset)
-//     {
-//     }
-// 
-//     Scaled& operator=(Scaled<T> const& rhs)
-//     {
-//         if (&rhs != this)
-//         {
-//             m_value = rhs.m_value;
-//             m_scale = rhs.m_scale;
-//             m_offset = rhs.m_scale;
-//         }
-//         return *this;
-//     }
-//     
-//     operator double() const 
-//     {
-//         double output = (m_value * *m_scale) + *m_offset;
-//             std::cout << "double(): " << output << " m_value: " << m_value << " m_scale: " << *m_scale << " m_offset: " << *m_offset << std::endl;
-//         return (m_value * *m_scale) + *m_offset;
-//     }
-//     
-//     operator T() const
-//     {
-//         return m_value;
-//     }
-//     
-// private:
-//     T m_value;
-//     double* m_scale;
-//     double* m_offset;
-// };
+class PointFactory
+{
+public:
+    PointFactory();
+    
+    static const PointFactory* getInstance();
+    
+    PointPtr createPoint() const;
+    PointPtr createPoint(HeaderPtr hdr) const;
+    
+    /// Destructor
+    virtual ~PointFactory();
+
+private:
+    HeaderPtr m_header;    
+};
 
 /// Point data record composed with X, Y, Z coordinates and attributes.
 class Point
@@ -244,7 +217,7 @@ public:
     std::vector<boost::uint8_t> const& GetData() const {return m_format_data; }
     void SetData(std::vector<boost::uint8_t> const& v) { m_format_data = v;}
     
-    void SetHeader(HeaderPtr header);
+    void SetHeaderPtr(HeaderPtr header);
     HeaderPtr GetHeaderPtr() const;
     
     property_tree::ptree GetPTree() const;

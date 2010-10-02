@@ -282,7 +282,7 @@ bool Point::IsValid() const
     return true;
 }
 
-void Point::SetHeader(HeaderPtr header) 
+void Point::SetHeaderPtr(HeaderPtr header) 
 {
     m_header = header;
 }
@@ -399,20 +399,27 @@ double Point::GetX() const
 void Point::SetX( double const& value ) 
 {
     boost::int32_t v = static_cast<boost::int32_t>(value);
+    std::vector<boost::uint8_t>::size_type pos = 0;
+
     if (m_header.get() != 0 ) 
     {
         // descale the value given our scale/offset
         v = static_cast<boost::int32_t>(
                              detail::sround(((value - m_header->GetOffsetX()) / 
                                               m_header->GetScaleX())));
+
+        SizesArray s = m_header->GetSchema().GetSizes("X");
+        pos = s[0];
     } else 
     {
         m_double_coords_cache[0] = value;
+        pos = 0;
     }
     // What to do about points with no header?  Cook up a default scale?
     // Given a double determine the maximum amount of precision required to 
     // 
-    std::vector<boost::uint8_t>::size_type pos = 0;
+    
+    
     detail::intToBits(v, m_format_data, pos);
 }
 
@@ -421,6 +428,13 @@ boost::int32_t Point::GetRawX() const
 
     boost::int32_t output;
     std::vector<boost::uint8_t>::size_type pos = 0;
+
+    if (m_header.get() != 0) {
+        SizesArray s = m_header->GetSchema().GetSizes("X");
+        pos = s[0];
+    } else {
+        pos = 0;
+    }
     output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
 
     return output;
@@ -643,4 +657,31 @@ boost::any Point::GetValue(DimensionPtr d) const
     return output;
 }
 
+PointFactory::PointFactory() : m_header(HeaderPtr(new Header))
+{
+    
+}
+
+const PointFactory* PointFactory::getInstance() 
+{
+    static PointFactory inst;
+    return &inst;
+}
+
+PointFactory::~PointFactory(){
+
+}
+
+PointPtr PointFactory::createPoint() const
+{
+    PointPtr p = PointPtr(new liblas::Point());
+    p->SetHeaderPtr(m_header);
+    return p;
+}
+
+
+PointPtr PointFactory::createPoint(HeaderPtr hdr) const
+{
+    return PointPtr(new liblas::Point(hdr));
+}
 } // namespace liblas
