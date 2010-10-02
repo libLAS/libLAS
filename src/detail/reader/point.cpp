@@ -103,7 +103,7 @@ void Point::read()
     // Set the header for the point early because 
     // SetCoordinates will use it later to scale the 
     // point
-    m_point.SetHeader(m_header);
+    m_point.SetHeaderPtr(m_header);
     
     try
     {
