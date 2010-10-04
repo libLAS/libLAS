@@ -14,16 +14,21 @@
 // std
 #include <fstream>
 #include <vector>
+// boost
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4512)
+#include <boost/program_options.hpp>
+#pragma warning(pop)
+#endif
+
+namespace po = boost::program_options;
 
 #ifdef _WIN32
 #define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
 #else
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
 #endif
-
-#include <boost/program_options.hpp>
-
-namespace po = boost::program_options;
 
 bool term_progress(std::ostream& os, double complete)
 {
