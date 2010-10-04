@@ -752,8 +752,6 @@ boost::any Point::GetValue(DimensionPtr d) const
     
     std::vector<boost::uint8_t> data;
 
-    DimensionPtr t;
-    
     std::vector<DimensionPtr> positions;
     for (DimensionMap::const_iterator i = dimensions.begin(); i != dimensions.end(); ++i)
     {

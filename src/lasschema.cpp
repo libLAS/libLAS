@@ -41,7 +41,12 @@
 
 #include <liblas/lasschema.hpp>
 #include <liblas/detail/utility.hpp>
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4512)
 #include <liblas/external/property_tree/xml_parser.hpp>
+#pragma warning(pop)
+#endif
 // boost
 #include <boost/cstdint.hpp>
 // std
