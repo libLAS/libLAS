@@ -481,20 +481,20 @@ namespace tut
             (int) p.GetRawY(), 483450000);
                 
         // Scale is 0.01 for this file
-        p.SetX(123456);
+        p.SetX(123);
         boost::int32_t x2 = p.GetRawX();
         ensure_equals("invalid raw x value",
-            (int) x2, 12345600);
+            (int) x2, 12300);
 
-        p.SetY(123456);
+        p.SetY(456);
         x2 = p.GetRawY();
         ensure_equals("invalid raw y value",
-            (int) x2, 12345600);      
+            (int) x2, 45600);      
 
-        p.SetZ(123456);
+        p.SetZ(789);
         x2 = p.GetRawZ();
         ensure_equals("invalid raw z value",
-            (int) x2, 12345600);          
+            (int) x2, 78900);          
         
     }
 }

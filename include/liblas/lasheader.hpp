@@ -404,6 +404,30 @@ private:
 
 std::ostream& operator<<(std::ostream& os, liblas::Header const&);
 
+/// Singleton used for all empty points upon construction.  If 
+/// a reader creates the point, the HeaderPtr from the file that was 
+/// read will be used, but all stand-alone points will have EmptyHeader 
+/// as their base.
+class EmptyHeader
+{
+public:
+    virtual ~EmptyHeader() {};
+    
+    static Header const& get() 
+    {
+        static Header object;
+        return object;
+    }
+protected:
+    EmptyHeader();
+    EmptyHeader( EmptyHeader const&);
+    EmptyHeader& operator=( EmptyHeader const&);
+    
+};
+
+
+
+
 } // namespace liblas
 
 #endif // LIBLAS_LASHEADER_HPP_INCLUDED

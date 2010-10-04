@@ -54,8 +54,7 @@ namespace liblas {
 
 
 Schema::Schema(PointFormatName data_format_id):
-     m_size(0)
-    , m_data_format_id(data_format_id)
+     m_data_format_id(data_format_id)
     , m_nextpos(0)
     , m_bit_size(0)
     , m_base_bit_size(0)
@@ -75,7 +74,7 @@ void Schema::add_record0_dimensions()
     x->IsInteger(true);
     x->IsNumeric(true);
     x->IsSigned(true);
-    x->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(x);
     text.str("");
 
@@ -86,7 +85,7 @@ void Schema::add_record0_dimensions()
     y->IsInteger(true);
     y->IsNumeric(true);
     y->IsSigned(true);
-    y->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(y);
     text.str("");
     
@@ -97,7 +96,6 @@ void Schema::add_record0_dimensions()
     z->IsInteger(true);
     z->IsNumeric(true);
     z->IsSigned(true);
-    z->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(z);
     text.str("");
 
@@ -108,7 +106,7 @@ void Schema::add_record0_dimensions()
     intensity->SetDescription(text.str());
     intensity->IsInteger(true);
     intensity->IsNumeric(true);
-    intensity->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(intensity);
     text.str("");
 
@@ -121,7 +119,7 @@ void Schema::add_record0_dimensions()
     return_no->SetDescription(text.str());
     return_no->IsNumeric(true);
     return_no->IsInteger(true);
-    return_no->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(return_no);
     text.str("");
     
@@ -133,7 +131,6 @@ void Schema::add_record0_dimensions()
     no_returns->SetDescription(text.str());
     no_returns->IsNumeric(true);
     no_returns->IsInteger(true);
-    no_returns->SetPosition(m_nextpos); m_nextpos++;
     AddDimension(no_returns);
     text.str("");
     
@@ -147,7 +144,7 @@ void Schema::add_record0_dimensions()
     scan_dir->SetDescription(text.str());
     scan_dir->IsNumeric(true);
     scan_dir->IsInteger(true);
-    scan_dir->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(scan_dir);
     text.str("");
     
@@ -158,7 +155,7 @@ void Schema::add_record0_dimensions()
     edge->SetDescription(text.str());
     edge->IsNumeric(true);
     edge->IsInteger(true);
-    edge->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(edge);
     text.str("");
 
@@ -172,7 +169,7 @@ void Schema::add_record0_dimensions()
             "bit encoded field with the lower five bits used for class and the "
             "three high bits used for flags.";
     classification->SetDescription(text.str());
-    classification->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(classification);
     text.str("");
 
@@ -191,14 +188,14 @@ void Schema::add_record0_dimensions()
     scan_angle->IsSigned(true);
     scan_angle->IsInteger(true);
     scan_angle->IsNumeric(true);
-    scan_angle->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(scan_angle);
     text.str("");
     
     DimensionPtr user_data = DimensionPtr(new Dimension("User Data", 8));
     text << "This field may be used at the user’s discretion";
     user_data->SetDescription(text.str());
-    user_data->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(user_data);
     text.str("");
     
@@ -215,7 +212,7 @@ void Schema::add_record0_dimensions()
     point_source_id->SetDescription(text.str());
     point_source_id->IsInteger(true);
     point_source_id->IsNumeric(true);
-    point_source_id->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(point_source_id);    
     text.str("");
 
@@ -241,7 +238,7 @@ void Schema::add_color()
     red->IsActive(true);
     red->IsInteger(true);
     red->IsNumeric(true);
-    red->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(red);
     text.str("");
 
@@ -252,7 +249,7 @@ void Schema::add_color()
     green->IsActive(true);
     green->IsInteger(true);
     green->IsNumeric(true);
-    green->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(green);
     text.str("");
 
@@ -263,7 +260,7 @@ void Schema::add_color()
     blue->IsActive(true);
     blue->IsInteger(true);
     blue->IsNumeric(true);
-    blue->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(blue);
     text.str("");
     
@@ -283,7 +280,7 @@ void Schema::add_time()
     t->IsRequired(true);
     t->IsActive(true);
     t->IsNumeric(true);
-    t->SetPosition(m_nextpos); m_nextpos++;
+
     AddDimension(t);
     text.str("");
     
@@ -291,7 +288,7 @@ void Schema::add_time()
 
 void Schema::update_required_dimensions(PointFormatName data_format_id)
 {
-    DimensionMap user_dims;
+    DimensionArray user_dims;
     DimensionMap::const_iterator i;
     
     if (m_dimensions.size() > 0)
@@ -300,15 +297,22 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
         // and add them back to the list of dimensions
         for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
         {
-            DimensionPtr t = (*i).second;
-            std::string name = (*i).first;
-            if ( t->IsRequired() == false)
-                user_dims[name] = t;
+            if ( i->second->IsRequired() == false)
+                user_dims.push_back(i->second);
         }
     }
     
+    // Sort the user dimensions so we preserve the order they were 
+    // added in.
+    std::sort(user_dims.begin(), user_dims.end(), sort_dimensions);
+    
     m_dimensions.clear();
     
+    // Reset the position counter.  Dimensions will be added in the 
+    // order they need to be according to add_record0_dimensions, etc.
+    m_nextpos = 0;
+    
+    // Add the base dimensions
     add_record0_dimensions();
 
     switch (data_format_id) 
@@ -334,19 +338,21 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
 
     // Copy any user-created dimensions that are not 
     // required by the PointFormatName
-    for (i = user_dims.begin(); i != user_dims.end(); ++i)
+    DimensionArray::const_iterator j;
+
+    for (j = user_dims.begin(); j != user_dims.end(); ++j)
     {
-        m_dimensions[(*i).first] = (*i).second;
+        // We need to use AddDimension to ensure that the sizes
+        // and position offsets are updated.
+        AddDimension(*j);
     }
 
-    m_nextpos = 0;
-    
+
     CalculateSizes();
 }
 /// copy constructor
 Schema::Schema(Schema const& other) :
-     m_size(other.m_size)
-    , m_data_format_id(other.m_data_format_id)
+    m_data_format_id(other.m_data_format_id)
     , m_nextpos(other.m_nextpos)
     , m_bit_size(other.m_bit_size)
     , m_base_bit_size(other.m_base_bit_size)
@@ -360,7 +366,6 @@ Schema& Schema::operator=(Schema const& rhs)
 {
     if (&rhs != this)
     {
-        m_size = rhs.m_size;
         m_data_format_id = rhs.m_data_format_id;
         m_nextpos = rhs.m_nextpos;
         m_dimensions = rhs.m_dimensions;
@@ -596,18 +601,65 @@ bool Schema::IsCustom() const
     return false;
 }
 
+SizesArray  Schema::GetSizes(std::string const& name) const
+{
+    SizesMap::const_iterator i = m_sizes.find(name);
+    if (i == m_sizes.end()) {
+        std::ostringstream oss;
+        oss << "Could not find dimension with name '" << name << "'";
+        throw std::runtime_error(oss.str());
+    }
+    return i->second;
+}
+
 void Schema::CalculateSizes() 
 {
     DimensionMap::const_iterator i;
+    DimensionArray::const_iterator j;
 
     m_bit_size = 0;
     m_base_bit_size = 0;
-    
-    for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+
+    std::vector<DimensionPtr> positions;
+    for (DimensionMap::const_iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        m_bit_size += i->second->GetBitSize();
-        if ( i->second->IsRequired() == true)
-            m_base_bit_size += i->second->GetBitSize();
+        positions.push_back(i->second);
+    }
+    
+    std::sort(positions.begin(), positions.end(), sort_dimensions);
+    
+    std::size_t index_position = 0;
+    std::size_t bit_position = 0;
+
+    for (j = positions.begin(); j != positions.end(); ++j)
+    {
+        // increment our total bit size for the entire point
+        DimensionPtr const& t = (*j);
+
+        m_bit_size += t->GetBitSize(); 
+
+        std::size_t byte_size = 0;
+        bit_position = bit_position + (t->GetBitSize() % 8);
+
+        // std::cout << "position : " << t->GetPosition() << " index_position: " << index_position;
+        // std::cout << " d: " << t->GetName() << " bit_position: " << bit_position<<std::endl;
+        // std::cout << "bit_size: " << t->GetBitSize()  << std::endl;
+        
+        SizesArray a;
+        a[0] = index_position;
+        a[1] = byte_size;
+        a[2] = bit_position;
+        a[3] = t->GetBitSize();
+        
+        // We don't increment if this dimension is within the current byte
+        if ( bit_position %8 == 0)
+        {
+            bit_position = 0;
+            index_position = index_position + t->GetByteSize();
+        }
+        m_sizes[t->GetName()] = a;
+        if ( t->IsRequired() == true)
+            m_base_bit_size += t->GetBitSize();
     }
 
     // std::cout << "Calculated: " << m_bit_size << std::endl;
@@ -677,7 +729,17 @@ std::size_t Schema::GetByteSize() const
 
 void Schema::AddDimension(DimensionPtr d)
 {
-    m_dimensions[d->GetName()] =d;
+    // Increment the position;
+    d->SetPosition(m_nextpos); m_nextpos++;
+    
+    // Add/reset the dimension ptr on the dimensions map
+    m_dimensions[d->GetName()] = d;
+    
+    // Add/reset the critical sizes array on the size map
+    SizesArray a;
+    m_sizes[d->GetName()] = a;
+    
+    // Update all of our sizes
     CalculateSizes();
 }
 

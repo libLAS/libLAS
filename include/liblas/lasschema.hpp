@@ -51,6 +51,7 @@
 #include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
+#include <boost/array.hpp>
 
 // std
 #include <iosfwd>
@@ -66,7 +67,10 @@ class Dimension;
 typedef boost::shared_ptr<Dimension> DimensionPtr;
 typedef std::map<std::string, DimensionPtr> DimensionMap;
 
+typedef std::vector<DimensionPtr> DimensionArray;
 
+typedef boost::array<std::size_t, 4> SizesArray;
+typedef std::map<std::string, SizesArray > SizesMap;
 
 class Schema
 {
@@ -104,6 +108,7 @@ public:
     std::vector<std::string> GetDimensionNames() const;
     DimensionMap const& GetDimensions() const { return m_dimensions; }
     liblas::property_tree::ptree GetPTree() const;
+    SizesArray GetSizes(std::string const& name) const;
     
     boost::uint16_t GetSchemaVersion() const { return m_schemaversion; }
     void SetSchemaVersion(boost::uint16_t v) { m_schemaversion = v; }
@@ -113,12 +118,12 @@ public:
 
 protected:
     
-    boost::uint16_t m_size;
     PointFormatName m_data_format_id;
     boost::uint32_t m_nextpos;
     std::size_t m_bit_size;
     std::size_t m_base_bit_size;
     boost::uint16_t m_schemaversion;
+    SizesMap m_sizes;
     
 private:
 
@@ -172,15 +177,39 @@ public:
     /// bytes, physical/serialisation size of record
     std::size_t GetByteSize() const 
     {
-        if (m_bitsize % 8 != 0) {
-            std::ostringstream oss;
-            oss << m_name << "'s bit size, " << m_bitsize 
-                << ", is not a multiple of 8 and " 
-                << "cannot be expressed as a single byte value";
-            throw std::range_error(oss.str());
+
+        std::size_t bit_position = m_bitsize % 8;
+        if (bit_position > 0) {
+            // For dimensions that are not byte aligned,
+            // we need to determine how many bytes they 
+            // will take.  We have to read at least one byte if the 
+            // size in bits is less than 8.  If it is more than 8, 
+            // we need to read the number of bytes it takes + 1 extra.
+            if (m_bitsize > 8) {
+                return m_bitsize/8 + 1;
+            } else {
+                return 1;
+            }
         }
         return m_bitsize / 8;
-    }    
+    }
+
+    //             /// This stuff needs to be put in dim-GetBytesize
+    //         if (m_bitsize > 8) {
+    //             return = m_bitsize / 8 + 1;
+    //         } else {
+    //             byte_size = 1; 
+    // }
+    //             
+    //     // if (m_bitsize % 8 != 0) {
+    //     //     std::ostringstream oss;
+    //     //     oss << m_name << "'s bit size, " << m_bitsize 
+    //     //         << ", is not a multiple of 8 and " 
+    //     //         << "cannot be expressed as a single byte value";
+    //     //     throw std::range_error(oss.str());
+    //     // }
+    //     // return m_bitsize / 8;
+    // }    
     
     /// Is this dimension required by PointFormatName
     bool IsRequired() const { return m_required; }

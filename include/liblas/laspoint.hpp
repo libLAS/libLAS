@@ -237,6 +237,8 @@ private:
     // must account for this.    
     boost::array<double, 3> m_double_coords_cache;
     
+    std::vector<boost::uint8_t>::size_type GetDimensionPosition(std::string const& name) const;
+    
     Color m_color;
     double m_gps_time;
     boost::uint16_t m_intensity;
@@ -246,6 +248,7 @@ private:
     boost::int8_t m_angle_rank;
     Classification m_class;
     HeaderPtr m_header;
+    Header const& m_default_header;
 
     void throw_out_of_range() const;
 };
@@ -262,49 +265,49 @@ inline bool operator!=(Point const& lhs, Point const& rhs)
     return (!(lhs == rhs));
 }
 
-inline boost::uint16_t Point::GetIntensity() const
-{
-    return m_intensity;
-}
+// inline boost::uint16_t Point::GetIntensity() const
+// {
+//     return m_intensity;
+// }
+// 
+// inline void Point::SetIntensity(boost::uint16_t const& intensity)
+// {
+//     m_intensity = intensity;
+// }
 
-inline void Point::SetIntensity(boost::uint16_t const& intensity)
-{
-    m_intensity = intensity;
-}
+// inline boost::uint16_t Point::GetReturnNumber() const
+// {
+//     // Read bits 1,2,3 (first 3 bits)
+//     return (m_flags & 0x07);
+// }
 
-inline boost::uint16_t Point::GetReturnNumber() const
-{
-    // Read bits 1,2,3 (first 3 bits)
-    return (m_flags & 0x07);
-}
+// inline boost::uint16_t Point::GetNumberOfReturns() const
+// {
+//     // Read bits 4,5,6
+//     return ((m_flags >> 3) & 0x07);
+// }
 
-inline boost::uint16_t Point::GetNumberOfReturns() const
-{
-    // Read bits 4,5,6
-    return ((m_flags >> 3) & 0x07);
-}
+// inline boost::uint16_t Point::GetScanDirection() const
+// {
+//     // Read 7th bit
+//     return ((m_flags >> 6) & 0x01);
+// }
+// 
+// inline boost::uint16_t Point::GetFlightLineEdge() const
+// {
+//     // Read 8th bit
+//     return ((m_flags >> 7) & 0x01);
+// }
 
-inline boost::uint16_t Point::GetScanDirection() const
-{
-    // Read 7th bit
-    return ((m_flags >> 6) & 0x01);
-}
+// inline boost::uint8_t Point::GetScanFlags() const
+// {
+//     return m_flags;
+// }
 
-inline boost::uint16_t Point::GetFlightLineEdge() const
-{
-    // Read 8th bit
-    return ((m_flags >> 7) & 0x01);
-}
-
-inline boost::uint8_t Point::GetScanFlags() const
-{
-    return m_flags;
-}
-
-inline void Point::SetScanFlags(boost::uint8_t const& flags)
-{
-    m_flags = flags;
-}
+// inline void Point::SetScanFlags(boost::uint8_t const& flags)
+// {
+//     m_flags = flags;
+// }
 
 inline boost::int8_t Point::GetScanAngleRank() const
 {

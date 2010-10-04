@@ -70,6 +70,7 @@ Point::Point()
     , m_user_data(0)
     , m_angle_rank(0)
     , m_header(HeaderPtr())
+    , m_default_header(EmptyHeader::get())
 {
     m_double_coords_cache.assign(0);
     m_format_data.resize(ePointSize3);
@@ -85,6 +86,7 @@ Point::Point(HeaderPtr hdr)
     , m_user_data(0)
     , m_angle_rank(0)
     , m_header(hdr)
+    , m_default_header(EmptyHeader::get())
 {
     m_double_coords_cache.assign(0);
     m_format_data.resize(ePointSize3);
@@ -104,6 +106,7 @@ Point::Point(Point const& other)
     , m_angle_rank(other.m_angle_rank)
     , m_class(other.m_class)
     , m_header(other.m_header)
+    , m_default_header(EmptyHeader::get())
 {
 }
 
@@ -136,37 +139,43 @@ void Point::SetCoordinates(double const& x, double const& y, double const& z)
 }
 
 
-void Point::SetReturnNumber(uint16_t const& num)
-{
-    // Store value in bits 0,1,2
-    uint8_t mask = 0x7 << 0; // 0b00000111
-    m_flags &= ~mask;
-    m_flags |= mask & (static_cast<uint8_t>(num) << 0);
+// void Point::SetReturnNumber(uint16_t const& num)
+// {
+//     // Store value in bits 0,1,2
+//     uint8_t mask = 0x7 << 0; // 0b00000111
+//     m_flags &= ~mask;
+//     m_flags |= mask & (static_cast<uint8_t>(num) << 0);
+// 
+// }
 
-}
+// void Point::SetNumberOfReturns(uint16_t const& num)
+// {
+//     // Store value in bits 3,4,5
+//     uint8_t mask = 0x7 << 3; // 0b00111000
+//     m_flags &= ~mask;
+//     m_flags |= mask & (static_cast<uint8_t>(num) << 3);
+// }
 
-void Point::SetNumberOfReturns(uint16_t const& num)
-{
-    // Store value in bits 3,4,5
-    uint8_t mask = 0x7 << 3; // 0b00111000
-    m_flags &= ~mask;
-    m_flags |= mask & (static_cast<uint8_t>(num) << 3);
-}
+// void Point::SetScanDirection(uint16_t const& dir)
+// {
+//     // Store value in bit 6
+//     uint8_t mask = 0x1 << 6; // 0b01000000
+//     m_flags &= ~mask;
+//     m_flags |= mask & (static_cast<uint8_t>(dir) << 6);
+// }
+// 
+// boost::uint16_t Point::GetScanDirection() const
+// {
+//     // Read 7th bit
+//     return ((m_flags >> 6) & 0x01);
+// }
 
-void Point::SetScanDirection(uint16_t const& dir)
-{
-    // Store value in bit 6
-    uint8_t mask = 0x1 << 6; // 0b01000000
-    m_flags &= ~mask;
-    m_flags |= mask & (static_cast<uint8_t>(dir) << 6);
-}
-
-void Point::SetFlightLineEdge(uint16_t const& edge)
-{
-    // Store value in bit 7
-    uint8_t mask = 0x1 << 7; // 0b10000000
-    m_flags &= ~mask;
-    m_flags |= mask & (static_cast<uint8_t>(edge) << 7);}
+// void Point::SetFlightLineEdge(uint16_t const& edge)
+// {
+//     // Store value in bit 7
+//     uint8_t mask = 0x1 << 7; // 0b10000000
+//     m_flags &= ~mask;
+//     m_flags |= mask & (static_cast<uint8_t>(edge) << 7);}
 
 void Point::SetScanAngleRank(int8_t const& rank)
 {
@@ -389,57 +398,12 @@ double Point::GetX() const
         // Scale it
         output  = (v * m_header->GetScaleX()) + m_header->GetOffsetX();
     } else {
+        output  = (v * m_default_header.GetScaleX()) + m_default_header.GetOffsetX();
         output = m_double_coords_cache[0];
     }
     
     return output;
 }
-
-
-void Point::SetX( double const& value ) 
-{
-    boost::int32_t v = static_cast<boost::int32_t>(value);
-    std::vector<boost::uint8_t>::size_type pos = 0;
-
-    if (m_header.get() != 0 ) 
-    {
-        // descale the value given our scale/offset
-        v = static_cast<boost::int32_t>(
-                             detail::sround(((value - m_header->GetOffsetX()) / 
-                                              m_header->GetScaleX())));
-
-        SizesArray s = m_header->GetSchema().GetSizes("X");
-        pos = s[0];
-    } else 
-    {
-        m_double_coords_cache[0] = value;
-        pos = 0;
-    }
-    // What to do about points with no header?  Cook up a default scale?
-    // Given a double determine the maximum amount of precision required to 
-    // 
-    
-    
-    detail::intToBits(v, m_format_data, pos);
-}
-
-boost::int32_t Point::GetRawX() const
-{
-
-    boost::int32_t output;
-    std::vector<boost::uint8_t>::size_type pos = 0;
-
-    if (m_header.get() != 0) {
-        SizesArray s = m_header->GetSchema().GetSizes("X");
-        pos = s[0];
-    } else {
-        pos = 0;
-    }
-    output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
-
-    return output;
-}
-
 
 double Point::GetY() const
 {
@@ -452,11 +416,56 @@ double Point::GetY() const
         // Scale it
         output  = (v * m_header->GetScaleY()) + m_header->GetOffsetY();
     } else {
+        output  = (v * m_default_header.GetScaleY()) + m_default_header.GetOffsetY();
         output = m_double_coords_cache[1];
         // output = static_cast<double>(v);
     }
     
     return output;
+}
+
+double Point::GetZ() const
+{
+    boost::int32_t v = GetRawZ();
+    
+    double output = 0;
+    
+    if (m_header.get() != 0 ) 
+    { 
+        // Scale it
+        output  = (v * m_header->GetScaleZ()) + m_header->GetOffsetZ();
+    } else {
+        output  = (v * m_default_header.GetScaleZ()) + m_default_header.GetOffsetZ();
+        output = m_double_coords_cache[2];
+        // output = static_cast<double>(v);
+    }
+    
+    return output;
+}
+
+void Point::SetX( double const& value ) 
+{
+    boost::int32_t v = static_cast<boost::int32_t>(value);
+    if (m_header.get() != 0 ) 
+    {
+        // descale the value given our scale/offset
+        v = static_cast<boost::int32_t>(
+                             detail::sround(((value - m_header->GetOffsetX()) / 
+                                              m_header->GetScaleX())));
+
+    } else 
+    {
+        v = static_cast<boost::int32_t>(
+                             detail::sround(((value - m_default_header.GetOffsetX()) / 
+                                              m_default_header.GetScaleX())));
+        m_double_coords_cache[0] = value;
+    }
+    // What to do about points with no header?  Cook up a default scale?
+    // Given a double determine the maximum amount of precision required to 
+    // 
+    
+    
+    SetRawX(v);
 }
 
 void Point::SetY( double const& value ) 
@@ -470,40 +479,16 @@ void Point::SetY( double const& value )
                                               m_header->GetScaleY())));
     } else 
     {
+        v = static_cast<boost::int32_t>(
+                             detail::sround(((value - m_default_header.GetOffsetY()) / 
+                                              m_default_header.GetScaleY())));
         m_double_coords_cache[1] = value;
     }
     
-    std::vector<boost::uint8_t>::size_type pos = 4;
-    detail::intToBits(v, m_format_data, pos);
-}
-
-boost::int32_t Point::GetRawY() const
-{
-    boost::int32_t output;
-    std::vector<boost::uint8_t>::size_type pos = 4;
-    output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
-
-    return output;
+    SetRawY(v);
 }
 
 
-double Point::GetZ() const
-{
-    boost::int32_t v = GetRawZ();
-    
-    double output = 0;
-    
-    if (m_header.get() != 0 ) 
-    { 
-        // Scale it
-        output  = (v * m_header->GetScaleZ()) + m_header->GetOffsetZ();
-    } else {
-        output = m_double_coords_cache[2];
-        // output = static_cast<double>(v);
-    }
-    
-    return output;
-}
 void Point::SetZ( double const& value ) 
 {
     boost::int32_t v = static_cast<boost::int32_t>(value);
@@ -515,21 +500,222 @@ void Point::SetZ( double const& value )
                                               m_header->GetScaleZ())));
     } else
     {
+        v = static_cast<boost::int32_t>(
+                             detail::sround(((value - m_default_header.GetOffsetZ()) / 
+                                              m_default_header.GetScaleZ())));
         m_double_coords_cache[2] = value;
     }
     
-    std::vector<boost::uint8_t>::size_type pos = 8;
-    detail::intToBits(v, m_format_data, pos);
+    SetRawZ(v);
 }
 
+
+boost::int32_t Point::GetRawX() const
+{
+
+    boost::int32_t output;
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("X");
+    output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
+
+    return output;
+}
+
+boost::int32_t Point::GetRawY() const
+{
+    boost::int32_t output;
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Y");
+    output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
+
+    return output;
+}
 
 boost::int32_t Point::GetRawZ() const
 {
     boost::int32_t output;
-    std::vector<boost::uint8_t>::size_type pos = 8;
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Z");
     output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
 
     return output;
+}
+
+void Point::SetRawX( boost::int32_t const& value)
+{
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("X");
+    liblas::detail::intToBits<boost::int32_t>(value, m_format_data, pos);
+}
+
+
+void Point::SetRawY( boost::int32_t const& value)
+{
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Y");
+    liblas::detail::intToBits<boost::int32_t>(value, m_format_data, pos);
+}
+
+void Point::SetRawZ( boost::int32_t const& value)
+{
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Z");
+    liblas::detail::intToBits<boost::int32_t>(value, m_format_data, pos);
+}
+
+boost::uint16_t Point::GetIntensity() const
+{
+    boost::uint16_t output;
+    output = liblas::detail::bitsToInt<boost::uint16_t>(output, 
+                                                        m_format_data, 
+                                                        GetDimensionPosition("Intensity"));
+
+    return output;
+}
+
+
+void Point::SetIntensity(boost::uint16_t const& intensity)
+{
+    liblas::detail::intToBits<boost::uint16_t>(intensity, 
+                                               m_format_data, 
+                                               GetDimensionPosition("Intensity"));
+}
+
+boost::uint8_t Point::GetScanFlags() const
+{
+    return m_format_data[GetDimensionPosition("Return Number")];
+}
+
+void Point::SetScanFlags(boost::uint8_t const& flags)
+{
+    m_format_data[GetDimensionPosition("Return Number")] = flags;
+}
+
+boost::uint16_t Point::GetReturnNumber() const
+{
+    boost::uint8_t flags;
+    
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Return Number");
+    flags = m_format_data[pos];
+    
+    // Read bits 1,2,3 (first 3 bits)
+    return (flags & 0x07);
+}
+
+void Point::SetReturnNumber(uint16_t const& num)
+{
+    
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Return Number");
+    
+    boost::uint8_t flags = m_format_data[pos];
+    
+    // Store value in bits 0,1,2
+    uint8_t mask = 0x7 << 0; // 0b00000111
+    flags &= ~mask;
+    flags |= mask & (static_cast<uint8_t>(num) << 0);
+    m_format_data[pos] = flags;
+
+}
+
+
+void Point::SetFlightLineEdge(uint16_t const& edge)
+{
+
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Flightline Edge");
+
+    boost::uint8_t flags = m_format_data[pos];
+    
+    // Store value in bits 7
+    uint8_t mask = 0x1 << 7; // 0b10000000
+    flags &= ~mask;
+    flags |= mask & (static_cast<uint8_t>(edge) << 7);
+    m_format_data[pos] = flags;
+
+//     // Store value in bit 7
+//     uint8_t mask = 0x1 << 7; // 0b10000000
+//     m_flags &= ~mask;
+//     m_flags |= mask & (static_cast<uint8_t>(edge) << 7);}
+
+}
+    
+boost::uint16_t Point::GetFlightLineEdge() const
+{
+    boost::uint8_t flags;
+    
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Flightline Edge");
+
+    flags = m_format_data[pos];
+
+    // Read 8th bit
+    return ((flags >> 7) & 0x01);
+}
+
+
+boost::uint16_t Point::GetNumberOfReturns() const
+{
+    boost::uint8_t flags;
+    
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Number of Returns");
+
+    flags = m_format_data[pos];
+
+    // Read bits 4,5,6
+    return ((flags >> 3) & 0x07);
+}
+
+void Point::SetNumberOfReturns(uint16_t const& num)
+{
+
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Number of Returns");
+    
+    boost::uint8_t flags = m_format_data[pos];
+    
+    // Store value in bits 3,4,5
+    uint8_t mask = 0x7 << 3; // 0b00111000
+    flags &= ~mask;
+    flags |= mask & (static_cast<uint8_t>(num) << 3);
+    m_format_data[pos] = flags;
+
+//     // Store value in bits 3,4,5
+//     uint8_t mask = 0x7 << 3; // 0b00111000
+//     m_flags &= ~mask;
+//     m_flags |= mask & (static_cast<uint8_t>(num) << 3);
+
+}
+
+void Point::SetScanDirection(uint16_t const& dir)
+{
+
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Scan Direction");
+    
+    boost::uint8_t flags = m_format_data[pos];
+    
+    // Store value in bits 6
+    uint8_t mask = 0x1 << 6; // 0b01000000
+    flags &= ~mask;
+    flags |= mask & (static_cast<uint8_t>(dir) << 6);
+    m_format_data[pos] = flags;
+    
+}
+
+boost::uint16_t Point::GetScanDirection() const
+{
+    boost::uint8_t flags;
+    
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Scan Direction");
+    
+    flags = m_format_data[pos];
+
+    // Read 6th bit
+    return ((flags >> 6) & 0x01);
+}
+
+
+std::vector<boost::uint8_t>::size_type Point::GetDimensionPosition(std::string const& name) const
+{
+    std::string dim_name(name);
+    SizesArray s;
+    if (m_header.get() != 0) {
+        s = m_header->GetSchema().GetSizes(dim_name);
+    } else {
+        s = m_default_header.GetSchema().GetSizes(dim_name);
+    }
+    
+    return s[0];
 }
 
 boost::any Point::GetValue(DimensionPtr d) const
