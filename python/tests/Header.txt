@@ -5,7 +5,7 @@
   >>> h = header.Header()
   
   >>> h.dataformat_id
-  0
+  3
 
   >>> h.scale
   [0.01, 0.01, 0.01]
@@ -114,8 +114,8 @@
   742L
 
   >>> h.data_record_length
-  20
-  >>> h.dataformat_id = 3
-  >>> h.data_record_length
   34
+  >>> h.dataformat_id = 0
+  >>> h.data_record_length
+  20
   

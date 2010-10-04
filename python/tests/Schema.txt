@@ -35,15 +35,15 @@
 
   
   >>> f.size
-  20
+  34
 
   >>> f.time
-  False  
+  True 
     
 
 
   >>> h.schema = f
   
   >>> h.data_record_length
-  20
+  34
   
