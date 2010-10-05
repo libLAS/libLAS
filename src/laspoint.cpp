@@ -177,35 +177,40 @@ void Point::SetCoordinates(double const& x, double const& y, double const& z)
 //     m_flags &= ~mask;
 //     m_flags |= mask & (static_cast<uint8_t>(edge) << 7);}
 
-void Point::SetScanAngleRank(int8_t const& rank)
-{
-    m_angle_rank = rank;
-}
+// void Point::SetScanAngleRank(int8_t const& rank)
+// {
+//     m_angle_rank = rank;
+// }
+// boost::int8_t Point::GetScanAngleRank() const
+// {
+//     return m_angle_rank;
+// }
 
-void Point::SetUserData(uint8_t const& data)
-{
-    m_user_data = data;
-}
 
-Classification const& Point::GetClassification() const
-{
-    return m_class;
-}
+// void Point::SetUserData(uint8_t const& data)
+// {
+//     m_user_data = data;
+// }
 
-void Point::SetClassification(Classification const& cls)
-{
-    m_class = cls;
-}
+// Classification const& Point::GetClassification() const
+// {
+//     return m_class;
+// }
+// 
+// void Point::SetClassification(Classification const& cls)
+// {
+//     m_class = cls;
+// }
 
-void Point::SetClassification(Classification::bitset_type const& flags)
-{
-    m_class = Classification(flags);
-}
-
-void Point::SetClassification(boost::uint8_t const& flags)
-{
-    m_class = Classification(flags);
-}
+// void Point::SetClassification(Classification::bitset_type const& flags)
+// {
+//     m_class = Classification(flags);
+// }
+// 
+// void Point::SetClassification(boost::uint8_t const& flags)
+// {
+//     m_class = Classification(flags);
+// }
 
 bool Point::equal(Point const& other) const
 {
@@ -717,6 +722,120 @@ std::vector<boost::uint8_t>::size_type Point::GetDimensionPosition(std::string c
     
     return s[0];
 }
+
+void Point::SetScanAngleRank(int8_t const& rank)
+{
+
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Scan Angle Rank");
+    
+    m_format_data[pos] = rank;
+
+}
+boost::int8_t Point::GetScanAngleRank() const
+{
+    
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Scan Angle Rank");
+    
+    return m_format_data[pos];
+}
+
+boost::uint8_t Point::GetUserData() const
+{
+    return m_format_data[GetDimensionPosition("User Data")];
+}
+
+void Point::SetUserData(boost::uint8_t const& flags)
+{
+    m_format_data[GetDimensionPosition("User Data")] = flags;
+}
+
+Classification Point::GetClassification() const
+{
+    boost::uint8_t kls = m_format_data[GetDimensionPosition("Classification")];    
+    return Classification(kls);
+}
+
+void Point::SetClassification(Classification const& cls)
+{
+    m_format_data[GetDimensionPosition("Classification")] = cls.GetClass();
+}
+
+void Point::SetClassification(Classification::bitset_type const& flags)
+{
+    m_format_data[GetDimensionPosition("Classification")] = Classification(flags).GetClass();
+}
+
+void Point::SetClassification(boost::uint8_t const& flags)
+{
+    m_format_data[GetDimensionPosition("Classification")] = Classification(flags).GetClass();
+}
+
+boost::uint16_t Point::GetPointSourceID() const
+{
+    boost::uint16_t output;
+    output = liblas::detail::bitsToInt<boost::uint16_t>(output, 
+                                                        m_format_data, 
+                                                        GetDimensionPosition("Point Source ID"));
+
+    return output;
+}
+
+
+void Point::SetPointSourceID(boost::uint16_t const& id)
+{
+    liblas::detail::intToBits<boost::uint16_t>(id, 
+                                               m_format_data, 
+                                               GetDimensionPosition("Point Source ID"));
+}
+
+Color Point::GetColor() const
+{
+    boost::uint16_t red(0);
+    boost::uint16_t green(0);
+    boost::uint16_t blue(0);
+
+    red = liblas::detail::bitsToInt<boost::uint16_t>(red, 
+                                                     m_format_data, 
+                                                     GetDimensionPosition("Red"));
+    green = liblas::detail::bitsToInt<boost::uint16_t>(green, 
+                                                     m_format_data, 
+                                                     GetDimensionPosition("Green"));
+    blue = liblas::detail::bitsToInt<boost::uint16_t>(blue, 
+                                                     m_format_data, 
+                                                     GetDimensionPosition("Blue"));
+
+  return Color(red, green, blue);
+}
+
+void Point::SetColor(Color const& value)
+{
+    liblas::detail::intToBits<boost::uint16_t>(value.GetRed(), 
+                                               m_format_data, 
+                                               GetDimensionPosition("Red"));
+    liblas::detail::intToBits<boost::uint16_t>(value.GetGreen(), 
+                                               m_format_data, 
+                                               GetDimensionPosition("Green"));
+    liblas::detail::intToBits<boost::uint16_t>(value.GetBlue(), 
+                                               m_format_data, 
+                                               GetDimensionPosition("Blue"));
+}
+
+// void Point::SetTime(double const& t)
+// {
+//     liblas::detail::intToBits<double>(t, 
+//                                                         m_format_data, 
+//                                                         GetDimensionPosition("Time"));
+// }
+// 
+// double Point::GetTime() const
+// {
+//     double output;
+//     liblas::detail::bitsToInt<double>(output, 
+//                                                m_format_data, 
+//                                                GetDimensionPosition("Time"));
+// 
+//     return output;
+// }
 
 boost::any Point::GetValue(DimensionPtr d) const
 {

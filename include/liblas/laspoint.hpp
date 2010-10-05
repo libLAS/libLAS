@@ -171,7 +171,7 @@ public:
     void SetFlightLineEdge(boost::uint16_t const& edge);
 
     //Classification& GetClassification();
-    Classification const& GetClassification() const;
+    Classification GetClassification() const;
     void SetClassification(Classification const& cls);
     void SetClassification(Classification::bitset_type const& flags);
     void SetClassification(boost::uint8_t const& flags);
@@ -192,7 +192,7 @@ public:
     void SetPointSourceID(boost::uint16_t const& id);
 
     /// Fetch color value associated with this point (LAS 1.2)
-    Color const& GetColor() const;
+    Color GetColor() const;
 
     /// Set color value associated with this point (LAS 1.2)
     void SetColor(Color const& value);
@@ -309,25 +309,25 @@ inline bool operator!=(Point const& lhs, Point const& rhs)
 //     m_flags = flags;
 // }
 
-inline boost::int8_t Point::GetScanAngleRank() const
-{
-    return m_angle_rank;
-}
+// inline boost::int8_t Point::GetScanAngleRank() const
+// {
+//     return m_angle_rank;
+// }
 
-inline boost::uint8_t Point::GetUserData() const
-{
-    return m_user_data;
-}
+// inline boost::uint8_t Point::GetUserData() const
+// {
+//     return m_user_data;
+// }
 
-inline boost::uint16_t Point::GetPointSourceID() const
-{
-    return m_source_id;
-}
-
-inline void Point::SetPointSourceID(boost::uint16_t const& id)
-{
-    m_source_id = id;
-}
+// inline boost::uint16_t Point::GetPointSourceID() const
+// {
+//     return m_source_id;
+// }
+// 
+// inline void Point::SetPointSourceID(boost::uint16_t const& id)
+// {
+//     m_source_id = id;
+// }
 
 inline double Point::GetTime() const
 {
@@ -340,15 +340,15 @@ inline void Point::SetTime(double const& time)
     m_gps_time = time;
 }
 
-inline Color const& Point::GetColor() const
-{
-    return m_color;
-}
+// > inline Color const& Point::GetColor() const
+// > {
+// >     return m_color;
+// > }
 
-inline void Point::SetColor(Color const& value)
-{
-    m_color = value;
-}
+// inline void Point::SetColor(Color const& value)
+// {
+//     m_color = value;
+// }
 
 inline double Point::operator[](std::size_t const& index) const
 {
