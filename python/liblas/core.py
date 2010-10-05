@@ -308,17 +308,17 @@ las.LASPoint_GetPointSourceId.restype = ctypes.c_short
 las.LASPoint_GetPointSourceId.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetPointSourceId.errcheck = check_value
 
-las.LASPoint_GetExtraData.argtypes = [ctypes.c_void_p,
-                            ctypes.POINTER(ctypes.POINTER(ctypes.c_ubyte)),
-                            ctypes.POINTER(ctypes.c_int)]
-las.LASPoint_GetExtraData.errcheck = check_value
-las.LASPoint_GetExtraData.restype = ctypes.c_int
-
-las.LASPoint_SetExtraData.argtypes = [ctypes.c_void_p,
-                                        ctypes.POINTER(ctypes.c_ubyte),
-                                        ctypes.c_int]
-las.LASPoint_SetExtraData.errcheck = check_value
-las.LASPoint_SetExtraData.restype = ctypes.c_int
+# las.LASPoint_GetExtraData.argtypes = [ctypes.c_void_p,
+#                             ctypes.POINTER(ctypes.POINTER(ctypes.c_ubyte)),
+#                             ctypes.POINTER(ctypes.c_int)]
+# las.LASPoint_GetExtraData.errcheck = check_value
+# las.LASPoint_GetExtraData.restype = ctypes.c_int
+# 
+# las.LASPoint_SetExtraData.argtypes = [ctypes.c_void_p,
+#                                         ctypes.POINTER(ctypes.c_ubyte),
+#                                         ctypes.c_int]
+# las.LASPoint_SetExtraData.errcheck = check_value
+# las.LASPoint_SetExtraData.restype = ctypes.c_int
 
 las.LASPoint_Create.restype = ctypes.c_void_p
 las.LASPoint_Create.errcheck = check_void
