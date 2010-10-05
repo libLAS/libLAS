@@ -66,7 +66,7 @@ public:
     Point(std::ostream& ofs, boost::uint32_t& count, HeaderPtr header);
     virtual ~Point();
 
-    const liblas::Point& GetPoint() const { return m_point; }
+    // const liblas::Point& GetPoint() const { return m_point; }
     void write( const liblas::Point& );
     
 protected:
@@ -82,7 +82,6 @@ private:
     
     std::ostream& m_ofs;
     HeaderPtr m_header;
-    liblas::Point m_point;
         
     PointRecord m_record;
     
@@ -94,7 +93,7 @@ private:
     bool bColor;
         
     void setup();
-    void fill();
+    // void fill();
 };
 
 }}} // namespace liblas::detail::writer

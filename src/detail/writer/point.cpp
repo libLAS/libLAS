@@ -59,7 +59,6 @@ Point::Point(std::ostream& ofs, uint32_t& count, HeaderPtr header)
     : Base(ofs, count)
     , m_ofs(ofs)
     , m_header(header)
-    , m_point(liblas::Point())
     , m_format(header->GetSchema())
     , bTime(header->GetSchema().HasTime())
     , bColor(header->GetSchema().HasColor())
@@ -94,58 +93,10 @@ void Point::setup()
 
 void Point::write(const liblas::Point& point)
 {
-    double t = 0;
-    uint16_t red = 0;
-    uint16_t blue = 0;
-    uint16_t green = 0;
     
-    
-    std::size_t byteswritten(0);
+    std::vector<boost::uint8_t> const& data = point.GetData();    
+    detail::write_n(m_ofs, data.front(), m_header->GetDataRecordLength());
 
-    // We need to remember to properly scale the raw xyz data in 
-    // accordance with what the user is setting for values in the header
-    // they are writing to the file.  FIXME: this needs to be done
-    // when the point writer turns into just a simple writer of the 
-    // liblas::Point::m_format_data + m_extra data
-    
-    m_point = point;
-    fill();
-    
-    detail::write_n(m_ofs, m_record, sizeof(m_record));
-    byteswritten += sizeof(PointRecord);
-
-    if (bTime) 
-    {
-
-        t = point.GetTime();
-        detail::write_n(m_ofs, t, sizeof(double));
-        byteswritten += sizeof(double);
-        
-        if (bColor) 
-        {
-            liblas::Color const& color = point.GetColor();
-            red = color.GetRed();
-            green = color.GetGreen();
-            blue = color.GetBlue();
-            detail::write_n(m_ofs, red, sizeof(uint16_t));
-            detail::write_n(m_ofs, green, sizeof(uint16_t));
-            detail::write_n(m_ofs, blue, sizeof(uint16_t));
-            byteswritten += 3 * sizeof(uint16_t);
-            
-        }
-    } else {
-        if (bColor) 
-        {
-            liblas::Color const& color = point.GetColor();
-            red = color.GetRed();
-            green = color.GetGreen();
-            blue = color.GetBlue();
-            detail::write_n(m_ofs, red, sizeof(uint16_t));
-            detail::write_n(m_ofs, green, sizeof(uint16_t));
-            detail::write_n(m_ofs, blue, sizeof(uint16_t));
-            byteswritten += 3 * sizeof(uint16_t);
-        }
-    }
 
     uint32_t& count = GetPointCount();
     count++;
@@ -153,47 +104,47 @@ void Point::write(const liblas::Point& point)
 
     // write in our extra data that the user set on the 
     // point up to the header's specified DataRecordLength
-    if (m_format.GetByteSize() != m_format.GetBaseByteSize()) {
-        std::vector<uint8_t> const& data = point.GetExtraData();
-
-        std::size_t size = m_format.GetByteSize() - m_format.GetBaseByteSize();
-        
-        if (size < 0) {
-            throw std::runtime_error("ByteSize of format was less than BaseByteSize, this cannot happen!");
-        }
-        
-        if (data.size() == 0) {
-
-            detail::write_n(GetStream(), m_blanks.front(), static_cast<std::streamsize>(size));
-            
-        } else if (data.size() < size){ 
-            // size can be casted now that we have already checked if it is less than 0
-            int16_t difference = static_cast<uint16_t>(size) - static_cast<uint16_t>(data.size());
-            detail::write_n(GetStream(), data.front(), data.size());
-            detail::write_n(GetStream(), m_blanks.front(), static_cast<std::streamsize>(difference));
-
-        } else {
-            detail::write_n(GetStream(), data.front(), static_cast<std::streamsize>(size));
-        }
-    }
+    // if (m_format.GetByteSize() != m_format.GetBaseByteSize()) {
+    //     std::vector<uint8_t> const& data = point.GetExtraData();
+    // 
+    //     std::size_t size = m_format.GetByteSize() - m_format.GetBaseByteSize();
+    //     
+    //     if (size < 0) {
+    //         throw std::runtime_error("ByteSize of format was less than BaseByteSize, this cannot happen!");
+    //     }
+    //     
+    //     if (data.size() == 0) {
+    // 
+    //         detail::write_n(GetStream(), m_blanks.front(), static_cast<std::streamsize>(size));
+    //         
+    //     } else if (data.size() < size){ 
+    //         // size can be casted now that we have already checked if it is less than 0
+    //         int16_t difference = static_cast<uint16_t>(size) - static_cast<uint16_t>(data.size());
+    //         detail::write_n(GetStream(), data.front(), data.size());
+    //         detail::write_n(GetStream(), m_blanks.front(), static_cast<std::streamsize>(difference));
+    // 
+    //     } else {
+    //         detail::write_n(GetStream(), data.front(), static_cast<std::streamsize>(size));
+    //     }
+    // }
 }
 
-void Point::fill() 
-{
-    liblas::Point& p = m_point;
-
-    m_record.x = static_cast<int32_t>(detail::sround(((p.GetX() - m_header->GetOffsetX()) / m_header->GetScaleX())));
-    m_record.y = static_cast<int32_t>(detail::sround(((p.GetY() - m_header->GetOffsetY()) / m_header->GetScaleY())));
-    m_record.z = static_cast<int32_t>(detail::sround(((p.GetZ() - m_header->GetOffsetZ()) / m_header->GetScaleZ())));
-
-    Classification::bitset_type clsflags(p.GetClassification());
-    m_record.classification = static_cast<uint8_t>(clsflags.to_ulong());
-
-    m_record.intensity = p.GetIntensity();
-    m_record.flags = p.GetScanFlags();
-    m_record.scan_angle_rank = p.GetScanAngleRank();
-    m_record.user_data = p.GetUserData();
-    m_record.point_source_id = p.GetPointSourceID();
-}
+// void Point::fill() 
+// {
+//     liblas::Point& p = m_point;
+// 
+//     m_record.x = static_cast<int32_t>(detail::sround(((p.GetX() - m_header->GetOffsetX()) / m_header->GetScaleX())));
+//     m_record.y = static_cast<int32_t>(detail::sround(((p.GetY() - m_header->GetOffsetY()) / m_header->GetScaleY())));
+//     m_record.z = static_cast<int32_t>(detail::sround(((p.GetZ() - m_header->GetOffsetZ()) / m_header->GetScaleZ())));
+// 
+//     Classification::bitset_type clsflags(p.GetClassification());
+//     m_record.classification = static_cast<uint8_t>(clsflags.to_ulong());
+// 
+//     m_record.intensity = p.GetIntensity();
+//     m_record.flags = p.GetScanFlags();
+//     m_record.scan_angle_rank = p.GetScanAngleRank();
+//     m_record.user_data = p.GetUserData();
+//     m_record.point_source_id = p.GetPointSourceID();
+// }
 
 }}} // namespace liblas::detail::reader
