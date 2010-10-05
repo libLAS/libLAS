@@ -682,7 +682,7 @@ void Point::SetTime(double const& t)
     std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Time");
     const boost::uint8_t* x_b =  reinterpret_cast<const boost::uint8_t*>(&t);
 #if defined(LIBLAS_BIG_ENDIAN)
-        for (boost::int32_t n = sizeof( double ); n >= 0; n--)
+        for (boost::int32_t n = sizeof( double )-1; n >= 0; n--)
 #else
         for (boost::uint32_t n = 0; n < sizeof( double ); n++)
 #endif 
@@ -699,13 +699,13 @@ double Point::GetTime() const
 #if defined(LIBLAS_BIG_ENDIAN)
         for (boost::uint32_t n = 0; n < sizeof( double ); n++)
 #else
-        for (boost::int32_t n = sizeof( double ); n >= 0; n--)
+        for (boost::int32_t n = sizeof( double )-1; n >= 0; n--)
 #endif  
             data[n] = m_format_data[pos+n];
 
     const double* output = reinterpret_cast<const double*>(data);
     double out = *output;
-    delete data;
+    delete[] data;
     return out;
 }
 

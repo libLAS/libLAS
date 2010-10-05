@@ -380,7 +380,7 @@ inline IntegerType bitsToInt(   IntegerType& result,
 #if defined(LIBLAS_BIG_ENDIAN)
         for (boost::uint32_t n = 0; n < sizeof( result ); n++)
 #else
-        for (boost::int32_t n = sizeof( result ); n >= 0; n--)
+        for (boost::int32_t n = sizeof( result )-1; n >= 0; n--)
 #endif    
             result = (result << 8) +data[ n + index ];
         return result;
