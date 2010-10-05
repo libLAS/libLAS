@@ -62,49 +62,23 @@ using namespace boost;
 namespace liblas {
 
 Point::Point()
-    : m_extra_data(0)
-    , m_gps_time(0)
-    , m_intensity(0)
-    , m_source_id(0)
-    , m_flags(0)
-    , m_user_data(0)
-    , m_angle_rank(0)
-    , m_header(HeaderPtr())
+    : m_header(HeaderPtr())
     , m_default_header(EmptyHeader::get())
 {
-    m_double_coords_cache.assign(0);
     m_format_data.resize(ePointSize3);
     m_format_data.assign(ePointSize3, 0);
 }
 
 Point::Point(HeaderPtr hdr)
-    : m_extra_data(0)
-    , m_gps_time(0)
-    , m_intensity(0)
-    , m_source_id(0)
-    , m_flags(0)
-    , m_user_data(0)
-    , m_angle_rank(0)
-    , m_header(hdr)
+    : m_header(hdr)
     , m_default_header(EmptyHeader::get())
 {
-    m_double_coords_cache.assign(0);
     m_format_data.resize(ePointSize3);
     m_format_data.assign(ePointSize3, 0);
 }
 
 Point::Point(Point const& other)
-    : m_extra_data(other.m_extra_data)
-    , m_format_data(other.m_format_data)
-    , m_double_coords_cache(other.m_double_coords_cache)
-    , m_color(other.m_color)
-    , m_gps_time(other.m_gps_time)
-    , m_intensity(other.m_intensity)
-    , m_source_id(other.m_source_id)
-    , m_flags(other.m_flags)
-    , m_user_data(other.m_user_data)
-    , m_angle_rank(other.m_angle_rank)
-    , m_class(other.m_class)
+    : m_format_data(other.m_format_data)
     , m_header(other.m_header)
     , m_default_header(EmptyHeader::get())
 {
@@ -114,17 +88,7 @@ Point& Point::operator=(Point const& rhs)
 {
     if (&rhs != this)
     {
-        m_extra_data = rhs.m_extra_data;
         m_format_data = rhs.m_format_data;
-        m_double_coords_cache = rhs.m_double_coords_cache;
-        m_color = rhs.m_color;
-        m_gps_time = rhs.m_gps_time;
-        m_class = rhs.m_class;
-        m_intensity = rhs.m_intensity;
-        m_source_id = rhs.m_source_id;
-        m_flags = rhs.m_flags;
-        m_user_data = rhs.m_user_data;
-        m_angle_rank = rhs.m_angle_rank;
         m_header = rhs.m_header;
     }
     return *this;
@@ -138,79 +102,6 @@ void Point::SetCoordinates(double const& x, double const& y, double const& z)
     SetZ(z);
 }
 
-
-// void Point::SetReturnNumber(uint16_t const& num)
-// {
-//     // Store value in bits 0,1,2
-//     uint8_t mask = 0x7 << 0; // 0b00000111
-//     m_flags &= ~mask;
-//     m_flags |= mask & (static_cast<uint8_t>(num) << 0);
-// 
-// }
-
-// void Point::SetNumberOfReturns(uint16_t const& num)
-// {
-//     // Store value in bits 3,4,5
-//     uint8_t mask = 0x7 << 3; // 0b00111000
-//     m_flags &= ~mask;
-//     m_flags |= mask & (static_cast<uint8_t>(num) << 3);
-// }
-
-// void Point::SetScanDirection(uint16_t const& dir)
-// {
-//     // Store value in bit 6
-//     uint8_t mask = 0x1 << 6; // 0b01000000
-//     m_flags &= ~mask;
-//     m_flags |= mask & (static_cast<uint8_t>(dir) << 6);
-// }
-// 
-// boost::uint16_t Point::GetScanDirection() const
-// {
-//     // Read 7th bit
-//     return ((m_flags >> 6) & 0x01);
-// }
-
-// void Point::SetFlightLineEdge(uint16_t const& edge)
-// {
-//     // Store value in bit 7
-//     uint8_t mask = 0x1 << 7; // 0b10000000
-//     m_flags &= ~mask;
-//     m_flags |= mask & (static_cast<uint8_t>(edge) << 7);}
-
-// void Point::SetScanAngleRank(int8_t const& rank)
-// {
-//     m_angle_rank = rank;
-// }
-// boost::int8_t Point::GetScanAngleRank() const
-// {
-//     return m_angle_rank;
-// }
-
-
-// void Point::SetUserData(uint8_t const& data)
-// {
-//     m_user_data = data;
-// }
-
-// Classification const& Point::GetClassification() const
-// {
-//     return m_class;
-// }
-// 
-// void Point::SetClassification(Classification const& cls)
-// {
-//     m_class = cls;
-// }
-
-// void Point::SetClassification(Classification::bitset_type const& flags)
-// {
-//     m_class = Classification(flags);
-// }
-// 
-// void Point::SetClassification(boost::uint8_t const& flags)
-// {
-//     m_class = Classification(flags);
-// }
 
 bool Point::equal(Point const& other) const
 {
@@ -404,7 +295,6 @@ double Point::GetX() const
         output  = (v * m_header->GetScaleX()) + m_header->GetOffsetX();
     } else {
         output  = (v * m_default_header.GetScaleX()) + m_default_header.GetOffsetX();
-        output = m_double_coords_cache[0];
     }
     
     return output;
@@ -422,8 +312,6 @@ double Point::GetY() const
         output  = (v * m_header->GetScaleY()) + m_header->GetOffsetY();
     } else {
         output  = (v * m_default_header.GetScaleY()) + m_default_header.GetOffsetY();
-        output = m_double_coords_cache[1];
-        // output = static_cast<double>(v);
     }
     
     return output;
@@ -441,8 +329,6 @@ double Point::GetZ() const
         output  = (v * m_header->GetScaleZ()) + m_header->GetOffsetZ();
     } else {
         output  = (v * m_default_header.GetScaleZ()) + m_default_header.GetOffsetZ();
-        output = m_double_coords_cache[2];
-        // output = static_cast<double>(v);
     }
     
     return output;
@@ -463,13 +349,8 @@ void Point::SetX( double const& value )
         v = static_cast<boost::int32_t>(
                              detail::sround(((value - m_default_header.GetOffsetX()) / 
                                               m_default_header.GetScaleX())));
-        m_double_coords_cache[0] = value;
     }
-    // What to do about points with no header?  Cook up a default scale?
-    // Given a double determine the maximum amount of precision required to 
-    // 
-    
-    
+
     SetRawX(v);
 }
 
@@ -487,7 +368,6 @@ void Point::SetY( double const& value )
         v = static_cast<boost::int32_t>(
                              detail::sround(((value - m_default_header.GetOffsetY()) / 
                                               m_default_header.GetScaleY())));
-        m_double_coords_cache[1] = value;
     }
     
     SetRawY(v);
@@ -508,7 +388,6 @@ void Point::SetZ( double const& value )
         v = static_cast<boost::int32_t>(
                              detail::sround(((value - m_default_header.GetOffsetZ()) / 
                                               m_default_header.GetScaleZ())));
-        m_double_coords_cache[2] = value;
     }
     
     SetRawZ(v);
@@ -820,171 +699,49 @@ void Point::SetColor(Color const& value)
                                                GetDimensionPosition("Blue"));
 }
 
-// void Point::SetTime(double const& t)
-// {
-//     liblas::detail::intToBits<double>(t, 
-//                                                         m_format_data, 
-//                                                         GetDimensionPosition("Time"));
-// }
-// 
-// double Point::GetTime() const
-// {
-//     double output;
-//     liblas::detail::bitsToInt<double>(output, 
-//                                                m_format_data, 
-//                                                GetDimensionPosition("Time"));
-// 
-//     return output;
-// }
+void Point::SetTime(double const& t)
+{
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Time");
+    const boost::uint8_t* x_b =  reinterpret_cast<const boost::uint8_t*>(&t);
+#if defined(LIBLAS_BIG_ENDIAN)
+        for (boost::int32_t n = sizeof( double ); n >= 0; n--)
+#else
+        for (boost::uint32_t n = 0; n < sizeof( double ); n++)
+#endif 
+            m_format_data[pos+n] = x_b[n];
+
+}
+
+double Point::GetTime() const
+{
+
+    std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Time");
+    boost::uint8_t* data = new boost::uint8_t[8];
+    
+#if defined(LIBLAS_BIG_ENDIAN)
+        for (boost::uint32_t n = 0; n < sizeof( double ); n++)
+#else
+        for (boost::int32_t n = sizeof( double ); n >= 0; n--)
+#endif  
+            data[n] = m_format_data[pos+n];
+
+    const double* output = reinterpret_cast<const double*>(data);
+    double out = *output;
+    delete data;
+    return out;
+}
+
 
 boost::any Point::GetValue(DimensionPtr d) const
 {
 
     boost::any output;
-    
-    // If we don't have a header for the point, we can't return 
-    // anything because we don't have a schema to go along with it.
-    // Use the other method Point::GetValue(DimensionPtr d, liblas::Schema const& schema).
-    if (m_header.get() == 0) {
-    std::cout << "GetValue: have no header!" << std::endl;
-        return output;
-    }
-    
-    liblas::Schema const& schema = m_header->GetSchema();
 
-    
-    if (m_format_data.size() + m_extra_data.size() != schema.GetByteSize()) {
-        std::ostringstream oss;
-        oss << "The size of the required_data, " << m_format_data.size()
-            << ", plus the size of the extra_data, " << m_extra_data.size()
-            << ", does not equal the schema's byte size, " << schema.GetByteSize();
-        throw std::runtime_error(oss.str());
-    }
-    
-    DimensionMap const& dimensions = schema.GetDimensions();
-    
-    
-    boost::uint32_t wanted_dim_pos = d->GetPosition();
-    std::size_t byte_pos = 0;
-    boost::uint32_t bit_pos = 0;
-    boost::uint32_t dim_pos = 0;
-    
-    std::vector<boost::uint8_t> data;
-
-    std::vector<DimensionPtr> positions;
-    for (DimensionMap::const_iterator i = dimensions.begin(); i != dimensions.end(); ++i)
-    {
-        positions.push_back((*i).second);
-    }
-    
-    std::sort(positions.begin(), positions.end(), sort_dimensions);
-    
-    
-    for (std::vector<DimensionPtr>::const_iterator i = positions.begin(); i != positions.end(); ++i)
-    {
-        DimensionPtr t = (*i);
-        
-        if (t->GetPosition() != dim_pos) {
-            std::ostringstream oss;
-            oss << "The dimensions are not properly sorted.  '"<< t->GetName()<<"'s "
-                << "position is " << t->GetPosition() << " while the next expected "
-                << "position is " << dim_pos;
-            throw std::runtime_error(oss.str());
-            
-        }
-
-
-
-        
-        // we're here
-        if (t->GetPosition() == d->GetPosition()) {            // 
-                    // std::cout << "Position: " << t->GetPosition() << std::endl;
-                    // std::cout << "byte_pos: " << byte_pos << std::endl;
-                    // std::cout << "bit_pos: " << bit_pos << std::endl;
-            
-            // Get a value that's at least 1byte in size
-                if (byte_pos > m_format_data.size()) {
-                    // fetch from extra data
-                } else {
-                    std::vector<boost::uint8_t>::size_type i;
-                    for(i=byte_pos; i != byte_pos+d->GetByteSize(); i++)
-                    {
-                        data.push_back(m_format_data[i]);
-                    }
-                    
-                    if (d->IsInteger()) 
-                    {
-                        if (d->IsSigned()) {
-                            
-                            // std::cout << "data size:" <<  data.size();
-                            boost::int32_t dx = 0;
-                            double scaled_x = 0;
-                            dx = liblas::detail::bitsToInt<boost::int32_t>(dx, data, byte_pos);
-                            
-                            double scale = m_header->GetScaleX();
-                            double offset = m_header->GetOffsetX();
-                            // liblas::Scaled<boost::int32_t> s(dx, m_header->GetScaleX(), &offset);
-                            double const ax = (dx * m_header->GetScaleX()) + m_header->GetOffsetX();
-                            output = dx;
-                            // std::cout << "dx: " <<  dx  <<" Real X: " << GetX() <<std::endl;
-                            return output;
-                        } else {
-                            
-                        }
-                    } else {
-                        
-                    }
-                    return output;
-                }
-            }
-            else {
-                // Do some shifting magic to get our value
-            }
-            
-        // If it is already-byte aligned, we'll count that directly.  If it 
-        // is not, we will cumulate until we are byte aligned.  If we never 
-        // be come byte aligned, we're going to throw an error.
-        if (t->GetBitSize() % 8 == 0) 
-        {
-            byte_pos += t->GetByteSize();
-        } else 
-        {
-            bit_pos += t->GetBitSize();
-        }
-        dim_pos++;
-                    
-    }
-
-
+    GetDimensionPosition(d->GetName());
+ 
     
     return output;
 }
 
-PointFactory::PointFactory() : m_header(HeaderPtr(new Header))
-{
-    
-}
 
-const PointFactory* PointFactory::getInstance() 
-{
-    static PointFactory inst;
-    return &inst;
-}
-
-PointFactory::~PointFactory(){
-
-}
-
-PointPtr PointFactory::createPoint() const
-{
-    PointPtr p = PointPtr(new liblas::Point());
-    p->SetHeaderPtr(m_header);
-    return p;
-}
-
-
-PointPtr PointFactory::createPoint(HeaderPtr hdr) const
-{
-    return PointPtr(new liblas::Point(hdr));
-}
 } // namespace liblas

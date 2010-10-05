@@ -63,22 +63,6 @@
 
 namespace liblas {
 
-class PointFactory
-{
-public:
-    PointFactory();
-    
-    static const PointFactory* getInstance();
-    
-    PointPtr createPoint() const;
-    PointPtr createPoint(HeaderPtr hdr) const;
-    
-    /// Destructor
-    virtual ~PointFactory();
-
-private:
-    HeaderPtr m_header;    
-};
 
 /// Point data record composed with X, Y, Z coordinates and attributes.
 class Point
@@ -210,9 +194,7 @@ public:
 
     bool Validate() const;
     bool IsValid() const;
-    
-    std::vector<boost::uint8_t> const& GetExtraData() const { return m_extra_data; }
-    void SetExtraData(std::vector<boost::uint8_t> const& v) { m_extra_data = v;}
+
 
     std::vector<boost::uint8_t> const& GetData() const {return m_format_data; }
     void SetData(std::vector<boost::uint8_t> const& v) { m_format_data = v;}
@@ -227,26 +209,10 @@ public:
 private:
 
     detail::PointRecord m_record;
-    std::vector<boost::uint8_t> m_extra_data;
     std::vector<boost::uint8_t> m_format_data;
-
-    // If we don't have a header, we have no way to scale the data.
-    // We're going to cache the value until the user sets the header for the point
-    // This means that the raw data is *out of sync* with the real data
-    // until there is a header attached to the point and the writer 
-    // must account for this.    
-    boost::array<double, 3> m_double_coords_cache;
     
     std::vector<boost::uint8_t>::size_type GetDimensionPosition(std::string const& name) const;
-    
-    Color m_color;
-    double m_gps_time;
-    boost::uint16_t m_intensity;
-    boost::uint16_t m_source_id;
-    boost::uint8_t m_flags;
-    boost::uint8_t m_user_data;
-    boost::int8_t m_angle_rank;
-    Classification m_class;
+
     HeaderPtr m_header;
     Header const& m_default_header;
 
@@ -264,91 +230,6 @@ inline bool operator!=(Point const& lhs, Point const& rhs)
 {
     return (!(lhs == rhs));
 }
-
-// inline boost::uint16_t Point::GetIntensity() const
-// {
-//     return m_intensity;
-// }
-// 
-// inline void Point::SetIntensity(boost::uint16_t const& intensity)
-// {
-//     m_intensity = intensity;
-// }
-
-// inline boost::uint16_t Point::GetReturnNumber() const
-// {
-//     // Read bits 1,2,3 (first 3 bits)
-//     return (m_flags & 0x07);
-// }
-
-// inline boost::uint16_t Point::GetNumberOfReturns() const
-// {
-//     // Read bits 4,5,6
-//     return ((m_flags >> 3) & 0x07);
-// }
-
-// inline boost::uint16_t Point::GetScanDirection() const
-// {
-//     // Read 7th bit
-//     return ((m_flags >> 6) & 0x01);
-// }
-// 
-// inline boost::uint16_t Point::GetFlightLineEdge() const
-// {
-//     // Read 8th bit
-//     return ((m_flags >> 7) & 0x01);
-// }
-
-// inline boost::uint8_t Point::GetScanFlags() const
-// {
-//     return m_flags;
-// }
-
-// inline void Point::SetScanFlags(boost::uint8_t const& flags)
-// {
-//     m_flags = flags;
-// }
-
-// inline boost::int8_t Point::GetScanAngleRank() const
-// {
-//     return m_angle_rank;
-// }
-
-// inline boost::uint8_t Point::GetUserData() const
-// {
-//     return m_user_data;
-// }
-
-// inline boost::uint16_t Point::GetPointSourceID() const
-// {
-//     return m_source_id;
-// }
-// 
-// inline void Point::SetPointSourceID(boost::uint16_t const& id)
-// {
-//     m_source_id = id;
-// }
-
-inline double Point::GetTime() const
-{
-    return m_gps_time;
-}
-
-inline void Point::SetTime(double const& time)
-{
-    // assert(time >= 0); // TODO: throw? --mloskot  // negative times are legit, I think -- hobu
-    m_gps_time = time;
-}
-
-// > inline Color const& Point::GetColor() const
-// > {
-// >     return m_color;
-// > }
-
-// inline void Point::SetColor(Color const& value)
-// {
-//     m_color = value;
-// }
 
 inline double Point::operator[](std::size_t const& index) const
 {
