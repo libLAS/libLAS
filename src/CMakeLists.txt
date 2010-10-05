@@ -84,7 +84,7 @@ set(LIBLAS_DETAIL_HPP
   ${LIBLAS_HEADERS_DIR}/detail/pointrecord.hpp
   ${LIBLAS_HEADERS_DIR}/detail/sha1.hpp
   ${LIBLAS_HEADERS_DIR}/detail/timer.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/utility.hpp)
+  ${LIBLAS_HEADERS_DIR}/detail/private_utility.hpp)
 
 set(LIBLAS_DETAIL_INDEX_HPP
   ${LIBLAS_HEADERS_DIR}/detail/index/indexoutput.hpp
