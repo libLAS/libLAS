@@ -46,7 +46,7 @@
 #include <liblas/lascolor.hpp>
 #include <liblas/detail/pointrecord.hpp>
 #include <liblas/detail/fwd.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/lasschema.hpp>
 

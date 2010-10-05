@@ -39,10 +39,10 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  
-#include <liblas/detail/reader/header.hpp>
-#include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/lasvariablerecord.hpp>
+#include <liblas/detail/reader/header.hpp>
+#include <liblas/detail/private_utility.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/concept_check.hpp>

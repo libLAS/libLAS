@@ -45,7 +45,7 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lasschema.hpp>
 #include <liblas/lasheader.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 #include <liblas/detail/writer/base.hpp>
 #include <liblas/detail/fwd.hpp>
 // boost

@@ -40,7 +40,7 @@
  ****************************************************************************/
 
 #include <liblas/lasschema.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -611,7 +611,7 @@ bool Schema::IsCustom() const
     return false;
 }
 
-SizesArray  Schema::GetSizes(std::string const& name) const
+SizesArray const& Schema::GetSizes(std::string const& name) const
 {
     SizesMap::const_iterator i = m_sizes.find(name);
     if (i == m_sizes.end()) {
@@ -624,13 +624,10 @@ SizesArray  Schema::GetSizes(std::string const& name) const
 
 void Schema::CalculateSizes() 
 {
-    DimensionMap::const_iterator i;
-    DimensionArray::const_iterator j;
-
     m_bit_size = 0;
     m_base_bit_size = 0;
 
-    std::vector<DimensionPtr> positions;
+    std::vector<DimensionPtr> positions(m_dimensions.size());
     for (DimensionMap::const_iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
         positions.push_back(i->second);
@@ -641,7 +638,7 @@ void Schema::CalculateSizes()
     std::size_t index_position = 0;
     std::size_t bit_position = 0;
 
-    for (j = positions.begin(); j != positions.end(); ++j)
+    for (DimensionArray::const_iterator j = positions.begin(); j != positions.end(); ++j)
     {
         // increment our total bit size for the entire point
         DimensionPtr const& t = (*j);
@@ -746,7 +743,7 @@ void Schema::AddDimension(DimensionPtr d)
     m_dimensions[d->GetName()] = d;
     
     // Add/reset the critical sizes array on the size map
-    SizesArray a;
+    SizesArray a; a.assign(0);
     m_sizes[d->GetName()] = a;
     
     // Update all of our sizes
@@ -790,8 +787,6 @@ std::vector<std::string> Schema::GetDimensionNames() const
     }
     return output;
 }
-
-
 
 VariableRecord Schema::GetVLR() const
 {

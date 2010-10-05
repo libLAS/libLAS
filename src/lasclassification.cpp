@@ -40,7 +40,7 @@
  ****************************************************************************/
 
 #include <liblas/lasclassification.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std

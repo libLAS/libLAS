@@ -41,7 +41,7 @@
  ****************************************************************************/
 
 #include <liblas/lasspatialreference.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 // boost
 #include <boost/concept_check.hpp>
 #include <boost/cstdint.hpp>

@@ -9,7 +9,7 @@
 #include <liblas/iterator.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasreader.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 #include <tut/tut.hpp>
 #include <algorithm>
 #include <fstream>

@@ -1,12 +1,7 @@
 #include "las2oci.hpp"
 
-
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 #include "laskernel.hpp"
-
-
-
-
 
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
@@ -14,11 +9,6 @@ namespace po = boost::program_options;
 
 using namespace liblas;
 using namespace std;
-
-
-
-
-
 
 void OCIGDALDebugErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
 {

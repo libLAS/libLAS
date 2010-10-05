@@ -39,11 +39,11 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/detail/writer/header.hpp>
-#include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasspatialreference.hpp>
+#include <liblas/detail/writer/header.hpp>
+#include <liblas/detail/private_utility.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std

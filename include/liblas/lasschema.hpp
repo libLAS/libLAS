@@ -52,7 +52,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
 #include <boost/array.hpp>
-
 // std
 #include <iosfwd>
 #include <limits>
@@ -67,12 +66,11 @@ class Dimension;
 
 typedef boost::shared_ptr<Dimension> DimensionPtr;
 typedef boost::unordered_map<std::string, DimensionPtr> DimensionMap;
-
 typedef std::vector<DimensionPtr> DimensionArray;
-
 typedef boost::array<std::size_t, 4> SizesArray;
 typedef boost::unordered_map<std::string, SizesArray> SizesMap;
 
+/// Schema definition
 class Schema
 {
 public:
@@ -94,7 +92,6 @@ public:
     /// Get the base size (only accounting for Time, Color, etc )
     std::size_t GetBaseByteSize() const;
 
-
     PointFormatName GetDataFormatId() const { return m_data_format_id; }
     void SetDataFormatId(PointFormatName const& value);
     
@@ -106,7 +103,7 @@ public:
     std::vector<std::string> GetDimensionNames() const;
     DimensionMap const& GetDimensions() const { return m_dimensions; }
     liblas::property_tree::ptree GetPTree() const;
-    SizesArray GetSizes(std::string const& name) const;
+    SizesArray const& GetSizes(std::string const& name) const;
     
     boost::uint16_t GetSchemaVersion() const { return m_schemaversion; }
     void SetSchemaVersion(boost::uint16_t v) { m_schemaversion = v; }
@@ -137,8 +134,7 @@ private:
 
 };
 
-
-
+/// Dimension definition
 class Dimension
 {
 public:
@@ -277,13 +273,11 @@ private:
     boost::uint32_t m_position;
     double m_scale;
     bool m_precise;
-    double m_offset;
-    
+    double m_offset;  
 };
 
 bool inline sort_dimensions(DimensionPtr i, DimensionPtr j) 
 { 
-    
     return (*i) < (*j); 
 }
 
