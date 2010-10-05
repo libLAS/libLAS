@@ -102,14 +102,3 @@ class Schema(object):
     size = property(get_size, set_size, None, doc)
 
 
-    def get_color(self):
-        return bool(core.las.LASSchema_HasColor(self.handle))
-
-    doc = """Does this format have color information"""
-    color = property(get_color, None, None, doc)
-
-    def get_time(self):
-        return bool(core.las.LASSchema_HasTime(self.handle))
-
-    doc = """Does this format have time information"""
-    time = property(get_time, None, None, doc)

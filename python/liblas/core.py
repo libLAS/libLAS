@@ -747,17 +747,6 @@ las.LASSchema_GetByteSize.argtypes = [ctypes.c_void_p]
 las.LASSchema_GetByteSize.errcheck = check_value
 
 
-
-las.LASSchema_HasColor.restype = ctypes.c_uint8
-las.LASSchema_HasColor.argtypes = [ctypes.c_void_p]
-las.LASSchema_HasColor.errcheck = check_value
-
-
-las.LASSchema_HasTime.restype = ctypes.c_uint8
-las.LASSchema_HasTime.argtypes = [ctypes.c_void_p]
-las.LASSchema_HasTime.errcheck = check_value
-
-
 las.LASSchema_Destroy.argtypes = [ctypes.c_void_p]
 las.LASSchema_Destroy.errcheck = check_void_done
 las.LASSchema_Destroy.restype = None

@@ -64,6 +64,7 @@
 namespace liblas {  
 
 class Dimension;
+
 typedef boost::shared_ptr<Dimension> DimensionPtr;
 typedef boost::unordered_map<std::string, DimensionPtr> DimensionMap;
 
@@ -96,9 +97,6 @@ public:
 
     PointFormatName GetDataFormatId() const { return m_data_format_id; }
     void SetDataFormatId(PointFormatName const& value);
-    
-    bool HasColor() const;
-    bool HasTime() const; 
     
     void AddDimension(DimensionPtr dim);
     DimensionPtr GetDimension(std::string const& name) const;
