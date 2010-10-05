@@ -59,18 +59,18 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <map>
+#include <boost/unordered_map.hpp>
 
 namespace liblas {  
 
 class Dimension;
 typedef boost::shared_ptr<Dimension> DimensionPtr;
-typedef std::map<std::string, DimensionPtr> DimensionMap;
+typedef boost::unordered_map<std::string, DimensionPtr> DimensionMap;
 
 typedef std::vector<DimensionPtr> DimensionArray;
 
 typedef boost::array<std::size_t, 4> SizesArray;
-typedef std::map<std::string, SizesArray > SizesMap;
+typedef boost::unordered_map<std::string, SizesArray> SizesMap;
 
 class Schema
 {
