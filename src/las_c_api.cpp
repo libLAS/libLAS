@@ -757,49 +757,6 @@ LAS_DLL LASErrorEnum LASPoint_SetUserData(LASPointH hPoint, boost::uint8_t value
 
 }
 
-LAS_DLL LASErrorEnum LASPoint_GetExtraData(const LASPointH hPoint, boost::uint8_t** data, boost::uint16_t* length) {
-    
-    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetData", LE_Failure);
-
-    try {
-        liblas::Point* p = ((liblas::Point*) hPoint);
-        std::vector<boost::uint8_t> d = p->GetExtraData();
-        *length = static_cast<boost::uint16_t>(d.size());
-        *data = (boost::uint8_t*) malloc (*length * sizeof(boost::uint8_t));
-        for (boost::uint16_t i=0; i < *length; i++) {
-            (*data)[i] = d[i];
-        }
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASPoint_GetData");
-        return LE_Failure;
-    }
-
-
-    return LE_None;
-}
-
-LAS_DLL LASErrorEnum LASPoint_SetExtraData(const LASPointH hPoint, boost::uint8_t* data, boost::uint16_t length) {
-    
-    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetData", LE_Failure);
-
-    try {
-        liblas::Point* p = ((liblas::Point*) hPoint);
-        std::vector<boost::uint8_t> d;
-        d.resize(length);
-        for (boost::uint16_t i=0; i < length; i++) {
-            d[i] = data[i];
-        }
-        p->SetExtraData(d);
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetData");
-        return LE_Failure;
-    }
-
-
-    return LE_None;
-}
 LAS_DLL int LASPoint_Equal(const LASPointH hPoint1, const LASPointH hPoint2) {
     VALIDATE_LAS_POINTER1(hPoint1, "LASPoint_Equal", 0);
     VALIDATE_LAS_POINTER1(hPoint2, "LASPoint_Equal", 0);
