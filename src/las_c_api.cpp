@@ -2010,21 +2010,6 @@ LAS_DLL LASSchemaH LASSchema_Create(  liblas::PointFormatName point_format) {
     return (LASSchemaH) schema;
 }
 
-LAS_DLL boost::uint8_t LASSchema_HasColor( LASSchemaH hFormat)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_HasColor", 0);
-    
-    return static_cast<int>(((liblas::Schema*) hFormat)->HasColor());    
-}
-
-
-LAS_DLL boost::uint8_t LASSchema_HasTime( LASSchemaH hFormat)
-{
-    VALIDATE_LAS_POINTER1(hFormat, "LASSchema_HasTime", 0);
-    
-    return static_cast<int>(((liblas::Schema*) hFormat)->HasTime());    
-}
-
 
 LAS_DLL boost::uint16_t LASSchema_GetByteSize( LASSchemaH hFormat)
 {

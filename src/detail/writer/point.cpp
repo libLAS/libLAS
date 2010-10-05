@@ -60,8 +60,6 @@ Point::Point(std::ostream& ofs, uint32_t& count, HeaderPtr header)
     , m_ofs(ofs)
     , m_header(header)
     , m_format(header->GetSchema())
-    , bTime(header->GetSchema().HasTime())
-    , bColor(header->GetSchema().HasColor())
 {
     setup();
 }

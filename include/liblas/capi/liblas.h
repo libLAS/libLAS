@@ -1154,24 +1154,9 @@ LAS_DLL unsigned int LASSRS_GetVLRCount(const LASSRSH hSRS);
 */
 LAS_DLL void LASString_Free(char* string);
 
-LAS_DLL LASSchemaH LASSchema_Create(  unsigned char version_major,
-                                                unsigned char version_minor,
-                                                unsigned int size,
-                                                unsigned char bHasColor,
-                                                unsigned char bHasTime);
-
-LAS_DLL unsigned char LASSchema_GetVersionMinor( LASSchemaH hFormat);
-LAS_DLL LASError LASSchema_SetVersionMinor( LASSchemaH hFormat, unsigned char nMinor);
-LAS_DLL unsigned char LASSchema_GetMajorVersion( LASSchemaH hFormat);
-LAS_DLL LASError LASSchema_SetVersionMinor( LASSchemaH hFormat, unsigned char nMajor);
-LAS_DLL unsigned char LASSchema_HasColor( LASSchemaH hFormat);
-LAS_DLL LASError LASSchema_SetColor( LASSchemaH hFormat, unsigned char bColor);
-LAS_DLL unsigned char LASSchema_HasTime( LASSchemaH hFormat);
-LAS_DLL LASError LASSchema_SetTime( LASSchemaH hFormat, unsigned char bTime);
 LAS_DLL unsigned short LASSchema_GetByteSize( LASSchemaH hFormat);
-LAS_DLL LASError LASSchema_SetByteSize( LASSchemaH hFormat, unsigned short size);
 LAS_DLL unsigned short LASSchema_GetBaseByteSize( LASSchemaH hFormat);
-LAS_DLL LASError LASSchema_SetBaseByteSize( LASSchemaH hFormat, unsigned short size);
+
 
 
 LAS_DLL LASSchemaH LASHeader_GetSchema( LASHeaderH hHeader );

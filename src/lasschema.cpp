@@ -792,37 +792,6 @@ std::vector<std::string> Schema::GetDimensionNames() const
 }
 
 
-bool Schema::HasColor() const
-{
-    DimensionPtr c;
-    try {
-        c = GetDimension("Red");
-        c = GetDimension("Green");
-        c = GetDimension("Blue");
-    } catch (std::runtime_error const& e) {
-        boost::ignore_unused_variable_warning(e);
-        return false;
-    }
-    
-    return true;
-    
-}
-
-bool Schema::HasTime() const
-{
-    DimensionPtr c;
-    try {
-        c = GetDimension("Time");
-    } catch (std::runtime_error const& e) {
-        boost::ignore_unused_variable_warning(e);
-        return false;
-    }
-    
-    return true;
-    
-}
-
-
 
 VariableRecord Schema::GetVLR() const
 {

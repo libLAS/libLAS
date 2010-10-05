@@ -8,11 +8,6 @@
   >>> f = schema.Schema()
   >>> f.size
   20
-  >>> f.color
-  False
-  >>> f.time
-  False
-
   
 
   >>> h = f2.header
@@ -23,12 +18,7 @@
   
   >>> f.size
   28
-  
-  >>> f.color
-  False
-  
-  >>> f.time
-  True
+
   
   >>> h = header.Header()
   >>> f = h.schema
@@ -37,9 +27,6 @@
   >>> f.size
   34
 
-  >>> f.time
-  True 
-    
 
 
   >>> h.schema = f

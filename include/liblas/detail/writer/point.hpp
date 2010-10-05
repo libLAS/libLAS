@@ -89,9 +89,6 @@ private:
     
     std::vector<boost::uint8_t> m_blanks; 
 
-    bool bTime;
-    bool bColor;
-        
     void setup();
     // void fill();
 };
