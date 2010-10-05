@@ -627,7 +627,7 @@ void Schema::CalculateSizes()
     m_bit_size = 0;
     m_base_bit_size = 0;
 
-    std::vector<DimensionPtr> positions(m_dimensions.size());
+    std::vector<DimensionPtr> positions;
     for (DimensionMap::const_iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
         positions.push_back(i->second);
