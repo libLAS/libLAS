@@ -43,7 +43,7 @@
 #define LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/exception.hpp>
 #include <liblas/capi/las_config.h>

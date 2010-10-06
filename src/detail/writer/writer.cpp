@@ -39,14 +39,13 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/detail/writer/writer.hpp>
-#include <liblas/detail/writer/header.hpp>
-#include <liblas/detail/writer/point.hpp>
-#include <liblas/detail/utility.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/liblas.hpp>
-
+#include <liblas/detail/writer/writer.hpp>
+#include <liblas/detail/writer/header.hpp>
+#include <liblas/detail/writer/point.hpp>
+#include <liblas/detail/private_utility.hpp>
 // std
 #include <vector>
 #include <fstream>

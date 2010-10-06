@@ -1,6 +1,6 @@
 #ifndef TS2LAS_HPP_INCLUDED
 
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 
 #include <liblas/laswriter.hpp>
 #include <liblas/laspoint.hpp>

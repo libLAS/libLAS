@@ -44,7 +44,7 @@
 
 #include <liblas/lasheader.hpp>
 #include <liblas/detail/fwd.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 #include <liblas/detail/writer/base.hpp>
 // boost
 #include <boost/cstdint.hpp>

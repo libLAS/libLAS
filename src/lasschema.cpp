@@ -40,7 +40,7 @@
  ****************************************************************************/
 
 #include <liblas/lasschema.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -77,7 +77,7 @@ void Schema::add_record0_dimensions()
 {
     std::ostringstream text;
     
-    DimensionPtr x = DimensionPtr(new Dimension("X", 32));
+    DimensionPtr x(new Dimension("X", 32));
     text << "x coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
     x->SetDescription(text.str()); 
@@ -88,7 +88,7 @@ void Schema::add_record0_dimensions()
     AddDimension(x);
     text.str("");
 
-    DimensionPtr y = DimensionPtr(new Dimension("Y", 32));
+    DimensionPtr y(new Dimension("Y", 32));
     text << "y coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
     y->SetDescription(text.str()); 
@@ -99,7 +99,7 @@ void Schema::add_record0_dimensions()
     AddDimension(y);
     text.str("");
     
-    DimensionPtr z = DimensionPtr(new Dimension("Z", 32));
+    DimensionPtr z(new Dimension("Z", 32));
     text << "z coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
     z->SetDescription(text.str()); 
@@ -109,7 +109,7 @@ void Schema::add_record0_dimensions()
     AddDimension(z);
     text.str("");
 
-    DimensionPtr intensity = DimensionPtr(new Dimension("Intensity", 16));
+    DimensionPtr intensity(new Dimension("Intensity", 16));
     text << "The intensity value is the integer representation of the pulse " 
             "return magnitude. This value is optional and system specific. "
             "However, it should always be included if available.";
@@ -120,7 +120,7 @@ void Schema::add_record0_dimensions()
     AddDimension(intensity);
     text.str("");
 
-    DimensionPtr return_no = DimensionPtr(new Dimension("Return Number", 3));
+    DimensionPtr return_no(new Dimension("Return Number", 3));
     text << "Return Number: The Return Number is the pulse return number for "
             "a given output pulse. A given output laser pulse can have many "
             "returns, and they must be marked in sequence of return. The first "
@@ -133,7 +133,7 @@ void Schema::add_record0_dimensions()
     AddDimension(return_no);
     text.str("");
     
-    DimensionPtr no_returns = DimensionPtr(new Dimension("Number of Returns", 3));
+    DimensionPtr no_returns(new Dimension("Number of Returns", 3));
     text << "Number of Returns (for this emitted pulse): The Number of Returns "
             "is the total number of returns for a given pulse. For example, "
             "a laser data point may be return two (Return Number) within a "
@@ -144,7 +144,7 @@ void Schema::add_record0_dimensions()
     AddDimension(no_returns);
     text.str("");
     
-    DimensionPtr scan_dir = DimensionPtr(new Dimension("Scan Direction", 1));
+    DimensionPtr scan_dir(new Dimension("Scan Direction", 1));
     text << "The Scan Direction Flag denotes the direction at which the "
             "scanner mirror was traveling at the time of the output pulse. "
             "A bit value of 1 is a positive scan direction, and a bit value "
@@ -158,7 +158,7 @@ void Schema::add_record0_dimensions()
     AddDimension(scan_dir);
     text.str("");
     
-    DimensionPtr edge = DimensionPtr(new Dimension("Flightline Edge", 1));
+    DimensionPtr edge(new Dimension("Flightline Edge", 1));
     text << "The Edge of Flight Line data bit has a value of 1 only when "
             "the point is at the end of a scan. It is the last point on "
             "a given scan line before it changes direction.";
@@ -169,7 +169,7 @@ void Schema::add_record0_dimensions()
     AddDimension(edge);
     text.str("");
 
-    DimensionPtr classification = DimensionPtr(new Dimension("Classification", 8));
+    DimensionPtr classification(new Dimension("Classification", 8));
     text << "Classification in LAS 1.0 was essentially user defined and optional. "
             "LAS 1.1 defines a standard set of ASPRS classifications. In addition, "
             "the field is now mandatory. If a point has never been classified, this "
@@ -182,9 +182,8 @@ void Schema::add_record0_dimensions()
 
     AddDimension(classification);
     text.str("");
-
     
-    DimensionPtr scan_angle = DimensionPtr(new Dimension("Scan Angle Rank", 8));
+    DimensionPtr scan_angle(new Dimension("Scan Angle Rank", 8));
     text << "The Scan Angle Rank is a signed one-byte number with a "
             "valid range from -90 to +90. The Scan Angle Rank is the "
             "angle (rounded to the nearest integer in the absolute "
@@ -202,14 +201,14 @@ void Schema::add_record0_dimensions()
     AddDimension(scan_angle);
     text.str("");
     
-    DimensionPtr user_data = DimensionPtr(new Dimension("User Data", 8));
+    DimensionPtr user_data(new Dimension("User Data", 8));
     text << "This field may be used at the user’s discretion";
     user_data->SetDescription(text.str());
 
     AddDimension(user_data);
     text.str("");
     
-    DimensionPtr point_source_id = DimensionPtr(new Dimension("Point Source ID", 16));
+    DimensionPtr point_source_id(new Dimension("Point Source ID", 16));
     text << "This value indicates the file from which this point originated. "
             "Valid values for this field are 1 to 65,535 inclusive with zero "
             "being used for a special case discussed below. The numerical value "
@@ -226,11 +225,9 @@ void Schema::add_record0_dimensions()
     AddDimension(point_source_id);    
     text.str("");
 
-    DimensionMap::iterator i;
-
-    for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+    for (DimensionMap::iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        boost::shared_ptr<Dimension> t = (*i).second;
+        DimensionPtr const& t = (*i).second;
         t->IsRequired(true);
         t->IsActive(true);
     }
@@ -241,7 +238,7 @@ void Schema::add_color()
 {
     std::ostringstream text;
     
-    DimensionPtr red = DimensionPtr(new Dimension("Red", 16));
+    DimensionPtr red(new Dimension("Red", 16));
     text << "The red image channel value associated with this point";
     red->SetDescription(text.str()); 
     red->IsRequired(true);
@@ -252,7 +249,7 @@ void Schema::add_color()
     AddDimension(red);
     text.str("");
 
-    DimensionPtr green = DimensionPtr(new Dimension("Green", 16));
+    DimensionPtr green(new Dimension("Green", 16));
     text << "The green image channel value associated with this point";
     green->SetDescription(text.str()); 
     green->IsRequired(true);
@@ -263,7 +260,7 @@ void Schema::add_color()
     AddDimension(green);
     text.str("");
 
-    DimensionPtr blue = DimensionPtr(new Dimension("Blue", 16));
+    DimensionPtr blue(new Dimension("Blue", 16));
     text << "The blue image channel value associated with this point";
     blue->SetDescription(text.str()); 
     blue->IsRequired(true);
@@ -299,13 +296,12 @@ void Schema::add_time()
 void Schema::update_required_dimensions(PointFormatName data_format_id)
 {
     DimensionArray user_dims;
-    DimensionMap::const_iterator i;
-    
-    if (m_dimensions.size() > 0)
+
+    if (!m_dimensions.empty())
     {
         // Keep any non-required dimensions the user may have added
         // and add them back to the list of dimensions
-        for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+        for (DimensionMap::const_iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
         {
             if ( i->second->IsRequired() == false)
                 user_dims.push_back(i->second);
@@ -348,9 +344,7 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
 
     // Copy any user-created dimensions that are not 
     // required by the PointFormatName
-    DimensionArray::const_iterator j;
-
-    for (j = user_dims.begin(); j != user_dims.end(); ++j)
+    for (DimensionArray::const_iterator j = user_dims.begin(); j != user_dims.end(); ++j)
     {
         // We need to use AddDimension to ensure that the sizes
         // and position offsets are updated.
@@ -611,22 +605,17 @@ bool Schema::IsCustom() const
     return false;
 }
 
-SizesArray  Schema::GetSizes(std::string const& name) const
+SizesArray const& Schema::GetSizes(std::string const& name) const
 {
     SizesMap::const_iterator i = m_sizes.find(name);
     if (i == m_sizes.end()) {
-        std::ostringstream oss;
-        oss << "Could not find dimension with name '" << name << "'";
-        throw std::runtime_error(oss.str());
+        throw std::runtime_error("Could not find dimension with name '" + name + "'");
     }
     return i->second;
 }
 
 void Schema::CalculateSizes() 
 {
-    DimensionMap::const_iterator i;
-    DimensionArray::const_iterator j;
-
     m_bit_size = 0;
     m_base_bit_size = 0;
 
@@ -641,7 +630,7 @@ void Schema::CalculateSizes()
     std::size_t index_position = 0;
     std::size_t bit_position = 0;
 
-    for (j = positions.begin(); j != positions.end(); ++j)
+    for (DimensionArray::const_iterator j = positions.begin(); j != positions.end(); ++j)
     {
         // increment our total bit size for the entire point
         DimensionPtr const& t = (*j);
@@ -746,7 +735,7 @@ void Schema::AddDimension(DimensionPtr d)
     m_dimensions[d->GetName()] = d;
     
     // Add/reset the critical sizes array on the size map
-    SizesArray a;
+    SizesArray a; a.assign(0);
     m_sizes[d->GetName()] = a;
     
     // Update all of our sizes
@@ -790,8 +779,6 @@ std::vector<std::string> Schema::GetDimensionNames() const
     }
     return output;
 }
-
-
 
 VariableRecord Schema::GetVLR() const
 {

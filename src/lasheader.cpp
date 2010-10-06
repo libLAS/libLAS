@@ -40,11 +40,11 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/detail/utility.hpp>
+#include <liblas/guid.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lasschema.hpp>
-#include <liblas/guid.hpp>
+#include <liblas/detail/private_utility.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/lambda/lambda.hpp>

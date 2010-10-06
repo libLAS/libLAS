@@ -45,7 +45,7 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lastransform.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 
 // boost
 #include <boost/cstdint.hpp>

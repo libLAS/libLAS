@@ -65,7 +65,7 @@
 #include <liblas/laswriter.hpp>
 #include <liblas/utility.hpp>
 #include <liblas/detail/endian.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 #include <liblas/capi/las_version.h>
 
 // booost

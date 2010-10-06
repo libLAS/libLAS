@@ -39,7 +39,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 
 
 extern "C" int libLASGeoTIFFPrint(char* data, void* aux)

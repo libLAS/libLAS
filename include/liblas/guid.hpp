@@ -60,7 +60,7 @@
 #define LIBLAS_GUID_HPP_INCLUDED
 
 #include <liblas/detail/sha1.hpp>
-#include <liblas/detail/utility.hpp>
+#include <liblas/detail/private_utility.hpp>
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
