@@ -273,7 +273,8 @@ private:
     boost::uint32_t m_position;
     double m_scale;
     bool m_precise;
-    double m_offset;  
+    double m_offset;
+  
 };
 
 bool inline sort_dimensions(DimensionPtr i, DimensionPtr j) 
