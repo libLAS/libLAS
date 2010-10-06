@@ -66,8 +66,10 @@ public:
 
 private:
     
-    boost::int32_t WriteVLRs();
+    void WriteVLRs();
     void WriteLAS10PadSignature();
+    boost::int32_t GetRequiredHeaderSize() const;
+    
     
     liblas::Header m_header;
 };

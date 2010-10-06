@@ -137,6 +137,20 @@ void Header::write()
             std::cout <<  m_header.GetSchema()<< std::endl;
             m_header.AddVLR(v);
         }
+    
+        int32_t difference = m_header.GetDataOffset() - GetRequiredHeaderSize();
+
+        if (difference <= 0) 
+        {
+            int32_t d = abs(difference);
+            if (m_header.GetVersionMinor()  ==  0) 
+            {
+                // Add the two extra bytes for the 1.0 pad
+                d = d + 2;
+            }
+            m_header.SetDataOffset(m_header.GetDataOffset() + d );
+        }
+
     }
 
     
@@ -202,34 +216,7 @@ void Header::write()
     detail::write_n(GetStream(), n2, sizeof(n2));
 
     // 14. Offset to data
-    // For 1.0 data, we must also add pad bytes to the end of the 
-    // m_header.  This means resetting the dataoffset +=2 
-    if (m_header.GetVersionMinor()  ==  0) {
-        int32_t difference = m_header.GetDataOffset() - m_header.GetHeaderSize();
-        if (    (m_header.GetDataOffset() != m_header.GetHeaderSize()) &&
-                (difference > 0) && ( difference >= 2)
-            ) 
-            {
-                n4 = m_header.GetDataOffset();
-            } 
-        else if (difference == 0) 
-        {
-            n4 = m_header.GetDataOffset() + 2;
-            m_header.SetDataOffset(n4);
-        } 
-        else if (difference < 0) 
-        {
-            throw std::out_of_range("DataOffset is smaller than HeaderSize!");
-        } 
-        else 
-        {
-            n4 = m_header.GetDataOffset() + 2;
-            m_header.SetDataOffset(n4);
-        }
-        // n4 = m_header.GetDataOffset() + 2;
-    } else {
-        n4 = m_header.GetDataOffset();        
-    }
+    n4 = m_header.GetDataOffset();        
     detail::write_n(GetStream(), n4, sizeof(n4));
 
     // 15. Number of variable length records
@@ -288,23 +275,11 @@ void Header::write()
 
     if (!bAppendMode) 
     {
-        int32_t difference = WriteVLRs();
-        if (difference < 0) {
-            m_header.SetDataOffset(m_header.GetDataOffset() + abs(difference) );
-            WriteVLRs();
-        
-            // Make sure to rewrite the dataoffset in the header portion now that
-            // we've changed it.
-            std::streamsize const current_pos = GetStream().tellp();
-            std::streamsize const offset_pos = 96; 
-            GetStream().seekp(offset_pos, std::ios::beg);
-            detail::write_n(GetStream(), m_header.GetDataOffset() , sizeof(m_header.GetDataOffset()));
-            GetStream().seekp(current_pos, std::ios::beg);      
-        }
-
+        WriteVLRs();
 
         // Write the 1.0 pad signature if we need to.
         WriteLAS10PadSignature(); 
+
     }           
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
@@ -313,34 +288,25 @@ void Header::write()
     
 }
 
-int32_t Header::WriteVLRs() 
+void Header::WriteVLRs() 
 {
-    // If this function returns a value, it is the size that the header's 
-    // data offset must be increased by in order for the VLRs to fit in 
-    // the header.  
+    // Seek to the end of the public header block (beginning of the VLRs)
+    // to start writing
     GetStream().seekp(m_header.GetHeaderSize(), std::ios::beg);
 
-    // if the VLRs won't fit because the data offset is too 
-    // small, we need to throw an error.
-    uint32_t vlr_total_size = 0;
-        
-    // Calculate a new data offset size
-    for (uint32_t i = 0; i < m_header.GetRecordsCount(); ++i)
-    {
-        VariableRecord vlr = m_header.GetVLR(i);
-        vlr_total_size += vlr.GetTotalSize();
-    }
+    int32_t diff = m_header.GetDataOffset() - GetRequiredHeaderSize();
     
-    int32_t difference = m_header.GetDataOffset() - (vlr_total_size + m_header.GetHeaderSize());
-
-    if (difference < 0) 
-    {
-        return difference;
+    if (diff < 0) {
+        std::ostringstream oss;
+        oss << "Header is not large enough to contain VLRs.  Data offset is ";
+        oss << m_header.GetDataOffset() << " while the required total size ";
+        oss << "for the VLRs is " << GetRequiredHeaderSize();
+        throw std::runtime_error(oss.str());
     }
     
     for (uint32_t i = 0; i < m_header.GetRecordsCount(); ++i)
     {
-        VariableRecord vlr = m_header.GetVLR(i);
+        VariableRecord const &vlr = m_header.GetVLR(i);
 
         detail::write_n(GetStream(), vlr.GetReserved(), sizeof(uint16_t));
         detail::write_n(GetStream(), vlr.GetUserId(true).c_str(), 16);
@@ -355,11 +321,29 @@ int32_t Header::WriteVLRs()
     // if we had more room than we need for the VLRs, we need to pad that with 
     // 0's.  We must also not forget to add the 1.0 pad bytes to the end of this
     // but the impl should be the one doing that, not us.
-    if (difference > 0) {
-        detail::write_n(GetStream(), "\0", difference);
+    if (diff > 0) {
+        detail::write_n(GetStream(), "\0", diff);
     }
 
-    return 0;
+}
+
+boost::int32_t Header::GetRequiredHeaderSize() const
+{
+    // if the VLRs won't fit because the data offset is too 
+    // small, we need to throw an error.
+    std::size_t vlr_total_size = 0;
+        
+    // Calculate a new data offset size
+    for (uint32_t i = 0; i < m_header.GetRecordsCount(); ++i)
+    {
+        VariableRecord const & vlr = m_header.GetVLR(i);
+        vlr_total_size += vlr.GetTotalSize();
+    }
+    
+    // int32_t difference = m_header.GetDataOffset() - (vlr_total_size + m_header.GetHeaderSize());
+    int32_t size = vlr_total_size + m_header.GetHeaderSize();
+    return size;
+    
 }
 
 void Header::WriteLAS10PadSignature()
@@ -371,6 +355,16 @@ void Header::WriteLAS10PadSignature()
     if (m_header.GetVersionMinor() > 0) {
         return;
     }
+
+    int32_t diff = m_header.GetDataOffset() - GetRequiredHeaderSize();
+
+    if (diff != 2) {
+        std::ostringstream oss;
+        oss << "Header is not large enough to write extra 1.0 pad bytes.  Data offset is ";
+        oss << m_header.GetDataOffset() << " while the required total size ";
+        oss << "for the VLRs is " << GetRequiredHeaderSize();
+        throw std::runtime_error(oss.str());
+    }    
     
     // step back two bytes to write the pad bytes.  We should have already
     // determined by this point if a) they will fit b) they won't overwrite 
