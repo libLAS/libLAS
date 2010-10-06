@@ -185,12 +185,12 @@ int main(int argc, char* argv[])
 	// temporary until argv[] starts to work
 	// uncomment only one of these blocks
 	/*------------------------------N1440375----------------------------------*/
-	///*------------------------build embedded index------------------------------
+	/*------------------------build embedded index------------------------------
 	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\N1440375.tmp",
 		 "-i", "C:\\LibLAS\\Samples\\N1440375.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
 		 "-o", "C:\\LibLAS\\Samples\\N1440375_idx.las"};
 	argc = 13;
-	//*/
+	*/
 	/*-----------------build index in standalone file---------------------------
 	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\N1440375.tmp",
 		 "-i", "C:\\LibLAS\\Samples\\N1440375.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
@@ -207,8 +207,8 @@ int main(int argc, char* argv[])
 		 "-n", "C:\\LibLAS\\Samples\\N1440375_idx.ldx", "-r"};
 	argc = 6;
 	*/
-	
-	/*const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\N1440375.tmp",
+	/*-----------------build embedded index, filter with user bounds------------
+	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\N1440375.tmp",
 		 "-i", "C:\\LibLAS\\Samples\\N1440375.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
 		 "-o", "C:\\LibLAS\\Samples\\N1440375_idx.las",
 		 "-x", "1443000.00", "1444000.00", "-y", "376000.02", "379000.00", "-z", "850.00", "950.00"};
@@ -248,6 +248,18 @@ int main(int argc, char* argv[])
 	/*------------------filter with embedded index------------------------------
 	const char* arggv[] = {"foo",
 		 "-i", "C:\\LibLAS\\Samples\\Lincoln_idx.las", "-r"};
+	argc = 4;
+	*/
+	/*------------------------------flatDataset-------------------------------*/
+	///*------------------------------build index---------------------------------
+	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\flatDataset.tmp",
+		 "-i", "C:\\LibLAS\\Samples\\flatDataset.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
+		 "-o", "C:\\LibLAS\\Samples\\flatDataset_idx.las"};
+	argc = 13;
+	//*/
+	/*------------------filter with embedded index------------------------------
+	const char* arggv[] = {"foo",
+		 "-i", "C:\\LibLAS\\Samples\\flatDataset_idx.las", "-r"};
 	argc = 4;
 	*/
 	/*------------------------------------------------------------------------*/
@@ -411,7 +423,7 @@ int main(int argc, char* argv[])
 								{
 									Bounds<double> filterBounds(oLowFilterX, oLowFilterY, oLowFilterZ,
 										oHighFilterX, oHighFilterY, oHighFilterZ);
-									if (ParamSrc.SetFilterValues(filterBounds))
+									if (ParamSrc.SetFilterValues(filterBounds, index))
 									{
 										const std::vector<uint32_t>& FilterResult = index.Filter(ParamSrc);
 										if (FilterResult.size())
@@ -507,14 +519,19 @@ int main(int argc, char* argv[])
 												break;
 											} // 5
 										} // switch
-										if (ParamSrc.SetFilterValues(filterBounds))
+										if (ParamSrc.SetFilterValues(filterBounds, index))
 										{
 											const std::vector<uint32_t>& FilterResult = index.Filter(ParamSrc);
 											if (FilterResult.size())
 											{
 												// do something with the list of points
+												#ifdef VISUAL_8
+												fprintf(debugger, "Points within filter area %d of %d, %s\n", FilterResult.size(), 
+													index.GetPointRecordsCount(), CovgStr);
+												#else // VISUAL_8
 												fprintf(debugger, "Points within filter area %zu of %d, %s\n", FilterResult.size(), 
 													index.GetPointRecordsCount(), CovgStr);
+												#endif // VISUAL_8
 											}
 											else
 												IndexFilterNoPoints(debugger);

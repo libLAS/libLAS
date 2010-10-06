@@ -43,6 +43,7 @@
 #include <liblas/laswriter.hpp>
 #include <liblas/detail/index/indexoutput.hpp>
 #include <liblas/detail/index/indexcell.hpp>
+#include <liblas/detail/writer/writer.hpp>
 
 namespace liblas
 {
@@ -303,7 +304,7 @@ void Index::SetCellFilterBounds(IndexData const& ParamSrc)
 	m_filterMinYCell = m_cellsY * (ParamSrc.GetMinFilterY() - GetMinY()) / GetRangeY();
 	m_filterMaxYCell = m_cellsY * (ParamSrc.GetMaxFilterY() - GetMinY()) / GetRangeY();
 	// Z range however can be 0
-	if (GetRangeZ() > 0.0)
+	if (GetRangeZ() > 0.0 && ! detail::compare_distance(GetRangeZ(), 0.0))
 	{
 		m_filterMinZCell = m_cellsZ * (ParamSrc.GetMinFilterZ() - GetMinZ()) / GetRangeZ();
 		m_filterMaxZCell = m_cellsZ * (ParamSrc.GetMaxFilterZ() - GetMinZ()) / GetRangeZ();
@@ -857,7 +858,7 @@ bool Index::BuildIndex(void)
 	CalcRangeY(); 
 	CalcRangeZ();
 
-	if (m_cellSizeZ > 0.0)
+	if (m_cellSizeZ > 0.0 && ! detail::compare_distance(m_cellSizeZ, 0.0))
 		m_cellsZ = static_cast<boost::uint32_t>(ceil(m_rangeZ / m_cellSizeZ));
 	else
 		m_cellsZ = 1;
@@ -1125,7 +1126,7 @@ bool Index::IdentifyCell(Point const& CurPt, boost::uint32_t& CurCellX, boost::u
 	OffsetX = (CurPt.GetX() - m_bounds.min(0)) / m_rangeX;
 	if (OffsetX >= 0 && OffsetX < 1.0)
 		CurCellX = static_cast<boost::uint32_t>(OffsetX * m_cellsX);
-	else if (OffsetX == 1.0)
+	else if (detail::compare_distance(OffsetX, 1.0))
 		CurCellX = m_cellsX - 1;
 	else
 	{
@@ -1135,7 +1136,7 @@ bool Index::IdentifyCell(Point const& CurPt, boost::uint32_t& CurCellX, boost::u
 	OffsetY = (CurPt.GetY() - m_bounds.min(1)) / m_rangeY;
 	if (OffsetY >= 0 && OffsetY < 1.0)
 		CurCellY = static_cast<boost::uint32_t>(OffsetY * m_cellsY);
-	else if (OffsetY == 1.0)
+	else if (detail::compare_distance(OffsetY, 1.0))
 		CurCellY = m_cellsY - 1;
 	else
 	{
@@ -1153,7 +1154,7 @@ bool Index::IdentifyCellZ(Point const& CurPt, boost::uint32_t& CurCellZ) const
 	OffsetZ = (CurPt.GetZ() - m_bounds.min(2)) / m_rangeZ;
 	if (OffsetZ >= 0 && OffsetZ < 1.0)
 		CurCellZ = static_cast<boost::uint32_t>(OffsetZ * m_cellsZ);
-	else if (OffsetZ == 1.0)
+	else if (detail::compare_distance(OffsetZ, 1.0))
 		CurCellZ = m_cellsZ - 1;
 	else
 	{
@@ -1194,7 +1195,7 @@ bool Index::IdentifySubCell(Point const& CurPt, boost::uint32_t x, boost::uint32
 
 	return true;
 
-} // Index::IdentifyCellZ
+} // Index::IdentifySubCell
 
 bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 {
@@ -1731,11 +1732,12 @@ bool IndexData::SetReadOrBuildAloneValues(Reader *reader, std::ostream *ofs, con
 } // IndexData::SetBuildAloneValues
 
 bool IndexData::SetFilterValues(double LowFilterX, double HighFilterX, double LowFilterY, double HighFilterY, 
-	double LowFilterZ, double HighFilterZ)
+	double LowFilterZ, double HighFilterZ, Index const& index)
 {
 	try {
 		m_filter = Bounds<double>(LowFilterX, LowFilterY, LowFilterZ, HighFilterX, HighFilterY, HighFilterZ);
 		m_filter.verify();
+		m_filter.clip(index.GetBounds());
 	} // try
 	catch (std::runtime_error) {
 		return (false);
@@ -1744,11 +1746,12 @@ bool IndexData::SetFilterValues(double LowFilterX, double HighFilterX, double Lo
 	
 } // IndexData::SetFilterValues
 
-bool IndexData::SetFilterValues(Bounds<double> const& src)
+bool IndexData::SetFilterValues(Bounds<double> const& src, Index const& index)
 {
 	try {
 		m_filter = src;
 		m_filter.verify();
+		m_filter.clip(index.GetBounds());
 	} // try
 	catch (std::runtime_error) {
 		return (false);
@@ -1759,14 +1762,19 @@ bool IndexData::SetFilterValues(Bounds<double> const& src)
 
 bool IndexData::CalcFilterEnablers(void)
 {
-	if (m_filter.min(0) == m_filter.max(0))
+	if (detail::compare_distance(m_filter.min(0), m_filter.max(0)))
 		m_noFilterX = true;
-	if (m_filter.min(1) == m_filter.max(1))
+	if (detail::compare_distance(m_filter.min(1), m_filter.max(1)))
 		m_noFilterY = true;
-	if (m_filter.min(2) == m_filter.max(2))
+	if (detail::compare_distance(m_filter.min(2), m_filter.max(2)))
 		m_noFilterZ = true;
 	return (! (m_noFilterX && m_noFilterY && m_noFilterZ));
 } // IndexData::CalcFilterEnablers
+
+void IndexData::ClampFilterBounds(Bounds<double> const& m_bounds)
+{
+	m_filter.clip(m_bounds);
+} // IndexData::ClampFilterBounds
 
 } // namespace liblas
 

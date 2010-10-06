@@ -379,8 +379,9 @@ public:
 		boost::uint32_t maxmem = LIBLAS_INDEX_MAXMEMDEFAULT, int debugoutputlevel = 0, FILE *debugger = 0);
 	
 	// set the bounds for use in filtering
-	bool SetFilterValues(double LowFilterX, double HighFilterX, double LowFilterY, double HighFilterY, double LowFilterZ, double HighFilterZ);
-	bool SetFilterValues(Bounds<double> const& src);
+	bool SetFilterValues(double LowFilterX, double HighFilterX, double LowFilterY, double HighFilterY, double LowFilterZ, double HighFilterZ, 
+		Index const& index);
+	bool SetFilterValues(Bounds<double> const& src, Index const& index);
 
     // Blocked copying operations, declared but not defined.
     /// Copy constructor.
@@ -427,6 +428,7 @@ public:
 	double GetMaxFilterY(void) const	{return m_filter.max(1);};
 	double GetMinFilterZ(void) const	{return m_filter.min(2);};
 	double GetMaxFilterZ(void) const	{return m_filter.max(2);};
+	void ClampFilterBounds(Bounds<double> const& m_bounds);
 	void SetReader(Reader *reader)	{m_reader = reader;};
 	void SetIStream(std::istream *ifs)	{m_ifs = ifs;};
 	void SetOStream(std::ostream *ofs)	{m_ofs = ofs;};
