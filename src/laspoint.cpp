@@ -704,12 +704,12 @@ double Point::GetTime() const
 }
 
 
-boost::any Point::GetValue(DimensionPtr d) const
+boost::any Point::GetValue(Dimension const& d) const
 {
 
     boost::any output;
 
-    GetDimensionPosition(d->GetName());
+    GetDimensionPosition(d.GetName());
  
     
     return output;

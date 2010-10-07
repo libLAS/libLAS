@@ -204,7 +204,7 @@ public:
     
     property_tree::ptree GetPTree() const;
     
-    boost::any GetValue(DimensionPtr d) const;
+    boost::any GetValue(Dimension const& d) const;
 
 private:
 

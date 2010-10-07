@@ -468,12 +468,7 @@ namespace tut
         
         liblas::Schema schema = reader.GetHeader().GetSchema();
 
-        liblas::DimensionPtr x;
-        try {
-            x = schema.GetDimension("X");
-        } catch (std::runtime_error const& e) {
-            boost::ignore_unused_variable_warning(e);
-        }
+        liblas::Dimension x = schema.GetDimension("X");
         
         boost::any d = p.GetValue(x);
     

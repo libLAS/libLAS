@@ -81,7 +81,7 @@ public:
         
     virtual ~Dimension() {};
         
-    std::string const& GetName() { return m_name; }
+    std::string const& GetName() const { return m_name; }
     
     /// bits, logical size of point record
     std::size_t GetBitSize() const 
@@ -122,11 +122,11 @@ public:
     void IsInteger(bool v) { m_integer = v; }
 
     /// The minimum value of this dimension as a double
-    double GetMinimum() { return m_min; }
+    double GetMinimum() const { return m_min; }
     void SetMinimum(double min) { m_min = min; }
     
     /// The maximum value of this dimension as a double
-    double GetMaximum() { return m_max; }
+    double GetMaximum() const { return m_max; }
     void SetMaximum(double max) { m_max = max; }
     
     boost::uint32_t GetPosition() const { return m_position; }

@@ -72,9 +72,8 @@
 
 namespace liblas {  
 
-typedef boost::shared_ptr<Dimension> DimensionPtr;
-typedef boost::unordered_map<std::string, DimensionPtr> DimensionMap;
-typedef std::vector<DimensionPtr> DimensionArray;
+typedef boost::unordered_map<std::string, Dimension> DimensionMap;
+typedef std::vector<Dimension> DimensionArray;
 typedef boost::array<std::size_t, 4> SizesArray;
 typedef boost::unordered_map<std::string, SizesArray> SizesMap;
 
@@ -114,10 +113,12 @@ public:
     PointFormatName GetDataFormatId() const { return m_data_format_id; }
     void SetDataFormatId(PointFormatName const& value);
     
-    void AddDimension(DimensionPtr dim);
-    DimensionPtr GetDimension(std::string const& name) const;
+    void AddDimension(Dimension const& dim);
+    Dimension const& GetDimension(std::string const& name) const;
+    Dimension& GetDimension(std::string const& name);
+    
     // DimensionPtr GetDimension(std::size_t index) const;
-    void RemoveDimension(DimensionPtr dim);
+    void RemoveDimension(Dimension const& dim);
     
     std::vector<std::string> GetDimensionNames() const;
     DimensionMap const& GetDimensions() const { return m_dimensions; }
@@ -153,9 +154,9 @@ private:
 
 };
 
-bool inline sort_dimensions(DimensionPtr i, DimensionPtr j) 
+bool inline sort_dimensions(Dimension i, Dimension j) 
 { 
-    return (*i) < (*j); 
+    return i < j; 
 }
 
 std::ostream& operator<<(std::ostream& os, liblas::Schema const&);

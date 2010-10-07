@@ -685,20 +685,20 @@ void Header::SetSchema(const Schema& format)
     
     m_schema = format;
     
-    DimensionPtr x = m_schema.GetDimension("X");
-    x->SetScale(m_scales.x);
-    x->IsFinitePrecision(true);
-    x->SetOffset(m_offsets.x);
+    Dimension& x = m_schema.GetDimension("X");
+    x.SetScale(m_scales.x);
+    x.IsFinitePrecision(true);
+    x.SetOffset(m_offsets.x);
     
-    DimensionPtr y = m_schema.GetDimension("Y");
-    y->SetScale(m_scales.y);
-    y->IsFinitePrecision(true);
-    y->SetOffset(m_offsets.y);
+    Dimension& y = m_schema.GetDimension("Y");
+    y.SetScale(m_scales.y);
+    y.IsFinitePrecision(true);
+    y.SetOffset(m_offsets.y);
 
-    DimensionPtr z = m_schema.GetDimension("Z");
-    z->SetScale(m_scales.z);
-    z->IsFinitePrecision(true);
-    z->SetOffset(m_offsets.z);
+    Dimension& z = m_schema.GetDimension("Z");
+    z.SetScale(m_scales.z);
+    z.IsFinitePrecision(true);
+    z.SetOffset(m_offsets.z);
     
     
 } 

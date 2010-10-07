@@ -77,99 +77,99 @@ void Schema::add_record0_dimensions()
 {
     std::ostringstream text;
     
-    DimensionPtr x(new Dimension("X", 32));
+    Dimension x("X", 32);
     text << "x coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
-    x->SetDescription(text.str()); 
-    x->IsInteger(true);
-    x->IsNumeric(true);
-    x->IsSigned(true);
+    x.SetDescription(text.str()); 
+    x.IsInteger(true);
+    x.IsNumeric(true);
+    x.IsSigned(true);
 
     AddDimension(x);
     text.str("");
 
-    DimensionPtr y(new Dimension("Y", 32));
+    Dimension y("Y", 32);
     text << "y coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
-    y->SetDescription(text.str()); 
-    y->IsInteger(true);
-    y->IsNumeric(true);
-    y->IsSigned(true);
+    y.SetDescription(text.str()); 
+    y.IsInteger(true);
+    y.IsNumeric(true);
+    y.IsSigned(true);
 
     AddDimension(y);
     text.str("");
     
-    DimensionPtr z(new Dimension("Z", 32));
+    Dimension z("Z", 32);
     text << "z coordinate as a long integer.  You must use the scale and "
          << "offset information of the header to determine the double value.";
-    z->SetDescription(text.str()); 
-    z->IsInteger(true);
-    z->IsNumeric(true);
-    z->IsSigned(true);
+    z.SetDescription(text.str()); 
+    z.IsInteger(true);
+    z.IsNumeric(true);
+    z.IsSigned(true);
     AddDimension(z);
     text.str("");
 
-    DimensionPtr intensity(new Dimension("Intensity", 16));
+    Dimension intensity("Intensity", 16);
     text << "The intensity value is the integer representation of the pulse " 
             "return magnitude. This value is optional and system specific. "
             "However, it should always be included if available.";
-    intensity->SetDescription(text.str());
-    intensity->IsInteger(true);
-    intensity->IsNumeric(true);
+    intensity.SetDescription(text.str());
+    intensity.IsInteger(true);
+    intensity.IsNumeric(true);
 
     AddDimension(intensity);
     text.str("");
 
-    DimensionPtr return_no(new Dimension("Return Number", 3));
+    Dimension return_no("Return Number", 3);
     text << "Return Number: The Return Number is the pulse return number for "
             "a given output pulse. A given output laser pulse can have many "
             "returns, and they must be marked in sequence of return. The first "
             "return will have a Return Number of one, the second a Return "
             "Number of two, and so on up to five returns.";
-    return_no->SetDescription(text.str());
-    return_no->IsNumeric(true);
-    return_no->IsInteger(true);
+    return_no.SetDescription(text.str());
+    return_no.IsNumeric(true);
+    return_no.IsInteger(true);
 
     AddDimension(return_no);
     text.str("");
     
-    DimensionPtr no_returns(new Dimension("Number of Returns", 3));
+    Dimension no_returns("Number of Returns", 3);
     text << "Number of Returns (for this emitted pulse): The Number of Returns "
             "is the total number of returns for a given pulse. For example, "
             "a laser data point may be return two (Return Number) within a "
             "total number of five returns.";
-    no_returns->SetDescription(text.str());
-    no_returns->IsNumeric(true);
-    no_returns->IsInteger(true);
+    no_returns.SetDescription(text.str());
+    no_returns.IsNumeric(true);
+    no_returns.IsInteger(true);
     AddDimension(no_returns);
     text.str("");
     
-    DimensionPtr scan_dir(new Dimension("Scan Direction", 1));
+    Dimension scan_dir("Scan Direction", 1);
     text << "The Scan Direction Flag denotes the direction at which the "
             "scanner mirror was traveling at the time of the output pulse. "
             "A bit value of 1 is a positive scan direction, and a bit value "
             "of 0 is a negative scan direction (where positive scan direction "
             "is a scan moving from the left side of the in-track direction to "
             "the right side and negative the opposite). ";
-    scan_dir->SetDescription(text.str());
-    scan_dir->IsNumeric(true);
-    scan_dir->IsInteger(true);
+    scan_dir.SetDescription(text.str());
+    scan_dir.IsNumeric(true);
+    scan_dir.IsInteger(true);
 
     AddDimension(scan_dir);
     text.str("");
     
-    DimensionPtr edge(new Dimension("Flightline Edge", 1));
+    Dimension edge("Flightline Edge", 1);
     text << "The Edge of Flight Line data bit has a value of 1 only when "
             "the point is at the end of a scan. It is the last point on "
             "a given scan line before it changes direction.";
-    edge->SetDescription(text.str());
-    edge->IsNumeric(true);
-    edge->IsInteger(true);
+    edge.SetDescription(text.str());
+    edge.IsNumeric(true);
+    edge.IsInteger(true);
 
     AddDimension(edge);
     text.str("");
 
-    DimensionPtr classification(new Dimension("Classification", 8));
+    Dimension classification("Classification", 8);
     text << "Classification in LAS 1.0 was essentially user defined and optional. "
             "LAS 1.1 defines a standard set of ASPRS classifications. In addition, "
             "the field is now mandatory. If a point has never been classified, this "
@@ -178,12 +178,12 @@ void Schema::add_record0_dimensions()
             "user defined operations. Note that the format for classification is a "
             "bit encoded field with the lower five bits used for class and the "
             "three high bits used for flags.";
-    classification->SetDescription(text.str());
+    classification.SetDescription(text.str());
 
     AddDimension(classification);
     text.str("");
     
-    DimensionPtr scan_angle(new Dimension("Scan Angle Rank", 8));
+    Dimension scan_angle("Scan Angle Rank", 8);
     text << "The Scan Angle Rank is a signed one-byte number with a "
             "valid range from -90 to +90. The Scan Angle Rank is the "
             "angle (rounded to the nearest integer in the absolute "
@@ -193,22 +193,22 @@ void Schema::add_record0_dimensions()
             "The scan angle is an angle based on 0 degrees being nadir, "
             "and –90 degrees to the left side of the aircraft in the "
             "direction of flight.";
-    scan_angle->SetDescription(text.str());
-    scan_angle->IsSigned(true);
-    scan_angle->IsInteger(true);
-    scan_angle->IsNumeric(true);
+    scan_angle.SetDescription(text.str());
+    scan_angle.IsSigned(true);
+    scan_angle.IsInteger(true);
+    scan_angle.IsNumeric(true);
 
     AddDimension(scan_angle);
     text.str("");
     
-    DimensionPtr user_data(new Dimension("User Data", 8));
+    Dimension user_data("User Data", 8);
     text << "This field may be used at the user’s discretion";
-    user_data->SetDescription(text.str());
+    user_data.SetDescription(text.str());
 
     AddDimension(user_data);
     text.str("");
     
-    DimensionPtr point_source_id(new Dimension("Point Source ID", 16));
+    Dimension point_source_id("Point Source ID", 16);
     text << "This value indicates the file from which this point originated. "
             "Valid values for this field are 1 to 65,535 inclusive with zero "
             "being used for a special case discussed below. The numerical value "
@@ -218,18 +218,18 @@ void Schema::add_record0_dimensions()
             "This implies that processing software should set the Point Source "
             "ID equal to the File Source ID of the file containing this point "
             "at some time during processing. ";
-    point_source_id->SetDescription(text.str());
-    point_source_id->IsInteger(true);
-    point_source_id->IsNumeric(true);
+    point_source_id.SetDescription(text.str());
+    point_source_id.IsInteger(true);
+    point_source_id.IsNumeric(true);
 
     AddDimension(point_source_id);    
     text.str("");
 
     for (DimensionMap::iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        DimensionPtr const& t = (*i).second;
-        t->IsRequired(true);
-        t->IsActive(true);
+        Dimension & t = (*i).second;
+        t.IsRequired(true);
+        t.IsActive(true);
     }
     
 }
@@ -238,35 +238,35 @@ void Schema::add_color()
 {
     std::ostringstream text;
     
-    DimensionPtr red(new Dimension("Red", 16));
+    Dimension red("Red", 16);
     text << "The red image channel value associated with this point";
-    red->SetDescription(text.str()); 
-    red->IsRequired(true);
-    red->IsActive(true);
-    red->IsInteger(true);
-    red->IsNumeric(true);
+    red.SetDescription(text.str()); 
+    red.IsRequired(true);
+    red.IsActive(true);
+    red.IsInteger(true);
+    red.IsNumeric(true);
 
     AddDimension(red);
     text.str("");
 
-    DimensionPtr green(new Dimension("Green", 16));
+    Dimension green("Green", 16);
     text << "The green image channel value associated with this point";
-    green->SetDescription(text.str()); 
-    green->IsRequired(true);
-    green->IsActive(true);
-    green->IsInteger(true);
-    green->IsNumeric(true);
+    green.SetDescription(text.str()); 
+    green.IsRequired(true);
+    green.IsActive(true);
+    green.IsInteger(true);
+    green.IsNumeric(true);
 
     AddDimension(green);
     text.str("");
 
-    DimensionPtr blue(new Dimension("Blue", 16));
+    Dimension blue("Blue", 16);
     text << "The blue image channel value associated with this point";
-    blue->SetDescription(text.str()); 
-    blue->IsRequired(true);
-    blue->IsActive(true);
-    blue->IsInteger(true);
-    blue->IsNumeric(true);
+    blue.SetDescription(text.str()); 
+    blue.IsRequired(true);
+    blue.IsActive(true);
+    blue.IsInteger(true);
+    blue.IsNumeric(true);
 
     AddDimension(blue);
     text.str("");
@@ -277,16 +277,16 @@ void Schema::add_time()
 {
     std::ostringstream text;
     
-    DimensionPtr t = DimensionPtr(new Dimension("Time", 64));
+    Dimension t("Time", 64);
     text << "The GPS Time is the double floating point time tag value at "
             "which the point was acquired. It is GPS Week Time if the "
             "Global Encoding low bit is clear and Adjusted Standard GPS "
             "Time if the Global Encoding low bit is set (see Global Encoding "
             "in the Public Header Block description).";
-    t->SetDescription(text.str()); 
-    t->IsRequired(true);
-    t->IsActive(true);
-    t->IsNumeric(true);
+    t.SetDescription(text.str()); 
+    t.IsRequired(true);
+    t.IsActive(true);
+    t.IsNumeric(true);
 
     AddDimension(t);
     text.str("");
@@ -303,7 +303,7 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
         // and add them back to the list of dimensions
         for (DimensionMap::const_iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
         {
-            if ( i->second->IsRequired() == false)
+            if ( i->second.IsRequired() == false)
                 user_dims.push_back(i->second);
         }
     }
@@ -429,19 +429,21 @@ DimensionMap Schema::LoadDimensions(liblas::property_tree::ptree tree)
             ::boost::ignore_unused_variable_warning(e);
         }
         
-        DimensionPtr d = DimensionPtr(new Dimension(name, size));
-        d->SetDescription(description);
-        d->IsActive(isactive);
-        d->IsInteger(isinteger);
-        d->IsSigned(issigned);
-        d->IsRequired(isrequired);
-        d->SetPosition(position);
+        Dimension d (name, size);
+        d.SetDescription(description);
+        d.IsActive(isactive);
+        d.IsInteger(isinteger);
+        d.IsSigned(issigned);
+        d.IsRequired(isrequired);
+        d.SetPosition(position);
         if (min != max && min != 0 && max != 0) {
-            d->SetMinimum(min);
-            d->SetMaximum(max);
+            d.SetMinimum(min);
+            d.SetMaximum(max);
         }
-        
-        dimensions[name] = d;
+
+        dimensions.insert(std::make_pair(name, d));
+
+        // dimensions[name] = d;
     }
     
     boost::uint32_t pf =tree.get<boost::uint32_t>("LASSchema.formatid");
@@ -463,21 +465,22 @@ liblas::property_tree::ptree Schema::GetPTree() const
     for(i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
         ptree dim;
-        DimensionPtr t = i->second;
-        dim.put("name", t->GetName());
-        dim.put("description", t->GetDescription());
-        dim.put("position", t->GetPosition());
-        dim.put("active", static_cast<boost::uint32_t>(t->IsActive()));
-        dim.put("size", t->GetBitSize());
-        dim.put("integer", static_cast<boost::uint32_t>(t->IsInteger()));
-        dim.put("signed", static_cast<boost::uint32_t>(t->IsSigned()));
-        dim.put("required", static_cast<boost::uint32_t>(t->IsRequired()));
+        Dimension const& t = i->second;
+        dim.put("name", t.GetName());
+        dim.put("description", t.GetDescription());
+        dim.put("position", t.GetPosition());
+        dim.put("active", static_cast<boost::uint32_t>(t.IsActive()));
+        dim.put("size", t.GetBitSize());
+        dim.put("integer", static_cast<boost::uint32_t>(t.IsInteger()));
+        dim.put("signed", static_cast<boost::uint32_t>(t.IsSigned()));
+        dim.put("required", static_cast<boost::uint32_t>(t.IsRequired()));
 
-       if (t->IsNumeric()) {
-           if (t->GetMinimum() != t->GetMaximum() && t->GetMaximum() != 0) 
+       if (t.IsNumeric()) {
+           // FIXME use detail::compare
+           if (t.GetMinimum() != t.GetMaximum() && t.GetMaximum() != 0) 
            {
-               dim.put("minimum", t->GetMinimum());
-               dim.put("maximum", t->GetMaximum());
+               dim.put("minimum", t.GetMinimum());
+               dim.put("maximum", t.GetMaximum());
            }
         }
 
@@ -598,8 +601,8 @@ bool Schema::IsCustom() const
     // return true; // For now, we'll always say we're  custom
     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
-        DimensionPtr t = (*i).second;
-        if ( t->IsRequired() == false)
+        Dimension const& t = (*i).second;
+        if ( t.IsRequired() == false)
             return true;
     }
     return false;
@@ -619,7 +622,7 @@ void Schema::CalculateSizes()
     m_bit_size = 0;
     m_base_bit_size = 0;
 
-    std::vector<DimensionPtr> positions;
+    std::vector<Dimension> positions;
     for (DimensionMap::const_iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
         positions.push_back(i->second);
@@ -633,12 +636,12 @@ void Schema::CalculateSizes()
     for (DimensionArray::const_iterator j = positions.begin(); j != positions.end(); ++j)
     {
         // increment our total bit size for the entire point
-        DimensionPtr const& t = (*j);
+        Dimension const& t = (*j);
 
-        m_bit_size += t->GetBitSize(); 
+        m_bit_size += t.GetBitSize(); 
 
         std::size_t byte_size = 0;
-        bit_position = bit_position + (t->GetBitSize() % 8);
+        bit_position = bit_position + (t.GetBitSize() % 8);
 
         // std::cout << "position : " << t->GetPosition() << " index_position: " << index_position;
         // std::cout << " d: " << t->GetName() << " bit_position: " << bit_position<<std::endl;
@@ -648,17 +651,17 @@ void Schema::CalculateSizes()
         a[0] = index_position;
         a[1] = byte_size;
         a[2] = bit_position;
-        a[3] = t->GetBitSize();
+        a[3] = t.GetBitSize();
         
         // We don't increment if this dimension is within the current byte
         if ( bit_position %8 == 0)
         {
             bit_position = 0;
-            index_position = index_position + t->GetByteSize();
+            index_position = index_position + t.GetByteSize();
         }
-        m_sizes[t->GetName()] = a;
-        if ( t->IsRequired() == true)
-            m_base_bit_size += t->GetBitSize();
+        m_sizes[t.GetName()] = a;
+        if ( t.IsRequired() == true)
+            m_base_bit_size += t.GetBitSize();
     }
 
     // std::cout << "Calculated: " << m_bit_size << std::endl;
@@ -713,9 +716,9 @@ void Schema::SetDataFormatId(PointFormatName const& value)
     CalculateSizes();
 }
 
-void Schema::RemoveDimension(DimensionPtr dim)
+void Schema::RemoveDimension(Dimension const& dim)
 {
-    m_dimensions.erase(dim->GetName());
+    m_dimensions.erase(dim.GetName());
     
     CalculateSizes();
 }
@@ -726,25 +729,40 @@ std::size_t Schema::GetByteSize() const
     return GetBitSize() / 8;
 }
 
-void Schema::AddDimension(DimensionPtr d)
+void Schema::AddDimension(Dimension const& dim)
 {
     // Increment the position;
-    d->SetPosition(m_nextpos); m_nextpos++;
+    Dimension d(dim);
+    d.SetPosition(m_nextpos); m_nextpos++;
     
     // Add/reset the dimension ptr on the dimensions map
-    m_dimensions[d->GetName()] = d;
+    m_dimensions.insert(std::make_pair(d.GetName(), d));
     
     // Add/reset the critical sizes array on the size map
     SizesArray a; a.assign(0);
-    m_sizes[d->GetName()] = a;
+    m_sizes[d.GetName()] = a;
     
     // Update all of our sizes
     CalculateSizes();
 }
 
-DimensionPtr Schema::GetDimension(std::string const& name) const
+Dimension const& Schema::GetDimension(std::string const& name) const
 {
     DimensionMap::const_iterator i = m_dimensions.find(name);
+    if (i != m_dimensions.end())
+    {
+        return i->second;
+    }
+
+    std::ostringstream oss;
+    oss << "Dimension with name '" << name << "' not found.";
+    throw std::runtime_error(oss.str());
+}
+
+
+Dimension& Schema::GetDimension(std::string const& name)
+{
+    DimensionMap::iterator i = m_dimensions.find(name);
     if (i != m_dimensions.end())
     {
         return i->second;
