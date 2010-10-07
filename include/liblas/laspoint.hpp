@@ -216,7 +216,6 @@ private:
     HeaderPtr m_header;
     Header const& m_default_header;
 
-    void throw_out_of_range() const;
 };
 
 /// Equal-to operator implemented in terms of Point::equal method.
@@ -241,7 +240,7 @@ inline double Point::operator[](std::size_t const& index) const
     if (index == 2)
         return GetZ();
 
-    throw_out_of_range();
+    throw std::out_of_range("coordinate subscript out of range");
     
 }
 

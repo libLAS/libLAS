@@ -276,12 +276,6 @@ std::ostream& operator<<(std::ostream& os, liblas::Point const& p)
     return os;
 }
 
-void Point::throw_out_of_range() const
-{
-    throw std::out_of_range("coordinate subscript out of range");
-}
-
-
 
 double Point::GetX() const
 {
