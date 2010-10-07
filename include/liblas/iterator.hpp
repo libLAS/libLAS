@@ -44,6 +44,7 @@
 
 #include <liblas/lasreader.hpp>
 #include <liblas/laswriter.hpp>
+#include <liblas/lasindex.hpp>
 #include <iterator>
 #include <cassert>
 
@@ -211,6 +212,89 @@ public:
 private:
 
     liblas::Writer* m_writer;
+};
+
+template <typename T>
+class index_filter_iterator
+{
+public:
+
+    typedef std::input_iterator_tag iterator_category;
+    typedef T value_type;
+    typedef T const* pointer;
+    typedef T const& reference;
+    typedef ptrdiff_t difference_type;
+
+    /// Initializes iterator pointing to pass-the-end.
+    index_filter_iterator()
+        : m_index(0)
+    {}
+
+    /// Initializes iterator pointing to beginning of Index's filtered points sequence.
+    /// No ownership transfer of index object occurs.
+    index_filter_iterator(liblas::Index& index)
+        : m_index(&index)
+    {
+        assert(0 != m_index);
+        getval();
+    }
+
+    /// Dereference operator.
+    /// It is implemented in terms of Index::GetNextID function.
+    reference operator*() const
+    {
+        assert(0 != m_index);
+        if (0 != m_index)
+        {
+            // return m_index->GetNextID();
+        }
+
+        throw std::runtime_error("index is null and iterator not dereferencable");
+    }
+
+    /// Pointer-to-member operator.
+    /// It is implemented in terms of Index::GetPoint function.
+    pointer operator->() const
+    {
+        return &(operator*());
+    }
+
+    /// Pre-increment operator.
+    /// Moves iterator to next record by calling Index::GetNextID.
+    index_filter_iterator& operator++()
+    {
+        assert(0 != m_index);
+        getval();
+        return (*this);
+    }
+
+    /// Post-increment operator.
+    /// Moves iterator to next record by calling Index::FindNextID.
+    index_filter_iterator operator++(int)
+    {
+        index_filter_iterator tmp(*this);
+        ++(*this);
+        return tmp;
+    }
+
+    /// Compare passed iterator to this.
+    /// Determine if both iterators apply to the same instance of liblas::Index class.
+    bool equal(index_filter_iterator const& rhs) const
+    {
+        return m_index == rhs.m_index;
+    }
+
+private:
+
+    void getval()
+    {
+        // if (0 != m_index && !(m_index->FindNextID()))
+        // {
+        //     m_index = 0;
+        // }
+    }
+
+    liblas::Index* m_index;
 };
 
 // Declare specializations for user's convenience
