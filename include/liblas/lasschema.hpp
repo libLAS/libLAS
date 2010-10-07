@@ -46,12 +46,22 @@
 #include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasversion.hpp>
+#include <liblas/lasdimension.hpp>
+
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
 #include <boost/array.hpp>
+
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/hashed_index.hpp>
+#include <boost/multi_index/sequenced_index.hpp>
+
+
 // std
 #include <iosfwd>
 #include <limits>
@@ -62,13 +72,22 @@
 
 namespace liblas {  
 
-class Dimension;
-
 typedef boost::shared_ptr<Dimension> DimensionPtr;
 typedef boost::unordered_map<std::string, DimensionPtr> DimensionMap;
 typedef std::vector<DimensionPtr> DimensionArray;
 typedef boost::array<std::size_t, 4> SizesArray;
 typedef boost::unordered_map<std::string, SizesArray> SizesMap;
+
+// using namespace boost::multi_index;
+// 
+// typedef multi_index_container<
+//     DimensionPtr,
+//     indexed_by<
+//         hashed_unique<tag<key>,  BOOST_MULTI_INDEX_MEMBER(Data_t,int,key_)>,
+//         sequenced<tag<key_seq> >
+//     >
+// > Map;
+
 
 /// Schema definition
 class Schema
@@ -132,149 +151,6 @@ private:
     liblas::property_tree::ptree LoadPTree(VariableRecord const& v);
     DimensionMap LoadDimensions(liblas::property_tree::ptree tree);
 
-};
-
-/// Dimension definition
-class Dimension
-{
-public:
-    Dimension(std::string const& name, boost::uint32_t size_in_bits) : 
-        m_name(name), 
-        m_bitsize(size_in_bits),
-        m_required(false),
-        m_active(false),
-        m_description(std::string("")),
-        m_min(0),
-        m_max(0),
-        m_numeric(false),
-        m_signed(false),
-        m_integer(false),
-        m_position(0)
-    {
-         if (size_in_bits == 0) {
-            std::ostringstream oss;
-            oss << "The bit size of the dimension is 0, the dimension is invalid.";
-            throw std::runtime_error(oss.str());
-        }
-    };
-    
-    virtual ~Dimension() {};
-        
-    std::string const& GetName() { return m_name; }
-    
-    /// bits, logical size of point record
-    std::size_t GetBitSize() const 
-    {
-        return m_bitsize;
-    }
-    
-    /// bytes, physical/serialisation size of record
-    std::size_t GetByteSize() const 
-    {
-
-        std::size_t bit_position = m_bitsize % 8;
-        if (bit_position > 0) {
-            // For dimensions that are not byte aligned,
-            // we need to determine how many bytes they 
-            // will take.  We have to read at least one byte if the 
-            // size in bits is less than 8.  If it is more than 8, 
-            // we need to read the number of bytes it takes + 1 extra.
-            if (m_bitsize > 8) {
-                return m_bitsize/8 + 1;
-            } else {
-                return 1;
-            }
-        }
-        return m_bitsize / 8;
-    }
-
-    //             /// This stuff needs to be put in dim-GetBytesize
-    //         if (m_bitsize > 8) {
-    //             return = m_bitsize / 8 + 1;
-    //         } else {
-    //             byte_size = 1; 
-    // }
-    //             
-    //     // if (m_bitsize % 8 != 0) {
-    //     //     std::ostringstream oss;
-    //     //     oss << m_name << "'s bit size, " << m_bitsize 
-    //     //         << ", is not a multiple of 8 and " 
-    //     //         << "cannot be expressed as a single byte value";
-    //     //     throw std::range_error(oss.str());
-    //     // }
-    //     // return m_bitsize / 8;
-    // }    
-    
-    /// Is this dimension required by PointFormatName
-    bool IsRequired() const { return m_required; }
-    void IsRequired(bool v) { m_required = v; }
-
-    /// Is this dimension being used.  A dimension with 
-    /// IsActive false may exist as a placeholder in PointFormatName-specified
-    /// dimensions, but have their IsActive flag set to false.  In this 
-    /// case, those values may be disregarded.
-    bool IsActive() const { return m_active; }
-    void IsActive(bool v) { m_active = v; }
-
-    std::string GetDescription() const { return m_description; }
-    void SetDescription(std::string const& v) { m_description = v; }
-
-    /// Is this dimension a numeric dimension.  Dimensions with IsNumeric == false
-    /// are considered generic bit/byte fields/
-    bool IsNumeric() const { return m_numeric ; }
-    void IsNumeric(bool v) { m_numeric = v; }
-
-    /// Does this dimension have a sign?  Only applicable to dimensions with 
-    /// IsNumeric == true.
-    bool IsSigned() const { return m_signed; }
-    void IsSigned(bool v) { m_signed = v; }
-
-    /// Does this dimension interpret to an integer?  Only applicable to dimensions 
-    /// with IsNumeric == true.
-    bool IsInteger() const { return m_integer; }
-    void IsInteger(bool v) { m_integer = v; }
-
-    /// The minimum value of this dimension as a double
-    double GetMinimum() { return m_min; }
-    void SetMinimum(double min) { m_min = min; }
-    
-    /// The maximum value of this dimension as a double
-    double GetMaximum() { return m_max; }
-    void SetMaximum(double max) { m_max = max; }
-    
-    boost::uint32_t GetPosition() const { return m_position; }
-    void SetPosition(boost::uint32_t v) { m_position = v; }
-    
-    double GetScale() const { return m_scale; }
-    void SetScale(double v) { m_scale = v; }
-    
-    double GetOffset() const { return m_offset; }
-    void SetOffset(double v) { m_offset = v; }
-    
-    bool IsFinitePrecision() const { return m_precise; }
-    void IsFinitePrecision(bool v) { m_precise = v; }
-    
-    bool operator < (Dimension const& dim) const 
-    {
-        return m_position < dim.m_position;
-    }
-private:
-        
-    std::string m_name;
-    boost::uint32_t m_bitsize;
-    bool m_required;
-    bool m_active;
-    std::string m_description;
-    double m_min;
-    double m_max;
-    bool m_numeric;
-    bool m_signed;
-    bool m_integer;
-    boost::uint32_t m_position;
-    double m_scale;
-    bool m_precise;
-    double m_offset;
-  
 };
 
 bool inline sort_dimensions(DimensionPtr i, DimensionPtr j) 

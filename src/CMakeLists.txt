@@ -26,6 +26,7 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/lasbounds.hpp
   ${LIBLAS_HEADERS_DIR}/lasclassification.hpp
   ${LIBLAS_HEADERS_DIR}/lascolor.hpp
+  ${LIBLAS_HEADERS_DIR}/lasdimension.hpp  
   ${LIBLAS_HEADERS_DIR}/laserror.hpp
   ${LIBLAS_HEADERS_DIR}/lasfilter.hpp
   ${LIBLAS_HEADERS_DIR}/lasheader.hpp
@@ -105,6 +106,7 @@ set(LIBLAS_DETAIL_WRITER_HPP
 set(LIBLAS_CPP
   lasclassification.cpp
   lascolor.cpp
+  lasdimension.cpp
   laserror.cpp
   lasfilter.cpp
   lasheader.cpp
