@@ -358,7 +358,7 @@ void Header::WriteLAS10PadSignature()
 
     int32_t diff = m_header.GetDataOffset() - GetRequiredHeaderSize();
 
-    if (diff != 2) {
+    if (diff < 2) {
         std::ostringstream oss;
         oss << "Header is not large enough to write extra 1.0 pad bytes.  Data offset is ";
         oss << m_header.GetDataOffset() << " while the required total size ";
