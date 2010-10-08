@@ -60,6 +60,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
+#include <boost/multi_index/mem_fun.hpp>
 
 
 // std
@@ -77,16 +78,28 @@ typedef std::vector<Dimension> DimensionArray;
 typedef boost::array<std::size_t, 4> SizesArray;
 typedef boost::unordered_map<std::string, SizesArray> SizesMap;
 
-// using namespace boost::multi_index;
-// 
-// typedef multi_index_container<
-//     DimensionPtr,
-//     indexed_by<
-//         hashed_unique<tag<key>,  BOOST_MULTI_INDEX_MEMBER(Data_t,int,key_)>,
-//         sequenced<tag<key_seq> >
-//     >
-// > Map;
+using namespace boost::multi_index;
 
+struct name{};
+struct position{};
+
+
+
+typedef multi_index_container<
+  Dimension,
+  indexed_by<
+    // sort by Dimension::operator<
+    ordered_unique<tag<position>, identity<Dimension> >,
+    
+    // sort by less<string> on GetName
+    hashed_unique<tag<name>, const_mem_fun<Dimension,std::string const&,&Dimension::GetName> >
+    
+
+  >
+> IndexMap;
+
+typedef IndexMap::index<name>::type index_by_name;
+typedef IndexMap::index<position>::type index_by_position;
 
 /// Schema definition
 class Schema
@@ -114,16 +127,18 @@ public:
     void SetDataFormatId(PointFormatName const& value);
     
     void AddDimension(Dimension const& dim);
-    Dimension const& GetDimension(std::string const& name) const;
-    Dimension& GetDimension(std::string const& name);
+    Dimension const& GetDimension(std::string const& n) const;
+    // Dimension& GetDimension(std::string const& n);
     
     // DimensionPtr GetDimension(std::size_t index) const;
     void RemoveDimension(Dimension const& dim);
     
+    void SetDimension(Dimension const& dim);
+    
     std::vector<std::string> GetDimensionNames() const;
     DimensionMap const& GetDimensions() const { return m_dimensions; }
     liblas::property_tree::ptree GetPTree() const;
-    SizesArray const& GetSizes(std::string const& name) const;
+    SizesArray const& GetSizes(std::string const& n) const;
     
     boost::uint16_t GetSchemaVersion() const { return m_schemaversion; }
     void SetSchemaVersion(boost::uint16_t v) { m_schemaversion = v; }
@@ -143,6 +158,7 @@ protected:
 private:
 
     DimensionMap m_dimensions;
+    IndexMap m_index;
     
     void add_record0_dimensions();
     void add_time();

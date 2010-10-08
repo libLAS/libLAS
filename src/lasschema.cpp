@@ -225,6 +225,13 @@ void Schema::add_record0_dimensions()
     AddDimension(point_source_id);    
     text.str("");
 
+    index_by_position& position_index = m_index.get<position>();
+    for (index_by_position::iterator i = position_index.begin(); i!= position_index.end(); ++i)
+    {
+        position_index.modify(i, SetRequired(true));
+        position_index.modify(i, SetActive(true));
+    }
+
     for (DimensionMap::iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
         Dimension & t = (*i).second;
@@ -307,12 +314,25 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
                 user_dims.push_back(i->second);
         }
     }
-    
+
+    index_by_position& position_index = m_index.get<position>();
+    if (!position_index.empty())
+    {
+        // Keep any non-required dimensions the user may have added
+        // and add them back to the list of dimensions
+        for (index_by_position::const_iterator i = position_index.begin(); i != position_index.end(); ++i)
+        {
+            if ( i->IsRequired() == false)
+                user_dims.push_back(*i);
+        }
+    }    
     // Sort the user dimensions so we preserve the order they were 
     // added in.
     std::sort(user_dims.begin(), user_dims.end(), sort_dimensions);
     
     m_dimensions.clear();
+    
+    position_index.clear();
     
     // Reset the position counter.  Dimensions will be added in the 
     // order they need to be according to add_record0_dimensions, etc.
@@ -362,6 +382,7 @@ Schema::Schema(Schema const& other) :
     , m_base_bit_size(other.m_base_bit_size)
     , m_schemaversion(other.m_schemaversion)
     , m_dimensions(other.m_dimensions)
+    , m_index(other.m_index)
 {
 }
 // 
@@ -373,6 +394,7 @@ Schema& Schema::operator=(Schema const& rhs)
         m_data_format_id = rhs.m_data_format_id;
         m_nextpos = rhs.m_nextpos;
         m_dimensions = rhs.m_dimensions;
+        m_index = rhs.m_index;
         m_base_bit_size = rhs.m_base_bit_size;
         m_bit_size = rhs.m_bit_size;
         m_schemaversion = rhs.m_schemaversion;
@@ -622,6 +644,8 @@ void Schema::CalculateSizes()
     m_bit_size = 0;
     m_base_bit_size = 0;
 
+    index_by_position& position_index = m_index.get<position>();
+    
     std::vector<Dimension> positions;
     for (DimensionMap::const_iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
     {
@@ -633,6 +657,39 @@ void Schema::CalculateSizes()
     std::size_t index_position = 0;
     std::size_t bit_position = 0;
 
+    for (index_by_position::const_iterator i = position_index.begin();
+         i != position_index.end(); 
+         i++)
+    {
+        Dimension const& t = (*i);
+        // m_bit_size += t.GetBitSize(); 
+
+        std::size_t byte_size = 0;
+        bit_position = bit_position + (t.GetBitSize() % 8);
+
+        // std::cout << "position : " << t->GetPosition() << " index_position: " << index_position;
+        // std::cout << " d: " << t->GetName() << " bit_position: " << bit_position<<std::endl;
+        // std::cout << "bit_size: " << t->GetBitSize()  << std::endl;
+        
+        SizesArray a;
+        a[0] = index_position;
+        a[1] = byte_size;
+        a[2] = bit_position;
+        a[3] = t.GetBitSize();
+        
+        // // We don't increment if this dimension is within the current byte
+        if ( bit_position %8 == 0)
+        {
+            bit_position = 0;
+            index_position = index_position + t.GetByteSize();
+        }
+        m_sizes[t.GetName()] = a;
+        // if ( t.IsRequired() == true)
+        //     m_base_bit_size += t.GetBitSize();        
+    }
+    index_position = 0;
+    bit_position = 0;
+    
     for (DimensionArray::const_iterator j = positions.begin(); j != positions.end(); ++j)
     {
         // increment our total bit size for the entire point
@@ -720,6 +777,7 @@ void Schema::RemoveDimension(Dimension const& dim)
 {
     m_dimensions.erase(dim.GetName());
     
+    m_index.erase(dim);
     CalculateSizes();
 }
 
@@ -737,6 +795,7 @@ void Schema::AddDimension(Dimension const& dim)
     
     // Add/reset the dimension ptr on the dimensions map
     m_dimensions.insert(std::make_pair(d.GetName(), d));
+    m_index.insert(d);
     
     // Add/reset the critical sizes array on the size map
     SizesArray a; a.assign(0);
@@ -746,46 +805,42 @@ void Schema::AddDimension(Dimension const& dim)
     CalculateSizes();
 }
 
-Dimension const& Schema::GetDimension(std::string const& name) const
+Dimension const& Schema::GetDimension(std::string const& n) const
 {
-    DimensionMap::const_iterator i = m_dimensions.find(name);
+    DimensionMap::const_iterator i = m_dimensions.find(n);
     if (i != m_dimensions.end())
     {
         return i->second;
     }
+    
+    index_by_name::const_iterator it = m_index.get<name>().find(n);
 
-    std::ostringstream oss;
-    oss << "Dimension with name '" << name << "' not found.";
-    throw std::runtime_error(oss.str());
-}
-
-
-Dimension& Schema::GetDimension(std::string const& name)
-{
-    DimensionMap::iterator i = m_dimensions.find(name);
-    if (i != m_dimensions.end())
+    if (it != m_index.get<name>().end())
     {
-        return i->second;
-    }
+        return *it;
+    }    
 
     std::ostringstream oss;
-    oss << "Dimension with name '" << name << "' not found.";
+    oss << "Dimension with name '" << n << "' not found.";
     throw std::runtime_error(oss.str());
 }
 
-// DimensionPtr Schema::GetDimension(std::size_t index) const
-// {
-//     std::vector<DimensionPtr>::const_iterator i;
-//     for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
-//     {
-//         if ((*i)->GetPosition() == index) {
-//             return *i;
-//         }
-//     }
-//     std::ostringstream oss;
-//     oss << "Dimension with index '" << index << "' not found.";
-//     throw std::runtime_error(oss.str());
-// }
+void Schema::SetDimension(Dimension const& dim)
+{
+    
+    index_by_name& name_index = m_index.get<name>();
+    index_by_name::iterator it = name_index.find(dim.GetName());
+    
+    if (it != name_index.end()) {
+        name_index.replace(it, dim);
+    } else {
+        std::ostringstream oss;
+        oss << "Dimension with name '" << dim.GetName() << "' not found, unable to SetDimension";
+        throw std::runtime_error(oss.str());
+    }
+}
+
+
 
 std::vector<std::string> Schema::GetDimensionNames() const
 {
@@ -795,6 +850,15 @@ std::vector<std::string> Schema::GetDimensionNames() const
     {
         output.push_back(i->first);
     }
+
+    index_by_position::const_iterator it = m_index.get<position>().begin();
+    
+    while (it != m_index.get<position>().end()) {
+        output.push_back(it->GetName());
+        it++;
+    }
+
+
     return output;
 }
 
