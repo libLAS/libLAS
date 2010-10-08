@@ -232,13 +232,6 @@ void Schema::add_record0_dimensions()
         position_index.modify(i, SetActive(true));
     }
 
-    for (DimensionMap::iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
-    {
-        Dimension & t = (*i).second;
-        t.IsRequired(true);
-        t.IsActive(true);
-    }
-    
 }
 
 void Schema::add_color()
@@ -304,17 +297,6 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
 {
     DimensionArray user_dims;
 
-    if (!m_dimensions.empty())
-    {
-        // Keep any non-required dimensions the user may have added
-        // and add them back to the list of dimensions
-        for (DimensionMap::const_iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
-        {
-            if ( i->second.IsRequired() == false)
-                user_dims.push_back(i->second);
-        }
-    }
-
     index_by_position& position_index = m_index.get<position>();
     if (!position_index.empty())
     {
@@ -329,8 +311,6 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
     // Sort the user dimensions so we preserve the order they were 
     // added in.
     std::sort(user_dims.begin(), user_dims.end(), sort_dimensions);
-    
-    m_dimensions.clear();
     
     position_index.clear();
     
@@ -381,7 +361,6 @@ Schema::Schema(Schema const& other) :
     , m_bit_size(other.m_bit_size)
     , m_base_bit_size(other.m_base_bit_size)
     , m_schemaversion(other.m_schemaversion)
-    , m_dimensions(other.m_dimensions)
     , m_index(other.m_index)
 {
 }
@@ -393,7 +372,6 @@ Schema& Schema::operator=(Schema const& rhs)
     {
         m_data_format_id = rhs.m_data_format_id;
         m_nextpos = rhs.m_nextpos;
-        m_dimensions = rhs.m_dimensions;
         m_index = rhs.m_index;
         m_base_bit_size = rhs.m_base_bit_size;
         m_bit_size = rhs.m_bit_size;
@@ -423,9 +401,9 @@ liblas::property_tree::ptree Schema::LoadPTree(VariableRecord const& v)
     return pt;    
 }
 
-DimensionMap Schema::LoadDimensions(liblas::property_tree::ptree tree)
+IndexMap Schema::LoadDimensions(liblas::property_tree::ptree tree)
 {
-    DimensionMap dimensions;
+    IndexMap dimensions;
     
     using liblas::property_tree::ptree;
     ptree::const_iterator i;
@@ -463,9 +441,8 @@ DimensionMap Schema::LoadDimensions(liblas::property_tree::ptree tree)
             d.SetMaximum(max);
         }
 
-        dimensions.insert(std::make_pair(name, d));
+        dimensions.insert(d);
 
-        // dimensions[name] = d;
     }
     
     boost::uint32_t pf =tree.get<boost::uint32_t>("LASSchema.formatid");
@@ -482,12 +459,13 @@ liblas::property_tree::ptree Schema::GetPTree() const
     using liblas::property_tree::ptree;
     ptree pt;
     
-    DimensionMap::const_iterator i;
+    index_by_position const& position_index = m_index.get<position>();
+    index_by_position::const_iterator i;
     
-    for(i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+    for(i = position_index.begin(); i != position_index.end(); ++i)
     {
         ptree dim;
-        Dimension const& t = i->second;
+        Dimension const& t = *i;
         dim.put("name", t.GetName());
         dim.put("description", t.GetDescription());
         dim.put("position", t.GetPosition());
@@ -593,7 +571,7 @@ Schema::Schema(std::vector<VariableRecord> const& vlrs)
     
     VariableRecord s = *it;
     liblas::property_tree::ptree pt = LoadPTree(s);
-    m_dimensions = LoadDimensions(pt);
+    m_index = LoadDimensions(pt);
     CalculateSizes();
 
 }
@@ -618,13 +596,14 @@ bool Schema::IsCustom() const
     // A custom schema has no fields that are required by the PointFormatName
     // This must mean a user has added them themselves.  We only write VLR 
     // schema definitions to files that have custom schemas.
-    DimensionMap::const_iterator i;
+    
+    index_by_position const& position_index = m_index.get<position>();
+    index_by_position::const_iterator i;
     
     // return true; // For now, we'll always say we're  custom
-    for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
+    for (i = position_index.begin(); i != position_index.end(); ++i)
     {
-        Dimension const& t = (*i).second;
-        if ( t.IsRequired() == false)
+        if ( i->IsRequired() == false)
             return true;
     }
     return false;
@@ -646,14 +625,6 @@ void Schema::CalculateSizes()
 
     index_by_position& position_index = m_index.get<position>();
     
-    std::vector<Dimension> positions;
-    for (DimensionMap::const_iterator i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
-    {
-        positions.push_back(i->second);
-    }
-    
-    std::sort(positions.begin(), positions.end(), sort_dimensions);
-    
     std::size_t index_position = 0;
     std::size_t bit_position = 0;
 
@@ -662,7 +633,7 @@ void Schema::CalculateSizes()
          i++)
     {
         Dimension const& t = (*i);
-        // m_bit_size += t.GetBitSize(); 
+        m_bit_size += t.GetBitSize(); 
 
         std::size_t byte_size = 0;
         bit_position = bit_position + (t.GetBitSize() % 8);
@@ -684,42 +655,43 @@ void Schema::CalculateSizes()
             index_position = index_position + t.GetByteSize();
         }
         m_sizes[t.GetName()] = a;
-        // if ( t.IsRequired() == true)
-        //     m_base_bit_size += t.GetBitSize();        
-    }
-    index_position = 0;
-    bit_position = 0;
-    
-    for (DimensionArray::const_iterator j = positions.begin(); j != positions.end(); ++j)
-    {
-        // increment our total bit size for the entire point
-        Dimension const& t = (*j);
-
-        m_bit_size += t.GetBitSize(); 
-
-        std::size_t byte_size = 0;
-        bit_position = bit_position + (t.GetBitSize() % 8);
-
-        // std::cout << "position : " << t->GetPosition() << " index_position: " << index_position;
-        // std::cout << " d: " << t->GetName() << " bit_position: " << bit_position<<std::endl;
-        // std::cout << "bit_size: " << t->GetBitSize()  << std::endl;
-        
-        SizesArray a;
-        a[0] = index_position;
-        a[1] = byte_size;
-        a[2] = bit_position;
-        a[3] = t.GetBitSize();
-        
-        // We don't increment if this dimension is within the current byte
-        if ( bit_position %8 == 0)
-        {
-            bit_position = 0;
-            index_position = index_position + t.GetByteSize();
-        }
-        m_sizes[t.GetName()] = a;
         if ( t.IsRequired() == true)
-            m_base_bit_size += t.GetBitSize();
+            m_base_bit_size += t.GetBitSize();        
     }
+        // 
+        // index_position = 0;
+        // bit_position = 0;
+        // 
+        // for (DimensionArray::const_iterator j = positions.begin(); j != positions.end(); ++j)
+        // {
+        //     // increment our total bit size for the entire point
+        //     Dimension const& t = (*j);
+        // 
+        //     m_bit_size += t.GetBitSize(); 
+        // 
+        //     std::size_t byte_size = 0;
+        //     bit_position = bit_position + (t.GetBitSize() % 8);
+        // 
+        //     // std::cout << "position : " << t->GetPosition() << " index_position: " << index_position;
+        //     // std::cout << " d: " << t->GetName() << " bit_position: " << bit_position<<std::endl;
+        //     // std::cout << "bit_size: " << t->GetBitSize()  << std::endl;
+        //     
+        //     SizesArray a;
+        //     a[0] = index_position;
+        //     a[1] = byte_size;
+        //     a[2] = bit_position;
+        //     a[3] = t.GetBitSize();
+        //     
+        //     // We don't increment if this dimension is within the current byte
+        //     if ( bit_position %8 == 0)
+        //     {
+        //         bit_position = 0;
+        //         index_position = index_position + t.GetByteSize();
+        //     }
+        //     m_sizes[t.GetName()] = a;
+        //     if ( t.IsRequired() == true)
+        //         m_base_bit_size += t.GetBitSize();
+        // }
 
     // std::cout << "Calculated: " << m_bit_size << std::endl;
     // if (m_bit_size % 8 != 0) {
@@ -775,8 +747,6 @@ void Schema::SetDataFormatId(PointFormatName const& value)
 
 void Schema::RemoveDimension(Dimension const& dim)
 {
-    m_dimensions.erase(dim.GetName());
-    
     m_index.erase(dim);
     CalculateSizes();
 }
@@ -794,7 +764,7 @@ void Schema::AddDimension(Dimension const& dim)
     d.SetPosition(m_nextpos); m_nextpos++;
     
     // Add/reset the dimension ptr on the dimensions map
-    m_dimensions.insert(std::make_pair(d.GetName(), d));
+    // FIXME: replace an existing dimension!
     m_index.insert(d);
     
     // Add/reset the critical sizes array on the size map
@@ -807,11 +777,6 @@ void Schema::AddDimension(Dimension const& dim)
 
 Dimension const& Schema::GetDimension(std::string const& n) const
 {
-    DimensionMap::const_iterator i = m_dimensions.find(n);
-    if (i != m_dimensions.end())
-    {
-        return i->second;
-    }
     
     index_by_name::const_iterator it = m_index.get<name>().find(n);
 
@@ -845,11 +810,6 @@ void Schema::SetDimension(Dimension const& dim)
 std::vector<std::string> Schema::GetDimensionNames() const
 {
     std::vector<std::string> output;
-    DimensionMap::const_iterator i;
-    for (i = m_dimensions.begin(); i != m_dimensions.end(); ++i)
-    {
-        output.push_back(i->first);
-    }
 
     index_by_position::const_iterator it = m_index.get<position>().begin();
     

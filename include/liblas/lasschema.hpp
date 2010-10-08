@@ -73,7 +73,6 @@
 
 namespace liblas {  
 
-typedef boost::unordered_map<std::string, Dimension> DimensionMap;
 typedef std::vector<Dimension> DimensionArray;
 typedef boost::array<std::size_t, 4> SizesArray;
 typedef boost::unordered_map<std::string, SizesArray> SizesMap;
@@ -136,7 +135,7 @@ public:
     void SetDimension(Dimension const& dim);
     
     std::vector<std::string> GetDimensionNames() const;
-    DimensionMap const& GetDimensions() const { return m_dimensions; }
+    IndexMap const& GetDimensions() const { return m_index; }
     liblas::property_tree::ptree GetPTree() const;
     SizesArray const& GetSizes(std::string const& n) const;
     
@@ -157,7 +156,6 @@ protected:
     
 private:
 
-    DimensionMap m_dimensions;
     IndexMap m_index;
     
     void add_record0_dimensions();
@@ -166,7 +164,7 @@ private:
     void update_required_dimensions(PointFormatName data_format_id);
     bool IsSchemaVLR(VariableRecord const& vlr);
     liblas::property_tree::ptree LoadPTree(VariableRecord const& v);
-    DimensionMap LoadDimensions(liblas::property_tree::ptree tree);
+    IndexMap LoadDimensions(liblas::property_tree::ptree tree);
 
 };
 
