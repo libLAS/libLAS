@@ -408,10 +408,10 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const&);
 /// a reader creates the point, the HeaderPtr from the file that was 
 /// read will be used, but all stand-alone points will have EmptyHeader 
 /// as their base.
-class EmptyHeader
+class DefaultHeader
 {
 public:
-    virtual ~EmptyHeader() {};
+    virtual ~DefaultHeader() {};
     
     static Header const& get() 
     {
@@ -419,9 +419,9 @@ public:
         return object;
     }
 protected:
-    EmptyHeader();
-    EmptyHeader( EmptyHeader const&);
-    EmptyHeader& operator=( EmptyHeader const&);
+    DefaultHeader();
+    DefaultHeader( DefaultHeader const&);
+    DefaultHeader& operator=( DefaultHeader const&);
     
 };
 
