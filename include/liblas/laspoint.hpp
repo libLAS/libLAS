@@ -211,8 +211,7 @@ private:
     detail::PointRecord m_record;
     std::vector<boost::uint8_t> m_format_data;
     
-    std::vector<boost::uint8_t>::size_type GetDimensionPosition(std::string const& name) const;
-
+    std::vector<boost::uint8_t>::size_type GetDimensionBytePosition(std::size_t dim_pos) const;
     HeaderPtr m_header;
     Header const& m_default_header;
 
