@@ -69,6 +69,14 @@ void Summary::AddPoint(liblas::Point const& p)
         if (first) {
             min = p;
             max = p;
+            
+            // We only summarize the base dimensions 
+            // but we want to be able to read/set them all.  The 
+            // point copy here would set the header ptr of min/max
+            // to be whatever might have come off of the file, 
+            // and this may/may not have space for time/color
+            min.SetHeaderPtr(HeaderPtr());
+            max.SetHeaderPtr(HeaderPtr());
             first = false;
         }
         
