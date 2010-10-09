@@ -80,6 +80,7 @@ Dimension::Dimension(std::string const& name, boost::uint32_t size_in_bits) :
         oss << "The bit size of the dimension is 0, the dimension is invalid.";
         throw std::runtime_error(oss.str());
     }
+    m_sizes.assign(0);
 };
 
 /// copy constructor
@@ -95,6 +96,7 @@ Dimension::Dimension(Dimension const& other) :
     , m_signed(other.m_signed)
     , m_integer(other.m_integer)
     , m_position(other.m_position)
+    , m_sizes(other.m_sizes)
 {
 }
 // 
@@ -114,6 +116,7 @@ Dimension& Dimension::operator=(Dimension const& rhs)
         m_signed = rhs.m_signed;
         m_integer = rhs.m_integer;
         m_position = rhs.m_position;
+        m_sizes = rhs.m_sizes;
     }
     
     return *this;

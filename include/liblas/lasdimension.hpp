@@ -70,6 +70,7 @@
 
 namespace liblas {  
 
+typedef boost::array<std::size_t, 4> SizesArray;
 
 /// Dimension definition
 class Dimension
@@ -145,6 +146,13 @@ public:
     {
         return m_position < dim.m_position;
     }
+    bool operator > (Dimension const& dim) const 
+    {
+        return m_position > dim.m_position;
+    }
+    
+    SizesArray const& GetSizes() const { return m_sizes; }
+    void SetSizes(SizesArray const& a) { m_sizes = a; }
 private:
         
     std::string m_name;
@@ -161,6 +169,8 @@ private:
     double m_scale;
     bool m_precise;
     double m_offset;
+    SizesArray m_sizes;
+    
   
 };
 
