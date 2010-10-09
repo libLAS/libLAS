@@ -61,6 +61,7 @@
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index/mem_fun.hpp>
+#include <boost/multi_index/random_access_index.hpp>
 
 
 // std
@@ -81,7 +82,7 @@ using namespace boost::multi_index;
 
 struct name{};
 struct position{};
-
+struct index{};
 
 
 typedef multi_index_container<
@@ -90,6 +91,8 @@ typedef multi_index_container<
     // sort by Dimension::operator<
     ordered_unique<tag<position>, identity<Dimension> >,
     
+    // Random access
+    random_access<tag<index> >,
     // sort by less<string> on GetName
     hashed_unique<tag<name>, const_mem_fun<Dimension,std::string const&,&Dimension::GetName> >
     
@@ -99,6 +102,8 @@ typedef multi_index_container<
 
 typedef IndexMap::index<name>::type index_by_name;
 typedef IndexMap::index<position>::type index_by_position;
+typedef IndexMap::index<index>::type index_by_index;
+
 
 /// Schema definition
 class Schema
@@ -138,6 +143,7 @@ public:
     IndexMap const& GetDimensions() const { return m_index; }
     liblas::property_tree::ptree GetPTree() const;
     SizesArray const& GetSizes(std::string const& n) const;
+    SizesArray const& GetSizes(std::size_t pos) const;
     
     boost::uint16_t GetSchemaVersion() const { return m_schemaversion; }
     void SetSchemaVersion(boost::uint16_t v) { m_schemaversion = v; }
@@ -152,7 +158,6 @@ protected:
     std::size_t m_bit_size;
     std::size_t m_base_bit_size;
     boost::uint16_t m_schemaversion;
-    SizesMap m_sizes;
     
 private:
 

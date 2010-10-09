@@ -609,13 +609,12 @@ bool Schema::IsCustom() const
     return false;
 }
 
-SizesArray const& Schema::GetSizes(std::string const& name) const
+SizesArray const& Schema::GetSizes(std::size_t pos) const
 {
-    SizesMap::const_iterator i = m_sizes.find(name);
-    if (i == m_sizes.end()) {
-        throw std::runtime_error("Could not find dimension with name '" + name + "'");
-    }
-    return i->second;
+    index_by_index const& idx = m_index.get<index>();
+    Dimension const& dim = idx.at(pos);
+    return dim.GetSizes();
+
 }
 
 void Schema::CalculateSizes() 
@@ -628,11 +627,11 @@ void Schema::CalculateSizes()
     std::size_t index_position = 0;
     std::size_t bit_position = 0;
 
-    for (index_by_position::const_iterator i = position_index.begin();
+    for (index_by_position::iterator i = position_index.begin();
          i != position_index.end(); 
          i++)
     {
-        Dimension const& t = (*i);
+        Dimension t = (*i);
         m_bit_size += t.GetBitSize(); 
 
         std::size_t byte_size = 0;
@@ -647,6 +646,8 @@ void Schema::CalculateSizes()
         a[1] = byte_size;
         a[2] = bit_position;
         a[3] = t.GetBitSize();
+        t.SetSizes(a);
+        position_index.replace(i, t);
         
         // // We don't increment if this dimension is within the current byte
         if ( bit_position %8 == 0)
@@ -654,44 +655,11 @@ void Schema::CalculateSizes()
             bit_position = 0;
             index_position = index_position + t.GetByteSize();
         }
-        m_sizes[t.GetName()] = a;
+
         if ( t.IsRequired() == true)
             m_base_bit_size += t.GetBitSize();        
     }
-        // 
-        // index_position = 0;
-        // bit_position = 0;
-        // 
-        // for (DimensionArray::const_iterator j = positions.begin(); j != positions.end(); ++j)
-        // {
-        //     // increment our total bit size for the entire point
-        //     Dimension const& t = (*j);
-        // 
-        //     m_bit_size += t.GetBitSize(); 
-        // 
-        //     std::size_t byte_size = 0;
-        //     bit_position = bit_position + (t.GetBitSize() % 8);
-        // 
-        //     // std::cout << "position : " << t->GetPosition() << " index_position: " << index_position;
-        //     // std::cout << " d: " << t->GetName() << " bit_position: " << bit_position<<std::endl;
-        //     // std::cout << "bit_size: " << t->GetBitSize()  << std::endl;
-        //     
-        //     SizesArray a;
-        //     a[0] = index_position;
-        //     a[1] = byte_size;
-        //     a[2] = bit_position;
-        //     a[3] = t.GetBitSize();
-        //     
-        //     // We don't increment if this dimension is within the current byte
-        //     if ( bit_position %8 == 0)
-        //     {
-        //         bit_position = 0;
-        //         index_position = index_position + t.GetByteSize();
-        //     }
-        //     m_sizes[t.GetName()] = a;
-        //     if ( t.IsRequired() == true)
-        //         m_base_bit_size += t.GetBitSize();
-        // }
+
 
     // std::cout << "Calculated: " << m_bit_size << std::endl;
     // if (m_bit_size % 8 != 0) {
@@ -769,7 +737,6 @@ void Schema::AddDimension(Dimension const& dim)
     
     // Add/reset the critical sizes array on the size map
     SizesArray a; a.assign(0);
-    m_sizes[d.GetName()] = a;
     
     // Update all of our sizes
     CalculateSizes();
