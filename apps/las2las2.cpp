@@ -15,51 +15,10 @@
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>
 
-
-typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-
 namespace po = boost::program_options;
 
 using namespace liblas;
 using namespace std;
-
-#ifdef _WIN32
-#define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
-#else
-#define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
-#endif
-
-bool term_progress(std::ostream& os, double complete)
-{
-    static int lastTick = -1;
-    int tick = static_cast<int>(complete * 40.0);
-
-    tick = std::min(40, std::max(0, tick));
-
-    // Have we started a new progress run?  
-    if (tick < lastTick && lastTick >= 39)
-        lastTick = -1;
-
-    if (tick <= lastTick)
-        return true;
-
-    while (tick > lastTick)
-    {
-        lastTick++;
-        if (lastTick % 4 == 0)
-            os << (lastTick / 4) * 10;
-        else
-            os << ".";
-    }
-
-    if( tick == 40 )
-        os << " - done.\n";
-    else
-        os.flush();
-
-    return true;
-}
-
 
 liblas::Writer* start_writer(   std::ofstream* strm, 
                                 std::string const& output, 

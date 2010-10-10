@@ -94,5 +94,6 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 std::istream* OpenInput(std::string filename, bool bEnd);
 std::string TryReadFileData(std::string filename);
 std::vector<char> TryReadRawFileData(std::string filename);
+bool term_progress(std::ostream& os, double complete);
 
 #endif // LIBLAS_ITERATOR_HPP_INCLUDED

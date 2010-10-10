@@ -56,6 +56,36 @@ std::vector<char> TryReadRawFileData(std::string filename)
     }
 }
 
+bool term_progress(std::ostream& os, double complete)
+{
+    static int lastTick = -1;
+    int tick = static_cast<int>(complete * 40.0);
+
+    tick = std::min(40, std::max(0, tick));
+
+    // Have we started a new progress run?  
+    if (tick < lastTick && lastTick >= 39)
+        lastTick = -1;
+
+    if (tick <= lastTick)
+        return true;
+
+    while (tick > lastTick)
+    {
+        lastTick++;
+        if (lastTick % 4 == 0)
+            os << (lastTick / 4) * 10;
+        else
+            os << ".";
+    }
+
+    if( tick == 40 )
+        os << " - done.\n";
+    else
+        os.flush();
+
+    return true;
+}
 
 
 bool IsDualRangeFilter(std::string parse_string) 
