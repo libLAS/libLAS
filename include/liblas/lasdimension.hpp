@@ -121,59 +121,68 @@ public:
     }
 
     /// Is this dimension required by PointFormatName
-    bool IsRequired() const { return m_required; }
-    void IsRequired(bool v) { m_required = v; }
+    inline bool IsRequired() const { return m_required; }
+    inline void IsRequired(bool v) { m_required = v; }
 
     /// Is this dimension being used.  A dimension with 
     /// IsActive false may exist as a placeholder in PointFormatName-specified
     /// dimensions, but have their IsActive flag set to false.  In this 
     /// case, those values may be disregarded.
-    bool IsActive() const { return m_active; }
-    void IsActive(bool v) { m_active = v; }
+    inline bool IsActive() const { return m_active; }
+    inline void IsActive(bool v) { m_active = v; }
 
-    std::string GetDescription() const { return m_description; }
-    void SetDescription(std::string const& v) { m_description = v; }
+    inline std::string GetDescription() const { return m_description; }
+    inline void SetDescription(std::string const& v) { m_description = v; }
 
     /// Is this dimension a numeric dimension.  Dimensions with IsNumeric == false
     /// are considered generic bit/byte fields/
-    bool IsNumeric() const { return m_numeric ; }
-    void IsNumeric(bool v) { m_numeric = v; }
+    inline bool IsNumeric() const { return m_numeric ; }
+    inline void IsNumeric(bool v) { m_numeric = v; }
 
     /// Does this dimension have a sign?  Only applicable to dimensions with 
     /// IsNumeric == true.
-    bool IsSigned() const { return m_signed; }
-    void IsSigned(bool v) { m_signed = v; }
+    inline bool IsSigned() const { return m_signed; }
+    inline void IsSigned(bool v) { m_signed = v; }
 
     /// Does this dimension interpret to an integer?  Only applicable to dimensions 
     /// with IsNumeric == true.
-    bool IsInteger() const { return m_integer; }
-    void IsInteger(bool v) { m_integer = v; }
+    inline bool IsInteger() const { return m_integer; }
+    inline void IsInteger(bool v) { m_integer = v; }
 
     /// The minimum value of this dimension as a double
-    double GetMinimum() const { return m_min; }
-    void SetMinimum(double min) { m_min = min; }
+    inline double GetMinimum() const { return m_min; }
+    inline void SetMinimum(double min) { m_min = min; }
     
     /// The maximum value of this dimension as a double
-    double GetMaximum() const { return m_max; }
-    void SetMaximum(double max) { m_max = max; }
+    inline double GetMaximum() const { return m_max; }
+    inline void SetMaximum(double max) { m_max = max; }
     
-    boost::uint32_t GetPosition() const { return m_position; }
-    void SetPosition(boost::uint32_t v) { m_position = v; }
+    /// The index position of the index.  In a standard ePointFormat0 
+    /// data record, the X dimension would have a position of 0, while 
+    /// the Y dimension would have a position of 1, for example.
+    inline boost::uint32_t GetPosition() const { return m_position; }
+    inline void SetPosition(boost::uint32_t v) { m_position = v; }
     
-    double GetScale() const { return m_scale; }
-    void SetScale(double v) { m_scale = v; }
+    /// The scaling value for this dimension as a double.  This should 
+    /// be positive or negative powers of ten.
+    inline double GetScale() const { return m_scale; }
+    inline void SetScale(double v) { m_scale = v; }
     
-    double GetOffset() const { return m_offset; }
-    void SetOffset(double v) { m_offset = v; }
+    /// The offset value for this dimension.  Usually zero, but it 
+    /// can be set to any value in combination with the scale to 
+    /// allow for more expressive ranges.
+    inline double GetOffset() const { return m_offset; }
+    inline void SetOffset(double v) { m_offset = v; }
     
-    bool IsFinitePrecision() const { return m_precise; }
-    void IsFinitePrecision(bool v) { m_precise = v; }
+    /// If true, this dimension uses scale/offset values 
+    inline bool IsFinitePrecision() const { return m_precise; }
+    inline void IsFinitePrecision(bool v) { m_precise = v; }
     
-    bool operator < (Dimension const& dim) const 
+    inline bool operator < (Dimension const& dim) const 
     {
         return m_position < dim.m_position;
     }
-    bool operator > (Dimension const& dim) const 
+    inline bool operator > (Dimension const& dim) const 
     {
         return m_position > dim.m_position;
     }
