@@ -200,7 +200,7 @@ void Point::SetHeaderPtr(HeaderPtr header)
     // any data set and nothing to worry about.
     boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
 
-    if (length != m_data.size() || sum != 0)
+    if (length != m_data.size() && sum != 0)
     {
         // Manually copy everything but the header ptr
         // We can't just copy the raw data because its 
