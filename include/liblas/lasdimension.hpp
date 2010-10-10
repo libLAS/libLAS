@@ -70,28 +70,55 @@
 
 namespace liblas {  
 
-typedef boost::array<std::size_t, 4> SizesArray;
-
 /// Dimension definition
 class Dimension
 {
 public:
-    Dimension(std::string const& name, boost::uint32_t size_in_bits);
+    Dimension(std::string const& name, std::size_t size_in_bits);
     Dimension& operator=(Dimension const& rhs);
     Dimension(Dimension const& other);
         
     virtual ~Dimension() {};
         
-    std::string const& GetName() const { return m_name; }
+    inline std::string const& GetName() const { return m_name; }
     
-    /// bits, logical size of point record
-    std::size_t GetBitSize() const 
+    /// bits, total logical size of point record, including any custom
+    /// dimensions
+    inline std::size_t GetBitSize() const 
     {
         return m_bit_size;
     }
     
     /// bytes, physical/serialisation size of record
     std::size_t GetByteSize() const;
+
+    /// The byte location to start reading/writing 
+    /// point data from in a composited schema.  liblas::Schema 
+    /// will set these values for you when liblas::Dimension are 
+    /// added to the liblas::Schema.
+    inline std::size_t GetByteOffset() const 
+    {
+        return m_byte_offset;
+    }
+
+    inline void SetByteOffset(std::size_t v) 
+    {
+        m_byte_offset = v;
+    }
+
+    /// The bit location within the byte to start reading data.  liblas::Schema 
+    /// will set these values for you when liblas::Dimension are 
+    /// added to the liblas::Schema.  This value will be 0 for dimensions 
+    /// that are composed of entire bytes.
+    inline std::size_t GetBitOffset() const 
+    {
+        return m_bit_offset;
+    }
+
+    inline void SetBitOffset(std::size_t v) 
+    {
+        m_bit_offset = v;
+    }
 
     /// Is this dimension required by PointFormatName
     bool IsRequired() const { return m_required; }
@@ -151,12 +178,10 @@ public:
         return m_position > dim.m_position;
     }
     
-    SizesArray const& GetSizes() const { return m_sizes; }
-    void SetSizes(SizesArray const& a) { m_sizes = a; }
 private:
         
     std::string m_name;
-    boost::uint32_t m_bit_size;
+    std::size_t m_bit_size;
     bool m_required;
     bool m_active;
     std::string m_description;
@@ -169,7 +194,8 @@ private:
     double m_scale;
     bool m_precise;
     double m_offset;
-    SizesArray m_sizes;
+    std::size_t m_byte_offset;
+    std::size_t m_bit_offset;
     
   
 };

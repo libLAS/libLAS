@@ -62,7 +62,7 @@ using namespace boost;
 
 namespace liblas { 
 
-Dimension::Dimension(std::string const& name, boost::uint32_t size_in_bits) : 
+Dimension::Dimension(std::string const& name, std::size_t size_in_bits) : 
     m_name(name), 
     m_bit_size(size_in_bits),
     m_required(false),
@@ -73,14 +73,15 @@ Dimension::Dimension(std::string const& name, boost::uint32_t size_in_bits) :
     m_numeric(false),
     m_signed(false),
     m_integer(false),
-    m_position(0)
+    m_position(0),
+    m_byte_offset(0),
+    m_bit_offset(0)
 {
      if (size_in_bits == 0) {
         std::ostringstream oss;
         oss << "The bit size of the dimension is 0, the dimension is invalid.";
         throw std::runtime_error(oss.str());
-    }
-    m_sizes.assign(0);
+     }
 };
 
 /// copy constructor
@@ -96,7 +97,8 @@ Dimension::Dimension(Dimension const& other) :
     , m_signed(other.m_signed)
     , m_integer(other.m_integer)
     , m_position(other.m_position)
-    , m_sizes(other.m_sizes)
+    , m_byte_offset(other.m_byte_offset)
+    , m_bit_offset(other.m_bit_offset)
 {
 }
 // 
@@ -116,7 +118,8 @@ Dimension& Dimension::operator=(Dimension const& rhs)
         m_signed = rhs.m_signed;
         m_integer = rhs.m_integer;
         m_position = rhs.m_position;
-        m_sizes = rhs.m_sizes;
+        m_byte_offset = rhs.m_byte_offset;
+        m_bit_offset = rhs.m_bit_offset;
     }
     
     return *this;

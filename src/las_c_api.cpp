@@ -666,7 +666,14 @@ LAS_DLL LASErrorEnum LASPoint_SetTime(LASPointH hPoint, double value) {
 
     try {
             ((liblas::Point*) hPoint)->SetTime(value);
-    } catch (std::exception const& e)
+    
+    }
+    catch (std::runtime_error const&) 
+    {
+        // drop the value on the floor.  If the point has a schema that 
+        // doesn't have time, the user needs to change the point's header.
+    }
+    catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetTime");
         return LE_Failure;
@@ -680,7 +687,14 @@ LAS_DLL double LASPoint_GetTime(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetTime", 0.0);
     
-    double value = ((liblas::Point*) hPoint)->GetTime();
+    double value = 0.0;
+    try {
+        value = ((liblas::Point*) hPoint)->GetTime();
+        
+    } catch (std::runtime_error const&) 
+    {
+        
+    }
     return value;
 }
 
@@ -1790,7 +1804,14 @@ LAS_DLL boost::uint16_t LASColor_GetGreen(LASColorH hColor) {
 LAS_DLL LASColorH LASPoint_GetColor(const LASPointH hPoint) {
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetColor", 0);
     
-    liblas::Color color = ((liblas::Point*) hPoint)->GetColor();
+    liblas::Color color;
+    try {
+        color = ((liblas::Point*) hPoint)->GetColor();
+        
+    } catch (std::runtime_error const&) 
+    {
+        
+    }
     return (LASColorH) new liblas::Color(color);
 }
 
@@ -1801,6 +1822,12 @@ LAS_DLL LASErrorEnum LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor)
 
     try {
         ((liblas::Point*) hPoint)->SetColor(*((liblas::Color*)hColor));
+    }
+    catch (std::runtime_error const&) 
+    {
+        // drop the value on the floor.  If the point has a schema that 
+        // doesn't have color, the user needs to change the point's header.
+        
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetColor");

@@ -609,13 +609,6 @@ bool Schema::IsCustom() const
     return false;
 }
 
-SizesArray const& Schema::GetSizes(std::size_t pos) const
-{
-    index_by_index const& idx = m_index.get<index>();
-    Dimension const& dim = idx.at(pos);
-    return dim.GetSizes();
-
-}
 
 void Schema::CalculateSizes() 
 {
@@ -624,8 +617,8 @@ void Schema::CalculateSizes()
 
     index_by_position& position_index = m_index.get<position>();
     
-    std::size_t index_position = 0;
-    std::size_t bit_position = 0;
+    std::size_t byte_offset = 0;
+    std::size_t bit_offset = 0;
 
     for (index_by_position::iterator i = position_index.begin();
          i != position_index.end(); 
@@ -634,26 +627,21 @@ void Schema::CalculateSizes()
         Dimension t = (*i);
         m_bit_size += t.GetBitSize(); 
 
-        std::size_t byte_size = 0;
-        bit_position = bit_position + (t.GetBitSize() % 8);
+        bit_offset = bit_offset + (t.GetBitSize() % 8);
 
         // std::cout << "position : " << t->GetPosition() << " index_position: " << index_position;
         // std::cout << " d: " << t->GetName() << " bit_position: " << bit_position<<std::endl;
         // std::cout << "bit_size: " << t->GetBitSize()  << std::endl;
         
-        SizesArray a;
-        a[0] = index_position;
-        a[1] = byte_size;
-        a[2] = bit_position;
-        a[3] = t.GetBitSize();
-        t.SetSizes(a);
+        t.SetByteOffset(byte_offset);
+        t.SetBitOffset(bit_offset);
         position_index.replace(i, t);
         
         // // We don't increment if this dimension is within the current byte
-        if ( bit_position %8 == 0)
+        if ( bit_offset %8 == 0)
         {
-            bit_position = 0;
-            index_position = index_position + t.GetByteSize();
+            bit_offset = 0;
+            byte_offset = byte_offset + t.GetByteSize();
         }
 
         if ( t.IsRequired() == true)
@@ -732,12 +720,15 @@ void Schema::AddDimension(Dimension const& dim)
     d.SetPosition(m_nextpos); m_nextpos++;
     
     // Add/reset the dimension ptr on the dimensions map
-    // FIXME: replace an existing dimension!
-    m_index.insert(d);
-    
-    // Add/reset the critical sizes array on the size map
-    SizesArray a; a.assign(0);
-    
+
+    index_by_name & name_index = m_index.get<name>();
+    index_by_name::iterator it = name_index.find(dim.GetName());
+
+    if (it != name_index.end())
+        name_index.replace(it, dim);
+    else 
+        m_index.insert(d);        
+
     // Update all of our sizes
     CalculateSizes();
 }
@@ -757,6 +748,12 @@ Dimension const& Schema::GetDimension(std::string const& n) const
     throw std::runtime_error(oss.str());
 }
 
+Dimension const& Schema::GetDimension(index_by_index::size_type t) const
+{
+    index_by_index const& idx = m_index.get<index>();
+    return idx.at(t);
+
+}
 void Schema::SetDimension(Dimension const& dim)
 {
     

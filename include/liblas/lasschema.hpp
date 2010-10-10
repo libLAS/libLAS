@@ -75,8 +75,6 @@
 namespace liblas {  
 
 typedef std::vector<Dimension> DimensionArray;
-typedef boost::array<std::size_t, 4> SizesArray;
-typedef boost::unordered_map<std::string, SizesArray> SizesMap;
 
 using namespace boost::multi_index;
 
@@ -132,7 +130,7 @@ public:
     
     void AddDimension(Dimension const& dim);
     Dimension const& GetDimension(std::string const& n) const;
-    // Dimension& GetDimension(std::string const& n);
+    Dimension const& GetDimension(index_by_index::size_type t) const;
     
     // DimensionPtr GetDimension(std::size_t index) const;
     void RemoveDimension(Dimension const& dim);
@@ -142,8 +140,6 @@ public:
     std::vector<std::string> GetDimensionNames() const;
     IndexMap const& GetDimensions() const { return m_index; }
     liblas::property_tree::ptree GetPTree() const;
-    SizesArray const& GetSizes(std::string const& n) const;
-    SizesArray const& GetSizes(std::size_t pos) const;
     
     boost::uint16_t GetSchemaVersion() const { return m_schemaversion; }
     void SetSchemaVersion(boost::uint16_t v) { m_schemaversion = v; }

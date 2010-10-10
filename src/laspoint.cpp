@@ -822,13 +822,15 @@ void Point::SetColor(Color const& value)
 
 std::vector<boost::uint8_t>::size_type Point::GetDimensionBytePosition(std::size_t dim_pos) const
 {
-    SizesArray s;
+    std::size_t output = 0;
     if (m_header) {
-        s = m_header->GetSchema().GetSizes(dim_pos);
+        Dimension const& d = m_header->GetSchema().GetDimension(dim_pos);
+        output = d.GetByteOffset();
     } else {
-        s = m_default_header.GetSchema().GetSizes(dim_pos);
+        Dimension const& d = m_default_header.GetSchema().GetDimension(dim_pos);
+        output = d.GetByteOffset();
     }   
-    return s[0];
+    return output;
 }
 
 
