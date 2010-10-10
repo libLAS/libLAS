@@ -224,5 +224,23 @@ liblas::property_tree::ptree VariableRecord::GetPTree() const
     
 }
 
+std::ostream& operator<<(std::ostream& os, liblas::VariableRecord const& v)
+{
+
+    using liblas::property_tree::ptree;
+    ptree tree = v.GetPTree();
+
+    os << "    User: '" 
+             << tree.get<std::string>("userid")
+             << "' - Description: '"
+             << tree.get<std::string>("description") 
+             <<"'" 
+             << std::endl;
+    os << "    ID: " << tree.get<boost::uint32_t>("id")
+             << " Length: " << tree.get<boost::uint32_t>("length")
+             << std::endl;
+        
+    return os;
+}
 } // namespace liblas
 

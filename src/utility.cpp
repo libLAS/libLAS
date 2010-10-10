@@ -62,6 +62,38 @@ Summary::Summary() :
     returns_of_given_pulse.assign(0);    
 }
 
+Summary::Summary(Summary const& other)
+    : classes(other.classes)
+    , synthetic(other.synthetic)
+    , withheld(other.withheld)
+    , keypoint(other.keypoint)
+    , count(other.count)
+    , points_by_return(other.points_by_return)
+    , returns_of_given_pulse(other.returns_of_given_pulse)
+    , first(other.first)
+    , min(other.min)
+    , max(other.max)
+{
+}
+
+Summary& Summary::operator=(Summary const& rhs)
+{
+    if (&rhs != this)
+    {
+        classes = rhs.classes;
+        synthetic = rhs.synthetic;
+        withheld = rhs.withheld;
+        keypoint = rhs.keypoint;
+        count = rhs.count;
+        first = rhs.first;
+        points_by_return = rhs.points_by_return;
+        returns_of_given_pulse = rhs.returns_of_given_pulse;
+        min = rhs.min;
+        max = rhs.max;
+    }
+    return *this;
+}
+
 void Summary::AddPoint(liblas::Point const& p)
 {
         count++;
@@ -216,4 +248,23 @@ ptree Summary::GetPTree() const
     pt.put("count", count);
     return pt;
 }
+
+std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
+{
+    liblas::property_tree::ptree tree = s.GetPTree();
+    
+    os << "---------------------------------------------------------";
+    os << "  Point Inspection Summary" ;
+    os << "---------------------------------------------------------";
+
+        BOOST_FOREACH(ptree::value_type &v,
+                tree.get_child("points_by_return"))
+        {
+            boost::uint32_t i = v.second.get<boost::uint32_t>("id");
+            boost::uint32_t count = v.second.get<boost::uint32_t>("count");
+            // header.SetPointRecordsByReturnCount(i-1, count);        
+        }     
+    return os;
+}
+
 } // namespace liblas

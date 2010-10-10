@@ -20,6 +20,7 @@ set(LAS2LAS las2las)
 set(LAS2TXT las2txt)
 set(TXT2LAS txt2las)
 set(LAS2LAS2 las2las2 )
+set(LASINFO2 lasinfo2)
 set(LASBLOCK lasblock )
 
 set(BIGFILE_TEST bigfile_test)
@@ -42,7 +43,7 @@ endif()
 
 set(LIBLAS_UTILITIES
     ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
-    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS2} ${LASBLOCK})
+    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS2} ${LASBLOCK} ${LASINFO2})
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -87,6 +88,11 @@ endif()
 if(LAS2LAS2)
     add_executable(${LAS2LAS2} las2las2.cpp laskernel.cpp)
     target_link_libraries(${LAS2LAS2} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
+endif()
+
+if(LASINFO2)
+    add_executable(${LASINFO2} lasinfo2.cpp laskernel.cpp)
+    target_link_libraries(${LASINFO2} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
 endif()
 
 # Build las2txt

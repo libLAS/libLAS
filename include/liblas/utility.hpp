@@ -48,7 +48,7 @@
 #include <liblas/external/property_tree/ptree.hpp>
 // boost
 #include <boost/cstdint.hpp>
-
+#include <boost/foreach.hpp>
 // std
 #include <vector>
 #include <functional>
@@ -65,14 +65,14 @@ class Summary
 public:
     
     Summary();
-    void AddPoint(liblas::Point const& p);
-    ptree GetPTree() const;
-    
-private:
-
     Summary(Summary const& other);
     Summary& operator=(Summary const& rhs);
+
+    void AddPoint(liblas::Point const& p);
+    ptree GetPTree() const;
+
     
+private:
 
     classes_type classes;
     boost::uint32_t synthetic;
@@ -86,6 +86,7 @@ private:
     liblas::Point max;    
 };
 
+std::ostream& operator<<(std::ostream& os, liblas::Summary const& s);
 
 } // namespace liblas
 

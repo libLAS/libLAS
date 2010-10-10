@@ -151,6 +151,9 @@ inline bool operator!=(VariableRecord const& lhs, VariableRecord const& rhs)
     return (!(lhs == rhs));
 }
 
+std::ostream& operator<<(std::ostream& os, liblas::VariableRecord const&);
+
+
 } // namespace liblas
 
 #endif // LIBLAS_LASVARIABLERECORD_HPP_INCLUDED
