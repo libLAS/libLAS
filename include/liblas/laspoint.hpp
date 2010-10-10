@@ -196,8 +196,8 @@ public:
     bool IsValid() const;
 
 
-    std::vector<boost::uint8_t> const& GetData() const {return m_format_data; }
-    void SetData(std::vector<boost::uint8_t> const& v) { m_format_data = v;}
+    std::vector<boost::uint8_t> const& GetData() const {return m_data; }
+    void SetData(std::vector<boost::uint8_t> const& v) { m_data = v;}
     
     void SetHeaderPtr(HeaderPtr header);
     HeaderPtr GetHeaderPtr() const;
@@ -208,8 +208,7 @@ public:
 
 private:
 
-    detail::PointRecord m_record;
-    std::vector<boost::uint8_t> m_format_data;
+    std::vector<boost::uint8_t> m_data;
     
     std::vector<boost::uint8_t>::size_type GetDimensionBytePosition(std::size_t dim_pos) const;
     HeaderPtr m_header;

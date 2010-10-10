@@ -65,20 +65,20 @@ Point::Point()
     : m_header(HeaderPtr())
     , m_default_header(DefaultHeader::get())
 {
-    m_format_data.resize(ePointSize3);
-    m_format_data.assign(ePointSize3, 0);
+    m_data.resize(ePointSize3);
+    m_data.assign(ePointSize3, 0);
 }
 
 Point::Point(HeaderPtr hdr)
     : m_header(hdr)
     , m_default_header(DefaultHeader::get())
 {
-    m_format_data.resize(ePointSize3);
-    m_format_data.assign(ePointSize3, 0);
+    m_data.resize(ePointSize3);
+    m_data.assign(ePointSize3, 0);
 }
 
 Point::Point(Point const& other)
-    : m_format_data(other.m_format_data)
+    : m_data(other.m_data)
     , m_header(other.m_header)
     , m_default_header(DefaultHeader::get())
 {
@@ -88,7 +88,7 @@ Point& Point::operator=(Point const& rhs)
 {
     if (&rhs != this)
     {
-        m_format_data = rhs.m_format_data;
+        m_data = rhs.m_data;
         m_header = rhs.m_header;
     }
     return *this;
@@ -390,7 +390,7 @@ boost::int32_t Point::GetRawX() const
 {
     // std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("X");
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(0);
-    boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
+    boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
 
     return output;
 }
@@ -399,7 +399,7 @@ boost::int32_t Point::GetRawY() const
 {
     // std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Y");
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(1);    
-    boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
+    boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
 
     return output;
 }
@@ -409,7 +409,7 @@ boost::int32_t Point::GetRawZ() const
     boost::int32_t output;
     // std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Z");
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(2);
-    output = liblas::detail::bitsToInt<boost::int32_t>(output, m_format_data, pos);
+    output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
 
     return output;
 }
@@ -418,21 +418,21 @@ void Point::SetRawX( boost::int32_t const& value)
 {
     // std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("X");
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(0);    
-    liblas::detail::intToBits<boost::int32_t>(value, m_format_data, pos);
+    liblas::detail::intToBits<boost::int32_t>(value, m_data, pos);
 }
 
 void Point::SetRawY( boost::int32_t const& value)
 {
     // std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Y");
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(1);
-    liblas::detail::intToBits<boost::int32_t>(value, m_format_data, pos);
+    liblas::detail::intToBits<boost::int32_t>(value, m_data, pos);
 }
 
 void Point::SetRawZ( boost::int32_t const& value)
 {
     // std::vector<boost::uint8_t>::size_type pos = GetDimensionPosition("Z");
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(2);    
-    liblas::detail::intToBits<boost::int32_t>(value, m_format_data, pos);
+    liblas::detail::intToBits<boost::int32_t>(value, m_data, pos);
 }
 
 boost::uint16_t Point::GetIntensity() const
@@ -441,7 +441,7 @@ boost::uint16_t Point::GetIntensity() const
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(3);
     boost::uint16_t output = 
         liblas::detail::bitsToInt<boost::uint16_t>(
-            output, m_format_data, pos);
+            output, m_data, pos);
 
     return output;
 }
@@ -452,7 +452,7 @@ void Point::SetIntensity(boost::uint16_t const& intensity)
     // Intensity's position is always the 4th dimension
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(3);    
     liblas::detail::intToBits<boost::uint16_t>(intensity, 
-                                               m_format_data, 
+                                               m_data, 
                                                pos);
 }
 
@@ -462,7 +462,7 @@ boost::uint8_t Point::GetScanFlags() const
     // (the entire byte composed of "Return Number", "Number of Returns", 
     // "Scan Direction", and "Flightline Edge")
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(4);    
-    return m_format_data[pos];
+    return m_data[pos];
 }
 
 void Point::SetScanFlags(boost::uint8_t const& flags)
@@ -471,14 +471,14 @@ void Point::SetScanFlags(boost::uint8_t const& flags)
     // (the entire byte composed of "Return Number", "Number of Returns", 
     // "Scan Direction", and "Flightline Edge")
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(4);       
-    m_format_data[pos] = flags;
+    m_data[pos] = flags;
 }
 
 boost::uint16_t Point::GetReturnNumber() const
 {
     // "Return Number" is always the 5th dimension
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(4);  
-    boost::uint8_t flags = m_format_data[pos];
+    boost::uint8_t flags = m_data[pos];
     
     // Read bits 1,2,3 (first 3 bits)
     return (flags & 0x07);
@@ -489,13 +489,13 @@ void Point::SetReturnNumber(uint16_t const& num)
     // "Return Number" is always the 5th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(4);  
         
-    boost::uint8_t flags = m_format_data[pos];
+    boost::uint8_t flags = m_data[pos];
     
     // Store value in bits 0,1,2
     uint8_t mask = 0x7 << 0; // 0b00000111
     flags &= ~mask;
     flags |= mask & (static_cast<uint8_t>(num) << 0);
-    m_format_data[pos] = flags;
+    m_data[pos] = flags;
 }
 
 boost::uint16_t Point::GetNumberOfReturns() const
@@ -505,7 +505,7 @@ boost::uint16_t Point::GetNumberOfReturns() const
     // "Number of Returns" is always the 6th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(5);
 
-    flags = m_format_data[pos];
+    flags = m_data[pos];
 
     // Read bits 4,5,6
     return ((flags >> 3) & 0x07);
@@ -516,13 +516,13 @@ void Point::SetNumberOfReturns(uint16_t const& num)
     // "Number of Returns" is always the 6th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(5);
     
-    boost::uint8_t flags = m_format_data[pos];
+    boost::uint8_t flags = m_data[pos];
     
     // Store value in bits 3,4,5
     uint8_t mask = 0x7 << 3; // 0b00111000
     flags &= ~mask;
     flags |= mask & (static_cast<uint8_t>(num) << 3);
-    m_format_data[pos] = flags;
+    m_data[pos] = flags;
 
 //     // Store value in bits 3,4,5
 //     uint8_t mask = 0x7 << 3; // 0b00111000
@@ -536,13 +536,13 @@ void Point::SetScanDirection(uint16_t const& dir)
     // "Scan Direction" is always the 7th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(6);
     
-    boost::uint8_t flags = m_format_data[pos];
+    boost::uint8_t flags = m_data[pos];
     
     // Store value in bits 6
     uint8_t mask = 0x1 << 6; // 0b01000000
     flags &= ~mask;
     flags |= mask & (static_cast<uint8_t>(dir) << 6);
-    m_format_data[pos] = flags;   
+    m_data[pos] = flags;   
 }
 
 boost::uint16_t Point::GetScanDirection() const
@@ -550,7 +550,7 @@ boost::uint16_t Point::GetScanDirection() const
     // "Scan Direction" is always the 7th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(6);
     
-    boost::uint8_t flags = m_format_data[pos];
+    boost::uint8_t flags = m_data[pos];
 
     // Read 6th bit
     return ((flags >> 6) & 0x01);
@@ -561,13 +561,13 @@ void Point::SetFlightLineEdge(uint16_t const& edge)
     // "Flightline Edge" is always the 8th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(7);
 
-    boost::uint8_t flags = m_format_data[pos];
+    boost::uint8_t flags = m_data[pos];
     
     // Store value in bits 7
     uint8_t mask = 0x1 << 7; // 0b10000000
     flags &= ~mask;
     flags |= mask & (static_cast<uint8_t>(edge) << 7);
-    m_format_data[pos] = flags;
+    m_data[pos] = flags;
 
 //     // Store value in bit 7
 //     uint8_t mask = 0x1 << 7; // 0b10000000
@@ -581,7 +581,7 @@ boost::uint16_t Point::GetFlightLineEdge() const
     // "Flightline Edge" is always the 8th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(7);
     
-    boost::uint8_t flags = m_format_data[pos];
+    boost::uint8_t flags = m_data[pos];
 
     // Read 8th bit
     return ((flags >> 7) & 0x01);
@@ -592,7 +592,7 @@ Classification Point::GetClassification() const
 {
     // "Classification" is always the 9th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(8);
-    boost::uint8_t kls = m_format_data[pos];
+    boost::uint8_t kls = m_data[pos];
     return Classification(kls);
 }
 
@@ -600,21 +600,21 @@ void Point::SetClassification(Classification const& cls)
 {
     // "Classification" is always the 9th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(8);
-    m_format_data[pos] = cls.GetClass();
+    m_data[pos] = cls.GetClass();
 }
 
 void Point::SetClassification(Classification::bitset_type const& flags)
 {
     // "Classification" is always the 9th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(8);
-    m_format_data[pos] = Classification(flags).GetClass();
+    m_data[pos] = Classification(flags).GetClass();
 }
 
 void Point::SetClassification(boost::uint8_t const& flags)
 {
     // "Classification" is always the 9th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(8);
-    m_format_data[pos] = Classification(flags).GetClass();
+    m_data[pos] = Classification(flags).GetClass();
 }
 
 void Point::SetScanAngleRank(int8_t const& rank)
@@ -622,7 +622,7 @@ void Point::SetScanAngleRank(int8_t const& rank)
     // "Scan Angle Rank" is always the 10th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(9);
 
-    m_format_data[pos] = rank;
+    m_data[pos] = rank;
 
 }
 boost::int8_t Point::GetScanAngleRank() const
@@ -630,7 +630,7 @@ boost::int8_t Point::GetScanAngleRank() const
     // "Scan Angle Rank" is always the 10th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(9);
 
-    return m_format_data[pos];
+    return m_data[pos];
 }
 
 boost::uint8_t Point::GetUserData() const
@@ -638,14 +638,14 @@ boost::uint8_t Point::GetUserData() const
     // "User Data" is always the 11th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(10);
     
-    return m_format_data[pos];
+    return m_data[pos];
 }
 
 void Point::SetUserData(boost::uint8_t const& flags)
 {
     // "User Data" is always the 11th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(10);
-    m_format_data[pos] = flags;
+    m_data[pos] = flags;
 }
 
 boost::uint16_t Point::GetPointSourceID() const
@@ -655,7 +655,7 @@ boost::uint16_t Point::GetPointSourceID() const
     // "Point Source ID" is always the 12th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(11);
     output = liblas::detail::bitsToInt<boost::uint16_t>(output, 
-                                                        m_format_data, 
+                                                        m_data, 
                                                         pos);
 
     return output;
@@ -667,7 +667,7 @@ void Point::SetPointSourceID(boost::uint16_t const& id)
     // "Point Source ID" is always the 12th dimension    
     std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(11);
     liblas::detail::intToBits<boost::uint16_t>(id, 
-                                               m_format_data, 
+                                               m_data, 
                                                pos);
 }
 
@@ -698,7 +698,7 @@ void Point::SetTime(double const& t)
 #else
         for (boost::uint32_t n = 0; n < sizeof( double ); n++)
 #endif 
-            m_format_data[pos+n] = x_b[n];
+            m_data[pos+n] = x_b[n];
 
 }
 
@@ -731,7 +731,7 @@ double Point::GetTime() const
 #else
         for (boost::int32_t n = sizeof( double )-1; n >= 0; n--)
 #endif  
-            data[n] = m_format_data[pos+n];
+            data[n] = m_data[pos+n];
 
     const double* output = reinterpret_cast<const double*>(data);
     double out = *output;
@@ -769,13 +769,13 @@ Color Point::GetColor() const
     
 
     red = liblas::detail::bitsToInt<boost::uint16_t>(red, 
-                                                     m_format_data, 
+                                                     m_data, 
                                                      red_pos);
     green = liblas::detail::bitsToInt<boost::uint16_t>(green, 
-                                                     m_format_data, 
+                                                     m_data, 
                                                      green_pos);
     blue = liblas::detail::bitsToInt<boost::uint16_t>(blue, 
-                                                     m_format_data, 
+                                                     m_data, 
                                                      blue_pos);
 
   return Color(red, green, blue);
@@ -806,13 +806,13 @@ void Point::SetColor(Color const& value)
  
 
     liblas::detail::intToBits<boost::uint16_t>(value.GetRed(), 
-                                               m_format_data, 
+                                               m_data, 
                                                red_pos);
     liblas::detail::intToBits<boost::uint16_t>(value.GetGreen(), 
-                                               m_format_data, 
+                                               m_data, 
                                                green_pos);
     liblas::detail::intToBits<boost::uint16_t>(value.GetBlue(), 
-                                               m_format_data, 
+                                               m_data, 
                                                blue_pos);
 }
 
