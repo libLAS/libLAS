@@ -476,8 +476,8 @@ liblas::property_tree::ptree Schema::GetPTree() const
         dim.put("required", static_cast<boost::uint32_t>(t.IsRequired()));
 
        if (t.IsNumeric()) {
-           // FIXME use detail::compare
-           if (t.GetMinimum() != t.GetMaximum() && t.GetMaximum() != 0) 
+           if (! (detail::compare_distance(t.GetMinimum(), t.GetMaximum() ) 
+                && detail::compare_distance(0.0, t.GetMaximum())))
            {
                dim.put("minimum", t.GetMinimum());
                dim.put("maximum", t.GetMaximum());
