@@ -612,6 +612,9 @@ bool Schema::IsCustom() const
 
 void Schema::CalculateSizes() 
 {
+    // Loop through the dimensions and update the bit and byte offset
+    // values for each.  Additionally, update m_bit_size and m_base_bit_size
+    // for the entire schema.  
     m_bit_size = 0;
     m_base_bit_size = 0;
 
@@ -629,16 +632,12 @@ void Schema::CalculateSizes()
 
         bit_offset = bit_offset + (t.GetBitSize() % 8);
 
-        // std::cout << "position : " << t->GetPosition() << " index_position: " << index_position;
-        // std::cout << " d: " << t->GetName() << " bit_position: " << bit_position<<std::endl;
-        // std::cout << "bit_size: " << t->GetBitSize()  << std::endl;
-        
         t.SetByteOffset(byte_offset);
         t.SetBitOffset(bit_offset);
         position_index.replace(i, t);
         
-        // // We don't increment if this dimension is within the current byte
-        if ( bit_offset %8 == 0)
+        // We don't increment if this dimension is within the current byte
+        if ( bit_offset % 8 == 0)
         {
             bit_offset = 0;
             byte_offset = byte_offset + t.GetByteSize();
@@ -648,39 +647,6 @@ void Schema::CalculateSizes()
             m_base_bit_size += t.GetBitSize();        
     }
 
-
-    // std::cout << "Calculated: " << m_bit_size << std::endl;
-    // if (m_bit_size % 8 != 0) {
-    //     std::ostringstream oss;
-    //     oss << "The summed size in bits, " << m_bit_size << ", is not a multiple of 8.";
-    //     oss << " The sum of the sizes of all dimensions must be a multiple ";
-    //     oss << " of 8";
-    //     throw std::runtime_error(oss.str());
-    // }
-    // if (m_base_bit_size % 8 != 0) {
-    //     std::ostringstream oss;
-    //     oss << "The summed size in bits, " << m_base_bit_size << ", is not a multiple of 8.";
-    //     oss << " The sum of the sizes of the required dimensions must be a multiple ";
-    //     oss << " of 8";
-    //     throw std::runtime_error(oss.str());
-    // }
-    // 
-    // std::size_t byte_size = m_base_bit_size / 8 ;
-    // switch (byte_size)
-    // {
-    //     case ePointSize0:
-    //     case ePointSize1:
-    //     case ePointSize2:
-    //     case ePointSize3:
-    //         break;
-    // 
-    //     // FIXME: We don't account for extended LAS 1.3 point formats yet.
-    //     default:
-    //         std::ostringstream oss;
-    //         oss << "The sum of the required dimensions, " << byte_size << ", is";
-    //         oss << " not a recognized value.  ";
-    //         throw std::runtime_error(oss.str());
-    // }
 }
 
 
@@ -720,7 +686,6 @@ void Schema::AddDimension(Dimension const& dim)
     d.SetPosition(m_nextpos); m_nextpos++;
     
     // Add/reset the dimension ptr on the dimensions map
-
     index_by_name & name_index = m_index.get<name>();
     index_by_name::iterator it = name_index.find(dim.GetName());
 
@@ -775,9 +740,10 @@ std::vector<std::string> Schema::GetDimensionNames() const
 {
     std::vector<std::string> output;
 
-    index_by_position::const_iterator it = m_index.get<position>().begin();
+    index_by_position const& position_index = m_index.get<position>();
+    index_by_position::const_iterator it = position_index.begin();
     
-    while (it != m_index.get<position>().end()) {
+    while (it != position_index.end()) {
         output.push_back(it->GetName());
         it++;
     }
