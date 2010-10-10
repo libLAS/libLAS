@@ -87,6 +87,90 @@ bool term_progress(std::ostream& os, double complete)
     return true;
 }
 
+void SetStreamPrecision(std::ostream& os, double scale)
+{
+    os.setf(std::ios_base::fixed, std::ios_base::floatfield);
+
+    double frac = 0;
+    double integer = 0;
+    frac = std::modf(scale, &integer);
+
+    boost::uint32_t prec = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
+    os.precision(prec);    
+}
+
+void RepairHeader(liblas::Summary const& summary, std::string const& filename)
+{
+    std::ifstream ifs;
+    if (!liblas::Open(ifs, filename.c_str()))
+    {
+        std::ostringstream oss;
+        oss << "Cannot open " << filename << "for read.  Exiting...";
+        throw std::runtime_error(oss.str());
+    }
+    liblas::Reader reader(ifs);
+    liblas::Header header = reader.GetHeader();
+    ifs.close();
+
+    for (boost::uint32_t i = 0; i < 5; i++)
+    {
+        header.SetPointRecordsByReturnCount(i, 0);
+    }    
+
+    std::ios::openmode m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
+
+    // Write a blank PointRecordsByReturnCount first
+    std::ofstream ofs(filename.c_str(), m);
+    liblas::Writer writer(ofs, header);
+    ofs.close();
+    
+    liblas::property_tree::ptree tree = summary.GetPTree();
+    
+    try
+    {
+        header.SetMin(tree.get<double>("minimum.x"),
+                      tree.get<double>("minimum.y"),
+                      tree.get<double>("minimum.z"));
+    
+        header.SetMax(tree.get<double>("maximum.x"),
+                      tree.get<double>("maximum.y"),
+                      tree.get<double>("maximum.z"));
+        
+    }     catch (liblas::property_tree::ptree_bad_path const& e) 
+    {
+        std::cerr << "Unable to write header bounds info.  Does the outputted file have any points?";
+        return;
+    }
+
+    try
+    {
+
+        for (boost::uint32_t i = 0; i < 5; i++)
+        {
+            header.SetPointRecordsByReturnCount(i, 0);
+        }
+    
+        BOOST_FOREACH(ptree::value_type &v,
+                tree.get_child("points_by_return"))
+        {
+            boost::uint32_t i = v.second.get<boost::uint32_t>("id");
+            boost::uint32_t count = v.second.get<boost::uint32_t>("count");
+            header.SetPointRecordsByReturnCount(i-1, count);        
+        } 
+        
+    }     catch (liblas::property_tree::ptree_bad_path const& e) 
+    {
+        std::cerr << "Unable to write header point return count info.  Does the outputted file have any points?";
+        return;
+    }
+    
+    
+    // Write our updated header with summary info
+    std::ofstream ofs2(filename.c_str(), m);
+    liblas::Writer writer2(ofs2, header);
+    ofs2.close();
+    
+}
 
 bool IsDualRangeFilter(std::string parse_string) 
 {
@@ -208,6 +292,8 @@ po::options_description GetHeaderOptions()
         ("add-schema", po::value<bool>()->zero_tokens(), "Add the liblas.org schema VLR record to the file.")
         ("delete-vlr", po::value<std::vector<std::string> >()->multitoken(), "Removes VLRs with the given name and id combination. --delete-vlr LASF_Projection 34737")
         ("add-vlr", po::value<std::vector<std::string> >()->multitoken(), "Add VLRs with the given name and id combination. --add-vlr hobu 1234 \"Description of the VLR\" \"filename.ext\"")
+        ("system_identifier", po::value<std::string>(), "Set the SystemID for the file. --system_identifier \"MODIFICATION\"")
+        ("generating_software", po::value<std::string>(), "Set the SoftwareID for the file. --generating_software \"liblas.org\"")
 
     ;
     
@@ -941,7 +1027,32 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         v.SetData(data);
         v.SetRecordLength(data.size());
         header.AddVLR(v);
-    }   
+    }
+
+    if (vm.count("generating_software")) 
+    {
+        std::string software = vm["generating_software"].as< std::string >();
+        if (verbose)
+        {
+
+                std::cout << "Setting Software ID to: " << software<< std::endl;
+        }
+        header.SetSoftwareId(software);
+    }
+
+    if (vm.count("system_identifier")) 
+    {
+        std::string id = vm["system_identifier"].as< std::string >();
+        
+
+        if (verbose)
+        {
+
+                std::cout << "Setting System ID to: " << id<< std::endl;
+        }
+        
+        header.SetSystemId(id);
+    }
     return transforms;
 }
 

@@ -43,6 +43,7 @@
 #define LIBLAS_KERNEL_HPP_INCLUDED
 
 #include <liblas/liblas.hpp>
+#include <liblas/utility.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/external/property_tree/xml_parser.hpp>
 
@@ -95,5 +96,7 @@ std::istream* OpenInput(std::string filename, bool bEnd);
 std::string TryReadFileData(std::string filename);
 std::vector<char> TryReadRawFileData(std::string filename);
 bool term_progress(std::ostream& os, double complete);
+void SetStreamPrecision(std::ostream& os, double scale);
+void RepairHeader(liblas::Summary const& summary, std::string const& filename);
 
 #endif // LIBLAS_ITERATOR_HPP_INCLUDED
