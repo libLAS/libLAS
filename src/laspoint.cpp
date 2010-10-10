@@ -56,6 +56,7 @@
 #include <vector>
 #include <iosfwd>
 #include <algorithm>
+#include <numeric>
 
 using namespace boost;
 
@@ -189,6 +190,58 @@ bool Point::IsValid() const
 
 void Point::SetHeaderPtr(HeaderPtr header) 
 {
+    boost::uint16_t length;
+    if (m_header) 
+        length = m_header->GetDataRecordLength();
+    else
+        length = m_default_header.GetDataRecordLength();
+    
+    // This is hopefully faster than copying everything if we don't have 
+    // any data set and nothing to worry about.
+    boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
+
+    if (length != m_data.size() || sum != 0)
+    {
+        // Manually copy everything but the header ptr
+        // We can't just copy the raw data because its 
+        // layout is likely changing as a result of the 
+        // schema change.
+        Point p(*this);
+    
+        m_data.resize(length);
+        m_data.assign(length, 0);
+    
+        SetX(p.GetX());
+        SetY(p.GetY());
+        SetZ(p.GetZ());
+        
+        SetIntensity(p.GetIntensity());
+        SetScanFlags(p.GetScanFlags());
+        SetClassification(p.GetClassification());
+        SetScanAngleRank(p.GetScanAngleRank());
+        SetUserData(p.GetUserData());
+        SetPointSourceID(p.GetPointSourceID());
+        
+        try {
+            SetTime(p.GetTime());
+        } catch (std::runtime_error const&) 
+        {
+            
+        }
+
+        try {
+            SetColor(p.GetColor());
+        } catch (std::runtime_error const&) 
+        {
+            
+        }
+        
+        // FIXME: copy other custom dimensions here?  resetting the 
+        // headerptr can be catastrophic in a lot of cases.  
+
+        
+    }
+    
     m_header = header;
 }
 
