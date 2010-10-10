@@ -859,31 +859,31 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
     os << tree.get<std::string>("srs.prettywkt") << std::endl;
     os << tree.get<std::string>("srs.gtiff") << std::endl;   
 
-    os << "---------------------------------------------------------" << std::endl;
-    os << "  VLR Summary" << std::endl;
-    os << "---------------------------------------------------------" << std::endl;
+    // os << "---------------------------------------------------------" << std::endl;
+    // os << "  VLR Summary" << std::endl;
+    // os << "---------------------------------------------------------" << std::endl;
 
-    try {
-        std::ostringstream vlrs_oss;
-        BOOST_FOREACH(ptree::value_type &v,
-                tree.get_child("vlrs"))
-        {
-                vlrs_oss << "    User: '" 
-                         << v.second.get<std::string>("userid")
-                         << "' - Description: '"
-                         << v.second.get<std::string>("description") 
-                         <<"'" 
-                         << std::endl;
-                vlrs_oss << "    ID: " << v.second.get<boost::uint32_t>("id")
-                         << " Length: " <<v.second.get<boost::uint32_t>("length")
-                         << std::endl;
-        }
-    
-        os << vlrs_oss.str();
-    }
-    catch (liblas::property_tree::ptree_bad_path const& e) {
-        ::boost::ignore_unused_variable_warning(e);
-    }
+    // try {
+    //     std::ostringstream vlrs_oss;
+    //     BOOST_FOREACH(ptree::value_type &v,
+    //             tree.get_child("vlrs"))
+    //     {
+    //             vlrs_oss << "    User: '" 
+    //                      << v.second.get<std::string>("userid")
+    //                      << "' - Description: '"
+    //                      << v.second.get<std::string>("description") 
+    //                      <<"'" 
+    //                      << std::endl;
+    //             vlrs_oss << "    ID: " << v.second.get<boost::uint32_t>("id")
+    //                      << " Length: " <<v.second.get<boost::uint32_t>("length")
+    //                      << std::endl;
+    //     }
+    // 
+    //     os << vlrs_oss.str();
+    // }
+    // catch (liblas::property_tree::ptree_bad_path const& e) {
+    //     ::boost::ignore_unused_variable_warning(e);
+    // }
     return os;
     
 }
