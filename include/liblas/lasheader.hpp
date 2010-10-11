@@ -348,6 +348,10 @@ public:
     /// all of the header data in a structured format.
     liblas::property_tree::ptree GetPTree() const;
     
+    void to_rst(std::ostream& os) const;
+    void to_xml(std::ostream& os) const;
+    void to_json(std::ostream& os) const;
+    
 private:
     
     typedef detail::Point<double> PointScales;

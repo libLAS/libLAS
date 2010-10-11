@@ -782,15 +782,14 @@ liblas::property_tree::ptree Header::GetPTree( ) const
     return pt;
 }
 
-std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
+void Header::to_rst(std::ostream& os) const
 {
+
     using liblas::property_tree::ptree;
-    ptree tree = h.GetPTree();
-    
-    
-    os << "---------------------------------------------------------" << std::endl;
+    ptree tree = GetPTree();
     os << "  Header Summary" << std::endl;
     os << "---------------------------------------------------------" << std::endl;
+    os << std::endl;
 
     os << "  Version:                     " << tree.get<std::string>("version") << std::endl;
     os << "  Source ID:                   " << tree.get<boost::uint32_t>("filesourceid") << std::endl;
@@ -801,60 +800,60 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
     os << "  File Creation Day/Year:      " << tree.get<std::string>("date") << std::endl;
     os << "  Header Byte Size             " << tree.get<boost::uint32_t>("size") << std::endl;
     os << "  Data Offset:                 " << tree.get<std::string>("dataoffset") << std::endl;
-    
+
     os << "  Number Var. Length Records:  ";
     try {
-        os << tree.get_child("vlrs").size();
+      os << tree.get_child("vlrs").size();
     }
     catch (liblas::property_tree::ptree_bad_path const& e) {
-        ::boost::ignore_unused_variable_warning(e);
-        os << "None";
+      ::boost::ignore_unused_variable_warning(e);
+      os << "None";
     }
     os << std::endl;
-    
+
     os << "  Point Data Format:           " << tree.get<boost::uint32_t>("dataformatid") << std::endl;
     os << "  Number of Point Records:     " << tree.get<boost::uint32_t>("count") << std::endl;
-    
+
     std::ostringstream returns_oss;
     BOOST_FOREACH(ptree::value_type &v,
-            tree.get_child("returns"))
+          tree.get_child("returns"))
     {
-            returns_oss << v.second.get<std::string>("count")<< " ";
-        
+          returns_oss << v.second.get<std::string>("count")<< " ";
+
     }        
- 
+
     os << "  Number of Points by Return:  " << returns_oss.str() << std::endl;
 
     os.setf(std::ios_base::fixed, std::ios_base::floatfield);
     double scale = tree.get<double>("scale.z");
-    
+
     double frac = 0;
     double integer = 0;
     frac = std::modf(scale, &integer);
-    
+
     boost::uint32_t prec = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
     os.precision(prec);
-        
+
     os << "  Scale Factor X Y Z:          " 
-       << tree.get<double>("scale.x") << " " 
-       << tree.get<double>("scale.y") << " " 
-       << tree.get<double>("scale.x") << std::endl;
+     << tree.get<double>("scale.x") << " " 
+     << tree.get<double>("scale.y") << " " 
+     << tree.get<double>("scale.z") << std::endl;
 
     os << "  Offset X Y Z:                " 
-       << tree.get<double>("offset.x") << " " 
-       << tree.get<double>("offset.y") << " " 
-       << tree.get<double>("offset.x") << std::endl;
+     << tree.get<double>("offset.x") << " " 
+     << tree.get<double>("offset.y") << " " 
+     << tree.get<double>("offset.z") << std::endl;
 
     os << "  Min X Y Z:                   " 
-       << tree.get<double>("minimum.x") << " " 
-       << tree.get<double>("minimum.y") << " " 
-       << tree.get<double>("minimum.x") << std::endl;
+     << tree.get<double>("minimum.x") << " " 
+     << tree.get<double>("minimum.y") << " " 
+     << tree.get<double>("minimum.z") << std::endl;
 
     os << "  Max X Y Z:                   " 
-       << tree.get<double>("minimum.x") << " " 
-       << tree.get<double>("minimum.y") << " " 
-       << tree.get<double>("minimum.x") << std::endl;         
-    
+     << tree.get<double>("maximum.x") << " " 
+     << tree.get<double>("maximum.y") << " " 
+     << tree.get<double>("maximum.z") << std::endl;         
+
     os << "  Spatial Reference:  " << std::endl;
     os << tree.get<std::string>("srs.prettywkt") << std::endl;
     os << tree.get<std::string>("srs.gtiff") << std::endl;   
@@ -884,6 +883,12 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
     // catch (liblas::property_tree::ptree_bad_path const& e) {
     //     ::boost::ignore_unused_variable_warning(e);
     // }
+}
+std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
+{
+
+    
+    h.to_rst(os);
     return os;
     
 }

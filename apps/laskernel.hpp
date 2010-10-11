@@ -97,6 +97,9 @@ std::string TryReadFileData(std::string filename);
 std::vector<char> TryReadRawFileData(std::string filename);
 bool term_progress(std::ostream& os, double complete);
 void SetStreamPrecision(std::ostream& os, double scale);
-void RepairHeader(liblas::Summary const& summary, std::string const& filename);
+
+liblas::Header FetchHeader(std::string const& filename);
+void RewriteHeader(liblas::Header const& header, std::string const& filename);
+void RepairHeader(liblas::Summary const& summary, liblas::Header& header);
 
 #endif // LIBLAS_ITERATOR_HPP_INCLUDED

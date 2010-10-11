@@ -151,7 +151,10 @@ bool process(   std::string const& input,
             ostringstream old_filename;
             old_filename << out << "-" << fileno - 1 << ".las";
 
-            RepairHeader(*summary, old_filename.str());
+            liblas::Header hnew = FetchHeader(old_filename.str());
+            RepairHeader(*summary, hnew);
+            RewriteHeader(hnew, old_filename.str());
+
             delete summary;
             summary =  new liblas::Summary; 
             fileno++;
@@ -175,8 +178,10 @@ bool process(   std::string const& input,
 
             ostringstream old_filename;
             old_filename << out << "-" << fileno - 1 << ".las";
-
-            RepairHeader(*summary, old_filename.str());
+            
+            liblas::Header hnew = FetchHeader(old_filename.str());
+            RepairHeader(*summary, hnew);
+            RewriteHeader(hnew, old_filename.str());
             delete summary;
             summary =  new liblas::Summary; 
             fileno++;
@@ -199,7 +204,10 @@ bool process(   std::string const& input,
     delete writer;
     delete ofs;
     
-    RepairHeader(*summary, output);
+    liblas::Header hnew = FetchHeader(output);
+    RepairHeader(*summary, hnew);
+    RewriteHeader(hnew, output);
+
     delete summary;
     
     return true;

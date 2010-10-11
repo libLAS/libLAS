@@ -54,7 +54,8 @@ Summary::Summary() :
     withheld(0),
     keypoint(0),
     count(0),
-    first(true)
+    first(true),
+    bHaveHeader(false)
     
 {
     classes.assign(0);
@@ -73,6 +74,8 @@ Summary::Summary(Summary const& other)
     , first(other.first)
     , min(other.min)
     , max(other.max)
+    , m_header(other.m_header)
+    , bHaveHeader(other.bHaveHeader)
 {
 }
 
@@ -90,6 +93,8 @@ Summary& Summary::operator=(Summary const& rhs)
         returns_of_given_pulse = rhs.returns_of_given_pulse;
         min = rhs.min;
         max = rhs.max;
+        m_header = rhs.m_header;
+        bHaveHeader = rhs.bHaveHeader;
     }
     return *this;
 }
@@ -184,6 +189,12 @@ void Summary::AddPoint(liblas::Point const& p)
         returns_of_given_pulse[p.GetNumberOfReturns()]++;    
 }
 
+void Summary::SetHeader(liblas::Header const& h) 
+{
+    m_header = h;
+    bHaveHeader = true;
+}
+
 ptree Summary::GetPTree() const
 {
     ptree pt;
@@ -246,7 +257,12 @@ ptree Summary::GetPTree() const
     }
     
     pt.put("count", count);
-    return pt;
+
+    liblas::property_tree::ptree top;
+    if (bHaveHeader)
+        top.add_child("summary.header",m_header.GetPTree());
+    top.add_child("summary.points",pt);
+    return top;
 }
 
 std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)

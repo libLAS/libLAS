@@ -99,8 +99,9 @@ void SetStreamPrecision(std::ostream& os, double scale)
     os.precision(prec);    
 }
 
-void RepairHeader(liblas::Summary const& summary, std::string const& filename)
+liblas::Header FetchHeader(std::string const& filename)
 {
+    
     std::ifstream ifs;
     if (!liblas::Open(ifs, filename.c_str()))
     {
@@ -111,11 +112,10 @@ void RepairHeader(liblas::Summary const& summary, std::string const& filename)
     liblas::Reader reader(ifs);
     liblas::Header header = reader.GetHeader();
     ifs.close();
-
-    for (boost::uint32_t i = 0; i < 5; i++)
-    {
-        header.SetPointRecordsByReturnCount(i, 0);
-    }    
+    return header;
+}
+void RewriteHeader(liblas::Header const& header, std::string const& filename)
+{
 
     std::ios::openmode m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
 
@@ -123,18 +123,33 @@ void RepairHeader(liblas::Summary const& summary, std::string const& filename)
     std::ofstream ofs(filename.c_str(), m);
     liblas::Writer writer(ofs, header);
     ofs.close();
+
+    // Write our updated header with summary info
+    std::ofstream ofs2(filename.c_str(), m);
+    liblas::Writer writer2(ofs2, header);
+    ofs2.close();
     
+}  
+  
+void RepairHeader(liblas::Summary const& summary, liblas::Header& header)
+{
+
+    for (boost::uint32_t i = 0; i < 5; i++)
+    {
+        header.SetPointRecordsByReturnCount(i, 0);
+    }
+
     liblas::property_tree::ptree tree = summary.GetPTree();
     
     try
     {
-        header.SetMin(tree.get<double>("minimum.x"),
-                      tree.get<double>("minimum.y"),
-                      tree.get<double>("minimum.z"));
+        header.SetMin(tree.get<double>("summary.points.minimum.x"),
+                      tree.get<double>("summary.points.minimum.y"),
+                      tree.get<double>("summary.points.minimum.z"));
     
-        header.SetMax(tree.get<double>("maximum.x"),
-                      tree.get<double>("maximum.y"),
-                      tree.get<double>("maximum.z"));
+        header.SetMax(tree.get<double>("summary.points.maximum.x"),
+                      tree.get<double>("summary.points.maximum.y"),
+                      tree.get<double>("summary.points.maximum.z"));
         
     }     catch (liblas::property_tree::ptree_bad_path const& e) 
     {
@@ -151,7 +166,7 @@ void RepairHeader(liblas::Summary const& summary, std::string const& filename)
         }
     
         BOOST_FOREACH(ptree::value_type &v,
-                tree.get_child("points_by_return"))
+                tree.get_child("summary.points.points_by_return"))
         {
             boost::uint32_t i = v.second.get<boost::uint32_t>("id");
             boost::uint32_t count = v.second.get<boost::uint32_t>("count");
@@ -163,12 +178,6 @@ void RepairHeader(liblas::Summary const& summary, std::string const& filename)
         std::cerr << "Unable to write header point return count info.  Does the outputted file have any points?";
         return;
     }
-    
-    
-    // Write our updated header with summary info
-    std::ofstream ofs2(filename.c_str(), m);
-    liblas::Writer writer2(ofs2, header);
-    ofs2.close();
     
 }
 

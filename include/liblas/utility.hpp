@@ -70,7 +70,7 @@ public:
 
     void AddPoint(liblas::Point const& p);
     ptree GetPTree() const;
-
+    void SetHeader(liblas::Header const& h);
     
 private:
 
@@ -83,7 +83,9 @@ private:
     boost::array<boost::uint32_t, 8> returns_of_given_pulse;
     bool first;
     liblas::Point min;
-    liblas::Point max;    
+    liblas::Point max;
+    liblas::Header m_header;
+    bool bHaveHeader; 
 };
 
 std::ostream& operator<<(std::ostream& os, liblas::Summary const& s);
