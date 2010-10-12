@@ -830,15 +830,15 @@ Color Point::GetColor() const
     using liblas::detail::bitsToInt;
     
     std::vector<boost::uint8_t>::size_type red_pos = GetDimensionBytePosition(index_pos);
-    assert(red_pos + sizeof(red) <= m_data.size());
+    assert(red_pos + sizeof(Color::value_type) <= m_data.size());
     red = bitsToInt<boost::uint16_t>(red, m_data, red_pos);
 
     std::vector<boost::uint8_t>::size_type green_pos = GetDimensionBytePosition(index_pos + 1);
-    assert(green_pos + sizeof(green) <= m_data.size());
+    assert(green_pos + sizeof(Color::value_type) <= m_data.size());
     green = bitsToInt<boost::uint16_t>(green, m_data, green_pos);
 
     std::vector<boost::uint8_t>::size_type blue_pos = GetDimensionBytePosition(index_pos + 2);
-    assert(blue_pos + sizeof(blue) <= m_data.size());
+    assert(blue_pos + sizeof(Color::value_type) <= m_data.size());
     blue = bitsToInt<boost::uint16_t>(blue, m_data, blue_pos);
 
   return Color(red, green, blue);
@@ -863,18 +863,20 @@ void Point::SetColor(Color const& value)
             << "no Color dimension exists on this format";
         throw std::runtime_error(msg.str());
     }
-    std::vector<boost::uint8_t>::size_type red_pos = GetDimensionBytePosition(index_pos);
+
+    using liblas::detail::intToBits;
+    
     std::vector<boost::uint8_t>::size_type green_pos = GetDimensionBytePosition(index_pos + 1);
     std::vector<boost::uint8_t>::size_type blue_pos = GetDimensionBytePosition(index_pos + 2);
  
 
-    liblas::detail::intToBits<boost::uint16_t>(value.GetRed(), 
-                                               m_data, 
-                                               red_pos);
-    liblas::detail::intToBits<boost::uint16_t>(value.GetGreen(), 
+    std::vector<boost::uint8_t>::size_type red_pos = GetDimensionBytePosition(index_pos);
+    assert(red_pos + sizeof(Color::value_type) <= m_data.size());
+    intToBits<boost::uint16_t>(value.GetRed(), m_data, red_pos);
+    intToBits<boost::uint16_t>(value.GetGreen(), 
                                                m_data, 
                                                green_pos);
-    liblas::detail::intToBits<boost::uint16_t>(value.GetBlue(), 
+    intToBits<boost::uint16_t>(value.GetBlue(), 
                                                m_data, 
                                                blue_pos);
 }

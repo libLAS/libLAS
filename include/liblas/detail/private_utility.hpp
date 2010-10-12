@@ -44,6 +44,7 @@
 
 #include <liblas/detail/pointrecord.hpp>
 #include <liblas/detail/endian.hpp>
+#include <liblas/detail/binary.hpp>
 // boost
 #include <boost/concept_check.hpp>
 #include <boost/cstdint.hpp>
@@ -371,32 +372,23 @@ inline void read_n<std::string>(std::string& dest, std::istream& src, std::strea
 
 // adapted from http://www.cplusplus.com/forum/beginner/3076/
 template <typename IntegerType>
-inline IntegerType bitsToInt(   IntegerType& result, 
-                                std::vector<boost::uint8_t> const& data, 
-                                std::size_t index)
+inline IntegerType bitsToInt(IntegerType& output,
+                             std::vector<boost::uint8_t> const& data, 
+                             std::size_t index)
 {
-    result = 0;
-
-#if defined(LIBLAS_BIG_ENDIAN)
-        for (boost::uint32_t n = 0; n < sizeof( result ); n++)
-#else
-        for (boost::int32_t n = sizeof( result )-1; n >= 0; n--)
-#endif    
-            result = (result << 8) +data[ n + index ];
-        return result;
+    binary::endian_value<IntegerType> value;
+    value.template load<binary::little_endian_tag>(data.begin() + index);
+    output = value;
+    return output;
 }
 
 template <typename IntegerType>
-inline void intToBits(   IntegerType value, 
-                         std::vector<boost::uint8_t> & data, 
-                         std::size_t index )
+inline void intToBits(IntegerType input, 
+                      std::vector<boost::uint8_t> & data, 
+                      std::size_t index )
 {
-#if defined(LIBLAS_BIG_ENDIAN)
-        for (boost::int32_t n = sizeof( value ); n >= 0; n--)
-#else
-        for (boost::uint32_t n = 0; n < sizeof( value ); n++)
-#endif   
-            data[index+n] = (boost::uint8_t) ((value >> n*8) & 0xFF);
+    binary::endian_value<IntegerType> value(input);
+    value.template store<binary::little_endian_tag>(data.begin() + index);
 }
 
 

@@ -80,6 +80,7 @@ set(LIBLAS_EXTERNAL_PROPERTY_TREE_DETAIL_HPP
   ${LIBLAS_HEADERS_DIR}/external/property_tree/detail/xml_parser_writer_settings.hpp)
 
 set(LIBLAS_DETAIL_HPP
+  ${LIBLAS_HEADERS_DIR}/detail/binary.hpp
   ${LIBLAS_HEADERS_DIR}/detail/endian.hpp
   ${LIBLAS_HEADERS_DIR}/detail/fwd.hpp
   ${LIBLAS_HEADERS_DIR}/detail/pointrecord.hpp
