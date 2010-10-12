@@ -14,13 +14,13 @@ include_directories(
 ###############################################################################
 # Collect programs to build
 
+set(LASINFO_OLD lasinfo-old)
 set(LASINFO lasinfo)
 set(LASMERGE lasmerge)
 set(LAS2LAS las2las)
+set(LAS2LAS_OLD las2las-old)
 set(LAS2TXT las2txt)
 set(TXT2LAS txt2las)
-set(LAS2LAS2 las2las2 )
-set(LASINFO2 lasinfo2)
 set(LASBLOCK lasblock )
 
 set(BIGFILE_TEST bigfile_test)
@@ -42,8 +42,8 @@ if(ORACLE_FOUND AND GDAL_FOUND)
 endif()
 
 set(LIBLAS_UTILITIES
-    ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
-    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS2} ${LASBLOCK} ${LASINFO2})
+    ${LASINFO_OLD} ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
+    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS} ${LAS2LAS_OLD} ${LASBLOCK} )
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -72,27 +72,27 @@ set(APPS_CPP_DEPENDENCIES
 link_directories(${Boost_LIBRARY_DIRS})
 
 # Build lasinfo
-if(LASINFO)
-    set(LASINFO_SRC lascommon.c ${LASINFO}.c)
-    add_executable(${LASINFO} ${LASINFO_SRC})
-    target_link_libraries(${LASINFO} ${LIBLAS_C_LIB_NAME})
+if(LASINFO_OLD)
+    set(LASINFO_OLD_SRC lascommon.c ${LASINFO_OLD}.c)
+    add_executable(${LASINFO_OLD} ${LASINFO_OLD_SRC})
+    target_link_libraries(${LASINFO_OLD} ${LIBLAS_C_LIB_NAME})
 endif()
 
 # Build las2las
+if(LAS2LAS_OLD)
+    set(LAS2LAS_OLD_SRC lascommon.c ${LAS2LAS_OLD}.c)
+    add_executable(${LAS2LAS_OLD} ${LAS2LAS_OLD_SRC})
+    target_link_libraries(${LAS2LAS_OLD} ${LIBLAS_C_LIB_NAME})
+endif()
+
 if(LAS2LAS)
-    set(LAS2LAS_SRC lascommon.c ${LAS2LAS}.c)
-    add_executable(${LAS2LAS} ${LAS2LAS_SRC})
-    target_link_libraries(${LAS2LAS} ${LIBLAS_C_LIB_NAME})
+    add_executable(${LAS2LAS} las2las.cpp laskernel.cpp)
+    target_link_libraries(${LAS2LAS} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
 endif()
 
-if(LAS2LAS2)
-    add_executable(${LAS2LAS2} las2las2.cpp laskernel.cpp)
-    target_link_libraries(${LAS2LAS2} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
-endif()
-
-if(LASINFO2)
-    add_executable(${LASINFO2} lasinfo2.cpp laskernel.cpp)
-    target_link_libraries(${LASINFO2} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
+if(LASINFO)
+    add_executable(${LASINFO} lasinfo.cpp laskernel.cpp)
+    target_link_libraries(${LASINFO} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})
 endif()
 
 # Build las2txt

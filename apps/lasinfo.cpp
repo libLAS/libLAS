@@ -64,7 +64,7 @@ liblas::Summary check_points(   liblas::Reader& reader,
 void OutputHelp( std::ostream & oss, po::options_description const& options)
 {
     oss << "--------------------------------------------------------------------\n";
-    oss << "    lasinfo2 (" << GetFullVersion() << ")\n";
+    oss << "    lasinfo (" << GetFullVersion() << ")\n";
     oss << "--------------------------------------------------------------------\n";
 
     oss << options;
@@ -194,14 +194,21 @@ int main(int argc, char* argv[])
 
         liblas::Header const& header = reader.GetHeader();
 
+        // Add the header to the summary so we can get more detailed 
+        // info
+        summary.SetHeader(header);
         
         if (output_xml && output_json) {
             std::cerr << "both JSON and XML output cannot be chosen";
             return 1;
         }
         if (output_xml) {
-
-            liblas::property_tree::ptree tree = summary.GetPTree();
+            liblas::property_tree::ptree tree;
+            if (check)
+                tree = summary.GetPTree();
+            else 
+                tree = header.GetPTree();
+            
             liblas::property_tree::write_xml(std::cout, tree);
             return 0;
         }
@@ -214,9 +221,6 @@ int main(int argc, char* argv[])
             std::cout << header.GetSchema();
                     
         if (check) {
-            // Add the header to the summary so we can get more detailed 
-            // info
-            summary.SetHeader(header);
             std::cout << summary << std::endl;
             
         }

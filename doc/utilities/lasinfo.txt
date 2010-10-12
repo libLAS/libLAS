@@ -4,129 +4,89 @@
   lasinfo
 ****************************************************************
 
-:Author: Martin Isenburg
-:Contact: isenburg@cs.unc.edu
 :Author: Howard Butler
 :Contact: hobu.inc@gmail.com
 
-Description
------------
 
-`lasinfo` prints the header contents by default, and with a switch, can 
-be used to print a short summary of the points. When in summary mode (using 
-the --check switch), differences between header info and point content are 
-reported as warnings.  `lasinfo` prints its information to stderr, and you 
-can use pipes to redirect the output of `lasinfo` as necessary.  `lasinfo` 
-supports reading from stdin, but it does not attempt to read from stdin if the 
---stdin switch is not used.  `lasinfo` can also be used to modify a few header
-entries in-place as described in the examples.
-
-`lasinfo` is a port of Martin Isenburg's `lasinfo` utility from `LASTools`_ 
-to the libLAS library.  For the most part, it is unchanged from Martin's 
-utility except for a few differences:
-
-* It does *not* scan the points by default and instead you must use the --check 
-  switch to have them scanned.
-
-* It *does* print the Variable Length Records (VLRs) by default.
-
-* Slightly different (and tidier) output format.
-
-* GNU-style arguments and switches (although most of the switches used by 
-  Martin's utilities should continue to work).
-
-
-Usage
------
-
-Simple header inspection
-~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
-  $ lasinfo lidar.las
-  $ lasinfo --input lidar.las
+    --------------------------------------------------------------------
+        lasinfo2 (libLAS 1.6.0 with GeoTIFF 1.3.0 GDAL 1.8dev)
+    --------------------------------------------------------------------
 
+    lasinfo2 options:
+      -h [ --help ]         produce help message
+      -i [ --input ] arg    input LAS file
+      -v [ --verbose ]      Verbose message output
+      --no-vlrs             Don't show VLRs
+      --no-schema           Don't show schema
+      --no-check            Don't scan points
+      --xml                 Output summary as XML
 
-Read from STDIN
-~~~~~~~~~~~~~~~
+    Filtering options:
+      -e [ --extent ] arg    Extent window that points must fall within to keep.
+                             For example, 
+                               -e minx miny maxx maxy
+                               or 
+                               -e minx miny minz maxx maxy maxz
+      -t [ --thin ] arg (=0) Simple decimation-style thinning.
+                             Thin the file by removing every t'th point from the 
+                             file.
+      --last_return_only     Keep last returns (cannot be used with 
+                             --first_return_only)
+      --first_return_only    Keep first returns (cannot be used with 
+                             --last_return_only
+      --keep-returns arg     A list of return numbers to keep in the output file: 
+                             --keep-returns 1 2 3
+      --drop-returns arg     Return numbers to drop.
+                             For example, --drop-returns 2 3 4 5
+      --valid_only           Keep only valid points
+      --keep-classes arg     A list of classifications to keep:
+                             --keep-classes 2 4 12
+                             --keep-classes 2
+      --drop-classes arg     A comma-separated list of classifications to drop:
+                             --drop-classes 1,7,8
+                             --drop-classes 2
+      --keep-intensity arg   Range in which to keep intensity.
+                             The following expression types are supported:  
+                             --keep-intensity 0-100 
+                             --keep-intensity <200 
+                             --keep-intensity >400 
+                             --keep-intensity >=200
+      --drop-intensity arg   Range in which to drop intensity.
+                             The following expression types are supported:  
+                             --drop-intensity <200 
+                             --drop-intensity >400 
+                             --drop-intensity >=200
+      --keep-time arg        Range in which to keep time.
+                             The following expression types are supported:  
+                             --keep-time 413665.2336-414092.8462 
+                             --keep-time <414094.8462 
+                             --keep-time >413665.2336 
+                             --keep-time >=413665.2336
+      --drop-time arg        Range in which to drop time.
+                             The following expression types are supported:  
+                             --drop-time <413666.2336 
+                             --drop-time >413665.2336 
+                             --drop-time >=413665.2336
+      --keep-scan-angle arg  Range in which to keep scan angle.
+                             The following expression types are supported:  
+                             --keep-scan-angle 0-100 
+                             --keep-scan-angle <100
+                             --keep-scan-angle <=100
+      --drop-scan-angle arg  Range in which to drop scan angle.
+                             The following expression types are supported:  
+                             --drop-scan-angle <30 
+                             --drop-scan-angle >100 
+                             --drop-scan-angle >=100
+      --keep-color arg       Range in which to keep colors.
+                             Define colors as two 3-tuples (R,G,B-R,G,B):  
+                             --keep-color '0,0,0-125,125,125'
+      --drop-color arg       Range in which to drop colors.
+                             Define colors as two 3-tuples (R,G,B-R,G,B):  
+                             --drop-color '255,255,255-65536,65536,65536'
 
-::
-
-  $ lasinfo --stdin < lidar.las
-
-
-Variable Header Records
-~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-  
-  $ lasinfo --input lidar.las -skip_vlr
-
-will skip the printing of Variable Record Headers (VLRs) for the file.
-
-Check the points for header inconsistencies
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  $ lasinfo --input lidar.las --check
-
-scans over all the points and reports any differences with the header.  
-Descriptive information like minimums and maximums of various variables 
-(time, x, y, z, etc) and some basic histograms are also reported.
-
-Repair missing or inconsistent header information
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  $ lasinfo --input lidar.las --repair
-
-will add missing or repair inconsistent header entries with respect to the points.  
-Items that are repaired with --repair include the bounding box header entries 
-and the point records by return count.  Future versions of the software may 
-include other header repair types if they can be done in such a way as to not 
-require rewriting of the file.
-
-Update bounding box of LAS file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  $ lasinfo --input lidar.las --repair_boundingbox
-
-reads all points, computes their bounding box, and updates it in the header.
-
-Set file creation date
-~~~~~~~~~~~~~~~~~~~~~~
-
-::
-  
-  $ lasinfo -i lidar.las --file_creation 8 2007
-
-sets the file creation day/year in the header to 8/2007.  With accordance to the 
-ASPRS LAS specification, this literally means the 8th day of 2007.  
-
-Set system identifier
-~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  $ lasinfo -i lidar.las --system_identifier "hello world!"
-
-copies the first 31 characters of the string into the system_identifier 
-field of the header.
-
-Set generating software header field
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-  
-  $ lasinfo -i lidar.las -generating_software "this is a test (-:"
-
-copies the first 31 characters of the string into the generating_software 
-field of the header.
 
 Example data
 ------------
