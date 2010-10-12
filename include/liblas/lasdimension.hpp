@@ -186,7 +186,8 @@ public:
     {
         return m_position > dim.m_position;
     }
-    
+
+    liblas::property_tree::ptree GetPTree() const;
 private:
         
     std::string m_name;
@@ -235,6 +236,7 @@ private:
     bool req_;
 };
 
+std::ostream& operator<<(std::ostream& os, liblas::Dimension const& d);
 
 } // namespace liblas
 

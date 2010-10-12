@@ -787,6 +787,8 @@ void Header::to_rst(std::ostream& os) const
 
     using liblas::property_tree::ptree;
     ptree tree = GetPTree();
+
+    os << "---------------------------------------------------------" << std::endl;
     os << "  Header Summary" << std::endl;
     os << "---------------------------------------------------------" << std::endl;
     os << std::endl;

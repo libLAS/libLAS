@@ -76,7 +76,7 @@ void OutputHelp( std::ostream & oss, po::options_description const& options)
 
 }
 
-void PrintVLRs(std::ostream& os, liblas::Header& header)
+void PrintVLRs(std::ostream& os, liblas::Header const& header)
 {
     if (!header.GetRecordsCount())
         return ;
@@ -90,9 +90,10 @@ void PrintVLRs(std::ostream& os, liblas::Header& header)
         liblas::VariableRecord const& v = header.GetVLR(i);
         os << v;
     }
-    os << std::endl;
     
 }
+
+
 int main(int argc, char* argv[])
 {
 
@@ -101,6 +102,9 @@ int main(int argc, char* argv[])
     bool verbose = false;
     bool check = true;
     bool show_vlrs = true;
+    bool show_schema = true;
+    bool output_xml = false;
+    bool output_json = false;
     
     std::vector<liblas::FilterPtr> filters;
     std::vector<liblas::TransformPtr> transforms;
@@ -123,8 +127,14 @@ int main(int argc, char* argv[])
 
             ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Verbose message output")
             ("no-vlrs", po::value<bool>(&show_vlrs)->zero_tokens()->implicit_value(false), "Don't show VLRs")
+            ("no-schema", po::value<bool>(&show_schema)->zero_tokens()->implicit_value(false), "Don't show schema")
             ("no-check", po::value<bool>(&check)->zero_tokens()->implicit_value(false), "Don't scan points")
+            ("xml", po::value<bool>(&output_xml)->zero_tokens()->implicit_value(true), "Output summary as XML")
+            // ("json", po::value<bool>(&output_json)->zero_tokens()->implicit_value(true), "Output summary as JSON")
 
+// --xml
+// --json
+// --restructured text output
         ;
 
         po::variables_map vm;
@@ -182,12 +192,34 @@ int main(int argc, char* argv[])
                             verbose
                             );
 
-        liblas::Header header = reader.GetHeader();
-        std::cout << header << std::endl;
+        liblas::Header const& header = reader.GetHeader();
+
         
+        if (output_xml && output_json) {
+            std::cerr << "both JSON and XML output cannot be chosen";
+            return 1;
+        }
+        if (output_xml) {
+
+            liblas::property_tree::ptree tree = summary.GetPTree();
+            liblas::property_tree::write_xml(std::cout, tree);
+            return 0;
+        }
+
+        std::cout << header << std::endl;        
         if (show_vlrs)
             PrintVLRs(std::cout, header);
+
+        if (show_schema)
+            std::cout << header.GetSchema();
+                    
+        if (check) {
+            // Add the header to the summary so we can get more detailed 
+            // info
+            summary.SetHeader(header);
+            std::cout << summary << std::endl;
             
+        }
     }
     catch(std::exception& e) {
         std::cerr << "error: " << e.what() << "\n";

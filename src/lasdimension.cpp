@@ -144,4 +144,49 @@ std::size_t Dimension::GetByteSize() const
     return m_bit_size / 8;
 }
 
+liblas::property_tree::ptree Dimension::GetPTree() const
+{
+    using liblas::property_tree::ptree;
+    ptree dim;
+    dim.put("name", GetName());
+    dim.put("description", GetDescription());
+    dim.put("position", GetPosition());
+    dim.put("active", static_cast<boost::uint32_t>(IsActive()));
+    dim.put("size", GetBitSize());
+    dim.put("integer", static_cast<boost::uint32_t>(IsInteger()));
+    dim.put("signed", static_cast<boost::uint32_t>(IsSigned()));
+    dim.put("required", static_cast<boost::uint32_t>(IsRequired()));
+    dim.put("byteoffset", GetByteOffset());
+    dim.put("bitoffset" , GetBitOffset());
+    dim.put("bytesize", GetByteSize());
+    
+   if (IsNumeric()) {
+       if (! (detail::compare_distance(GetMinimum(), GetMaximum() ) 
+            && detail::compare_distance(0.0, GetMaximum())))
+       {
+           dim.put("minimum", GetMinimum());
+           dim.put("maximum", GetMaximum());
+       }
+    }
+    
+    return dim;
+}
+
+std::ostream& operator<<(std::ostream& os, liblas::Dimension const& d)
+{
+    
+    using liblas::property_tree::ptree;
+    ptree tree = d.GetPTree();
+    
+    std::string name = tree.get<std::string>("name");
+    
+
+    os << "'" << name << "'" << " -- ";
+    os << " size: " << tree.get<boost::uint32_t>("size");
+    os << " offset: " << tree.get<boost::uint32_t>("byteoffset");
+    os << std::endl;
+    
+    return os;
+}
+
 } // namespace liblas
