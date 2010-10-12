@@ -47,6 +47,12 @@ namespace liblas { namespace property_tree { namespace xml_parser
         const Ch indent_char;
         const typename std::basic_string<Ch>::size_type indent_count;
         const std::basic_string<Ch> encoding;
+    private:
+        // <mloskot>
+        // noncopyable
+        xml_writer_settings(xml_writer_settings const& other);
+        xml_writer_settings& operator=(xml_writer_settings const& other);
+        // </mloskot>
     };
 
     template <class Ch>
