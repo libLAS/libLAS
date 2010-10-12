@@ -25,9 +25,11 @@ std::istream* OpenInput(std::string filename, bool bEnd)
     return istrm;
 }
 
-std::string TryReadFileData(std::string filename)
+std::string TryReadFileData(std::string const& filename)
 {
     std::vector<char> data = TryReadRawFileData(filename);
+
+    // FIXME: What is this construction supposed to grab? --mloskot
     return std::string(data.front(), (std::size_t) data.size());
 }
 

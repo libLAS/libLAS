@@ -211,28 +211,28 @@ private:
 
 struct SetRequired
 {
-  SetRequired(bool req):req_(req){}
+    SetRequired(bool req) : req_(req) {}
 
-  void operator()(Dimension& e)
-  {
-      e.IsRequired(req_);
-  }
+    void operator()(Dimension& e)
+    {
+        e.IsRequired(req_);
+    }
 
 private:
-  int req_;
+    bool req_;
 };
 
 struct SetActive
 {
-  SetActive(bool req):req_(req){}
+    SetActive(bool req) : req_(req) {}
 
-  void operator()(Dimension& e)
-  {
-      e.IsActive(req_);
-  }
+    void operator()(Dimension& e)
+    {
+        e.IsActive(req_);
+    }
 
 private:
-  int req_;
+    bool req_;
 };
 
 
