@@ -377,18 +377,18 @@ inline IntegerType bitsToInt(IntegerType& output,
                              std::size_t index)
 {
     binary::endian_value<IntegerType> value;
-    value.template load<binary::little_endian_tag>(data.begin() + index);
+    value.template load<binary::little_endian_tag>(&data[0] + index);
     output = value;
     return output;
 }
 
 template <typename IntegerType>
 inline void intToBits(IntegerType input, 
-                      std::vector<boost::uint8_t> & data, 
-                      std::size_t index )
+                      std::vector<boost::uint8_t>& data, 
+                      std::size_t index)
 {
     binary::endian_value<IntegerType> value(input);
-    value.template store<binary::little_endian_tag>(data.begin() + index);
+    value.template store<binary::little_endian_tag>(&data[0] + index);
 }
 
 
