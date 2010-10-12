@@ -190,17 +190,25 @@ bool Point::IsValid() const
 
 void Point::SetHeaderPtr(HeaderPtr header) 
 {
-    boost::uint16_t length;
-    if (m_header) 
-        length = m_header->GetDataRecordLength();
+    boost::uint16_t wanted_length;
+    
+    if (header) 
+        wanted_length = header->GetDataRecordLength();
     else
-        length = m_default_header.GetDataRecordLength();
+        wanted_length = m_default_header.GetDataRecordLength();
     
     // This is hopefully faster than copying everything if we don't have 
     // any data set and nothing to worry about.
     boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
-
-    if (length != m_data.size() && sum != 0)
+    
+    if (!sum) {
+        m_data.resize(wanted_length);
+        m_data.assign(wanted_length, 0);
+        m_header = header;
+        return;
+    }
+    
+    if (wanted_length != m_data.size())
     {
         // Manually copy everything but the header ptr
         // We can't just copy the raw data because its 
@@ -208,8 +216,8 @@ void Point::SetHeaderPtr(HeaderPtr header)
         // schema change.
         Point p(*this);
     
-        m_data.resize(length);
-        m_data.assign(length, 0);
+        m_data.resize(wanted_length);
+        m_data.assign(wanted_length, 0);
     
         SetX(p.GetX());
         SetY(p.GetY());
@@ -816,7 +824,9 @@ Color Point::GetColor() const
         //         throw std::runtime_error(msg.str());
         return Color(0, 0, 0);
     }
-
+    
+    assert(!(f == ePointFormat0 || f == ePointFormat1));
+    
     using liblas::detail::bitsToInt;
     
     std::vector<boost::uint8_t>::size_type red_pos = GetDimensionBytePosition(index_pos);
