@@ -285,9 +285,9 @@ Help listing
       --add-vlr arg             Add VLRs with the given name and id combination. 
                                 --add-vlr hobu 1234 "Description of the VLR" 
                                 "filename.ext"
-      --system_identifier arg   Set the SystemID for the file. --system_identifier 
+      --system-identifier arg   Set the SystemID for the file. --system_identifier 
                                 "MODIFICATION"
-      --generating_software arg Set the SoftwareID for the file. 
+      --generating-software arg Set the SoftwareID for the file. 
                                 --generating_software "liblas.org"
 
     Transformation options:
