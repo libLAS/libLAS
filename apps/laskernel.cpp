@@ -303,8 +303,8 @@ po::options_description GetHeaderOptions()
         ("add-schema", po::value<bool>()->zero_tokens(), "Add the liblas.org schema VLR record to the file.")
         ("delete-vlr", po::value<std::vector<std::string> >()->multitoken(), "Removes VLRs with the given name and id combination. --delete-vlr LASF_Projection 34737")
         ("add-vlr", po::value<std::vector<std::string> >()->multitoken(), "Add VLRs with the given name and id combination. --add-vlr hobu 1234 \"Description of the VLR\" \"filename.ext\"")
-        ("system_identifier", po::value<std::string>(), "Set the SystemID for the file. --system_identifier \"MODIFICATION\"")
-        ("generating_software", po::value<std::string>(), "Set the SoftwareID for the file. --generating_software \"liblas.org\"")
+        ("system-identifier", po::value<std::string>(), "Set the SystemID for the file. --system_identifier \"MODIFICATION\"")
+        ("generating-software", po::value<std::string>(), "Set the SoftwareID for the file. --generating_software \"liblas.org\"")
 
     ;
     
@@ -1040,9 +1040,9 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         header.AddVLR(v);
     }
 
-    if (vm.count("generating_software")) 
+    if (vm.count("generating-software")) 
     {
-        std::string software = vm["generating_software"].as< std::string >();
+        std::string software = vm["generating-software"].as< std::string >();
         if (verbose)
         {
 
@@ -1051,9 +1051,9 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         header.SetSoftwareId(software);
     }
 
-    if (vm.count("system_identifier")) 
+    if (vm.count("system-identifier")) 
     {
-        std::string id = vm["system_identifier"].as< std::string >();
+        std::string id = vm["system-identifier"].as< std::string >();
         
 
         if (verbose)
