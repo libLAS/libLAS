@@ -816,20 +816,20 @@ Color Point::GetColor() const
         //         throw std::runtime_error(msg.str());
         return Color(0, 0, 0);
     }
-    std::vector<boost::uint8_t>::size_type red_pos = GetDimensionBytePosition(index_pos);
-    std::vector<boost::uint8_t>::size_type green_pos = GetDimensionBytePosition(index_pos + 1);
-    std::vector<boost::uint8_t>::size_type blue_pos = GetDimensionBytePosition(index_pos + 2);
-    
 
-    red = liblas::detail::bitsToInt<boost::uint16_t>(red, 
-                                                     m_data, 
-                                                     red_pos);
-    green = liblas::detail::bitsToInt<boost::uint16_t>(green, 
-                                                     m_data, 
-                                                     green_pos);
-    blue = liblas::detail::bitsToInt<boost::uint16_t>(blue, 
-                                                     m_data, 
-                                                     blue_pos);
+    using liblas::detail::bitsToInt;
+    
+    std::vector<boost::uint8_t>::size_type red_pos = GetDimensionBytePosition(index_pos);
+    assert(red_pos + sizeof(red) <= m_data.size());
+    red = bitsToInt<boost::uint16_t>(red, m_data, red_pos);
+
+    std::vector<boost::uint8_t>::size_type green_pos = GetDimensionBytePosition(index_pos + 1);
+    assert(green_pos + sizeof(green) <= m_data.size());
+    green = bitsToInt<boost::uint16_t>(green, m_data, green_pos);
+
+    std::vector<boost::uint8_t>::size_type blue_pos = GetDimensionBytePosition(index_pos + 2);
+    assert(blue_pos + sizeof(blue) <= m_data.size());
+    blue = bitsToInt<boost::uint16_t>(blue, m_data, blue_pos);
 
   return Color(red, green, blue);
 }
