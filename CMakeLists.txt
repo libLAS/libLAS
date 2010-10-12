@@ -53,8 +53,10 @@ set(CMAKE_MODULE_PATH ${libLAS_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 # General build settings
 
 # Default to release mode 
-set(CMAKE_BUILD_TYPE Release CACHE STRING 
-    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel")
+if(NOT MSVC_IDE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING 
+      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel")
+endif()
 
 # TODO: Still testing the output paths --mloskot
 set(LIBLAS_BUILD_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
