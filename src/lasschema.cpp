@@ -464,28 +464,7 @@ liblas::property_tree::ptree Schema::GetPTree() const
     
     for(i = position_index.begin(); i != position_index.end(); ++i)
     {
-        ptree dim;
-        Dimension const& t = *i;
-        dim.put("name", t.GetName());
-        dim.put("description", t.GetDescription());
-        dim.put("position", t.GetPosition());
-        dim.put("active", static_cast<boost::uint32_t>(t.IsActive()));
-        dim.put("size", t.GetBitSize());
-        dim.put("integer", static_cast<boost::uint32_t>(t.IsInteger()));
-        dim.put("signed", static_cast<boost::uint32_t>(t.IsSigned()));
-        dim.put("required", static_cast<boost::uint32_t>(t.IsRequired()));
-
-       if (t.IsNumeric()) {
-           if (! (detail::compare_distance(t.GetMinimum(), t.GetMaximum() ) 
-                && detail::compare_distance(0.0, t.GetMaximum())))
-           {
-               dim.put("minimum", t.GetMinimum());
-               dim.put("maximum", t.GetMaximum());
-           }
-        }
-
-        pt.add_child("LASSchema.dimensions.dimension", dim);
-        
+        pt.add_child("LASSchema.dimensions.dimension", i->GetPTree());
     }
     
     pt.put("LASSchema.version", "1.0");
@@ -539,12 +518,22 @@ std::ostream& operator<<(std::ostream& os, liblas::Schema const& s)
         os << "  Bit size is unaligned to byte boundaries" << std::endl;
     }
     
+    os << std::endl;
+    os << "  Dimensions" << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
+    
     os << "  ";
-    for (i = dims.begin(); i != dims.end(); ++i)
+
+    index_by_position const& position_index = s.GetDimensions().get<position>();
+    index_by_position::const_iterator it;
+    
+    for(it = position_index.begin(); it != position_index.end(); ++it)
     {
-        std::string name = (*i).second.get<std::string>("name");
-        os << name << " ";
+        os << *it;
+        os << "  ";
     }
+    
+
     os << std::endl;
     
     return os;

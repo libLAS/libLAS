@@ -221,9 +221,9 @@ ptree Summary::GetPTree() const
             pt.add_child("classification.classification",klasses);            
         }
     }
-    pt.put("classification.withheld", withheld);
-    pt.put("classification.keypoint", keypoint);
-    pt.put("classification.synthetic", synthetic);
+    pt.put("encoding.withheld", withheld);
+    pt.put("encoding.keypoint", keypoint);
+    pt.put("encoding.synthetic", synthetic);
     
     ptree returns;
     bool have_returns = false;
@@ -269,18 +269,170 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
 {
     liblas::property_tree::ptree tree = s.GetPTree();
     
-    os << "---------------------------------------------------------";
-    os << "  Point Inspection Summary" ;
-    os << "---------------------------------------------------------";
+    os << "---------------------------------------------------------" << std::endl;
+    os << "  Point Inspection Summary" << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
 
-        BOOST_FOREACH(ptree::value_type &v,
-                tree.get_child("points_by_return"))
-        {
-            boost::uint32_t i = v.second.get<boost::uint32_t>("id");
-            boost::uint32_t count = v.second.get<boost::uint32_t>("count");
-            // header.SetPointRecordsByReturnCount(i-1, count);        
-        }     
+    os << "  Header Point Count: " << tree.get<std::string>("summary.header.count") << std::endl;
+    os << "  Actual Point Count: " << tree.get<std::string>("summary.points.count") << std::endl;
+    
+    os << std::endl;
+    os << "  Minimum and Maximum Attributes (min,max)" << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
+    
+    boost::uint32_t x_precision = 6;
+    boost::uint32_t y_precision = 6;
+    boost::uint32_t z_precision = 6;
+
+    try {
+        double frac = 0;
+        double integer = 0;
+        double x_scale = tree.get<double>("summary.header.scale.x");
+        double y_scale = tree.get<double>("summary.header.scale.y");
+        double z_scale = tree.get<double>("summary.header.scale.x");
+        frac = std::modf(x_scale, &integer);
+        x_precision = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
+        frac = std::modf(y_scale, &integer);
+        y_precision = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
+        frac = std::modf(z_scale, &integer);
+        z_precision = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
+        
+
+    }
+    catch (liblas::property_tree::ptree_bad_path const& e) {
+        ::boost::ignore_unused_variable_warning(e);
+    }
+    
+    os << "  Min X, Y, Z: \t\t";
+    os.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    os.precision(x_precision);
+    os << tree.get<double>("summary.points.minimum.x") << ", ";
+    os.precision(y_precision);
+    os << tree.get<double>("summary.points.minimum.y") << ", ";
+    os.precision(z_precision);
+    os << tree.get<double>("summary.points.minimum.z") << ", ";
+
+    os << std::endl;
+    os << "  Max X, Y, Z: \t\t";
+    os.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    os.precision(x_precision);
+    os << tree.get<double>("summary.points.maximum.x") << ", ";
+    os.precision(y_precision);
+    os << tree.get<double>("summary.points.maximum.y") << ", ";
+    os.precision(z_precision);
+    os << tree.get<double>("summary.points.maximum.z") << ", ";
+    
+    os << std::endl;
+    os << "  Bounding Box:\t\t";
+    os << tree.get<double>("summary.points.minimum.x") << ", "
+       << tree.get<double>("summary.points.minimum.y") << ", "
+       << tree.get<double>("summary.points.maximum.x") << ", "
+       << tree.get<double>("summary.points.maximum.y");
+    
+    os << std::endl;
+    os.precision(6);
+    os << "  Time:\t\t\t" << tree.get<double>("summary.points.minimum.time") << ", "
+       << tree.get<double>("summary.points.maximum.time");
+
+
+    os << std::endl;
+    os.setf(std::ios::floatfield);
+    os << "  Return Number:\t" << tree.get<boost::uint32_t>("summary.points.minimum.returnnumber") << ", "
+       << tree.get<boost::uint32_t>("summary.points.maximum.returnnumber");
+
+    os << std::endl;
+    os << "  Return Count:\t\t" << tree.get<boost::uint32_t>("summary.points.minimum.numberofreturns") << ", "
+       << tree.get<boost::uint32_t>("summary.points.maximum.numberofreturns");
+
+    os << std::endl;
+    os << "  Flightline Edge:\t" << tree.get<boost::uint32_t>("summary.points.minimum.flightlineedge") << ", "
+       << tree.get<boost::uint32_t>("summary.points.maximum.flightlineedge");
+
+    os << std::endl;
+    os << "  Intensity:\t\t" << tree.get<boost::uint32_t>("summary.points.minimum.intensity") << ", "
+       << tree.get<boost::uint32_t>("summary.points.maximum.intensity");
+
+    os << std::endl;
+    os << "  Scan Direction Flag:\t" << tree.get<boost::int32_t>("summary.points.minimum.scandirection") << ", "
+       << tree.get<boost::int32_t>("summary.points.maximum.scandirection");
+
+    os << std::endl;
+    os << "  Scan Angle Rank:\t" << tree.get<boost::int32_t>("summary.points.minimum.scanangle") << ", "
+       << tree.get<boost::int32_t>("summary.points.maximum.scanangle");
+
+    os << std::endl;
+    os << "  Classification:\t" << tree.get<boost::int32_t>("summary.points.minimum.classification.id") << ", "
+       << tree.get<boost::int32_t>("summary.points.maximum.classification.id");
+
+    os << std::endl;
+    os << "  Point Source Id:\t" << tree.get<boost::uint32_t>("summary.points.minimum.pointsourceid") << ", "
+       << tree.get<boost::uint32_t>("summary.points.maximum.pointsourceid");
+
+    os << std::endl;
+    os << "  User Data:\t\t" << tree.get<boost::uint32_t>("summary.points.minimum.userdata") << ", "
+       << tree.get<boost::uint32_t>("summary.points.maximum.userdata");
+
+    os << std::endl;
+    os << "  Minimum Color:\t" 
+       << tree.get<boost::uint32_t>("summary.points.minimum.color.red") << " "
+       << tree.get<boost::uint32_t>("summary.points.minimum.color.green") << " "
+       << tree.get<boost::uint32_t>("summary.points.minimum.color.blue") << " ";
+
+    os << std::endl;
+    os << "  Maximum Color:\t" 
+       << tree.get<boost::uint32_t>("summary.points.maximum.color.red") << " "
+       << tree.get<boost::uint32_t>("summary.points.maximum.color.green") << " "
+       << tree.get<boost::uint32_t>("summary.points.maximum.color.blue") << " ";
+
+    os << std::endl;
+    os << std::endl;
+    os << "  Number of Points by Return" << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
+    
+    BOOST_FOREACH(ptree::value_type &v,
+            tree.get_child("summary.points.points_by_return"))
+    {
+        boost::uint32_t i = v.second.get<boost::uint32_t>("id");
+        boost::uint32_t count = v.second.get<boost::uint32_t>("count");
+        os << "\t(" << i << ") " << count;
+    }
+    
+    os << std::endl;
+    os << std::endl;
+    os << "  Number of Returns by Pulse" << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
+    
+    BOOST_FOREACH(ptree::value_type &v,
+            tree.get_child("summary.points.returns_of_given_pulse"))
+    {
+        boost::uint32_t i = v.second.get<boost::uint32_t>("id");
+        boost::uint32_t count = v.second.get<boost::uint32_t>("count");
+        os << "\t(" << i << ") " << count;
+    }     
+
+    os << std::endl;
+    os << std::endl;
+    os << "  Point Classifications" << std::endl;
+    os << "---------------------------------------------------------" << std::endl;
+    
+
+    BOOST_FOREACH(ptree::value_type &v,
+            tree.get_child("summary.points.classification"))
+    {
+        boost::uint32_t i = v.second.get<boost::uint32_t>("id");
+        boost::uint32_t count = v.second.get<boost::uint32_t>("count");
+        std::string name = v.second.get<std::string>("name");
+        os << "\t" << count << " " << name << " (" << i << ") " << std::endl;;
+    }
+
+    os << "  -------------------------------------------------------" << std::endl;
+    os << "  \t" << tree.get<boost::uint32_t>("summary.points.encoding.withheld") << " withheld" << std::endl;
+    os << "  \t" << tree.get<boost::uint32_t>("summary.points.encoding.keypoint") << " keypoint" << std::endl;
+    os << "  \t" << tree.get<boost::uint32_t>("summary.points.encoding.synthetic") << " synthetic" << std::endl;
+    os << "  -------------------------------------------------------" << std::endl;
+
     return os;
+    
 }
 
 } // namespace liblas

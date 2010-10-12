@@ -21,6 +21,7 @@
 #include <climits>
 #include <cstring>
 #include <cstddef>
+#include <iterator>
 
 #include <boost/config.hpp>
 #include <boost/cstdint.hpp>

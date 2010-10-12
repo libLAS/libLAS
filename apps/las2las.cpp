@@ -193,14 +193,14 @@ bool process(   std::string const& input,
         std::cout << std::endl;
     
     reader.Reset();
-    liblas::property_tree::ptree pts = summary->GetPTree();
-    liblas::property_tree::ptree top;
-    top.add_child("summary.header",reader.GetHeader().GetPTree());
-    top.add_child("summary.points",pts);
-    liblas::property_tree::write_xml("junk.xml", top);
-    liblas::property_tree::write_xml("schema.xml", reader.GetHeader().GetSchema().GetPTree());
-
-    std::cout <<  reader.GetHeader().GetSchema() << std::endl;
+    // liblas::property_tree::ptree pts = summary->GetPTree();
+    // liblas::property_tree::ptree top;
+    // top.add_child("summary.header",reader.GetHeader().GetPTree());
+    // top.add_child("summary.points",pts);
+    // liblas::property_tree::write_xml("junk.xml", top);
+    // liblas::property_tree::write_xml("schema.xml", reader.GetHeader().GetSchema().GetPTree());
+    // 
+    // std::cout <<  reader.GetHeader().GetSchema() << std::endl;
     delete writer;
     delete ofs;
     
