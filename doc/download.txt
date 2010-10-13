@@ -8,6 +8,29 @@ Download
 Current Release(s)
 ------------------------------------------------------------------------------
 
+* **2010-10-12** 
+
+  - `libLAS-1.6.0b1.tar.gz`_ 
+    `(md5) <http://trac.liblas.org/raw-attachment/wiki/1.6.0b1/libLAS-1.6.0b1.tar.gz.md5>`__ 
+
+  - `libLAS-1.6.0b1.zip <http://trac.liblas.org/raw-attachment/wiki/1.6.0b1/libLAS-1.6.0b1.zip>`_ 
+    `(md5) <http://trac.liblas.org/raw-attachment/wiki/1.6.0b1/libLAS-1.6.0b1.zip.md5>`__
+
+  - `Release Notes <http://trac.liblas.org/wiki/1.2.1>`__
+
+.. _`libLAS-1.6.0b1.tar.gz`: http://trac.liblas.org/raw-attachment/wiki/1.6.0b1/libLAS-1.6.0b1.tar.gz
+
+.. seealso::
+    :ref:`source`
+
+.. seealso::
+    A `sample library <http://liblas.org/samples>`__ is also available to provide 
+    data to test your tools.
+    
+
+Past Releases
+------------------------------------------------------------------------------
+
 * **2009-10-02** 
 
   - `liblas-src-1.2.1.tar.gz`_ 
@@ -20,16 +43,6 @@ Current Release(s)
 
 .. _`liblas-src-1.2.1.tar.gz`: http://trac.liblas.org/raw-attachment/wiki/1.2.1/liblas-src-1.2.1.tar.gz
 
-.. seealso::
-    :ref:`source`
-
-.. seealso::
-    A `sample library <http://liblas.org/samples>`__ is also available to provide 
-    data to test your tools.
-    
-
-Past Releases
-------------------------------------------------------------------------------
 
 * **2009-03-25** 
 
