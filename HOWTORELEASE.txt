@@ -23,10 +23,19 @@ Release Process
 
 1) Increment Version Numbers
  
-  - configure.ac
+  - CMakeLists.txt
+   
+    * SET(CPACK_PACKAGE_VERSION_MAJOR "1")
+    * SET(CPACK_PACKAGE_VERSION_MINOR "6")
+    * SET(CPACK_PACKAGE_VERSION_PATCH "0b1")
+    
   - include/liblas/capi/las_version.h
+
+    * #define LIBLAS_VERSION_MAJOR    1
+    * #define LIBLAS_VERSION_MINOR    6
+    * #define LIBLAS_VERSION_REV      0b1
+
   - python/setup.py
-  - nmake.opt
 
 2) Update README to include any relevant info about the release that 
    might have changed.
