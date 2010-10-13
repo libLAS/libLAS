@@ -64,18 +64,18 @@ def read_version(filename):
             line = line.replace('SET('+major+' ', '')
             line = line.replace(')','')
             line = line.replace('"','')
-            major = int(line)
+            maj = line.strip()
         if str(minor) in line:
             line = line.replace('SET('+minor+' ', '')
             line = line.replace(')','')
             line = line.replace('"','')
-            minor = int(line)
+            min = line.strip()
         if str(patch) in line:
             line = line.replace('SET('+patch+' ', '')
             line = line.replace(')','')
             line = line.replace('"','')
-            patch = int(line)    
-    return '%d.%d.%d'%(major, minor, patch)
+            pat = line.strip()
+    return '%s.%s.%s'%(maj, min, pat)
     
 version = read_version('../CMakeLists.txt')
 

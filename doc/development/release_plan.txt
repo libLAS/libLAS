@@ -7,7 +7,7 @@ libLAS 1.6.0 Release Notes and Schedule
 
 :Author: Howard Butler
 :Contact: hobu.inc at gmail dot com
-:Date: 7/27/2010
+:Date: 10/12/2010
 
 .. contents::
     :depth: 3
@@ -76,11 +76,24 @@ developments
 Generic spatial indexing
 ..............................................................................
 
-A octree-based spatial index is being developed for libLAS to speed up random,
-bounding-box-based queries to LAS files. It is expected that this will be
-released as part of libLAS 1.6, but it is not yet complete. The index will be
-able to be stored within VLRs (requires a file rewrite) in addition to in a
-file alongside the .las file.
+A octree-based spatial index was developed for libLAS to speed up random,
+bounding-box-based queries to LAS files. It is released as part of libLAS 1.6,
+but its full implementation within the library is not yet complete. The index
+can store its data within VLRs (requires a file rewrite) in addition to
+in a file alongside the .las file.
+
+Rewritten :ref:`lasinfo <lasinfo>` and :ref:`las2las <las2las>` 
+..............................................................................
+
+:ref:`lasinfo <lasinfo>` and :ref:`las2las <las2las>` have been completely 
+rewritten to take advantage of faster access and summary methods within the 
+libLAS C++ API.  In addition to nearly double the speed of the previous 
+libLAS-provided lasinfo and las2las implementations, both applications 
+gained a number of features including much more expressive filtering and 
+more detailed header and file transformation.  The old versions of :ref:`lasinfo <lasinfo_old>` 
+and :ref:`las2las <las2las_old>` are still available to people who have 
+embedded them in processes and applications.  They are now called ``lasinfo-old`` and 
+``las2las-old``.
 
 Migration to CMake
 ..............................................................................
@@ -129,6 +142,13 @@ and describe the vertical datum GeoTIFF keys that are present in LAS files.
 that are as full as possible, square as possible, and made in a reasonable 
 amount of time (chips at a rate of ~1 million points per second).
 
+Faster binary i/o
+..............................................................................
+
+libLAS gained a more savvy implementation for its binary i/o which should 
+provide some significant performance improvements.
+
+
 Release Schedule
 ------------------------------------------------------------------------------
 
@@ -136,9 +156,9 @@ We expect to have at least two beta release before the final release of libLAS 1
 
 The following dates are approximate:
 
-* Beta 1: 8/20/2010
-* Beta 2: 9/10/2010
-* 1.6.0: 9/30/2010
+* Beta 1: 10/12/2010
+* Beta 2: 11/1/2010
+* 1.6.0: 11/15/2010
 
 libPC
 ------------------------------------------------------------------------------
