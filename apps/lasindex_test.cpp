@@ -177,7 +177,7 @@ bool ReportIteratorResults(FILE *debugger, uint32_t resultSize, uint32_t pointCo
 		fprintf(debugger, "Points within filter area %d of %d, step %d, %s\n", resultSize, 
 			pointCount, step, "Using iterator");
 		#else // VISUAL_8
-		fprintf(debugger, "Points within filter area %zu of %d, step %d, %s\n", resultSize, 
+		fprintf(debugger, "Points within filter area %d of %d, step %d, %s\n", resultSize, 
 			pointCount, step, "Using iterator");
 		#endif // VISUAL_8
 		return true;

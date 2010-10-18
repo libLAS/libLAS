@@ -51,9 +51,9 @@ IndexOutput::IndexOutput(liblas::Index *indexsource) :
 	m_index(indexsource), 
 	m_VLRCommonDataSize(6 * sizeof(boost::uint32_t)),
 	m_VLRDataSizeLocation(4 * sizeof(boost::uint32_t)),
-	m_VLRPointCountLocation(5 * sizeof(boost::uint32_t)),
 	m_FirstCellLocation(0),
 	m_LastCellLocation(sizeof(boost::uint32_t) * 2),
+	m_VLRPointCountLocation(5 * sizeof(boost::uint32_t)),
 	m_DataPointsThisVLR(0)
 {
 } // IndexOutput::IndexOutput
