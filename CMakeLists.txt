@@ -83,6 +83,7 @@ if(WIN32)
             add_definitions(-D_CRT_SECURE_NO_WARNINGS)
             add_definitions(-D_CRT_NONSTDC_NO_WARNING)
             add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+            add_definitions(-D_SECURE_SCL=0)
         endif()
         
         if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
