@@ -476,7 +476,7 @@ int main(int argc, char* argv[])
 										// two iterators with different filter bounds
 										IndexIterator *indexIt = index.Filter(ParamSrc, chunkSize);
 										IndexIterator *indexIt2 = index.Filter(ParamSrc2, chunkSize);
-										if (indexIt)
+										if (indexIt && indexIt2)
 										{
 											for (boost::uint32_t step = 0; step < 3; ++step)
 											{
@@ -532,6 +532,8 @@ int main(int argc, char* argv[])
 										} // if
 										else
 											IndexFilterInitError(debugger);
+										delete indexIt;
+										delete indexIt2;
 									}
 									else
 										IndexFilterInitError(debugger);
