@@ -471,7 +471,8 @@ protected:
 	IndexData m_indexData;
 	Index *m_index;
 	boost::uint32_t m_chunkSize, m_advance;
-	boost::uint32_t m_curVLR, m_curCellStartPos, m_curCellX, m_curCellY, m_totalPointsScanned, m_ptsScannedCurCell;
+	boost::uint32_t m_curVLR, m_curCellStartPos, m_curCellX, m_curCellY, m_totalPointsScanned, m_ptsScannedCurCell,
+		m_ptsScannedCurVLR;
 	boost::uint32_t m_conformingPtsFound;
 
 public:

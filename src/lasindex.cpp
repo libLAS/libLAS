@@ -300,15 +300,15 @@ const std::vector<boost::uint32_t>& Index::Filter(IndexData & ParamSrc)
 							break;
 						if (ParamSrc.m_iterator)
 						{
+							if (VLRDone)
+								ParamSrc.m_iterator->m_curCellStartPos = ParamSrc.m_iterator->m_ptsScannedCurCell = 
+									ParamSrc.m_iterator->m_ptsScannedCurVLR = 0;
 							// if we've filled our quota break out of loop
 							if (m_filterResult.size() >= ParamSrc.m_iterator->m_chunkSize)
 							{
 								// if we've scanned the entire VLR
 								if (VLRDone)
-								{
 									++i;	// increment i so that next iteration starts on next VLR
-									ParamSrc.m_iterator->m_curCellStartPos = ParamSrc.m_iterator->m_ptsScannedCurCell = 0;
-								} // if
 								else if (i != HeadVLR)	// if VLR's are linked FilterOneVLR() will have incremented i
 									i = HeadVLR;	// put back i so that the right VLR is loaded first next iteration
 								break;
@@ -508,7 +508,7 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 
 	boost::uint32_t ReadPos = 0;
 	boost::uint32_t MinCellX, MinCellY, MaxCellX, MaxCellY, PointsThisRecord = 0, PointsThisCell = 0, DataRecordSize = 0,
-		PointsScanned = 0, PointsToIgnore = 0;
+		PointsScannedThisTime = 0, PointsScannedCurVLR = 0, PointsToIgnore = 0;
 	IndexVLRData CompositeData;
 	
 	try {
@@ -557,6 +557,7 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 			{
 				ReadPos = ParamSrc.m_iterator->m_curCellStartPos;
 				PointsToIgnore = ParamSrc.m_iterator->m_ptsScannedCurCell;
+				PointsScannedCurVLR = ParamSrc.m_iterator->m_ptsScannedCurVLR;
 			} // if
 			// translate the data for this VLR
 			while (ReadPos + sizeof (boost::uint32_t) < DataRecordSize)
@@ -606,12 +607,12 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 						ReadVLRData_n(ConsecutivePts, CompositeData, ReadPos);
 						if (TestPointsInThisCell && ZCellInteresting(ZCellID, ParamSrc))
 						{
-							FilterPointSeries(PointID, PointsScanned, PointsToIgnore, x, y, ZCellID, 
+							FilterPointSeries(PointID, PointsScannedThisTime, PointsToIgnore, x, y, ZCellID, 
 								ConsecutivePts, ParamSrc.m_iterator, ParamSrc);
 						} // if
 						else
 						{
-							PointsScanned += ConsecutivePts;
+							PointsScannedThisTime += ConsecutivePts;
 							if (ParamSrc.m_iterator)
 								ParamSrc.m_iterator->m_ptsScannedCurCell += ConsecutivePts;
 						} // else
@@ -638,12 +639,12 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 						ReadVLRData_n(ConsecutivePts, CompositeData, ReadPos);
 						if (TestPointsInThisCell && SubCellInteresting(SubCellID, x, y, ParamSrc))
 						{
-							FilterPointSeries(PointID, PointsScanned, PointsToIgnore, x, y, 0, 
+							FilterPointSeries(PointID, PointsScannedThisTime, PointsToIgnore, x, y, 0, 
 								ConsecutivePts, ParamSrc.m_iterator, ParamSrc);
 						} // if
 						else
 						{
-							PointsScanned += ConsecutivePts;
+							PointsScannedThisTime += ConsecutivePts;
 							if (ParamSrc.m_iterator)
 								ParamSrc.m_iterator->m_ptsScannedCurCell += ConsecutivePts;
 						} // else
@@ -665,12 +666,12 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 						ReadVLRData_n(ConsecutivePts, CompositeData, ReadPos);
 						if (TestPointsInThisCell)
 						{
-							FilterPointSeries(PointID, PointsScanned, PointsToIgnore, x, y, 0, 
+							FilterPointSeries(PointID, PointsScannedThisTime, PointsToIgnore, x, y, 0, 
 								ConsecutivePts, ParamSrc.m_iterator, ParamSrc);
 						} // if
 						else
 						{
-							PointsScanned += ConsecutivePts;
+							PointsScannedThisTime += ConsecutivePts;
 							if (ParamSrc.m_iterator)
 								ParamSrc.m_iterator->m_ptsScannedCurCell += ConsecutivePts;
 						} // else
@@ -681,10 +682,14 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 				if (ParamSrc.m_iterator && (m_filterResult.size() >= ParamSrc.m_iterator->m_chunkSize))
 					break;
 			} // while
-			if (PointsScanned >= PointsThisRecord)
+			PointsScannedCurVLR += PointsScannedThisTime;
+			if (PointsScannedCurVLR >= PointsThisRecord)
 				VLRDone = true;
 			if (ParamSrc.m_iterator)
-				ParamSrc.m_iterator->m_totalPointsScanned += PointsScanned;
+			{
+				ParamSrc.m_iterator->m_totalPointsScanned += PointsScannedThisTime;
+				ParamSrc.m_iterator->m_ptsScannedCurVLR = PointsScannedCurVLR;
+			} // if
 		} // if
 		else if (ParamSrc.m_iterator)
 		{
@@ -2080,6 +2085,7 @@ void IndexIterator::Copy(IndexIterator const& other)
 		m_curCellY = other.m_curCellY;
 		m_totalPointsScanned = other.m_totalPointsScanned;
 		m_ptsScannedCurCell = other.m_ptsScannedCurCell;
+		m_ptsScannedCurVLR = other.m_ptsScannedCurVLR;
 		m_conformingPtsFound = other.m_conformingPtsFound;
 	} // if
 } // IndexIterator::Copy
@@ -2087,7 +2093,7 @@ void IndexIterator::Copy(IndexIterator const& other)
 void IndexIterator::ResetPosition(void)
 {
 	m_curVLR = m_curCellStartPos = m_curCellX = m_curCellY = 0;
-	m_totalPointsScanned = m_ptsScannedCurCell = 0;
+	m_totalPointsScanned = m_ptsScannedCurCell = m_ptsScannedCurVLR = 0;
 	m_conformingPtsFound = 0;
 } // IndexIterator::ResetPosition
 
