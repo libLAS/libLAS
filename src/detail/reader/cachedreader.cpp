@@ -81,13 +81,13 @@ HeaderPtr CachedReaderImpl::ReadHeader()
     if (m_cache_size > hptr->GetPointRecordsCount()) {
         m_cache_size = hptr->GetPointRecordsCount();
     }
+    // FIXME: Note, vector::resize never shrinks the container and frees memory! Are we aware of this fact here? --mloskot
     m_cache.resize(m_cache_size);
     
     // Mark all positions as uncached and build up the mask
     // to the size of the number of points in the file
-    for (boost::uint32_t i = 0; i < hptr->GetPointRecordsCount(); ++i) {
-        m_mask.push_back(0);
-    }
+    boost::uint8_t const uncached_mask = 0;
+    cache_mask_type(hptr->GetPointRecordsCount(), uncached_mask).swap(m_mask);
     
     return hptr;
 }
