@@ -9,18 +9,17 @@
 project(libLAS)
 
 if(WIN32)
-    # Name of C++ library
-    set(LIBLAS_LIB_NAME liblas)
+  # Name of C++ library
+  set(LIBLAS_LIB_NAME liblas)
 
-    # Name of C library
-    set(LIBLAS_C_LIB_NAME liblas_c)
+  # Name of C library
+  set(LIBLAS_C_LIB_NAME liblas_c)
 else()
-    # Name of C++ library
-    set(LIBLAS_LIB_NAME las)
-
-    # Name of C library
-    set(LIBLAS_C_LIB_NAME las_c)
-
+  # Name of C++ library
+  set(LIBLAS_LIB_NAME las)
+  
+  # Name of C library
+  set(LIBLAS_C_LIB_NAME las_c)
 endif()
 
 # Name of test suite runner
@@ -35,7 +34,7 @@ set(WITH_TESTS TRUE CACHE BOOL "Choose if libLAS unit tests should be built")
 # Enable CTest and submissions to libLAS dashboard at CDash
 # http://my.cdash.org/index.php?project=libLAS
 set(ENABLE_CTEST FALSE CACHE BOOL
-    "Enable CTest to support submissions of results to CDash at http://cdash.org")
+  "Enable CTest to support submissions of results to CDash at http://cdash.org")
 
 ###############################################################################
 # CMake settings
@@ -55,7 +54,7 @@ set(CMAKE_MODULE_PATH ${libLAS_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 # Default to release mode 
 if(NOT MSVC_IDE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING 
-      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel")
+    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel")
 endif()
 
 # TODO: Still testing the output paths --mloskot
@@ -77,47 +76,48 @@ file(WRITE "README.txt" "${README}")
 # Platform and compiler specific settings
 
 if(WIN32)
-    if (MSVC)
-        if (MSVC80 OR MSVC90 OR MSVC10)
-            add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-            add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-            add_definitions(-D_CRT_NONSTDC_NO_WARNING)
-            add_definitions(-D_SCL_SECURE_NO_WARNINGS)
-            add_definitions(-D_SECURE_SCL=0)
-        endif()
-        
-        if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-            string(REGEX REPLACE "/W[0-4]" "/W4"
-                   CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-        else()
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-        endif()
-
-        # Generate dot-user file with user-specific settings for Visual Studio project
-        set(MSVC_ENVIRONMENT_PATH "" CACHE STRING
-            "Custom PATH for Environment property in Visual Studio project configuration")
-        mark_as_advanced(MSVC_ENVIRONMENT_PATH)
-        set(VCPROJ_USER_ENVIRONMENT_PATH_DEBUG "${ENVIRONMENT_PATH}")
-        mark_as_advanced(VCPROJ_USER_ENVIRONMENT_PATH_DEBUG)
-
+  if (MSVC)
+    if (MSVC80 OR MSVC90 OR MSVC10)
+      add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+      add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+      add_definitions(-D_CRT_NONSTDC_NO_WARNING)
+      add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+      add_definitions(-D_SECURE_SCL=0)
     endif()
+    
+    if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+      string(REGEX REPLACE "/W[0-4]" "/W4"
+        CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    else()
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    endif()
+
+    # Generate dot-user file with user-specific settings for
+    # Visual Studio project
+    set(MSVC_ENVIRONMENT_PATH "" CACHE STRING
+      "Custom PATH for Environment property in Visual Studio for project")
+    mark_as_advanced(MSVC_ENVIRONMENT_PATH)
+    set(VCPROJ_USER_ENVIRONMENT_PATH_DEBUG "${ENVIRONMENT_PATH}")
+    mark_as_advanced(VCPROJ_USER_ENVIRONMENT_PATH_DEBUG)
+
+  endif()
 else()
-    if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-        
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -Wno-long-long -ansi")
-        if (CMAKE_COMPILER_IS_GNUCXX)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
-        endif()
+  if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+    
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -Wno-long-long -ansi")
+    if (CMAKE_COMPILER_IS_GNUCXX)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
     endif()
+  endif()
 endif(WIN32)
 
 if (APPLE)
-    set(SO_EXT dylib)
-    set(CMAKE_FIND_FRAMEWORK "LAST")
+  set(SO_EXT dylib)
+  set(CMAKE_FIND_FRAMEWORK "LAST")
 elseif(WIN32)
-    set(SO_EXT dll)
+  set(SO_EXT dll)
 else()
-    set(SO_EXT so)
+  set(SO_EXT so)
 endif(APPLE)
 
 ###############################################################################
@@ -143,109 +143,112 @@ link_directories(${Boost_LIBRARY_DIRS})
 set(WITH_GEOTIFF FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
 
 if(WITH_GEOTIFF)
-    find_package(GeoTIFF 1.2.5)
+  find_package(GeoTIFF 1.2.5)
 
-    if(GEOTIFF_FOUND)
+  if(GEOTIFF_FOUND)
     
-        # Confirm required API is available
-        include(CheckFunctionExists) 
-        set(CMAKE_REQUIRED_LIBRARIES ${GEOTIFF_LIBRARY})
-#       check_function_exists(ST_Create HAVE_ST_CREATE)
+    # Confirm required API is available
+    include(CheckFunctionExists) 
+    set(CMAKE_REQUIRED_LIBRARIES ${GEOTIFF_LIBRARY})
+    #       check_function_exists(ST_Create HAVE_ST_CREATE)
     
-#        if(NOT HAVE_ST_CREATE)
-#            set(GEOTIFF_FOUND) # Reset to NOT found for GeoTIFF
-#            message(FATAL_ERROR "GeoTIFF support requires libgeotiff 1.2.5 or newer.")
-#        else()
-            include_directories(${GEOTIFF_INCLUDE_DIR})
-            add_definitions(-DHAVE_LIBGEOTIFF=1)
-#        endif()
-    endif()
+    #        if(NOT HAVE_ST_CREATE)
+    #            set(GEOTIFF_FOUND) # Reset to NOT found for GeoTIFF
+    #            message(FATAL_ERROR "GeoTIFF support requires libgeotiff 1.2.5 or newer.")
+    #        else()
+    include_directories(${GEOTIFF_INCLUDE_DIR})
+    add_definitions(-DHAVE_LIBGEOTIFF=1)
+    #        endif()
+  endif()
 
-    # Determine libTIFF availability, required
-    if (GEOTIFF_FOUND)
+  # Determine libTIFF availability, required
+  if (GEOTIFF_FOUND)
 
-        find_package(TIFF) 
-        mark_as_advanced(CLEAR TIFF_INCLUDE_DIR) 
-        mark_as_advanced(CLEAR TIFF_LIBRARIES) 
-        if (TIFF_FOUND)
-            include_directories(${TIFF_INCLUDE_DIR})
-        endif()
+    find_package(TIFF) 
+    mark_as_advanced(CLEAR TIFF_INCLUDE_DIR) 
+    mark_as_advanced(CLEAR TIFF_LIBRARIES) 
+    if (TIFF_FOUND)
+      include_directories(${TIFF_INCLUDE_DIR})
     endif()
+  endif()
 endif()
 
 # GDAL/OGR support - optional, default=OFF
 set(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
 
 if(WITH_GDAL)
-    if (NOT GEOTIFF_FOUND)
-        message(FATAL_ERROR "GDAL support requires GeoTIFF library which was not selected")
-    endif()
+  if (NOT GEOTIFF_FOUND)
+    message(FATAL_ERROR
+      "GDAL support requires GeoTIFF library which was not selected")
+  endif()
 
-    find_package(GDAL 1.6.0)
+  find_package(GDAL 1.6.0)
 
-    if(GDAL_FOUND)
-        # Confirm required API is available
-        include(CheckFunctionExists) 
-        set(CMAKE_REQUIRED_LIBRARIES ${GDAL_LIBRARY})
-        check_function_exists(OSRSetEquirectangular2 HAVE_OSRSETEQUIRECTANGULAR2)
+  if(GDAL_FOUND)
+    # Confirm required API is available
+    include(CheckFunctionExists) 
+    set(CMAKE_REQUIRED_LIBRARIES ${GDAL_LIBRARY})
+    check_function_exists(OSRSetEquirectangular2 HAVE_OSRSETEQUIRECTANGULAR2)
     
-        if(NOT HAVE_OSRSETEQUIRECTANGULAR2)
-            # Reset to NOT found for GDAL/OGR
-            set(GDAL_FOUND)
-            message(FATAL_ERROR "Unable to find OSRSetEquirectangular2 within GDAL library at ${GDAL_INCLUDE_DIR} ${GDAL_LIBRARY}")
-        else()
-            include_directories(${GDAL_INCLUDE_DIR})
-            add_definitions(-DHAVE_GDAL=1)
-        endif()
+    if(NOT HAVE_OSRSETEQUIRECTANGULAR2)
+      # Reset to NOT found for GDAL/OGR
+      set(GDAL_FOUND)
+      message(FATAL_ERROR
+        "Unable to find OSRSetEquirectangular2 within GDAL library at ${GDAL_INCLUDE_DIR} ${GDAL_LIBRARY}")
+    else()
+      include_directories(${GDAL_INCLUDE_DIR})
+      add_definitions(-DHAVE_GDAL=1)
     endif()
+  endif()
 endif()
 
 # Oracle support - optional, default=OFF
 set(WITH_ORACLE FALSE CACHE BOOL "Choose if Oracle support should be built")
 
 if(WITH_ORACLE)
-    find_package(Oracle)
+  find_package(Oracle)
 
-    if(ORACLE_FOUND)
-        include_directories(${ORACLE_INCLUDE_DIR})
-        add_definitions(-DHAVE_ORACLE=1)
-    endif()
+  if(ORACLE_FOUND)
+    include_directories(${ORACLE_INCLUDE_DIR})
+    add_definitions(-DHAVE_ORACLE=1)
+  endif()
 endif()
 
 ###############################################################################
 # Installation settings
 
 if(WIN32)
-    set(DEFAULT_LIB_SUBDIR lib)
-    set(DEFAULT_DATA_SUBDIR .)
-    set(DEFAULT_INCLUDE_SUBDIR include)
+  set(DEFAULT_LIB_SUBDIR lib)
+  set(DEFAULT_DATA_SUBDIR .)
+  set(DEFAULT_INCLUDE_SUBDIR include)
 
-    if (MSVC)
-        set(DEFAULT_BIN_SUBDIR bin)
-    else()
-        set(DEFAULT_BIN_SUBDIR .)
-    endif()
-else()
-    # Common locatoins for Unix and Mac OS X
+  if (MSVC)
     set(DEFAULT_BIN_SUBDIR bin)
-    set(DEFAULT_LIB_SUBDIR lib)
-    set(DEFAULT_DATA_SUBDIR share/liblas)
-    set(DEFAULT_INCLUDE_SUBDIR include)
+  else()
+    set(DEFAULT_BIN_SUBDIR .)
+  endif()
+else()
+  # Common locatoins for Unix and Mac OS X
+  set(DEFAULT_BIN_SUBDIR bin)
+  set(DEFAULT_LIB_SUBDIR lib)
+  set(DEFAULT_DATA_SUBDIR share/liblas)
+  set(DEFAULT_INCLUDE_SUBDIR include)
 endif()
 
 # Locations are changeable by user to customize layout of libLAS installation
 # (default values are platform-specific)
 set(LIBLAS_BIN_SUBDIR ${DEFAULT_BIN_SUBDIR} CACHE STRING
-    "Subdirectory where executables will be installed")
+  "Subdirectory where executables will be installed")
 set(LIBLAS_LIB_SUBDIR ${DEFAULT_LIB_SUBDIR} CACHE STRING
-    "Subdirectory where libraries will be installed")
+  "Subdirectory where libraries will be installed")
 set(LIBLAS_INCLUDE_SUBDIR ${DEFAULT_INCLUDE_SUBDIR} CACHE STRING
-    "Subdirectory where header files will be installed")
+  "Subdirectory where header files will be installed")
 set(LIBLAS_DATA_SUBDIR ${DEFAULT_DATA_SUBDIR} CACHE STRING
-    "Subdirectory where data will be installed")
+  "Subdirectory where data will be installed")
 
 # Mark *_SUBDIR variables as advanced and dedicated to use by power-users only.
-mark_as_advanced(LIBLAS_BIN_SUBDIR LIBLAS_LIB_SUBDIR LIBLAS_INCLUDE_SUBDIR LIBLAS_DATA_SUBDIR)
+mark_as_advanced(LIBLAS_BIN_SUBDIR
+  LIBLAS_LIB_SUBDIR LIBLAS_INCLUDE_SUBDIR LIBLAS_DATA_SUBDIR)
 
 # Full paths for the installation
 set(LIBLAS_BIN_DIR ${LIBLAS_BIN_SUBDIR})
@@ -257,7 +260,7 @@ set(LIBLAS_DATA_DIR ${LIBLAS_DATA_SUBDIR})
 # Installation commands
 
 install(FILES AUTHORS COPYING INSTALL LICENSE.txt README.txt
-    DESTINATION ${LIBLAS_DATA_DIR}/doc)
+  DESTINATION ${LIBLAS_DATA_DIR}/doc)
 
 ###############################################################################
 # Processing of project directories
@@ -265,36 +268,37 @@ install(FILES AUTHORS COPYING INSTALL LICENSE.txt README.txt
 add_subdirectory(src)
 
 if(WITH_UTILITIES)
-    message(STATUS "Enable libLAS utilities to build - done")
-    add_subdirectory(apps)
+  message(STATUS "Enable libLAS utilities to build - done")
+  add_subdirectory(apps)
 endif()
 
 if(WITH_TESTS)
-    message(STATUS "Enable libLAS unit tests to build - done")
-    enable_testing()
+  message(STATUS "Enable libLAS unit tests to build - done")
+  enable_testing()
 
 
-    if(ENABLE_CTEST)
-        message(STATUS "Enable CTest to support submissions of results to CDash at http://cdash.org")
-        cmake_minimum_required(VERSION 2.8.0)
-        # Dashboard has been prepared for experiments
-        # http://my.cdash.org/index.php?project=libLAS
-        include(CTest)
-        message(STATUS "Enable CTest to support submissions of results to CDash at http://cdash.org - done")
-    endif()
+  if(ENABLE_CTEST)
+    message(STATUS
+      "Enable CTest to support submissions of results to CDash at http://cdash.org")
+    cmake_minimum_required(VERSION 2.8.0)
+    # Dashboard has been prepared for experiments
+    # http://my.cdash.org/index.php?project=libLAS
+    include(CTest)
+    message(STATUS
+      "Enable CTest to support submissions of results to CDash at http://cdash.org - done")
+  endif()
 
-    add_subdirectory(test)
+  add_subdirectory(test)
 else()
-    if(ENABLE_CTEST)
-        message(WARNING "CTest support requested but WITH_TESTS option not specified to build of libLAS unit tests")
-    endif()
+  if(ENABLE_CTEST)
+    message(WARNING
+      "CTest support requested but WITH_TESTS option not specified to build of libLAS unit tests")
+  endif()
 endif()
 
 #if (WIN32)
 #    include(BuildOSGeo4W)
 #endif(WIN32)
-
-
 
 # Version information
 SET(CPACK_PACKAGE_VERSION_MAJOR "1")
@@ -323,8 +327,6 @@ list(APPEND CPACK_SOURCE_IGNORE_FILES "CPackConfig.cmake")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "schemas")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "hobu-config.bat")
 
-
 include(CPack)
-
 
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
