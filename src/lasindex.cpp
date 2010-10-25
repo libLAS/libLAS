@@ -122,7 +122,8 @@ void Index::SetValues(void)
 	m_DataVLR_ID = 43;
 	m_maxMemoryUsage = LIBLAS_INDEX_MAXMEMDEFAULT;
     m_rangeX = m_rangeY = m_rangeZ = m_cellSizeZ = m_cellSizeX = m_cellSizeY = 
-    m_pointRecordsCount = m_maxMemoryUsage = m_cellsX = m_cellsY = m_cellsZ = m_totalCells = m_tempFileWrittenBytes = 0;
+		m_pointRecordsCount = m_maxMemoryUsage = m_cellsX = m_cellsY = m_cellsZ = m_totalCells = 0;
+    m_tempFileWrittenBytes = 0;
 	m_indexBuilt = m_tempFileStarted = m_readerCreated = false;
 } // Index::SetValues
 
@@ -1025,8 +1026,7 @@ bool Index::BuildIndex(void)
 	m_versionMinor = LIBLAS_INDEX_VERSIONMINOR;
 	
 	// reset to beginning of point data records in case points had been examined before index is built
-	m_reader->Reset();
-
+	m_reader->seek(0);
 	// need the header to get number of point records
     m_pointRecordsCount = m_pointheader.GetPointRecordsCount();
     // get the bounds of the data and scale factors in case they are needed for point translation
@@ -1164,11 +1164,9 @@ bool Index::BuildIndex(void)
 		// If a cell contains too many points, subdivide the cell and save sub-cells within the cell structure
 		// If Z-binning is desired, define the bounds of each Z zone and subdivide sort each cell's points into Z bins
 		// Save Z bins within the cell structure.
-		// reset Reader to beginning of point data records in case points had been examined before index is built
 		
 		if (IndexOut.InitiateOutput())
 		{
-			m_reader->Reset();
 			for (boost::uint32_t x = 0; x < m_cellsX; ++x)
 			{
 				for (boost::uint32_t y = 0; y < m_cellsY; ++y)
@@ -1384,7 +1382,7 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 {
 	if (m_tempFile || OpenTempFile())
 	{
-		boost::uint32_t EmptyOffset = 0;	// this might not be large enough
+		liblas::detail::TempFileOffsetType EmptyOffset = 0;	// this might not be large enough
 		
 		if (! m_tempFileStarted)
 		{
@@ -1392,12 +1390,12 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 			// write out a block of file offsets the size of the number of cells
 			for (boost::uint32_t i = 0; i < m_totalCells; ++i)
 			{
-				if (fwrite(&EmptyOffset, sizeof(boost::uint32_t), 1, m_tempFile) < 1)
+				if (fwrite(&EmptyOffset, sizeof(liblas::detail::TempFileOffsetType), 1, m_tempFile) < 1)
 				{
 					return (FileError("Index::PurgePointsToTempFile"));
 				} // if error
 			} // for
-			m_tempFileWrittenBytes = m_totalCells * sizeof(boost::uint32_t);
+			m_tempFileWrittenBytes = m_totalCells * sizeof(liblas::detail::TempFileOffsetType);
 			m_tempFileStarted = true;
 		} // if
 		for (boost::uint32_t x = 0; x < m_cellsX; ++x)
@@ -1411,20 +1409,20 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 					// if cell block header is 0 write the current file location in the file header
 					// otherwise write the current file location at the file location specified in the 
 					// cell block header
-					boost::uint32_t LastWriteLocation = CellBlock[x][y].GetFileOffset();
+					liblas::detail::TempFileOffsetType LastWriteLocation = CellBlock[x][y].GetFileOffset();
 					if (LastWriteLocation == 0)
-						LastWriteLocation = (x * m_cellsY + y) * sizeof(boost::uint32_t);
-					fseek(m_tempFile, LastWriteLocation, SEEK_SET);
-					if (fwrite(&m_tempFileWrittenBytes, sizeof(boost::uint32_t), 1, m_tempFile) < 1)
+						LastWriteLocation = (x * m_cellsY + y) * sizeof(liblas::detail::TempFileOffsetType);
+					_fseeki64(m_tempFile, LastWriteLocation, SEEK_SET);
+					if (fwrite(&m_tempFileWrittenBytes, sizeof(liblas::detail::TempFileOffsetType), 1, m_tempFile) < 1)
 						return (FileError("Index::PurgePointsToTempFile"));
 					CellBlock[x][y].SetFileOffset(m_tempFileWrittenBytes);
 
 					// seek to end of file where next block of data will be written
-					fseek(m_tempFile, 0, SEEK_END);
+					_fseeki64(m_tempFile, 0, SEEK_END);
 					// write a blank space for later placement of next file block for this cell
-					if (fwrite(&EmptyOffset, sizeof(boost::uint32_t), 1, m_tempFile) < 1)
+					if (fwrite(&EmptyOffset, sizeof(liblas::detail::TempFileOffsetType), 1, m_tempFile) < 1)
 						return (FileError("Index::PurgePointsToTempFile"));
-					m_tempFileWrittenBytes += sizeof(boost::uint32_t);
+					m_tempFileWrittenBytes += sizeof(liblas::detail::TempFileOffsetType);
 					// write the number of records stored in this section
 					if (fwrite(&RecordsToWrite, sizeof(boost::uint32_t), 1, m_tempFile) < 1)
 						return (FileError("Index::PurgePointsToTempFile"));
@@ -1462,23 +1460,24 @@ bool Index::LoadCellFromTempFile(liblas::detail::IndexCell *CellBlock,
 	boost::uint32_t CurCellX, boost::uint32_t CurCellY)
 {
 
-	boost::uint32_t FileOffset, RecordsToRead, FormerNumPts, NewNumPts = 0;
+	boost::uint32_t RecordsToRead, FormerNumPts, NewNumPts = 0;
+	liblas::detail::TempFileOffsetType FileOffset;
 	
 	FormerNumPts = CellBlock->GetNumPoints();
 	CellBlock->SetNumPoints(0);
 	
 	// load the cell as it was written
 	// read the first offset for this cell
-	if (fseek(m_tempFile, (CurCellX * m_cellsY + CurCellY) * sizeof (boost::uint32_t), SEEK_SET))
+	if (_fseeki64(m_tempFile, (CurCellX * m_cellsY + CurCellY) * sizeof (liblas::detail::TempFileOffsetType), SEEK_SET))
 		return (FileError("Index::LoadCellFromTempFile"));
-	if (fread(&FileOffset, sizeof (boost::uint32_t), 1, m_tempFile) < 1)
+	if (fread(&FileOffset, sizeof (liblas::detail::TempFileOffsetType), 1, m_tempFile) < 1)
 		return (FileError("Index::LoadCellFromTempFile"));
 	while (FileOffset > 0)
 	{
 		// jump to the first block for this cell, read the next offset
-		if (fseek(m_tempFile, FileOffset, SEEK_SET))
+		if (_fseeki64(m_tempFile, FileOffset, SEEK_SET))
 			return (FileError("Index::LoadCellFromTempFile"));
-		if (fread(&FileOffset, sizeof (boost::uint32_t), 1, m_tempFile) < 1)
+		if (fread(&FileOffset, sizeof (liblas::detail::TempFileOffsetType), 1, m_tempFile) < 1)
 			return (FileError("Index::LoadCellFromTempFile"));
 		// read the data for the cell in this block
 		// first is the number of items to read now
@@ -1534,7 +1533,7 @@ bool Index::SaveIndexInLASFile(void)
 {
 	try {
 		Writer writer(*m_ofs, m_idxheader);
-		m_reader->Reset();
+		m_reader->seek(0);
 		while (m_reader->ReadNextPoint())
 		{
 			Point CurPt = m_reader->GetPoint();
@@ -1553,7 +1552,7 @@ bool Index::SaveIndexInStandAloneFile(void)
 	try {
 		Writer writer(*m_ofs, m_idxheader);
 		/* test block - uncommenting this makes it just like above version with included points
-		m_reader->Reset();
+		m_reader->seek(0);
 		while (m_reader->ReadNextPoint())
 		{
 			Point CurPt = m_reader->GetPoint();
