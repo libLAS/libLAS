@@ -866,8 +866,8 @@ std::vector<boost::uint8_t>::size_type Point::GetDimensionBytePosition(std::size
 boost::any Point::GetValue(Dimension const& d) const
 {
     boost::any output;
+    boost::ignore_unused_variable_warning(d);
 
-    
     return output;
 }
 
