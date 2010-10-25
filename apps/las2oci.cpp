@@ -10,7 +10,7 @@ namespace po = boost::program_options;
 using namespace liblas;
 using namespace std;
 
-void OCIGDALDebugErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
+ void CPL_STDCALL OCIGDALDebugErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
 {
     ostringstream oss;
     
@@ -24,7 +24,7 @@ void OCIGDALDebugErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
     }
 }
 
-void OCIGDALErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
+ void CPL_STDCALL OCIGDALErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
 {
     ostringstream oss;
     
