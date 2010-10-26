@@ -4,9 +4,9 @@ set G="NMake Makefiles"
 set LIBLAS=D:\liblas
 set OSGEO4W=C:\OSGeo4W
 set BOOST=D:\boost\boost_1_44
-set ORACLE_HOME=D:\instantclient_11_1
+set ORACLE_HOME=%OSGEO4W%
 
-set PATH=%ORACLE_HOME%;%OSGEO4W%\apps\gdal-dev\bin;%OSGEO4W%\bin;%PATH%
+set PATH=%OSGEO4W%\apps\gdal-dev\bin;%OSGEO4W%\bin;%PATH%
 
 cmake -G %G% ^
     -DBOOST_INCLUDEDIR=%BOOST% ^
@@ -19,6 +19,7 @@ cmake -G %G% ^
     -DGEOTIFF_LIBRARY=%OSGEO4W%\lib\geotiff_i.lib ^
     -DGDAL_INCLUDE_DIR=%OSGEO4W%\apps\gdal-dev\include ^
     -DGDAL_LIBRARY=%OSGEO4W%\apps\gdal-dev\lib\gdal_i.lib ^
-    -DORACLE_INCLUDE_DIR=%ORACLE_HOME%\sdk\include ^
-    -DORACLE_OCI_LIBRARY=%ORACLE_HOME%\sdk\lib\msvc\oci.lib ^
+    -DORACLE_INCLUDE_DIR=%ORACLE_HOME%\include ^
+    -DORACLE_OCI_LIBRARY=%ORACLE_HOME%\lib\oci.lib ^
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo ^
     %LIBLAS%
