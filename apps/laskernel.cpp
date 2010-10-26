@@ -926,14 +926,27 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             }            
         }
         
-        boost::uint32_t day = 0;
-        boost::uint32_t year = 0;
+        boost::int32_t day = 0;
+        boost::int32_t year = 0;
         
         
         if (creation.size() == 2) 
         {
             day = atoi(creation[0].c_str());
             year = atoi(creation[1].c_str());
+            
+            if (day < 0 || day > 366) {
+                ostringstream oss;
+                oss << "Day must be between 1-366, not " << day;
+                throw std::runtime_error(oss.str());
+            }
+            if (year < 0)
+            {
+                ostringstream oss;
+                oss << "Year must be greater than 0, not " << year;
+                throw std::runtime_error(oss.str());
+            }
+            
         }
         
         if (now == true) 
@@ -942,8 +955,8 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             header.SetCreationDOY(h.GetCreationDOY());
             header.SetCreationYear(h.GetCreationYear());
         } else {
-            header.SetCreationDOY(day);
-            header.SetCreationYear(year);
+            header.SetCreationDOY(static_cast<boost::uint16_t>(day));
+            header.SetCreationYear(static_cast<boost::uint16_t>(year));
             
         }
     }
