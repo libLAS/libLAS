@@ -30,7 +30,7 @@ std::string TryReadFileData(std::string const& filename)
     std::vector<char> data = TryReadRawFileData(filename);
 
     // FIXME: What is this construction supposed to grab? --mloskot
-    return std::string(data.front(), (std::size_t) data.size());
+    return std::string((const char*)data.front(), data.size());
 }
 
 std::vector<char> TryReadRawFileData(std::string filename)
@@ -1044,7 +1044,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             throw std::runtime_error(oss.str());
         }
 
-        v.SetRecordId(id);
+        v.SetRecordId(static_cast<boost::uint16_t>(id));
         
         std::vector<boost::uint8_t> data;
         
