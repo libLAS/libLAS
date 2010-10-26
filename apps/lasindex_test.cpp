@@ -263,8 +263,8 @@ int main(int argc, char* argv[])
 	/*----------------------------build index-----------------------------------
 	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Mount St Helens Oct 4 2004.tmp",
 		 "-i", "C:\\LibLAS\\Samples\\Mount St Helens Oct 4 2004.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
-		 "-o", "C:\\LibLAS\\Samples\\Mount St Helens Oct 4 2004_idx.las"};
-	argc = 13;
+		 "-o", "C:\\LibLAS\\Samples\\Mount St Helens Oct 4 2004_idx.las", "-b", "100"};
+	argc = 15;
 	*/
 	/*------------------filter with embedded index------------------------------
 	const char* arggv[] = {"foo",
@@ -295,12 +295,23 @@ int main(int argc, char* argv[])
 		 "-i", "C:\\LibLAS\\Samples\\flatDataset_idx.las", "-r"};
 	argc = 4;
 	*/
-	///*------------filter with embedded index using iterator---------------------
+	/*------------filter with embedded index using iterator---------------------
 	const char* arggv[] = {"foo",
-		 "-i", "C:\\LibLAS\\Samples\\flatDataset_idx.las", "-r", "-it", "5"};
+		 "-i", "C:\\LibLAS\\Samples\\flatDataset_idx.las", "-r", "-it", "25"};
 	argc = 6;
-	//*/
-	/*------------------------------------------------------------------------*/
+	*/
+	/*---------------------------billion_points-------------------------------*/
+	/*-----------------build index in standalone file---------------------------
+	const char* arggv[] = {"foo", "-t", "K:\\FME\\billion_points.tmp",
+		 "-i", "D:\\Zips\\FME\\billion_points.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
+		 "-o", "K:\\FME\\billion_points_idx.ldx", "-s", "-it", "5000000"};
+	argc = 16;
+	*/
+	/*-------------------filter from standalone file using iterator---------------
+	const char* arggv[] = {"foo", "-i", "D:\\Zips\\FME\\billion_points.las",
+		 "-n", "K:\\FME\\billion_points_idx.ldx", "-r", "-it", "5000000"};
+	argc = 8;
+	*/
 	
 	for (int i = 1; i < argc; i++)
     {
@@ -478,7 +489,7 @@ int main(int argc, char* argv[])
 										IndexIterator *indexIt2 = index.Filter(ParamSrc2, chunkSize);
 										if (indexIt && indexIt2)
 										{
-											for (boost::uint32_t step = 0; step < 3; ++step)
+											for (boost::uint32_t step = 0; step < 1000; ++step)
 											{
 												// use any of these to begin the vector with the next point that fits the filter criteria 
 												// that hasn't been scanned yet.
@@ -527,7 +538,7 @@ int main(int argc, char* argv[])
 												const std::vector<boost::uint32_t>& FilterResult5 = (*indexIt)+6;
 												if (!ReportIteratorResults(debugger, FilterResult5.size(), index.GetPointRecordsCount(), step))
 													break;
-												
+											
 											} // for
 										} // if
 										else

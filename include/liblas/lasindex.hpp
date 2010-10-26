@@ -140,7 +140,8 @@ private:
 	int m_debugOutputLevel;
 	boost::uint8_t m_versionMajor, m_versionMinor;
     boost::uint32_t m_pointRecordsCount, m_maxMemoryUsage, m_cellsX, m_cellsY, m_cellsZ, m_totalCells, 
-		m_tempFileWrittenBytes, m_DataVLR_ID;
+		m_DataVLR_ID;
+    liblas::detail::TempFileOffsetType m_tempFileWrittenBytes;
     double m_rangeX, m_rangeY, m_rangeZ, m_cellSizeZ, m_cellSizeX, m_cellSizeY;
 	std::string m_tempFileName;	
 	std::string m_indexAuthor;
