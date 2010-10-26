@@ -1,7 +1,7 @@
 
 #include "laskernel.hpp"
 
-std::istream* OpenInput(std::string filename, bool bEnd) 
+std::istream* OpenInput(std::string const& filename, bool bEnd) 
 {
     std::ios::openmode mode = std::ios::in | std::ios::binary;
     if (bEnd == true) {
@@ -30,10 +30,10 @@ std::string TryReadFileData(std::string const& filename)
     std::vector<char> data = TryReadRawFileData(filename);
 
     // FIXME: What is this construction supposed to grab? --mloskot
-    return std::string((const char*)data.front(), data.size());
+    return std::string(&data[0], data.size());
 }
 
-std::vector<char> TryReadRawFileData(std::string filename)
+std::vector<char> TryReadRawFileData(std::string const& filename)
 {
     std::istream* infile = OpenInput(filename.c_str(), true);
     std::ifstream::pos_type size;
@@ -63,7 +63,7 @@ bool term_progress(std::ostream& os, double complete)
     static int lastTick = -1;
     int tick = static_cast<int>(complete * 40.0);
 
-    tick = std::min(40, std::max(0, tick));
+    tick = (std::min)(40, std::max(0, tick));
 
     // Have we started a new progress run?  
     if (tick < lastTick && lastTick >= 39)
