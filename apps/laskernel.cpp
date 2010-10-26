@@ -974,7 +974,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         
         if (vlrs.size() % 2 != 0) {
             ostringstream err;
-            err << "VLR descriptions must be in pairs of 2";
+            err << "VLR descriptions must be in pairs of 2 -- A name and an ID";
             throw std::runtime_error(err.str());
         }
         ostringstream oss;
@@ -993,7 +993,17 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         
         for (std::vector<std::string>::size_type i = 0; i < vlrs.size(); i=i+2)
         {
-            header.DeleteVLRs(vlrs[i], atoi(vlrs[i+1].c_str()));
+            boost::int32_t id = atoi(vlrs[i+1].c_str());
+            if (id < 0)
+            {
+                throw std::runtime_error("VLR ID must be > 0");
+            }
+            if (id > std::numeric_limits<boost::uint16_t>::max()) {
+                ostringstream oss;
+                oss << "ID must be less than "<< std::numeric_limits<boost::uint16_t>::max() <<", not " << id;
+                throw std::runtime_error(oss.str());
+            }
+            header.DeleteVLRs(vlrs[i], static_cast<boost::uint16_t>(id));
         }
     }
 
@@ -1022,7 +1032,19 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         
         liblas::VariableRecord v;
         v.SetUserId(vlrs[0]);
-        v.SetRecordId(atoi(vlrs[1].c_str()));
+
+        boost::int32_t id = atoi(vlrs[1].c_str());
+        if (id < 0)
+        {
+            throw std::runtime_error("VLR ID must be > 0");
+        }
+        if (id > std::numeric_limits<boost::uint16_t>::max()) {
+            ostringstream oss;
+            oss << "ID must be less than "<< std::numeric_limits<boost::uint16_t>::max() <<", not " << id;
+            throw std::runtime_error(oss.str());
+        }
+
+        v.SetRecordId(id);
         
         std::vector<boost::uint8_t> data;
         
@@ -1067,7 +1089,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 
 
         v.SetData(data);
-        v.SetRecordLength(data.size());
+        v.SetRecordLength(static_cast<boost::uint16_t>(data.size()));
         header.AddVLR(v);
     }
 
