@@ -153,7 +153,7 @@ void RepairHeader(liblas::Summary const& summary, liblas::Header& header)
                       tree.get<double>("summary.points.maximum.y"),
                       tree.get<double>("summary.points.maximum.z"));
         
-    }     catch (liblas::property_tree::ptree_bad_path const& e) 
+    }     catch (liblas::property_tree::ptree_bad_path const& ) 
     {
         std::cerr << "Unable to write header bounds info.  Does the outputted file have any points?";
         return;
@@ -175,7 +175,7 @@ void RepairHeader(liblas::Summary const& summary, liblas::Header& header)
             header.SetPointRecordsByReturnCount(i-1, count);        
         } 
         
-    }     catch (liblas::property_tree::ptree_bad_path const& e) 
+    }     catch (liblas::property_tree::ptree_bad_path const& ) 
     {
         std::cerr << "Unable to write header point return count info.  Does the outputted file have any points?";
         return;
@@ -585,7 +585,16 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             std::vector<liblas::Color::value_type> rgb;
             for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
             {
-                rgb.push_back(atoi((*c).c_str()));
+                int color_val = atoi((*c).c_str());
+                if (color_val < std::numeric_limits<boost::uint16_t>::min() || 
+                    color_val > std::numeric_limits<boost::uint16_t>::max()) 
+                {
+                    ostringstream oss;
+                    oss << "Color value must be between 0-65536, not " << color_val;
+                    throw std::runtime_error( oss.str() );
+                    
+                }
+                rgb.push_back(static_cast<boost::uint16_t>(color_val));
             }
             liblas::Color color(rgb[0], rgb[1], rgb[2]);
             colors.push_back(color);
@@ -611,7 +620,16 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             std::vector<liblas::Color::value_type> rgb;
             for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
             {
-                rgb.push_back(atoi((*c).c_str()));
+                int color_val = atoi((*c).c_str());
+                if (color_val < std::numeric_limits<boost::uint16_t>::min() || 
+                    color_val > std::numeric_limits<boost::uint16_t>::max()) 
+                {
+                    ostringstream oss;
+                    oss << "Color value must be between 0-65536, not " << color_val;
+                    throw std::runtime_error( oss.str() );
+                    
+                }
+                rgb.push_back(static_cast<boost::uint16_t>(color_val));
             }
             liblas::Color color(rgb[0], rgb[1], rgb[2]);
             colors.push_back(color);
