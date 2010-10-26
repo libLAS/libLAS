@@ -1154,8 +1154,8 @@ LAS_DLL unsigned int LASSRS_GetVLRCount(const LASSRSH hSRS);
 */
 LAS_DLL void LASString_Free(char* string);
 
-LAS_DLL unsigned short LASSchema_GetByteSize( LASSchemaH hFormat);
-LAS_DLL unsigned short LASSchema_GetBaseByteSize( LASSchemaH hFormat);
+LAS_DLL unsigned int LASSchema_GetByteSize( LASSchemaH hFormat);
+LAS_DLL unsigned int LASSchema_GetBaseByteSize( LASSchemaH hFormat);
 
 
 
