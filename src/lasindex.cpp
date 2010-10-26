@@ -1412,13 +1412,22 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 					liblas::detail::TempFileOffsetType LastWriteLocation = CellBlock[x][y].GetFileOffset();
 					if (LastWriteLocation == 0)
 						LastWriteLocation = (x * m_cellsY + y) * sizeof(liblas::detail::TempFileOffsetType);
+#ifdef _MSC_VER
 					_fseeki64(m_tempFile, LastWriteLocation, SEEK_SET);
+#else
+					fseek(m_tempFile, LastWriteLocation, SEEK_SET);
+#endif
 					if (fwrite(&m_tempFileWrittenBytes, sizeof(liblas::detail::TempFileOffsetType), 1, m_tempFile) < 1)
 						return (FileError("Index::PurgePointsToTempFile"));
 					CellBlock[x][y].SetFileOffset(m_tempFileWrittenBytes);
 
 					// seek to end of file where next block of data will be written
+#ifdef _MSC_VER
 					_fseeki64(m_tempFile, 0, SEEK_END);
+#else
+					fseek(m_tempFile, 0, SEEK_END);
+#endif
+
 					// write a blank space for later placement of next file block for this cell
 					if (fwrite(&EmptyOffset, sizeof(liblas::detail::TempFileOffsetType), 1, m_tempFile) < 1)
 						return (FileError("Index::PurgePointsToTempFile"));
@@ -1468,14 +1477,25 @@ bool Index::LoadCellFromTempFile(liblas::detail::IndexCell *CellBlock,
 	
 	// load the cell as it was written
 	// read the first offset for this cell
+
+#ifdef _MSC_VER
 	if (_fseeki64(m_tempFile, (CurCellX * m_cellsY + CurCellY) * sizeof (liblas::detail::TempFileOffsetType), SEEK_SET))
+#else
+	if (fseek(m_tempFile, (CurCellX * m_cellsY + CurCellY) * sizeof (liblas::detail::TempFileOffsetType), SEEK_SET))
+#endif
 		return (FileError("Index::LoadCellFromTempFile"));
 	if (fread(&FileOffset, sizeof (liblas::detail::TempFileOffsetType), 1, m_tempFile) < 1)
 		return (FileError("Index::LoadCellFromTempFile"));
 	while (FileOffset > 0)
 	{
 		// jump to the first block for this cell, read the next offset
+
+#ifdef _MSC_VER
 		if (_fseeki64(m_tempFile, FileOffset, SEEK_SET))
+#else
+		if (fseek(m_tempFile, FileOffset, SEEK_SET))
+#endif
+
 			return (FileError("Index::LoadCellFromTempFile"));
 		if (fread(&FileOffset, sizeof (liblas::detail::TempFileOffsetType), 1, m_tempFile) < 1)
 			return (FileError("Index::LoadCellFromTempFile"));
