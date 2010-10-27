@@ -934,7 +934,7 @@ int main(int argc, char* argv[])
             }
             if (verbose)
                 if (!used_file)
-                    std::cout << "Setting output post-sql to: " << pre_sql << std::endl;
+                    std::cout << "Setting output post-sql to: " << post_sql << std::endl;
                 else
                     std::cout << "Setting output post-sql to: " << sql << std::endl; // Tell filename instead
         }
