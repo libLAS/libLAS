@@ -439,10 +439,11 @@ double Header::GetScaleZ() const
 
 void Header::SetScale(double x, double y, double z)
 {
+
     double const minscale = 0.01;
-    m_scales.x = (0 == x) ? minscale : x;
-    m_scales.y = (0 == y) ? minscale : y;
-    m_scales.z = (0 == z) ? minscale : z;
+    m_scales.x = (detail::compare_distance(0.0, x)) ? minscale : x;
+    m_scales.y = (detail::compare_distance(0.0, y)) ? minscale : y;
+    m_scales.z = (detail::compare_distance(0.0, z)) ? minscale : z;
 }
 
 double Header::GetOffsetX() const

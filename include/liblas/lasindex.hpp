@@ -75,7 +75,6 @@ typedef std::vector<boost::uint8_t> IndexVLRData;
 typedef std::vector<liblas::detail::IndexCell> IndexCellRow;
 typedef std::vector<IndexCellRow>	IndexCellDataBlock;
 
-class liblas::detail::IndexCell;
 class IndexData;
 class IndexIterator;
 

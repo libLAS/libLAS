@@ -559,13 +559,11 @@ int main(int argc, char* argv[])
 										if (FilterResult.size())
 										{
 											// do something with the list of points
-											#ifdef VISUAL_8
-											fprintf(debugger, "Points within filter area %d of %d, %s\n", FilterResult.size(), 
-												index.GetPointRecordsCount(), "User-defined filter bounds");
-											#else // VISUAL_8
-											fprintf(debugger, "Points within filter area %zu of %d, %s\n", FilterResult.size(), 
-												index.GetPointRecordsCount(), "User-defined filter bounds");
-											#endif // VISUAL_8
+											std::ostringstream oss;
+											oss << "Points within filter area " << FilterResult.size() 
+												<< " of " << index.GetPointRecordsCount()
+												<< ",\nUser-defined filter bounds" << std::endl;
+											fprintf(debugger, "%s", oss.str().c_str());
 										}
 										else
 											IndexFilterNoPoints(debugger);
@@ -660,13 +658,11 @@ int main(int argc, char* argv[])
 											if (FilterResult.size())
 											{
 												// do something with the list of points
-												#ifdef VISUAL_8
-												fprintf(debugger, "Points within filter area %d of %d, %s\n", FilterResult.size(), 
-													index.GetPointRecordsCount(), CovgStr);
-												#else // VISUAL_8
-												fprintf(debugger, "Points within filter area %zu of %d, %s\n", FilterResult.size(), 
-													index.GetPointRecordsCount(), CovgStr);
-												#endif // VISUAL_8
+												std::ostringstream oss;
+												oss << "Points within filter area " << FilterResult.size() 
+													<< " of " << index.GetPointRecordsCount() 
+													<< ", " << CovgStr << std::endl;
+												fprintf(debugger, "%s", oss.str().c_str());
 											}
 											else
 												IndexFilterNoPoints(debugger);
@@ -693,8 +689,8 @@ int main(int argc, char* argv[])
 					if (static_cast<std::ifstream&>(*idxstrm))
 						static_cast<std::ifstream&>(*idxstrm).close();
 				} // if
-				if (idxreader)
-					delete idxreader;
+
+				delete idxreader;
 				delete reader;
 			} // if reader
 		
