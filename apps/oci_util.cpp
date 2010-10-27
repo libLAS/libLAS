@@ -1,7 +1,6 @@
 #include "oci_util.hpp"
 
 
-
 std::string ReadSQLData(std::string filename)
 {
     std::istream* infile = OpenInput(filename.c_str(), true);

@@ -92,7 +92,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
 #endif
 
-std::istream* OpenInput(std::string const& filename, bool bEnd);
+// std::istream* OpenInput(std::string const& filename, bool bEnd);
 std::string TryReadFileData(std::string const& filename);
 std::vector<char> TryReadRawFileData(std::string const& filename);
 bool term_progress(std::ostream& os, double complete);
