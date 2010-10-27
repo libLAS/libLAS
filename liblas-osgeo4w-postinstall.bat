@@ -1,0 +1,1 @@
+textreplace -std -t bin/liblas.bat
