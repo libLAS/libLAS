@@ -67,7 +67,9 @@ class Range
 public:
     T min;
     T max;
-    
+
+	typedef T value_type;
+
     Range(T mmin=std::numeric_limits<T>::max(), T mmax=std::numeric_limits<T>::min())
         : min(mmin), max(mmax) {};
     
@@ -168,7 +170,7 @@ class Bounds
 {
 public:
 
-
+	typedef T value_type;
     typedef typename std::vector< Range<T> >::size_type size_type;
     
     typedef typename std::vector< Range<T> > RangeVec;
