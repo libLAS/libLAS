@@ -295,14 +295,12 @@ else()
   endif()
 endif()
 
-#if (WIN32)
-#    include(BuildOSGeo4W)
-#endif(WIN32)
 
 # Version information
 SET(CPACK_PACKAGE_VERSION_MAJOR "1")
 SET(CPACK_PACKAGE_VERSION_MINOR "6")
 SET(CPACK_PACKAGE_VERSION_PATCH "0b1")
+SET(OSGEO4W_UPSTREAM_RELEASE "1")
 
 SET(CPACK_SOURCE_GENERATOR "TGZ;ZIP;TBZ2")
 SET(CPACK_CMAKE_GENERATOR "Unix Makefiles")
@@ -326,6 +324,12 @@ list(APPEND CPACK_SOURCE_IGNORE_FILES "CPackConfig.cmake")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "schemas")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "hobu-config.bat")
 
+list(APPEND CPACK_SOURCE_IGNORE_FILES "liblas-osgeo4w-init.bat")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "liblas-osgeo4w-start.bat.tmpl")
 include(CPack)
 
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
+
+#if (WIN32)
+#    include(BuildOSGeo4W)
+#endif(WIN32)
