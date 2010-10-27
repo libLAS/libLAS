@@ -6,8 +6,8 @@ set OSGEO4W=C:\OSGeo4W
 set BOOST=D:\boost\boost_1_44
 set ORACLE_HOME=%OSGEO4W%
 # set BUILD_TYPE=RelWithDebInfo
-set BUILD_TYPE=Debug
-# set BUILD_TYPE=Release
+#set BUILD_TYPE=Debug
+set BUILD_TYPE=Release
 
 set PATH=%OSGEO4W%\apps\gdal-dev\bin;%OSGEO4W%\bin;%PATH%
 
