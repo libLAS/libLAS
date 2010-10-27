@@ -166,11 +166,16 @@ bool BlockTableExists(OWConnection* connection, std::string tableName)
     try {
         statement->Execute();
     } catch (std::runtime_error const& e) {
-        delete statement;
-        std::ostringstream oss;
-        oss << "Failed select if block table "<< tableName << " exists.  Do you have rights to select?"  
-            << std::endl << e.what() << std::endl;
-        throw std::runtime_error(oss.str());
+        // Assume for now that an error returned here is OCI_NODATA, which means 
+        // the table doesn't exist.  If this really isn't the case, we're going 
+        // to get more legit message further down the line.
+
+        return false;
+        // delete statement;
+        // std::ostringstream oss;
+        // oss << "Failed select if block table "<< tableName << " exists.  Do you have rights to select?"  
+        //     << std::endl << e.what() << std::endl;
+        // throw std::runtime_error(oss.str());
     }  
     
     return true;
