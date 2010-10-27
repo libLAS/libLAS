@@ -113,7 +113,20 @@ macro (tar_directories source destination base_paths)
 endmacro(tar_directories)
 
 make_directories()
-copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/*.exe ${OSGEO4W_BIN_DIR}/  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/lasinfo.exe ${OSGEO4W_BIN_DIR}/lasinfo.exe  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/lasinfo-old.exe ${OSGEO4W_BIN_DIR}/lasinfo-old.exe   )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las2las.exe ${OSGEO4W_BIN_DIR}/las2las.exe  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las2las-old.exe ${OSGEO4W_BIN_DIR}/las2las-old.exe  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las2ogr.exe ${OSGEO4W_BIN_DIR}/las2ogr.exe   )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las2oci.exe ${OSGEO4W_BIN_DIR}/las2oci.exe  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las2txt.exe ${OSGEO4W_BIN_DIR}/las2txt.exe  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/lasblock.exe ${OSGEO4W_BIN_DIR}/lasblock.exe   )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/lasmerge.exe ${OSGEO4W_BIN_DIR}/lasmerge.exe  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/txt2las.exe ${OSGEO4W_BIN_DIR}/txt2las.exe  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/ts2las.exe ${OSGEO4W_BIN_DIR}/ts2las.exe  )
+
+
+
 copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/liblas_c.dll ${OSGEO4W_BIN_DIR}/  )
 copy_files(${libLAS_SOURCE_DIR}/liblas-osgeo4w-start.bat.tmpl ${OSGEO4W_BIN_DIR}/liblas.bat.tmpl )
 copy_files(${libLAS_SOURCE_DIR}/liblas-osgeo4w-init.bat ${OSGEO4W_ETC_INI_DIR}/liblas.bat )
