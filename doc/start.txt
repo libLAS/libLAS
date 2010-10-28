@@ -1,0 +1,58 @@
+.. _start:
+
+******************************************************************************
+Getting Started with libLAS
+******************************************************************************
+
+.. contents::
+    :depth: 3
+    :backlinks: none
+
+
+
+:Author: Howard Butler
+:Contact: hobu.inc at gmail dot com
+
+    
+Overview
+------------------------------------------------------------------------------
+
+libLAS is two things: a library for embedding read and write support of the 
+ASPRS LAS format into your own C/C++ applications, and a suite of command-line 
+utilities based on :ref:`LASTools <lastools_liblas>` for inspecting, manipulating, 
+transforming, and processing LAS LiDAR data.
+
+This document is an entry point into the world of libLAS, and will give a 
+general overview of the types of operations you can do with the :ref:`libLAS utilities <utilities>` 
+as well as point you to other information for developing your own applications 
+with libLAS.  
+
+Installation
+------------------------------------------------------------------------------
+
+:ref:`download` contains the canonical location for obtaining libLAS in 
+both source and binary forms.  
+
+Windows
+..............................................................................
+
+:ref:`osgeo4w_install` contains information how to install libLAS on Windows.  
+
+Compilation
+..............................................................................
+
+:ref:`compilation` shows how to compile libLAS for your own use on Windows,
+Mac OSX, and Linux. 
+    
+    
+.. _`CMake`: http://www.cmake.org/
+.. _`CTest`: http://cmake.org/cmake/help/ctest-2-8-docs.html
+.. _`CMake 2.8.0+`: http://www.cmake.org/cmake/help/cmake-2-8-docs.html
+.. _`CDash`: http://www.cdash.org/
+.. _`continuous integration`: http://en.wikipedia.org/wiki/Continuous_integration
+.. _`libLAS CDash`: http://my.cdash.org/index.php?project=libLAS
+.. _`Curses`: http://en.wikipedia.org/wiki/Curses_%28programming_library%29
+.. _`Autoconf`: http://www.gnu.org/software/autoconf/
+.. _`LLVM`: http://llvm.org/
+.. _`OSGeo4W`: http://trac.osgeo.org/osgeo4w/
+.. _`Boost`: http://www.boost.org/

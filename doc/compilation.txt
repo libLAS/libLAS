@@ -15,8 +15,8 @@ Compilation
 :Contact: hobu.inc at gmail dot com
 
 .. warning::
-    This document is only for the un-released 1.6 libLAS release.  Unfortunately,
-    there is no documentation for building libLAS 1.2.1 at this time, though 
+    This document is only for the 1.6 libLAS release.  Unfortunately,
+    there is no documentation for building earlier libLAS releases at this time, though 
     it is a straightforward `Autoconf`_ setup for unix and nmake files for 
     windows.
     
@@ -54,7 +54,7 @@ following compilers are known to work:
 * MSVC 2010
 * GCC 4.0
 * GCC 4.2
-* LLVM 4.2
+* LLVM 4.8/Clang 2.8
 
 `Boost`_
 ------------------------------------------------------------------------------

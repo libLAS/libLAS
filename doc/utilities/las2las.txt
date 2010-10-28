@@ -39,7 +39,11 @@ used for include:
 
 :ref:`las2las <las2las>` started a port of Martin Isenburg's :ref:`las2las` utility from `LASTools`_ 
 to the libLAS library.  It is much-improved from his version, however, and 
-provides a number of additional capabilities.
+provides a number of additional capabilities. 
+
+.. seealso::
+    :ref:`lastools_liblas` contains background information on the port of 
+    Isenburg and Shewchuck's utilities to the libLAS library.
 
 * Text output describing the operation(s) is only provided when the --verbose (-v)
   switch is provided.  Errors are reported to stderr.
