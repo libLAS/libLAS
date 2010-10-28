@@ -105,6 +105,8 @@ int main(int argc, char* argv[])
     bool show_schema = true;
     bool output_xml = false;
     bool output_json = false;
+    bool show_point = false;
+    boost::uint32_t point = 0;
     
     std::vector<liblas::FilterPtr> filters;
     std::vector<liblas::TransformPtr> transforms;
@@ -130,6 +132,8 @@ int main(int argc, char* argv[])
             ("no-schema", po::value<bool>(&show_schema)->zero_tokens()->implicit_value(false), "Don't show schema")
             ("no-check", po::value<bool>(&check)->zero_tokens()->implicit_value(false), "Don't scan points")
             ("xml", po::value<bool>(&output_xml)->zero_tokens()->implicit_value(true), "Output summary as XML")
+            ("point,p", po::value<boost::uint32_t>(&point), "Display a point with a given id.  --point 44")
+
             // ("json", po::value<bool>(&output_json)->zero_tokens()->implicit_value(true), "Output summary as JSON")
 
 // --xml
@@ -151,6 +155,10 @@ int main(int argc, char* argv[])
             return 1;
         }
 
+        if (vm.count("point")) 
+        {
+            show_point = true;
+        }
 
         if (vm.count("input")) 
         {
@@ -183,7 +191,33 @@ int main(int argc, char* argv[])
     
 
         liblas::Reader reader(ifs);
-        
+        if (show_point)
+        {
+            try 
+            {
+                reader.ReadPointAt(point);
+                liblas::Point const& p = reader.GetPoint();
+                if (output_xml) {
+                    liblas::property_tree::ptree tree;
+                    tree = p.GetPTree();
+                    liblas::property_tree::write_xml(std::cout, tree);
+                    exit(0);
+                } 
+                else 
+                {
+                    std::cout <<  p << std::endl;
+                    exit(0);    
+                }
+                
+            } catch (std::out_of_range const& e)
+            {
+                std::cerr << "Unable to read point at index " << point << ": " << e.what() << std::endl;
+                exit(1);
+                
+            }
+
+        }
+
         liblas::Summary summary;
         if (check)
             summary = check_points(  reader, 
