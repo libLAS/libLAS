@@ -38,13 +38,46 @@ Windows
 
 :ref:`osgeo4w_install` contains information how to install libLAS on Windows.  
 
+Unix
+..............................................................................
+
+Packages are available for `DebianGIS`_, but in most other cases you are 
+going to have to compile libLAS yourself. :ref:`compilation` provides an 
+extensive synopsis of how to do so.
+
 Compilation
 ..............................................................................
 
 :ref:`compilation` shows how to compile libLAS for your own use on Windows,
 Mac OSX, and Linux. 
     
-    
+Processing
+------------------------------------------------------------------------------
+
+The libLAS :ref:`command-line utilities <utilities>` provide the bulk of 
+user-facing operational software for libLAS, although the underlying libLAS 
+library is what powers them.  Below is a listing of common operations that 
+you might want to do on LAS data, and the utilities and approaches to 
+take to complete those tasks.
+
+Reproject a LAS file
+..............................................................................
+
+All LAS data are in some sort of coordinate system, even if that coordinate 
+system is not described in the LAS file.  For terrestrial LAS data, these 
+coordinate system descriptions often map to coordinate systems described 
+by the `EPSG`_ database.  Another source of information about coordinate 
+systems in http://spatialreference.org.  
+
+The :ref:`las2las <las2las>` utility is the tool you will want to use to 
+reproject LAS data.  :ref:`las2las <las2las>` can take advantage of the 
+existing coordinate system description that might already be specified in the 
+LAS file, or you may override the coordinate system description (or supply 
+one if none was specified).
+
+:ref:`las2las <las2las>` is very similar in behavior to another data 
+translation utility for raster data -- `gdal_translate`_.  
+
 .. _`CMake`: http://www.cmake.org/
 .. _`CTest`: http://cmake.org/cmake/help/ctest-2-8-docs.html
 .. _`CMake 2.8.0+`: http://www.cmake.org/cmake/help/cmake-2-8-docs.html
@@ -56,3 +89,5 @@ Mac OSX, and Linux.
 .. _`LLVM`: http://llvm.org/
 .. _`OSGeo4W`: http://trac.osgeo.org/osgeo4w/
 .. _`Boost`: http://www.boost.org/
+.. _`DebianGIS`: http://wiki.debian.org/DebianGis
+.. _`gdal_translate`: http://www.gdal.org/gdal_translate.html
