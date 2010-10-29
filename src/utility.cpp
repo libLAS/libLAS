@@ -289,7 +289,7 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
         double integer = 0;
         double x_scale = tree.get<double>("summary.header.scale.x");
         double y_scale = tree.get<double>("summary.header.scale.y");
-        double z_scale = tree.get<double>("summary.header.scale.x");
+        double z_scale = tree.get<double>("summary.header.scale.z");
         frac = std::modf(x_scale, &integer);
         x_precision = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
         frac = std::modf(y_scale, &integer);
