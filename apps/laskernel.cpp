@@ -689,115 +689,6 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 {
     std::vector<liblas::TransformPtr> transforms;
 
-    if (vm.count("a_srs")) 
-    {
-        liblas::SpatialReference in_ref;
-        
-        std::string input_srs = vm["a_srs"].as< string >();
-        if (verbose)
-            std::cout << "Setting input SRS to " << input_srs << std::endl;
-        in_ref.SetFromUserInput(input_srs);
-        header.SetSRS(in_ref);
-    }
-
-    if (vm.count("a_vertcs"))
-    {
-        liblas::SpatialReference vert_ref = header.GetSRS();
-
-        std::vector<std::string> vertical_vec = vm["a_vertcs"].as< std::vector<std::string> >();
-        if (vertical_vec.size() > 4) {
-            ostringstream oss;
-            oss << "Too many arguments were given to a_vertcs. "
-                << "--a_vertcs verticalCSType citation verticalDatum verticalUnits  "
-                << "All except verticalCSType are optional, but they are "
-                << "applied in order, so if you want to set verticalUnits, "
-                << "you must set all the others";
-
-            throw std::runtime_error(oss.str());
-        }
-        if (vertical_vec.size() < 1) {
-            ostringstream oss;
-            oss << "At least verticalCSType must be given to a_vertcs. "
-                << "--a_vertcs verticalCSType citation verticalDatum verticalUnits  "
-                << "All except verticalCSType are optional, but they are "
-                << "applied in order, so if you want to set verticalUnits, "
-                << "you must set all the others";
-
-            throw std::runtime_error(oss.str());
-        }
-        
-        if (verbose)
-        {
-            ostringstream oss;
-            for (std::vector<std::string>::const_iterator i = vertical_vec.begin();
-                 i != vertical_vec.end();
-                 i++) 
-                {
-                    oss << *i << " ";
-                }
-                std::cout << "Setting vertical info to: " << oss.str() << std::endl;
-        }
-            
-        boost::int32_t verticalCSType = boost::lexical_cast<boost::int32_t>(vertical_vec[0]);
-        
-        std::string citation;
-        int verticalDatum = -1;
-        int verticalUnits = 9001;
-        
-        if (vertical_vec.size() > 1) {
-            citation = boost::lexical_cast<std::string>(vertical_vec[1]);
-        }
-        
-        if (vertical_vec.size() > 2) {
-            verticalDatum = boost::lexical_cast<boost::int32_t>(vertical_vec[2]);
-        }
-
-        if (vertical_vec.size() > 3) {
-            verticalUnits = boost::lexical_cast<boost::int32_t>(vertical_vec[3]);
-        }
-        
-        vert_ref.SetVerticalCS(verticalCSType, citation, verticalDatum, verticalUnits);
-        header.SetSRS(vert_ref);      
-    }
-    
-    if (vm.count("t_srs")) 
-    {
-        liblas::SpatialReference in_ref;
-        liblas::SpatialReference out_ref;
-        
-        std::string output_srs = vm["t_srs"].as< string >();
-        if (verbose)
-            std::cout << "Setting output SRS to " << output_srs << std::endl;
-        out_ref.SetFromUserInput(output_srs);
-
-        if (vm.count("a_srs")){
-            std::string input_srs = vm["a_srs"].as< string >();
-            in_ref.SetFromUserInput(input_srs);
-        } else {
-            // If the user didn't assign an input SRS, we'll try to take 
-            // it from our existing header.
-            in_ref = header.GetSRS();
-            if (in_ref.GetVLRs().size() == 0)
-            {
-                throw std::runtime_error("No input SRS is available on the file you have specified.  Please use --a_srs to assign one");
-            }
-            
-        }
-        // Set the header's SRS to the output SRS now.  We've already 
-        // made the transformation, and this SRS will be used to 
-        // write the new file(s)
-        header.SetSRS(out_ref);
-        
-        liblas::Bounds<double> b = header.GetExtent();
-        b.project(in_ref, out_ref);
-        header.SetExtent(b);
-        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref));
-        transforms.push_back(srs_transform);
-    }
-
-
-
-
     if (vm.count("offset")) 
     {
 
@@ -1117,6 +1008,113 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         
         header.SetSystemId(id);
     }
+    
+
+    if (vm.count("a_srs")) 
+    {
+        liblas::SpatialReference in_ref;
+        
+        std::string input_srs = vm["a_srs"].as< string >();
+        if (verbose)
+            std::cout << "Setting input SRS to " << input_srs << std::endl;
+        in_ref.SetFromUserInput(input_srs);
+        header.SetSRS(in_ref);
+    }
+
+    if (vm.count("a_vertcs"))
+    {
+        liblas::SpatialReference vert_ref = header.GetSRS();
+
+        std::vector<std::string> vertical_vec = vm["a_vertcs"].as< std::vector<std::string> >();
+        if (vertical_vec.size() > 4) {
+            ostringstream oss;
+            oss << "Too many arguments were given to a_vertcs. "
+                << "--a_vertcs verticalCSType citation verticalDatum verticalUnits  "
+                << "All except verticalCSType are optional, but they are "
+                << "applied in order, so if you want to set verticalUnits, "
+                << "you must set all the others";
+
+            throw std::runtime_error(oss.str());
+        }
+        if (vertical_vec.size() < 1) {
+            ostringstream oss;
+            oss << "At least verticalCSType must be given to a_vertcs. "
+                << "--a_vertcs verticalCSType citation verticalDatum verticalUnits  "
+                << "All except verticalCSType are optional, but they are "
+                << "applied in order, so if you want to set verticalUnits, "
+                << "you must set all the others";
+
+            throw std::runtime_error(oss.str());
+        }
+        
+        if (verbose)
+        {
+            ostringstream oss;
+            for (std::vector<std::string>::const_iterator i = vertical_vec.begin();
+                 i != vertical_vec.end();
+                 i++) 
+                {
+                    oss << *i << " ";
+                }
+                std::cout << "Setting vertical info to: " << oss.str() << std::endl;
+        }
+            
+        boost::int32_t verticalCSType = boost::lexical_cast<boost::int32_t>(vertical_vec[0]);
+        
+        std::string citation;
+        int verticalDatum = -1;
+        int verticalUnits = 9001;
+        
+        if (vertical_vec.size() > 1) {
+            citation = boost::lexical_cast<std::string>(vertical_vec[1]);
+        }
+        
+        if (vertical_vec.size() > 2) {
+            verticalDatum = boost::lexical_cast<boost::int32_t>(vertical_vec[2]);
+        }
+
+        if (vertical_vec.size() > 3) {
+            verticalUnits = boost::lexical_cast<boost::int32_t>(vertical_vec[3]);
+        }
+        
+        vert_ref.SetVerticalCS(verticalCSType, citation, verticalDatum, verticalUnits);
+        header.SetSRS(vert_ref);      
+    }
+    
+    if (vm.count("t_srs")) 
+    {
+        liblas::SpatialReference in_ref;
+        liblas::SpatialReference out_ref;
+        
+        std::string output_srs = vm["t_srs"].as< string >();
+        if (verbose)
+            std::cout << "Setting output SRS to " << output_srs << std::endl;
+        out_ref.SetFromUserInput(output_srs);
+
+        if (vm.count("a_srs")){
+            std::string input_srs = vm["a_srs"].as< string >();
+            in_ref.SetFromUserInput(input_srs);
+        } else {
+            // If the user didn't assign an input SRS, we'll try to take 
+            // it from our existing header.
+            in_ref = header.GetSRS();
+            if (in_ref.GetVLRs().size() == 0)
+            {
+                throw std::runtime_error("No input SRS is available on the file you have specified.  Please use --a_srs to assign one");
+            }
+            
+        }
+        // Set the header's SRS to the output SRS now.  We've already 
+        // made the transformation, and this SRS will be used to 
+        // write the new file(s)
+        header.SetSRS(out_ref);
+        
+        liblas::Bounds<double> b = header.GetExtent();
+        b.project(in_ref, out_ref);
+        header.SetExtent(b);
+        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, liblas::HeaderPtr(new liblas::Header(header))));
+        transforms.push_back(srs_transform);
+    }    
     return transforms;
 }
 
