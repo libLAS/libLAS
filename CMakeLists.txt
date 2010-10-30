@@ -132,6 +132,7 @@ message(STATUS "Searching for Boost 1.38+ - done")
 
 set(Boost_USE_STATIC_LIBS   ON)
 set(Boost_USE_MULTITHREADED ON)
+# NOTE: Add iostreams to COMPONENTS list to enable bigfile_boost_iostreams_test
 find_package(Boost 1.38 COMPONENTS program_options REQUIRED)
 
 if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
