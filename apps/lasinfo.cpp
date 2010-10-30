@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
             ("no-vlrs", po::value<bool>(&show_vlrs)->zero_tokens()->implicit_value(false), "Don't show VLRs")
             ("no-schema", po::value<bool>(&show_schema)->zero_tokens()->implicit_value(false), "Don't show schema")
             ("no-check", po::value<bool>(&check)->zero_tokens()->implicit_value(false), "Don't scan points")
-            ("xml", po::value<bool>(&output_xml)->zero_tokens()->implicit_value(true), "Output summary as XML")
+            ("xml", po::value<bool>(&output_xml)->zero_tokens()->implicit_value(true), "Output as XML")
             ("point,p", po::value<boost::uint32_t>(&point), "Display a point with a given id.  --point 44")
 
             // ("json", po::value<bool>(&output_json)->zero_tokens()->implicit_value(true), "Output summary as JSON")
