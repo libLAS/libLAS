@@ -72,14 +72,14 @@ public:
     /// @exception std::runtime_error - on failure state of the input stream.
     Reader(std::istream& ifs);
     Reader(std::istream& ifs, boost::uint32_t cache_size);
-    Reader(std::istream& ifs, boost::uint32_t cache_size, Header& header);
+    Reader(std::istream& ifs, boost::uint32_t cache_size, Header const& header);
     Reader(ReaderI* reader);
     
     
     /// User-defined consructor initializes reader with input stream and
     /// a header to override the values in the file
     /// @exception std::runtime_error - on failure state of the input stream.
-    Reader(std::istream& ifs, Header& header);
+    Reader(std::istream& ifs, Header const& header);
     
     /// Destructor.
     /// @exception nothrow
@@ -188,11 +188,8 @@ private:
     TransformPtr m_reprojection_transform;
 
     SpatialReference m_out_srs;
-    SpatialReference m_in_srs;
-    
+    SpatialReference m_in_srs;  
 };
-
-
 
 } // namespace liblas
 
