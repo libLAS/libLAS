@@ -364,7 +364,7 @@ const GTIF* SpatialReference::GetGTIF()
 
     m_gtiff = GTIFNewSimpleTags(m_tiff);
     if (!m_gtiff) 
-        throw std::runtime_error("The geotiff keys could not read from VLR records");
+        throw std::runtime_error("The geotiff keys could not be read from VLR records");
     
     return m_gtiff;
 #endif
@@ -499,10 +499,10 @@ void SpatialReference::SetWKT(std::string const& v)
 #endif
 }
 
-void SpatialReference::SetVerticalCS(int verticalCSType, 
+void SpatialReference::SetVerticalCS(boost::int32_t verticalCSType, 
                                      std::string const& citation,
-                                     int verticalDatum,
-                                     int verticalUnits)
+                                     boost::int32_t verticalDatum,
+                                     boost::int32_t verticalUnits)
 {
     if (!m_gtiff)
     {
