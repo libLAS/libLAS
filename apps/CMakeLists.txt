@@ -44,7 +44,7 @@ endif()
 
 set(LIBLAS_UTILITIES
     ${LASINFO_OLD} ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
-    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS} ${LAS2LAS_OLD} ${LASBLOCK} ${TS2LAS} )
+    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS} ${LAS2LAS_OLD} ${LASBLOCK} ${TS2LAS})
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -142,7 +142,7 @@ if(LAS2OCI)
 endif()
 
 if(BIGFILE_TEST)
-    add_executable(${BIGFILE_TEST} bigtest.cpp)
+    add_executable(${BIGFILE_TEST} bigtest.c)
     target_link_libraries(${BIGFILE_TEST} ${LIBLAS_C_LIB_NAME})
 endif()
 
