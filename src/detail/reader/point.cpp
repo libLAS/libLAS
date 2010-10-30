@@ -69,7 +69,7 @@ Point::~Point()
 
 std::istream& Point::GetStream() const
 {
-    return m_ifs
+    return m_ifs;
 }
 
 void Point::read()
