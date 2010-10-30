@@ -382,59 +382,70 @@ double Point::GetZ() const
 
 void Point::SetX( double const& value ) 
 {
-    boost::int32_t v = static_cast<boost::int32_t>(value);
+    boost::int32_t v;
+    double scale;
+    double offset;
+
     if (m_header.get() != 0 ) 
     {
-        // descale the value given our scale/offset
-        v = static_cast<boost::int32_t>(
-                             detail::sround(((value - m_header->GetOffsetX()) / 
-                                              m_header->GetScaleX())));
-
-    } else 
+        scale = m_header->GetScaleX();
+        offset = m_header->GetOffsetX();
+    } 
+    else 
     {
-        v = static_cast<boost::int32_t>(
-                             detail::sround(((value - m_default_header.GetOffsetX()) / 
-                                              m_default_header.GetScaleX())));
+        scale = m_default_header.GetScaleX();
+        offset = m_default_header.GetOffsetX();
     }
 
+    // descale the value given our scale/offset
+    v = static_cast<boost::int32_t>(
+                         detail::sround((value - offset) / scale));
     SetRawX(v);
 }
 
 void Point::SetY( double const& value ) 
 {
-    boost::int32_t v = static_cast<boost::int32_t>(value);
+    boost::int32_t v;
+    double scale;
+    double offset;
+
     if (m_header.get() != 0 ) 
     {
-        // descale the value given our scale/offset
-        v = static_cast<boost::int32_t>(
-                             detail::sround(((value - m_header->GetOffsetY()) / 
-                                              m_header->GetScaleY())));
-    } else 
+        scale = m_header->GetScaleY();
+        offset = m_header->GetOffsetY();
+    } 
+    else 
     {
-        v = static_cast<boost::int32_t>(
-                             detail::sround(((value - m_default_header.GetOffsetY()) / 
-                                              m_default_header.GetScaleY())));
+        scale = m_default_header.GetScaleY();
+        offset = m_default_header.GetOffsetY();
     }
-    
+
+    // descale the value given our scale/offset
+    v = static_cast<boost::int32_t>(
+                         detail::sround((value - offset) / scale));
     SetRawY(v);
 }
 
 void Point::SetZ( double const& value ) 
 {
-    boost::int32_t v = static_cast<boost::int32_t>(value);
-    if (m_header) 
+    boost::int32_t v;
+    double scale;
+    double offset;
+
+    if (m_header.get() != 0 ) 
     {
-        // descale the value given our scale/offset
-        v = static_cast<boost::int32_t>(
-                             detail::sround(((value - m_header->GetOffsetZ()) / 
-                                              m_header->GetScaleZ())));
-    } else
+        scale = m_header->GetScaleZ();
+        offset = m_header->GetOffsetZ();
+    } 
+    else 
     {
-        v = static_cast<boost::int32_t>(
-                             detail::sround(((value - m_default_header.GetOffsetZ()) / 
-                                              m_default_header.GetScaleZ())));
+        scale = m_default_header.GetScaleZ();
+        offset = m_default_header.GetOffsetZ();
     }
-    
+
+    // descale the value given our scale/offset
+    v = static_cast<boost::int32_t>(
+                         detail::sround((value - offset) / scale));
     SetRawZ(v);
 }
 

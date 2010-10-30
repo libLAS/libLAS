@@ -112,8 +112,25 @@ void Summary::AddPoint(liblas::Point const& p)
             // point copy here would set the header ptr of min/max
             // to be whatever might have come off of the file, 
             // and this may/may not have space for time/color
-            min.SetHeaderPtr(HeaderPtr());
-            max.SetHeaderPtr(HeaderPtr());
+            
+            // If we do have scale/offset values, we do want to keep those, 
+            // however.  
+            liblas::HeaderPtr hdr = p.GetHeaderPtr();
+            if (hdr.get()) 
+            {
+                // Keep scale/offset values around because we need these 
+                liblas::Header header;
+                header.SetScale(hdr->GetScaleX(), hdr->GetScaleY(), hdr->GetScaleZ());
+                header.SetOffset(hdr->GetOffsetX(), hdr->GetOffsetY(), hdr->GetOffsetZ());
+                liblas::HeaderPtr h(new liblas::Header(header));
+                min.SetHeaderPtr(h);
+                max.SetHeaderPtr(h);
+            } else 
+            {
+                min.SetHeaderPtr(HeaderPtr());
+                max.SetHeaderPtr(HeaderPtr()); 
+            }
+
             first = false;
         }
         
@@ -324,10 +341,15 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
     
     os << std::endl;
     os << "  Bounding Box:\t\t";
-    os << tree.get<double>("summary.points.minimum.x") << ", "
-       << tree.get<double>("summary.points.minimum.y") << ", "
-       << tree.get<double>("summary.points.maximum.x") << ", "
-       << tree.get<double>("summary.points.maximum.y");
+
+    os.precision(x_precision);
+    os << tree.get<double>("summary.points.minimum.x") << ", ";
+    os.precision(y_precision);
+    os << tree.get<double>("summary.points.minimum.y") << ", ";
+    os.precision(x_precision);
+    os << tree.get<double>("summary.points.maximum.x") << ", ";
+    os.precision(y_precision);
+    os << tree.get<double>("summary.points.maximum.y");
     
     os << std::endl;
     os.precision(6);
