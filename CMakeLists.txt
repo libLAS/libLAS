@@ -101,17 +101,21 @@ if(WIN32)
 
   endif()
 else()
+
+  # Recommended C++ compilation flags
+  # -Weffc++
+  set(LIBLAS_COMMON_CXX_FLAGS
+	"-pedantic -ansi -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Wfloat-equal -Wredundant-decls -Wno-long-long")
+
   if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 
-	# Recommended C++ compilation flags
-	# -Weffc++
-	set(LIBLAS_GCC_CXX_FLAGS
-	  "-pedantic -ansi -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Wfloat-equal -Wredundant-decls -Wno-long-long")
-    
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC ${LIBLAS_GCC_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC ${LIBLAS_COMMON_CXX_FLAGS}")
     if (CMAKE_COMPILER_IS_GNUCXX)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
     endif()
+
+  elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" OR "${CMAKE_CXX_COMPILER}" MATCHES "clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIBLAS_COMMON_CXX_FLAGS}")
   endif()
 endif(WIN32)
 
