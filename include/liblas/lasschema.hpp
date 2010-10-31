@@ -63,7 +63,6 @@
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/random_access_index.hpp>
 
-
 // std
 #include <iosfwd>
 #include <limits>
@@ -93,9 +92,7 @@ typedef multi_index_container<
     random_access<tag<index> >,
     // sort by less<string> on GetName
     hashed_unique<tag<name>, const_mem_fun<Dimension,std::string const&,&Dimension::GetName> >
-    
-
-  >
+      >
 > IndexMap;
 
 typedef IndexMap::index<name>::type index_by_name;
@@ -114,7 +111,7 @@ public:
     Schema& operator=(Schema const& rhs);
     Schema(Schema const& other);
     
-    ~Schema() {};
+    ~Schema() {}
 
     /// Fetch byte size
     std::size_t GetByteSize() const;

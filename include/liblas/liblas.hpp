@@ -130,7 +130,7 @@ public:
     
     virtual std::istream& GetStream() const = 0;
     
-    virtual ~ReaderI() {};    
+    virtual ~ReaderI() {}
 };
 
 class WriterI
@@ -143,10 +143,9 @@ public:
 
     virtual std::ostream& GetStream() const = 0;
 
-    virtual ~WriterI() {};    
+    virtual ~WriterI() {}
 
 };
-
 
 } // namespace liblas
 

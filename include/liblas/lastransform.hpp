@@ -64,7 +64,7 @@ class TransformI
 public:
     
     virtual bool transform(Point& point) = 0;
-    virtual ~TransformI() {};
+    virtual ~TransformI() {}
 };
 
 typedef boost::shared_ptr<liblas::TransformI> TransformPtr;

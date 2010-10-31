@@ -78,8 +78,8 @@ public:
 	boost::uint32_t GetNumPoints(void) const;
 	boost::uint32_t GetNumSubCellRecords(void) const;
 	boost::uint32_t GetNumZCellRecords(void) const;
-	ElevExtrema GetMinZ(void) const {return m_MinZ;};
-	ElevExtrema GetMaxZ(void) const {return m_MaxZ;};
+	ElevExtrema GetMinZ(void) const {return m_MinZ;}
+	ElevExtrema GetMaxZ(void) const {return m_MaxZ;}
 	bool RoomToAdd(boost::uint32_t a);
 	void AddPointRecord(boost::uint32_t a);
 	void AddPointRecord(boost::uint32_t a, boost::uint8_t b);
@@ -99,8 +99,6 @@ public:
 	const IndexSubCellData::iterator GetEndSubCell(void);
 	const IndexSubCellData::iterator GetFirstZCellRecord(void);
 	const IndexSubCellData::iterator GetEndZCell(void);
-
-	
 };
 
 }} // namespace liblas::detail

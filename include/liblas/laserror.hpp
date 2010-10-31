@@ -73,9 +73,9 @@ public:
     // TODO - mloskot: What about replacing string return by copy with const char* ?
     //        char const* GetMethod() const { return m_method.c_str(); }, etc.
 
-    int GetCode() const { return m_code; };
-    std::string GetMessage() const { return m_message; };
-    std::string GetMethod() const { return m_method; };    
+    int GetCode() const { return m_code; }
+    std::string GetMessage() const { return m_message; }
+    std::string GetMethod() const { return m_method; }   
 
 private:
 
