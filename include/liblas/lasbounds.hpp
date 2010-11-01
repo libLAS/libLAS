@@ -46,7 +46,7 @@
 #include <liblas/laspoint.hpp>
 #include <liblas/lastransform.hpp>
 #include <liblas/detail/private_utility.hpp>
-
+#include <liblas/export.hpp>
 // boost
 #include <boost/cstdint.hpp>
 
@@ -62,7 +62,7 @@
 namespace liblas {
 
 template <typename T>
-class Range
+class LAS_DLL Range
 {
 public:
     T min;
@@ -166,7 +166,7 @@ public:
 };
     
 template <typename T>
-class Bounds
+class LAS_DLL Bounds
 {
 public:
 

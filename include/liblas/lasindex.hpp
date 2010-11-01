@@ -47,6 +47,7 @@
 #include <liblas/lasbounds.hpp>
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/detail/index/indexcell.hpp>
+#include <liblas/export.hpp>
 
 // std
 #include <stdexcept> // std::out_of_range
@@ -75,8 +76,8 @@ typedef std::vector<boost::uint8_t> IndexVLRData;
 typedef std::vector<liblas::detail::IndexCell> IndexCellRow;
 typedef std::vector<IndexCellRow>	IndexCellDataBlock;
 
-class IndexData;
-class IndexIterator;
+class LAS_DLL IndexData;
+class LAS_DLL IndexIterator;
 
 // Index class is the fundamental object for building and filtering a spatial index of points in an LAS file.
 // An Index class doesn't do anything until it is configured with an IndexData object (see below).
@@ -115,7 +116,7 @@ class IndexIterator;
 // Currently only one, two or three dimensional spatial window filters are supported. See IndexData below for 
 //		more info on filtering.
 
-class Index
+class LAS_DLL Index
 {
 public:
 	Index();
@@ -342,7 +343,7 @@ public:
 //		system that a liblas::Header returns with the commands GetMin{X|Y|Z} and a liblas::Point returns with 
 //		Get{X|Y|Z}
 
-class IndexData
+class LAS_DLL IndexData
 {
 friend class Index;
 friend class IndexIterator;
@@ -463,7 +464,7 @@ public:
 	void SetDebugger(FILE *debugger)	{m_debugger = debugger;}
 };
 
-class IndexIterator
+class LAS_DLL IndexIterator
 {
 friend class Index;
 

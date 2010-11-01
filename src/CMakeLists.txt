@@ -202,15 +202,26 @@ if(UNIX)
   add_definitions("-fPIC")
 endif()
 
-add_library(${LIBLAS_LIB_NAME} STATIC ${LIBLAS_SOURCES})
+if(WIN32)
+    add_definitions("-DLAS_DLL_EXPORT=1")
+endif()
+
+add_library(${LIBLAS_LIB_NAME} SHARED ${LIBLAS_SOURCES})
 add_library(${LIBLAS_C_LIB_NAME} SHARED ${LIBLAS_C_SOURCES})
+
+target_link_libraries(${LIBLAS_LIB_NAME}
+  ${LIBLAS_LIB_NAME}
+  ${TIFF_LIBRARY}
+  ${GEOTIFF_LIBRARY}
+  ${GDAL_LIBRARY}
+  ${Boost_LIBRARIES})
 
 target_link_libraries(${LIBLAS_C_LIB_NAME}
   ${LIBLAS_LIB_NAME}
   ${TIFF_LIBRARY}
   ${GEOTIFF_LIBRARY}
   ${GDAL_LIBRARY}
-  ${SPATIALINDEX_LIBRARY})
+  ${Boost_LIBRARIES})
 
 if (APPLE)
   set_target_properties(

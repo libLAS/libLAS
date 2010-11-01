@@ -50,6 +50,7 @@
 #include <liblas/lastransform.hpp>
 #include <liblas/lasfilter.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
+#include <liblas/export.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std
@@ -63,7 +64,7 @@ namespace liblas {
 
 
 /// Defines public interface to LAS reader implementation.
-class Reader
+class LAS_DLL Reader
 {
 public:
 

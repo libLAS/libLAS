@@ -55,7 +55,9 @@
 #  define LAS_C_END
 #endif
 
+LAS_C_START
 #include <liblas/export.hpp>
+LAS_C_END
 
 #ifndef NULL
 #define NULL 0

@@ -67,6 +67,7 @@
 #include <liblas/detail/endian.hpp>
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/capi/las_version.h>
+#include <liblas/export.hpp>
 
 // booost
 #include <boost/array.hpp>

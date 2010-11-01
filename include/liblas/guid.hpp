@@ -61,6 +61,7 @@
 
 #include <liblas/detail/sha1.hpp>
 #include <liblas/detail/private_utility.hpp>
+#include <liblas/export.hpp>
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
@@ -111,7 +112,7 @@ namespace detail {
 /// uniquely identify every LAS, globally.
 ///
 /// \see About GUID in Wikipedia http://en.wikipedia.org/wiki/Globally_Unique_Identifier 
-class guid
+class LAS_DLL guid
 {
 public:
 

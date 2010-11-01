@@ -46,6 +46,7 @@
 
 #include "las_version.h"
 #include "las_config.h"
+#include <liblas/export.hpp>
 
 typedef struct LASWriterHS *LASWriterH;
 typedef struct LASReaderHS *LASReaderH;

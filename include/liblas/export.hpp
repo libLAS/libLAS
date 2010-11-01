@@ -44,9 +44,9 @@
 
 #ifndef LAS_DLL
 #if defined(_MSC_VER) && !defined(LAS_DISABLE_DLL)
-#if defined(LIBLAS_DLL_EXPORT)
+#if defined(LAS_DLL_EXPORT)
 #   define LAS_DLL   __declspec(dllexport)
-#elif defined(LIBLAS_DLL_IMPORT)
+#elif defined(LAS_DLL_IMPORT)
 #   define LAS_DLL   __declspec(dllimport)
 #endif
 #else

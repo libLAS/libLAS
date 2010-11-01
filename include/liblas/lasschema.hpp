@@ -47,6 +47,7 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/lasversion.hpp>
 #include <liblas/lasdimension.hpp>
+#include <liblas/export.hpp>
 
 // boost
 #include <boost/cstdint.hpp>
@@ -101,7 +102,7 @@ typedef IndexMap::index<index>::type index_by_index;
 
 
 /// Schema definition
-class Schema
+class LAS_DLL Schema
 {
 public:
     
@@ -171,7 +172,7 @@ bool inline sort_dimensions(Dimension i, Dimension j)
     return i < j; 
 }
 
-std::ostream& operator<<(std::ostream& os, liblas::Schema const&);
+LAS_DLL std::ostream& operator<<(std::ostream& os, liblas::Schema const&);
 
 
 } // namespace liblas

@@ -46,6 +46,7 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/detail/fwd.hpp>
+#include <liblas/export.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/function.hpp>
@@ -59,7 +60,7 @@
 namespace liblas {
 
 /// Defines public interface to LAS filter implementation.
-class FilterI
+class LAS_DLL FilterI
 {
 public:
     
@@ -100,7 +101,7 @@ typedef boost::shared_ptr<FilterI> FilterPtr;
 
 /// A filter for keeping or rejecting points that fall within a 
 /// specified bounds.
-class BoundsFilter: public FilterI
+class LAS_DLL BoundsFilter: public FilterI
 {
 public:
     
@@ -118,7 +119,7 @@ private:
 };
 
 /// A filter for keeping or rejecting a list of classification ids
-class ClassificationFilter: public FilterI
+class LAS_DLL ClassificationFilter: public FilterI
 {
 public:
     
@@ -136,7 +137,7 @@ private:
 };
 
 /// A filter simple decimation
-class ThinFilter: public liblas::FilterI
+class LAS_DLL ThinFilter: public liblas::FilterI
 {
 public:
     
@@ -156,7 +157,7 @@ private:
 
 
 /// A filter for keeping or rejecting a list of return ids.
-class ReturnFilter: public FilterI
+class LAS_DLL ReturnFilter: public FilterI
 {
 public:
     
@@ -175,7 +176,7 @@ private:
 };
 
 
-class ValidationFilter: public FilterI
+class LAS_DLL ValidationFilter: public FilterI
 {
 public:
 
@@ -194,7 +195,7 @@ private:
 /// from the liblas::Point class.  See laskernel.cpp for examples 
 /// how to use it for filtering intensity and time values.  
 template <typename T>
-class ContinuousValueFilter: public FilterI
+class LAS_DLL ContinuousValueFilter: public FilterI
 {
     
 
@@ -365,7 +366,7 @@ private:
 };
 
 /// A filter for color ranges
-class ColorFilter: public FilterI
+class LAS_DLL ColorFilter: public FilterI
 {
 public:
 

@@ -45,6 +45,7 @@
 #include <liblas/lasreader.hpp>
 #include <liblas/laswriter.hpp>
 #include <liblas/lasindex.hpp>
+#include <liblas/export.hpp>
 #include <iterator>
 #include <cassert>
 
@@ -56,7 +57,7 @@ namespace liblas {
 /// \sa About Input Iterator at http://www.sgi.com/tech/stl/InputIterator.html
 ///
 template <typename T>
-class reader_iterator
+class LAS_DLL reader_iterator
 {
 public:
 
@@ -157,7 +158,7 @@ bool operator!=(reader_iterator<T> const& lhs, reader_iterator<T> const& rhs)
 /// \sa About Output Iterator at http://www.sgi.com/tech/stl/OutputIterator.html
 ///
 template <typename T>
-class writer_iterator
+class LAS_DLL writer_iterator
 {
 public:
 

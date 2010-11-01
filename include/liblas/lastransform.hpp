@@ -45,6 +45,7 @@
 #include <liblas/lasversion.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/lasspatialreference.hpp>
+#include <liblas/export.hpp>
 // boost
 #include <boost/shared_ptr.hpp>
 // std
@@ -59,7 +60,7 @@ namespace liblas {
 
 
 /// Defines public interface to LAS transform implementation.
-class TransformI
+class LAS_DLL TransformI
 {
 public:
     
@@ -69,7 +70,7 @@ public:
 
 typedef boost::shared_ptr<liblas::TransformI> TransformPtr;
 
-class ReprojectionTransform: public TransformI
+class LAS_DLL ReprojectionTransform: public TransformI
 {
 public:
     

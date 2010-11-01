@@ -47,6 +47,7 @@
 #include <liblas/lasvariablerecord.hpp>
 #include <liblas/exception.hpp>
 #include <liblas/capi/las_config.h>
+#include <liblas/export.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 
 // GDAL OSR
@@ -88,7 +89,7 @@ typedef struct ST_TIFFS *ST_TIFF;
 namespace liblas {
 
 /// Spatial Reference System container for libLAS
-class SpatialReference
+class LAS_DLL SpatialReference
 {
 public:
     enum WKTModeFlag
