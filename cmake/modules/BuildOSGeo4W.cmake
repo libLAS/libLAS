@@ -43,7 +43,7 @@ set(OSGEO4W_DIRECTORIES
 add_custom_target(make_osgeo4w_directories
   COMMAND ${CMAKE_COMMAND} -E echo "Building OSGeo4W install directories")
 
-add_dependencies(  make_osgeo4w_directories las2las2  )
+add_dependencies(  make_osgeo4w_directories las2las )
 
 macro (make_directories)
     add_custom_command(
