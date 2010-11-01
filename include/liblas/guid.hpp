@@ -64,6 +64,7 @@
 // boost
 #include <boost/array.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/random.hpp>
 // std
 #include <iosfwd>
 #include <iomanip>
@@ -78,6 +79,28 @@
 #include <cassert>
 
 namespace liblas {
+
+namespace detail {
+
+    inline uint8_t random_byte()
+    {
+        // Change seed to something better?
+
+        typedef boost::mt19937 engine_t;
+        typedef boost::uniform_int<unsigned long> distribution_t;
+        typedef boost::variate_generator<engine_t, distribution_t> generator_t;
+
+        static generator_t generator(
+            engine_t(static_cast<engine_t::result_type>( std::time(0) )),
+            // this line should work and does, but it produces lots of warnings
+            // thus we will use unsigned long and cast it to a uint8_t
+            //distribution_t((std::numeric_limits<uint8_t>::min)(), (std::numeric_limits<uint8_t>::max)()));
+            distribution_t((std::numeric_limits<unsigned long>::min)(), (std::numeric_limits<unsigned long>::max)()));
+
+        return static_cast<uint8_t>(generator() & 0xFF);
+    }
+
+} // namespace detail
 
 /// Definition of Globally Unique Identifier type.
 /// The GUID is a 16-byte (128-bit) number.
@@ -418,7 +441,7 @@ private:
         
         for (size_t i = 0; i < result.data_.size(); i++)
         {
-            result.data_[i] = detail::generate_random_byte<boost::uint8_t>();
+            result.data_[i] = detail::random_byte();
         }
     
         // set variant

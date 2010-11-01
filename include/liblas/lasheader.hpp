@@ -415,22 +415,20 @@ std::ostream& operator<<(std::ostream& os, liblas::Header const&);
 class DefaultHeader
 {
 public:
-    virtual ~DefaultHeader() {};
+    virtual ~DefaultHeader() {}
     
     static Header const& get() 
     {
         static Header object;
         return object;
     }
+
 protected:
     DefaultHeader();
     DefaultHeader( DefaultHeader const&);
     DefaultHeader& operator=( DefaultHeader const&);
     
 };
-
-
-
 
 } // namespace liblas
 

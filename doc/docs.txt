@@ -17,6 +17,7 @@ libLAS Documentation
 .. toctree::
    :maxdepth: 2
    
+   start
    compilation
    tutorial/index
    faq

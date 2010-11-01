@@ -106,25 +106,24 @@ bool process(   std::string const& input,
     liblas::Summary* summary = new liblas::Summary;
     
     reader.SetFilters(filters);
-    reader.SetTransforms(transforms);
-
+    reader.SetTransforms(transforms);    
+    
     if (min_offset) 
     {
         
         liblas::property_tree::ptree tree = reader.Summarize();
-    
         try
         {
-            header.SetOffset(tree.get<double>("minimum.x"),
-                             tree.get<double>("minimum.y"),
-                             tree.get<double>("minimum.z"));
+            header.SetOffset(tree.get<double>("summary.points.minimum.x"),
+                             tree.get<double>("summary.points.minimum.y"),
+                             tree.get<double>("summary.points.minimum.z"));
     
                               
         }
         catch (liblas::property_tree::ptree_bad_path const& e) 
         {
             std::cerr << "Unable to write minimum header info.  Does the outputted file have any points?";
-            e.what();
+            std::cerr << e.what() << std::endl;
             return false;
         }
         if (verbose) 

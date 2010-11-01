@@ -83,7 +83,7 @@ public:
     /// Gets the type of filter.
     FilterType GetType() const {return m_type; }
 
-    virtual ~FilterI() {};
+    virtual ~FilterI() {}
 
     /// Base constructor.  Initializes the FilterType
     FilterI(FilterType t) : m_type(t) {}
@@ -225,10 +225,9 @@ public:
     /// liblas::ContinuousValueFilter<uint16_t>::filter_func f = &liblas::Point::GetIntensity;
     /// liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, 100, c);
     /// intensity_filter->SetType(liblas::FilterI::eInclusion);
-    ContinuousValueFilter(filter_func f, T value, compare_func c) :
-        liblas::FilterI(eInclusion), f(f), c(c),value(value)
-            {};
-
+    ContinuousValueFilter(filter_func f, T value, compare_func c)
+        : liblas::FilterI(eInclusion), f(f), c(c),value(value)
+    {}
 
         
     /// Construct the filter with a filter_func and a simple 
@@ -258,8 +257,8 @@ public:
     /// liblas::ContinuousValueFilter<uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<uint16_t>(f, intensities);
     /// intensity_filter->SetType(liblas::FilterI::eInclusion);
     
-    ContinuousValueFilter(filter_func f, std::string const& filter_string) :
-        liblas::FilterI(eInclusion), f(f) 
+    ContinuousValueFilter(filter_func f, std::string const& filter_string)
+        : liblas::FilterI(eInclusion), f(f)
     {
         compare_func compare;
 
@@ -308,13 +307,10 @@ public:
         
         value =  boost::lexical_cast<T>(out);
         // std::cout << "Value is: " << value << " pos " << pos << " out " << out << std::endl;
-
-
-    };
+    }
             
     bool filter(const liblas::Point& p)
     {
-
         bool output = false;
 
         T v = f(&p);

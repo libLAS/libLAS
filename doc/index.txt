@@ -9,7 +9,8 @@ libLAS is a C/C++ library for reading and writing the very common `LAS`
 `LiDAR`_ format. The `ASPRS LAS format`_ is a sequential binary format used to
 store data from LiDAR sensors and by LiDAR processing software for data
 interchange and archival.  See :ref:`features` for more details on what 
-libLAS can provide a LiDAR software developer.
+libLAS can provide a LiDAR software developer.  See :ref:`start` for how to 
+get started using the library.
 
 libLAS' initial development was supported in 2007-2008 by the `IGSB`_ of the
 Iowa DNR for use in its state-wide `LIDAR`_ project.  Ongoing support for 

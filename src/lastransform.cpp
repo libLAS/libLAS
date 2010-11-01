@@ -53,10 +53,27 @@ ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, cons
     : m_transform(0)
     , m_in_ref(0)
     , m_out_ref(0)
+    , m_new_header(HeaderPtr())
 {
+    Initialize(inSRS, outSRS);
+}
 
+ReprojectionTransform::ReprojectionTransform(
+    const SpatialReference& inSRS, 
+    const SpatialReference& outSRS,
+    liblas::HeaderPtr new_header)
+    : m_transform(0)
+    , m_in_ref(0)
+    , m_out_ref(0)
+    , m_new_header(new_header)
+{
+    Initialize(inSRS, outSRS);
+}
+
+void ReprojectionTransform::Initialize(const SpatialReference& inSRS, const SpatialReference& outSRS)
+{
 #ifdef HAVE_GDAL
-    
+
     if (m_transform)
     {
         OCTDestroyCoordinateTransformation(m_transform);
@@ -130,7 +147,7 @@ bool ReprojectionTransform::transform(Point& point)
     double x = point.GetX();
     double y = point.GetY();
     double z = point.GetZ();
-    
+
     ret = OCTTransform(m_transform, 1, &x, &y, &z);    
     if (!ret)
     {
@@ -139,10 +156,30 @@ bool ReprojectionTransform::transform(Point& point)
         throw std::runtime_error(msg.str());
     }
 
+    if (m_new_header.get()) 
+    {
+        point.SetHeaderPtr(m_new_header);
+    }
+
     point.SetX(x);
     point.SetY(y);
     point.SetZ(z);
     
+    if (detail::compare_distance(point.GetRawX(), std::numeric_limits<boost::int32_t>::max()) ||
+        detail::compare_distance(point.GetRawX(), std::numeric_limits<boost::int32_t>::min())) {
+        throw std::domain_error("X scale and offset combination is insufficient to represent the data");
+    }
+
+    if (detail::compare_distance(point.GetRawY(), std::numeric_limits<boost::int32_t>::max()) ||
+        detail::compare_distance(point.GetRawY(), std::numeric_limits<boost::int32_t>::min())) {
+        throw std::domain_error("Y scale and offset combination is insufficient to represent the data");
+    }    
+
+    if (detail::compare_distance(point.GetRawZ(), std::numeric_limits<boost::int32_t>::max()) ||
+        detail::compare_distance(point.GetRawZ(), std::numeric_limits<boost::int32_t>::min())) {
+        throw std::domain_error("Z scale and offset combination is insufficient to represent the data");
+    }        
+
     return true;
 #else
     boost::ignore_unused_variable_warning(point);

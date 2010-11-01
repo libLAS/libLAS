@@ -1,0 +1,11 @@
+.. _osgeo4w_install:
+
+******************************************************************************
+Installing libLAS using OSGeo4W
+******************************************************************************
+
+
+:Author: Howard Butler
+:Contact: hobu.inc at gmail dot com
+
+.. _`OSGeo4W`: http://trac.osgeo.org/osgeo4w/

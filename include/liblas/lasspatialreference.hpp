@@ -147,10 +147,10 @@ public:
     /// range 5100 to 5299 - implied by verticalCSType if that is provided, or 
     /// -1 if no value is available.
     /// \param verticalUnits - the EPSG vertical units code, often 9001 for Metre.
-    void SetVerticalCS(int verticalCSType, 
+    void SetVerticalCS(boost::int32_t verticalCSType, 
                        std::string const& citation = std::string(0),
-                       int verticalDatum = -1,
-                       int verticalUnits = 9001);
+                       boost::int32_t verticalDatum = -1,
+                       boost::int32_t verticalUnits = 9001);
 
     /// Sets the SRS using GDAL's SetFromUserInput function. If GDAL is not linked, this 
     /// operation has no effect.

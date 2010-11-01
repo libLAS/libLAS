@@ -182,8 +182,9 @@ public:
     {
         assert(0 != m_writer);
 
-        bool const ret = m_writer->WritePoint(value);
-        assert(ret); // TODO: Low-level debugging
+        bool ret = false;
+        ret = m_writer->WritePoint(value);
+        assert(ret);
 
         return (*this);
     }

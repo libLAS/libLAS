@@ -27,10 +27,14 @@ set(LASBLOCK lasblock )
 set(BIGFILE_TEST bigfile_test)
 set(LASINDEX_TEST lasindex_test)
 
+if(Boost_IOSTREAMS_FOUND)
+  set(BIGFILE_BIO_TEST bigfile_boost_iostreams_test)
+endif()
+
 # Set the build type to release if it is not explicitly set by the user and 
 # isn't in the cache yet
 if (NOT CMAKE_BUILD_TYPE )
-set(CMAKE_BUILD_TYPE "Release")
+  set(CMAKE_BUILD_TYPE "Release")
 endif()
 
 # Utilities depending on 3rd-pary libraries
@@ -44,7 +48,7 @@ endif()
 
 set(LIBLAS_UTILITIES
     ${LASINFO_OLD} ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
-    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS} ${LAS2LAS_OLD} ${LASBLOCK} ${TS2LAS} )
+    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS} ${LAS2LAS_OLD} ${LASBLOCK} ${TS2LAS})
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -142,13 +146,18 @@ if(LAS2OCI)
 endif()
 
 if(BIGFILE_TEST)
-    add_executable(${BIGFILE_TEST} bigtest.cpp)
+    add_executable(${BIGFILE_TEST} bigtest.c)
     target_link_libraries(${BIGFILE_TEST} ${LIBLAS_C_LIB_NAME})
 endif()
 
 if (LASINDEX_TEST)
     add_executable(${LASINDEX_TEST} lasindex_test.cpp)
     target_link_libraries(${LASINDEX_TEST} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})    
+endif()
+
+if(BIGFILE_BIO_TEST)
+    add_executable(${BIGFILE_BIO_TEST} bigfile_boost_iostreams_test.cpp)
+    target_link_libraries(${BIGFILE_BIO_TEST} ${APPS_CPP_DEPENDENCIES} ${Boost_LIBRARIES})    
 endif()
 
 ###############################################################################

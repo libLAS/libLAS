@@ -651,7 +651,13 @@ int main(int argc, char* argv[])
 													indexBounds.max(2));
 												break;
 											} // 5
+                                            default:
+                                            {
+                                                CovgStr = "";
+                                                break;
+                                            }
 										} // switch
+
 										if (ParamSrc.SetFilterValues(filterBounds, index))
 										{
 											const std::vector<uint32_t>& FilterResult = index.Filter(ParamSrc);

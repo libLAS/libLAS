@@ -64,7 +64,7 @@ class TransformI
 public:
     
     virtual bool transform(Point& point) = 0;
-    virtual ~TransformI() {};
+    virtual ~TransformI() {}
 };
 
 typedef boost::shared_ptr<liblas::TransformI> TransformPtr;
@@ -74,6 +74,7 @@ class ReprojectionTransform: public TransformI
 public:
     
     ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS);    
+    ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS, liblas::HeaderPtr new_header);    
     ~ReprojectionTransform();
 
     bool transform(Point& point);
@@ -84,9 +85,12 @@ private:
     OGRCoordinateTransformationH m_transform;
     OGRSpatialReferenceH m_in_ref;
     OGRSpatialReferenceH m_out_ref;
+    liblas::HeaderPtr m_new_header;
 
     ReprojectionTransform(ReprojectionTransform const& other);
     ReprojectionTransform& operator=(ReprojectionTransform const& rhs);
+    
+    void Initialize(SpatialReference const& inSRS, SpatialReference const& outSRS);
 };
 
 } // namespace liblas

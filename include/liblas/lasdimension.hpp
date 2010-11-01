@@ -59,7 +59,6 @@
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 
-
 // std
 #include <iosfwd>
 #include <limits>
@@ -78,7 +77,7 @@ public:
     Dimension& operator=(Dimension const& rhs);
     Dimension(Dimension const& other);
         
-    virtual ~Dimension() {};
+    virtual ~Dimension() {}
         
     inline std::string const& GetName() const { return m_name; }
     
