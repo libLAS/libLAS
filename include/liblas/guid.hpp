@@ -82,7 +82,7 @@ namespace liblas {
 
 namespace detail {
 
-    inline uint8_t random_byte()
+	inline boost::uint8_t random_byte()
     {
         // Change seed to something better?
 
@@ -97,7 +97,7 @@ namespace detail {
             //distribution_t((std::numeric_limits<uint8_t>::min)(), (std::numeric_limits<uint8_t>::max)()));
             distribution_t((std::numeric_limits<unsigned long>::min)(), (std::numeric_limits<unsigned long>::max)()));
 
-        return static_cast<uint8_t>(generator() & 0xFF);
+		return static_cast<boost::uint8_t>(generator() & 0xFF);
     }
 
 } // namespace detail
