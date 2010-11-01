@@ -2,11 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Basic macros for the libLAS C API
- * Author:   Howard Butler, hobu.inc@gmail.com
+ * Purpose:  LAS DLL export macros file
+ * Author:   Howard Butler, hobu@hobu.net
  *
  ******************************************************************************
- * Copyright (c) 2008, Howard Butler
+ * Copyright (c) 2010, Howard Butler
  *
  * All rights reserved.
  * 
@@ -39,49 +39,23 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LAS_CONFIG_H_INCLUDED
-#define LAS_CONFIG_H_INCLUDED
+#ifndef LASEXPORT_HPP_INCLUDED
+#define LASEXPORT_HPP_INCLUDED
 
-#define LIBLAS_C_API 1
-
-/* ==================================================================== */
-/*      Other standard services.                                        */
-/* ==================================================================== */
-#ifdef __cplusplus
-#  define LAS_C_START           extern "C" {
-#  define LAS_C_END             }
+#ifndef LAS_DLL
+#if defined(_MSC_VER) && !defined(LAS_DISABLE_DLL)
+#if defined(LIBLAS_DLL_EXPORT)
+#   define LAS_DLL   __declspec(dllexport)
+#elif defined(LIBLAS_DLL_IMPORT)
+#   define LAS_DLL   __declspec(dllimport)
+#endif
 #else
-#  define LAS_C_START
-#  define LAS_C_END
+#  if defined(USE_GCC_VISIBILITY_FLAG)
+#    define LAS_DLL     __attribute__ ((visibility("default")))
+#  else
+#    define LAS_DLL
+#  endif
+#endif
 #endif
 
-#include <liblas/export.hpp>
-
-#ifndef NULL
-#define NULL 0
-#endif
-
-#ifndef TRUE
-#define TRUE 1
-#endif 
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#ifndef MAX
-#  define MIN(a,b)      ((a<b) ? a : b)
-#  define MAX(a,b)      ((a>b) ? a : b)
-#endif
-
-#if defined(_MSC_VER) && \
-    (_MSC_FULL_VER >= 150000000)
-#define LASCopyString _strdup
-#else
-#define LASCopyString strdup
-#endif
-
-
-
-#endif /* LAS_CONFIG_H_INCLUDED */
-
+#endif // LIBLAS_HPP_INCLUDED
