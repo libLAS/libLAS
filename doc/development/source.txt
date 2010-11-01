@@ -9,4 +9,4 @@ The Mercurial repository for libLAS is located at http://hg.liblas.org/main
 
 You can obtain a copy of the active source code by issuing the following::
 
-    hg clone http://hg.liblas.org/main
+    hg clone http://hg.liblas.org/main liblas
