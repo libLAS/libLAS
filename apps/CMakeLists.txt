@@ -67,6 +67,11 @@ endif()
 ###############################################################################
 # Configure build targets
 
+if(WIN32)
+    add_definitions("-DLAS_DLL_EXPORT=1")
+endif()
+
+
 set(APPS_CPP_DEPENDENCIES
     ${LIBLAS_LIB_NAME}
     ${TIFF_LIBRARY}

@@ -58,4 +58,8 @@
 #endif
 #endif
 
+#ifdef _MSC_VER
+#pragma warning(disable:4251 4275)
+#endif // _MSC_VER
+
 #endif // LIBLAS_HPP_INCLUDED

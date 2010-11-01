@@ -231,8 +231,6 @@ if(WIN32)
   set(DEFAULT_DATA_SUBDIR .)
   set(DEFAULT_INCLUDE_SUBDIR include)
 
-  add_definitions("-DLAS_DLL_EXPORT=1")
-
   if (MSVC)
     set(DEFAULT_BIN_SUBDIR bin)
   else()
