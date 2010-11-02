@@ -100,6 +100,9 @@ if(WIN32)
     mark_as_advanced(VCPROJ_USER_ENVIRONMENT_PATH_DEBUG)
 
   endif()
+  
+  set(CMAKE_INCLUDE_PATH c:/osgeo4w/include;$ENV{CMAKE_INCLUDE_PATH})
+  set(CMAKE_LIBRARY_PATH c:/osgeo4w/lib;$ENV{CMAKE_LIBRARY_PATH})
 else()
 
   # Recommended C++ compilation flags
@@ -173,9 +176,12 @@ if(WITH_GEOTIFF)
   # Determine libTIFF availability, required
   if (GEOTIFF_FOUND)
 
-    find_package(TIFF) 
     mark_as_advanced(CLEAR TIFF_INCLUDE_DIR) 
-    mark_as_advanced(CLEAR TIFF_LIBRARIES) 
+    mark_as_advanced(CLEAR TIFF_LIBRARY) 
+    if (WIN32)
+        set(TIFF_NAMES libtiff_i)
+    endif(WIN32)
+    find_package(TIFF) 
     if (TIFF_FOUND)
       include_directories(${TIFF_INCLUDE_DIR})
     endif()
@@ -209,6 +215,10 @@ if(WITH_GDAL)
       add_definitions(-DHAVE_GDAL=1)
     endif()
   endif()
+
+  mark_as_advanced(CLEAR GDAL_INCLUDE_DIR) 
+  mark_as_advanced(CLEAR GDAL_LIBRARY) 
+
 endif()
 
 # Oracle support - optional, default=OFF
