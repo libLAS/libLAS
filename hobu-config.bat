@@ -1,14 +1,14 @@
 @echo off
 
-REM set G="NMake Makefiles"
-set G="Visual Studio 9 2008"
+set G="NMake Makefiles"
+REM set G="Visual Studio 9 2008"
 set LIBLAS=D:\liblas
 set OSGEO4W=C:\OSGeo4W
 set BOOST=D:\boost\boost_1_44
 set ORACLE_HOME=%OSGEO4W%
 REM set BUILD_TYPE=RelWithDebInfo
-REM set BUILD_TYPE=Debug
-set BUILD_TYPE=Release
+set BUILD_TYPE=Debug
+REM set BUILD_TYPE=Release
 
 set PATH=%OSGEO4W%\apps\gdal-dev\bin;%OSGEO4W%\bin;%PATH%
 
@@ -26,4 +26,5 @@ cmake -G %G% ^
     -DORACLE_INCLUDE_DIR=%ORACLE_HOME%\include ^
     -DORACLE_OCI_LIBRARY=%ORACLE_HOME%\lib\oci.lib ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
+    -DCMAKE_VERBOSE_FILE=OFF
     %LIBLAS%

@@ -159,6 +159,13 @@ public:
         if (v > max)
             max = v;
     }
+
+    void grow(Range const& r) 
+    {
+        grow(r.min);
+        grow(r.max);
+    }
+
     T length() const
     {
         return max - min;
@@ -166,7 +173,7 @@ public:
 };
     
 template <typename T>
-class LAS_DLL Bounds
+class Bounds
 {
 public:
 
@@ -578,6 +585,10 @@ Bounds<T> project(liblas::SpatialReference const& in_ref, liblas::SpatialReferen
 };
 
 
+
 } // namespace liblas
+
+template class LAS_DLL liblas::Range<double>;
+template class LAS_DLL liblas::Bounds<double>;
 
 #endif // ndef LIBLAS_LASBOUNDS_HPP_INCLUDED
