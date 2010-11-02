@@ -129,7 +129,7 @@ public:
     
     bool empty(void) const 
     {
-        return min==std::numeric_limits<T>::max() && max==std::numeric_limits<T>::min();
+        return detail::compare_distance(min, std::numeric_limits<T>::max()) && detail::compare_distance(max, std::numeric_limits<T>::min());
     }
     
     void shift(T v) 
@@ -588,7 +588,10 @@ Bounds<T> project(liblas::SpatialReference const& in_ref, liblas::SpatialReferen
 
 } // namespace liblas
 
+// Needed for C++ DLL exports
+#ifdef _MSC_VER
 template class LAS_DLL liblas::Range<double>;
 template class LAS_DLL liblas::Bounds<double>;
+#endif
 
 #endif // ndef LIBLAS_LASBOUNDS_HPP_INCLUDED

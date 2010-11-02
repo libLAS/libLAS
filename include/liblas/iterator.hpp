@@ -307,8 +307,11 @@ typedef reader_iterator<Point> lasreader_iterator;
 /// Public specialization of LASWriter output iterator for liblas::LASPoint type.
 typedef writer_iterator<Point> laswriter_iterator;
 
+// Needed for C++ DLL exports
+#ifdef _MSC_VER
 template class LAS_DLL reader_iterator<Point>;
 template class LAS_DLL writer_iterator<Point>;
+#endif
 
 } // namespace liblas
 
