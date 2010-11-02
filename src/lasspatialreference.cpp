@@ -50,6 +50,10 @@
 #include <string>
 #include <vector>
 
+#ifdef HAVE_GDAL
+#  include "cpl_conv.h"
+#endif
+
 using namespace boost;
 
 namespace liblas {
@@ -395,16 +399,16 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
     {
         pszWKT = GTIFGetOGISDefn( m_gtiff, &sGTIFDefn );
 
-            if (pretty) {
-                OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
-                char *pszOrigWKT = pszWKT;
-                poSRS->importFromWkt( &pszOrigWKT );
-
-                CPLFree( pszWKT );
-                pszWKT = NULL;
-                poSRS->exportToPrettyWkt(&pszWKT, false);
-                delete poSRS;
-            }
+        if (pretty) {
+            OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
+            char *pszOrigWKT = pszWKT;
+            poSRS->importFromWkt( &pszOrigWKT );
+            
+            CPLFree( pszWKT );
+            pszWKT = NULL;
+            poSRS->exportToPrettyWkt(&pszWKT, false);
+            delete poSRS;
+        }
                 
         // Older versions of GDAL lack StripVertical(), but should never
         // actually return COMPD_CS anyways.

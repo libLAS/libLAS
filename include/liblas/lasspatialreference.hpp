@@ -54,9 +54,9 @@
 #ifdef HAVE_GDAL
 #include <ogr_srs_api.h>
 #include <cpl_port.h>
-#include <cpl_serv.h>
-#include <geo_tiffp.h>
-#define CPL_ERROR_H_INCLUDED
+//#include <cpl_serv.h>
+//#include <geo_tiffp.h>
+//#define CPL_ERROR_H_INCLUDED
 #include <geo_normalize.h>
 #include <geovalues.h>
 #include <ogr_spatialref.h>
