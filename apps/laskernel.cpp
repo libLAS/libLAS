@@ -305,6 +305,7 @@ po::options_description GetHeaderOptions()
         ("add-vlr", po::value<std::vector<std::string> >()->multitoken(), "Add VLRs with the given name and id combination. --add-vlr hobu 1234 \"Description of the VLR\" \"filename.ext\"")
         ("system-identifier", po::value<std::string>(), "Set the SystemID for the file. --system_identifier \"MODIFICATION\"")
         ("generating-software", po::value<std::string>(), "Set the SoftwareID for the file. --generating_software \"liblas.org\"")
+        ("point-translate", po::value<std::string>(), "An expression to translate the X, Y, Z values of the point. For example, converting Z units that are in meters to feet: --point-translate \"x*1.0 y*1.0 z*3.2808399\"")
 
     ;
     
@@ -1114,7 +1115,19 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         header.SetExtent(b);
         liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, liblas::HeaderPtr(new liblas::Header(header))));
         transforms.push_back(srs_transform);
-    }    
+    }
+
+    if (vm.count("point-translate")) 
+    {
+        std::string translate = vm["point-translate"].as< std::string >();
+        if (verbose)
+        {
+
+                std::cout << "Translating points with expression: " << translate << std::endl;
+        }
+        liblas::TransformPtr trans_trans = liblas::TransformPtr(new liblas::TranslationTransform(translate));
+        transforms.push_back(trans_trans);
+    }
     return transforms;
 }
 

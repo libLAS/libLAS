@@ -50,6 +50,7 @@
 #include <boost/shared_ptr.hpp>
 // std
 #include <vector>
+#include <string>
 
 namespace liblas {
 
@@ -82,18 +83,75 @@ public:
 
 private:
 
-    // FIXME: use shared_ptr with custom deleter and get rid of bloat of OGR manual calls --mloskot
-    OGRCoordinateTransformationH m_transform;
-    OGRSpatialReferenceH m_in_ref;
-    OGRSpatialReferenceH m_out_ref;
-    liblas::HeaderPtr m_new_header;
+    struct OGRSpatialReferenceDeleter
+    {
+       template <typename T>
+       void operator()(T* ptr)
+       {
+           ::OSRDestroySpatialReference(ptr);
+       }
+    };
 
+    struct OSRTransformDeleter
+    {
+       template <typename T>
+       void operator()(T* ptr)
+       {
+           ::OCTDestroyCoordinateTransformation(ptr);
+       }
+    };
+
+
+    liblas::HeaderPtr m_new_header;
+    
+    typedef boost::shared_ptr<void> ReferencePtr;
+    typedef boost::shared_ptr<void> TransformPtr;
+    ReferencePtr m_in_ref_ptr;
+    ReferencePtr m_out_ref_ptr;
+    TransformPtr m_transform_ptr;
+    
+    
     ReprojectionTransform(ReprojectionTransform const& other);
     ReprojectionTransform& operator=(ReprojectionTransform const& rhs);
     
     void Initialize(SpatialReference const& inSRS, SpatialReference const& outSRS);
 };
 
+class LAS_DLL TranslationTransform: public TransformI
+{
+public:
+    
+    TranslationTransform(std::string const& expression);
+    ~TranslationTransform();
+
+    bool transform(Point& point);
+
+    // Yes, Mateusz, I'm embarassed by this :)
+    struct operation{
+        bool multiply;
+        bool divide;
+        bool subtract;
+        bool add;
+        std::string dimension;
+        double value;
+        std::string expression;
+        
+        operation(std::string name) : multiply(false), divide(false), subtract(false), add(false), dimension(name), value(0.0)
+        {
+        }
+    };
+
+private:
+
+    TranslationTransform(TranslationTransform const& other);
+    TranslationTransform& operator=(TranslationTransform const& rhs);
+    
+    operation GetOperation(std::string const& expression);
+    
+    std::vector<operation> operations;
+    
+    std::string m_expression;
+};
 } // namespace liblas
 
 #endif // ndef LIBLAS_LASTRANSFORM_HPP_INCLUDED

@@ -42,18 +42,22 @@
 #include <liblas/lastransform.hpp>
 // boost
 #include <boost/concept_check.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/erase.hpp>
+
 // std
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <algorithm>
+
+typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
 namespace liblas { 
 
 ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS)
-    : m_transform(0)
-    , m_in_ref(0)
-    , m_out_ref(0)
-    , m_new_header(HeaderPtr())
+    : m_new_header(HeaderPtr())
 {
     Initialize(inSRS, outSRS);
 }
@@ -62,10 +66,7 @@ ReprojectionTransform::ReprojectionTransform(
     const SpatialReference& inSRS, 
     const SpatialReference& outSRS,
     liblas::HeaderPtr new_header)
-    : m_transform(0)
-    , m_in_ref(0)
-    , m_out_ref(0)
-    , m_new_header(new_header)
+    : m_new_header(new_header)
 {
     Initialize(inSRS, outSRS);
 }
@@ -73,24 +74,11 @@ ReprojectionTransform::ReprojectionTransform(
 void ReprojectionTransform::Initialize(const SpatialReference& inSRS, const SpatialReference& outSRS)
 {
 #ifdef HAVE_GDAL
-
-    if (m_transform)
-    {
-        OCTDestroyCoordinateTransformation(m_transform);
-    }
-    if (m_in_ref)
-    {
-        OSRDestroySpatialReference(m_in_ref);
-    }
-    if (m_out_ref)
-    {
-        OSRDestroySpatialReference(m_out_ref);
-    }
     
-    m_in_ref = OSRNewSpatialReference(0);
-    m_out_ref = OSRNewSpatialReference(0);
+    m_in_ref_ptr = ReferencePtr(OSRNewSpatialReference(0), OGRSpatialReferenceDeleter());
+    m_out_ref_ptr = ReferencePtr(OSRNewSpatialReference(0), OGRSpatialReferenceDeleter());
     
-    int result = OSRSetFromUserInput(m_in_ref, inSRS.GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
+    int result = OSRSetFromUserInput(m_in_ref_ptr.get(), inSRS.GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
     if (result != OGRERR_NONE) 
     {
         std::ostringstream msg; 
@@ -100,7 +88,7 @@ void ReprojectionTransform::Initialize(const SpatialReference& inSRS, const Spat
         throw std::runtime_error(msg.str());
     }
     
-    result = OSRSetFromUserInput(m_out_ref, outSRS.GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
+    result = OSRSetFromUserInput(m_out_ref_ptr.get(), outSRS.GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
     if (result != OGRERR_NONE) 
     {
         std::ostringstream msg; 
@@ -110,8 +98,7 @@ void ReprojectionTransform::Initialize(const SpatialReference& inSRS, const Spat
         std::string message(msg.str());
         throw std::runtime_error(message);
     }
-
-    m_transform = OCTNewCoordinateTransformation( m_in_ref, m_out_ref);
+    m_transform_ptr = TransformPtr(OCTNewCoordinateTransformation( m_in_ref_ptr.get(), m_out_ref_ptr.get()), OSRTransformDeleter());
 #else
 
     boost::ignore_unused_variable_warning(inSRS);
@@ -121,21 +108,7 @@ void ReprojectionTransform::Initialize(const SpatialReference& inSRS, const Spat
 
 ReprojectionTransform::~ReprojectionTransform()
 {
-#ifdef HAVE_GDAL
-    if (m_transform)
-    {
-        OCTDestroyCoordinateTransformation(m_transform);
-    }
-    if (m_in_ref)
-    {
-        OSRDestroySpatialReference(m_in_ref);
-    }
-    if (m_out_ref)
-    {
-        OSRDestroySpatialReference(m_out_ref);
-    }
 
-#endif
 }
 
 
@@ -148,7 +121,7 @@ bool ReprojectionTransform::transform(Point& point)
     double y = point.GetY();
     double z = point.GetZ();
 
-    ret = OCTTransform(m_transform, 1, &x, &y, &z);    
+    ret = OCTTransform(m_transform_ptr.get(), 1, &x, &y, &z);    
     if (!ret)
     {
         std::ostringstream msg; 
@@ -186,4 +159,156 @@ bool ReprojectionTransform::transform(Point& point)
     return true;
 #endif
 }
+
+
+
+TranslationTransform::TranslationTransform(std::string const& expression)
+{
+    if (expression.size() == 0) 
+        throw std::runtime_error("no expression was given to TranslationTransform");
+    
+    boost::char_separator<char> sep_space(" ");
+
+    tokenizer dimensions(expression, sep_space);
+    
+
+
+    boost::char_separator<char> sep_star("*");
+    boost::char_separator<char> sep_dash("-");
+    boost::char_separator<char> sep_plus("+");
+    boost::char_separator<char> sep_div("/");
+        
+    
+    boost::uint32_t dimension_size = 0;
+    for (tokenizer::iterator t = dimensions.begin(); t != dimensions.end(); ++t) {
+        std::cout << "token: " << *t;
+        std::string const& s = *t;
+        
+        operation op = GetOperation(s);
+        operations.push_back(op);
+        
+        dimension_size++;
+    }
+    std::cout << std::endl;
+    std::cout << dimension_size << std::endl;
+    
+    
+    
+}
+
+TranslationTransform::operation TranslationTransform::GetOperation(std::string const& expr)
+{
+
+    std::string x("x");
+    std::string y("y");
+    std::string z("z");
+    std::string star("*");
+    std::string divide("/");
+    std::string plus("+");
+    std::string minus("-");
+
+    if (expr.find(x) == std::string::npos &&
+        expr.find(y) == std::string::npos &&
+        expr.find(z) == std::string::npos)
+        throw std::runtime_error("expression is invalid -- use x, y, or z to define a dimension.  No 'x', 'y', or 'z' was found");
+
+    operation output("X");
+    
+    
+    std::string expression(expr);
+    boost::erase_all(expression, " "); // Get rid of any spaces in the expression chunk
+
+
+    std::size_t found_x = expression.find(x);
+    std::size_t found_y = expression.find(y);
+    std::size_t found_z = expression.find(z);
+    std::size_t found_star = expression.find(star);
+    std::size_t found_divide = expression.find(divide);
+    std::size_t found_plus = expression.find(plus);
+    std::size_t found_minus = expression.find(minus);
+    
+    // if they gave something like 'xyz*34' it's invalid
+    if (found_x != std::string::npos &&
+        found_y != std::string::npos &&
+        found_z != std::string::npos)
+        throw std::runtime_error("expression is invalid");
+    
+    std::string::size_type op_pos=std::string::npos;
+    if (found_x != std::string::npos)
+    {
+        output = operation("X");
+        op_pos = expression.find_last_of(x) + 1;
+    }
+
+    if (found_y != std::string::npos)
+    {
+        output = operation("Y");
+        op_pos = expression.find_last_of(y) + 1;
+    }
+
+    if (found_z != std::string::npos)
+    {
+        output = operation("Z");
+        op_pos = expression.find_last_of(z) + 1;
+    }
+    
+    if (op_pos == std::string::npos) 
+    {
+        std::ostringstream oss;
+        oss << "Expression '" << expression << "' does not have 'x', 'y', or 'z' to denote fields";
+        throw std::runtime_error(oss.str());
+    }
+    
+    std::string::size_type data_pos = std::string::npos;
+    if (found_star != std::string::npos) 
+    {
+        output.multiply = true;
+        data_pos = expression.find_last_of(star) + 1;
+    }
+
+    if (found_divide != std::string::npos) 
+    {
+        output.divide = true;
+        data_pos = expression.find_last_of(divide) + 1;
+    }
+
+    if (found_plus != std::string::npos) 
+    {
+        output.add = true;
+        data_pos = expression.find_last_of(plus) + 1;
+    }
+    if (found_minus != std::string::npos) 
+    {
+        output.subtract = true;
+        data_pos = expression.find_last_of(minus) + 1;
+    }
+
+    if (data_pos == std::string::npos) 
+    {
+        std::ostringstream oss;
+        oss << "Expression '" << expression << "' does not have '*', '/', '+', or '-' to denote operations";
+        throw std::runtime_error(oss.str());
+    }
+    
+    std::string out;
+    out = expression.substr(data_pos, expression.size());
+    
+    double value =  boost::lexical_cast<double>(out);    
+    output.expression = expression;
+    output.value = value;
+    
+    return output;
+            
+}
+bool TranslationTransform::transform(Point& point)
+{
+    return true;
+}
+
+
+TranslationTransform::~TranslationTransform()
+{
+}
+
+
 } // namespace liblas
