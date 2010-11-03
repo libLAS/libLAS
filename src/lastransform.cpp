@@ -170,29 +170,12 @@ TranslationTransform::TranslationTransform(std::string const& expression)
     boost::char_separator<char> sep_space(" ");
 
     tokenizer dimensions(expression, sep_space);
-    
-
-
-    boost::char_separator<char> sep_star("*");
-    boost::char_separator<char> sep_dash("-");
-    boost::char_separator<char> sep_plus("+");
-    boost::char_separator<char> sep_div("/");
-        
-    
-    boost::uint32_t dimension_size = 0;
     for (tokenizer::iterator t = dimensions.begin(); t != dimensions.end(); ++t) {
-        std::cout << "token: " << *t;
         std::string const& s = *t;
         
         operation op = GetOperation(s);
         operations.push_back(op);
-        
-        dimension_size++;
     }
-    std::cout << std::endl;
-    std::cout << dimension_size << std::endl;
-    
-    
     
 }
 
@@ -262,24 +245,24 @@ TranslationTransform::operation TranslationTransform::GetOperation(std::string c
     std::string::size_type data_pos = std::string::npos;
     if (found_star != std::string::npos) 
     {
-        output.multiply = true;
+        output.oper = eOPER_MULTIPLY;
         data_pos = expression.find_last_of(star) + 1;
     }
 
     if (found_divide != std::string::npos) 
     {
-        output.divide = true;
+        output.oper = eOPER_DIVIDE;
         data_pos = expression.find_last_of(divide) + 1;
     }
 
     if (found_plus != std::string::npos) 
     {
-        output.add = true;
+        output.oper = eOPER_ADD;
         data_pos = expression.find_last_of(plus) + 1;
     }
     if (found_minus != std::string::npos) 
     {
-        output.subtract = true;
+        output.oper = eOPER_SUBTRACT;
         data_pos = expression.find_last_of(minus) + 1;
     }
 
@@ -302,6 +285,93 @@ TranslationTransform::operation TranslationTransform::GetOperation(std::string c
 }
 bool TranslationTransform::transform(Point& point)
 {
+    for(std::vector<TranslationTransform::operation>::const_iterator op = operations.begin();
+        op != operations.end();
+        op++) 
+    {
+
+        switch (op->oper) 
+            {
+                case eOPER_MULTIPLY:
+                    if (!op->dimension.compare("X")) 
+                    {
+                        point.SetX(point.GetX() * op->value);
+                    }
+                    if (!op->dimension.compare("Y")) 
+                    {
+                        point.SetY(point.GetY() * op->value);
+                    }
+                    if (!op->dimension.compare("Z")) 
+                    {
+                        point.SetZ(point.GetZ() * op->value);
+                    }
+                    break;
+                case eOPER_DIVIDE:
+                    if (!op->dimension.compare("X")) 
+                    {
+                        point.SetX(point.GetX() / op->value);
+                    }
+                    if (!op->dimension.compare("Y")) 
+                    {
+                        point.SetY(point.GetY() / op->value);
+                    }
+                    if (!op->dimension.compare("Z")) 
+                    {
+                        point.SetZ(point.GetZ() / op->value);
+                    }
+                    break;
+                case eOPER_ADD:
+                    if (!op->dimension.compare("X")) 
+                    {
+                        point.SetX(point.GetX() + op->value);
+                    }
+                    if (!op->dimension.compare("Y")) 
+                    {
+                        point.SetY(point.GetY() + op->value);
+                    }
+                    if (!op->dimension.compare("Z")) 
+                    {
+                        point.SetZ(point.GetZ() + op->value);
+                    }
+
+                    break;
+                case eOPER_SUBTRACT:
+                    if (!op->dimension.compare("X")) 
+                    {
+                        point.SetX(point.GetX() - op->value);
+                    }
+                    if (!op->dimension.compare("Y")) 
+                    {
+                        point.SetY(point.GetY() - op->value);
+                    }
+                    if (!op->dimension.compare("Z")) 
+                    {
+                        point.SetZ(point.GetZ() - op->value);
+                    }
+                    break;
+
+                default:
+                    std::ostringstream oss;
+                    oss << "Unhandled expression operation id " << static_cast<boost::int32_t>(op->oper);
+                    throw std::runtime_error(oss.str());
+            }
+
+    if (detail::compare_distance(point.GetRawX(), std::numeric_limits<boost::int32_t>::max()) ||
+        detail::compare_distance(point.GetRawX(), std::numeric_limits<boost::int32_t>::min())) {
+        throw std::domain_error("X scale and offset combination of this file is insufficient to represent the data given the expression ");
+    }
+
+    if (detail::compare_distance(point.GetRawY(), std::numeric_limits<boost::int32_t>::max()) ||
+        detail::compare_distance(point.GetRawY(), std::numeric_limits<boost::int32_t>::min())) {
+        throw std::domain_error("Y scale and offset combination of this file is insufficient to represent the data given the expression");
+    }    
+
+    if (detail::compare_distance(point.GetRawZ(), std::numeric_limits<boost::int32_t>::max()) ||
+        detail::compare_distance(point.GetRawZ(), std::numeric_limits<boost::int32_t>::min())) {
+        throw std::domain_error("Z scale and offset combination of this file is insufficient to represent the data given the expression");
+    }   
+
+    }
     return true;
 }
 

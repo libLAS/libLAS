@@ -125,18 +125,24 @@ public:
     ~TranslationTransform();
 
     bool transform(Point& point);
+    
+    enum OPER_TYPE
+    {
+        eOPER_MULTIPLY = 0, 
+        eOPER_DIVIDE = 1, 
+        eOPER_SUBTRACT = 2,  
+        eOPER_ADD = 3,
+        eOPER_NONE = -99
+    };
 
     // Yes, Mateusz, I'm embarassed by this :)
     struct operation{
-        bool multiply;
-        bool divide;
-        bool subtract;
-        bool add;
+        OPER_TYPE oper;
         std::string dimension;
         double value;
         std::string expression;
         
-        operation(std::string name) : multiply(false), divide(false), subtract(false), add(false), dimension(name), value(0.0)
+        operation(std::string name) : oper(eOPER_NONE), dimension(name), value(0.0)
         {
         }
     };
