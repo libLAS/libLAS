@@ -533,7 +533,7 @@ void grow(Point const& p)
 
 T volume() const
 {
-    T output = static_cast<T>(0);
+    T output = T();
     for (size_type i = 0; i < dimension(); i++) {
         output = output * ranges[i].length();
     }
