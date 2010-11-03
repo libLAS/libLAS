@@ -179,8 +179,17 @@ std::ostream& operator<<(std::ostream& os, liblas::Dimension const& d)
     
     std::string const name = tree.get<std::string>("name");
 
-    os << "'" << name << "'" << " -- ";
-    os << " size: " << tree.get<boost::uint32_t>("size");
+    std::ostringstream quoted_name;
+    quoted_name << "'" << name << "'";
+    std::ostringstream pad;
+    std::string const& cur = quoted_name.str();
+    std::string::size_type size = cur.size();
+    std::string::size_type pad_size = 30 - size;
+    
+    for (std::string::size_type i=0; i != pad_size; i++ ) {
+        pad << " ";
+    }
+    os << quoted_name.str() << pad.str() <<" -- "<< " size: " << tree.get<boost::uint32_t>("size");
     os << " offset: " << tree.get<boost::uint32_t>("byteoffset");
     os << std::endl;
     
