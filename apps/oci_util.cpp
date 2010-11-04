@@ -165,7 +165,7 @@ bool BlockTableExists(OWConnection* connection, std::string tableName)
     
     try {
         statement->Execute();
-    } catch (std::runtime_error const& e) {
+    } catch (std::runtime_error const& ) {
         // Assume for now that an error returned here is OCI_NODATA, which means 
         // the table doesn't exist.  If this really isn't the case, we're going 
         // to get more legit message further down the line.
