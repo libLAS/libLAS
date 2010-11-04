@@ -187,7 +187,7 @@ bool Writer::SetOutputSRS(const SpatialReference& srs)
     }
     
     // overwrite our reprojection transform
-    m_reprojection_transform = TransformPtr(new ReprojectionTransform(m_in_srs, m_out_srs));
+    m_reprojection_transform = TransformPtr(new ReprojectionTransform(m_in_srs, m_out_srs, m_header));
     
     if (m_transforms != 0) {
         if (m_transforms->size() > 0) {
