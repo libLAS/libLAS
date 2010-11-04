@@ -294,24 +294,44 @@ void Header::read()
         m_ifs.seekg(0, std::ios::end);
         std::ios::pos_type end = m_ifs.tellg();
         std::ios::off_type size = end - beginning;
-     
-        // Figure out how many points we have 
-        std::ios::off_type count = (end - static_cast<std::ios::off_type>(m_header->GetDataOffset())) / 
-                                     static_cast<std::ios::off_type>(m_header->GetDataRecordLength());
-    
+        std::ios::off_type offset = static_cast<std::ios::off_type>(m_header->GetDataOffset());
+        std::ios::off_type length = static_cast<std::ios::off_type>(m_header->GetDataRecordLength());
+        std::ios::off_type point_bytes = end - offset;
+
+        // Figure out how many points we have and whether or not we have 
+        // extra slop in there.
+        std::ios::off_type count = point_bytes / length;
+        std::ios::off_type remainder = point_bytes % length;
+        
+
         if ( m_header->GetPointRecordsCount() != static_cast<uint32_t>(count)) {
-            std::ostringstream msg; 
-            msg <<  "The number of points in the header that was set "
-                    "by the software '" << m_header->GetSoftwareId() <<
-                    "' does not match the actual number of points in the file "
-                    "as determined by subtracting the data offset (" 
-                    <<m_header->GetDataOffset() << ") from the file length (" 
-                    << size <<  ") and dividing by the point record length(" 
-                    << m_header->GetDataRecordLength() << "). "
-                    " Actual number of points: " << count << 
-                    " Header-specified number of points: " 
-                    << m_header->GetPointRecordsCount() ;
-            throw std::runtime_error(msg.str());
+            if (remainder == 0)
+            {
+                // The point bytes are exactly long enough, let's use it
+                // Set the count to what we calculated
+                m_header->SetPointRecordsCount(static_cast<boost::uint32_t>(count));
+                
+            } 
+            else 
+            {
+                std::ostringstream msg; 
+                msg <<  "The number of points in the header that was set "
+                        "by the software '" << m_header->GetSoftwareId() <<
+                        "' does not match the actual number of points in the file "
+                        "as determined by subtracting the data offset (" 
+                        <<m_header->GetDataOffset() << ") from the file length (" 
+                        << size <<  ") and dividing by the point record length (" 
+                        << m_header->GetDataRecordLength() << ")."
+                        " It also does not perfectly contain an exact number of"
+                        " point data and we cannot infer a point count."
+                        " Calculated number of points: " << count << 
+                        " Header-specified number of points: " 
+                        << m_header->GetPointRecordsCount() <<
+                        " Point data remainder: " << remainder;
+                throw std::runtime_error(msg.str());                
+            }
+
+
         
         }
     }
