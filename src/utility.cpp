@@ -327,7 +327,7 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
     os.precision(y_precision);
     os << tree.get<double>("summary.points.minimum.y") << ", ";
     os.precision(z_precision);
-    os << tree.get<double>("summary.points.minimum.z") << ", ";
+    os << tree.get<double>("summary.points.minimum.z");
 
     os << std::endl;
     os << "  Max X, Y, Z: \t\t";
@@ -337,7 +337,7 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
     os.precision(y_precision);
     os << tree.get<double>("summary.points.maximum.y") << ", ";
     os.precision(z_precision);
-    os << tree.get<double>("summary.points.maximum.z") << ", ";
+    os << tree.get<double>("summary.points.maximum.z");
     
     os << std::endl;
     os << "  Bounding Box:\t\t";
