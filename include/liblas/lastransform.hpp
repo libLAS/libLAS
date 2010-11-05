@@ -83,6 +83,7 @@ public:
 
 private:
 
+#ifdef HAVE_GDAL
     struct OGRSpatialReferenceDeleter
     {
        template <typename T>
@@ -110,7 +111,8 @@ private:
     ReferencePtr m_out_ref_ptr;
     TransformPtr m_transform_ptr;
     
-    
+#endif
+
     ReprojectionTransform(ReprojectionTransform const& other);
     ReprojectionTransform& operator=(ReprojectionTransform const& rhs);
     
