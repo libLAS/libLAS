@@ -800,6 +800,7 @@ int main(int argc, char* argv[])
             header = reader.GetHeader();
         } else {
             std::cerr << "Input LAS file not specified!\n";
+            std::cout << GetInvocationHeader()<<file_options<<transform_options<<filtering_options<<"\n";
             return 1;
         }
 
