@@ -69,9 +69,9 @@ void OutputHelp( std::ostream & oss, po::options_description const& options)
 
     oss << options;
 
-    oss <<"\nFor more information, see the full documentation for lasinfo2 at:\n";
+    oss <<"\nFor more information, see the full documentation for lasinfo at:\n";
     
-    oss << " http://liblas.org/utilities/lasinfo2.html\n";
+    oss << " http://liblas.org/utilities/lasinfo.html\n";
     oss << "----------------------------------------------------------\n";
 
 }
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 
     try {
 
-        po::options_description file_options("lasinfo2 options");
+        po::options_description file_options("lasinfo options");
         po::options_description filtering_options = GetFilteringOptions();
         po::options_description header_options = GetHeaderOptions();
 
