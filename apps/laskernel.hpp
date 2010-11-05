@@ -65,7 +65,7 @@
 using namespace std;
 namespace po = boost::program_options;
 
-#define SEPARATORS ",|"
+#define SEPARATORS ",| "
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
 bool IsDualRangeFilter(std::string parse_string) ;
