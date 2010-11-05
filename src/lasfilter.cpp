@@ -95,6 +95,10 @@ BoundsFilter::BoundsFilter( Bounds<double> const& b) : FilterI(eInclusion)
 bool BoundsFilter::filter(const Point& p)
 {
     return bounds.contains(p);
+    // lasinfo --extent 630000.00 4834500.00 46.83 630300 4834600.00 150.00 TO_core_las_zoom.las
+    
+    // lasinfo --minx 630000.00 --miny 4834500.00 --minz 46.83 --maxx 630300 --maxy 4834600.00 --maxz 150.00 TO_core_las_zoom.las
+
 }
 
 
