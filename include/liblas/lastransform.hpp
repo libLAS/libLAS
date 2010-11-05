@@ -102,6 +102,7 @@ private:
        }
     };
 
+#endif
 
     liblas::HeaderPtr m_new_header;
     
@@ -111,7 +112,7 @@ private:
     ReferencePtr m_out_ref_ptr;
     TransformPtr m_transform_ptr;
     
-#endif
+
 
     ReprojectionTransform(ReprojectionTransform const& other);
     ReprojectionTransform& operator=(ReprojectionTransform const& rhs);
