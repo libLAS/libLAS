@@ -290,6 +290,11 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
     os << "  Point Inspection Summary" << std::endl;
     os << "---------------------------------------------------------" << std::endl;
 
+    if (tree.get<boost::uint32_t>("summary.points.count") == 0 )
+    {
+        os << "  File has no points ...";
+        return os;
+    }
     os << "  Header Point Count: " << tree.get<std::string>("summary.header.count") << std::endl;
     os << "  Actual Point Count: " << tree.get<std::string>("summary.points.count") << std::endl;
     
