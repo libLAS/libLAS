@@ -255,7 +255,14 @@ po::options_description GetFilteringOptions()
 po::options_description filtering_options("Filtering options");
 
 filtering_options.add_options()
-    ("extent,e", po::value< string >(), "Extent window that points must fall within to keep.\nUse a comma-separated list, for example, \n -e minx, miny, maxx, maxy\n or \n -e minx, miny, minz, maxx, maxy, maxz")     ("thin,t", po::value<boost::uint32_t>()->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
+    ("extent,e", po::value< string >(), "Extent window that points must fall within to keep.\nUse a comma-separated or quoted, space-separated list, for example, \n -e minx, miny, maxx, maxy\n or \n -e minx, miny, minz, maxx, maxy, maxz\n -e \"minx miny minz maxx maxy maxz\"")     
+    ("minx", po::value< double >(), "Extent must be greater than or equal to minx to be kept. \n --minx 1234.0")
+    ("miny", po::value< double >(), "Extent must be greater than or equal to miny to be kept. \n --miny 5678.0")
+    ("minz", po::value< double >(), "Extent must be greater than or equal to minz to be kept. If maxx and maxy are set but not minz *and maxz, all z values are kept. \n --minz 0.0")
+    ("maxx", po::value< double >(), "Extent must be less than or equal to maxx to be kept. \n --maxx 1234.0")
+    ("maxy", po::value< double >(), "Extent must be less than or equal to maxy to be kept. \n --maxy 5678.0")
+    ("maxz", po::value< double >(), "Extent must be less than or equal to maxz to be kept. If maxx and maxy are set but not maxz *and minz, all z values are kept. \n --maxz 10.0")
+    ("thin,t", po::value<boost::uint32_t>()->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
     ("last_return_only", po::value<bool>()->zero_tokens(), "Keep last returns (cannot be used with --first_return_only)")
     ("first_return_only", po::value<bool>()->zero_tokens(), "Keep first returns (cannot be used with --last_return_only")
     ("keep-returns", po::value< std::vector<boost::uint16_t> >()->multitoken(), "A list of return numbers to keep in the output file: \n--keep-returns 1 2 3")
@@ -293,8 +300,8 @@ po::options_description GetHeaderOptions()
     transform_options.add_options()
         ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
         ("a_vertcs", po::value< std::vector<string> >()->multitoken(), "Override vertical coordinate system information.  Use --a_vertcs \"verticalCSType [citation [verticalDatum [verticalUnits]]]\"\nFor example: --a_vertcs 5703 \"North American Vertical Datum of 1988 (NAVD88)\" 5103 9001")   
-        ("offset", po::value< string >(), "A comma-separated list of offsets to set on the output file: \n--offset 0,0,0")
-        ("scale", po::value< std::vector<double> >()->multitoken(), "A list of scales to set on the output file: \n--scale 0.1 0.1 0.00001")
+        ("offset", po::value< string >(), "A comma-separated or quoted, space-separated list of offsets to set on the output file: \n--offset 0,0,0\n--offset \"1234 5678 91011\"")
+        ("scale", po::value< std::vector<double> >()->multitoken(), "A list of scales to set on the output file. Scales *cannot* be negative, and should always be a negative power of 10 \n--scale 0.1 0.1 0.00001")
         ("format,f", po::value< string >(), "Set the LAS format of the new file (only 1.0-1.2 supported at this time): \n--format 1.2\n-f 1.1")
         ("pad-header", po::value< string >(), "Add extra bytes to the existing header")
         ("min-offset", po::value<bool>()->zero_tokens(), "Set the offset of the header to the minimums of all values in the file.  Note that this requires multiple read passes through the file to achieve.")
@@ -313,6 +320,8 @@ po::options_description GetHeaderOptions()
 std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
 {
     std::vector<liblas::FilterPtr> filters;
+    liblas::Bounds<double> extent;
+    bool bSetExtent = false;
     
     if (vm.count("keep-classes")) 
     {
@@ -408,7 +417,61 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
                                                             liblas::FilterI::eExclusion);
         filters.push_back(return_filter); 
     }
-            
+
+    if (vm.count("minx")) 
+    {
+        double minx = vm["minx"].as< double >();
+        extent.min(0, minx);
+        bSetExtent = true;
+        if (verbose)
+            std::cout << "Setting minx to: " << minx << std::endl;
+    }
+
+    if (vm.count("maxx")) 
+    {
+        double maxx = vm["maxx"].as< double >();
+        extent.max(0, maxx);
+        bSetExtent = true;
+        if (verbose)
+            std::cout << "Setting maxx to: " << maxx << std::endl;
+    }
+
+    if (vm.count("miny")) 
+    {
+        double miny = vm["miny"].as< double >();
+        extent.min(1, miny);
+        bSetExtent = true;
+        if (verbose)
+            std::cout << "Setting miny to: " << miny << std::endl;
+    }
+
+    if (vm.count("maxx")) 
+    {
+        double maxy = vm["maxy"].as< double >();
+        extent.max(1, maxy);
+        bSetExtent = true;
+        if (verbose)
+            std::cout << "Setting maxy to: " << maxy << std::endl;
+    }
+
+    if (vm.count("minz")) 
+    {
+        double minz = vm["minz"].as< double >();
+        extent.min(2, minz);
+        bSetExtent = true;
+        if (verbose)
+            std::cout << "Setting minz to: " << minz << std::endl;
+    }
+
+    if (vm.count("maxz")) 
+    {
+        double maxz = vm["maxz"].as< double >();
+        extent.max(2, maxz);
+        bSetExtent = true;
+        if (verbose)
+            std::cout << "Setting maxz to: " << maxz << std::endl;
+    }
+    
     if (vm.count("extent")) 
     {
         std::string bounds_string = vm["extent"].as< string >();
@@ -441,7 +504,15 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
                    "6-tuple, not a "<< vbounds.size()<<"-tuple" << "\n";
             throw std::runtime_error(oss.str());
         }
-
+        
+        if ( bSetExtent ) 
+        {
+            if (verbose) 
+            {
+                std::cout << " Growing --extent bounds with those that were set via --[x|y|z][min|max]" << std::endl;
+            }
+            bounds.grow(extent);
+        }
     
         if (verbose)
         {
@@ -464,6 +535,11 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
         }
 
         liblas::FilterPtr bounds_filter = MakeBoundsFilter(bounds, liblas::FilterI::eInclusion);
+        // Set to false because we are using this opportunity to set the filter
+        // If it were still true after this point, *another* BoundsFilter would be 
+        // added to the filters list at the end of this function
+        if (bSetExtent)
+            bSetExtent = false; 
         filters.push_back(bounds_filter);
         
     }
@@ -688,6 +764,15 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
         filters.push_back(valid_filter);            
     }
 
+
+    // If we have bSetExtent and we haven't turned it off by merging with a --extent 
+    // BoundsFilter, make a filter
+    if (bSetExtent)
+    {
+        liblas::FilterPtr bounds_filter = MakeBoundsFilter(extent, liblas::FilterI::eInclusion);
+        filters.push_back(bounds_filter);
+    }
+    
     return filters;
 }
 
