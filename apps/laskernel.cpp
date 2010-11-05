@@ -255,8 +255,7 @@ po::options_description GetFilteringOptions()
 po::options_description filtering_options("Filtering options");
 
 filtering_options.add_options()
-    ("extent,e", po::value< std::vector<double> >()->multitoken(), "Extent window that points must fall within to keep.\nFor example, \n  -e minx miny maxx maxy\n  or \n  -e minx miny minz maxx maxy maxz")
-    ("thin,t", po::value<boost::uint32_t>()->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
+    ("extent,e", po::value< string >(), "Extent window that points must fall within to keep.\nUse a comma-separated list, for example, \n -e minx, miny, maxx, maxy\n or \n -e minx, miny, minz, maxx, maxy, maxz")     ("thin,t", po::value<boost::uint32_t>()->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
     ("last_return_only", po::value<bool>()->zero_tokens(), "Keep last returns (cannot be used with --first_return_only)")
     ("first_return_only", po::value<bool>()->zero_tokens(), "Keep first returns (cannot be used with --last_return_only")
     ("keep-returns", po::value< std::vector<boost::uint16_t> >()->multitoken(), "A list of return numbers to keep in the output file: \n--keep-returns 1 2 3")
@@ -294,7 +293,7 @@ po::options_description GetHeaderOptions()
     transform_options.add_options()
         ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
         ("a_vertcs", po::value< std::vector<string> >()->multitoken(), "Override vertical coordinate system information.  Use --a_vertcs \"verticalCSType [citation [verticalDatum [verticalUnits]]]\"\nFor example: --a_vertcs 5703 \"North American Vertical Datum of 1988 (NAVD88)\" 5103 9001")   
-        ("offset", po::value< std::vector<double> >()->multitoken(), "A list of offsets to set on the output file: \n--offset 0 0 0")
+        ("offset", po::value< string >(), "A comma-separated list of offsets to set on the output file: \n--offset 0,0,0")
         ("scale", po::value< std::vector<double> >()->multitoken(), "A list of scales to set on the output file: \n--scale 0.1 0.1 0.00001")
         ("format,f", po::value< string >(), "Set the LAS format of the new file (only 1.0-1.2 supported at this time): \n--format 1.2\n-f 1.1")
         ("pad-header", po::value< string >(), "Add extra bytes to the existing header")
@@ -412,11 +411,16 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             
     if (vm.count("extent")) 
     {
+        std::string bounds_string = vm["extent"].as< string >();
 
-        std::vector<double> vbounds = vm["extent"].as< std::vector<double> >();
+        boost::char_separator<char> sep(SEPARATORS);
 
+        std::vector<double> vbounds;
+        tokenizer tokens(bounds_string, sep);
         liblas::Bounds<double> bounds;
-
+        for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+            vbounds.push_back(atof((*t).c_str()));
+        }
         if (vbounds.size() == 4) 
         {
             bounds = liblas::Bounds<double>(vbounds[0], 
@@ -437,6 +441,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
                    "6-tuple, not a "<< vbounds.size()<<"-tuple" << "\n";
             throw std::runtime_error(oss.str());
         }
+
     
         if (verbose)
         {
@@ -692,31 +697,36 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 
     if (vm.count("offset")) 
     {
-
-        std::vector<double> offsets = vm["offset"].as< std::vector<double> >();
-        if (offsets.size() != 3) {
-            ostringstream oss;
-            oss << "Three arguments must be given to offset. "
-                << "--offset x y z";
-
-            throw std::runtime_error(oss.str());
-        }
-
-        
+        std::string offset_string = vm["offset"].as< string >();
         if (verbose)
-        {
-            ostringstream oss;
-            for (std::vector<double>::const_iterator i = offsets.begin();
-                 i != offsets.end();
-                 i++) 
-                {
-                    oss << *i << " ";
-                }
-                std::cout << "Setting offsets to: " << oss.str() << std::endl;
+            std::cout << "Setting offsets to: " << offset_string << std::endl;
+        boost::char_separator<char> sep(SEPARATORS);
+        std::vector<double> offsets;
+        tokenizer tokens(offset_string, sep);
+        bool mins = false;
+        std::string m("min");
+        for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
+            // Check if the user set --offset min,min,min
+            // FIXME: make this so the user could do --offset min,min,20.00
+            if (!(*t).compare(m))
+            {   
+                mins = true;
+                continue;
+            }
+            else
+            {
+                mins = false;
+                offsets.push_back(atof((*t).c_str()));
+            }
         }
+        if (offsets.size() != 3) 
+        {
+            throw std::runtime_error("All three values for setting the offset must be floats, and there must be three values");
 
+        }
         header.SetOffset(offsets[0], offsets[1], offsets[2]);
     }
+
 
     if (vm.count("scale")) 
     {
