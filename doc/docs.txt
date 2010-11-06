@@ -18,6 +18,7 @@ libLAS Documentation
    :maxdepth: 2
    
    start
+   Windows Installation <osgeo4w>
    compilation
    tutorial/index
    faq

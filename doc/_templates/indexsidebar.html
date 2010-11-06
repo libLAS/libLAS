@@ -10,6 +10,43 @@
 </p>
 
 <p>
+<script src="http://widgets.twimg.com/j/2/widget.js" ></script>
+<script type="text/javascript" >
+new TWTR.Widget({
+  version: 2,
+  type: 'profile',
+  rpp: 4,
+  interval: 6000,
+  width: 'auto',
+  height: 300,
+  theme: {
+    shell: {
+      background: '#e2e05a',
+      color: '#050005'
+    },
+    tweets: {
+      background: '#e2e05a',
+      color: '#000000',
+      links: '#000544'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: false,
+    live: false,
+    hashtags: true,
+    timestamp: true,
+    avatars: false,
+    behavior: 'all'
+  }
+}).render().setUser('liblas').start();
+</script>
+</p>
+
+
+
+<p>
 <script type="text/javascript" src="http://www.ohloh.net/p/10742/widgets/project_thin_badge.js"></script>
 </p>
+
 

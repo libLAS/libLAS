@@ -41,7 +41,9 @@ Unix platform and a Windows platform.
     The only supported build environment libLAS moving forward from the 1.6
     release is `CMake`_. `Autoconf`_ configuration will be phased out and will
     no longer be updated after the 1.6 release.
-    
+
+.. _prerequisites:
+
 Prerequisites
 ..............................................................................
 

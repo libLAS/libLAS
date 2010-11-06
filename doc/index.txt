@@ -3,7 +3,7 @@
 ******************************************************************************
 libLAS - LAS 1.0/1.1/1.2 ASPRS LiDAR data translation toolset
 ******************************************************************************
-   
+
 
 libLAS is a C/C++ library for reading and writing the very common `LAS`
 `LiDAR`_ format. The `ASPRS LAS format`_ is a sequential binary format used to
