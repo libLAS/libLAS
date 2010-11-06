@@ -11,7 +11,41 @@
 
 <p>
 <script src="http://widgets.twimg.com/j/2/widget.js" ></script>
-<script type="text/javascript" >
+<script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'search',
+  search: 'from:liblas',
+  interval: 6000,
+  title: 'libLAS News',
+  subject: '',
+  width: 'auto',
+  height: 150,
+  theme: {
+    shell: {
+      background: '#e2e05a',
+      color: '#ffffff'
+    },
+    tweets: {
+      background: '#e2e05a',
+      color: '#444444',
+      links: '#1985b5'
+    }
+  },
+  features: {
+    scrollbar: true,
+    loop: false,
+    live: true,
+    hashtags: true,
+    timestamp: true,
+    avatars: false,
+    toptweets: false,
+    behavior: 'all'
+  }
+}).render().start();
+</script>
+<!-- <script type="text/javascript" >
 new TWTR.Widget({
   version: 2,
   type: 'profile',
@@ -40,7 +74,7 @@ new TWTR.Widget({
     behavior: 'all'
   }
 }).render().setUser('liblas').start();
-</script>
+</script> -->
 </p>
 
 
