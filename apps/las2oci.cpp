@@ -666,7 +666,7 @@ file_options.add_options()
     ("base-table-aux-values", po::value< string >(), "Quoted, comma-separated list of values to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
     ("solid", po::value<bool>()->zero_tokens(), "Define the point cloud's PC_EXTENT geometry gtype as (1,1007,3) instead of the normal (1,1003,3), and use gtype 3008/2008 vs 3003/2003 for BLK_EXTENT geometry values.")
     ("3d", po::value<bool>()->zero_tokens(), "Use Z values for insertion of all extent (PC_EXTENT, BLK_EXTENT, USER_SDO_GEOM_METADATA) entries")
-    ("global-extent", po::value< std::vector<double> >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated or quoted, space-separated list, for example, \n -e minx, miny, maxx, maxy\n or \n -e minx, miny, minz, maxx, maxy, maxz\n -e \"minx miny minz maxx maxy maxz\"")
+    ("global-extent", po::value< std::string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated or quoted, space-separated list, for example, \n -e minx, miny, maxx, maxy\n or \n -e minx, miny, minz, maxx, maxy, maxz\n -e \"minx miny minz maxx maxy maxz\"")
     ("cached", po::value<bool>()->zero_tokens(), "Cache the entire file on the first read")
 
 
