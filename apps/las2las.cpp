@@ -14,59 +14,20 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace po = boost::program_options;
 
 using namespace liblas;
 using namespace std;
 
-// 0, 4, 16, 64, 256
-//std::size_t const default_buffer_size = 0;
-//std::size_t const default_buffer_size = 4 * 1024;
-//std::size_t const default_buffer_size = 16 * 1024;
-//std::size_t const default_buffer_size = 64 * 1024;
-//std::size_t const default_buffer_size = 256 * 1024;
-std::size_t const default_buffer_size = 1024 * 1024;
-std::vector<char> ofs_buffer;
-std::vector<char> ifs_buffer;
+typedef boost::shared_ptr<liblas::Writer> WriterPtr;
+typedef boost::shared_ptr<liblas::Summary> SummaryPtr;
+typedef boost::shared_ptr<std::ofstream> OStreamPtr;
 
-std::ofstream& set_ofstream_buffer(std::ofstream& ofs, std::size_t buffer_size)
-{
-    char* buffer = 0; // unbuffered;
-    if (buffer_size > 0)
-    {
-        std::vector<char>(buffer_size).swap(ofs_buffer);
-        buffer = &ofs_buffer[0];
-    }
-
-    std::streambuf* sb = ofs.rdbuf()->pubsetbuf(buffer, buffer_size);
-    if (0 != buffer && 0 == sb)
-    {
-        throw std::runtime_error("failed to attach non-null buffer to input file stream");
-    }
-    return ofs;
-}
-
-std::ifstream& set_ifstream_buffer(std::ifstream& ifs, std::size_t buffer_size)
-{
-    char* buffer = 0; // unbuffered;
-    if (buffer_size > 0)
-    {
-        std::vector<char>(buffer_size).swap(ifs_buffer);
-        buffer = &ifs_buffer[0];
-    }
-
-    std::streambuf* sb = ifs.rdbuf()->pubsetbuf(buffer, buffer_size);
-    if (0 != buffer && 0 == sb)
-    {
-        throw std::runtime_error("failed to attach non-null buffer to input file stream");
-    }
-    return ifs;
-}
-
-liblas::Writer* start_writer(   std::ofstream* strm, 
-                                std::string const& output, 
-                                liblas::Header const& header)
+WriterPtr start_writer(   OStreamPtr strm, 
+                          std::string const& output, 
+                          liblas::Header const& header)
 {
     
     if (!liblas::Create(*strm, output.c_str()))
@@ -76,9 +37,7 @@ liblas::Writer* start_writer(   std::ofstream* strm,
         throw std::runtime_error(oss.str());
     }
 
-    // set_ofstream_buffer(*strm, default_buffer_size);
-
-    liblas::Writer* writer = new liblas::Writer(*strm, header);
+    WriterPtr writer( new liblas::Writer(*strm, header));
     return writer;
     
 }
@@ -100,17 +59,15 @@ bool process(   std::string const& input,
         std::cerr << "Cannot open " << input << "for read.  Exiting...";
         return false;
     }
-    // set_ifstream_buffer(ifs, default_buffer_size);
 
     liblas::Reader reader(ifs);
-    liblas::Summary* summary = new liblas::Summary;
+    SummaryPtr summary(new::liblas::Summary);
     
     reader.SetFilters(filters);
     reader.SetTransforms(transforms);    
     
     if (min_offset) 
     {
-        
         liblas::property_tree::ptree tree = reader.Summarize();
         try
         {
@@ -128,8 +85,6 @@ bool process(   std::string const& input,
         }
         if (verbose) 
         {
-            
-    
             std::cout << "Using minimum offsets ";
             SetStreamPrecision(std::cout, header.GetScaleX());
             std::cout << header.GetOffsetX() << " ";
@@ -142,9 +97,11 @@ bool process(   std::string const& input,
         reader.Reset();
     }
 
-    std::ofstream* ofs = new std::ofstream;
+    OStreamPtr ofs(new std::ofstream);
     std::string out = output;
-    liblas::Writer* writer = 0;
+    
+    WriterPtr writer;
+
     if (!split_mb && !split_pts) {
         writer = start_writer(ofs, output, header);
         
@@ -186,10 +143,11 @@ bool process(   std::string const& input,
             // down until we've written that many points into the file.  
             // After that point, we make a new file and start writing into 
             // that.  
-            delete writer;
-            delete ofs;
-            
-            ofs = new std::ofstream;
+
+            // dereference the writer so it is deleted before the ofs
+            writer = WriterPtr();
+                        
+            ofs = OStreamPtr(new std::ofstream);
             ostringstream oss;
             oss << out << "-"<< fileno <<".las";
 
@@ -202,8 +160,7 @@ bool process(   std::string const& input,
             RepairHeader(*summary, hnew);
             RewriteHeader(hnew, old_filename.str());
 
-            delete summary;
-            summary =  new liblas::Summary; 
+            summary =  SummaryPtr(new liblas::Summary); 
             fileno++;
             split_bytes_count = 1024*1024*split_mb;
         }
@@ -214,10 +171,11 @@ bool process(   std::string const& input,
             // After that point, we make a new file and start writing into 
             // that.  
 
-            delete writer;
-            delete ofs;
+            // dereference the writer so it is deleted before the ofs
+            writer = WriterPtr();
             
-            ofs = new std::ofstream;
+            
+            ofs = OStreamPtr(new std::ofstream);
             ostringstream oss;
             oss << out << "-"<< fileno <<".las";
 
@@ -229,8 +187,8 @@ bool process(   std::string const& input,
             liblas::Header hnew = FetchHeader(old_filename.str());
             RepairHeader(*summary, hnew);
             RewriteHeader(hnew, old_filename.str());
-            delete summary;
-            summary =  new liblas::Summary; 
+
+            summary =  SummaryPtr(new liblas::Summary); 
             fileno++;
             split_points_count = 0;
         }
@@ -238,25 +196,14 @@ bool process(   std::string const& input,
     }
     if (verbose)
         std::cout << std::endl;
-    
-    reader.Reset();
-    // liblas::property_tree::ptree pts = summary->GetPTree();
-    // liblas::property_tree::ptree top;
-    // top.add_child("summary.header",reader.GetHeader().GetPTree());
-    // top.add_child("summary.points",pts);
-    // liblas::property_tree::write_xml("junk.xml", top);
-    // liblas::property_tree::write_xml("schema.xml", reader.GetHeader().GetSchema().GetPTree());
-    // 
-    // std::cout <<  reader.GetHeader().GetSchema() << std::endl;
-    delete writer;
-    delete ofs;
-    
-    liblas::Header hnew = FetchHeader(output);
-    RepairHeader(*summary, hnew);
-    RewriteHeader(hnew, output);
 
-    delete summary;
-    
+    if (!split_mb && !split_pts) {
+        reader.Reset();
+
+        liblas::Header hnew = FetchHeader(output);
+        RepairHeader(*summary, hnew);
+        RewriteHeader(hnew, output);
+    }
     return true;
 }
 
