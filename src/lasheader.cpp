@@ -726,14 +726,6 @@ liblas::property_tree::ptree Header::GetPTree( ) const
     pt.put("filesourceid", GetFileSourceId());
     pt.put("reserved", GetReserved());
 
-// #ifdef HAVE_GDAL
-//     pt.put("srs", GetSRS().GetWKT(liblas::SpatialReference::eHorizontalOnly, true));
-// #else
-// #ifdef HAVE_LIBGEOTIFF
-//     pt.put("srs", GetSRS().GetProj4());
-// #endif
-// #endif
-    
     ptree srs = GetSRS().GetPTree();
     pt.add_child("srs", srs);
     
@@ -779,6 +771,10 @@ liblas::property_tree::ptree Header::GetPTree( ) const
     for (boost::uint32_t i=0; i< GetRecordsCount(); i++) {
         pt.add_child("vlrs.vlr", GetVLR(i).GetPTree());
     }    
+
+    liblas::Schema const& schema = GetSchema(); 
+    ptree t = schema.GetPTree(); 
+    pt.add_child("schema",  t);
     
     return pt;
 }
