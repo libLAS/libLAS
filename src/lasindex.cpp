@@ -683,13 +683,16 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 				if (ParamSrc.m_iterator && (m_filterResult.size() >= ParamSrc.m_iterator->m_chunkSize))
 					break;
 			} // while
-			PointsScannedCurVLR += PointsScannedThisTime;
-			if (PointsScannedCurVLR >= PointsThisRecord)
-				VLRDone = true;
-			if (ParamSrc.m_iterator)
+			if (PointsScannedThisTime >= PointsToIgnore)
 			{
-				ParamSrc.m_iterator->m_totalPointsScanned += PointsScannedThisTime;
-				ParamSrc.m_iterator->m_ptsScannedCurVLR = PointsScannedCurVLR;
+				PointsScannedCurVLR += PointsScannedThisTime - PointsToIgnore;
+				if (PointsScannedCurVLR >= PointsThisRecord)
+					VLRDone = true;
+				if (ParamSrc.m_iterator)
+				{
+					ParamSrc.m_iterator->m_totalPointsScanned += PointsScannedThisTime - PointsToIgnore;
+					ParamSrc.m_iterator->m_ptsScannedCurVLR = PointsScannedCurVLR;
+				} // if
 			} // if
 		} // if
 		else if (ParamSrc.m_iterator)
