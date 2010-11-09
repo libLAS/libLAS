@@ -55,116 +55,41 @@ void SetGDALErrorHandler(bool debug)
 
 
 void SetElements(   OWStatement* statement,
-                    OCIArray* sdo_elem_info, 
+                    OCIArray* elem_info, 
                     bool bUseSolidGeometry)
 {
     
 
-    statement->AddElement(sdo_elem_info, 1);
+    statement->AddElement(elem_info, 1);
     if (bUseSolidGeometry == true) {
         //"(1,1007,3)";
-        statement->AddElement(sdo_elem_info, 1007);
+        statement->AddElement(elem_info, 1007);
     } else {
         //"(1,1003,3)";
-        statement->AddElement(sdo_elem_info, 1003);
+        statement->AddElement(elem_info, 1003);
     }
 
-    statement->AddElement(sdo_elem_info, 3);
+    statement->AddElement(elem_info, 3);
  
 }
 
 void SetOrdinates(   OWStatement* statement,
-                     OCIArray* sdo_ordinates, 
+                     OCIArray* ordinates, 
                      liblas::Bounds<double> const& extent)
 {
     
-    statement->AddElement(sdo_ordinates, extent.min(0));
-    statement->AddElement(sdo_ordinates, extent.min(1));
+    statement->AddElement(ordinates, extent.min(0));
+    statement->AddElement(ordinates, extent.min(1));
     if (extent.dimension() > 2)
-        statement->AddElement(sdo_ordinates, extent.min(2));
+        statement->AddElement(ordinates, extent.min(2));
     
-    statement->AddElement(sdo_ordinates, extent.max(0));
-    statement->AddElement(sdo_ordinates, extent.max(1));
+    statement->AddElement(ordinates, extent.max(0));
+    statement->AddElement(ordinates, extent.max(1));
     if (extent.dimension() > 2)
-        statement->AddElement(sdo_ordinates, extent.max(2));
+        statement->AddElement(ordinates, extent.max(2));
         
 
 }
-
-
-// bool FillBlock( OWStatement* statement,
-//                 IndexResult& result, 
-//                 liblas::Reader* reader,
-//                 blocks* b,
-//                 long index,
-//                 int srid, 
-//                 long pc_id,
-//                 long gtype,
-//                 bool bUseSolidGeometry,
-//                 bool bUse3d,
-//                 long nDimensions
-//               )
-// {
-// 
-// 
-//     // list<SpatialIndex::id_type> const& ids = result.GetIDs();
-//     IDVector const& ids = result.GetIDs();
-//     
-//     b->pc_ids[index] = pc_id;
-//     b->srids[index] = (long)srid;
-//     b->block_ids[index] = result.GetID();
-//     b->num_points[index] = (long)ids.size();
-//     
-//     std::vector<uint8_t>* blob = new std::vector<uint8_t>;
-//     result.GetData(reader, *blob);
-// 
-//     
-//     b->blobs[index] = blob;
-//     // // FIXME: null srids not supported 
-//     b->srids[index] = srid;
-//     b->gtypes[index] = gtype;
-//     // 
-//     OCIArray* sdo_elem_info=0;
-//     statement->GetConnection()->CreateType(&sdo_elem_info, statement->GetConnection()->GetElemInfoType());
-//     SetElements(statement, sdo_elem_info, bUseSolidGeometry);
-//     // 
-//     b->element_arrays[index] = sdo_elem_info;
-//     
-//     OCIArray* sdo_ordinates=0;
-//     statement->GetConnection()->CreateType(&sdo_ordinates, statement->GetConnection()->GetOrdinateType());
-//     // 
-//     // 
-//     // 
-//     SetOrdinates(statement, sdo_ordinates, result.GetBounds());
-//     
-//     b->coordinate_arrays[index] = sdo_ordinates;
-//     
-// 
-//     return true;
-// }
-
-
-// blocks* CreateBlock(int size)
-// {
-//     blocks* b = (blocks*) malloc( sizeof(blocks));
-//     
-//     b->pc_ids = (long*) malloc( size * sizeof(long));
-//     b->block_ids = (long*) malloc ( size * sizeof(long));
-//     b->num_points = (long*) malloc ( size * sizeof(long));
-//     b->blobs = (std::vector<uint8_t>**) malloc ( size * sizeof(std::vector<uint8_t>*));
-//     b->locators =(OCILobLocator**) malloc( sizeof(OCILobLocator*) * size );
-// 
-//     b->srids = (long*) malloc ( size * sizeof(long));
-//     b->gtypes = (long*) malloc ( size * sizeof(long));
-// 
-//     b->element_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
-// 
-//     b->coordinate_arrays = (OCIArray**) malloc ( size * sizeof(OCIArray*));
-// 
-//     b->size = size;
-//     
-//     return b;
-// }
 
 long GetGType(  bool bUse3d,
                 bool bUseSolidGeometry)
