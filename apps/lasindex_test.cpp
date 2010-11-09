@@ -261,7 +261,7 @@ int main(int argc, char* argv[])
 	*/
 	/*---------------------Mount St Helens Oct 4 2004-------------------------*/
 	/*----------------------------build index-----------------------------------
-	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Mount St Helens Oct 4 2004.tmp",
+	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\Mount St Helens Oct 4 2004.tmp",
 		 "-i", "C:\\LibLAS\\Samples\\Mount St Helens Oct 4 2004.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
 		 "-o", "C:\\LibLAS\\Samples\\Mount St Helens Oct 4 2004_idx.las", "-b", "100"};
 	argc = 15;
@@ -285,7 +285,7 @@ int main(int argc, char* argv[])
 	*/
 	/*------------------------------flatDataset-------------------------------*/
 	/*------------------------------build index---------------------------------
-	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\flatDataset.tmp",
+	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\flatDataset.tmp",
 		 "-i", "C:\\LibLAS\\Samples\\flatDataset.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
 		 "-o", "C:\\LibLAS\\Samples\\flatDataset_idx.las"};
 	argc = 13;
@@ -307,9 +307,21 @@ int main(int argc, char* argv[])
 		 "-o", "K:\\FME\\billion_points_idx.ldx", "-s", "-it", "5000000"};
 	argc = 16;
 	*/
-	/*-------------------filter from standalone file using iterator---------------
+	/*-------------------filter from standalone file using iterator-------------
 	const char* arggv[] = {"foo", "-i", "D:\\Zips\\FME\\billion_points.las",
 		 "-n", "K:\\FME\\billion_points_idx.ldx", "-r", "-it", "5000000"};
+	argc = 8;
+	*/
+	/*---------------------------billion_points-------------------------------*/
+	/*-----------------build index in standalone file---------------------------
+	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\400Pts.tmp",
+		 "-i", "C:\\LibLAS\\Samples\\400Pts.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
+		 "-o", "C:\\LibLAS\\Samples\\400Pts_idx.ldx", "-s", "-it", "25"};
+	argc = 16;
+	*/
+	/*-------------------filter from standalone file using iterator-------------
+	const char* arggv[] = {"foo", "-i", "C:\\LibLAS\\Samples\\400Pts.las",
+		 "-n", "C:\\LibLAS\\Samples\\400Pts_idx.ldx", "-r", "-it", "25"};
 	argc = 8;
 	*/
 	
