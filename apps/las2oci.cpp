@@ -10,7 +10,7 @@ namespace po = boost::program_options;
 using namespace liblas;
 using namespace std;
 
- void CPL_STDCALL OCIGDALDebugErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
+void CPL_STDCALL OCIGDALDebugErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
 {
     ostringstream oss;
     
@@ -120,9 +120,18 @@ bool InsertBlock(OWConnection* connection,
                 const char* tableName,
                 long pc_id,
                 bool bUseSolidGeometry,
-                bool bUse3d)
+                bool bUse3d,
+                bool bUsePartition,
+                const std::string& block_partition_column_name,
+                boost::int32_t block_partition_value)
 {
     ostringstream oss;
+    ostringstream partition;
+    
+    if (bUsePartition)
+    {
+        partition << "," << block_partition_column_name;
+    }
 
     IDVector const& ids = result.GetIDs();
     // const SpatialIndex::Region* b = result.GetBounds();
@@ -133,11 +142,19 @@ bool InsertBlock(OWConnection* connection,
     
     long gtype = GetGType(bUse3d, bUseSolidGeometry);
 
+    
     oss << "INSERT INTO "<< tableName << 
             "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS,   "
-            "PCBLK_MIN_RES, BLK_EXTENT, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
+            "PCBLK_MIN_RES, BLK_EXTENT, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM";
+    if (bUsePartition)
+        oss << partition.str();
+    oss << ") "
             "VALUES ( :1, :2, :3, :4, 1, mdsys.sdo_geometry(:5, :6, null,:7, :8)" 
-            ", 1, 0, 1)";
+            ", 1, 0, 1";
+    if (bUsePartition)
+        oss << ", :9";
+            
+    oss <<")";
           
     OWStatement* statement = 0;
     // TODO: If gotdata == false below, this memory probably leaks --mloskot
@@ -208,6 +225,14 @@ bool InsertBlock(OWConnection* connection,
     SetOrdinates(statement, sdo_ordinates, result.GetBounds());
     statement->Bind(&sdo_ordinates, connection->GetOrdinateType());
     
+    // :9
+    long* p_partition_d = 0;
+    if (bUsePartition) {
+        p_partition_d = (long*) malloc (1 * sizeof(long));
+        p_partition_d[0] = block_partition_value;
+        statement->Bind(p_partition_d);        
+    }
+    
     try {
         statement->Execute();
     } catch (std::runtime_error const& e) {
@@ -229,7 +254,8 @@ bool InsertBlock(OWConnection* connection,
     if (p_num_points != 0) free(p_num_points);
     if (p_gtype != 0) free(p_gtype);
     if (p_srid != 0) free(p_srid);    
-
+    if (p_partition_d != 0) free(p_partition_d);
+    
     connection->DestroyType(&sdo_elem_info);
     connection->DestroyType(&sdo_ordinates);
     
@@ -246,31 +272,18 @@ bool InsertBlocks(
                 int srid, 
                 long pc_id,
                 bool bUseSolidGeometry,
-                bool bUse3d
+                bool bUse3d,
+                bool bUsePartition,
+                const std::string& block_partition_column_name,
+                boost::int32_t block_partition_value
                 )
 {
-    ResultsVector::iterator i;
-
-
-    // blocks* b = CreateBlock(nCommitInterval);
-
-    ostringstream oss;
-    oss << "INSERT INTO "<< table_name << 
-            "(OBJ_ID, BLK_ID, NUM_POINTS, POINTS,   "
-            "PCBLK_MIN_RES, BLK_EXTENT, PCBLK_MAX_RES, NUM_UNSORTED_POINTS, PT_SORT_DIM) "
-            "VALUES ( :1, :2, :3, :4, 1, mdsys.sdo_geometry(:5, :6, null,:7, :8)" 
-            ", 1, 0, 1)";
-          
-    OWStatement* statement = 0;
-
-    statement = con->CreateStatement(oss.str().c_str());
-    long j = 0;
     bool inserted = false;
     ResultsVector& results = summary->GetResults();
         
 
 
-    for (i=results.begin(); i!=results.end(); i++)
+    for (ResultsVector::iterator i=results.begin(); i!=results.end(); i++)
     {        
         inserted = InsertBlock(con, 
                                     *i,
@@ -279,8 +292,10 @@ bool InsertBlocks(
                                     table_name.c_str(), 
                                     pc_id, 
                                     bUseSolidGeometry, 
-                                    bUse3d);
-        j++;
+                                    bUse3d,
+                                    bUsePartition,
+                                    block_partition_column_name,
+                                    block_partition_value);
     }
     return inserted;
 }
@@ -577,9 +592,13 @@ file_options.add_options()
     ("verbose,v", po::value<bool>()->zero_tokens(), "Verbose message output")
     ("debug", po::value<bool>()->zero_tokens(), "Enable debug messages (SQL calls)")
     ("base-table-name", po::value< string >()->default_value("HOBU"), "The table name in which to put the point cloud object.  This table must have a column of type SDO_PC, with the name to be specified with --cloud-column-name")
-    ("block-table-name", po::value< string >(), "The table name in which to put the block data.  This table must be of type SDO_PC.BLK_TABLE.  This table will be created using the filename of the input LAS file if not specified.  Use -d to delete the table if it already exists.")
+    ("base-table-aux-columns", po::value< string >(), "Quoted, comma-separated list of columns to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
+    ("base-table-aux-values", po::value< string >(), "Quoted, comma-separated list of values to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
     ("cloud-column-name", po::value< string >()->default_value("CLOUD"), "The column name that contains the point cloud object in the base table")
     ("header-blob-column", po::value< string >(), "Blob column name in the base table in which to optionally insert the contents of the input file's header.")
+    ("block-table-name", po::value< string >(), "The table name in which to put the block data.  This table must be of type SDO_PC.BLK_TABLE.  This table will be created using the filename of the input LAS file if not specified.  Use -d to delete the table if it already exists.")
+    ("block-table-partition-column", po::value< string >(), "The column name in which to put the partition id for the block as specified in --block-table-partition-value")
+    ("block-table-partition-value", po::value< boost::int32_t >(), "The value for the partition id for the block to be placed in the column specified by --block-table-partition-column")
     ("overwrite,d", po::value<bool>()->zero_tokens(), "Drop block table before inserting data.")
     ("block-capacity", po::value<boost::uint32_t>()->default_value(3000), "Maximum number of points to be inserted into each block")
     ("precision,p", po::value<boost::uint32_t>()->default_value(8), "Number of decimal points to write into SQL for point coordinate data.  Used in user_sdo_geom_metadata entry and defining the PC_EXTENT for the point cloud object.")
@@ -587,8 +606,6 @@ file_options.add_options()
     ("pre-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run before executing the point cloud creation process.")
     ("pre-block-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run before executing the insertion of block data.")
     ("post-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run after inserting block data.")
-    ("base-table-aux-columns", po::value< string >(), "Quoted, comma-separated list of columns to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
-    ("base-table-aux-values", po::value< string >(), "Quoted, comma-separated list of values to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
     ("solid", po::value<bool>()->zero_tokens(), "Define the point cloud's PC_EXTENT geometry gtype as (1,1007,3) instead of the normal (1,1003,3), and use gtype 3008/2008 vs 3003/2003 for BLK_EXTENT geometry values.")
     ("3d", po::value<bool>()->zero_tokens(), "Use Z values for insertion of all extent (PC_EXTENT, BLK_EXTENT, USER_SDO_GEOM_METADATA) entries")
     ("global-extent", po::value< std::string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated or quoted, space-separated list, for example, \n -e minx, miny, maxx, maxy\n or \n -e minx, miny, minz, maxx, maxy, maxz\n -e \"minx miny minz maxx maxy maxz\"")
@@ -646,6 +663,10 @@ int main(int argc, char* argv[])
     bool bCachedReader = false;
     
     boost::uint32_t nCapacity = 10000;
+
+    std::string block_partition_column_name("");
+    boost::int32_t block_partition_value(0);
+    bool bUsePartition = false;
 
     int srid = 0;
     long precision = 8;
@@ -977,6 +998,21 @@ int main(int argc, char* argv[])
                 std::cout << "Caching entire file... " << std::endl;
         }
 
+        if (vm.count("block-table-partition-column")) 
+        {
+            if (!vm.count("block-table-partition-value"))
+            {
+                std::cerr <<"--block-table-partition-column specified, but no --block-table-partition-value provided" << std::endl;
+                exit(1);
+            }
+            bUsePartition = true;
+            block_partition_column_name = vm["block-table-partition-column"].as< std::string >();
+            block_partition_value = vm["block-table-partition-value"].as< boost::int32_t >();
+            if (verbose)
+                std::cout << "Setting block partition to '" << block_partition_column_name << "' with value "<< block_partition_value << std::endl;
+        }
+
+
         SetGDALErrorHandler(debug);
 
         filters = GetFilters(vm, verbose);
@@ -1152,7 +1188,10 @@ int main(int argc, char* argv[])
                      srid,
                      pc_id,
                      bUseSolidGeometry,
-                     bUse3d);
+                     bUse3d,
+                     bUsePartition,
+                     block_partition_column_name,
+                     block_partition_value);
 
 
         if (!bUseExistingBlockTable) {
