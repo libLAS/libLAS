@@ -48,9 +48,14 @@
 #include <liblas/export.hpp>
 // boost
 #include <boost/shared_ptr.hpp>
+#include <boost/array.hpp>
 // std
 #include <vector>
 #include <string>
+
+#ifdef HAVE_GDAL
+#include <gdal.h>
+#endif
 
 namespace liblas {
 
@@ -154,6 +159,49 @@ private:
     std::vector<operation> operations;
     
     std::string m_expression;
+};
+
+
+class LAS_DLL ColorFetchingTransform: public TransformI
+{
+public:
+    
+    ColorFetchingTransform( std::string const& datasource, 
+                            std::vector<boost::uint32_t> bands
+                            );
+    ~ColorFetchingTransform();
+
+    bool transform(Point& point);
+
+private:
+
+#ifdef HAVE_GDAL
+    struct GDALSourceDeleter
+    {
+       template <typename T>
+       void operator()(T* ptr)
+       {
+           ::GDALClose(ptr);
+       }
+    };
+
+
+#endif
+
+    liblas::HeaderPtr m_new_header;
+    
+    typedef boost::shared_ptr<void> DataSourcePtr;
+    
+    DataSourcePtr m_ds;
+    std::string m_datasource;
+    std::vector<boost::uint32_t> m_bands;
+    boost::array<double, 6> m_forward_transform;
+    boost::array<double, 6> m_inverse_transform;
+
+    ColorFetchingTransform(ColorFetchingTransform const& other);
+    ColorFetchingTransform& operator=(ColorFetchingTransform const& rhs);
+    
+    void Initialize();
 };
 } // namespace liblas
 

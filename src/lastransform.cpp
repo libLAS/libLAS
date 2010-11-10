@@ -380,5 +380,124 @@ TranslationTransform::~TranslationTransform()
 {
 }
 
+#ifdef HAVE_GDAL
+void CPL_STDCALL ColorFetchingTransformGDALErrorHandler(CPLErr eErrClass, int err_no, const char *msg)
+{
+    std::ostringstream oss;
+    
+    if (eErrClass == CE_Failure || eErrClass == CE_Fatal) {
+        oss <<"GDAL Failure number=" << err_no << ": " << msg;
+        throw std::runtime_error(oss.str());
+    } else {
+        return;
+    }
+}
+#endif
+
+ColorFetchingTransform::ColorFetchingTransform(
+    std::string const& datasource, 
+    std::vector<boost::uint32_t> bands
+)
+    : m_ds(DataSourcePtr())
+    , m_datasource(datasource)
+    , m_bands(bands)
+{
+    Initialize();
+}
+
+void ColorFetchingTransform::Initialize()
+{
+#ifdef HAVE_GDAL
+    GDALAllRegister();
+
+
+    CPLPopErrorHandler();
+    CPLPushErrorHandler(ColorFetchingTransformGDALErrorHandler);
+
+    m_ds = DataSourcePtr(GDALOpen( m_datasource.c_str(), GA_ReadOnly ), GDALSourceDeleter());
+
+    // Assume the first three bands are RGB, and not get any more if the 
+    // user did not supply any bands 
+    if( m_bands.size() == 0 )
+    {
+        for( boost::int32_t i = 0; i < GDALGetRasterCount( m_ds.get() ); i++ )
+        {
+            if (i > 3) break;  
+            m_bands.push_back( i+1 );
+        }
+    }
+    
+    if (GDALGetGeoTransform( m_ds.get(), &m_forward_transform[0] ) != CE_None )
+    {
+        throw std::runtime_error("unable to fetch forward geotransform for raster!");
+    }
+
+    m_forward_transform.assign(0.0);
+    m_inverse_transform.assign(0.0);
+
+    GDALInvGeoTransform( &m_forward_transform[0], &m_inverse_transform[0] );
+
+#endif  
+}
+
+bool ColorFetchingTransform::transform(Point& point)
+{
+#ifdef HAVE_GDAL
+    
+    boost::int32_t pixel = 0;
+    boost::int32_t line = 0;
+    
+    double x = point.GetX();
+    double y = point.GetY();
+    
+
+    pixel = (boost::int32_t) std::floor(
+        m_inverse_transform[0] 
+        + m_inverse_transform[1] * x
+        + m_inverse_transform[2] * y );
+    line = (boost::int32_t) std::floor(
+        m_inverse_transform[3] 
+        + m_inverse_transform[4] * x
+        + m_inverse_transform[5] * y );
+ 
+    if( pixel < 0 || line < 0 
+        || pixel >= GDALGetRasterXSize( m_ds.get() )
+        || line  >= GDALGetRasterYSize( m_ds.get() )
+        )
+    {
+        // The x, y is not coincident with this raster, we'll leave whatever
+        // color value might be there alone.
+        return true;
+    }
+    
+    boost::array<double, 2> pix;
+    boost::array<liblas::Color::value_type, 3> color;
+    
+    for( std::vector<boost::int32_t>::size_type i = 0; 
+         i < m_bands.size(); i++ )
+         {
+             GDALRasterBandH hBand = GDALGetRasterBand( m_ds.get(), m_bands[i] );
+             if (hBand == NULL)
+                 continue;       
+             if( GDALRasterIO( hBand, GF_Read, pixel, line, 1, 1, 
+                               &pix[0], 1, 1, GDT_CFloat64, 0, 0) == CE_None )
+             {
+                 color[i] = static_cast<liblas::Color::value_type>(pix[0]); 
+             }             
+         }
+     point.SetColor(Color(color));
+
+    return true;
+#else
+    boost::ignore_unused_variable_warning(point);
+    return true;
+#endif
+}
+ColorFetchingTransform::~ColorFetchingTransform()
+{
+#ifdef HAVE_GDAL
+    CPLPopErrorHandler();
+#endif
+}
 
 } // namespace liblas
