@@ -54,12 +54,6 @@
 
 namespace liblas {
 
-#ifndef HAVE_GDAL
-    typedef struct OGRCoordinateTransformationHS *OGRCoordinateTransformationH;
-    typedef struct OGRSpatialReferenceHS *OGRSpatialReferenceH;
-#endif
-
-
 /// Defines public interface to LAS transform implementation.
 class LAS_DLL TransformI
 {
