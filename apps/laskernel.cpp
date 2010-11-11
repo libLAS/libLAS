@@ -290,7 +290,7 @@ po::options_description GetTransformationOptions()
         ("point-translate", po::value<std::string>(), "An expression to translate the X, Y, Z values of the point. For example, converting Z units that are in meters to feet: --point-translate \"x*1.0 y*1.0 z*3.2808399\"")
         ("color-source", po::value<std::string>(), "A string to a GDAL-openable raster data source.  Use GDAL VRTs if you want to adjust the data source or set its coordinate system, etc. \n--color-source \"afile.tif\" ")
         ("color-source-bands", po::value< std::vector<boost::uint32_t> >()->multitoken(), "A list of three bands from the --color-source to assign to the R, G, B  values for the point \n--color-source-bands 1 2 3")
-        ("color-source-scale", po::value< boost::uint32_t >(), "A number used by --color-source to scale the input R, G, B  values for the point.  For example, to scale the 8 bit color data from an input raster to 16 bit, the 8 bit data should be multiplied by 256. \n--color-source-scale 256")
+        ("color-source-scale", po::value< boost::uint32_t >(), "A number used by --color-source to scale the input R, G, B  values for the point.  For example, to scale the 8 bit color data from an input raster to 16 bit, the 8 bit data should be multiplied by 257. \n--color-source-scale 256")
 
     ;
     
