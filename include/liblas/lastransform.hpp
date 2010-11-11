@@ -169,6 +169,11 @@ public:
     ColorFetchingTransform( std::string const& datasource, 
                             std::vector<boost::uint32_t> bands
                             );
+    ColorFetchingTransform( std::string const& datasource, 
+                            std::vector<boost::uint32_t> bands,
+                            HeaderPtr header);
+    
+    void SetScaleFactor(boost::uint32_t v) {m_scale = v; }
     ~ColorFetchingTransform();
 
     bool transform(Point& point);
@@ -197,6 +202,7 @@ private:
     std::vector<boost::uint32_t> m_bands;
     boost::array<double, 6> m_forward_transform;
     boost::array<double, 6> m_inverse_transform;
+    boost::uint32_t m_scale;
 
     ColorFetchingTransform(ColorFetchingTransform const& other);
     ColorFetchingTransform& operator=(ColorFetchingTransform const& rhs);

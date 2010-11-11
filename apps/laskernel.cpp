@@ -202,7 +202,6 @@ liblas::FilterPtr  MakeReturnFilter(std::vector<boost::uint16_t> const& returns,
     return liblas::FilterPtr(return_filter);
 }
 
-
 liblas::FilterPtr  MakeClassFilter(std::vector<liblas::Classification> const& classes, liblas::FilterI::FilterType ftype) 
 {
 
@@ -288,6 +287,11 @@ po::options_description GetTransformationOptions()
 
     transform_options.add_options()
         ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")
+        ("point-translate", po::value<std::string>(), "An expression to translate the X, Y, Z values of the point. For example, converting Z units that are in meters to feet: --point-translate \"x*1.0 y*1.0 z*3.2808399\"")
+        ("color-source", po::value<std::string>(), "A string to a GDAL-openable raster data source.  Use GDAL VRTs if you want to adjust the data source or set its coordinate system, etc. \n--color-source \"afile.tif\" ")
+        ("color-source-bands", po::value< std::vector<boost::uint32_t> >()->multitoken(), "A list of three bands from the --color-source to assign to the R, G, B  values for the point \n--color-source-bands 1 2 3")
+        ("color-source-scale", po::value< boost::uint32_t >(), "A number used by --color-source to scale the input R, G, B  values for the point.  For example, to scale the 8 bit color data from an input raster to 16 bit, the 8 bit data should be multiplied by 256. \n--color-source-scale 256")
+
     ;
     
     return transform_options;
@@ -303,6 +307,7 @@ po::options_description GetHeaderOptions()
         ("offset", po::value< string >(), "A comma-separated or quoted, space-separated list of offsets to set on the output file: \n--offset 0,0,0\n--offset \"1234 5678 91011\"")
         ("scale", po::value< std::vector<double> >()->multitoken(), "A list of scales to set on the output file. Scales *cannot* be negative, and should always be a negative power of 10 \n--scale 0.1 0.1 0.00001")
         ("format,f", po::value< string >(), "Set the LAS format of the new file (only 1.0-1.2 supported at this time): \n--format 1.2\n-f 1.1")
+        ("point-format", po::value< boost::uint32_t >(), "Set the LAS point format of the new file (0, 1, 2, 3): \n--point-format 3\n")
         ("pad-header", po::value< string >(), "Add extra bytes to the existing header")
         ("min-offset", po::value<bool>()->zero_tokens(), "Set the offset of the header to the minimums of all values in the file.  Note that this requires multiple read passes through the file to achieve.")
         ("file-creation", po::value< std::vector<string> >()->multitoken(), "Set the header's day/year.  Specify either as \"1 2010\" for the first day of 2010, or as \"now\" to specify the current day/year")
@@ -311,8 +316,6 @@ po::options_description GetHeaderOptions()
         ("add-vlr", po::value<std::vector<std::string> >()->multitoken(), "Add VLRs with the given name and id combination. --add-vlr hobu 1234 \"Description of the VLR\" \"filename.ext\"")
         ("system-identifier", po::value<std::string>(), "Set the SystemID for the file. --system_identifier \"MODIFICATION\"")
         ("generating-software", po::value<std::string>(), "Set the SoftwareID for the file. --generating_software \"liblas.org\"")
-        ("point-translate", po::value<std::string>(), "An expression to translate the X, Y, Z values of the point. For example, converting Z units that are in meters to feet: --point-translate \"x*1.0 y*1.0 z*3.2808399\"")
-
     ;
     
     return transform_options;
@@ -871,6 +874,20 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         }
         header.SetVersionMinor(static_cast<boost::uint8_t>(minor)); 
     }
+
+    if (vm.count("point-format")) 
+    {
+        boost::uint32_t format = vm["point-format"].as< boost::uint32_t >();
+        if (verbose)
+            std::cout << "Setting point format to: " << format << std::endl;
+            
+        if (format > 3){
+            ostringstream oss;
+            oss << "Point format valid range is 0-3, not " << format;
+            throw std::runtime_error(oss.str());
+        }
+        header.SetDataFormatId(static_cast<liblas::PointFormatName>(format)); 
+    }
     if (vm.count("pad-header")) 
     {
         std::string header_pad = vm["pad-header"].as< string >();
@@ -1212,6 +1229,94 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         transforms.push_back(srs_transform);
     }
 
+    if (vm.count("color-source")) 
+    {
+        std::string datasource = vm["color-source"].as< string >();
+        std::vector<boost::uint32_t> bands;
+        boost::uint32_t scale = 0;
+        bool bSetScale = false;
+        if (vm.count("color-source-bands"))
+        {
+            bands = vm["color-source-bands"].as< std::vector<boost::uint32_t> >();
+            if (bands.size() != 3) 
+            {
+                std::ostringstream oss;
+                oss << "The bands list must have three elements, not " << bands.size();
+                throw std::runtime_error(oss.str());
+            }
+        } 
+        else 
+        {
+            bands.resize(3);
+            bands[0] = 1;
+            bands[1] = 2;
+            bands[2] = 3;
+        }
+
+        if (vm.count("color-source-scale"))
+        {
+            bSetScale = true;
+            scale = vm["color-source-scale"].as< boost::uint32_t >();
+        }          
+        
+        
+        if (verbose)
+        {
+            // make a displayable string for the bands list
+            std::ostringstream bnds;
+            for (std::vector<uint32_t>::const_iterator i = bands.begin();
+            i != bands.end();
+            i++)
+            {
+                bnds << *i;
+                std::vector<uint32_t>::const_iterator i2 = i+1;
+                if (i2 != bands.end())
+                    bnds << ", ";
+            }
+            std::cout << "Fetching color from ' " << datasource 
+                      << "' using bands '" << bnds.str() 
+                      << "' for R, G, B";
+            if (bSetScale)
+                std::cout << " with a scale factor of " << scale;
+            std::cout<< std::endl;
+                
+        }
+
+        
+        // Check the schema to see if we have color
+        liblas::Schema const& schema = header.GetSchema();
+        
+        try
+        {
+            schema.GetDimension("Red");
+        } catch (std::runtime_error const&)
+        {
+            throw std::runtime_error("The header for this file does not allow storing red color information.  Alter the header's data format using the --point-format switch");
+        }
+
+        try
+        {
+            schema.GetDimension("Blue");
+        } catch (std::runtime_error const&)
+        {
+            throw std::runtime_error("The header for this file does not allow storing blue color information.  Alter the header's data format using the --point-format switch");
+        }
+        
+        try
+        {
+            schema.GetDimension("Green");
+        } catch (std::runtime_error const&)
+        {
+            throw std::runtime_error("The header for this file does not allow storing green color information.  Alter the header's data format using the --point-format switch");
+        }        
+        
+        liblas::TransformPtr color_fetch = liblas::TransformPtr(new liblas::ColorFetchingTransform(datasource, bands, liblas::HeaderPtr(new liblas::Header(header))));
+        if (bSetScale) {
+            liblas::ColorFetchingTransform* c = dynamic_cast<liblas::ColorFetchingTransform*>(color_fetch.get());
+            c->SetScaleFactor(scale);
+        }
+        transforms.push_back(color_fetch);
+    }
     if (vm.count("point-translate")) 
     {
         std::string translate = vm["point-translate"].as< std::string >();

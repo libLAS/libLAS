@@ -40,6 +40,7 @@
  ****************************************************************************/
 
 #include <liblas/lastransform.hpp>
+#include <liblas/lasheader.hpp>
 // boost
 #include <boost/concept_check.hpp>
 #include <boost/tokenizer.hpp>
@@ -398,9 +399,25 @@ ColorFetchingTransform::ColorFetchingTransform(
     std::string const& datasource, 
     std::vector<boost::uint32_t> bands
 )
-    : m_ds(DataSourcePtr())
+    : m_new_header(HeaderPtr())
+    , m_ds(DataSourcePtr())
     , m_datasource(datasource)
     , m_bands(bands)
+    , m_scale(0)
+{
+    Initialize();
+}
+
+ColorFetchingTransform::ColorFetchingTransform(
+    std::string const& datasource, 
+    std::vector<boost::uint32_t> bands,
+    HeaderPtr header
+)
+    : m_new_header(header)
+    , m_ds(DataSourcePtr())
+    , m_datasource(datasource)
+    , m_bands(bands)
+    , m_scale(0)
 {
     Initialize();
 }
@@ -426,16 +443,16 @@ void ColorFetchingTransform::Initialize()
             m_bands.push_back( i+1 );
         }
     }
+
+    m_forward_transform.assign(0.0);
+    m_inverse_transform.assign(0.0);
     
-    if (GDALGetGeoTransform( m_ds.get(), &m_forward_transform[0] ) != CE_None )
+    if (GDALGetGeoTransform( m_ds.get(), &(m_forward_transform.front()) ) != CE_None )
     {
         throw std::runtime_error("unable to fetch forward geotransform for raster!");
     }
 
-    m_forward_transform.assign(0.0);
-    m_inverse_transform.assign(0.0);
-
-    GDALInvGeoTransform( &m_forward_transform[0], &m_inverse_transform[0] );
+    GDALInvGeoTransform( &(m_forward_transform.front()), &(m_inverse_transform.front()) );
 
 #endif  
 }
@@ -449,8 +466,12 @@ bool ColorFetchingTransform::transform(Point& point)
     
     double x = point.GetX();
     double y = point.GetY();
-    
 
+    if (m_new_header.get()) 
+    {
+        point.SetHeaderPtr(m_new_header);
+    }
+    
     pixel = (boost::int32_t) std::floor(
         m_inverse_transform[0] 
         + m_inverse_transform[1] * x
@@ -472,21 +493,28 @@ bool ColorFetchingTransform::transform(Point& point)
     
     boost::array<double, 2> pix;
     boost::array<liblas::Color::value_type, 3> color;
+    color.assign(0);
     
     for( std::vector<boost::int32_t>::size_type i = 0; 
          i < m_bands.size(); i++ )
          {
              GDALRasterBandH hBand = GDALGetRasterBand( m_ds.get(), m_bands[i] );
-             if (hBand == NULL)
-                 continue;       
+             if (hBand == NULL) 
+             {
+                 continue;
+             }
              if( GDALRasterIO( hBand, GF_Read, pixel, line, 1, 1, 
                                &pix[0], 1, 1, GDT_CFloat64, 0, 0) == CE_None )
              {
-                 color[i] = static_cast<liblas::Color::value_type>(pix[0]); 
+                 color[i] = static_cast<liblas::Color::value_type>(pix[0]);
+                 if (m_scale) {
+                     color[i] = color[i] * m_scale;
+                 }
              }             
          }
-     point.SetColor(Color(color));
 
+     point.SetColor(Color(color));
+ 
     return true;
 #else
     boost::ignore_unused_variable_warning(point);
