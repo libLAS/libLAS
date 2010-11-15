@@ -265,6 +265,7 @@ bool IndexOutput::OutputCell(liblas::detail::IndexCell *CellBlock, boost::uint32
 				// get set up for next VLR
 				if (! InitializeVLRData(x, y))
 					return false;
+				m_DataPointsThisVLR = NumPts;
 			} // if
 			// if size allows, add to VLR cell record data
 			if (m_TempWritePos + m_DataRecordSize <= numeric_limits<unsigned short>::max())
