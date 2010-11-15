@@ -61,7 +61,7 @@ namespace liblas {
 #define LIBLAS_INDEX_MAXMEMDEFAULT	10000000	// 10 megs default
 #define LIBLAS_INDEX_MINMEMDEFAULT	1000000	// 1 meg at least has to be allowed
 #define LIBLAS_INDEX_VERSIONMAJOR	1
-#define LIBLAS_INDEX_VERSIONMINOR	1	// minor version 1 begins 10/12/10
+#define LIBLAS_INDEX_VERSIONMINOR	2	// minor version 2 begins 11/15/10
 #define LIBLAS_INDEX_MAXSTRLEN	512
 #define LIBLAS_INDEX_MAXCELLS	250000
 #define LIBLAS_INDEX_OPTPTSPERCELL	100
@@ -488,6 +488,8 @@ public:
 private:
  	void Copy(IndexIterator const& other);
 	void ResetPosition(void);
+	boost::uint8_t MinMajorVersion(void)	{return(1);};
+	boost::uint8_t MinMinorVersion(void)	{return(2);};
 
 public:
 	/// n=0 or n=1 gives next sequence with no gap, n>1 skips n-1 filter-compliant points, n<0 skips backwards
@@ -512,6 +514,8 @@ public:
 	inline const std::vector<boost::uint32_t>& operator-(boost::int32_t n)	{return (advance(-n));}
     /// returns filter-compliant points beginning with the nth compliant point, 0 and 1 return first set of compliant points
 	inline const std::vector<boost::uint32_t>& operator[](boost::int32_t n)	{return ((*this)(n));}
+	/// tests viability of index for filtering with iterator
+	bool ValidateIndexVersion(boost::uint8_t VersionMajor, boost::uint8_t VersionMinor)	{return (VersionMajor > MinMajorVersion() || (VersionMajor == MinMajorVersion() && VersionMinor >= MinMinorVersion()));};
 };
 
 template <typename T, typename Q>
