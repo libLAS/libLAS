@@ -2,6 +2,8 @@
 #define LIBLAS_CHIPPER_H
 
 #include <liblas/liblas.hpp>
+#include <liblas/export.hpp>
+
 #include <vector>
 
 namespace liblas
@@ -17,7 +19,7 @@ enum Direction
     DIR_NONE
 };
 
-class PtRef
+class LAS_DLL PtRef
 {
 public:
     double m_pos;
@@ -28,7 +30,7 @@ public:
         { return m_pos < pt.m_pos; }
 };
 
-struct RefList
+struct LAS_DLL RefList
 {
 public:
     std::vector<PtRef> m_vec;
@@ -61,9 +63,9 @@ public:
     }
 };
 
-class Chipper;
+class LAS_DLL Chipper;
 
-class Block
+class LAS_DLL Block
 {
     friend class Chipper;
 
@@ -91,7 +93,7 @@ public:
     //     { return m_ymax; }
 };
 
-class Chipper
+class LAS_DLL Chipper
 {
 public:
     Chipper(Reader *reader, boost::uint32_t max_partition_size) :

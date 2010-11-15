@@ -44,6 +44,7 @@
 
 #include <liblas/liblas.hpp>
 #include <liblas/utility.hpp>
+#include <liblas/export.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/external/property_tree/xml_parser.hpp>
 
@@ -68,23 +69,23 @@ namespace po = boost::program_options;
 #define SEPARATORS ",| "
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
-bool IsDualRangeFilter(std::string parse_string) ;
+LAS_DLL bool IsDualRangeFilter(std::string parse_string) ;
 
-liblas::FilterPtr MakeReturnFilter(std::vector<boost::uint16_t> const& returns, liblas::FilterI::FilterType ftype) ;
-liblas::FilterPtr MakeClassFilter(std::vector<liblas::Classification> const& classes, liblas::FilterI::FilterType ftype) ;
-liblas::FilterPtr MakeBoundsFilter(liblas::Bounds<double> const& bounds, liblas::FilterI::FilterType ftype) ;
-liblas::FilterPtr MakeIntensityFilter(std::string intensities, liblas::FilterI::FilterType ftype) ;
-liblas::FilterPtr MakeTimeFilter(std::string times, liblas::FilterI::FilterType ftype) ;
-liblas::FilterPtr MakeScanAngleFilter(std::string intensities, liblas::FilterI::FilterType ftype) ;
-liblas::FilterPtr MakeColorFilter(liblas::Color const& low, liblas::Color const& high, liblas::FilterI::FilterType ftype); 
+LAS_DLL liblas::FilterPtr MakeReturnFilter(std::vector<boost::uint16_t> const& returns, liblas::FilterI::FilterType ftype) ;
+LAS_DLL liblas::FilterPtr MakeClassFilter(std::vector<liblas::Classification> const& classes, liblas::FilterI::FilterType ftype) ;
+LAS_DLL liblas::FilterPtr MakeBoundsFilter(liblas::Bounds<double> const& bounds, liblas::FilterI::FilterType ftype) ;
+LAS_DLL liblas::FilterPtr MakeIntensityFilter(std::string intensities, liblas::FilterI::FilterType ftype) ;
+LAS_DLL liblas::FilterPtr MakeTimeFilter(std::string times, liblas::FilterI::FilterType ftype) ;
+LAS_DLL liblas::FilterPtr MakeScanAngleFilter(std::string intensities, liblas::FilterI::FilterType ftype) ;
+LAS_DLL liblas::FilterPtr MakeColorFilter(liblas::Color const& low, liblas::Color const& high, liblas::FilterI::FilterType ftype); 
 
 
-po::options_description GetFilteringOptions();
-po::options_description GetTransformationOptions();
-po::options_description GetHeaderOptions();
+LAS_DLL po::options_description GetFilteringOptions();
+LAS_DLL po::options_description GetTransformationOptions();
+LAS_DLL po::options_description GetHeaderOptions();
 
-std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose);
-std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header);
+LAS_DLL std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose);
+LAS_DLL std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbose, liblas::Header& header);
 
 #ifdef _WIN32
 #define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )
@@ -93,13 +94,13 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 #endif
 
 // std::istream* OpenInput(std::string const& filename, bool bEnd);
-std::string TryReadFileData(std::string const& filename);
-std::vector<char> TryReadRawFileData(std::string const& filename);
-bool term_progress(std::ostream& os, double complete);
-void SetStreamPrecision(std::ostream& os, double scale);
+LAS_DLL std::string TryReadFileData(std::string const& filename);
+LAS_DLL std::vector<char> TryReadRawFileData(std::string const& filename);
+LAS_DLL bool term_progress(std::ostream& os, double complete);
+LAS_DLL void SetStreamPrecision(std::ostream& os, double scale);
 
-liblas::Header FetchHeader(std::string const& filename);
-void RewriteHeader(liblas::Header const& header, std::string const& filename);
-void RepairHeader(liblas::Summary const& summary, liblas::Header& header);
+LAS_DLL liblas::Header FetchHeader(std::string const& filename);
+LAS_DLL void RewriteHeader(liblas::Header const& header, std::string const& filename);
+LAS_DLL void RepairHeader(liblas::Summary const& summary, liblas::Header& header);
 
 #endif // LIBLAS_ITERATOR_HPP_INCLUDED
