@@ -312,7 +312,7 @@ int main(int argc, char* argv[])
 		 "-n", "K:\\FME\\billion_points_idx.ldx", "-r", "-it", "5000000"};
 	argc = 8;
 	*/
-	/*---------------------------billion_points-------------------------------*/
+	/*---------------------------400Pts---------------------------------------*/
 	/*-----------------build index in standalone file---------------------------
 	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\400Pts.tmp",
 		 "-i", "C:\\LibLAS\\Samples\\400Pts.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
@@ -322,6 +322,30 @@ int main(int argc, char* argv[])
 	/*-------------------filter from standalone file using iterator-------------
 	const char* arggv[] = {"foo", "-i", "C:\\LibLAS\\Samples\\400Pts.las",
 		 "-n", "C:\\LibLAS\\Samples\\400Pts_idx.ldx", "-r", "-it", "25"};
+	argc = 8;
+	*/
+	/*---------------------------355by355-------------------------------------*/
+	/*-----------------build index in standalone file---------------------------
+	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\355by355.tmp",
+		 "-i", "C:\\LibLAS\\Samples\\355by355.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
+		 "-o", "C:\\LibLAS\\Samples\\355by355_idx.ldx", "-s", "-it", "100"};
+	argc = 16;
+	*/
+	/*-------------------filter from standalone file using iterator-------------
+	const char* arggv[] = {"foo", "-i", "C:\\LibLAS\\Samples\\355by355.las",
+		 "-n", "C:\\LibLAS\\Samples\\355by355_idx.ldx", "-r", "-it", "25"};
+	argc = 8;
+	*/
+	/*---------------------------545by545-------------------------------------*/
+	/*-----------------build index in standalone file---------------------------
+	const char* arggv[] = {"foo", "-t", "C:\\LibLAS\\Samples\\545by545.tmp",
+		 "-i", "C:\\LibLAS\\Samples\\545by545.las", "-a", SAMPLE_AUTHOR, "-c", SAMPLE_COMMENT, "-d", SAMPLE_DATE,
+		 "-o", "C:\\LibLAS\\Samples\\545by545_idx.ldx", "-s", "-it", "100"};
+	argc = 16;
+	*/
+	/*-------------------filter from standalone file using iterator-------------
+	const char* arggv[] = {"foo", "-i", "C:\\LibLAS\\Samples\\545by545.las",
+		 "-n", "C:\\LibLAS\\Samples\\545by545_idx.ldx", "-r", "-it", "25"};
 	argc = 8;
 	*/
 	
@@ -501,7 +525,7 @@ int main(int argc, char* argv[])
 										IndexIterator *indexIt2 = index.Filter(ParamSrc2, chunkSize);
 										if (indexIt && indexIt2)
 										{
-											for (boost::uint32_t step = 0; step < 1000; ++step)
+											for (boost::uint32_t step = 0; step < 5000; ++step)
 											{
 												// use any of these to begin the vector with the next point that fits the filter criteria 
 												// that hasn't been scanned yet.
