@@ -1264,12 +1264,12 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         {
             // make a displayable string for the bands list
             std::ostringstream bnds;
-            for (std::vector<uint32_t>::const_iterator i = bands.begin();
+            for (std::vector<boost::uint32_t>::const_iterator i = bands.begin();
             i != bands.end();
             i++)
             {
                 bnds << *i;
-                std::vector<uint32_t>::const_iterator i2 = i+1;
+                std::vector<boost::uint32_t>::const_iterator i2 = i+1;
                 if (i2 != bands.end())
                     bnds << ", ";
             }
