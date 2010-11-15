@@ -136,17 +136,17 @@ void Chipper::Load(RefList& xvec, RefList& yvec, RefList& spare )
 
 void Chipper::Partition(uint32_t size)
 {
-    uint32_t num_partitions;
+    boost::uint32_t num_partitions;
 
     num_partitions = size / m_threshold;
     if ( size % m_threshold )
         num_partitions++;
     double total = 0;
-    double partition_size = (double)size / num_partitions;
+    double partition_size = static_cast<double>(size) / num_partitions;
     m_partitions.push_back(0);
-    for (uint32_t i = 0; i < num_partitions; ++i) {
+    for (boost::uint32_t i = 0; i < num_partitions; ++i) {
         total += partition_size;
-        m_partitions.push_back((uint32_t)detail::sround(total));
+        m_partitions.push_back(static_cast<uint32_t>(detail::sround(total)));
     }
 }
 
@@ -200,7 +200,7 @@ void Chipper::Split(RefList& wide, RefList& narrow, RefList& spare,
         // for the [left,right] partition.
         lstart = left;
         rstart = center;
-        for (int64_t i = left; i <= right; ++i)
+        for (uint32_t i = left; i <= right; ++i)
         {
             if (narrow[i].m_oindex < center)
             {
@@ -232,25 +232,32 @@ void Chipper::Split(RefList& wide, RefList& narrow, RefList& spare,
 void Chipper::FinalSplit(RefList& wide, RefList& narrow,
     uint32_t pleft, uint32_t pright)  
 {
-    long left1 = -1;
-    long left2 = -1;
-    long right1 = -1;
-    long right2 = -1;
+    
+    boost::int64_t left1 = -1;
+    boost::int64_t left2 = -1;
+    boost::int64_t right1 = -1;
+    boost::int64_t right2 = -1;
 
-    uint32_t left = m_partitions[pleft];
-    uint32_t right = m_partitions[pright] - 1;
-    uint32_t center = m_partitions[pright - 1];
+    // It appears we're using int64_t here because we're using -1 as 
+    // an indicator.  I'm not 100% sure that i ends up <0, but I don't 
+    // think so.  These casts will at least shut up the compiler, but 
+    // I think this code should be revisited to use std::vector<boost::uint32_t>::const_iterator
+    // or std::vector<boost::uint32_t>::size_type instead of this int64_t stuff -- hobu 11/15/10
+    boost::int64_t left = static_cast<boost::int64_t>(m_partitions[pleft]);
+    boost::int64_t right = static_cast<boost::int64_t>(m_partitions[pright] - 1);
+    boost::int64_t center = static_cast<boost::int64_t>(m_partitions[pright - 1]);
 
     // Find left values for the partitions.
     for (int64_t i = left; i <= right; ++i)
-    {
-        if (left1 < 0 && (narrow[i].m_oindex < center))
+    {        
+        boost::int64_t idx = static_cast<boost::int64_t>(narrow[static_cast<boost::uint32_t>(i)].m_oindex);
+        if (left1 < 0 && (idx < center))
         {
             left1 = i;
             if (left2 >= 0)
                 break;
         }
-        else if (left2 < 0 && (narrow[i].m_oindex >= center))
+        else if (left2 < 0 && (idx >= center))
         {
             left2 = i;
             if (left1 >= 0)
@@ -260,13 +267,14 @@ void Chipper::FinalSplit(RefList& wide, RefList& narrow,
     // Find right values for the partitions.
     for (int64_t i = right; i >= left; --i)
     {
-        if (right1 < 0 && (narrow[i].m_oindex < center))
+        boost::int64_t idx = static_cast<boost::int64_t>(narrow[static_cast<boost::uint32_t>(i)].m_oindex);        
+        if (right1 < 0 && (idx < center))
         {
             right1 = i;
             if (right2 >= 0)
                 break;
         }
-        else if (right2 < 0 && (narrow[i].m_oindex >= center))
+        else if (right2 < 0 && (idx >= center))
         {
             right2 = i;
             if (right1 >= 0)
@@ -275,8 +283,18 @@ void Chipper::FinalSplit(RefList& wide, RefList& narrow,
     }
 
     // Emit results.
-    Emit(wide, left, center - 1, narrow, left1, right1 );
-    Emit(wide, center, right, narrow, left2, right2 );
+    Emit(wide, 
+         static_cast<boost::uint32_t>(left), 
+         static_cast<boost::uint32_t>(center - 1), 
+         narrow, 
+         static_cast<boost::uint32_t>(left1), 
+         static_cast<boost::uint32_t>(right1) );
+    Emit(wide, 
+         static_cast<boost::uint32_t>(center), 
+         static_cast<boost::uint32_t>(right), 
+         narrow, 
+         static_cast<boost::uint32_t>(left2), 
+         static_cast<boost::uint32_t>(right2) );
 }
 
 void Chipper::Emit(RefList& wide, uint32_t widemin, uint32_t widemax,
