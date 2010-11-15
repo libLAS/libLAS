@@ -1,6 +1,30 @@
 #include "oci_util.hpp"
 
 
+std::istream* OpenInput(std::string const& filename, bool bEnd) 
+{
+    std::ios::openmode mode = std::ios::in | std::ios::binary;
+    if (bEnd == true) {
+        mode = mode | std::ios::ate;
+    }
+    std::istream* istrm;
+    if (compare_no_case(filename.c_str(),"STDIN",5) == 0)
+    {
+        istrm = &std::cin;
+    }
+    else 
+    {
+        istrm = new std::ifstream(filename.c_str(), mode);
+    }
+    
+    if (!istrm->good())
+    {
+        delete istrm;
+        throw std::runtime_error("Reading stream was not able to be created");
+    }
+    return istrm;
+}
+
 std::string ReadSQLData(std::string filename)
 {
     std::istream* infile = OpenInput(filename.c_str(), true);
