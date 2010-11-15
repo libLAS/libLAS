@@ -291,6 +291,12 @@ const std::vector<boost::uint32_t>& Index::Filter(IndexData & ParamSrc)
 								fprintf(m_debugger, "Index bounds do not intersect filter bounds.\n");
 							break;
 						} // if
+						if (ParamSrc.m_iterator && ! ParamSrc.m_iterator->ValidateIndexVersion(GetVersionMajor(), GetVersionMinor()))
+						{
+							if (m_debugOutputLevel > 1)
+								fprintf(m_debugger, "Index version does not support iterator access. Regenerate Index.\n");
+							break;
+						} // if
 					} // if 42
 					else if (RecordID == m_DataVLR_ID)
 					{
