@@ -52,11 +52,13 @@
 
 // GDAL OSR
 #ifdef HAVE_GDAL
+
+// Supress inclusion of cpl_serv.h per #194, perhaps remove one day
+// when libgeotiff 1.4.0+ is widely used
+#define CPL_SERV_H_INCLUDED
+
 #include <ogr_srs_api.h>
 #include <cpl_port.h>
-//#include <cpl_serv.h>
-//#include <geo_tiffp.h>
-//#define CPL_ERROR_H_INCLUDED
 #include <geo_normalize.h>
 #include <geovalues.h>
 #include <ogr_spatialref.h>
