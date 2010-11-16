@@ -20,14 +20,7 @@ import os
 
 version = '1.6.0b2'
 
-if os.name == 'nt':
-    # Windows NT library
-    lib_name = 'liblas1.dll' 
-    data_files=[('DLLs', ['DLLs/%s'% lib_name, 'c:\\osgeo4w\\bin\\geotiff.dll','c:\\osgeo4w\\bin\\libtiff.dll','c:\\osgeo4w\\bin\\zlib_osgeo.dll','c:\\osgeo4w\\bin\\jpeg_osgeo.dll']),]
-else:
-    data_files = None
-
-scripts =['scripts/oci2las.py','scripts/laskdtree.py','scripts/colorize.py']
+scripts =['scripts/oci2las.py']
         
 setup(name          = 'libLAS',
       version       = version,
@@ -39,7 +32,6 @@ setup(name          = 'libLAS',
       maintainer    = 'Howard Butler',
       maintainer_email  = 'hobu.inc@gmail.com',
       url   = 'http://liblas.org',
-      data_files = data_files,
       long_description = readme,
       packages      = ['liblas'],
       install_requires = install_requires,
