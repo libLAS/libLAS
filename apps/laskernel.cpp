@@ -306,7 +306,7 @@ po::options_description GetHeaderOptions()
         ("a_vertcs", po::value< std::vector<string> >()->multitoken(), "Override vertical coordinate system information.  Use --a_vertcs \"verticalCSType [citation [verticalDatum [verticalUnits]]]\"\nFor example: --a_vertcs 5703 \"North American Vertical Datum of 1988 (NAVD88)\" 5103 9001")   
         ("offset", po::value< string >(), "A comma-separated or quoted, space-separated list of offsets to set on the output file: \n--offset 0,0,0\n--offset \"1234 5678 91011\"")
         ("scale", po::value< std::vector<double> >()->multitoken(), "A list of scales to set on the output file. Scales *cannot* be negative, and should always be a negative power of 10 \n--scale 0.1 0.1 0.00001")
-        ("format,f", po::value< string >(), "Set the LAS format of the new file (only 1.0-1.2 supported at this time): \n--format 1.2\n-f 1.1")
+        ("file-format,f", po::value< string >(), "Set the LAS format of the new file (only 1.0-1.2 supported at this time): \n--file-format 1.2\n-f 1.1")
         ("point-format", po::value< boost::uint32_t >(), "Set the LAS point format of the new file (0, 1, 2, 3): \n--point-format 3\n")
         ("pad-header", po::value< string >(), "Add extra bytes to the existing header")
         ("min-offset", po::value<bool>()->zero_tokens(), "Set the offset of the header to the minimums of all values in the file.  Note that this requires multiple read passes through the file to achieve.")
@@ -845,9 +845,9 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         header.SetScale(scales[0], scales[1], scales[2]);
     }
     
-    if (vm.count("format")) 
+    if (vm.count("file-format")) 
     {
-        std::string format_string = vm["format"].as< string >();
+        std::string format_string = vm["file-format"].as< string >();
         if (verbose)
             std::cout << "Setting format to: " << format_string << std::endl;
             
