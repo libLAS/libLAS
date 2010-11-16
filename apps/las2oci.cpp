@@ -1148,7 +1148,7 @@ int main(int argc, char* argv[])
                         point_cloud_name,
                         aux_columns,
                         aux_values,
-                        3, // we're assuming 3d for now
+                        5, // we're assuming 5d for now (x, y, z, time, classification)
                         srid,
                         nCapacity,
                         precision,

@@ -288,7 +288,7 @@ int main(int argc, char* argv[])
             std::ifstream ifs;
             if (!liblas::Open(ifs, input.c_str()))
             {
-                std::cerr << "Cannot open " << input << "for read.  Exiting...";
+                std::cerr << "Cannot open " << input << "for read.  Exiting..." << std::endl;
                 return 1;
             }
             // set_ifstream_buffer(ifs, default_buffer_size);

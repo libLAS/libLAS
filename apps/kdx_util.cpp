@@ -108,13 +108,18 @@ bool GetPointData(  liblas::Point const& p,
     double x = p.GetX();
     double y = p.GetY();
     double z = p.GetZ();
-    // double t = p.GetTime();
+    double t = p.GetTime();
+    
+    // std::cout.precision(6);
+    // std::cout.setf(std::ios::fixed);
+    // // std::cout << "X: " << x << " y: " << y << " z: " << z << std::endl;
+    boost::uint8_t c = p.GetClassification().GetClass();
 
     boost::uint8_t* x_b =  reinterpret_cast<boost::uint8_t*>(&x);
     boost::uint8_t* y_b =  reinterpret_cast<boost::uint8_t*>(&y);
     boost::uint8_t* z_b =  reinterpret_cast<boost::uint8_t*>(&z);
-
-    // liblas::uint8_t* t_b =  reinterpret_cast<liblas::uint8_t*>(&t);
+    boost::uint8_t* t_b =  reinterpret_cast<boost::uint8_t*>(&t);
+    boost::uint8_t* c_b =  reinterpret_cast<boost::uint8_t*>(&c);
 
     // doubles are 8 bytes long.  For each double, push back the 
     // byte.  We do this for all four values (x,y,z,t)
@@ -139,13 +144,16 @@ bool GetPointData(  liblas::Point const& p,
     }
 
     
-    // if (bTime)
-    // {
-    //     for (int i = sizeof(double) - 1; i >= 0; i--) {
-    //         point_data.push_back(t_b[i]);
-    //     }
-    // 
-    // }
+    for (int i = sizeof(double) - 1; i >= 0; i--) {
+        point_data.push_back(t_b[i]);
+    }
+
+    // Classification is only a single byte, but 
+    // we need to store it in an 8 byte big-endian 
+    // double to satisfy OPC
+    for (int i = sizeof(double) - 1; i >= 0; i--) {
+        point_data.push_back(c_b[i]);
+    }
 
     return true;
 }
