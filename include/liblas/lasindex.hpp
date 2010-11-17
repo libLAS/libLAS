@@ -492,9 +492,9 @@ private:
 	boost::uint8_t MinMinorVersion(void)	{return(2);};
 
 public:
-	/// n=0 or n=1 gives next sequence with no gap, n>1 skips n-1 filter-compliant points, n<0 skips backwards
+	/// n=0 or n=1 gives next sequence with no gap, n>1 skips n-1 filter-compliant points, n<0 jumps backwards n compliant points
     const std::vector<boost::uint32_t>& advance(boost::int32_t n);
-    /// returns filter-compliant points beginning with the nth compliant point, 0 and 1 return first set of compliant points
+    /// returns filter-compliant points as though the first point returned is element n in a zero-based array
     const std::vector<boost::uint32_t>& operator()(boost::int32_t n);
 	/// returns next set of filter-compliant points with no skipped points
 	inline const std::vector<boost::uint32_t>& operator++()	{return (advance(1));}
@@ -512,7 +512,7 @@ public:
 	inline const std::vector<boost::uint32_t>& operator-=(boost::int32_t n)	{return (advance(-n));}
 	/// returns set of filter-compliant points beginning n points backwards from the end of the last set, for n<0 acts like +()
 	inline const std::vector<boost::uint32_t>& operator-(boost::int32_t n)	{return (advance(-n));}
-    /// returns filter-compliant points beginning with the nth compliant point, 0 and 1 return first set of compliant points
+    /// returns filter-compliant points as though the first point returned is element n in a zero-based array
 	inline const std::vector<boost::uint32_t>& operator[](boost::int32_t n)	{return ((*this)(n));}
 	/// tests viability of index for filtering with iterator
 	bool ValidateIndexVersion(boost::uint8_t VersionMajor, boost::uint8_t VersionMinor)	{return (VersionMajor > MinMajorVersion() || (VersionMajor == MinMajorVersion() && VersionMinor >= MinMinorVersion()));};
