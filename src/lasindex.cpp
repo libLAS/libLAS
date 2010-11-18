@@ -2127,24 +2127,29 @@ void IndexIterator::ResetPosition(void)
 
 const std::vector<boost::uint32_t>& IndexIterator::operator()(boost::int32_t n)
 {
-	if (n < 0)
-		n = 0;
-	if ((boost::uint32_t)n <= m_conformingPtsFound)
+	if (n <= 0)
+	{
 		ResetPosition();
-	n -= m_conformingPtsFound;
-	return (advance(n));
+		m_advance = 1;
+	} // if
+	else if (n < m_conformingPtsFound)
+	{
+		ResetPosition();
+		m_advance = n + 1;
+	} // if
+	else
+	{
+		m_advance = n - m_conformingPtsFound + 1;
+	} // else
+	m_indexData.SetIterator(this);
+	return (m_index->Filter(m_indexData));
 } // IndexIterator::operator++
 
 const std::vector<boost::uint32_t>& IndexIterator::advance(boost::int32_t n)
 {
-	if (n < 0)
-	{
-		n = m_conformingPtsFound + n;
-		return((*this)(n));
-	} // if
-	m_advance = n;
-	m_indexData.SetIterator(this);
-	return (m_index->Filter(m_indexData));
+	if (n > 0)
+		--n;
+	return ((*this)(m_conformingPtsFound + n));
 } // IndexIterator::advance
 
 } // namespace liblas
