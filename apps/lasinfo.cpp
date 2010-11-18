@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
                 std::cout << "Opening " << input << " to fetch Header" << std::endl;
             if (!liblas::Open(ifs, input.c_str()))
             {
-                std::cerr << "Cannot open " << input << "for read.  Exiting...";
+                std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
                 return 1;
             }
             liblas::Reader reader(ifs);
@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
         std::ifstream ifs;
         if (!liblas::Open(ifs, input.c_str()))
         {
-            std::cerr << "Cannot open " << input << "for read.  Exiting...";
+            std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
             return false;
         }
     
