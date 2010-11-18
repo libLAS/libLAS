@@ -45,6 +45,7 @@
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lasschema.hpp>
 #include <liblas/detail/private_utility.hpp>
+#include <liblas/utility.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -831,15 +832,10 @@ void Header::to_rst(std::ostream& os) const
     boost::uint32_t x_precision = 6;
     boost::uint32_t y_precision = 6;
     boost::uint32_t z_precision = 6;
-    double frac = 0;
-    double integer = 0;
     
-    frac = std::modf(x_scale, &integer);
-    x_precision = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
-    frac = std::modf(y_scale, &integer);
-    y_precision = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
-    frac = std::modf(z_scale, &integer);
-    z_precision = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
+    x_precision = GetStreamPrecision(x_scale);
+    y_precision = GetStreamPrecision(y_scale);
+    z_precision = GetStreamPrecision(z_scale);
 
     os << "  Scale Factor X Y Z:          ";
     os.precision(x_precision);

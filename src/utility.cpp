@@ -312,13 +312,9 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
         double x_scale = tree.get<double>("summary.header.scale.x");
         double y_scale = tree.get<double>("summary.header.scale.y");
         double z_scale = tree.get<double>("summary.header.scale.z");
-        frac = std::modf(x_scale, &integer);
-        x_precision = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
-        frac = std::modf(y_scale, &integer);
-        y_precision = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
-        frac = std::modf(z_scale, &integer);
-        z_precision = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
-        
+        x_precision = GetStreamPrecision(x_scale);
+        y_precision = GetStreamPrecision(y_scale);
+        z_precision = GetStreamPrecision(z_scale);
 
     }
     catch (liblas::property_tree::ptree_bad_path const& e) {
@@ -462,4 +458,16 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
     
 }
 
+
+boost::uint32_t GetStreamPrecision(double scale)
+{
+    double frac = 0;
+    double integer = 0;
+    
+    frac = std::modf(scale, &integer);
+    double precision = std::fabs(std::floor(std::log10(frac)));
+    
+    boost::uint32_t output = static_cast<boost::uint32_t>(precision);
+    return output;
+}
 } // namespace liblas

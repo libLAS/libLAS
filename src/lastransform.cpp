@@ -118,9 +118,30 @@ bool ReprojectionTransform::transform(Point& point)
 #ifdef HAVE_GDAL
     
     int ret = 0;
+
+    std::cout << "before SetHeaderPtr y : " << point.GetY() ;
+
+    HeaderPtr hdr = point.GetHeaderPtr();
+    if (hdr.get())
+        std::cout << " before SetHeaderPtr scaley: "<< hdr->GetScaleY() ;
+    std::cout<< std::endl;
+    
+    if (m_new_header.get()) 
+    {
+        point.SetHeaderPtr(m_new_header);
+    }
+
+    std::cout.precision(10);
+    std::cout.setf(std::ios::fixed);
     double x = point.GetX();
     double y = point.GetY();
     double z = point.GetZ();
+    std::cout << "after SetHeaderPtr y : " << y ;
+    
+    hdr = point.GetHeaderPtr();
+    if (hdr.get())
+        std::cout << " after SetHeaderPtr scaley: "<< hdr->GetScaleY() ;
+    std::cout<< std::endl;
 
     ret = OCTTransform(m_transform_ptr.get(), 1, &x, &y, &z);    
     if (!ret)
@@ -129,11 +150,10 @@ bool ReprojectionTransform::transform(Point& point)
         msg << "Could not project point for ReprojectionTransform::" << CPLGetLastErrorMsg() << ret;
         throw std::runtime_error(msg.str());
     }
+    
 
-    if (m_new_header.get()) 
-    {
-        point.SetHeaderPtr(m_new_header);
-    }
+    std::cout << "reproj y : " << y << std::endl;
+
 
     point.SetX(x);
     point.SetY(y);

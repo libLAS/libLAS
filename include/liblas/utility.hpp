@@ -91,6 +91,8 @@ private:
 
 LAS_DLL std::ostream& operator<<(std::ostream& os, liblas::Summary const& s);
 
+boost::uint32_t GetStreamPrecision(double scale);
+
 } // namespace liblas
 
 #endif // ndef LIBLAS_LASSUMMARY_HPP_INCLUDED
