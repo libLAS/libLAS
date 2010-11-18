@@ -262,8 +262,8 @@ filtering_options.add_options()
     ("maxy", po::value< double >(), "Extent must be less than or equal to maxy to be kept. \n --maxy 5678.0")
     ("maxz", po::value< double >(), "Extent must be less than or equal to maxz to be kept. If maxx and maxy are set but not maxz *and minz, all z values are kept. \n --maxz 10.0")
     ("thin,t", po::value<boost::uint32_t>()->default_value(0), "Simple decimation-style thinning.\nThin the file by removing every t'th point from the file.")
-    ("last_return_only", po::value<bool>()->zero_tokens(), "Keep last returns (cannot be used with --first_return_only)")
-    ("first_return_only", po::value<bool>()->zero_tokens(), "Keep first returns (cannot be used with --last_return_only")
+    ("last-return-only", po::value<bool>()->zero_tokens(), "Keep last returns (cannot be used with --first-return-only)")
+    ("first-return-only", po::value<bool>()->zero_tokens(), "Keep first returns (cannot be used with --last-return-only")
     ("keep-returns", po::value< std::vector<boost::uint16_t> >()->multitoken(), "A list of return numbers to keep in the output file: \n--keep-returns 1 2 3")
     ("drop-returns", po::value< std::vector<boost::uint16_t> >()->multitoken(), "Return numbers to drop.\nFor example, --drop-returns 2 3 4 5")
     ("valid_only", po::value<bool>()->zero_tokens(), "Keep only valid points")
@@ -314,8 +314,8 @@ po::options_description GetHeaderOptions()
         ("add-schema", po::value<bool>()->zero_tokens(), "Add the liblas.org schema VLR record to the file.")
         ("delete-vlr", po::value<std::vector<std::string> >()->multitoken(), "Removes VLRs with the given name and id combination. --delete-vlr LASF_Projection 34737")
         ("add-vlr", po::value<std::vector<std::string> >()->multitoken(), "Add VLRs with the given name and id combination. --add-vlr hobu 1234 \"Description of the VLR\" \"filename.ext\"")
-        ("system-identifier", po::value<std::string>(), "Set the SystemID for the file. --system_identifier \"MODIFICATION\"")
-        ("generating-software", po::value<std::string>(), "Set the SoftwareID for the file. --generating_software \"liblas.org\"")
+        ("system-identifier", po::value<std::string>(), "Set the SystemID for the file. --system-identifier \"MODIFICATION\"")
+        ("generating-software", po::value<std::string>(), "Set the SoftwareID for the file. --generating-software \"liblas.org\"")
     ;
     
     return transform_options;
@@ -737,13 +737,13 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
     }
 
 
-    if (vm.count("first_return_only") && vm.count("last_return_only")) {
-        throw std::runtime_error( "--first_return_only and --last_return_only cannot "
+    if (vm.count("first-return-only") && vm.count("last-return-only")) {
+        throw std::runtime_error( "--first-return-only and --last-return-only cannot "
                      "be used simultaneously.  Use --keep-returns 1 in "
-                     "combination with --last_return_only");
+                     "combination with --last-return-only");
     }
 
-    if (vm.count("last_return_only")) {
+    if (vm.count("last-return-only")) {
         if (verbose)
             std::cout << "Keeping last returns only."  << std::endl;
         std::vector<boost::uint16_t> returns;
@@ -751,7 +751,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
         filters.push_back(last_filter);
     }
 
-    if (vm.count("first_return_only")){
+    if (vm.count("first-return-only")){
         if (verbose)
             std::cout << "Keeping first returns only."  << std::endl;
         std::vector<boost::uint16_t> returns;
