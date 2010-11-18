@@ -128,7 +128,7 @@ Extract last returns
 
 ::
   
-  $ las2las --input in.las --output out.las --last_return_only
+  $ las2las --input in.las --output out.las --last-return-only
 
 extracts all last return points from in.las and stores them to out.las.
 
@@ -244,6 +244,40 @@ VLR removal
 
 removes all VLRs from in.las when writing the new output.las file.   
 
+
+Adding color from an image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to use las2las to set RGB color information from an 
+image and set it on the points.  This requires a rewrite of the file and 
+in some cases will require changing both the format and point-format of the 
+file.
+
+The following example takes the ``input.las`` file, sets its format to ``1.2``, 
+and sets the point format to ``3`` so it can store color information.  It 
+also re-orders the color bands to have the 3rd band in the image be red, 1st 
+band be green, and second band be blue.  Additionally, the color values are 
+then multiplied by the --color-source-scale factor or 257 to rescale the 
+8bit image data to 16bit color data.
+
+::
+
+    las2las -i input.las \
+            --color-source image.img \
+            -o output.las \
+            --format 1.2 \
+            --point-format 3 \
+            --color-source-scale 257 \
+            --color-source-bands 3 1 2
+
+.. note::
+    If the coordinate system of ``image.img`` is not the same as the input 
+    coordinate system of the LAS file, you should use GDAL VRTs to cause the 
+    image to be warped and reprojected as part of the read process.  See 
+    http://www.gdal.org/gdal_vrttut.html for more detail.
+.. warning::
+    `GDAL`_ support must be enabled for this to work.
+
 Help listing
 ---------------
 
@@ -280,10 +314,14 @@ Help listing
                                 *cannot* be negative, and should always be a 
                                 negative power of 10 
                                 --scale 0.1 0.1 0.00001
-      -f [ --format ] arg       Set the LAS format of the new file (only 1.0-1.2 
+      -f [ --file-format ] arg  Set the LAS format of the new file (only 1.0-1.2 
                                 supported at this time): 
-                                --format 1.2
+                                --file-format 1.2
                                 -f 1.1
+      --point-format arg        Set the LAS point format of the new file (0, 1, 2, 
+                                3): 
+                                --point-format 3
+                            
       --pad-header arg          Add extra bytes to the existing header
       --min-offset              Set the offset of the header to the minimums of all
                                 values in the file.  Note that this requires 
@@ -297,19 +335,31 @@ Help listing
       --add-vlr arg             Add VLRs with the given name and id combination. 
                                 --add-vlr hobu 1234 "Description of the VLR" 
                                 "filename.ext"
-      --system-identifier arg   Set the SystemID for the file. --system_identifier 
+      --system-identifier arg   Set the SystemID for the file. --system-identifier 
                                 "MODIFICATION"
       --generating-software arg Set the SoftwareID for the file. 
-                                --generating_software "liblas.org"
-      --point-translate arg     An expression to translate the X, Y, Z values of 
-                                the point. For example, converting Z units that are
-                                in meters to feet: --point-translate "x*1.0 y*1.0 
-                                z*3.2808399"
+                                --generating-software "liblas.org"
 
     Transformation options:
-      --t_srs arg           Coordinate system to reproject output LAS file to.  Use
-                            --a_srs or verify that your input LAS file has a 
-                            coordinate system according to lasinfo
+      --t_srs arg              Coordinate system to reproject output LAS file to.  
+                               Use --a_srs or verify that your input LAS file has a
+                               coordinate system according to lasinfo
+      --point-translate arg    An expression to translate the X, Y, Z values of the
+                               point. For example, converting Z units that are in 
+                               meters to feet: --point-translate "x*1.0 y*1.0 
+                               z*3.2808399"
+      --color-source arg       A string to a GDAL-openable raster data source.  Use
+                               GDAL VRTs if you want to adjust the data source or 
+                               set its coordinate system, etc. 
+                               --color-source "afile.tif" 
+      --color-source-bands arg A list of three bands from the --color-source to 
+                               assign to the R, G, B  values for the point 
+                               --color-source-bands 1 2 3
+      --color-source-scale arg A number used by --color-source to scale the input 
+                               R, G, B  values for the point.  For example, to 
+                               scale the 8 bit color data from an input raster to 
+                               16 bit, the 8 bit data should be multiplied by 257. 
+                               --color-source-scale 256
 
     Filtering options:
       -e [ --extent ] arg    Extent window that points must fall within to keep.
@@ -340,10 +390,10 @@ Help listing
       -t [ --thin ] arg (=0) Simple decimation-style thinning.
                              Thin the file by removing every t'th point from the 
                              file.
-      --last_return_only     Keep last returns (cannot be used with 
-                             --first_return_only)
-      --first_return_only    Keep first returns (cannot be used with 
-                             --last_return_only
+      --last-return-only     Keep last returns (cannot be used with 
+                             --first-return-only)
+      --first-return-only    Keep first returns (cannot be used with 
+                             --last-return-only
       --keep-returns arg     A list of return numbers to keep in the output file: 
                              --keep-returns 1 2 3
       --drop-returns arg     Return numbers to drop.
@@ -397,6 +447,8 @@ Help listing
     For more information, see the full documentation for las2las2 at:
      http://liblas.org/utilities/las2las2.html
     ----------------------------------------------------------
+
+
 
  
 .. _`GDAL`: http://www.gdal.org
