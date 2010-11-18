@@ -241,7 +241,17 @@ void Point::SetHeaderPtr(HeaderPtr header)
         // headerptr can be catastrophic in a lot of cases.  
     }
     
+    double x = GetX();
+    double y = GetY();
+    double z = GetZ();
+    
+    // The header's scale/offset can change the raw storage of xyz.  
+    // SetHeaderPtr can result in a rescaling of the data.
     m_header = header;
+    
+    SetX(x);
+    SetY(y);
+    SetZ(z);
 }
 
 HeaderPtr Point::GetHeaderPtr() const
