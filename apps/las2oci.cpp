@@ -1112,9 +1112,9 @@ int main(int argc, char* argv[])
         
         liblas::Reader* reader2 = 0;
         if (bCachedReader)
-            reader2 = new liblas::Reader(*istrm2,0, header);
+            reader2 = new liblas::Reader(*istrm2,0);
         else
-            reader2 = new liblas::Reader(*istrm2, header);
+            reader2 = new liblas::Reader(*istrm2);
 
         reader2->SetFilters(filters);
         reader2->SetTransforms(transforms);
