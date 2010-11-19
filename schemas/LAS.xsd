@@ -1,22 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-    xmlns:las="http://liblas.org/schemas/LAS/example" 
-    elementFormDefault="qualified" 
-    attributeFormDefault="unqualified" 
-    targetNamespace="http://liblas.org/schemas/LAS/example" version="1.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:las="http://liblas.org/schemas/LAS/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://liblas.org/schemas/LAS/1.0" version="1.0">
 
     <xs:simpleType name="sizeType">
-        <xs:annotation><xs:documentation>
+        <xs:annotation>
+      <xs:documentation>
             The storage size type of the dimension.
-        </xs:documentation></xs:annotation>   
+        </xs:documentation>
+    </xs:annotation>   
         <xs:restriction base="xs:string">
-            <xs:enumeration value="byte"></xs:enumeration>
-            <xs:enumeration value="bit"></xs:enumeration>
+            <xs:enumeration value="byte"/>
+            <xs:enumeration value="bit"/>
         </xs:restriction>
     </xs:simpleType>
  
-    <xs:simpleType name="interpretationType" >
-        <xs:annotation><xs:documentation>
+    <xs:simpleType name="interpretationType">
+        <xs:annotation>
+      <xs:documentation>
             Common interpretations of the data that may be used.  This 
             type may be extended under the expectation that clients 
             know how to consume the data.  In the case of string-like 
@@ -24,78 +23,148 @@
             and transform accordingly.  Because nulls (or even 
             multi-byte strings) might be allowed, there are 
             no common string interpretations provided by defaut.
-        </xs:documentation></xs:annotation>   
+        </xs:documentation>
+    </xs:annotation>   
         <xs:restriction base="xs:string">
-            <xs:enumeration value="int8_t"></xs:enumeration>
-            <xs:enumeration value="uint8_t"></xs:enumeration>
-            <xs:enumeration value="int16_t"></xs:enumeration>
-            <xs:enumeration value="uint16_t"></xs:enumeration>
-            <xs:enumeration value="int32_t"></xs:enumeration>
-            <xs:enumeration value="uint32_t"></xs:enumeration>
-            <xs:enumeration value="int64_t"></xs:enumeration>
-            <xs:enumeration value="uint64_t"></xs:enumeration>
-            <xs:enumeration value="double"></xs:enumeration>
-            <xs:enumeration value="float"></xs:enumeration>
-            <xs:enumeration value="unknown"></xs:enumeration>
+            <xs:enumeration value="int8_t"/>
+            <xs:enumeration value="uint8_t"/>
+            <xs:enumeration value="int16_t"/>
+            <xs:enumeration value="uint16_t"/>
+            <xs:enumeration value="int32_t"/>
+            <xs:enumeration value="uint32_t"/>
+            <xs:enumeration value="int64_t"/>
+            <xs:enumeration value="uint64_t"/>
+            <xs:enumeration value="double"/>
+            <xs:enumeration value="float"/>
+            <xs:enumeration value="unknown"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:complexType name="rangeType">
-        <xs:attribute name="units" type="las:interpretationType"></xs:attribute>
-        <xs:attribute name="value" type="xs:decimal"></xs:attribute>
+        <xs:attribute name="units" type="las:interpretationType"/>
+        <xs:attribute name="value" type="xs:decimal"/>
     </xs:complexType>
     
     <xs:complexType name="dimensionType">
-        <xs:sequence>
-            <xs:element name="name" type="xs:string"  />
-            <xs:element name="description" type="xs:string" minOccurs="0"/>
-            
-            <xs:element name="position" type="xs:nonNegativeInteger" >
-                <xs:annotation><xs:documentation>
-                    The dimension's position in the block of point data (counting from 0)
-                </xs:documentation></xs:annotation>                
+        <xs:all>
+            <xs:element name="position" type="xs:nonNegativeInteger">
+                <xs:annotation>
+                    <xs:documentation>
+                        The dimension's position in the block of point data
+                        (counting from 0)
+                    </xs:documentation>
+                </xs:annotation>                
             </xs:element>
-            
 
-            <xs:element name="active" type="xs:boolean">
-                <xs:annotation><xs:documentation>
-                    A dimension may have be holding its place in bytes but might not have actual
-                    values that mean anything.  This flag can be used to skip the dimension in
-                    that case.
-                </xs:documentation></xs:annotation>
+            <xs:element name="size" type="xs:nonNegativeInteger">
+                <xs:annotation>
+                    <xs:documentation>
+                        The size of this dimension (assumed to be in bytes if
+                        no units element is available).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="required" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>
+                        Is this dimension required by the LAS Point Format?
+                    </xs:documentation>
+                </xs:annotation>
             </xs:element>
             
-            <!--Specify the size and units of the dimension's storage-->
-            <xs:element name="size" type="xs:nonNegativeInteger"></xs:element>
-            <xs:element name="units" type="las:sizeType"></xs:element>
             
-            <xs:element name="interpretation" type="las:interpretationType">
-                <xs:annotation><xs:documentation>
-                    This element describes how the data should be interpreted.  
-                    In the case of conflicting data, for example when then size is 2, the units "byte", 
-                    but the interpretation is "uint32_t", the size determines how much 
-                    precision is available.
-                </xs:documentation></xs:annotation>   
+            <xs:element minOccurs="0" name="name" type="xs:string"/>
+            <xs:element minOccurs="0" name="description" type="xs:string"/>
+
+            <xs:element minOccurs="0" name="active" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>
+                    A dimension may have be holding its place in bytes but
+                    might not have actual values that mean anything. This flag
+                    can be used to skip the dimension in that case.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element minOccurs="0" name="units" type="las:sizeType">
+                <xs:annotation>
+                    <xs:documentation>
+                        The units to use for size measurements for this
+                        dimension. If no units element is specified, "bytes"
+                        is the assumed unit.
+                    </xs:documentation>
+                </xs:annotation>
             </xs:element>
             
-            <xs:element name="minimum" type="las:rangeType" minOccurs="0">
-                <xs:annotation><xs:documentation>
-                    The minimum value of this dimension.
-                </xs:documentation></xs:annotation>                   
+            <xs:element minOccurs="0" name="interpretation" type="las:interpretationType">
+                <xs:annotation>
+                    <xs:documentation>
+                        This element describes how the data should be
+                        interpreted. In the case of conflicting data, for
+                        example when then size is 2, the units "byte", but the
+                        interpretation is "uint32_t", the size determines how
+                        much precision is available.
+                    </xs:documentation>
+                </xs:annotation>
             </xs:element>
-            <xs:element name="maximum" type="las:rangeType">
-                <xs:annotation><xs:documentation>
-                    The maximum value of this dimension.
-                </xs:documentation></xs:annotation>   
+            
+            <xs:element minOccurs="0" name="minimum" type="las:rangeType">
+                <xs:annotation>
+                    <xs:documentation>
+                        The minimum value of this dimension.
+                    </xs:documentation>
+                </xs:annotation>                   
             </xs:element>
-        </xs:sequence>
+
+            <xs:element minOccurs="0" name="maximum" type="las:rangeType">
+                <xs:annotation>
+                    <xs:documentation>
+                        The maximum value of this dimension.
+                    </xs:documentation>
+                </xs:annotation>   
+            </xs:element>
+
+            <xs:element minOccurs="0" name="offset" type="xs:double"/>
+                <xs:annotation>
+                    <xs:documentation>
+                        The double offset to use when applying a scaling 
+                        factor to an integer dimension
+                    </xs:documentation>
+                </xs:annotation>   
+            </xs:element>
+            <xs:element minOccurs="0" name="scale" type="xs:double">
+                <xs:annotation>
+                    <xs:documentation>
+                        The scale (usually a negative log10 exponent) of this 
+                        dimension.  Used to support scaled integer types
+                    </xs:documentation>
+                </xs:annotation>   
+            </xs:element>
+            <xs:element minOccurs="0" name="byteOffset" type="xs:nonNegativeInteger">
+                <xs:annotation>
+                    <xs:documentation>
+                        The byte offset to start reading this dimension from 
+                        the front of the point record.
+                    </xs:documentation>
+                </xs:annotation>   
+            </xs:element>
+            <xs:element minOccurs="0" name="bitOffset" type="xs:nonNegativeInteger">
+                <xs:annotation>
+                    <xs:documentation>
+                        The bit offset to start reading this dimension from the 
+                        calculated (or specified, using byteOffset) byte offset 
+                        of the dimension.  
+                    </xs:documentation>
+                </xs:annotation>   
+            </xs:element>            
+        </xs:all>
     </xs:complexType>
     
   
-    <xs:element name="LASSchema" >
+    <xs:element name="LASSchema">
         <xs:complexType>
-            <xs:sequence >
-                <xs:element name="dimension" type="las:dimesionType" minOccurs="1" maxOccurs="unbounded"></xs:element>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="1" name="dimension" type="las:dimensionType"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
