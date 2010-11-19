@@ -247,7 +247,7 @@ void Chipper::FinalSplit(RefList& wide, RefList& narrow,
     boost::int64_t center = static_cast<boost::int64_t>(m_partitions[pright - 1]);
 
     // Find left values for the partitions.
-    for (int64_t i = left; i <= right; ++i)
+    for (boost::int64_t i = left; i <= right; ++i)
     {        
         boost::int64_t idx = static_cast<boost::int64_t>(narrow[static_cast<boost::uint32_t>(i)].m_oindex);
         if (left1 < 0 && (idx < center))
@@ -264,7 +264,7 @@ void Chipper::FinalSplit(RefList& wide, RefList& narrow,
         }
     }
     // Find right values for the partitions.
-    for (int64_t i = right; i >= left; --i)
+    for (boost::int64_t i = right; i >= left; --i)
     {
         boost::int64_t idx = static_cast<boost::int64_t>(narrow[static_cast<boost::uint32_t>(i)].m_oindex);        
         if (right1 < 0 && (idx < center))
