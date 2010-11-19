@@ -106,6 +106,10 @@ and Windows has the `OSGeo4W`_ platform.
 
 * GDAL 1.7+ is required.
 
+.. note::
+    If you are using `OSGeo4W`_ as your provider of GDAL, you must use the 
+    ``gdal-dev`` package, which is GDAL 1.8 as of 11/19/2010.
+
 
 `libgeotiff`_
 ------------------------------------------------------------------------------
