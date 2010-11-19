@@ -307,8 +307,6 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
     boost::uint32_t z_precision = 6;
 
     try {
-        double frac = 0;
-        double integer = 0;
         double x_scale = tree.get<double>("summary.header.scale.x");
         double y_scale = tree.get<double>("summary.header.scale.y");
         double z_scale = tree.get<double>("summary.header.scale.z");
