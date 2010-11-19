@@ -10,7 +10,8 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/liblas.hpp>
-#include "chipper.hpp"
+#include <liblas/chipper.hpp>
+
 // std
 #include <fstream>
 #include <vector>

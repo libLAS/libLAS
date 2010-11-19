@@ -20,7 +20,9 @@ endif()
 set(LIBLAS_HEADERS_DIR ../include/liblas)
 
 set(LIBLAS_HPP
+  ${LIBLAS_HEADERS_DIR}/chipper.hpp
   ${LIBLAS_HEADERS_DIR}/exception.hpp
+  ${LIBLAS_HEADERS_DIR}/export.hpp
   ${LIBLAS_HEADERS_DIR}/guid.hpp
   ${LIBLAS_HEADERS_DIR}/iterator.hpp
   ${LIBLAS_HEADERS_DIR}/lasbounds.hpp
@@ -105,6 +107,7 @@ set(LIBLAS_DETAIL_WRITER_HPP
   ${LIBLAS_HEADERS_DIR}/detail/writer/header.hpp)
 
 set(LIBLAS_CPP
+  chipper.cpp
   lasclassification.cpp
   lascolor.cpp
   lasdimension.cpp

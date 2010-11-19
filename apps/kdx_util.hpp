@@ -7,7 +7,7 @@
 
 #include <liblas/liblas.hpp>
 #include <liblas/detail/fwd.hpp>
-#include "chipper.hpp"
+#include <liblas/chipper.hpp>
 
 #include <fstream>
 #include <sstream>

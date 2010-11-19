@@ -38,13 +38,12 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include "chipper.hpp"
+#include <liblas/chipper.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std
 #include <cmath>
 
-using namespace boost;
 using namespace std;
 
 /**
@@ -79,11 +78,11 @@ be stored.
 
 namespace liblas { namespace chipper {
 
-vector<uint32_t> Block::GetIDs() const
+vector<boost::uint32_t> Block::GetIDs() const
 {
-    vector<uint32_t> ids;
+    vector<boost::uint32_t> ids;
 
-    for (uint32_t i = m_left; i <= m_right; ++i)
+    for (boost::uint32_t i = m_left; i <= m_right; ++i)
         ids.push_back((*m_list_p)[i].m_ptindex);
     return ids;
 }
@@ -98,8 +97,8 @@ void Chipper::Chip()
 void Chipper::Load(RefList& xvec, RefList& yvec, RefList& spare )
 {
     PtRef ref;
-    uint32_t idx;
-    uint32_t count;
+    boost::uint32_t idx;
+    boost::uint32_t count;
     vector<PtRef>::iterator it;
    
     count = m_reader->GetHeader().GetPointRecordsCount();
@@ -121,7 +120,7 @@ void Chipper::Load(RefList& xvec, RefList& yvec, RefList& spare )
     }
     // Sort xvec and assign other index in yvec to sorted indices in xvec.
     sort(xvec.begin(), xvec.end());
-    for (uint32_t i = 0; i < xvec.size(); ++i) {
+    for (boost::uint32_t i = 0; i < xvec.size(); ++i) {
         idx = xvec[i].m_ptindex;
         yvec[idx].m_oindex = i;
     }
@@ -130,11 +129,11 @@ void Chipper::Load(RefList& xvec, RefList& yvec, RefList& spare )
     sort(yvec.begin(), yvec.end());
 
     //Iterate through the yvector, setting the xvector appropriately.
-    for (uint32_t i = 0; i < yvec.size(); ++i)
+    for (boost::uint32_t i = 0; i < yvec.size(); ++i)
         xvec[yvec[i].m_oindex].m_oindex = i;
 }
 
-void Chipper::Partition(uint32_t size)
+void Chipper::Partition(boost::uint32_t size)
 {
     boost::uint32_t num_partitions;
 
@@ -146,17 +145,17 @@ void Chipper::Partition(uint32_t size)
     m_partitions.push_back(0);
     for (boost::uint32_t i = 0; i < num_partitions; ++i) {
         total += partition_size;
-        m_partitions.push_back(static_cast<uint32_t>(detail::sround(total)));
+        m_partitions.push_back(static_cast<boost::uint32_t>(detail::sround(total)));
     }
 }
 
 void Chipper::DecideSplit(RefList& v1, RefList& v2, RefList& spare,
-    uint32_t pleft, uint32_t pright)
+    boost::uint32_t pleft, boost::uint32_t pright)
 {
     double v1range;
     double v2range;
-    uint32_t left = m_partitions[pleft];
-    uint32_t right = m_partitions[pright] - 1;
+    boost::uint32_t left = m_partitions[pleft];
+    boost::uint32_t right = m_partitions[pright] - 1;
 
     // Decide the wider direction of the block, and split in that direction
     // to maintain squareness.
@@ -169,14 +168,14 @@ void Chipper::DecideSplit(RefList& v1, RefList& v2, RefList& spare,
 }
 
 void Chipper::Split(RefList& wide, RefList& narrow, RefList& spare,
-    uint32_t pleft, uint32_t pright)
+    boost::uint32_t pleft, boost::uint32_t pright)
 {
-    uint32_t lstart;
-    uint32_t rstart;
-    uint32_t pcenter;
-    uint32_t left;
-    uint32_t right;
-    uint32_t center;
+    boost::uint32_t lstart;
+    boost::uint32_t rstart;
+    boost::uint32_t pcenter;
+    boost::uint32_t left;
+    boost::uint32_t right;
+    boost::uint32_t center;
 
     left = m_partitions[pleft];
     right = m_partitions[pright] - 1;
@@ -200,7 +199,7 @@ void Chipper::Split(RefList& wide, RefList& narrow, RefList& spare,
         // for the [left,right] partition.
         lstart = left;
         rstart = center;
-        for (uint32_t i = left; i <= right; ++i)
+        for (boost::uint32_t i = left; i <= right; ++i)
         {
             if (narrow[i].m_oindex < center)
             {
@@ -230,7 +229,7 @@ void Chipper::Split(RefList& wide, RefList& narrow, RefList& spare,
 // ordered, but not for our split, so we have to find the max/min entries
 // for each partition in the final split.
 void Chipper::FinalSplit(RefList& wide, RefList& narrow,
-    uint32_t pleft, uint32_t pright)  
+    boost::uint32_t pleft, boost::uint32_t pright)  
 {
     
     boost::int64_t left1 = -1;
@@ -297,8 +296,8 @@ void Chipper::FinalSplit(RefList& wide, RefList& narrow,
          static_cast<boost::uint32_t>(right2) );
 }
 
-void Chipper::Emit(RefList& wide, uint32_t widemin, uint32_t widemax,
-    RefList& narrow, uint32_t narrowmin, uint32_t narrowmax )
+void Chipper::Emit(RefList& wide, boost::uint32_t widemin, boost::uint32_t widemax,
+    RefList& narrow, boost::uint32_t narrowmin, boost::uint32_t narrowmax )
 {
     Block b;
 
