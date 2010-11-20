@@ -40,6 +40,33 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
+
+// GDAL OSR
+#ifdef HAVE_GDAL
+
+// Supress inclusion of cpl_serv.h per #194, perhaps remove one day
+// when libgeotiff 1.4.0+ is widely used
+#define CPL_SERV_H_INCLUDED
+
+#include <ogr_srs_api.h>
+#include <cpl_port.h>
+#include <geo_normalize.h>
+#include <geovalues.h>
+#include <ogr_spatialref.h>
+#include <gdal.h>
+#include <xtiffio.h>
+#include <cpl_multiproc.h>
+#endif
+
+// GeoTIFF
+#ifdef HAVE_LIBGEOTIFF
+#include <geotiff.h>
+#include <geo_simpletags.h>
+#include <geo_normalize.h>
+#include <geo_simpletags.h>
+#include <geovalues.h>
+#endif // HAVE_LIBGEOTIFF
+
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/detail/private_utility.hpp>
 // boost

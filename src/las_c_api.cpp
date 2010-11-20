@@ -41,6 +41,16 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
+#ifdef HAVE_LIBGEOTIFF
+// Supress inclusion of cpl_serv.h per #194, perhaps remove one day
+// when libgeotiff 1.4.0+ is widely used
+#define CPL_SERV_H_INCLUDED
+
+#include <geotiff.h>
+#include <geo_simpletags.h>
+#include <geo_normalize.h>
+#endif
+
 #include <liblas/liblas.hpp>
 #include <liblas/lasreader.hpp>
 #include <liblas/laserror.hpp>
@@ -1847,11 +1857,11 @@ LAS_DLL void LASSRS_Destroy(LASSRSH hSRS){
     hSRS = NULL;
 }
 
-LAS_DLL const GTIF* LASSRS_GetGTIF(LASSRSH hSRS) {
+LAS_DLL const void* LASSRS_GetGTIF(LASSRSH hSRS) {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_GetGTIF", 0);
     
     try {
-        return ((liblas::SpatialReference*) hSRS)->GetGTIF();
+        return (const void *) ((liblas::SpatialReference*) hSRS)->GetGTIF();
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_GetGTIF");
@@ -1859,13 +1869,13 @@ LAS_DLL const GTIF* LASSRS_GetGTIF(LASSRSH hSRS) {
     }
 }
 
-LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const GTIF* pgtiff, const ST_TIFF* ptiff)
+LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const void* pgtiff, const void* ptiff)
 {
     VALIDATE_LAS_POINTER1(hSRS, "LASSRS_SetGTIF", LE_Failure);
     VALIDATE_LAS_POINTER1(pgtiff, "LASSRS_SetGTIF", LE_Failure);
     VALIDATE_LAS_POINTER1(ptiff, "LASSRS_SetGTIF", LE_Failure);
     try {
-        ((liblas::SpatialReference*) hSRS)->SetGTIF(pgtiff, ptiff);
+        ((liblas::SpatialReference*) hSRS)->SetGTIF((const GTIF*)pgtiff, (const ST_TIFF*) ptiff);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetGTIF");

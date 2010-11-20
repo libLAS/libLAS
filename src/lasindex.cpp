@@ -2132,7 +2132,7 @@ const std::vector<boost::uint32_t>& IndexIterator::operator()(boost::int32_t n)
 		ResetPosition();
 		m_advance = 1;
 	} // if
-	else if (n < m_conformingPtsFound)
+	else if ((boost::uint32_t)n < m_conformingPtsFound)
 	{
 		ResetPosition();
 		m_advance = n + 1;

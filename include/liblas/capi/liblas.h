@@ -59,15 +59,6 @@ typedef struct LASSRSHS *LASSRSH;
 typedef struct LASSchemaHS *LASSchemaH;
 
 
-/* Fake out the compiler if we don't have libgeotiff */
-#ifndef HAVE_LIBGEOTIFF
-    typedef struct GTIFS * GTIF;
-    typedef struct TIFFS * TIFF;
-#else
-#include <geotiff.h>
-#endif
-
-
 LAS_C_START
 
 
@@ -1132,8 +1123,8 @@ LAS_DLL LASError LASPoint_SetColor(LASPointH hPoint, const LASColorH hColor);
 */
 LAS_DLL LASSRSH LASSRS_Create(void);
 
-
-LAS_DLL const GTIF* LASSRS_GetGTIF(LASSRSH hSRS);
+LAS_DLL const /*GTIF*/ void* LASSRS_GetGTIF(LASSRSH hSRS);
+LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const /* GTIF */ void* pgtiff, const /* ST_TIFF */ void* ptiff);
 LAS_DLL char* LASSRS_GetWKT(LASSRSH hSRS );
 LAS_DLL char* LASSRS_GetWKT_CompoundOK( LASSRSH hSRS );
 LAS_DLL LASError LASSRS_SetWKT(LASSRSH hSRS, const char* value);

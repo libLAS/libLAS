@@ -50,41 +50,17 @@
 #include <liblas/export.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 
-// GDAL OSR
-#ifdef HAVE_GDAL
-
-// Supress inclusion of cpl_serv.h per #194, perhaps remove one day
-// when libgeotiff 1.4.0+ is widely used
-#define CPL_SERV_H_INCLUDED
-
-#include <ogr_srs_api.h>
-#include <cpl_port.h>
-#include <geo_normalize.h>
-#include <geovalues.h>
-#include <ogr_spatialref.h>
-#include <gdal.h>
-#include <xtiffio.h>
-#include <cpl_multiproc.h>
-#endif
-
-// GeoTIFF
-#ifdef HAVE_LIBGEOTIFF
-#include <geotiff.h>
-#include <geo_simpletags.h>
-#include <geo_normalize.h>
-#include <geo_simpletags.h>
-#include <geovalues.h>
-#endif // HAVE_LIBGEOTIFF
-
 // std
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
 #include <string>
 #include <stdio.h>
 
-// Fake out the compiler if we don't have libgeotiff
-#if !defined(LIBGEOTIFF_VERSION) && !defined(HAVE_LIBGEOTIFF) 
+// Fake out the compiler if we don't have libgeotiff includes already
+#if !defined(__geotiff_h_)
 typedef struct GTIFS *GTIF;
+#endif
+#if !defined(__geo_simpletags_h_)
 typedef struct ST_TIFFS *ST_TIFF;
 #endif
 
@@ -208,14 +184,20 @@ private:
 
 } // namespace liblas
 
-#ifdef HAVE_GDAL
 LAS_C_START
+#if defined(__geotiff_h_)
+#if defined(GEO_NORMALIZE_H_INCLUDED)
 char LAS_DLL * GTIFGetOGISDefn(GTIF*, GTIFDefn*);
-int  LAS_DLL   GTIFSetFromOGISDefn(GTIF*, const char*);
-
-void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName);
-void SetGeogCSCitation(GTIF* psGTIF, OGRSpatialReference* poSRS, char* angUnitName, int nDatum, short nSpheroid);
-LAS_C_END
 #endif
+
+int  LAS_DLL   GTIFSetFromOGISDefn(GTIF*, const char*);
+void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName);
+
+#if defined(_OGR_SRS_API_H_INCLUDED)
+void SetGeogCSCitation(GTIF* psGTIF, OGRSpatialReference* poSRS, char* angUnitName, int nDatum, short nSpheroid);
+#endif // defined _OGR_SRS_API_H_INCLUDED
+#endif // defined __geotiff_h_
+
+LAS_C_END
 
 #endif // LIBLAS_LASSPATIALREFERENCE_HPP_INCLUDED
