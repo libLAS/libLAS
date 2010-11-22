@@ -93,7 +93,7 @@ LAS_DLL std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bo
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
 #endif
 
-// std::istream* OpenInput(std::string const& filename, bool bEnd);
+std::istream* OpenInput(std::string const& filename, bool bEnd);
 LAS_DLL std::string TryReadFileData(std::string const& filename);
 LAS_DLL std::vector<char> TryReadRawFileData(std::string const& filename);
 LAS_DLL bool term_progress(std::ostream& os, double complete);
