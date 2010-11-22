@@ -10,7 +10,7 @@ except ImportError:
 from sys import version_info
 
 try:
-    readme = file('../README','rb').read()
+    readme = file('../doc/index.txt','rb').read()
 except:
     readme = ''
 
@@ -18,7 +18,7 @@ install_requires = ['setuptools']
 
 import os
 
-version = '1.6.0b2'
+version = '1.6.0b3'
 
 scripts =['scripts/oci2las.py']
         

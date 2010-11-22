@@ -33,7 +33,7 @@ LAS_DLL bool WipeBlockTable(   OWConnection* connection,
                     std::string cloudColumnName);
 LAS_DLL std::string to_upper(const std::string&);
 LAS_DLL std::string ReadSQLData(std::string filename);
-LAS_DLL std::istream* OpenInput(std::string const& filename, bool bEnd) ;
+// LAS_DLL std::istream* OpenInput(std::string const& filename, bool bEnd) ;
 
 #ifdef _WIN32
 #define compare_no_case(a,b,n)  _strnicmp( (a), (b), (n) )

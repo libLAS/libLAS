@@ -82,15 +82,6 @@ set(APPS_CPP_DEPENDENCIES
 
 link_directories(${Boost_LIBRARY_DIRS})
 
-set (LASKERNEL_SOURCES laskernel.cpp)
-add_library(${LASKERNEL_LIB_NAME} SHARED ${LASKERNEL_SOURCES})
-target_link_libraries(${LASKERNEL_LIB_NAME}
-                      ${LIBLAS_LIB_NAME})
-
-install(TARGETS ${LASKERNEL_LIB_NAME} 
-  RUNTIME DESTINATION ${LIBLAS_BIN_DIR}
-  LIBRARY DESTINATION ${LIBLAS_LIB_DIR}
-  ARCHIVE DESTINATION ${LIBLAS_LIB_DIR})
 
 # Build lasinfo
 if(LASINFO_OLD)
@@ -107,13 +98,13 @@ if(LAS2LAS_OLD)
 endif()
 
 if(LAS2LAS)
-    add_executable(${LAS2LAS} las2las.cpp )
-    target_link_libraries(${LAS2LAS} ${APPS_CPP_DEPENDENCIES} ${LASKERNEL_LIB_NAME})
+    add_executable(${LAS2LAS} las2las.cpp laskernel.cpp)
+    target_link_libraries(${LAS2LAS} ${APPS_CPP_DEPENDENCIES} )
 endif()
 
 if(LASINFO)
-    add_executable(${LASINFO} lasinfo.cpp )
-    target_link_libraries(${LASINFO} ${APPS_CPP_DEPENDENCIES} ${LASKERNEL_LIB_NAME} )
+    add_executable(${LASINFO} lasinfo.cpp laskernel.cpp )
+    target_link_libraries(${LASINFO} ${APPS_CPP_DEPENDENCIES}  )
 endif()
 
 # Build las2txt
@@ -157,8 +148,8 @@ endif()
 
 # Build las2oci
 if(LAS2OCI)
-    add_executable(${LAS2OCI} las2oci.cpp oci_wrapper.cpp kdx_util.cpp oci_util.cpp )
-    target_link_libraries(${LAS2OCI} ${APPS_CPP_DEPENDENCIES} ${ORACLE_LIBRARY} ${LASKERNEL_LIB_NAME})
+    add_executable(${LAS2OCI} las2oci.cpp oci_wrapper.cpp kdx_util.cpp oci_util.cpp laskernel.cpp )
+    target_link_libraries(${LAS2OCI} ${APPS_CPP_DEPENDENCIES} ${ORACLE_LIBRARY} )
 endif()
 
 if(BIGFILE_TEST)

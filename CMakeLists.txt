@@ -332,7 +332,7 @@ endif()
 # Version information
 SET(CPACK_PACKAGE_VERSION_MAJOR "1")
 SET(CPACK_PACKAGE_VERSION_MINOR "6")
-SET(CPACK_PACKAGE_VERSION_PATCH "0b2")
+SET(CPACK_PACKAGE_VERSION_PATCH "0b3")
 SET(OSGEO4W_UPSTREAM_RELEASE "1")
 
 SET(CPACK_SOURCE_GENERATOR "TGZ;ZIP;TBZ2")
@@ -364,6 +364,6 @@ include(CPack)
 
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
-#if (WIN32)
-#    include(BuildOSGeo4W)
-#endif(WIN32)
+if (WIN32)
+    include(BuildOSGeo4W)
+endif(WIN32)
