@@ -187,6 +187,12 @@ bool SpatialReference::IsGeoVLR(VariableRecord const& vlr) const
         return true;
     }
 
+    // OGR_WKT?
+    if (uid == vlr.GetUserId(true).c_str() && 2112 == vlr.GetRecordId())
+    {
+        return true;
+    }
+
     return false;
 }
 
@@ -321,6 +327,33 @@ void SpatialReference::ResetVLRs()
          m_vlrs.push_back(record);
     }
 #endif // ndef HAVE_LIBGEOTIFF
+
+
+    if( m_wkt == "" )
+        m_wkt = GetWKT( eCompoundOK );
+
+    // Add a WKT VLR if we have a WKT definition.
+    if( m_wkt != "" )
+    {
+        VariableRecord wkt_record;
+        std::vector<uint8_t> data;
+        const uint8_t* wkt_bytes = reinterpret_cast<const uint8_t*>(m_wkt.c_str());
+
+        wkt_record.SetRecordId( 2112 );
+        wkt_record.SetUserId("LASF_Projection");
+        wkt_record.SetDescription( "OGR variant of OpenGIS WKT SRS" );
+
+        // Would you be surprised if this remarshalling of bytes
+        // was annoying to me? FrankW
+        while( *wkt_bytes != 0 )
+            data.push_back( *(wkt_bytes++) );
+
+        wkt_record.SetRecordLength( data.size() );
+        wkt_record.SetData(data);
+
+        // not to speak of this additional copy!
+        m_vlrs.push_back( wkt_record );
+    }
 }
 
 void SpatialReference::SetGTIF(const GTIF* pgtiff, const ST_TIFF* ptiff) 
@@ -413,8 +446,42 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
     boost::ignore_unused_variable_warning(mode_flag);
     boost::ignore_unused_variable_warning(pretty);
 
-    return std::string();
+    // we don't have a way of making this pretty, or of stripping the compound wrapper.
+    return m_wkt;
 #else
+
+    // If we already have Well Known Text then try return it, possibly
+    // after some preprocessing.
+    if( m_wkt != "" )
+    {
+        std::string result_wkt = m_wkt;
+        
+        if( (mode_flag == eHorizontalOnly 
+             && strstr(result_wkt.c_str(),"COMPD_CS") != NULL)
+            || pretty )
+        {
+            OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(result_wkt.c_str());
+            char *pszWKT = NULL;
+
+            if( mode_flag == eHorizontalOnly )
+                poSRS->StripVertical();
+
+            if (pretty) 
+                poSRS->exportToPrettyWkt(&pszWKT, FALSE );
+            else
+                poSRS->exportToWkt( &pszWKT );
+            
+            OSRDestroySpatialReference( poSRS );
+
+            result_wkt = pszWKT;
+            CPLFree( pszWKT );
+        }
+
+        return result_wkt;
+    }
+
+    // Otherwise build WKT from GeoTIFF VLRs. 
+
     GTIFDefn sGTIFDefn;
     char* pszWKT = 0;
     if (!m_gtiff)
@@ -434,9 +501,13 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
             CPLFree( pszWKT );
             pszWKT = NULL;
             poSRS->exportToPrettyWkt(&pszWKT, false);
-            delete poSRS;
+            OSRDestroySpatialReference( poSRS );
+
         }
-                
+
+        // save this for future calls, etc.
+        m_wkt = (const char *) pszWKT;
+
         // Older versions of GDAL lack StripVertical(), but should never
         // actually return COMPD_CS anyways.
 #if (GDAL_VERSION_NUM >= 1700) && (GDAL_RELEASE_DATE >= 20100110)
@@ -462,7 +533,6 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
 #else
         boost::ignore_unused_variable_warning(mode_flag);
 #endif
-
 
         if (pszWKT)
         {
@@ -503,13 +573,14 @@ void SpatialReference::SetFromUserInput(std::string const& v)
 
 void SpatialReference::SetWKT(std::string const& v)
 {
+    m_wkt = v;
+
     if (!m_gtiff)
     {
         GetGTIF(); 
     }
 
 #ifdef HAVE_GDAL
-    
     int ret = 0;
     ret = GTIFSetFromOGISDefn( m_gtiff, v.c_str() );
     if (!ret) 
@@ -522,12 +593,11 @@ void SpatialReference::SetWKT(std::string const& v)
     {
         throw std::runtime_error("The geotiff keys could not be written");
     }
-
-    ResetVLRs();
 #else
     boost::ignore_unused_variable_warning(v);
-    throw std::runtime_error("GDAL is not available, SpatialReference could not be set from WKT");
 #endif
+
+    ResetVLRs();
 }
 
 void SpatialReference::SetVerticalCS(boost::int32_t verticalCSType, 
@@ -562,6 +632,8 @@ void SpatialReference::SetVerticalCS(boost::int32_t verticalCSType,
     {
         throw std::runtime_error("The geotiff keys could not be written");
     }
+
+    // TODO: Should we clear WKT so it gets regenerated? 
 
     ResetVLRs();
 #else

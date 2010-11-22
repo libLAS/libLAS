@@ -54,7 +54,6 @@
 #include <stdexcept> // std::out_of_range
 #include <cstdlib> // std::size_t
 #include <string>
-#include <stdio.h>
 
 // Fake out the compiler if we don't have libgeotiff includes already
 #if !defined(__geotiff_h_)
@@ -74,6 +73,12 @@ public:
     {
         eHorizontalOnly = 1,
         eCompoundOK = 2
+    };
+
+    enum DefinativeGeoVLR
+    {
+        eGeoTIFF = 1,
+        eLLWKT = 2
     };
 
     /// Default constructor.
@@ -163,12 +168,21 @@ public:
     /// Return a copy of the LASVLRs that SpatialReference maintains
     std::vector<VariableRecord> GetVLRs() const;
 
+    void SetDefinativeGeoVLR( DefinativeGeoVLR eDGV );
+
+    DefinativeGeoVLR GetDefinativeGeoVLR( void ) const;
+
     liblas::property_tree::ptree GetPTree() const;    
 private:
 
     // FIXME: Define as shared_ptr<GTIF> with custom deleter to get rid of bloated mem management, unsafe anyway --mloskot
-    GTIF* m_gtiff;
-    ST_TIFF* m_tiff;
+    GTIF*       m_gtiff;
+    ST_TIFF*    m_tiff;
+    bool        m_gtiff_primary;
+
+    mutable std::string m_wkt;
+
+    DefinativeGeoVLR  m_definative_geo_vlr;
 
     std::vector<VariableRecord> m_vlrs;
     bool IsGeoVLR(VariableRecord const& vlr) const;
