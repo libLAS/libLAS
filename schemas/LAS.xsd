@@ -124,7 +124,7 @@
                 </xs:annotation>   
             </xs:element>
 
-            <xs:element minOccurs="0" name="offset" type="xs:double"/>
+            <xs:element minOccurs="0" name="offset" type="xs:double">
                 <xs:annotation>
                     <xs:documentation>
                         The double offset to use when applying a scaling 
