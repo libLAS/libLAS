@@ -57,10 +57,10 @@ namespace tut
         liblas::SpatialReference const& ref = header.GetSRS();
         
         const char* wkt_c = "PROJCS[\"WGS 84 / UTM zone 17N\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-81],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"32617\"]]";
-        ensure_equals("WKT comparison", wkt_c, ref.GetWKT());
+        ensure_equals("WKT comparison", ref.GetWKT(), wkt_c );
         
         const char* proj4_c = "+proj=utm +zone=17 +datum=WGS84 +units=m +no_defs ";
-        ensure_equals("Proj.4 comparison", proj4_c, ref.GetProj4());
+        ensure_equals("Proj.4 comparison", ref.GetProj4(), proj4_c);
 
     }
 
@@ -73,7 +73,7 @@ namespace tut
         const char* proj4_c = "+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs ";
         ref.SetProj4(proj4_c);
         
-        ensure_equals("Proj.4 comparison", proj4_c, ref.GetProj4());
+        ensure_equals("Proj.4 comparison", ref.GetProj4(), proj4_c);
         
     }
 
@@ -85,11 +85,11 @@ namespace tut
         liblas::SpatialReference ref;
         const char* code = "EPSG:4326";
         const char* proj4_c = "+proj=longlat +datum=WGS84 +no_defs ";
-        const char* wkt_c = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]]";
+        const char* wkt_c = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
         ref.SetFromUserInput(code);
         
-        ensure_equals("Proj.4 comparison", proj4_c, ref.GetProj4());
-        ensure_equals("WKT comparison", wkt_c, ref.GetWKT());
+        ensure_equals("Proj.4 comparison", ref.GetProj4(), proj4_c);
+        ensure_equals("WKT comparison", ref.GetWKT(), wkt_c );
         
     }
 
@@ -106,13 +106,13 @@ namespace tut
         liblas::SpatialReference const& in_ref = header.GetSRS();
         
         const char* utm15_wkt = "PROJCS[\"NAD83 / UTM zone 15N\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,298.2572221010002,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6269\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4269\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-93],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"26915\"]]";
-        ensure_equals("Input WKT comparison", utm15_wkt, in_ref.GetWKT());
+        ensure_equals("Input WKT comparison", in_ref.GetWKT(), utm15_wkt);
 
         const char* epsg4326_wkt = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]]";
         
         liblas::SpatialReference out_ref;
         out_ref.SetWKT(epsg4326_wkt);
-        ensure_equals("Output WKT comparison", epsg4326_wkt, out_ref.GetWKT());
+        ensure_equals("Output WKT comparison", out_ref.GetWKT(), epsg4326_wkt);
         
         liblas::HeaderPtr out_hdr = liblas::HeaderPtr(new liblas::Header(header));
         out_hdr->SetScale(0.00000001, 0.00000001, 0.01);
@@ -185,8 +185,8 @@ namespace tut
         ref.SetFromUserInput(code);
         
         std::vector<liblas::VariableRecord> const& vlrs = ref.GetVLRs();
-        ensure_equals("VLR count", boost::uint32_t(3), vlrs.size());
-        ensure_equals("First record size", boost::uint32_t(64), vlrs[0].GetRecordLength());
+        ensure_equals("VLR count", vlrs.size(), boost::uint32_t(4));
+        ensure_equals("First record size", vlrs[0].GetRecordLength(), boost::uint32_t(64));
         
     }
 
