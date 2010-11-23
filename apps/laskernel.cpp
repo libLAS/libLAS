@@ -1128,9 +1128,14 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         liblas::SpatialReference in_ref;
         
         std::string input_srs = vm["a_srs"].as< string >();
+        
+        if (!input_srs.empty())
+        {
+            in_ref.SetFromUserInput(input_srs);
+        }
+        
         if (verbose)
-            std::cout << "Setting input SRS to " << input_srs << std::endl;
-        in_ref.SetFromUserInput(input_srs);
+            std::cout << "Setting input SRS to '" << input_srs << "'"<< std::endl;
         header.SetSRS(in_ref);
     }
 
