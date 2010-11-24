@@ -19,6 +19,7 @@ set(LASINFO lasinfo)
 set(LASMERGE lasmerge)
 set(LAS2LAS las2las)
 set(LAS2LAS_OLD las2las-old)
+set(LAS2TXT_OLD las2txt-old)
 set(LAS2TXT las2txt)
 set(TXT2LAS txt2las)
 set(TS2LAS ts2las)
@@ -47,8 +48,8 @@ if(ORACLE_FOUND AND GDAL_FOUND)
 endif()
 
 set(LIBLAS_UTILITIES
-    ${LASINFO_OLD} ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT} ${TXT2LAS} 
-    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS} ${LAS2LAS_OLD} ${LASBLOCK} ${TS2LAS})
+    ${LASINFO_OLD} ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT_OLD} ${TXT2LAS} 
+    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS} ${LAS2LAS_OLD} ${LASBLOCK} ${TS2LAS}  ${LAS2TXT} )
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -82,6 +83,8 @@ set(APPS_CPP_DEPENDENCIES
 
 link_directories(${Boost_LIBRARY_DIRS})
 
+#    add_executable(lasschematest lasschematest.cpp laskernel.cpp)
+#    target_link_libraries(lasschematest ${APPS_CPP_DEPENDENCIES} ${LIBXML2_LIBRARIES})
 
 # Build lasinfo
 if(LASINFO_OLD)
@@ -97,6 +100,7 @@ if(LAS2LAS_OLD)
     target_link_libraries(${LAS2LAS_OLD} ${LIBLAS_C_LIB_NAME})
 endif()
 
+
 if(LAS2LAS)
     add_executable(${LAS2LAS} las2las.cpp laskernel.cpp)
     target_link_libraries(${LAS2LAS} ${APPS_CPP_DEPENDENCIES} )
@@ -108,10 +112,15 @@ if(LASINFO)
 endif()
 
 # Build las2txt
+if(LAS2TXT_OLD)
+    set(LAS2TXT_OLD_SRC lascommon.c ${LAS2TXT}.c)
+    add_executable(${LAS2TXT_OLD} ${LAS2TXT_OLD_SRC})
+    target_link_libraries(${LAS2TXT_OLD} ${LIBLAS_C_LIB_NAME})
+endif()
+
 if(LAS2TXT)
-    set(LAS2TXT_SRC lascommon.c ${LAS2TXT}.c)
-    add_executable(${LAS2TXT} ${LAS2TXT_SRC})
-    target_link_libraries(${LAS2TXT} ${LIBLAS_C_LIB_NAME})
+    add_executable( ${LAS2TXT}  las2txt.cpp laskernel.cpp )
+    target_link_libraries(${LAS2TXT} ${APPS_CPP_DEPENDENCIES}  )
 endif()
  
 # Build txt2las
