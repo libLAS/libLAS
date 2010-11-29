@@ -428,6 +428,7 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
 
             ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Verbose message output")
             ("xml", po::value<bool>(&output_xml)->zero_tokens()->implicit_value(true), "Output as XML -- no formatting given by --parse is respected in this case.")
+            ("stdout", po::value<bool>(&bUseStdout)->zero_tokens()->implicit_value(true), "Output data to stdout")
 
         ;
 
@@ -491,9 +492,17 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
             
 
         } else {
-            std::cerr << "Output text file not specified!\n";
-            OutputHelp(std::cout, options);
-            return 1;
+            
+            if (bUseStdout) 
+            {
+                os = &std::cout;
+            } else 
+            {
+                std::cerr << "Output text file not specified!\n";
+                OutputHelp(std::cout, options);
+                return 1;
+            }
+
         }
         filters = GetFilters(vm, verbose);
 
