@@ -4,7 +4,7 @@
     <las:position>0</las:position>
     <las:size>0</las:size>
     <las:required>true</las:required>
-    <las:name3>las:name</las:name>
+    <las:name>las:name</las:name>
     <las:description>las:description</las:description>
     <las:active>true</las:active>
     <las:units>byte</las:units>
