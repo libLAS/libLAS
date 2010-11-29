@@ -60,12 +60,10 @@ class CachedReaderImpl : public ReaderImpl
 public:
 
     CachedReaderImpl(std::istream& ifs, std::size_t cache_size);
-    // ~CachedReaderImpl();
 
     HeaderPtr ReadHeader();
     liblas::Point const& ReadNextPoint(HeaderPtr header);
     liblas::Point const& ReadPointAt(std::size_t n, HeaderPtr header);
-    // void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
 
     void Seek(std::size_t n, HeaderPtr header);
     void Reset(HeaderPtr header);
@@ -82,6 +80,7 @@ private:
     void CacheData(boost::uint32_t position, HeaderPtr header);
 
     typedef std::vector<boost::uint8_t> cache_mask_type;
+
     cache_mask_type m_mask;
     cache_mask_type::size_type m_cache_size;    
     cache_mask_type::size_type m_cache_start_position;
