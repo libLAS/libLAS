@@ -249,9 +249,9 @@ namespace tut
         liblas::Header header;
         liblas::Writer writer(ofs, header);
 
-        std::ostream& os = writer.GetStream();
+        std::ostream* os = writer.GetStream();
 
-        ensure_equals(ofs, os); // same streams
+        ensure_equals(ofs, *os); // same streams
     }
 }
 

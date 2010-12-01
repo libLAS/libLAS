@@ -99,7 +99,7 @@ public:
 
     /// Allow fetching of the stream attached to the reader.
     /// @exception nothrow
-    std::istream& GetStream() const;
+    std::istream* GetStream() const;
 
     /// Checks if end-of-file has been reached.
     bool IsEOF() const;

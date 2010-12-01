@@ -153,9 +153,9 @@ namespace tut
         ifs.open(file10_.c_str(), std::ios::in | std::ios::binary);
         liblas::Reader reader(ifs);
 
-        std::istream& is = reader.GetStream();
+        std::istream* is = reader.GetStream();
 
-        ensure_equals(ifs, is);
+        ensure_equals(ifs, *is);
     }
 
 

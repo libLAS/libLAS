@@ -301,9 +301,9 @@ void Reader::Init()
     m_in_srs = m_header->GetSRS();
 }
 
-std::istream& Reader::GetStream() const
+std::istream* Reader::GetStream() const
 {
-    return m_pimpl->GetStream();
+    return &(m_pimpl->GetStream());
 }
 
 void Reader::Reset() 

@@ -259,7 +259,7 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader)
 
     try { 
         liblas::Reader* reader = (liblas::Reader*)hReader;
-        std::istream* istrm = &(reader->GetStream());
+        std::istream* istrm = reader->GetStream();
 
         delete reader;
         hReader = NULL;
@@ -1419,7 +1419,7 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
     
     try { 
         liblas::Writer* writer = (liblas::Writer*)hWriter;
-        std::ostream* ostrm = &(writer->GetStream());
+        std::ostream* ostrm = writer->GetStream();
 
         delete writer;
         hWriter = NULL;

@@ -83,7 +83,7 @@ public:
     bool WritePoint(Point const& point);
 
     /// Allow fetching of the stream
-    std::ostream& GetStream() const;
+    std::ostream* GetStream() const;
     
     /// Allow in-place writing of header
     void WriteHeader(Header& header);
