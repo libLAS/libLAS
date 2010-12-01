@@ -48,8 +48,8 @@
 namespace liblas { namespace detail {
 
 WriterBase::WriterBase(std::ostream& ofs, boost::uint32_t& count)
-    : m_pointCount(count)
-    , m_ofs(ofs)
+    : m_ofs(ofs)
+    , m_pointCount(count)
 {
 }
 
