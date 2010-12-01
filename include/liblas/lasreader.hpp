@@ -101,9 +101,6 @@ public:
     /// @exception nothrow
     std::istream* GetStream() const;
 
-    /// Checks if end-of-file has been reached.
-    bool IsEOF() const;
-
     /// Fetches next point record in file.
     /// @exception may throw std::exception
     bool ReadNextPoint();
