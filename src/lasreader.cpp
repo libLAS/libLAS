@@ -311,11 +311,6 @@ void Reader::Reset()
     Init();
 }
 
-bool Reader::IsEOF() const
-{
-    return m_pimpl->GetStream().eof();
-}
-
 bool Reader::SetSRS(const SpatialReference& srs)
 {
     return SetOutputSRS(srs);
