@@ -92,10 +92,7 @@ void Point::write(const liblas::Point& point)
     std::vector<boost::uint8_t> const& data = point.GetData();    
     detail::write_n(m_ofs, data.front(), m_header->GetDataRecordLength());
 
-
-    uint32_t& count = GetPointCount();
-    count++;
-    SetPointCount(count);
+    m_pointCount++;
 
     // write in our extra data that the user set on the 
     // point up to the header's specified DataRecordLength

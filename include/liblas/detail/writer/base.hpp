@@ -58,12 +58,10 @@ public:
 
     WriterBase(std::ostream& ofs, boost::uint32_t& count);
     ~WriterBase();
-    
-    boost::uint32_t& GetPointCount() const { return m_pointCount; }
-    void SetPointCount(boost::uint32_t& count) { m_pointCount = count; }
 
 protected:
     std::ostream& m_ofs;
+    boost::uint32_t& m_pointCount;
     
 private:
 
@@ -71,7 +69,6 @@ private:
     WriterBase(WriterBase const& other);
     WriterBase& operator=(WriterBase const& rhs);
 
-    boost::uint32_t& m_pointCount;
 };
 
 }} // namespace liblas::detail

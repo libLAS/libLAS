@@ -112,9 +112,7 @@ void Header::write()
             throw std::runtime_error(oss.str());
         }
 
-        uint32_t& cnt =  GetPointCount();
-        cnt = static_cast<uint32_t>(count);
-        SetPointCount(cnt);
+        m_pointCount = static_cast<uint32_t>(count);
 
         // Position to the beginning of the file to start writing the header
         m_ofs.seekp(0, ios::beg);
@@ -282,7 +280,7 @@ void Header::write()
     }           
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
-    if (GetPointCount() != 0)
+    if (m_pointCount != 0)
         m_ofs.seekp(0, std::ios::end);
     
 }
