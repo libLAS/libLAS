@@ -56,15 +56,11 @@ namespace liblas
 Writer::Writer(std::ostream& ofs, Header const& header) :
     m_pimpl(detail::WriterFactory::Create(ofs)), m_header(HeaderPtr(new liblas::Header(header))), 
     m_filters(0),
-    m_transforms(0),
-    m_reprojection_transform(TransformPtr())
+    m_transforms(0)
 {
     liblas::Header const& h = m_pimpl->WriteHeader(*m_header);
     m_header = HeaderPtr(new liblas::Header(h));
 
-    // Copy our input SRS.  If the user issues SetInputSRS, it will 
-    // be overwritten
-    m_in_srs = m_header->GetSRS();
 }
 
 Writer::~Writer()
@@ -149,65 +145,6 @@ void Writer::WriteHeader(Header& header)
     m_header = HeaderPtr(new liblas::Header(h));
 }
 
-bool Writer::SetSRS(const SpatialReference& srs)
-{
-    SetOutputSRS(srs);
-    return true;
-}
 
-bool Writer::SetInputSRS(const SpatialReference& srs)
-{
-    m_in_srs = srs;
-    return true;
-}
-
-bool Writer::SetOutputSRS(const SpatialReference& srs)
-{
-    m_out_srs = srs;
-
-    // Check the very first transform and see if it is 
-    // the reprojection transform.  If it is, we're going to 
-    // nuke it and replace it with a new one
-    
-    // If there was nothing there, we're going to make a new reprojection
-    // transform and put in on the transforms list (or make a new transforms
-    // list if *that* isn't there).
-    TransformI* possible_reprojection_transform = 0;
-    
-    if (m_transforms != 0) {
-        if (m_transforms->size() > 0) {
-            possible_reprojection_transform = m_transforms->at(0);
-        }
-    }
-    
-    if (m_reprojection_transform.get() == possible_reprojection_transform && m_reprojection_transform.get() != 0) {
-        // remove it from the transforms list
-        std::vector<TransformI*>::iterator i = m_transforms->begin();
-        m_transforms->erase(i);
-    }
-    
-    // overwrite our reprojection transform
-    m_reprojection_transform = TransformPtr(new ReprojectionTransform(m_in_srs, m_out_srs, m_header));
-    
-    if (m_transforms != 0) {
-        if (m_transforms->size() > 0) {
-            // Insert the new reprojection transform to the beginning of the 
-            // vector there are already transforms there.
-            m_transforms->insert(m_transforms->begin(), m_reprojection_transform.get());
-            
-        } else {
-            // List exists, but its size is 0
-            m_transforms->push_back(m_reprojection_transform.get());
-        }
-    } else {
-        // transforms don't exist yet, make a new one and put our 
-        // reprojection transform on it.
-        m_transforms = new std::vector<liblas::TransformI*>;
-        m_transforms->push_back(m_reprojection_transform.get());
-    }
-
-
-    return true;
-}
 } // namespace liblas
 

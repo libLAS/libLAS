@@ -117,21 +117,6 @@ public:
     /// ReadNextPoint operations
     /// @exception may throw std::exception
     bool seek(std::size_t n);
-    
-    /// Reproject data as they are written if the Reader's reference is
-    /// different than the Header's.
-    /// @exception may throw std::exception
-    bool SetSRS(const SpatialReference& ref);
-    
-    /// Override the spatial reference of the Reader's Header for 
-    /// writing purposes.
-    /// @exception may throw std::exception
-    bool SetInputSRS(const SpatialReference& ref);
-
-    /// Override the spatial reference of the Reader's Header for 
-    /// writing purposes.
-    /// @exception may throw std::exception
-    bool SetOutputSRS(const SpatialReference& ref);
 
     /// Provides index-based access to point records.
     /// The operator is implemented in terms of ReadPointAt method
@@ -180,10 +165,6 @@ private:
     std::vector<liblas::FilterPtr> m_filters;
     std::vector<liblas::TransformPtr> m_transforms;
 
-    TransformPtr m_reprojection_transform;
-
-    SpatialReference m_out_srs;
-    SpatialReference m_in_srs;  
 };
 
 } // namespace liblas

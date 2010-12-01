@@ -295,10 +295,7 @@ void Reader::Init()
     // keep it around until the reader closes down and then deletes.  
     // 
     m_point = m_empty_point.get();
-    
-    // Copy our input SRS.  If the user issues SetInputSRS, it will 
-    // be overwritten
-    m_in_srs = m_header->GetSRS();
+
 }
 
 std::istream* Reader::GetStream() const
@@ -310,57 +307,6 @@ void Reader::Reset()
 {
     Init();
 }
-
-bool Reader::SetSRS(const SpatialReference& srs)
-{
-    return SetOutputSRS(srs);
-}
-
-bool Reader::SetInputSRS(const SpatialReference& srs)
-{
-    m_in_srs = srs;
-    return true;
-}
-
-bool Reader::SetOutputSRS(const SpatialReference& srs)
-{
-    m_out_srs = srs;
-    m_pimpl->Reset(m_header);
-
-    // Check the very first transform and see if it is 
-    // the reprojection transform.  If it is, we're going to 
-    // nuke it and replace it with a new one
-    
-    // If there was nothing there, we're going to make a new reprojection
-    // transform and put in on the transforms list (or make a new transforms
-    // list if *that* isn't there).
-    liblas::TransformPtr possible_reprojection_transform;
-    
-   if (!m_transforms.empty()) {
-        possible_reprojection_transform = m_transforms.at(0);
-    }
-    
-    if (m_reprojection_transform == possible_reprojection_transform && m_reprojection_transform) {
-        // remove it from the transforms list
-        std::vector<liblas::TransformPtr>::iterator i = m_transforms.begin();
-        m_transforms.erase(i);
-    }
-    
-    // overwrite our reprojection transform
-    m_reprojection_transform = TransformPtr(new ReprojectionTransform(m_in_srs, m_out_srs));
-    
-    if (!m_transforms.empty()) {
-        // Insert the new reprojection transform to the beginning of the 
-        // vector there are already transforms there.
-        m_transforms.insert(m_transforms.begin(), m_reprojection_transform);
-        
-    } else {
-        // List exists, but its size is 0
-        m_transforms.push_back(m_reprojection_transform);
-    } 
-    return true;
-}
-
 
 } // namespace liblas
 
