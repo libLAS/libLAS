@@ -1336,4 +1336,26 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
     return transforms;
 }
 
+liblas::property_tree::ptree SummarizeReader(liblas::Reader& reader) 
+{
+    liblas::Summary s;
+
+    reader.Reset();
+    bool read = reader.ReadNextPoint();
+    if (!read)
+    {
+        throw std::runtime_error("Unable to read any points from file.");
+    }
+        
+    while (read) 
+    {
+        liblas::Point const& p = reader.GetPoint();
+        s.AddPoint(p);
+        read = reader.ReadNextPoint();
+    }
+
+    return s.GetPTree();
+
+
+}
 

@@ -361,54 +361,6 @@ bool Reader::SetOutputSRS(const SpatialReference& srs)
     return true;
 }
 
-liblas::property_tree::ptree Reader::Summarize() 
-{
-    liblas::Summary s;
 
-    Reset();
-    bool read = ReadNextPoint();
-    if (!read)
-    {
-        throw std::runtime_error("Unable to read any points from file.");
-    }
-        
-    while (read) 
-    {
-        liblas::Point const& p = GetPoint();
-        s.AddPoint(p);
-        read = ReadNextPoint();
-    }
-
-    return s.GetPTree();
-    
-    // Summarize the schema
-    // liblas::Schema schema = m_header->GetSchema();
-    
-    // // if both min == max *and* min is 0, we're declaring this 
-    // // dimension inactive.
-    // if (detail::compare_distance(max.GetX(), min.GetX() ) && detail::compare_distance(0, min.GetX()))
-    // {
-    //     DimensionPtr d = schema.GetDimension("X");
-    //     d->IsActive(false);
-    // }
-    // 
-    // // if both min == max *and* min is 0, we're declaring this 
-    // // dimension inactive.
-    // if (detail::compare_distance(max.GetY(), min.GetY() ) && detail::compare_distance(0, min.GetY()))
-    // {
-    //     DimensionPtr d = schema.GetDimension("Y");
-    //     d->IsActive(false);
-    // }
-    // 
-    // // if both min == max *and* min is 0, we're declaring this 
-    // // dimension inactive.
-    // if (detail::compare_distance(max.GetZ(), min.GetZ() ) && detail::compare_distance(0, min.GetZ()))
-    // {
-    //     DimensionPtr d = schema.GetDimension("Z");
-    //     d->IsActive(false);
-    // }
-
-
-}
 } // namespace liblas
 

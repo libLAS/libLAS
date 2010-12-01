@@ -68,7 +68,8 @@ bool process(   std::string const& input,
     
     if (min_offset) 
     {
-        liblas::property_tree::ptree tree = reader.Summarize();
+        liblas::property_tree::ptree tree = SummarizeReader(reader);
+
         try
         {
             header.SetOffset(tree.get<double>("summary.points.minimum.x"),

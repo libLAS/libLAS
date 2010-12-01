@@ -49,7 +49,6 @@
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lastransform.hpp>
 #include <liblas/lasfilter.hpp>
-#include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/export.hpp>
 // boost
 #include <boost/cstdint.hpp>
@@ -160,9 +159,7 @@ public:
     /// the internal transform creation
     void SetTransforms(std::vector<liblas::TransformPtr> const& transforms) {m_transforms = transforms;}
 
-    /// Summarize the file represented by the reader in the form of a 
-    /// property_tree.  
-    liblas::property_tree::ptree Summarize();
+
 private:
 
     // Blocked copying operations, declared but not defined.
