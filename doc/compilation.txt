@@ -447,6 +447,18 @@ Configure the basic core library for the Xcode build:
     -- Generating done
     -- Build files have been written to: /Users/hobu/hg/liblas-cmake/xcode
 
+
+Alternatively, if you have `KyngChaos`_ frameworks for `GDAL`_ and `libgeotiff`_ installed, you can provide locations for those as part of your ``cmake`` invocation:
+
+::
+
+    $ cmake -G "Xcode" \
+      -D GDAL_CONFIG=/Library/Frameworks/GDAL.framework/Programs/gdal-config \
+      -D GEOTIFF_INCLUDE_DIR=/Library/Frameworks/UnixImageIO.framework/unix/include \
+      -D GEOTIFF_LIBRARY=/Library/Frameworks/UnixImageIO.framework/unix/lib/libgeotiff.dylib \
+      ..
+
+    
 :: 
     
     $ open libLAS.xcodeproj/
@@ -616,3 +628,4 @@ substituting accordingly, to values that match your system layout.
 .. _`LLVM`: http://llvm.org/
 .. _`OSGeo4W`: http://trac.osgeo.org/osgeo4w/
 .. _`Boost`: http://www.boost.org/
+
