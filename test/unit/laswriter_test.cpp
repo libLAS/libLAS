@@ -253,5 +253,47 @@ namespace tut
 
         ensure_equals(ofs, *os); // same streams
     }
+
+    // Test appending to an existing file
+    template<>
+    template<>
+    void to::test<5>()
+    {
+        std::ofstream ofs;
+        ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
+
+        liblas::Header header;
+      	header.SetDataOffset(759);//Toggle to see the differences
+      	header.SetDataFormatId( liblas::ePointFormat1 );
+      	{
+            liblas::Writer testWriter( ofs, header);
+      	}
+      	
+        ofs.close();
+        
+        ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
+        {
+            
+    	    liblas::Writer test2Writer( ofs, header);
+
+            size_t count = 500;
+          	for ( size_t i = 0; i < count ; i++ )
+          	{
+                liblas::Point point;
+                point.SetCoordinates( 10 + i, 20 + i, 30 + i );
+                test2Writer.WritePoint( point );
+          	}
+      	}
+      	
+        ofs.close();
+        
+        std::ifstream ifs;
+        ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
+        liblas::Reader reader(ifs);
+        
+        liblas::Header const& h = reader.GetHeader();
+        ensure_equals("Appended point count does not match", h.GetPointRecordsCount(), 500);
+
+    }
 }
 

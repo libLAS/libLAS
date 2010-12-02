@@ -105,7 +105,7 @@ void Header::write()
         
         if (points < 0) {
             std::ostringstream oss;
-            oss << "The header's data offset," << m_header.GetDataOffset() 
+            oss << "The header's data offset, " << m_header.GetDataOffset() 
                 <<", is much larger than the size of the file, " << end
                 <<", and something is amiss.  Did you use the right header"
                 <<" offset value?";
@@ -281,7 +281,13 @@ void Header::write()
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
     if (m_pointCount != 0)
+    {
         m_ofs.seekp(0, std::ios::end);
+    }
+    else
+    {
+        m_ofs.seekp(m_header.GetDataOffset(), std::ios::beg);
+    }
     
 }
 
