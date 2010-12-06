@@ -71,8 +71,14 @@ public:
     
     void Reset(HeaderPtr header);
 
+    void SetFilters(std::vector<liblas::FilterPtr> const& filters);
+    void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
+
+
 protected:
     void CreateTransform();
+    bool FilterPoint(liblas::Point const& p);
+    void TransformPoint(liblas::Point& p);
 
     typedef std::istream::off_type off_type;
     typedef std::istream::pos_type pos_type;
@@ -84,6 +90,8 @@ protected:
     PointReaderPtr m_point_reader;
     HeaderReaderPtr m_header_reader;
 
+    std::vector<liblas::FilterPtr> m_filters;
+    std::vector<liblas::TransformPtr> m_transforms;
 private:
 
     // Blocked copying operations, declared but not defined.

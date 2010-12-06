@@ -63,35 +63,29 @@ namespace liblas
 {
 
 Reader::Reader(std::istream& ifs) :
-    m_pimpl(new detail::CachedReaderImpl(ifs,3)),
+    m_pimpl(new detail::ReaderImpl(ifs)),
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(false),
-    m_filters(0),
-    m_transforms(0)
+    bCustomHeader(false)
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size) :
-    m_pimpl(new detail::CachedReaderImpl(ifs, cache_size)),
+    m_pimpl(new detail::ReaderImpl(ifs)),
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(false),
-    m_filters(0),
-    m_transforms(0)
+    bCustomHeader(false)
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size, Header const& header) :
-    m_pimpl(new detail::CachedReaderImpl(ifs, cache_size)),
+    m_pimpl(new detail::ReaderImpl(ifs)),
     m_header(new Header(header)),
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(true),
-    m_filters(0),
-    m_transforms(0)
+    bCustomHeader(true)
 {
     // if we have a custom header, create a slot for it and then copy 
     // the header we were given
@@ -103,9 +97,8 @@ Reader::Reader(ReaderI* reader) :
     m_pimpl(reader),
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(false),
-    m_filters(0),
-    m_transforms(0)
+    bCustomHeader(false)
+
 {
     Init();
 }
@@ -114,9 +107,7 @@ Reader::Reader(std::istream& ifs, Header const& header) :
     m_pimpl(new detail::ReaderImpl(ifs)),
     m_point(0),
     m_empty_point(new Point()),
-    bCustomHeader(true),
-    m_filters(0),
-    m_transforms(0)
+    bCustomHeader(true)
 {
     // if we have a custom header, create a slot for it and then copy 
     // the header we were given
@@ -130,9 +121,6 @@ Reader::~Reader()
     // std::auto_ptr with incomplete type (Reader).
     // delete m_empty_point;
     
-    // if (m_header != 0) {
-    //     delete m_header;
-    // }
 }
 
 Header const& Reader::GetHeader() const
@@ -145,25 +133,6 @@ Point const& Reader::GetPoint() const
     return *m_point;
 }
 
-bool Reader::KeepPoint(liblas::Point const& p)
-{    
-    // If there's no filters on this reader, we keep 
-    // the point no matter what.
-    if (m_filters.empty() ) {
-        return true;
-    }
-
-    std::vector<liblas::FilterPtr>::const_iterator fi;
-    for (fi = m_filters.begin(); fi != m_filters.end(); ++fi)
-    {
-        liblas::FilterPtr filter = *fi;
-        if (!filter->filter(p))
-        {
-            return false;
-        }
-    }
-    return true;
-}
 
 bool Reader::ReadNextPoint()
 {  
@@ -172,29 +141,29 @@ bool Reader::ReadNextPoint()
         // m_point = m_pimpl->ReadNextPoint(m_header).get();
         m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
 
-        // Filter the points and continue reading until we either find 
-        // one to keep or throw an exception.
-        if (!KeepPoint(*m_point))
-        {
-            m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-            while (!KeepPoint(*m_point))
-            {
-                m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-            }
-        }
-        
-        if (!m_transforms.empty())
-        {
-            // Apply the transforms to each point
-            std::vector<liblas::TransformPtr>::const_iterator ti;
-
-            for (ti = m_transforms.begin(); ti != m_transforms.end(); ++ti)
-            {
-                liblas::TransformPtr transform = *ti;
-                transform->transform(*m_point);
-            }            
-        }
-
+        // // Filter the points and continue reading until we either find 
+        // // one to keep or throw an exception.
+        // if (!KeepPoint(*m_point))
+        // {
+        //     m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
+        //     while (!KeepPoint(*m_point))
+        //     {
+        //         m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
+        //     }
+        // }
+        // 
+        // if (!m_transforms.empty())
+        // {
+        //     // Apply the transforms to each point
+        //     std::vector<liblas::TransformPtr>::const_iterator ti;
+        // 
+        //     for (ti = m_transforms.begin(); ti != m_transforms.end(); ++ti)
+        //     {
+        //         liblas::TransformPtr transform = *ti;
+        //         transform->transform(*m_point);
+        //     }            
+        // }
+        // 
         return true;
     }
     catch (std::out_of_range)
@@ -215,15 +184,6 @@ bool Reader::ReadPointAt(std::size_t n)
     try
     {
         m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
-        if (!m_transforms.empty())
-        {
-            std::vector<liblas::TransformPtr>::const_iterator ti;
-            for (ti = m_transforms.begin(); ti != m_transforms.end(); ++ti)
-            {
-                liblas::TransformPtr transform = *ti;
-                transform->transform(*m_point);
-            }            
-        }
         return true;
     }
     catch (std::out_of_range)
@@ -302,6 +262,16 @@ void Reader::Init()
 void Reader::Reset() 
 {
     Init();
+}
+
+void Reader::SetFilters(std::vector<liblas::FilterPtr> const& filters)
+{
+    m_pimpl->SetFilters(filters);
+}
+
+void Reader::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
+{
+    m_pimpl->SetTransforms(transforms);
 }
 
 } // namespace liblas

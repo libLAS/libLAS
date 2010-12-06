@@ -128,6 +128,9 @@ public:
     virtual void Seek(std::size_t n, HeaderPtr header) = 0;
     
     virtual void Reset(HeaderPtr header) = 0;
+    
+    virtual void SetFilters(std::vector<liblas::FilterPtr> const& filters) = 0;
+    virtual void SetTransforms(std::vector<liblas::TransformPtr> const& transforms) = 0;
 
     virtual ~ReaderI() {}
 };
