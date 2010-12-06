@@ -69,8 +69,6 @@ public:
     liblas::Point const& ReadPointAt(std::size_t n, HeaderPtr header);
     void Seek(std::size_t n, HeaderPtr header);
     
-    std::istream& GetStream() const;
-    
     void Reset(HeaderPtr header);
 
 protected:

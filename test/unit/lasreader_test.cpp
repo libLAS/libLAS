@@ -144,25 +144,10 @@ namespace tut
         test_file10_point2(reader[1]);
     }
 
-    // Test GetStream method
-    template<>
-    template<>
-    void to::test<7>()
-    {
-        std::ifstream ifs;
-        ifs.open(file10_.c_str(), std::ios::in | std::ios::binary);
-        liblas::Reader reader(ifs);
-
-        std::istream* is = reader.GetStream();
-
-        ensure_equals(ifs, *is);
-    }
-
-
     // Test seek nd GetPoint pair
     template<>
     template<>
-    void to::test<8>()
+    void to::test<7>()
     {
         std::ifstream ifs;
         ifs.open(file10_.c_str(), std::ios::in | std::ios::binary);

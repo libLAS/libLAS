@@ -82,9 +82,6 @@ public:
     /// \todo TODO: How to handle point_source_id in portable way, for LAS 1.0 and 1.1
     bool WritePoint(Point const& point);
 
-    /// Allow fetching of the stream
-    std::ostream* GetStream() const;
-    
     /// Allow in-place writing of header
     void WriteHeader(Header& header);
 

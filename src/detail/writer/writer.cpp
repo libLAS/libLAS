@@ -97,12 +97,6 @@ WriterImpl::~WriterImpl()
 
 }
 
-std::ostream& WriterImpl::GetStream() const
-{
-    return m_ofs;
-}
-
-
 WriterImpl* WriterFactory::Create(std::ostream& ofs)
 {
     if (!ofs)

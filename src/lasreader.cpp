@@ -298,10 +298,6 @@ void Reader::Init()
 
 }
 
-std::istream* Reader::GetStream() const
-{
-    return &(m_pimpl->GetStream());
-}
 
 void Reader::Reset() 
 {

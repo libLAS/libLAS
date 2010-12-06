@@ -132,11 +132,6 @@ bool Writer::WritePoint(Point const& point)
     return true;
 }
 
-std::ostream* Writer::GetStream() const
-{
-    return &(m_pimpl->GetStream());
-}
-
 void Writer::WriteHeader(Header& header)
 {
     // The writer may update our header as part of its 

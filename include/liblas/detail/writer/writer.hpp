@@ -66,8 +66,6 @@ public:
     void UpdateHeader(liblas::Header const& header);
     void WritePoint(liblas::Point const& record, HeaderPtr header);
 
-    std::ostream& GetStream() const;
-
 protected:
     PointRecord m_record;
     std::ostream& m_ofs;

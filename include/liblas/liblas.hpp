@@ -128,9 +128,7 @@ public:
     virtual void Seek(std::size_t n, HeaderPtr header) = 0;
     
     virtual void Reset(HeaderPtr header) = 0;
-    
-    virtual std::istream& GetStream() const = 0;
-    
+
     virtual ~ReaderI() {}
 };
 
@@ -141,8 +139,6 @@ public:
     virtual Header const& WriteHeader(Header const& header) = 0;
     virtual void UpdateHeader(Header const& header) = 0;
     virtual void WritePoint(const Point& point, HeaderPtr header) = 0;
-
-    virtual std::ostream& GetStream() const = 0;
 
     virtual ~WriterI() {}
 

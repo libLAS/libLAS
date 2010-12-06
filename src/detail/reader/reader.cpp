@@ -72,11 +72,6 @@ ReaderImpl::~ReaderImpl()
 {
 }
 
-std::istream& ReaderImpl::GetStream() const
-{
-    return m_ifs;
-}
-
 void ReaderImpl::Reset(HeaderPtr header)
 {
     m_ifs.clear();

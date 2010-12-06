@@ -130,6 +130,8 @@ typedef enum
 
 
 static std::stack<liblas::Error > errors;
+static std::map<liblas::Reader*, std::istream*> readers;
+static std::map<liblas::Writer*, std::ostream*> writers;
 
 #ifdef _MSC_VER
 # pragma warning(disable: 4127) // warning C4127: conditional expression is constant
@@ -219,8 +221,9 @@ LAS_DLL LASReaderH LASReader_Create(const char* filename)
     try {
         
         std::istream* istrm = OpenInput(std::string(filename));
-        return (LASReaderH) new liblas::Reader(*istrm);
-
+        liblas::Reader* reader = new liblas::Reader(*istrm);
+        readers.insert(std::pair<liblas::Reader*, std::istream*>(reader, istrm));
+        return (LASReaderH) reader;
     
     } catch (std::exception const& e)
      {
@@ -242,8 +245,9 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
         std::istream* istrm = OpenInput(std::string(filename));
         
         liblas::Header* header = ((liblas::Header*) hHeader);
-        return (LASReaderH) new liblas::Reader(*istrm, *header);
-
+        liblas::Reader* reader = new liblas::Reader(*istrm, *header);
+        readers.insert(std::pair<liblas::Reader*, std::istream*>(reader, istrm));
+        return (LASReaderH) reader;
     
     } catch (std::exception const& e)
      {
@@ -259,13 +263,28 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader)
 
     try { 
         liblas::Reader* reader = (liblas::Reader*)hReader;
-        std::istream* istrm = reader->GetStream();
+        
+        std::map<liblas::Reader*, std::istream*>::iterator it = readers.find(reader);
+        if (it == readers.end())
+        {
+            LASError_PushError(LE_Failure, "Unable to find reader stream", "LASReader_Destroy");
+            return;            
+        }
+        std::istream* istrm = it->second;
 
         delete reader;
         hReader = NULL;
     
+        if ( istrm == NULL )
+        {
+            LASError_PushError(LE_Failure, "Got 99 problems, but the stream ain't one", "LASReader_Destroy");
+            return;            
+        }
+        
         if (static_cast<std::ifstream&>(*istrm))
             static_cast<std::ifstream&>(*istrm).close();
+            
+        readers.erase(reader);
         delete istrm;
         istrm = NULL;
   
@@ -1360,7 +1379,10 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
         
         liblas::Header* header = ((liblas::Header*) hHeader);
         liblas::Writer* writer = new liblas::Writer(*ostrm, *header);
+
+        writers.insert(std::pair<liblas::Writer*, std::ostream*>(writer, ostrm));
         return (LASWriterH) writer;
+        
 
     } catch (std::exception const& e)
      {
@@ -1412,23 +1434,34 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
 {
     VALIDATE_LAS_POINTER0(hWriter, "LASWriter_Destroy");
 
-
-    
-
-  
-    
     try { 
         liblas::Writer* writer = (liblas::Writer*)hWriter;
-        std::ostream* ostrm = writer->GetStream();
+
+        std::map<liblas::Writer*, std::ostream*>::iterator it = writers.find(writer);
+        if (it == writers.end())
+        {
+            LASError_PushError(LE_Failure, "Unable to find writer stream", "LASWriter_Destroy");
+            return;            
+        }
+        std::ostream* ostrm = it->second;
 
         delete writer;
         hWriter = NULL;
+
+        if ( ostrm == NULL )
+        {
+            LASError_PushError(LE_Failure, "Got 99 problems, but the stream ain't one", "LASWriter_Destroy");
+            return;            
+        }
     
         if (static_cast<std::ofstream&>(*ostrm))
             static_cast<std::ofstream&>(*ostrm).close();
         
         if (ostrm != NULL)
             delete ostrm;
+        
+        writers.erase(writer);
+        
         ostrm = NULL;
   
         }  catch (std::runtime_error const& e/* e */) 

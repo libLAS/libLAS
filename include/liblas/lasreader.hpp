@@ -97,10 +97,6 @@ public:
     /// @exception nothrow
     std::vector<VariableRecord> const& GetVLRs() const;
 
-    /// Allow fetching of the stream attached to the reader.
-    /// @exception nothrow
-    std::istream* GetStream() const;
-
     /// Fetches next point record in file.
     /// @exception may throw std::exception
     bool ReadNextPoint();
