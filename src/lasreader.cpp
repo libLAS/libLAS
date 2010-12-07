@@ -193,7 +193,7 @@ bool Reader::ReadPointAt(std::size_t n)
     return false;
 }
 
-bool Reader::seek(std::size_t n)
+bool Reader::Seek(std::size_t n)
 {
     try
     {

@@ -349,7 +349,7 @@ LAS_DLL LASErrorEnum LASReader_Seek(LASReaderH hReader, boost::uint32_t position
 
     try {
         liblas::Reader *reader = ((liblas::Reader*) hReader);
-        if (reader->seek((std::size_t) position)) 
+        if (reader->Seek((std::size_t) position)) 
             return LE_None;
         else 
             return LE_Failure;

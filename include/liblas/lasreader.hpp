@@ -112,7 +112,7 @@ public:
     /// Move to the specified point to start 
     /// ReadNextPoint operations
     /// @exception may throw std::exception
-    bool seek(std::size_t n);
+    bool Seek(std::size_t n);
 
     /// Provides index-based access to point records.
     /// The operator is implemented in terms of ReadPointAt method
