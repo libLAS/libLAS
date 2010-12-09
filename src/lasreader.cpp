@@ -77,10 +77,9 @@ Reader::Reader(std::istream& ifs, uint32_t cache_size) :
 Reader::Reader(std::istream& ifs, uint32_t cache_size, Header const& header) :
     m_pimpl(new detail::CachedReaderImpl(ifs,3))
 {
-    // if we have a custom header, create a slot for it and then copy 
-    // the header we were given
 
     Init();
+    m_pimpl->SetHeader(header);
 }
 
 Reader::Reader(ReaderI* reader) :
@@ -113,7 +112,6 @@ Point const& Reader::GetPoint() const
 {
     return m_pimpl->GetPoint();
 }
-
 
 bool Reader::ReadNextPoint()
 {  
@@ -161,6 +159,7 @@ bool Reader::Seek(std::size_t n)
     }
     return false;
 }
+
 Point const& Reader::operator[](std::size_t n)
 {
     if (m_pimpl->GetHeader().GetPointRecordsCount() <= n)
@@ -175,47 +174,13 @@ Point const& Reader::operator[](std::size_t n)
         throw std::out_of_range("no point record at given position");
     }
 
-    
     return m_pimpl->GetPoint();
 }
 
 void Reader::Init()
 {   
-    // Copy our existing header in case we have already set a custom 
-    // one.  We will use this instead of the one from the stream if 
-    // the constructor with the header was used.
-    
-    // Header custom_header;
-    // if (m_header != 0) 
-    // {
-    //     custom_header = *m_header;
-    // }
-    // 
-    // m_pimpl->ReadHeader();
-    // 
-    // m_header = HeaderPtr(new liblas::Header(m_pimpl->GetHeader()));
-    // 
-    //     // throw std::runtime_error("public header block reading failure");
-    // 
-    // m_pimpl->Reset(m_header);
-    // 
-    // if (bCustomHeader) {
-    //     custom_header.SetDataOffset(m_header->GetDataOffset());
-    //     *m_header = custom_header;
-    // }
-    // 
-    // This is yucky, but we need to ensure that we have a reference 
-    // to a real point existing as soon as we are constructed.  
-    // This is for someone who tries to GetPoint without first reading 
-    // a point, and it will ensure they get something valid.  We just 
-    // keep it around until the reader closes down and then deletes.  
-    // 
-    // m_point = m_empty_point.get();
-    
     m_pimpl->ReadHeader();
-
 }
-
 
 void Reader::Reset() 
 {
