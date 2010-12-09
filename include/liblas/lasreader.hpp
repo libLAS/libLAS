@@ -145,21 +145,8 @@ private:
     Reader& operator=(Reader const& rhs);
 
     void Init(); // throws on error
-    // bool KeepPoint(liblas::Point const& p);
-
     const std::auto_ptr<ReaderI> m_pimpl;
 
-    HeaderPtr m_header;
-    Point* m_point;
-    PointPtr m_empty_point;
-    
-    
-    // Set if the user provides a header to override the header as 
-    // read from the istream
-    bool bCustomHeader;
-    
-    // std::vector<liblas::FilterPtr> m_filters;
-    // std::vector<liblas::TransformPtr> m_transforms;
 
 };
 

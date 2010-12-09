@@ -63,29 +63,19 @@ namespace liblas
 {
 
 Reader::Reader(std::istream& ifs) :
-    m_pimpl(new detail::ReaderImpl(ifs)),
-    m_point(0),
-    m_empty_point(new Point()),
-    bCustomHeader(false)
+    m_pimpl(new detail::CachedReaderImpl(ifs,3))
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size) :
-    m_pimpl(new detail::ReaderImpl(ifs)),
-    m_point(0),
-    m_empty_point(new Point()),
-    bCustomHeader(false)
+    m_pimpl(new detail::CachedReaderImpl(ifs,3))
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size, Header const& header) :
-    m_pimpl(new detail::ReaderImpl(ifs)),
-    m_header(new Header(header)),
-    m_point(0),
-    m_empty_point(new Point()),
-    bCustomHeader(true)
+    m_pimpl(new detail::CachedReaderImpl(ifs,3))
 {
     // if we have a custom header, create a slot for it and then copy 
     // the header we were given
@@ -94,25 +84,16 @@ Reader::Reader(std::istream& ifs, uint32_t cache_size, Header const& header) :
 }
 
 Reader::Reader(ReaderI* reader) :
-    m_pimpl(reader),
-    m_point(0),
-    m_empty_point(new Point()),
-    bCustomHeader(false)
-
+    m_pimpl(reader)
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, Header const& header) :
-    m_pimpl(new detail::ReaderImpl(ifs)),
-    m_point(0),
-    m_empty_point(new Point()),
-    bCustomHeader(true)
+    m_pimpl(new detail::CachedReaderImpl(ifs,3))
 {
-    // if we have a custom header, create a slot for it and then copy 
-    // the header we were given
-    m_header = HeaderPtr(new Header(header));
     Init();
+    m_pimpl->SetHeader(header);
 }
 
 Reader::~Reader()
@@ -125,12 +106,12 @@ Reader::~Reader()
 
 Header const& Reader::GetHeader() const
 {
-    return *m_header;
+    return m_pimpl->GetHeader();
 }
 
 Point const& Reader::GetPoint() const
 {
-    return *m_point;
+    return m_pimpl->GetPoint();
 }
 
 
@@ -138,37 +119,11 @@ bool Reader::ReadNextPoint()
 {  
     try
     {
-        // m_point = m_pimpl->ReadNextPoint(m_header).get();
-        m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-
-        // // Filter the points and continue reading until we either find 
-        // // one to keep or throw an exception.
-        // if (!KeepPoint(*m_point))
-        // {
-        //     m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-        //     while (!KeepPoint(*m_point))
-        //     {
-        //         m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-        //     }
-        // }
-        // 
-        // if (!m_transforms.empty())
-        // {
-        //     // Apply the transforms to each point
-        //     std::vector<liblas::TransformPtr>::const_iterator ti;
-        // 
-        //     for (ti = m_transforms.begin(); ti != m_transforms.end(); ++ti)
-        //     {
-        //         liblas::TransformPtr transform = *ti;
-        //         transform->transform(*m_point);
-        //     }            
-        // }
-        // 
+        m_pimpl->ReadNextPoint();
         return true;
     }
-    catch (std::out_of_range)
+    catch (std::out_of_range const&)
     {
-        m_point = 0;
     }
 
     return false;
@@ -176,19 +131,18 @@ bool Reader::ReadNextPoint()
 
 bool Reader::ReadPointAt(std::size_t n)
 {
-    if (m_header->GetPointRecordsCount() <= n)
+    if (m_pimpl->GetHeader().GetPointRecordsCount() <= n)
     {
         throw std::out_of_range("point subscript out of range");
     }
     
     try
     {
-        m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
+        m_pimpl->ReadPointAt(n);
         return true;
     }
-    catch (std::out_of_range)
+    catch (std::out_of_range const&)
     {
-        m_point = 0;
     }
     return false;
 }
@@ -197,32 +151,32 @@ bool Reader::Seek(std::size_t n)
 {
     try
     {
-        assert(n < m_header->GetPointRecordsCount());
+        assert(n < m_pimpl->GetHeader().GetPointRecordsCount());
 
-        m_pimpl->Seek(n, m_header);
+        m_pimpl->Seek(n);
         return true;
     }
-    catch (std::out_of_range)
+    catch (std::out_of_range const&)
     {
-        m_point = 0;
     }
     return false;
 }
 Point const& Reader::operator[](std::size_t n)
 {
-    if (m_header->GetPointRecordsCount() <= n)
+    if (m_pimpl->GetHeader().GetPointRecordsCount() <= n)
     {
         throw std::out_of_range("point subscript out of range");
     }
     
-    ReadPointAt(n);
+    bool read = ReadPointAt(n);
 
-    if (m_point == 0) 
+    if (read == false) 
     {
         throw std::out_of_range("no point record at given position");
     }
 
-    return *m_point;
+    
+    return m_pimpl->GetPoint();
 }
 
 void Reader::Init()
@@ -231,30 +185,34 @@ void Reader::Init()
     // one.  We will use this instead of the one from the stream if 
     // the constructor with the header was used.
     
-    Header custom_header;
-    if (m_header != 0) 
-    {
-        custom_header = *m_header;
-    }
-
-    m_header = m_pimpl->ReadHeader();
-
-        // throw std::runtime_error("public header block reading failure");
-
-    m_pimpl->Reset(m_header);
-    
-    if (bCustomHeader) {
-        custom_header.SetDataOffset(m_header->GetDataOffset());
-        *m_header = custom_header;
-    }
-    
+    // Header custom_header;
+    // if (m_header != 0) 
+    // {
+    //     custom_header = *m_header;
+    // }
+    // 
+    // m_pimpl->ReadHeader();
+    // 
+    // m_header = HeaderPtr(new liblas::Header(m_pimpl->GetHeader()));
+    // 
+    //     // throw std::runtime_error("public header block reading failure");
+    // 
+    // m_pimpl->Reset(m_header);
+    // 
+    // if (bCustomHeader) {
+    //     custom_header.SetDataOffset(m_header->GetDataOffset());
+    //     *m_header = custom_header;
+    // }
+    // 
     // This is yucky, but we need to ensure that we have a reference 
     // to a real point existing as soon as we are constructed.  
     // This is for someone who tries to GetPoint without first reading 
     // a point, and it will ensure they get something valid.  We just 
     // keep it around until the reader closes down and then deletes.  
     // 
-    m_point = m_empty_point.get();
+    // m_point = m_empty_point.get();
+    
+    m_pimpl->ReadHeader();
 
 }
 

@@ -63,6 +63,7 @@ class TransformI;
 class VariableRecord;
 
 typedef boost::shared_ptr<Header> HeaderPtr;
+typedef boost::shared_ptr<const Header> ConstHeaderPtr;
 typedef boost::shared_ptr<Point> PointPtr;
 
 namespace detail {

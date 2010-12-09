@@ -64,19 +64,22 @@ public:
     ReaderImpl(std::istream& ifs);
     ~ReaderImpl();
 
-    HeaderPtr ReadHeader();
-    liblas::Point const& ReadNextPoint(HeaderPtr header);
-    liblas::Point const& ReadPointAt(std::size_t n, HeaderPtr header);
-    void Seek(std::size_t n, HeaderPtr header);
+    void ReadHeader();
+    liblas::Header const& GetHeader() const {return *m_header;}
+    void SetHeader(liblas::Header const& header);
+    liblas::Point const& GetPoint() const { return *m_point; }
+    void ReadNextPoint();
+    liblas::Point const& ReadPointAt(std::size_t n);
+    void Seek(std::size_t n);
     
-    void Reset(HeaderPtr header);
+    void Reset();
 
     void SetFilters(std::vector<liblas::FilterPtr> const& filters);
     void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
 
 
 protected:
-    void CreateTransform();
+
     bool FilterPoint(liblas::Point const& p);
     void TransformPoint(liblas::Point& p);
 
@@ -89,6 +92,10 @@ protected:
     
     PointReaderPtr m_point_reader;
     HeaderReaderPtr m_header_reader;
+    
+    HeaderPtr m_header;
+    
+    PointPtr m_point;
 
     std::vector<liblas::FilterPtr> m_filters;
     std::vector<liblas::TransformPtr> m_transforms;
