@@ -144,7 +144,7 @@ namespace tut
         test_file10_point2(reader[1]);
     }
 
-    // Test seek nd GetPoint pair
+    // Test seek and GetPoint pair
     template<>
     template<>
     void to::test<7>()
