@@ -138,6 +138,8 @@ namespace tut
     {
         liblas::Header h;
         ensure_equals(h.GetReserved(), 0);
+        h.SetReserved(1);
+        ensure_equals(h.GetReserved(), 1);
     }
 
     // Test Set/GetProjectId

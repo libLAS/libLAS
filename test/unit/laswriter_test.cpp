@@ -202,6 +202,7 @@ namespace tut
             test_default_header(hdr_default);
 
             // update some header data and overwrite header block
+            header.SetReserved(1);
             header.SetFileSourceId(65535);
             header.SetSystemId("Unit Test libLAS System");
             header.SetSoftwareId("Unit Test libLAS Software");
@@ -224,6 +225,7 @@ namespace tut
             liblas::Reader reader(ifs);
 
             liblas::Header const& header = reader.GetHeader();
+            ensure_equals(header.GetReserved(), 1);
             ensure_equals(header.GetFileSourceId(), 65535);
             ensure_equals(header.GetSystemId(), std::string("Unit Test libLAS System"));
             ensure_equals(header.GetSoftwareId(), std::string("Unit Test libLAS Software"));
