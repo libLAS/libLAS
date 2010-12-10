@@ -233,6 +233,30 @@ void CachedReaderImpl::ReadNextPoint()
     // PointPtr ptr = ReadCachedPoint(m_cache_read_position, header);
     ReadCachedPoint(m_cache_read_position);
     ++m_cache_read_position;
+
+    // Filter the points and continue reading until we either find 
+    // one to keep or throw an exception.
+
+    bool bLastPoint = false;
+    if (!FilterPoint(*m_point))
+    {
+        ReadCachedPoint(m_cache_read_position);
+        ++m_cache_read_position;
+
+        while (!FilterPoint(*m_point))
+        {
+            ReadCachedPoint(m_cache_read_position);
+            ++m_cache_read_position;
+            if (m_current == m_size) 
+            {
+                bLastPoint = true;
+                break;
+            }
+        }
+    }
+
+    if (bLastPoint)
+        throw std::out_of_range("ReadNextPoint: file has no more points to read, end of file reached");
     
 }
 
