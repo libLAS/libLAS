@@ -923,7 +923,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 		{
 			// seek and read
 			assert(static_cast<boost::uint32_t>(PointID) < m_pointRecordsCount);
-			PtRead = (m_reader->seek(PointID) && m_reader->ReadNextPoint());
+			PtRead = (m_reader->Seek(PointID) && m_reader->ReadNextPoint());
 		} // if
 		if (PtRead)
 		{
@@ -966,7 +966,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 				{
 					// seek and read
 					assert(static_cast<boost::uint32_t>(PointID) < m_pointRecordsCount);
-					PtRead = (m_reader->seek(PointID) && m_reader->ReadNextPoint());
+					PtRead = (m_reader->Seek(PointID) && m_reader->ReadNextPoint());
 				} // if
 				if (PtRead)
 				{
@@ -1010,7 +1010,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 				{
 					// seek and read
 					assert(static_cast<boost::uint32_t>(PointID) < m_pointRecordsCount);
-					PtRead = (m_reader->seek(PointID) && m_reader->ReadNextPoint());
+					PtRead = (m_reader->Seek(PointID) && m_reader->ReadNextPoint());
 				} // if
 				if (PtRead)
 				{
@@ -1035,7 +1035,7 @@ bool Index::BuildIndex(void)
 	m_versionMinor = LIBLAS_INDEX_VERSIONMINOR;
 	
 	// reset to beginning of point data records in case points had been examined before index is built
-	m_reader->seek(0);
+	m_reader->Seek(0);
 	// need the header to get number of point records
     m_pointRecordsCount = m_pointheader.GetPointRecordsCount();
     // get the bounds of the data and scale factors in case they are needed for point translation
@@ -1199,7 +1199,7 @@ bool Index::BuildIndex(void)
 							{
 								// get the actual point from the las file
 								assert(MapIt->first < m_pointRecordsCount);
-								if (m_reader->seek(MapIt->first) && m_reader->ReadNextPoint())
+								if (m_reader->Seek(MapIt->first) && m_reader->ReadNextPoint())
 								{
 									boost::uint32_t FirstPt = 0, LastCellZ = static_cast<boost::uint32_t>(~0);
 									boost::uint32_t LastSubCell = static_cast<boost::uint32_t>(~0);
@@ -1562,7 +1562,7 @@ bool Index::SaveIndexInLASFile(void)
 {
 	try {
 		Writer writer(*m_ofs, m_idxheader);
-		m_reader->seek(0);
+		m_reader->Seek(0);
 		while (m_reader->ReadNextPoint())
 		{
 			Point CurPt = m_reader->GetPoint();
@@ -1581,7 +1581,7 @@ bool Index::SaveIndexInStandAloneFile(void)
 	try {
 		Writer writer(*m_ofs, m_idxheader);
 		/* test block - uncommenting this makes it just like above version with included points
-		m_reader->seek(0);
+		m_reader->Seek(0);
 		while (m_reader->ReadNextPoint())
 		{
 			Point CurPt = m_reader->GetPoint();

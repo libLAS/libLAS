@@ -82,17 +82,8 @@ public:
     /// \todo TODO: How to handle point_source_id in portable way, for LAS 1.0 and 1.1
     bool WritePoint(Point const& point);
 
-    /// Allow fetching of the stream
-    std::ostream& GetStream() const;
-    
     /// Allow in-place writing of header
     void WriteHeader(Header& header);
-
-    /// Reproject data as they are written if the Writer's reference is
-    /// different than the Header's
-    bool SetSRS(const SpatialReference& ref);
-    bool SetInputSRS(const SpatialReference& ref);
-    bool SetOutputSRS(const SpatialReference& ref);
 
     /// Sets filters that are used to determine wither or not to 
     /// keep a point that before we write it
@@ -122,11 +113,7 @@ private:
 
     std::vector<liblas::FilterI*>* m_filters;
     std::vector<liblas::TransformI*>* m_transforms;
-    
-    TransformPtr m_reprojection_transform;
-    
-    SpatialReference m_out_srs;
-    SpatialReference m_in_srs;
+
     
 };
 

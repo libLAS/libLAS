@@ -63,65 +63,36 @@ namespace liblas
 {
 
 Reader::Reader(std::istream& ifs) :
-    m_pimpl(new detail::CachedReaderImpl(ifs,3)),
-    m_point(0),
-    m_empty_point(new Point()),
-    bCustomHeader(false),
-    m_filters(0),
-    m_transforms(0)
+    m_pimpl(new detail::CachedReaderImpl(ifs,3))
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size) :
-    m_pimpl(new detail::CachedReaderImpl(ifs, cache_size)),
-    m_point(0),
-    m_empty_point(new Point()),
-    bCustomHeader(false),
-    m_filters(0),
-    m_transforms(0)
+    m_pimpl(new detail::CachedReaderImpl(ifs,3))
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size, Header const& header) :
-    m_pimpl(new detail::CachedReaderImpl(ifs, cache_size)),
-    m_header(new Header(header)),
-    m_point(0),
-    m_empty_point(new Point()),
-    bCustomHeader(true),
-    m_filters(0),
-    m_transforms(0)
+    m_pimpl(new detail::CachedReaderImpl(ifs,3))
 {
-    // if we have a custom header, create a slot for it and then copy 
-    // the header we were given
 
     Init();
+    m_pimpl->SetHeader(header);
 }
 
 Reader::Reader(ReaderI* reader) :
-    m_pimpl(reader),
-    m_point(0),
-    m_empty_point(new Point()),
-    bCustomHeader(false),
-    m_filters(0),
-    m_transforms(0)
+    m_pimpl(reader)
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, Header const& header) :
-    m_pimpl(new detail::ReaderImpl(ifs)),
-    m_point(0),
-    m_empty_point(new Point()),
-    bCustomHeader(true),
-    m_filters(0),
-    m_transforms(0)
+    m_pimpl(new detail::CachedReaderImpl(ifs,3))
 {
-    // if we have a custom header, create a slot for it and then copy 
-    // the header we were given
-    m_header = HeaderPtr(new Header(header));
     Init();
+    m_pimpl->SetHeader(header);
 }
 
 Reader::~Reader()
@@ -130,76 +101,27 @@ Reader::~Reader()
     // std::auto_ptr with incomplete type (Reader).
     // delete m_empty_point;
     
-    // if (m_header != 0) {
-    //     delete m_header;
-    // }
 }
 
 Header const& Reader::GetHeader() const
 {
-    return *m_header;
+    return m_pimpl->GetHeader();
 }
 
 Point const& Reader::GetPoint() const
 {
-    return *m_point;
-}
-
-bool Reader::KeepPoint(liblas::Point const& p)
-{    
-    // If there's no filters on this reader, we keep 
-    // the point no matter what.
-    if (m_filters.empty() ) {
-        return true;
-    }
-
-    std::vector<liblas::FilterPtr>::const_iterator fi;
-    for (fi = m_filters.begin(); fi != m_filters.end(); ++fi)
-    {
-        liblas::FilterPtr filter = *fi;
-        if (!filter->filter(p))
-        {
-            return false;
-        }
-    }
-    return true;
+    return m_pimpl->GetPoint();
 }
 
 bool Reader::ReadNextPoint()
 {  
     try
     {
-        // m_point = m_pimpl->ReadNextPoint(m_header).get();
-        m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-
-        // Filter the points and continue reading until we either find 
-        // one to keep or throw an exception.
-        if (!KeepPoint(*m_point))
-        {
-            m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-            while (!KeepPoint(*m_point))
-            {
-                m_point = const_cast<Point*>(&(m_pimpl->ReadNextPoint(m_header)));
-            }
-        }
-        
-        if (!m_transforms.empty())
-        {
-            // Apply the transforms to each point
-            std::vector<liblas::TransformPtr>::const_iterator ti;
-
-            for (ti = m_transforms.begin(); ti != m_transforms.end(); ++ti)
-            {
-                liblas::TransformPtr transform = *ti;
-                transform->transform(*m_point);
-            }            
-        }
-
+        m_pimpl->ReadNextPoint();
         return true;
     }
-    catch (std::out_of_range)
+    catch (std::out_of_range const&)
     {
-        m_point = 0;
     }
 
     return false;
@@ -207,103 +129,57 @@ bool Reader::ReadNextPoint()
 
 bool Reader::ReadPointAt(std::size_t n)
 {
-    if (m_header->GetPointRecordsCount() <= n)
+    if (m_pimpl->GetHeader().GetPointRecordsCount() <= n)
     {
         throw std::out_of_range("point subscript out of range");
     }
     
     try
     {
-        m_point = const_cast<Point*>(&(m_pimpl->ReadPointAt(n, m_header)));
-        if (!m_transforms.empty())
-        {
-            std::vector<liblas::TransformPtr>::const_iterator ti;
-            for (ti = m_transforms.begin(); ti != m_transforms.end(); ++ti)
-            {
-                liblas::TransformPtr transform = *ti;
-                transform->transform(*m_point);
-            }            
-        }
+        m_pimpl->ReadPointAt(n);
         return true;
     }
-    catch (std::out_of_range)
+    catch (std::out_of_range const&)
     {
-        m_point = 0;
     }
     return false;
 }
 
-bool Reader::seek(std::size_t n)
+bool Reader::Seek(std::size_t n)
 {
     try
     {
-        assert(n < m_header->GetPointRecordsCount());
+        assert(n < m_pimpl->GetHeader().GetPointRecordsCount());
 
-        m_pimpl->Seek(n, m_header);
+        m_pimpl->Seek(n);
         return true;
     }
-    catch (std::out_of_range)
+    catch (std::out_of_range const&)
     {
-        m_point = 0;
     }
     return false;
 }
+
 Point const& Reader::operator[](std::size_t n)
 {
-    if (m_header->GetPointRecordsCount() <= n)
+    if (m_pimpl->GetHeader().GetPointRecordsCount() <= n)
     {
         throw std::out_of_range("point subscript out of range");
     }
     
-    ReadPointAt(n);
+    bool read = ReadPointAt(n);
 
-    if (m_point == 0) 
+    if (read == false) 
     {
         throw std::out_of_range("no point record at given position");
     }
 
-    return *m_point;
+    return m_pimpl->GetPoint();
 }
 
 void Reader::Init()
 {   
-    // Copy our existing header in case we have already set a custom 
-    // one.  We will use this instead of the one from the stream if 
-    // the constructor with the header was used.
-    
-    Header custom_header;
-    if (m_header != 0) 
-    {
-        custom_header = *m_header;
-    }
-
-    m_header = m_pimpl->ReadHeader();
-
-        // throw std::runtime_error("public header block reading failure");
-
-    m_pimpl->Reset(m_header);
-    
-    if (bCustomHeader) {
-        custom_header.SetDataOffset(m_header->GetDataOffset());
-        *m_header = custom_header;
-    }
-    
-    // This is yucky, but we need to ensure that we have a reference 
-    // to a real point existing as soon as we are constructed.  
-    // This is for someone who tries to GetPoint without first reading 
-    // a point, and it will ensure they get something valid.  We just 
-    // keep it around until the reader closes down and then deletes.  
-    // 
-    m_point = m_empty_point.get();
-    
-    // Copy our input SRS.  If the user issues SetInputSRS, it will 
-    // be overwritten
-    m_in_srs = m_header->GetSRS();
-}
-
-std::istream& Reader::GetStream() const
-{
-    return m_pimpl->GetStream();
+    m_pimpl->ReadHeader();
 }
 
 void Reader::Reset() 
@@ -311,109 +187,15 @@ void Reader::Reset()
     Init();
 }
 
-bool Reader::IsEOF() const
+void Reader::SetFilters(std::vector<liblas::FilterPtr> const& filters)
 {
-    return m_pimpl->GetStream().eof();
+    m_pimpl->SetFilters(filters);
 }
 
-bool Reader::SetSRS(const SpatialReference& srs)
+void Reader::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
-    return SetOutputSRS(srs);
+    m_pimpl->SetTransforms(transforms);
 }
 
-bool Reader::SetInputSRS(const SpatialReference& srs)
-{
-    m_in_srs = srs;
-    return true;
-}
-
-bool Reader::SetOutputSRS(const SpatialReference& srs)
-{
-    m_out_srs = srs;
-    m_pimpl->Reset(m_header);
-
-    // Check the very first transform and see if it is 
-    // the reprojection transform.  If it is, we're going to 
-    // nuke it and replace it with a new one
-    
-    // If there was nothing there, we're going to make a new reprojection
-    // transform and put in on the transforms list (or make a new transforms
-    // list if *that* isn't there).
-    liblas::TransformPtr possible_reprojection_transform;
-    
-   if (!m_transforms.empty()) {
-        possible_reprojection_transform = m_transforms.at(0);
-    }
-    
-    if (m_reprojection_transform == possible_reprojection_transform && m_reprojection_transform) {
-        // remove it from the transforms list
-        std::vector<liblas::TransformPtr>::iterator i = m_transforms.begin();
-        m_transforms.erase(i);
-    }
-    
-    // overwrite our reprojection transform
-    m_reprojection_transform = TransformPtr(new ReprojectionTransform(m_in_srs, m_out_srs));
-    
-    if (!m_transforms.empty()) {
-        // Insert the new reprojection transform to the beginning of the 
-        // vector there are already transforms there.
-        m_transforms.insert(m_transforms.begin(), m_reprojection_transform);
-        
-    } else {
-        // List exists, but its size is 0
-        m_transforms.push_back(m_reprojection_transform);
-    } 
-    return true;
-}
-
-liblas::property_tree::ptree Reader::Summarize() 
-{
-    liblas::Summary s;
-
-    Reset();
-    bool read = ReadNextPoint();
-    if (!read)
-    {
-        throw std::runtime_error("Unable to read any points from file.");
-    }
-        
-    while (read) 
-    {
-        liblas::Point const& p = GetPoint();
-        s.AddPoint(p);
-        read = ReadNextPoint();
-    }
-
-    return s.GetPTree();
-    
-    // Summarize the schema
-    // liblas::Schema schema = m_header->GetSchema();
-    
-    // // if both min == max *and* min is 0, we're declaring this 
-    // // dimension inactive.
-    // if (detail::compare_distance(max.GetX(), min.GetX() ) && detail::compare_distance(0, min.GetX()))
-    // {
-    //     DimensionPtr d = schema.GetDimension("X");
-    //     d->IsActive(false);
-    // }
-    // 
-    // // if both min == max *and* min is 0, we're declaring this 
-    // // dimension inactive.
-    // if (detail::compare_distance(max.GetY(), min.GetY() ) && detail::compare_distance(0, min.GetY()))
-    // {
-    //     DimensionPtr d = schema.GetDimension("Y");
-    //     d->IsActive(false);
-    // }
-    // 
-    // // if both min == max *and* min is 0, we're declaring this 
-    // // dimension inactive.
-    // if (detail::compare_distance(max.GetZ(), min.GetZ() ) && detail::compare_distance(0, min.GetZ()))
-    // {
-    //     DimensionPtr d = schema.GetDimension("Z");
-    //     d->IsActive(false);
-    // }
-
-
-}
 } // namespace liblas
 

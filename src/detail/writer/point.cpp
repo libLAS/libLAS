@@ -92,10 +92,7 @@ void Point::write(const liblas::Point& point)
     std::vector<boost::uint8_t> const& data = point.GetData();    
     detail::write_n(m_ofs, data.front(), m_header->GetDataRecordLength());
 
-
-    uint32_t& count = GetPointCount();
-    count++;
-    SetPointCount(count);
+    m_pointCount++;
 
     // write in our extra data that the user set on the 
     // point up to the header's specified DataRecordLength
@@ -124,22 +121,5 @@ void Point::write(const liblas::Point& point)
     // }
 }
 
-// void Point::fill() 
-// {
-//     liblas::Point& p = m_point;
-// 
-//     m_record.x = static_cast<int32_t>(detail::sround(((p.GetX() - m_header->GetOffsetX()) / m_header->GetScaleX())));
-//     m_record.y = static_cast<int32_t>(detail::sround(((p.GetY() - m_header->GetOffsetY()) / m_header->GetScaleY())));
-//     m_record.z = static_cast<int32_t>(detail::sround(((p.GetZ() - m_header->GetOffsetZ()) / m_header->GetScaleZ())));
-// 
-//     Classification::bitset_type clsflags(p.GetClassification());
-//     m_record.classification = static_cast<uint8_t>(clsflags.to_ulong());
-// 
-//     m_record.intensity = p.GetIntensity();
-//     m_record.flags = p.GetScanFlags();
-//     m_record.scan_angle_rank = p.GetScanAngleRank();
-//     m_record.user_data = p.GetUserData();
-//     m_record.point_source_id = p.GetPointSourceID();
-// }
 
 }}} // namespace liblas::detail::reader

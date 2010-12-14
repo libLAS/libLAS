@@ -142,24 +142,19 @@ ReturnFilter::ReturnFilter( return_list_type returns, bool last_only )
 
 bool ReturnFilter::filter(const Point& p)
 {
-    if (last_only) {
-        bool output = false;
-        if (p.GetReturnNumber() == p.GetNumberOfReturns()) {
-            output = true;
-        }
 
+    if (last_only) {
+        bool isLast = p.GetReturnNumber() == p.GetNumberOfReturns();
+        
         // If the type is switched to eExclusion, we'll throw out all last returns.
-        if (GetType() == eExclusion && output == true) {
-            output = false;
-        } else {
-            output = true;
-        }
-        return output;
+        if (GetType() == eExclusion)
+            isLast = false;
+        return isLast;
     }
     
     uint16_t r = p.GetReturnNumber();
     
-    // If the user gave us an empty set of classes to filter
+    // If the user gave us an empty set of returns to filter
     // we're going to return true regardless
     bool output = true;
     for (return_list_type::const_iterator it = m_returns.begin(); it != m_returns.end(); ++it) {

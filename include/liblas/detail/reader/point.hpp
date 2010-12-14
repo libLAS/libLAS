@@ -62,8 +62,7 @@ public:
     Point(std::istream& ifs, HeaderPtr header);
     virtual ~Point();
 
-    std::istream& GetStream() const;
-    const liblas::Point& GetPoint() const { return m_point; }
+    liblas::Point& GetPoint() { return m_point; }
     void read();
     
 protected:

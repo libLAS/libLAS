@@ -64,7 +64,6 @@ public:
 
 protected:
 
-    
     std::istream& m_ifs;
     HeaderPtr m_header;
 

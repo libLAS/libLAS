@@ -90,8 +90,8 @@ void Header::read()
     m_header->SetFileSourceId(n2);
 
     // 3. Reserved
-    // This data must always contain Zeros.
     read_n(n2, m_ifs, sizeof(n2));
+    m_header->SetReserved(n2);
 
     // 4-7. Project ID
     uint32_t d1 = 0;

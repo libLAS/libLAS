@@ -122,15 +122,19 @@ class ReaderI
 {
 public:
 
-    virtual HeaderPtr ReadHeader() = 0;
-    virtual Point const& ReadNextPoint(HeaderPtr header) = 0;
-    virtual Point const& ReadPointAt(std::size_t n, HeaderPtr header) = 0;
-    virtual void Seek(std::size_t n, HeaderPtr header) = 0;
+    virtual liblas::Header const& GetHeader() const = 0;
+    virtual void ReadHeader() = 0;
+    virtual void SetHeader(liblas::Header const& header) = 0;
+    virtual liblas::Point const& GetPoint() const = 0;
+    virtual void ReadNextPoint() = 0;
+    virtual Point const& ReadPointAt(std::size_t n) = 0;
+    virtual void Seek(std::size_t n) = 0;
     
-    virtual void Reset(HeaderPtr header) = 0;
+    virtual void Reset() = 0;
     
-    virtual std::istream& GetStream() const = 0;
-    
+    virtual void SetFilters(std::vector<liblas::FilterPtr> const& filters) = 0;
+    virtual void SetTransforms(std::vector<liblas::TransformPtr> const& transforms) = 0;
+
     virtual ~ReaderI() {}
 };
 
@@ -141,8 +145,6 @@ public:
     virtual Header const& WriteHeader(Header const& header) = 0;
     virtual void UpdateHeader(Header const& header) = 0;
     virtual void WritePoint(const Point& point, HeaderPtr header) = 0;
-
-    virtual std::ostream& GetStream() const = 0;
 
     virtual ~WriterI() {}
 

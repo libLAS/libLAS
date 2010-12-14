@@ -60,15 +60,15 @@ class CachedReaderImpl : public ReaderImpl
 public:
 
     CachedReaderImpl(std::istream& ifs, std::size_t cache_size);
-    // ~CachedReaderImpl();
 
-    HeaderPtr ReadHeader();
-    liblas::Point const& ReadNextPoint(HeaderPtr header);
-    liblas::Point const& ReadPointAt(std::size_t n, HeaderPtr header);
-    // void SetOutputSRS(const SpatialReference& srs, const liblas::Header& header);
+    void ReadHeader();
+    void ReadNextPoint();
+    liblas::Point const& ReadPointAt(std::size_t n);
 
-    void Seek(std::size_t n, HeaderPtr header);
-    void Reset(HeaderPtr header);
+    void Seek(std::size_t n);
+    void Reset();
+    void SetFilters(std::vector<liblas::FilterPtr> const& filters);
+    void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
 
 protected:
 
@@ -77,11 +77,13 @@ private:
     // Blocked copying operations, declared but not defined.
     CachedReaderImpl(CachedReaderImpl const& other);
     CachedReaderImpl& operator=(CachedReaderImpl const& rhs);
-    liblas::Point const& ReadCachedPoint(boost::uint32_t position, HeaderPtr header);
+    void ReadCachedPoint(boost::uint32_t position);
     
-    void CacheData(boost::uint32_t position, HeaderPtr header);
-
+    void CacheData(boost::uint32_t position);
+    void ReadNextUncachedPoint();
+    
     typedef std::vector<boost::uint8_t> cache_mask_type;
+
     cache_mask_type m_mask;
     cache_mask_type::size_type m_cache_size;    
     cache_mask_type::size_type m_cache_start_position;

@@ -150,8 +150,17 @@ endif(APPLE)
 # Boost C++ Libraries support - required
 message(STATUS "Searching for Boost 1.38+ - done")
 
-set(Boost_USE_STATIC_LIBS   ON)
-set(Boost_USE_MULTITHREADED ON)
+# Default to using static, multithreaded libraries for 
+# linking under MSVC.  This is because we show users how to 
+# use boostpro.com installer and install those options when linking 
+# on windows in the compilation documentation.
+if(WIN32)
+  if (MSVC)
+    set(Boost_USE_STATIC_LIBS   ON)
+    set(Boost_USE_MULTITHREADED ON)
+  endif(MSVC)
+endif(WIN32)
+
 # NOTE: Add iostreams to COMPONENTS list to enable bigfile_boost_iostreams_test
 find_package(Boost 1.38 COMPONENTS program_options REQUIRED)
 
@@ -163,6 +172,23 @@ endif()
 mark_as_advanced(CLEAR Boost_INCLUDE_DIR) 
 mark_as_advanced(CLEAR Boost_LIBRARY_DIRS) 
 link_directories(${Boost_LIBRARY_DIRS}) 
+
+
+	
+# libxml2 support - optional, default=ON
+set(WITH_LIBXML2 FALSE CACHE BOOL "Choose if libxml2 support should be built ")
+
+if(WITH_LIBXML2)
+    find_package(LibXml2)
+    mark_as_advanced(CLEAR LIBXML2_INCLUDE_DIR)
+    mark_as_advanced(CLEAR LIBXML2_LIBRARIES)
+    if(LIBXML2_FOUND)
+        include_directories(${LIBXML2_INCLUDE_DIR})
+        add_definitions(-DHAVE_LIBXML2=1)
+    endif()
+endif()
+
+
 
 # GeoTIFF support - optional, default=OFF
 set(WITH_GEOTIFF FALSE CACHE BOOL "Choose if GeoTIFF support should be built")

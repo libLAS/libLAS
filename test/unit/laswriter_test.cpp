@@ -202,6 +202,7 @@ namespace tut
             test_default_header(hdr_default);
 
             // update some header data and overwrite header block
+            header.SetReserved(1);
             header.SetFileSourceId(65535);
             header.SetSystemId("Unit Test libLAS System");
             header.SetSoftwareId("Unit Test libLAS Software");
@@ -224,6 +225,7 @@ namespace tut
             liblas::Reader reader(ifs);
 
             liblas::Header const& header = reader.GetHeader();
+            ensure_equals(header.GetReserved(), 1);
             ensure_equals(header.GetFileSourceId(), 65535);
             ensure_equals(header.GetSystemId(), std::string("Unit Test libLAS System"));
             ensure_equals(header.GetSoftwareId(), std::string("Unit Test libLAS Software"));
@@ -238,7 +240,7 @@ namespace tut
         }
     }
 
-    // Test GetStream method
+    // Test appending to an existing file
     template<>
     template<>
     void to::test<4>()
@@ -247,11 +249,37 @@ namespace tut
         ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
 
         liblas::Header header;
-        liblas::Writer writer(ofs, header);
+        header.SetDataOffset(759);//Toggle to see the differences
+        header.SetDataFormatId( liblas::ePointFormat1 );
+        {
+            liblas::Writer testWriter( ofs, header);
+        }
+        
+        ofs.close();
+        
+        ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
+        {
+            
+            liblas::Writer test2Writer( ofs, header);
 
-        std::ostream& os = writer.GetStream();
+            size_t count = 500;
+            for ( size_t i = 0; i < count ; i++ )
+            {
+                liblas::Point point;
+                point.SetCoordinates( 10 + i, 20 + i, 30 + i );
+                test2Writer.WritePoint( point );
+            }
+        }
+        
+        ofs.close();
+        
+        std::ifstream ifs;
+        ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
+        liblas::Reader reader(ifs);
+        
+        liblas::Header const& h = reader.GetHeader();
+        ensure_equals("Appended point count does not match", h.GetPointRecordsCount(), 500);
 
-        ensure_equals(ofs, os); // same streams
     }
 }
 

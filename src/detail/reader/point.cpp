@@ -67,27 +67,15 @@ Point::~Point()
 {
 }
 
-std::istream& Point::GetStream() const
-{
-    return m_ifs;
-}
-
 void Point::read()
 {
     assert(m_header);
     assert(m_point.GetHeaderPtr());
     assert(m_raw_data.size() > 0);
-
-    // try
-    // {
-        detail::read_n(m_raw_data.front(), m_ifs, m_raw_data.size());
-    // }
-    // catch (std::out_of_range const& e) // we reached the end of the file
-    // {
-    //     // FIXME: Why do we kill the error? It cause setting m_point with invali data, doesn't it? --mloskot
-    //     std::cerr << e.what() << std::endl;
-    // }    
     
+    m_point.SetHeaderPtr(m_header);
+    detail::read_n(m_raw_data.front(), m_ifs, m_raw_data.size());
+
     m_point.SetData(m_raw_data);
 }
 

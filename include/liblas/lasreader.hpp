@@ -49,7 +49,6 @@
 #include <liblas/lasspatialreference.hpp>
 #include <liblas/lastransform.hpp>
 #include <liblas/lasfilter.hpp>
-#include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/export.hpp>
 // boost
 #include <boost/cstdint.hpp>
@@ -98,13 +97,6 @@ public:
     /// @exception nothrow
     std::vector<VariableRecord> const& GetVLRs() const;
 
-    /// Allow fetching of the stream attached to the reader.
-    /// @exception nothrow
-    std::istream& GetStream() const;
-
-    /// Checks if end-of-file has been reached.
-    bool IsEOF() const;
-
     /// Fetches next point record in file.
     /// @exception may throw std::exception
     bool ReadNextPoint();
@@ -120,22 +112,7 @@ public:
     /// Move to the specified point to start 
     /// ReadNextPoint operations
     /// @exception may throw std::exception
-    bool seek(std::size_t n);
-    
-    /// Reproject data as they are written if the Reader's reference is
-    /// different than the Header's.
-    /// @exception may throw std::exception
-    bool SetSRS(const SpatialReference& ref);
-    
-    /// Override the spatial reference of the Reader's Header for 
-    /// writing purposes.
-    /// @exception may throw std::exception
-    bool SetInputSRS(const SpatialReference& ref);
-
-    /// Override the spatial reference of the Reader's Header for 
-    /// writing purposes.
-    /// @exception may throw std::exception
-    bool SetOutputSRS(const SpatialReference& ref);
+    bool Seek(std::size_t n);
 
     /// Provides index-based access to point records.
     /// The operator is implemented in terms of ReadPointAt method
@@ -148,7 +125,7 @@ public:
     /// effect for reading data at specific locations in the file.  
     /// They only affect reading ReadNextPoint-style operations
     /// Filters are applied *before* transforms.
-    void SetFilters(std::vector<liblas::FilterPtr> const& filters) {m_filters = filters;}
+    void SetFilters(std::vector<liblas::FilterPtr> const& filters);
 
     /// Sets transforms to apply to points.  Points are transformed in 
     /// place *in the order* of the transform list.
@@ -158,11 +135,9 @@ public:
     /// special case.  You can define your own reprojection transforms and add 
     /// it to the list, but be sure to not issue a SetOutputSRS to trigger 
     /// the internal transform creation
-    void SetTransforms(std::vector<liblas::TransformPtr> const& transforms) {m_transforms = transforms;}
+    void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
 
-    /// Summarize the file represented by the reader in the form of a 
-    /// property_tree.  
-    liblas::property_tree::ptree Summarize();
+
 private:
 
     // Blocked copying operations, declared but not defined.
@@ -170,26 +145,9 @@ private:
     Reader& operator=(Reader const& rhs);
 
     void Init(); // throws on error
-    bool KeepPoint(liblas::Point const& p);
-
     const std::auto_ptr<ReaderI> m_pimpl;
 
-    HeaderPtr m_header;
-    Point* m_point;
-    PointPtr m_empty_point;
-    
-    
-    // Set if the user provides a header to override the header as 
-    // read from the istream
-    bool bCustomHeader;
-    
-    std::vector<liblas::FilterPtr> m_filters;
-    std::vector<liblas::TransformPtr> m_transforms;
 
-    TransformPtr m_reprojection_transform;
-
-    SpatialReference m_out_srs;
-    SpatialReference m_in_srs;  
 };
 
 } // namespace liblas

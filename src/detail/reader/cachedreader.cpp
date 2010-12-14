@@ -70,9 +70,10 @@ CachedReaderImpl::CachedReaderImpl(std::istream& ifs , std::size_t size)
 {
 }
 
-HeaderPtr CachedReaderImpl::ReadHeader()
+void CachedReaderImpl::ReadHeader()
 {
-    HeaderPtr hptr = ReaderImpl::ReadHeader();
+    ReaderImpl::ReadHeader();
+    HeaderPtr hptr(new liblas::Header(ReaderImpl::GetHeader()));
     
     // If we were given no cache size, try to cache the whole thing
     if (m_cache_size == 0) {
@@ -90,15 +91,15 @@ HeaderPtr CachedReaderImpl::ReadHeader()
     // boost::uint8_t const uncached_mask = 0;
     // cache_mask_type(hptr->GetPointRecordsCount(), uncached_mask).swap(m_mask);
     
-    return hptr;
+    m_header = hptr;
 }
 
-void CachedReaderImpl::CacheData(boost::uint32_t position, HeaderPtr header) 
+void CachedReaderImpl::CacheData(boost::uint32_t position) 
 {
     cache_mask_type::size_type old_cache_start_position = m_cache_start_position;
     m_cache_start_position = position;
 
-    cache_mask_type::size_type header_size = static_cast<cache_mask_type::size_type>(header->GetPointRecordsCount());
+    cache_mask_type::size_type header_size = static_cast<cache_mask_type::size_type>(m_header->GetPointRecordsCount());
     cache_mask_type::size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
 
     cache_mask_type::size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position);
@@ -111,7 +112,7 @@ void CachedReaderImpl::CacheData(boost::uint32_t position, HeaderPtr header)
     // if these aren't equal, we've hopped around with ReadPointAt
     // and we need to seek to the proper position.
     if (m_current != position) {
-        CachedReaderImpl::Seek(position, header);
+        CachedReaderImpl::Seek(position);
         m_current = position;
     }
     m_cache_read_position =  position;
@@ -120,7 +121,8 @@ void CachedReaderImpl::CacheData(boost::uint32_t position, HeaderPtr header)
     {
         try {
             m_mask[m_current] = 1;
-            m_cache[i] = ReaderImpl::ReadNextPoint(header);
+            ReadNextUncachedPoint();
+            m_cache[i] = ReaderImpl::GetPoint();
         } catch (std::out_of_range&) {
             // cached to the end
             break;
@@ -128,7 +130,31 @@ void CachedReaderImpl::CacheData(boost::uint32_t position, HeaderPtr header)
     }
 }
 
-liblas::Point const& CachedReaderImpl::ReadCachedPoint(boost::uint32_t position, HeaderPtr header) {
+void CachedReaderImpl::ReadNextUncachedPoint()
+{
+    if (0 == m_current)
+    {
+        m_ifs.clear();
+        m_ifs.seekg(m_header->GetDataOffset(), std::ios::beg);
+    }
+
+    if (m_current >= m_size ){
+        throw std::out_of_range("ReadNextPoint: file has no more points to read, end of file reached");
+    } 
+
+    m_point_reader->read();
+    ++m_current;
+    *m_point = m_point_reader->GetPoint();
+
+
+    if (!m_transforms.empty())
+    {
+        ReaderImpl::TransformPoint(*m_point);
+    }
+
+}
+
+void CachedReaderImpl::ReadCachedPoint(boost::uint32_t position) {
     
     int32_t cache_position = position - m_cache_start_position ;
 
@@ -150,16 +176,17 @@ liblas::Point const& CachedReaderImpl::ReadCachedPoint(boost::uint32_t position,
         // Mark all positions as uncached and build up the mask
         // to the size of the number of points in the file
         boost::uint8_t const uncached_mask = 0;
-        cache_mask_type(header->GetPointRecordsCount(), uncached_mask).swap(m_mask);
+        cache_mask_type(m_header->GetPointRecordsCount(), uncached_mask).swap(m_mask);
  
         m_cache_initialized = true;
     }
     if (m_mask[position] == 1) {
         m_cache_read_position = position;
-        return m_cache[cache_position];
+        *m_point =  m_cache[cache_position];
+        return;
     } else {
 
-        CacheData(position, header);
+        CacheData(position);
         
         // At this point, we can't have a negative cache position.
         // If we do, it's a big error or we'll segfault.
@@ -182,7 +209,8 @@ liblas::Point const& CachedReaderImpl::ReadCachedPoint(boost::uint32_t position,
                     << " greater than cache size: " << m_cache.size() ;
                 throw std::runtime_error(msg.str());
             }
-            return m_cache[cache_position];
+            *m_point = m_cache[cache_position];
+            return;
         } else {
             std::ostringstream msg;
             msg << "ReadCachedPoint:: unable to obtain cached point"
@@ -195,7 +223,7 @@ liblas::Point const& CachedReaderImpl::ReadCachedPoint(boost::uint32_t position,
     }
 }
 
-liblas::Point const& CachedReaderImpl::ReadNextPoint(HeaderPtr header)
+void CachedReaderImpl::ReadNextPoint()
 {
     if (m_cache_read_position == m_size )
     {
@@ -203,12 +231,36 @@ liblas::Point const& CachedReaderImpl::ReadNextPoint(HeaderPtr header)
     }
     
     // PointPtr ptr = ReadCachedPoint(m_cache_read_position, header);
-    liblas::Point const& point = ReadCachedPoint(m_cache_read_position, header);
+    ReadCachedPoint(m_cache_read_position);
     ++m_cache_read_position;
-    return point;
+
+    // Filter the points and continue reading until we either find 
+    // one to keep or throw an exception.
+
+    bool bLastPoint = false;
+    if (!FilterPoint(*m_point))
+    {
+        ReadCachedPoint(m_cache_read_position);
+        ++m_cache_read_position;
+
+        while (!FilterPoint(*m_point))
+        {
+            ReadCachedPoint(m_cache_read_position);
+            ++m_cache_read_position;
+            if (m_current == m_size) 
+            {
+                bLastPoint = true;
+                break;
+            }
+        }
+    }
+
+    if (bLastPoint)
+        throw std::out_of_range("ReadNextPoint: file has no more points to read, end of file reached");
+    
 }
 
-liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, HeaderPtr header)
+liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n)
 {
 
     if (n >= m_size ){
@@ -223,22 +275,22 @@ liblas::Point const& CachedReaderImpl::ReadPointAt(std::size_t n, HeaderPtr head
         throw std::runtime_error(out);
     }
     
-    liblas::Point const& p = ReadCachedPoint(n, header);
+    ReadCachedPoint(n);
     m_cache_read_position = n;
-    return p;
+    return *m_point;
 }
 
-void CachedReaderImpl::Reset(HeaderPtr header)
+void CachedReaderImpl::Reset()
 {
     if (m_mask.empty())
     {    
-        ReaderImpl::Reset(header);
+        ReaderImpl::Reset();
         return;
     }
 
     typedef cache_mask_type::size_type size_type;
     size_type old_cache_start_position = m_cache_start_position;
-    size_type header_size = static_cast<size_type>(header->GetPointRecordsCount());
+    size_type header_size = static_cast<size_type>(m_header->GetPointRecordsCount());
     size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position); 
 
     for (uint32_t i = 0; i < to_mark; ++i) {
@@ -253,18 +305,32 @@ void CachedReaderImpl::Reset(HeaderPtr header)
     m_cache_read_position = 0;
     m_cache_initialized = false;
 
-    ReaderImpl::Reset(header);
+    ReaderImpl::Reset();
 }
 
-void CachedReaderImpl::Seek(std::size_t n, HeaderPtr header)
+void CachedReaderImpl::Seek(std::size_t n)
 {
 
    if (n < 1) {
-       CachedReaderImpl::Reset(header);
+       CachedReaderImpl::Reset();
    }
    
    m_cache_read_position = n;
-   ReaderImpl::Seek(n,header);
+   ReaderImpl::Seek(n);
+}
+
+void CachedReaderImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
+{
+    Reset();
+    ReaderImpl::SetFilters(filters);
+}
+
+void CachedReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
+{
+    // Setting transforms means the cache is invalid
+    Reset();
+    ReaderImpl::SetTransforms(transforms);
+
 }
 
 }} // namespace liblas::detail
