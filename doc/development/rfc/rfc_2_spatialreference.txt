@@ -111,8 +111,64 @@ when it is included vs. when liblas itself is compiled and linked.
 SpatialReference WKT Updates
 ------------------------------------------------------------------------------
 
+Additions to SpatialReference Class::
+
+  public
+    enum GeoVLRType
+    {
+        eGeoTIFF = 1,
+        eOGRWKT = 2
+    };
+
+    void ClearVLRs( GeoVLRType eType );
+
+  private:
+    mutable std::string m_wkt;
+
+The GeoVLRType enumeration is currently used just to define what information
+should be wiped in a call to ClearVLRs() but in the future it might also 
+be used for other purposes.
+
+The ClearVLRs() method clears either the WKT VLR + m_vlr, or the GeoTIFF
+VLRs and the associated m_gtiff, m_tiff objects. 
+
+The m_wkt is used internally to cache the current WKT string associated
+with the spatial reference.  
+
+The SpatialReference class is updated to:
+
+ * Generated both GeoTIFF and WKT VLRs in the ResetVLRs() method.  
+
+ * GetWKT() now just returns the WKT definition if it is available, otherwise 
+   it computes the WKT from the GeoTIFF definition. 
+
+ * SetWKT() now caches the WKT as well as creating the GeoTIFF definition
+   from it.  Then the WKT and GeoTIFF VLRs are generated.
+
+Now, if you want *only* GeoTIFF VLRs you should normally generate the
+SpatialReference and then call "ClearVLRs(eOGRWKT);" before setting the
+SpatialReference on the header being written.  If you want *only* a WKT
+VLR then you should call "ClearVLRs(eGeotIFF);" at the same point.
+
+
 
 WKT VLR
 ------------------------------------------------------------------------------
+
+
+Currently the OGR WKT VLR is currently being written with a UserId of
+"LASF_Projection" like the GeoTIFF VLRs, and with a RecordId of 2112 to 
+distingish it from the GeoTIFF VLRs.  
+
+The data is the OGR WKT string with a terminating zero byte. 
+
+Is there any scheme to assign RecordIds?  Perhaps we should pick a value
+outside the normal legal range for TIFF tags?  Or perhaps we should be
+using a different UserId? 
+
+Note that it is anticipated at some point in the future there will be a
+WKT VLR definition as part of the LAS specification and that it's contents
+may be more accurately defined as OGC WKT rather than OGR WKT which can
+contain a variety of extensions to the specification.
 
 
