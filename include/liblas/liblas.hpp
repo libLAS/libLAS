@@ -146,6 +146,10 @@ public:
     virtual void UpdateHeader(Header const& header) = 0;
     virtual void WritePoint(const Point& point, HeaderPtr header) = 0;
 
+    virtual void SetFilters(std::vector<liblas::FilterPtr> const& filters) = 0;
+    virtual void SetTransforms(std::vector<liblas::TransformPtr> const& transforms) = 0;
+
+
     virtual ~WriterI() {}
 
 };

@@ -66,13 +66,19 @@ public:
     void UpdateHeader(liblas::Header const& header);
     void WritePoint(liblas::Point const& record, HeaderPtr header);
 
+    void SetFilters(std::vector<liblas::FilterPtr> const& filters);
+    void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
+
 protected:
     PointRecord m_record;
     std::ostream& m_ofs;
      
     PointWriterPtr m_point_writer;
     HeaderWriterPtr m_header_writer;
-    
+
+    std::vector<liblas::FilterPtr> m_filters;
+    std::vector<liblas::TransformPtr> m_transforms;    
+
 private:
 
     boost::uint32_t m_pointCount;

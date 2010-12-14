@@ -97,6 +97,16 @@ WriterImpl::~WriterImpl()
 
 }
 
+void WriterImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
+{
+    m_filters = filters;
+}
+
+void WriterImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
+{
+    m_transforms = transforms;
+}
+
 WriterImpl* WriterFactory::Create(std::ostream& ofs)
 {
     if (!ofs)

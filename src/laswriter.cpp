@@ -54,9 +54,8 @@ namespace liblas
 {
 
 Writer::Writer(std::ostream& ofs, Header const& header) :
-    m_pimpl(detail::WriterFactory::Create(ofs)), m_header(HeaderPtr(new liblas::Header(header))), 
-    m_filters(0),
-    m_transforms(0)
+    m_pimpl(detail::WriterFactory::Create(ofs)), m_header(HeaderPtr(new liblas::Header(header))) 
+
 {
     liblas::Header const& h = m_pimpl->WriteHeader(*m_header);
     m_header = HeaderPtr(new liblas::Header(h));
@@ -77,57 +76,6 @@ Header const& Writer::GetHeader() const
 
 bool Writer::WritePoint(Point const& point)
 {
-    if (!point.IsValid())
-    {
-        return false;
-    }
-
-    bool bHaveTransforms = (m_transforms != 0);
-    bool bHaveFilters = (m_filters != 0);
-
-    if (bHaveFilters) {
-    if (m_filters->size() != 0) {
-        // We have filters, filter this point.  All filters must 
-        // return true for us to keep it.
-        bool keep = false;
-        for (std::vector<liblas::FilterI*>::const_iterator fi = m_filters->begin(); fi != m_filters->end(); ++fi) {
-            liblas::FilterI* filter = *fi;
-            if (filter->filter(point)){
-                // if ->filter() is true, we keep the point
-                keep = true;
-            } else {
-                keep = false;
-                break;
-            }
-            
-        }
-        if (!keep) {
-            return false;
-        } 
-    }
-    }
-    
-    if (bHaveTransforms) {
-    if (m_transforms->size() != 0) {
-    
-        // Apply the transforms to each point
-        Point p(point);
-        for (std::vector<liblas::TransformI*>::const_iterator ti = m_transforms->begin();
-             ti != m_transforms->end(); ++ti) {
-            liblas::TransformI* transform = *ti;
-            transform->transform(p);
-
-        }
-        
-        // We have to write a copy of our point, because we're applying 
-        // transformations that change the point.
-        m_pimpl->WritePoint(p, m_header);
-        return true;
-    }
-    }
-
-    // if we haven't returned because of the filter and we don't have any 
-    // transforms, just write the point
     m_pimpl->WritePoint(point, m_header);
     return true;
 }
@@ -140,6 +88,15 @@ void Writer::WriteHeader(Header& header)
     m_header = HeaderPtr(new liblas::Header(h));
 }
 
+void Writer::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
+{
+    m_pimpl->SetTransforms(transforms);
+}
+
+void Writer::SetFilters(std::vector<liblas::FilterPtr> const& filters)
+{
+    m_pimpl->SetFilters(filters);
+}    
 
 } // namespace liblas
 

@@ -53,6 +53,7 @@ WriterBase::WriterBase(std::ostream& ofs, boost::uint32_t& count)
 {
 }
 
+
 WriterBase::~WriterBase()
 {
 }

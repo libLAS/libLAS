@@ -88,7 +88,7 @@ public:
     /// Sets filters that are used to determine wither or not to 
     /// keep a point that before we write it
     /// Filters are applied *before* transforms.
-    void SetFilters(std::vector<liblas::FilterI*>* filters) {m_filters = filters;}
+    void SetFilters(std::vector<liblas::FilterPtr> const& filters);
 
     /// Sets transforms to apply to points.  Points are transformed in 
     /// place *in the order* of the transform list.
@@ -98,7 +98,7 @@ public:
     /// special case.  You can define your own reprojection transforms and add 
     /// it to the list, but be sure to not issue a SetOutputSRS to trigger 
     /// the internal transform creation
-    void SetTransforms(std::vector<liblas::TransformI*>* transforms) {m_transforms = transforms;}
+    void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
     
 private:
     
@@ -109,12 +109,6 @@ private:
     const std::auto_ptr<WriterI> m_pimpl;
 
     HeaderPtr m_header;
-    detail::PointRecord m_record;
-
-    std::vector<liblas::FilterI*>* m_filters;
-    std::vector<liblas::TransformI*>* m_transforms;
-
-    
 };
 
 } // namespace liblas
