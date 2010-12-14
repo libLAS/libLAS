@@ -201,6 +201,51 @@ std::vector<VariableRecord> SpatialReference::GetVLRs() const
     return m_vlrs;
 }
 
+void SpatialReference::ClearVLRs( GeoVLRType eType )
+
+{
+    std::vector<VariableRecord>::iterator it;
+
+    for (it = m_vlrs.begin(); it != m_vlrs.end(); )
+    {
+        VariableRecord const& vlr = *it;
+        bool wipe = false;
+
+        // for now we can assume all m_vlrs records are LASF_Projection.
+        if( eType == eOGRWKT && 2112 == vlr.GetRecordId() )
+            wipe = true;
+
+        else if( eType == eGeoTIFF 
+                 && (34735 == vlr.GetRecordId()
+                     || 34736 == vlr.GetRecordId()
+                     || 34737 == vlr.GetRecordId()) )
+            wipe = true;
+
+        if( wipe )
+            it = m_vlrs.erase( it );
+        else
+            ++it;
+    }
+
+    if( eType == eOGRWKT )
+        m_wkt = "";
+    else if( eType == eGeoTIFF )
+    {
+#ifdef HAVE_LIBGEOTIFF
+        if (m_gtiff != 0)
+        {
+            GTIFFree(m_gtiff);
+            m_gtiff = 0;
+        }
+        if (m_tiff != 0)
+        {
+            ST_Destroy(m_tiff);
+            m_tiff = 0;
+        }
+#endif
+    }
+}
+
 void SpatialReference::ResetVLRs()
 {
 
@@ -347,6 +392,8 @@ void SpatialReference::ResetVLRs()
         // was annoying to me? FrankW
         while( *wkt_bytes != 0 )
             data.push_back( *(wkt_bytes++) );
+
+        data.push_back( '\0' );
 
         wkt_record.SetRecordLength( data.size() );
         wkt_record.SetData(data);
@@ -528,7 +575,7 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
             else
                 poSRS->exportToWkt( &pszWKT );
             
-            delete poSRS;
+            OSRDestroySpatialReference( poSRS );
         }
 #else
         boost::ignore_unused_variable_warning(mode_flag);
@@ -675,8 +722,7 @@ std::string SpatialReference::GetProj4() const
     {
         char* proj4def = GTIFGetProj4Defn(&defn);
         std::string tmp(proj4def);
-        std::free(proj4def); /* risk of cross-heap issue, but no free function in libgeotiff matching GTIFGetProj4Defn */
-
+        GTIFFreeMemory( proj4def );
         return tmp;
     }
 #endif
@@ -729,7 +775,7 @@ void SpatialReference::SetProj4(std::string const& v)
     {
         char* proj4def = GTIFGetProj4Defn(&defn);
         std::string tmp(proj4def);
-        std::free(proj4def); /* risk of cross-heap issue, but no free function in libgeotiff matching GTIFGetProj4Defn */
+        GTIFFreeMemory( proj4def );
     }
 #else
     boost::ignore_unused_variable_warning(v);
@@ -777,6 +823,9 @@ std::string SpatialReference::GetGTIFFText() const
 #ifndef HAVE_LIBGEOTIFF
     return std::string("");
 #else
+
+    if( m_gtiff == NULL )
+        return std::string("");
 
     detail::geotiff_dir_printer geotiff_printer;
     GTIFPrint(m_gtiff, detail::libLASGeoTIFFPrint, &geotiff_printer);

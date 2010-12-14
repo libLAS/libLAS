@@ -75,10 +75,10 @@ public:
         eCompoundOK = 2
     };
 
-    enum DefinativeGeoVLR
+    enum GeoVLRType
     {
         eGeoTIFF = 1,
-        eLLWKT = 2
+        eOGRWKT = 2
     };
 
     /// Default constructor.
@@ -168,9 +168,7 @@ public:
     /// Return a copy of the LASVLRs that SpatialReference maintains
     std::vector<VariableRecord> GetVLRs() const;
 
-    void SetDefinativeGeoVLR( DefinativeGeoVLR eDGV );
-
-    DefinativeGeoVLR GetDefinativeGeoVLR( void ) const;
+    void ClearVLRs( GeoVLRType eType );
 
     liblas::property_tree::ptree GetPTree() const;    
 private:
@@ -178,11 +176,8 @@ private:
     // FIXME: Define as shared_ptr<GTIF> with custom deleter to get rid of bloated mem management, unsafe anyway --mloskot
     GTIF*       m_gtiff;
     ST_TIFF*    m_tiff;
-    bool        m_gtiff_primary;
 
     mutable std::string m_wkt;
-
-    DefinativeGeoVLR  m_definative_geo_vlr;
 
     std::vector<VariableRecord> m_vlrs;
     bool IsGeoVLR(VariableRecord const& vlr) const;

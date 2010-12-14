@@ -190,7 +190,134 @@ namespace tut
         
     }
 
+    // Test incorporation of vertical datum information into WKT string and
+    // into GeoTIFF VLRs. 
+    template<>
+    template<>
+    void to::test<7>()
+    {
+        liblas::SpatialReference ref;
+        const char* wkt_c = "COMPD_CS[\"WGS 84 + VERT_CS\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],VERT_CS[\"NAVD88 height\",VERT_DATUM[\"North American Vertical Datum 1988\",2005,AUTHORITY[\"EPSG\",\"5103\"],EXTENSION[\"PROJ4_GRIDS\",\"g2003conus.gtx\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"5703\"]]]";
+        const char* exp_gtiff = "Geotiff_Information:\n   Version: 1\n   Key_Revision: 1.0\n   Tagged_Information:\n      End_Of_Tags.\n   Keyed_Information:\n      GTRasterTypeGeoKey (Short,1): RasterPixelIsArea\n      GTModelTypeGeoKey (Short,1): ModelTypeGeographic\n      GeogAngularUnitsGeoKey (Short,1): Angular_Degree\n      GeogCitationGeoKey (Ascii,7): \"WGS 84\"\n      GeographicTypeGeoKey (Short,1): GCS_WGS_84\n      GeogInvFlatteningGeoKey (Double,1): 298.257223563    \n      GeogSemiMajorAxisGeoKey (Double,1): 6378137          \n      VerticalCitationGeoKey (Ascii,14): \"NAVD88 height\"\n      VerticalCSTypeGeoKey (Short,1): Unknown-5703\n      VerticalDatumGeoKey (Short,1): Unknown-5103\n      VerticalUnitsGeoKey (Short,1): Linear_Meter\n      End_Of_Keys.\n   End_Of_Geotiff.\n";
+
+        ref.SetFromUserInput(wkt_c);
+
+        ensure_equals("WKT comparison", ref.GetWKT(liblas::SpatialReference::eCompoundOK), wkt_c );
+        
+        std::vector<liblas::VariableRecord> const& vlrs = ref.GetVLRs();
+        ensure_equals("VLR count", vlrs.size(), boost::uint32_t(4));
+        ensure_equals("First record size", vlrs[0].GetRecordLength(), boost::uint32_t(96));
+
+        liblas::property_tree::ptree tree = ref.GetPTree();
+        std::string gtiff = tree.get<std::string>("gtiff");
+
+        ensure_equals("GeoTIFF Tags", gtiff, exp_gtiff );
+
+        // Now try stripping away the WKT VLR and see that we get the GeoTIFF 
+        // derived version instead.
+        ref.ClearVLRs( liblas::SpatialReference::eOGRWKT );
+
+        wkt_c = "COMPD_CS[\"unknown\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],VERT_CS[\"NAVD88 height\",VERT_DATUM[\"North American Vertical Datum 1988\",2005,AUTHORITY[\"EPSG\",\"5103\"],EXTENSION[\"PROJ4_GRIDS\",\"g2003conus.gtx,g2003alaska.gtx,g2003h01.gtx,g2003p01.gtx\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"5703\"]]]";
+        ensure_equals("non OGR WKT comparison", ref.GetWKT(liblas::SpatialReference::eCompoundOK), wkt_c );
+    }
+
+    // Try writing a compound coordinate system to file and ensure we get back
+    // WKT with the geoidgrids (from the WKT VLR).
+    template<>
+    template<>
+    void to::test<8>()
+    {
+        std::string tmpfile_(g_test_data_path + "//tmp_srs.las");
+        liblas::SpatialReference ref, result_ref;
+        const char* wkt_c = "COMPD_CS[\"WGS 84 + VERT_CS\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],VERT_CS[\"NAVD88 height\",VERT_DATUM[\"North American Vertical Datum 1988\",2005,AUTHORITY[\"EPSG\",\"5103\"],EXTENSION[\"PROJ4_GRIDS\",\"g2003conus.gtx,g2003alaska.gtx,g2003h01.gtx,g2003p01.gtx\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"5703\"]]]";
+
+        ref.SetFromUserInput( wkt_c );
+
+        // Write a very simple file with our SRS and one point.
+        {
+            std::ofstream ofs;
+            ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
+
+            liblas::Header header;
+            header.SetSRS( ref );
+
+            liblas::Writer writer(ofs, header);
+            
+            liblas::Point point;
+            point.SetCoordinates( -117, 33, 100 );
+            writer.WritePoint( point );
+        }
+
+        // Reopen and check contents. 
+        {
+            std::ifstream ifs;
+            ifs.open( tmpfile_.c_str(), std::ios::in | std::ios::binary );
+            
+            liblas::Reader reader(ifs);
+
+            liblas::Header const& header = reader.GetHeader();
+            
+            result_ref = header.GetSRS();
+        }
+
+        ensure_equals("WKT comparison", ref.GetWKT(liblas::SpatialReference::eCompoundOK), wkt_c );
+
+        // Cleanup 
+        std::remove(tmpfile_.c_str());
+    }
+
+    // Try writing only the WKT VLR to a file, and see if the resulting
+    // file still works ok.
+    template<>
+    template<>
+    void to::test<9>()
+    {
+        std::string tmpfile_(g_test_data_path + "//tmp_srs_9.las");
+        liblas::SpatialReference ref, result_ref;
+
+        ref.SetFromUserInput( "EPSG:4326" );
+        ref.ClearVLRs( liblas::SpatialReference::eGeoTIFF );
+
+        // Write a very simple file with our SRS and one point.
+        {
+            std::ofstream ofs;
+            ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
+
+            liblas::Header header;
+            header.SetSRS( ref );
+
+            liblas::Writer writer(ofs, header);
+            
+            liblas::Point point;
+            point.SetCoordinates( -117, 33, 100 );
+            writer.WritePoint( point );
+        }
+
+        // Reopen and check contents. 
+        {
+            std::ifstream ifs;
+            ifs.open( tmpfile_.c_str(), std::ios::in | std::ios::binary );
+            
+            liblas::Reader reader(ifs);
+
+            liblas::Header const& header = reader.GetHeader();
+            
+            result_ref = header.GetSRS();
+        }
+
+        std::vector<liblas::VariableRecord> const& vlrs = ref.GetVLRs();
+        ensure_equals("VLR count", vlrs.size(), boost::uint32_t(1));
+
+        liblas::property_tree::ptree tree = ref.GetPTree();
+        std::string gtiff = tree.get<std::string>("gtiff");
+
+        // there should be no geotiff definition.
+        ensure_equals("GeoTIFF Tags", gtiff, "" );
+
+        // Cleanup 
+        std::remove(tmpfile_.c_str());
+    }
+
 #endif
 
 }
-
