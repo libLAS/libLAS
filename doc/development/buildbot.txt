@@ -1,8 +1,45 @@
 .. _buildbot:
 
 ******************************************************************************
-Continuous Integration
+Test Suite
 ******************************************************************************
+
+Liblas includes a test suite written in C++ that can be fairly easily run
+to ensure that the library is working properly.  
+
+
+make test
+..............................................................................
+
+The test suite can be run in the liblas main directory with::
+
+  make test
+
+If the liblas_test binary does not exist it may be necessary to do::
+
+  make liblas_test test
+
+This should produce a brief report indicating the number of tests that failed,
+if any.  A detailed report will be generated in 
+liblas/Testing/Temporary/LastTest.log.  Failure reports may look something 
+like::
+
+  ---> group: liblas::SpatialReference, test: test<6>
+       problem: assertion failed
+       failed assertion: `VLR count: expected `3` actual `4``
+
+Tests failures diagnosis may require inspecting the test code in the 
+liblas/test/unit directory.  In the above case searching for "test<6>" in
+the file liblas/test/unit/lasspatialreference_test.cpp would be appropriate.
+
+The tests can also be run directly in the liblas/test/unit directory by 
+running the liblas/bin/liblas_test executable.   In this case the report is
+written to stderr.  Be careful to write it in the right directory or some
+tests will fail for reasons that are not clear. 
+
+
+Continuous Integration - buildbot
+..............................................................................
 
 
 The libLAS project uses `Buildbot <http://buildbot.net/trac>`__ to perform
@@ -18,6 +55,10 @@ There is also #bbliblas bot present on `IRC`_ #liblas] IRC channel:
 ::
 
 <mloskot> bbliblas: force build telascience-full "Routine check"
+
+.. warning::
+    Currently the buildbot instance is not operational.  This section will
+    be updated when an analygous service is available again.
 
 
 Building libLAS and running unit tests using CMake on Unix
@@ -157,6 +198,16 @@ during development process.
        Uploaded: /home/mloskot/dev/liblas/_hg/build/Testing/20091025-0003/Update.xml
        Submission successful
     Built target Continuous
+
+
+Ammending and Extending the Test Suite
+..............................................................................
+
+The tests for the test suite are implemented as a set of C++ files in the 
+liblas/test/unit directory.  New tests for existing classes can be added 
+based on the existing examples.  New files can be introduced for additional
+classes or categories of testing, but the source filename(s) will also need
+to be added in liblas/test/unit/CMakeLists.txt.
 
 
 .. _`CMake`: http://www.cmake.org/

@@ -2,11 +2,13 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Definition of LAS version constants
+ * Purpose:  LAS version related functions.
  * Author:   Mateusz Loskot, mateusz@loskot.net
+ *           Frank Warmerdam, warmerdam@pobox.com
  *
  ******************************************************************************
  * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Frank Warmerdam
  *
  * All rights reserved.
  * 
@@ -39,62 +41,73 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_LASVERSION_HPP_INCLUDED
-#define LIBLAS_LASVERSION_HPP_INCLUDED
+#include <liblas/lasversion.hpp>
 
-#include <liblas/capi/las_version.h>
-#include <liblas/export.hpp>
+#ifdef HAVE_LIBGEOTIFF
+#include <geotiff.h>
+#endif
 
-#include <string>
+#ifdef HAVE_GDAL 
+#include <gdal.h>
+#endif
 
-namespace liblas {
+#include <liblas/lasspatialreference.hpp>
 
-/// Version numbers of the ASPRS LAS Specification.
-/// Numerical representation of versions is calculated according to 
-/// following formula: <em>major * 100000 + minor</em>
-enum LASVersion
+using namespace boost;
+
+namespace liblas
 {
-    eLASVersion10 = 1 * 100000 + 0, ///< LAS Format 1.0
-    eLASVersion11 = 1 * 100000 + 1, ///< LAS Format 1.1
-    eLASVersion12 = 1 * 100000 + 2, ///< LAS Format 1.2
-    eLASVersion20 = 2 * 100000 + 0  ///< LAS Format 2.0
-};
 
-/// Range of allowed ASPRS LAS file format versions.
-enum FormatVersion
+/// Check if GDAL support has been built in to libLAS.
+bool IsGDALEnabled()
 {
-    eVersionMajorMin = 1, ///< Minimum of major component
-    eVersionMajorMax = 1, ///< Maximum of major component
-    eVersionMinorMin = 0, ///< Minimum of minor component
-    eVersionMinorMax = 3  ///< Maximum of minor component
-};
+#ifdef HAVE_GDAL
+    return true;
+#else
+    return false;
+#endif
+}
 
-/// Versions of point record format.
-enum PointFormatName
+/// Check if GeoTIFF support has been built in to libLAS.
+bool IsLibGeoTIFFEnabled()
 {
-    ePointFormat0 = 0,  ///< Point Data Format \e 0
-    ePointFormat1 = 1,  ///< Point Data Format \e 1
-    ePointFormat2 = 2,  ///< Point Data Format \e 2
-    ePointFormat3 = 3,  ///< Point Data Format \e 3
-    ePointFormat4 = 4,  ///< Point Data Format \e 3
-    ePointFormat5 = 5,  ///< Point Data Format \e 3
-    ePointFormatUnknown = -99 ///< Point Data Format is unknown
-};
+#ifdef HAVE_LIBGEOTIFF
+    return true;
+#else
+    return false;
+#endif
+}
 
-/// Number of bytes of point record storage in particular format.
-enum PointSize
-{
-    ePointSize0 = 20, ///< Size of point record in data format \e 0
-    ePointSize1 = 28, ///< Size of point record in data format \e 1
-    ePointSize2 = 26, ///< Size of point record in data format \e 2
-    ePointSize3 = 34  ///< Size of point record in data format \e 3
-};
+/// Tell the user a bit about libLAS' compilation
+std::string  GetFullVersion(void) {
 
-bool LAS_DLL IsGDALEnabled(void);
-bool LAS_DLL IsLibGeoTIFFEnabled(void);
-std::string LAS_DLL GetFullVersion(void);
-std::string LAS_DLL GetVersion(void);
+    std::ostringstream os;
+#ifdef HAVE_LIBGEOTIFF
+    os << " GeoTIFF "
+       << (LIBGEOTIFF_VERSION / 1000) << '.'
+       << (LIBGEOTIFF_VERSION / 100 % 10) << '.'
+       << (LIBGEOTIFF_VERSION % 100 / 10);
+#endif
+#ifdef HAVE_GDAL
+    os << " GDAL " << GDALVersionInfo("RELEASE_NAME");
+#endif
+
+    std::string info(os.str());
+    os.str("");
+    os << "libLAS " << LIBLAS_RELEASE_NAME;
+    if (!info.empty())
+    {
+        os << " with" << info;
+    }
+
+
+    return os.str();
+}
+
+/// Tell the user our dotted release name.
+std::string GetVersion() {
+    return std::string(LIBLAS_RELEASE_NAME);
+}
 
 } // namespace liblas
 
-#endif // LIBLAS_LASVERSION_HPP_INCLUDED
