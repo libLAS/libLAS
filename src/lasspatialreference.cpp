@@ -424,7 +424,7 @@ void SpatialReference::ResetVLRs()
         }
 
 
-        wkt_record.SetRecordLength( data.size() );
+        wkt_record.SetRecordLength( static_cast<boost::uint16_t>(data.size()) );
         wkt_record.SetData(data);
 
         // not to speak of this additional copy!
