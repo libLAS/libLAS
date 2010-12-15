@@ -63,9 +63,7 @@ Writer::Writer(std::ostream& ofs, Header const& header) :
 
 Writer::~Writer()
 {
-    assert(0 != m_pimpl.get());
 
-    m_pimpl->UpdatePointCount(0);
 }
 
 Header const& Writer::GetHeader() const
