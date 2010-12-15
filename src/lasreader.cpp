@@ -69,13 +69,13 @@ Reader::Reader(std::istream& ifs) :
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size) :
-    m_pimpl(new detail::CachedReaderImpl(ifs,3))
+    m_pimpl(new detail::CachedReaderImpl(ifs, cache_size))
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size, Header const& header) :
-    m_pimpl(new detail::CachedReaderImpl(ifs,3))
+    m_pimpl(new detail::CachedReaderImpl(ifs, cache_size))
 {
 
     Init();
