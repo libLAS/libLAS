@@ -108,7 +108,6 @@ private:
 
     const std::auto_ptr<WriterI> m_pimpl;
 
-    HeaderPtr m_header;
 };
 
 } // namespace liblas

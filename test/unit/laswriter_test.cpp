@@ -214,6 +214,10 @@ namespace tut
             writer.WriteHeader(header);
             liblas::Header const& written_header = writer.GetHeader();
             ensure_equals("written_header fileSource id", written_header.GetFileSourceId(), 65535);
+            ensure_equals("written_header SystemId", written_header.GetSystemId(), "Unit Test libLAS System");
+            ensure_equals("written_header SoftwareId", written_header.GetSoftwareId(), "Unit Test libLAS Software");
+            ensure_equals("written_header CreationDOY", written_header.GetCreationDOY(), 100);
+            ensure_equals("written_header CreationYear", written_header.GetCreationYear(), 2008);
 
         }
 

@@ -142,9 +142,13 @@ class WriterI
 {
 public:
 
-    virtual Header const& WriteHeader(Header const& header) = 0;
-    virtual void UpdateHeader(Header const& header) = 0;
-    virtual void WritePoint(const Point& point, HeaderPtr header) = 0;
+
+    virtual liblas::Header& GetHeader() const = 0;
+    virtual void WriteHeader() = 0;
+    virtual void SetHeader(liblas::Header const& header) = 0;
+    
+    virtual void UpdatePointCount(boost::uint32_t count) = 0;
+    virtual void WritePoint(const Point& point) = 0;
 
     virtual void SetFilters(std::vector<liblas::FilterPtr> const& filters) = 0;
     virtual void SetTransforms(std::vector<liblas::TransformPtr> const& transforms) = 0;

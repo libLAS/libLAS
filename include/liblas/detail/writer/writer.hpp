@@ -62,10 +62,14 @@ public:
     WriterImpl(std::ostream& ofs);
     ~WriterImpl();
     LASVersion GetVersion() const;
-    liblas::Header const& WriteHeader(liblas::Header const& header);
-    void UpdateHeader(liblas::Header const& header);
-    void WritePoint(liblas::Point const& record, HeaderPtr header);
+    void WritePoint(liblas::Point const& record);
 
+    liblas::Header& GetHeader() const;
+    void WriteHeader();
+
+    void UpdatePointCount(boost::uint32_t count);
+    void SetHeader(liblas::Header const& header);
+    
     void SetFilters(std::vector<liblas::FilterPtr> const& filters);
     void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
 
@@ -77,7 +81,9 @@ protected:
     HeaderWriterPtr m_header_writer;
 
     std::vector<liblas::FilterPtr> m_filters;
-    std::vector<liblas::TransformPtr> m_transforms;    
+    std::vector<liblas::TransformPtr> m_transforms;
+
+    HeaderPtr m_header;
 
 private:
 

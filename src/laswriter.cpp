@@ -54,29 +54,28 @@ namespace liblas
 {
 
 Writer::Writer(std::ostream& ofs, Header const& header) :
-    m_pimpl(detail::WriterFactory::Create(ofs)), m_header(HeaderPtr(new liblas::Header(header))) 
+    m_pimpl(detail::WriterFactory::Create(ofs))
 
 {
-    liblas::Header const& h = m_pimpl->WriteHeader(*m_header);
-    m_header = HeaderPtr(new liblas::Header(h));
-
+    m_pimpl->SetHeader(header);
+    m_pimpl->WriteHeader();
 }
 
 Writer::~Writer()
 {
     assert(0 != m_pimpl.get());
 
-    m_pimpl->UpdateHeader(*m_header);
+    m_pimpl->UpdatePointCount(0);
 }
 
 Header const& Writer::GetHeader() const
 {
-    return *m_header;
+    return m_pimpl->GetHeader();
 }
 
 bool Writer::WritePoint(Point const& point)
 {
-    m_pimpl->WritePoint(point, m_header);
+    m_pimpl->WritePoint(point);
     return true;
 }
 
@@ -84,8 +83,8 @@ void Writer::WriteHeader(Header& header)
 {
     // The writer may update our header as part of its 
     // writing process (change VLRs for SRS's, for instance).
-    liblas::Header const& h = m_pimpl->WriteHeader(header);
-    m_header = HeaderPtr(new liblas::Header(h));
+    m_pimpl->SetHeader(header);
+    m_pimpl->WriteHeader();
 }
 
 void Writer::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
