@@ -206,14 +206,17 @@ void SpatialReference::ClearVLRs( GeoVLRType eType )
 
 {
     std::vector<VariableRecord>::iterator it;
-
+    std::string const liblas_id("liblas");
+    
     for (it = m_vlrs.begin(); it != m_vlrs.end(); )
     {
         VariableRecord const& vlr = *it;
         bool wipe = false;
 
         // for now we can assume all m_vlrs records are LASF_Projection.
-        if( eType == eOGRWKT && 2112 == vlr.GetRecordId() )
+        if( eType == eOGRWKT && 
+            2112 == vlr.GetRecordId() && 
+            liblas_id == vlr.GetUserId(true).c_str() )
             wipe = true;
 
         else if( eType == eGeoTIFF 
@@ -582,7 +585,7 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
         }
 
         // save this for future calls, etc.
-        m_wkt = (const char *) pszWKT;
+        // m_wkt = std::string( pszWKT );
 
         // Older versions of GDAL lack StripVertical(), but should never
         // actually return COMPD_CS anyways.

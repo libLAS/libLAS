@@ -177,7 +177,7 @@ private:
     GTIF*       m_gtiff;
     ST_TIFF*    m_tiff;
 
-    mutable std::string m_wkt;
+    std::string m_wkt;
 
     std::vector<VariableRecord> m_vlrs;
     bool IsGeoVLR(VariableRecord const& vlr) const;
