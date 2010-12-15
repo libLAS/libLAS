@@ -390,6 +390,6 @@ include(CPack)
 
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
-if (WIN32)
-    include(BuildOSGeo4W)
-endif(WIN32)
+#if (WIN32)
+#    include(BuildOSGeo4W)
+#endif(WIN32)
