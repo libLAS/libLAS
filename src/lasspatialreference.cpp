@@ -167,28 +167,29 @@ void SpatialReference::AddVLR(VariableRecord const& vlr)
 
 bool SpatialReference::IsGeoVLR(VariableRecord const& vlr) const
 {
-    std::string const uid("LASF_Projection");
+    std::string const las_projid("LASF_Projection");
+    std::string const liblas_id("liblas");
     
     // GTIFF_GEOKEYDIRECTORY == 34735
-    if (uid == vlr.GetUserId(true).c_str() && 34735 == vlr.GetRecordId())
+    if (las_projid == vlr.GetUserId(true).c_str() && 34735 == vlr.GetRecordId())
     {
         return true;
     }
     
     // GTIFF_DOUBLEPARAMS == 34736
-    if (uid == vlr.GetUserId(true).c_str() && 34736 == vlr.GetRecordId())
+    if (las_projid == vlr.GetUserId(true).c_str() && 34736 == vlr.GetRecordId())
     {
         return true;
     }
     
     // GTIFF_ASCIIPARAMS == 34737
-    if (uid == vlr.GetUserId(true).c_str() && 34737 == vlr.GetRecordId())
+    if (las_projid == vlr.GetUserId(true).c_str() && 34737 == vlr.GetRecordId())
     {
         return true;
     }
 
     // OGR_WKT?
-    if (uid == vlr.GetUserId(true).c_str() && 2112 == vlr.GetRecordId())
+    if (liblas_id == vlr.GetUserId(true).c_str() && 2112 == vlr.GetRecordId())
     {
         return true;
     }
@@ -281,6 +282,7 @@ void SpatialReference::ResetVLRs()
         int i = 0;
         record.SetRecordId(34735);
         record.SetUserId("LASF_Projection");
+        record.SetDescription("GeoTIFF GeoKeyDirectoryTag");
         std::vector<uint8_t> data;
 
         // Shorts are 2 bytes in length
@@ -310,6 +312,8 @@ void SpatialReference::ResetVLRs()
         int i = 0;
         record.SetRecordId(34736);
         record.SetUserId("LASF_Projection");
+        record.SetDescription("GeoTIFF GeoDoubleParamsTag");
+        
         std::vector<uint8_t> data;
 
         // Doubles are 8 bytes in length
@@ -344,6 +348,7 @@ void SpatialReference::ResetVLRs()
          int i = 0;
          record.SetRecordId(34737);
          record.SetUserId("LASF_Projection");
+         record.SetDescription("GeoTIFF GeoAsciiParamsTag");         
          std::vector<uint8_t> data;
 
          // whoa.  If the returned count was 0, it is because there 
@@ -385,7 +390,7 @@ void SpatialReference::ResetVLRs()
         const uint8_t* wkt_bytes = reinterpret_cast<const uint8_t*>(m_wkt.c_str());
 
         wkt_record.SetRecordId( 2112 );
-        wkt_record.SetUserId("LASF_Projection");
+        wkt_record.SetUserId("liblas");
         wkt_record.SetDescription( "OGR variant of OpenGIS WKT SRS" );
 
         // Would you be surprised if this remarshalling of bytes
