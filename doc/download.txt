@@ -8,19 +8,19 @@ Download
 Current Release(s)
 ------------------------------------------------------------------------------
 
-* **2010-11-05** 
+* **2010-12-15** 
 
-  - `libLAS-1.6.0b2-src.tar.gz`_ 
-    `(md5) <http://trac.liblas.org/raw-attachment/wiki/1.6.0b2/libLAS-1.6.0b2.tar.gz.md5>`__ 
+  - `libLAS-1.6.0b3-src.tar.gz`_ 
+    `(md5) <http://download.osgeo.org/liblas/libLAS-1.6.0b3.tar.gz.md5>`__ 
 
-  - `libLAS-1.6.0b2-src.zip <http://trac.liblas.org/raw-attachment/wiki/1.6.0b2/libLAS-1.6.0b2.zip>`_ 
-    `(md5) <http://trac.liblas.org/raw-attachment/wiki/1.6.0b2/libLAS-1.6.0b2.zip.md5>`__
+  - `libLAS-1.6.0b2-src.zip <http://download.osgeo.org/liblas/libLAS-1.6.0b3.zip>`_ 
+    `(md5) <http://download.osgeo.org/liblas/libLAS-1.6.0b3.zip.md5>`__
 
   - See `OSGeo4W <http://trac.osgeo.org/osgeo4w>`__ for Windows release.
   
   - `Release Notes <http://trac.liblas.org/wiki/1.6.0b2>`__
 
-.. _`libLAS-1.6.0b2-src.tar.gz`: http://trac.liblas.org/raw-attachment/wiki/1.6.0b2/libLAS-1.6.0b2.tar.gz
+.. _`libLAS-1.6.0b2-src.tar.gz`: http://download.osgeo.org/liblas/libLAS-1.6.0b3.tar.gz
 
 .. seealso::
     :ref:`source`
@@ -36,6 +36,20 @@ Current Release(s)
 
 Past Releases
 ------------------------------------------------------------------------------
+
+* **2010-11-05** 
+
+  - `libLAS-1.6.0b2-src.tar.gz`_ 
+    `(md5) <http://trac.liblas.org/raw-attachment/wiki/1.6.0b2/libLAS-1.6.0b2.tar.gz.md5>`__ 
+
+  - `libLAS-1.6.0b2-src.zip <http://trac.liblas.org/raw-attachment/wiki/1.6.0b2/libLAS-1.6.0b2.zip>`_ 
+    `(md5) <http://trac.liblas.org/raw-attachment/wiki/1.6.0b2/libLAS-1.6.0b2.zip.md5>`__
+
+  - See `OSGeo4W <http://trac.osgeo.org/osgeo4w>`__ for Windows release.
+  
+  - `Release Notes <http://trac.liblas.org/wiki/1.6.0b2>`__
+
+.. _`libLAS-1.6.0b2-src.tar.gz`: http://trac.liblas.org/raw-attachment/wiki/1.6.0b2/libLAS-1.6.0b2.tar.gz
 
 * **2010-10-12** 
 
