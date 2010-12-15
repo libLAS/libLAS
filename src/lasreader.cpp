@@ -97,10 +97,7 @@ Reader::Reader(std::istream& ifs, Header const& header) :
 
 Reader::~Reader()
 {
-    // empty, but required so we can implement PIMPL using
-    // std::auto_ptr with incomplete type (Reader).
-    // delete m_empty_point;
-    
+
 }
 
 Header const& Reader::GetHeader() const
