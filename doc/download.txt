@@ -20,7 +20,7 @@ Current Release(s)
   
   - `Release Notes <http://trac.liblas.org/wiki/1.6.0b2>`__
 
-.. _`libLAS-1.6.0b2-src.tar.gz`: http://download.osgeo.org/liblas/libLAS-1.6.0b3.tar.gz
+.. _`libLAS-1.6.0b3-src.tar.gz`: http://download.osgeo.org/liblas/libLAS-1.6.0b3.tar.gz
 
 .. seealso::
     :ref:`source`
