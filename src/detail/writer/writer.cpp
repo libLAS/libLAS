@@ -77,6 +77,7 @@ void WriterImpl::UpdatePointCount(boost::uint32_t count)
     
     if ( count != 0 ) { out = count; }
     
+    if (!m_ofs.good() ) return;
     // Skip to first byte of number of point records data member
     std::streamsize const dataPos = 107; 
     m_ofs.seekp(dataPos, std::ios::beg);
@@ -85,7 +86,7 @@ void WriterImpl::UpdatePointCount(boost::uint32_t count)
 
 void WriterImpl::WritePoint(liblas::Point const& point)
 {
-    if (m_point_writer == 0) {
+    if (m_point_writer.get() == 0) {
         m_point_writer = PointWriterPtr(new writer::Point(m_ofs, m_pointCount, m_header));
     } 
     m_point_writer->write(point);
@@ -94,6 +95,16 @@ void WriterImpl::WritePoint(liblas::Point const& point)
 
 WriterImpl::~WriterImpl()
 {
+    // Try to update the point count on our way out, but we don't really
+    // care if we weren't able to write it.
+    try
+    {
+        UpdatePointCount(0);
+        
+    } catch (std::runtime_error const&)
+    {
+        
+    }
 
 }
 
@@ -109,7 +120,7 @@ void WriterImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transfor
 
 liblas::Header& WriterImpl::GetHeader() const
 {
-    *m_header;
+    return *m_header;
 }
 void WriterImpl::SetHeader(liblas::Header const& header)
 {

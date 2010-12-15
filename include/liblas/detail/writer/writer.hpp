@@ -74,7 +74,7 @@ public:
     void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
 
 protected:
-    PointRecord m_record;
+
     std::ostream& m_ofs;
      
     PointWriterPtr m_point_writer;
