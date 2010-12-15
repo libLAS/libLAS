@@ -290,6 +290,7 @@ po::options_description GetTransformationOptions()
 
     transform_options.add_options()
         ("t_srs", po::value< string >(), "Coordinate system to reproject output LAS file to.  Use --a_srs or verify that your input LAS file has a coordinate system according to lasinfo")
+        ("add-wkt-srs", po::value<bool>()->zero_tokens(), "Reset the coordinate system of the input file to use both WKT and GeoTIFF VLR entries")
         ("point-translate", po::value<std::string>(), "An expression to translate the X, Y, Z values of the point. For example, converting Z units that are in meters to feet: --point-translate \"x*1.0 y*1.0 z*3.2808399\"")
         ("color-source", po::value<std::string>(), "A string to a GDAL-openable raster data source.  Use GDAL VRTs if you want to adjust the data source or set its coordinate system, etc. \n--color-source \"afile.tif\" ")
         ("color-source-bands", po::value< std::vector<boost::uint32_t> >()->multitoken(), "A list of three bands from the --color-source to assign to the R, G, B  values for the point \n--color-source-bands 1 2 3")
@@ -1201,7 +1202,16 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         vert_ref.SetVerticalCS(verticalCSType, citation, verticalDatum, verticalUnits);
         header.SetSRS(vert_ref);      
     }
-    
+    if (vm.count("add-wkt-srs")) 
+    {
+        // Reset the SRS using WKT, which will cause both GeoTIFF keys and OGC WKT 
+        // VLRs to be written to the file.
+        liblas::SpatialReference ref = header.GetSRS();
+        std::string wkt = ref.GetWKT();
+        ref.SetWKT(wkt);
+        header.SetSRS(ref);
+    }
+
     if (vm.count("t_srs")) 
     {
         liblas::SpatialReference in_ref;
