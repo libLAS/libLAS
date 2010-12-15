@@ -145,7 +145,9 @@ private:
     Reader& operator=(Reader const& rhs);
 
     void Init(); // throws on error
-    const std::auto_ptr<ReaderI> m_pimpl;
+
+    typedef boost::shared_ptr<ReaderI> ReaderIPtr;
+    const ReaderIPtr m_pimpl;
 
 
 };
