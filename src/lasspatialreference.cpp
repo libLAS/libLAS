@@ -374,6 +374,18 @@ void SpatialReference::ResetVLRs()
              data.push_back(v[0]);
          }
          record.SetData(data);
+
+        if (data.size() > std::numeric_limits<boost::uint16_t>::max())
+        {
+            std::ostringstream oss;
+            std::vector<uint8_t>::size_type overrun = data.size() - static_cast<std::vector<uint8_t>::size_type>(std::numeric_limits<boost::uint16_t>::max());
+            oss << "The size of the GeoTIFF GeoAsciiParamsTag, " << data.size() << ", is " << overrun 
+                << " bytes too large to fit inside the maximum size of a VLR which is " 
+                << std::numeric_limits<boost::uint16_t>::max() << " bytes.";
+            throw std::runtime_error(oss.str());
+
+        }
+
          m_vlrs.push_back(record);
     }
 #endif // ndef HAVE_LIBGEOTIFF
@@ -399,6 +411,18 @@ void SpatialReference::ResetVLRs()
             data.push_back( *(wkt_bytes++) );
 
         data.push_back( '\0' );
+
+        if (data.size() > std::numeric_limits<boost::uint16_t>::max())
+        {
+            std::ostringstream oss;
+            std::vector<uint8_t>::size_type overrun = data.size() - static_cast<std::vector<uint8_t>::size_type>(std::numeric_limits<boost::uint16_t>::max());
+            oss << "The size of the wkt, " << data.size() << ", is " << overrun 
+                << " bytes too large to fit inside the maximum size of a VLR which is " 
+                << std::numeric_limits<boost::uint16_t>::max() << " bytes.";
+            throw std::runtime_error(oss.str());
+
+        }
+
 
         wkt_record.SetRecordLength( data.size() );
         wkt_record.SetData(data);
