@@ -205,6 +205,12 @@ bool process(   std::string const& input,
         RepairHeader(*summary, hnew);
         RewriteHeader(hnew, output);
     }
+
+    // cheap hackery.  We need the Writer to disappear before the stream.  
+    // Fix this up to not suck so bad.
+    writer = WriterPtr();   
+    ofs = OStreamPtr();
+    
     return true;
 }
 
