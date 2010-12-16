@@ -5,20 +5,18 @@
 :Author: Frank Warmerdam
 :Contact: warmerdam@pobox.com
 :Date: 11/19/10
-:Status: Proposed
+:Status: Implemented
 :Version: libLAS 1.6
 
 .. contents::
     :depth: 1
 
-.. sectnum::
-
 This RFC addresses several areas of change to the liblas::SpatialReference 
 class and associated services.  The objectives are:
 
- * Minimize the default exposure of liblas applications to definitions 
+ * Minimize the default exposure of libLAS applications to definitions 
    from the GeoTIFF library.
- * Minimize the default exposure of liblas applications to definitions
+ * Minimize the default exposure of libLAS applications to definitions
    from the GDAL library.
  * Provide a mechanism to capture coordinate system definitions in a LAS
    file that cannot be represented via GeoTIFF tags via a liblas 
@@ -36,12 +34,12 @@ these sublibraries are enabled in the build.
 
 This introduces a lot of cruft into the global namespace.  Also due to the
 "C" style includes of these sublibraries, it introduces a lot of junk that
-might interfere in suprising ways and in contrast to how the rest of 
-liblas in very careful to put things into namespaces and otherwise be
+might interfere in surprising ways and in contrast to how the rest of 
+libLAS in very careful to put things into namespaces and otherwise be
 somewhat sparing of includes. 
 
 The cleanup should help avoid conflicts and namespace pollution for
-applications primariliy linking against liblas and not wanting to use
+applications primarily linking against libLAS and not wanting to use
 libgeotiff or GDAL services directly.  It should also make building somewhat
 less fragile in some cases.
 
@@ -52,20 +50,20 @@ Justification for WKT Coordinate System Representation
 There are a significant number of coordinate systems, and options that 
 cannot be represented in GeoTIFF tags.  This includes TOWGS84 parameters, 
 options to use particular horizontal and vertical grid shift files, and
-support for projection methods that don't have CT_ definitions for 
+support for projection methods that don't have CT\_ definitions for 
 GeoTIFF.
 
 Currently the liblas::SpatialReference class converts passed in WKT 
 coordinate system definitions into a GeoTIFF VLR and future requests for
 the WKT are created by converting the GeoTIFF VLR back into WKT.  This 
-makes it essentially impossible currently for las2las to perform 
+makes it essentially impossible currently for :ref:`las2las <las2las>` to perform 
 transformations between coordinate systems not representable in GeoTIFF
-terms even if the source and destination are provided on the commandline in 
+terms even if the source and destination are provided on the command-line in 
 WKT format. 
 
 Also, it seems with future versions of LAS format some variation of OGC
 WKT in a VLR will become a supported, or even the preferred way of 
-repesenting coordinate systems. 
+representing coordinate systems. 
 
 Given these points it seems reasonable to make liblas::SpatialReference 
 less GeoTIFF VLR oriented now.
@@ -89,7 +87,7 @@ like::
   typedef struct ST_TIFFS *ST_TIFF;
   #endif
 
-Thus liblas library code, and application code that wants "proper" 
+Thus libLAS library code, and application code that wants "proper" 
 GTIF and ST_TIFF types will need to include the corresponding libgeotiff
 include files *before* including lasspatialreference.hpp.  Any attempt to 
 include these libgeotiff include files *after* including lasspatialreference.hpp
@@ -97,15 +95,15 @@ will cause conflicts.  Yes, this is somewhat unfortunate and will be an
 unobvious requirement to new folks.  Some existing application code will
 likely need a bit of include reordering before it will work. 
 
-It is intended that  similar approach might be used for GDAL and OGR
+It is intended that similar approach might be used for GDAL and OGR
 dependencies.  The primary place where this is a concern seems to be 
 lastransform.hpp. 
 
 It is also planned to move the lasversion.hpp function implementations into a
 .cpp file to avoid having to include libgeotiff and GDAL include files right
 in lasversion.hpp.  This should have the added benefit of not making what
-lasversion.hpp returns depend on what extra macros (like HAVE_GDAL) are defined
-when it is included vs. when liblas itself is compiled and linked.
+lasversion.hpp returns depend on what extra macros (like `HAVE_GDAL`) are defined
+when it is included vs. when libLAS itself is compiled and linked.
 
 
 SpatialReference WKT Updates
@@ -123,7 +121,7 @@ Additions to SpatialReference Class::
     void ClearVLRs( GeoVLRType eType );
 
   private:
-    mutable std::string m_wkt;
+    std::string m_wkt;
 
 The GeoVLRType enumeration is currently used just to define what information
 should be wiped in a call to ClearVLRs() but in the future it might also 
@@ -145,10 +143,23 @@ The SpatialReference class is updated to:
  * SetWKT() now caches the WKT as well as creating the GeoTIFF definition
    from it.  Then the WKT and GeoTIFF VLRs are generated.
 
-Now, if you want *only* GeoTIFF VLRs you should normally generate the
-SpatialReference and then call "ClearVLRs(eOGRWKT);" before setting the
-SpatialReference on the header being written.  If you want *only* a WKT
-VLR then you should call "ClearVLRs(eGeotIFF);" at the same point.
+.. note::
+    A liblas::SpatialReference instance that was read/generated from VLRs containing 
+    only GeoTIFF keys will continue to only have GeoTIFF keys until you 
+    issue a call to SetWKT().  You can simply do the following to WKT-enable 
+    a liblas::SpatialReference in that case:
+    
+    ::
+    
+        reference.SetWKT(reference.GetWKT());
+    
+
+.. warning::
+
+    If you want *only* GeoTIFF VLRs you should normally generate the
+    SpatialReference and then call "ClearVLRs(eOGRWKT);" before setting the
+    SpatialReference on the header being written. If you want *only* a WKT VLR
+    then you should call "ClearVLRs(eGeotIFF);" at the same point.
 
 
 
@@ -157,18 +168,21 @@ WKT VLR
 
 
 Currently the OGR WKT VLR is currently being written with a UserId of
-"LASF_Projection" like the GeoTIFF VLRs, and with a RecordId of 2112 to 
-distingish it from the GeoTIFF VLRs.  
+"liblas" and with a RecordId of 2112 to 
+distinguish it from the GeoTIFF VLRs.  
 
-The data is the OGR WKT string with a terminating zero byte. 
+The data is the OGR WKT string with a terminating zero byte. An exception 
+is thrown if the size of the WKT is larger than a VLR record can hold.
 
 Is there any scheme to assign RecordIds?  Perhaps we should pick a value
 outside the normal legal range for TIFF tags?  Or perhaps we should be
 using a different UserId? 
 
-Note that it is anticipated at some point in the future there will be a
-WKT VLR definition as part of the LAS specification and that it's contents
-may be more accurately defined as OGC WKT rather than OGR WKT which can
-contain a variety of extensions to the specification.
+.. note::
+
+    It is anticipated at some point in the future there will be a
+    WKT VLR definition as part of the LAS specification and that it's contents
+    may be more accurately defined as OGC WKT rather than OGR WKT which can
+    contain a variety of extensions to the specification.
 
 
