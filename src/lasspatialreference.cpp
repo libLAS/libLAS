@@ -88,7 +88,6 @@ namespace liblas {
 SpatialReference::SpatialReference()
     : m_gtiff(0)
     , m_tiff(0)
-    , m_wkt(0)
 {
     assert(0 == m_gtiff);
     assert(0 == m_tiff);
