@@ -70,6 +70,9 @@ public:
     /// @exception std::runtime_error - on failure state of the input stream.
     Writer(std::ostream& ofs, Header const& header);
 
+    Writer(Writer const& other);
+    Writer& operator=(Writer const& rhs);    
+    
     /// Destructor does not close file attached to the output stream
     /// Header may be updated after writing operation completed, if necessary
     /// in order to maintain data consistency.
@@ -102,12 +105,8 @@ public:
     
 private:
     
-    // Blocked copying operations, declared but not defined.
-    Writer(Writer const& other);
-    Writer& operator=(Writer const& rhs);
-    
     typedef boost::shared_ptr<WriterI> WriterIPtr;
-    const WriterIPtr m_pimpl;
+    WriterIPtr m_pimpl;
 
 };
 

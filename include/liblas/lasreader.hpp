@@ -74,7 +74,9 @@ public:
     Reader(std::istream& ifs, boost::uint32_t cache_size);
     Reader(std::istream& ifs, boost::uint32_t cache_size, Header const& header);
     Reader(ReaderI* reader);
-    
+
+    Reader(Reader const& other);
+    Reader& operator=(Reader const& rhs);    
     
     /// User-defined consructor initializes reader with input stream and
     /// a header to override the values in the file
@@ -138,16 +140,14 @@ public:
     void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
 
 
+
 private:
 
-    // Blocked copying operations, declared but not defined.
-    Reader(Reader const& other);
-    Reader& operator=(Reader const& rhs);
 
     void Init(); // throws on error
 
     typedef boost::shared_ptr<ReaderI> ReaderIPtr;
-    const ReaderIPtr m_pimpl;
+    ReaderIPtr m_pimpl;
 
 
 };

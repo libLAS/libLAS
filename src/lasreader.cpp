@@ -95,6 +95,20 @@ Reader::Reader(std::istream& ifs, Header const& header) :
     m_pimpl->SetHeader(header);
 }
 
+Reader::Reader(Reader const& other) 
+    : m_pimpl(other.m_pimpl)
+{
+}
+
+Reader& Reader::operator=(Reader const& rhs)
+{
+    if (&rhs != this)
+    {
+        m_pimpl = rhs.m_pimpl;
+    }
+    return *this;
+}
+
 Reader::~Reader()
 {
 

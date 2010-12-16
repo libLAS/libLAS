@@ -61,6 +61,21 @@ Writer::Writer(std::ostream& ofs, Header const& header) :
     m_pimpl->WriteHeader();
 }
 
+
+Writer::Writer(Writer const& other) 
+    : m_pimpl(other.m_pimpl)
+{
+}
+
+Writer& Writer::operator=(Writer const& rhs)
+{
+    if (&rhs != this)
+    {
+        m_pimpl = rhs.m_pimpl;
+    }
+    return *this;
+}
+
 Writer::~Writer()
 {
 
