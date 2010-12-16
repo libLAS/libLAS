@@ -88,6 +88,7 @@ namespace liblas {
 SpatialReference::SpatialReference()
     : m_gtiff(0)
     , m_tiff(0)
+    , m_wkt(0)
 {
     assert(0 == m_gtiff);
     assert(0 == m_tiff);
@@ -104,6 +105,7 @@ SpatialReference::SpatialReference(std::vector<VariableRecord> const& vlrs)
 SpatialReference::SpatialReference(SpatialReference const& other) 
     : m_gtiff(0)
     , m_tiff(0)
+    , m_wkt(other.m_wkt)
 {
     SetVLRs(other.GetVLRs());
     GetGTIF();
@@ -115,6 +117,7 @@ SpatialReference& SpatialReference::operator=(SpatialReference const& rhs)
     {
         SetVLRs(rhs.GetVLRs());
         GetGTIF();
+        m_wkt = rhs.m_wkt;
     }
     return *this;
 }
