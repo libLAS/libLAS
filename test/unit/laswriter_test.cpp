@@ -282,8 +282,40 @@ namespace tut
         liblas::Reader reader(ifs);
         
         liblas::Header const& h = reader.GetHeader();
-        ensure_equals("Appended point count does not match", h.GetPointRecordsCount(), 500);
+        ensure_equals("Appended point count does not match", h.GetPointRecordsCount(), static_cast<boost::uint32_t>(500));
 
     }
+
+
+    // Test padding application for 1.0 files
+    template<>
+    template<>
+    void to::test<5>()
+    {
+        {            
+            std::ofstream ofs;
+            ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
+
+            liblas::Header header;
+            header.SetDataOffset(227);
+            header.SetDataFormatId( liblas::ePointFormat0 );
+            header.SetVersionMinor(0);
+            liblas::Writer testWriter( ofs, header);
+            ofs.close();
+        }
+        
+        {
+            std::ifstream ifs;
+            ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
+            liblas::Reader reader( ifs);
+            liblas::Header const& h = reader.GetHeader();
+            ensure_equals("DataOffset is not expected value", h.GetDataOffset(), static_cast<boost::uint32_t>(229));
+
+        }
+
+
+    }
+
+
 }
 
