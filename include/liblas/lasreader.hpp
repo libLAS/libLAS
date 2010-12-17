@@ -71,17 +71,11 @@ public:
     /// @param ifs - stream used as source of LAS records.
     /// @exception std::runtime_error - on failure state of the input stream.
     Reader(std::istream& ifs);
-    Reader(std::istream& ifs, boost::uint32_t cache_size);
-    Reader(std::istream& ifs, boost::uint32_t cache_size, Header const& header);
-    Reader(ReaderI* reader);
+    Reader(ReaderIPtr reader);
 
     Reader(Reader const& other);
     Reader& operator=(Reader const& rhs);    
     
-    /// User-defined consructor initializes reader with input stream and
-    /// a header to override the values in the file
-    /// @exception std::runtime_error - on failure state of the input stream.
-    Reader(std::istream& ifs, Header const& header);
     
     /// Destructor.
     /// @exception nothrow
@@ -90,6 +84,8 @@ public:
     /// Provides read-only access to header of LAS file being read.
     /// @exception nothrow
     Header const& GetHeader() const;
+    
+    void SetHeader(Header const& );
 
     /// Provides read-only access to current point record.
     /// @exception nothrow
@@ -146,7 +142,6 @@ private:
 
     void Init(); // throws on error
 
-    typedef boost::shared_ptr<ReaderI> ReaderIPtr;
     ReaderIPtr m_pimpl;
 
 

@@ -18,7 +18,7 @@ Current Release(s)
 
   - See `OSGeo4W <http://trac.osgeo.org/osgeo4w>`__ for Windows release.
   
-  - `Release Notes <http://trac.liblas.org/wiki/1.6.0b2>`__
+  - `Release Notes <http://lists.osgeo.org/pipermail/liblas-devel/2010-December/001108.html>`__
 
 .. _`libLAS-1.6.0b3-src.tar.gz`: http://download.osgeo.org/liblas/libLAS-1.6.0b3.tar.gz
 

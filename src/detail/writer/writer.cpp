@@ -69,6 +69,8 @@ void WriterImpl::WriteHeader()
     m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs,m_pointCount, *m_header) );
     
     m_header_writer->write();
+    
+    m_header = HeaderPtr(new liblas::Header(m_header_writer->GetHeader()));
 }
 
 void WriterImpl::UpdatePointCount(boost::uint32_t count)

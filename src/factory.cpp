@@ -2,12 +2,12 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS reader class 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  LAS factories 
+ * Author:   Howard Butler, hobu.inc@gmail.com
  *
  ******************************************************************************
  * Copyright (c) 2008, Mateusz Loskot
- * Copyright (c) 2008, Phil Vachon
+ * Copyright (c) 2010, Howard Butler
  *
  * All rights reserved.
  * 
@@ -40,8 +40,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasversion.hpp>
-#include <liblas/lasreader.hpp>
+#include <liblas/factory.hpp>
 #include <liblas/detail/reader/reader.hpp>
 #include <liblas/detail/reader/cachedreader.hpp>
 #include <liblas/utility.hpp>
@@ -62,136 +61,22 @@ using namespace boost;
 namespace liblas
 {
 
-Reader::Reader(std::istream& ifs) :
-    m_pimpl(new detail::ReaderImpl(ifs))
+Reader ReaderFactory::CreateWithImpl(ReaderIPtr r)
 {
-    Init();
+    liblas::Reader reader(r);
+    return reader;
 }
 
-
-Reader::Reader(ReaderIPtr reader) :
-    m_pimpl(reader)
+Reader ReaderFactory::CreateCached(std::istream& stream, boost::uint32_t cache_size)
 {
-    Init();
+    ReaderIPtr r = ReaderIPtr(new detail::CachedReaderImpl(stream, cache_size) );
+    return liblas::Reader(r);
 }
 
-Reader::Reader(Reader const& other) 
-    : m_pimpl(other.m_pimpl)
+Reader ReaderFactory::Create(std::istream& stream)
 {
+    ReaderIPtr r = ReaderIPtr(new detail::ReaderImpl(stream) );
+    return liblas::Reader(r);
 }
-
-Reader& Reader::operator=(Reader const& rhs)
-{
-    if (&rhs != this)
-    {
-        m_pimpl = rhs.m_pimpl;
-    }
-    return *this;
-}
-
-Reader::~Reader()
-{
-
-}
-
-Header const& Reader::GetHeader() const
-{
-    return m_pimpl->GetHeader();
-}
-
-void Reader::SetHeader(Header const& header)
-{
-    m_pimpl->SetHeader(header);
-}
-
-Point const& Reader::GetPoint() const
-{
-    return m_pimpl->GetPoint();
-}
-
-bool Reader::ReadNextPoint()
-{  
-    try
-    {
-        m_pimpl->ReadNextPoint();
-        return true;
-    }
-    catch (std::out_of_range const&)
-    {
-    }
-
-    return false;
-}
-
-bool Reader::ReadPointAt(std::size_t n)
-{
-    if (m_pimpl->GetHeader().GetPointRecordsCount() <= n)
-    {
-        throw std::out_of_range("point subscript out of range");
-    }
-    
-    try
-    {
-        m_pimpl->ReadPointAt(n);
-        return true;
-    }
-    catch (std::out_of_range const&)
-    {
-    }
-    return false;
-}
-
-bool Reader::Seek(std::size_t n)
-{
-    try
-    {
-        assert(n < m_pimpl->GetHeader().GetPointRecordsCount());
-
-        m_pimpl->Seek(n);
-        return true;
-    }
-    catch (std::out_of_range const&)
-    {
-    }
-    return false;
-}
-
-Point const& Reader::operator[](std::size_t n)
-{
-    if (m_pimpl->GetHeader().GetPointRecordsCount() <= n)
-    {
-        throw std::out_of_range("point subscript out of range");
-    }
-    
-    bool read = ReadPointAt(n);
-
-    if (read == false) 
-    {
-        throw std::out_of_range("no point record at given position");
-    }
-
-    return m_pimpl->GetPoint();
-}
-
-void Reader::Init()
-{   
-    m_pimpl->ReadHeader();
-}
-
-void Reader::Reset() 
-{
-    Init();
-}
-
-void Reader::SetFilters(std::vector<liblas::FilterPtr> const& filters)
-{
-    m_pimpl->SetFilters(filters);
-}
-
-void Reader::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
-{
-    m_pimpl->SetTransforms(transforms);
-}
-
 } // namespace liblas
 

@@ -1112,7 +1112,12 @@ int main(int argc, char* argv[])
         
         liblas::Reader* reader2 = 0;
         if (bCachedReader)
-            reader2 = new liblas::Reader(*istrm2,0);
+        {
+            liblas::ReaderFactory rf;
+            liblas::Reader r = rf.CreateCached(*istrm2, 0);
+            reader2 = new liblas::Reader(r);
+            // reader2 = new liblas::Reader(*istrm2,0);
+        }
         else
             reader2 = new liblas::Reader(*istrm2);
 
