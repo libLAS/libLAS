@@ -43,7 +43,9 @@
 #define LIBLAS_LASVERSION_HPP_INCLUDED
 
 #include <liblas/capi/las_version.h>
-#include <liblas/lasspatialreference.hpp>
+#include <liblas/export.hpp>
+
+#include <string>
 
 namespace liblas {
 
@@ -88,56 +90,10 @@ enum PointSize
     ePointSize3 = 34  ///< Size of point record in data format \e 3
 };
 
-/// Check if GDAL support has been built in to libLAS.
-inline bool IsGDALEnabled()
-{
-#ifdef HAVE_GDAL
-    return true;
-#else
-    return false;
-#endif
-}
-
-/// Check if GeoTIFF support has been built in to libLAS.
-inline bool IsLibGeoTIFFEnabled()
-{
-#ifdef HAVE_LIBGEOTIFF
-    return true;
-#else
-    return false;
-#endif
-}
-
-/// Tell the user a bit about libLAS' compilation
-inline std::string  GetFullVersion(void) {
-
-    std::ostringstream os;
-#ifdef HAVE_LIBGEOTIFF
-    os << " GeoTIFF "
-       << (LIBGEOTIFF_VERSION / 1000) << '.'
-       << (LIBGEOTIFF_VERSION / 100 % 10) << '.'
-       << (LIBGEOTIFF_VERSION % 100 / 10);
-#endif
-#ifdef HAVE_GDAL
-    os << " GDAL " << GDALVersionInfo("RELEASE_NAME");
-#endif
-
-    std::string info(os.str());
-    os.str("");
-    os << "libLAS " << LIBLAS_RELEASE_NAME;
-    if (!info.empty())
-    {
-        os << " with" << info;
-    }
-
-
-    return os.str();
-}
-
-/// Tell the user our dotted release name.
-inline std::string GetVersion() {
-    return std::string(LIBLAS_RELEASE_NAME);
-}
+bool LAS_DLL IsGDALEnabled(void);
+bool LAS_DLL IsLibGeoTIFFEnabled(void);
+std::string LAS_DLL GetFullVersion(void);
+std::string LAS_DLL GetVersion(void);
 
 } // namespace liblas
 

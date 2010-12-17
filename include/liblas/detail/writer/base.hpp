@@ -58,11 +58,12 @@ public:
 
     WriterBase(std::ostream& ofs, boost::uint32_t& count);
     ~WriterBase();
-
+ 
 protected:
     std::ostream& m_ofs;
     boost::uint32_t& m_pointCount;
-    
+
+        
 private:
 
     // Blocked copying operations, declared but not defined.

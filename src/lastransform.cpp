@@ -508,7 +508,7 @@ bool ColorFetchingTransform::transform(Point& point)
              {
                  color[i] = static_cast<liblas::Color::value_type>(pix[0]);
                  if (m_scale) {
-                     color[i] = color[i] * m_scale;
+                     color[i] = color[i] * static_cast<liblas::Color::value_type>(m_scale);
                  }
              }             
          }

@@ -64,29 +64,30 @@ WriterImpl::WriterImpl(std::ostream& ofs) :
 }
 
 
-liblas::Header const&  WriterImpl::WriteHeader(liblas::Header const& header)
+void WriterImpl::WriteHeader()
 {
-    m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs,m_pointCount, header) );
+    m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs,m_pointCount, *m_header) );
     
     m_header_writer->write();
-    return m_header_writer->GetHeader();
 }
 
-void WriterImpl::UpdateHeader(liblas::Header const& header)
+void WriterImpl::UpdatePointCount(boost::uint32_t count)
 {
-    if (m_pointCount != header.GetPointRecordsCount())
-    {
-        // Skip to first byte of number of point records data member
-        std::streamsize const dataPos = 107; 
-        m_ofs.seekp(dataPos, std::ios::beg);
-        detail::write_n(m_ofs, m_pointCount , sizeof(m_pointCount));
-    }
+    boost::uint32_t out = m_pointCount;
+    
+    if ( count != 0 ) { out = count; }
+    
+    if (!m_ofs.good() ) return;
+    // Skip to first byte of number of point records data member
+    std::streamsize const dataPos = 107; 
+    m_ofs.seekp(dataPos, std::ios::beg);
+    detail::write_n(m_ofs, out , sizeof(out));
 }
 
-void WriterImpl::WritePoint(liblas::Point const& point, HeaderPtr header)
+void WriterImpl::WritePoint(liblas::Point const& point)
 {
-    if (m_point_writer == 0) {
-        m_point_writer = PointWriterPtr(new writer::Point(m_ofs, m_pointCount, header));
+    if (m_point_writer.get() == 0) {
+        m_point_writer = PointWriterPtr(new writer::Point(m_ofs, m_pointCount, m_header));
     } 
     m_point_writer->write(point);
 
@@ -94,7 +95,36 @@ void WriterImpl::WritePoint(liblas::Point const& point, HeaderPtr header)
 
 WriterImpl::~WriterImpl()
 {
+    // Try to update the point count on our way out, but we don't really
+    // care if we weren't able to write it.
+    try
+    {
+        UpdatePointCount(0);
+        
+    } catch (std::runtime_error const&)
+    {
+        
+    }
 
+}
+
+void WriterImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
+{
+    m_filters = filters;
+}
+
+void WriterImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
+{
+    m_transforms = transforms;
+}
+
+liblas::Header& WriterImpl::GetHeader() const
+{
+    return *m_header;
+}
+void WriterImpl::SetHeader(liblas::Header const& header)
+{
+    m_header = HeaderPtr(new liblas::Header(header));
 }
 
 WriterImpl* WriterFactory::Create(std::ostream& ofs)

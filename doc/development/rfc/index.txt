@@ -15,6 +15,7 @@ of complex changes, and once agreed upon serve as a specification.
    :maxdepth: 1
    
    rfc_1_verticalcs
+   rfc_2_spatialreference
 
 
 

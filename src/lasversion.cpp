@@ -2,11 +2,13 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Basic macros for the libLAS C API
- * Author:   Howard Butler, hobu.inc@gmail.com
+ * Purpose:  LAS version related functions.
+ * Author:   Mateusz Loskot, mateusz@loskot.net
+ *           Frank Warmerdam, warmerdam@pobox.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Howard Butler
+ * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Frank Warmerdam
  *
  * All rights reserved.
  * 
@@ -39,26 +41,73 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LAS_VERSION_H_INCLUDED
-#define LAS_VERSION_H_INCLUDED
+#include <liblas/lasversion.hpp>
 
-#ifndef LIBLAS_VERSION_MAJOR
-#define LIBLAS_VERSION_MAJOR    1
-#define LIBLAS_VERSION_MINOR    6
-#define LIBLAS_VERSION_REV      0b3
-#define LIBLAS_VERSION_BUILD    0
+#ifdef HAVE_LIBGEOTIFF
+#include <geotiff.h>
 #endif
 
-#ifndef LIBLAS_VERSION_NUM
-#define LIBLAS_VERSION_NUM      (LIBLAS_VERSION_MAJOR*1000+LIBLAS_VERSION_MINOR*100+LIBLAS_VERSION_REV*10+LIBLAS_VERSION_BUILD)
+#ifdef HAVE_GDAL 
+#include <gdal.h>
 #endif
 
-#ifndef LIBLAS_RELEASE_DATE
-#define LIBLAS_RELEASE_DATE     20101215
+#include <liblas/lasspatialreference.hpp>
+
+using namespace boost;
+
+namespace liblas
+{
+
+/// Check if GDAL support has been built in to libLAS.
+bool IsGDALEnabled()
+{
+#ifdef HAVE_GDAL
+    return true;
+#else
+    return false;
+#endif
+}
+
+/// Check if GeoTIFF support has been built in to libLAS.
+bool IsLibGeoTIFFEnabled()
+{
+#ifdef HAVE_LIBGEOTIFF
+    return true;
+#else
+    return false;
+#endif
+}
+
+/// Tell the user a bit about libLAS' compilation
+std::string  GetFullVersion(void) {
+
+    std::ostringstream os;
+#ifdef HAVE_LIBGEOTIFF
+    os << " GeoTIFF "
+       << (LIBGEOTIFF_VERSION / 1000) << '.'
+       << (LIBGEOTIFF_VERSION / 100 % 10) << '.'
+       << (LIBGEOTIFF_VERSION % 100 / 10);
+#endif
+#ifdef HAVE_GDAL
+    os << " GDAL " << GDALVersionInfo("RELEASE_NAME");
 #endif
 
-#ifndef LIBLAS_RELEASE_NAME
-#define LIBLAS_RELEASE_NAME     "1.6.0b3"
-#endif
+    std::string info(os.str());
+    os.str("");
+    os << "libLAS " << LIBLAS_RELEASE_NAME;
+    if (!info.empty())
+    {
+        os << " with" << info;
+    }
 
-#endif /* LAS_VERSION_H_INCLUDED */
+
+    return os.str();
+}
+
+/// Tell the user our dotted release name.
+std::string GetVersion() {
+    return std::string(LIBLAS_RELEASE_NAME);
+}
+
+} // namespace liblas
+

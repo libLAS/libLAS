@@ -55,6 +55,7 @@
 
 #ifdef HAVE_GDAL
 #include <gdal.h>
+#include <ogr_spatialref.h>
 #endif
 
 namespace liblas {

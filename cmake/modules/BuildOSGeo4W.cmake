@@ -120,6 +120,7 @@ copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las2las-old.exe ${OSGEO4W_BIN_DIR}/l
 copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las2ogr.exe ${OSGEO4W_BIN_DIR}/las2ogr.exe   )
 copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las2oci.exe ${OSGEO4W_BIN_DIR}/las2oci.exe  )
 copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las2txt.exe ${OSGEO4W_BIN_DIR}/las2txt.exe  )
+copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/las2txt-old.exe ${OSGEO4W_BIN_DIR}/las2txt-old.exe   )
 copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/lasblock.exe ${OSGEO4W_BIN_DIR}/lasblock.exe   )
 copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/lasmerge.exe ${OSGEO4W_BIN_DIR}/lasmerge.exe  )
 copy_files(${LIBLAS_BUILD_OUTPUT_DIRECTORY}/txt2las.exe ${OSGEO4W_BIN_DIR}/txt2las.exe  )

@@ -122,7 +122,8 @@ set(LIBLAS_CPP
   lastransform.cpp
   utility.cpp
   lasvariablerecord.cpp
-  laswriter.cpp)
+  laswriter.cpp
+  lasversion.cpp)
 
 set(LIBLAS_DETAIL_CPP
   detail/utility.cpp)

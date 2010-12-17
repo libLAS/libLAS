@@ -69,13 +69,13 @@ Reader::Reader(std::istream& ifs) :
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size) :
-    m_pimpl(new detail::CachedReaderImpl(ifs,3))
+    m_pimpl(new detail::CachedReaderImpl(ifs, cache_size))
 {
     Init();
 }
 
 Reader::Reader(std::istream& ifs, uint32_t cache_size, Header const& header) :
-    m_pimpl(new detail::CachedReaderImpl(ifs,3))
+    m_pimpl(new detail::CachedReaderImpl(ifs, cache_size))
 {
 
     Init();
@@ -95,12 +95,23 @@ Reader::Reader(std::istream& ifs, Header const& header) :
     m_pimpl->SetHeader(header);
 }
 
+Reader::Reader(Reader const& other) 
+    : m_pimpl(other.m_pimpl)
+{
+}
+
+Reader& Reader::operator=(Reader const& rhs)
+{
+    if (&rhs != this)
+    {
+        m_pimpl = rhs.m_pimpl;
+    }
+    return *this;
+}
+
 Reader::~Reader()
 {
-    // empty, but required so we can implement PIMPL using
-    // std::auto_ptr with incomplete type (Reader).
-    // delete m_empty_point;
-    
+
 }
 
 Header const& Reader::GetHeader() const

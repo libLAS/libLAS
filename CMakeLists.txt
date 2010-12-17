@@ -385,7 +385,7 @@ list(APPEND CPACK_SOURCE_IGNORE_FILES ".zip")
 list(APPEND CPACK_SOURCE_IGNORE_FILES ".hg")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "README")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "HOWTORELEASE.txt")
-list(APPEND CPACK_SOURCE_IGNORE_FILES "doc")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "/doc/_static/files")
 
 list(APPEND CPACK_SOURCE_IGNORE_FILES "CMakeCache.txt")
 
@@ -399,6 +399,6 @@ include(CPack)
 
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
-if (WIN32)
-    include(BuildOSGeo4W)
-endif(WIN32)
+#if (WIN32)
+#    include(BuildOSGeo4W)
+#endif(WIN32)
