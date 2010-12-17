@@ -107,16 +107,6 @@ private:
 };
 
 
-// class ReaderFactory
-// {
-// public:
-// 
-//     // TODO: prototypes
-//     static ReaderImpl* Create(std::istream& ifs);
-//     static void Destroy(ReaderImpl* p);
-// };
-
-
 }} // namespace liblas::detail
 
 #endif // LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED
