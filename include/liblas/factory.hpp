@@ -67,7 +67,7 @@ public:
     Reader CreateWithImpl(ReaderIPtr r);
     
     Reader CreateCached(std::istream& stream, boost::uint32_t cache_size);
-    Reader Create(std::istream& stream);
+    Reader CreateWithStream(std::istream& stream);
     
     /// Destructor.
     /// @exception nothrow
@@ -76,10 +76,29 @@ public:
 
 private:
 
-
-
 };
 
+class LAS_DLL WriterFactory
+{
+public:
+
+
+    WriterFactory() {};
+
+    WriterFactory(WriterFactory const& other);
+    WriterFactory& operator=(WriterFactory const& rhs);    
+
+    Writer CreateWithImpl(WriterIPtr w);
+    Writer CreateWithStream(std::ostream& stream);
+    
+    /// Destructor.
+    /// @exception nothrow
+    ~WriterFactory() {};
+
+
+private:
+
+};
 } // namespace liblas
 
 #endif // ndef LIBLAS_LASREADER_HPP_INCLUDED
