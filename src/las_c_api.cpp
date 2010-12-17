@@ -62,6 +62,7 @@
 #include <liblas/lasschema.hpp>
 #include <liblas/capi/las_config.h>
 #include <liblas/capi/las_version.h>
+#include <liblas/factory.hpp>
 
 typedef struct LASWriterHS *LASWriterH;
 typedef struct LASReaderHS *LASReaderH;
@@ -255,7 +256,8 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
         std::istream* istrm = OpenInput(std::string(filename));
         
         liblas::Header* header = ((liblas::Header*) hHeader);
-        liblas::Reader* reader = new liblas::Reader(*istrm, *header);
+        liblas::Reader* reader = new liblas::Reader(*istrm);
+        reader->SetHeader(*header);
         readers.insert(std::pair<liblas::Reader*, std::istream*>(reader, istrm));
         return (LASReaderH) reader;
     

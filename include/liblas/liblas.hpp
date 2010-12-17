@@ -68,6 +68,7 @@
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/capi/las_version.h>
 #include <liblas/export.hpp>
+#include <liblas/factory.hpp>
 
 // booost
 #include <boost/array.hpp>
