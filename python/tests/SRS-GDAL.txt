@@ -31,7 +31,7 @@
   True
   >>> p = f.read(0)
   >>> s2.vlr_count()
-  3
+  4
   >>> s2.GetVLR(0).recordlength
   64
   >>> int(round(p.x))
