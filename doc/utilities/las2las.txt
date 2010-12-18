@@ -244,6 +244,7 @@ VLR removal
 
 removes all VLRs from in.las when writing the new output.las file.   
 
+.. _assign_color:
 
 Adding color from an image
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -257,17 +258,17 @@ The following example takes the ``input.las`` file, sets its format to ``1.2``,
 and sets the point format to ``3`` so it can store color information.  It 
 also re-orders the color bands to have the 3rd band in the image be red, 1st 
 band be green, and second band be blue.  Additionally, the color values are 
-then multiplied by the --color-source-scale factor or 257 to rescale the 
-8bit image data to 16bit color data.
+then multiplied by the --color-source-scale factor or 256 to rescale the 
+8 bit image data to 16 bit color data.
 
 ::
 
     las2las -i input.las \
             --color-source image.img \
             -o output.las \
-            --format 1.2 \
+            --file-format 1.2 \
             --point-format 3 \
-            --color-source-scale 257 \
+            --color-source-scale 256 \
             --color-source-bands 3 1 2
 
 .. note::
@@ -275,6 +276,7 @@ then multiplied by the --color-source-scale factor or 257 to rescale the
     coordinate system of the LAS file, you should use GDAL VRTs to cause the 
     image to be warped and reprojected as part of the read process.  See 
     http://www.gdal.org/gdal_vrttut.html for more detail.
+    
 .. warning::
     `GDAL`_ support must be enabled for this to work.
 

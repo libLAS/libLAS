@@ -222,9 +222,9 @@ void OutputHelp( std::ostream & oss, po::options_description const& options)
 
     oss << options;
 
-    oss <<"\nFor more information, see the full documentation for las2las2 at:\n";
+    oss <<"\nFor more information, see the full documentation for las2las at:\n";
     
-    oss << " http://liblas.org/utilities/las2las2.html\n";
+    oss << " http://liblas.org/utilities/las2las.html\n";
     oss << "----------------------------------------------------------\n";
 
 }
@@ -247,7 +247,7 @@ int main(int argc, char* argv[])
 
     try {
 
-        po::options_description file_options("las2las2 options");
+        po::options_description file_options("las2las options");
         po::options_description filtering_options = GetFilteringOptions();
         po::options_description header_options = GetHeaderOptions();
         po::options_description transform_options = GetTransformationOptions() ;
@@ -352,4 +352,4 @@ int main(int argc, char* argv[])
 
 }
 
-//las2las2 -i lt_srs_rt.las  -o foo.las -c 1,2 -b 2483590,366208,2484000,366612
+//las2las -i lt_srs_rt.las  -o foo.las -c 1,2 -b 2483590,366208,2484000,366612

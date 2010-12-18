@@ -44,6 +44,7 @@
 #include <liblas/detail/reader/reader.hpp>
 #include <liblas/detail/reader/zipreader.hpp>
 #include <liblas/detail/reader/cachedreader.hpp>
+#include <liblas/detail/writer/writer.hpp>
 #include <liblas/utility.hpp>
 
 // boost
@@ -74,7 +75,7 @@ Reader ReaderFactory::CreateCached(std::istream& stream, boost::uint32_t cache_s
     return liblas::Reader(r);
 }
 
-Reader ReaderFactory::Create(std::istream& stream)
+Reader ReaderFactory::CreateWithStream(std::istream& stream)
 {
     detail::HeaderReaderPtr h(new detail::reader::Header(stream));
     h->read();
@@ -95,5 +96,22 @@ Reader ReaderFactory::Create(std::istream& stream)
     
     return liblas::Reader(r);
 }
+
+
+Writer WriterFactory::CreateWithImpl(WriterIPtr w)
+{
+    liblas::Writer writer(w);
+    return writer;
+}
+
+
+Writer WriterFactory::CreateWithStream(std::ostream& stream)
+{
+
+    WriterIPtr w  = WriterIPtr(new detail::WriterImpl(stream));
+    return liblas::Writer(w);
+}
+
+
 } // namespace liblas
 

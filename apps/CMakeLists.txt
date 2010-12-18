@@ -145,7 +145,7 @@ endif()
 
 # Build lasblock
 if(LASBLOCK)
-    set(LASBLOCK_SRC lasblock.cpp )
+    set(LASBLOCK_SRC lasblock.cpp laskernel.cpp)
     add_executable(${LASBLOCK} ${LASBLOCK_SRC})
     target_link_libraries(${LASBLOCK} ${APPS_CPP_DEPENDENCIES} )
 endif()

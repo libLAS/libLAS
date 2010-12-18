@@ -71,6 +71,8 @@ public:
     Writer(std::ostream& ofs, Header const& header);
 
     Writer(Writer const& other);
+    Writer(WriterIPtr ptr);
+    
     Writer& operator=(Writer const& rhs);    
     
     /// Destructor does not close file attached to the output stream
@@ -104,8 +106,7 @@ public:
     void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
     
 private:
-    
-    typedef boost::shared_ptr<WriterI> WriterIPtr;
+
     WriterIPtr m_pimpl;
 
 };

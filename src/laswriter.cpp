@@ -42,6 +42,7 @@
 #include <liblas/lasversion.hpp>
 #include <liblas/laswriter.hpp>
 #include <liblas/detail/writer/writer.hpp>
+#include <liblas/factory.hpp>
 
 // std
 #include <stdexcept>
@@ -54,7 +55,7 @@ namespace liblas
 {
 
 Writer::Writer(std::ostream& ofs, Header const& header) :
-    m_pimpl(detail::WriterFactory::Create(ofs))
+    m_pimpl(WriterIPtr(new detail::WriterImpl(ofs)))
 
 {
     m_pimpl->SetHeader(header);
@@ -74,6 +75,12 @@ Writer& Writer::operator=(Writer const& rhs)
         m_pimpl = rhs.m_pimpl;
     }
     return *this;
+}
+
+Writer::Writer(WriterIPtr ptr) :
+    m_pimpl(ptr)
+
+{
 }
 
 Writer::~Writer()

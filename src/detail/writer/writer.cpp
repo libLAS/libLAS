@@ -129,21 +129,5 @@ void WriterImpl::SetHeader(liblas::Header const& header)
     m_header = HeaderPtr(new liblas::Header(header));
 }
 
-WriterImpl* WriterFactory::Create(std::ostream& ofs)
-{
-    if (!ofs)
-    {
-        throw std::runtime_error("output stream state is invalid");
-    }
-    
-    return new detail::WriterImpl(ofs);
-
-}
-
-void WriterFactory::Destroy(detail::WriterImpl* p) 
-{
-    delete p;
-    p = 0;
-}
 
 }} // namespace liblas::detail
