@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
                 return 1;
             }
             liblas::ReaderFactory f;
-            liblas::Reader reader = f.Create(ifs);
+            liblas::Reader reader = f.CreateWithStream(ifs);
             header = reader.GetHeader();
         } else {
             std::cerr << "Input LAS file not specified!\n";
@@ -192,7 +192,7 @@ int main(int argc, char* argv[])
     
 
         liblas::ReaderFactory f;
-        liblas::Reader reader = f.Create(ifs);
+        liblas::Reader reader = f.CreateWithStream(ifs);
         if (show_point)
         {
             try 
