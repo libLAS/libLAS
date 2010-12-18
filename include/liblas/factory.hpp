@@ -101,4 +101,4 @@ private:
 };
 } // namespace liblas
 
-#endif // ndef LIBLAS_LASREADER_HPP_INCLUDED
+#endif // ndef LIBLAS_FACTORY_HPP_INCLUDED
