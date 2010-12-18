@@ -349,6 +349,13 @@ public:
     /// all of the header data in a structured format.
     liblas::property_tree::ptree GetPTree() const;
     
+    /// Returns true iff the file is compressed (laszip),
+    /// as determined by the high bit in the point type
+    bool IsCompressed() const;
+
+    /// Sets whether or not the points are compressed.
+    void SetIsCompressed(bool b);
+
     void to_rst(std::ostream& os) const;
     void to_xml(std::ostream& os) const;
     void to_json(std::ostream& os) const;
@@ -405,6 +412,7 @@ private:
     std::vector<VariableRecord> m_vlrs;
     SpatialReference m_srs;
     Schema m_schema;
+    bool m_isCompressed;
 };
 
 LAS_DLL std::ostream& operator<<(std::ostream& os, liblas::Header const&);

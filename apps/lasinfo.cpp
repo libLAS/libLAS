@@ -171,7 +171,8 @@ int main(int argc, char* argv[])
                 std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
                 return 1;
             }
-            liblas::Reader reader(ifs);
+            liblas::ReaderFactory f;
+            liblas::Reader reader = f.Create(ifs);
             header = reader.GetHeader();
         } else {
             std::cerr << "Input LAS file not specified!\n";
@@ -190,7 +191,8 @@ int main(int argc, char* argv[])
         }
     
 
-        liblas::Reader reader(ifs);
+        liblas::ReaderFactory f;
+        liblas::Reader reader = f.Create(ifs);
         if (show_point)
         {
             try 

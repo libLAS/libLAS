@@ -106,7 +106,6 @@ private:
     ReaderImpl& operator=(ReaderImpl const& rhs);
 };
 
-
 }} // namespace liblas::detail
 
 #endif // LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED

@@ -6,7 +6,7 @@
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Michael P. Gerlek
  *
  * All rights reserved.
  * 
@@ -39,11 +39,15 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
+#ifdef HAVE_LASZIP
+
 #include <liblas/liblas.hpp>
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
-#include <liblas/detail/reader/reader.hpp>
+#include <liblas/detail/reader/zipreader.hpp>
 #include <liblas/detail/private_utility.hpp>
+// laszip
+#include <laszip/lasunzipper.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std
@@ -59,7 +63,8 @@ using namespace boost;
 
 namespace liblas { namespace detail { 
 
-ReaderImpl::ReaderImpl(std::istream& ifs)
+
+ZReaderImpl::ZReaderImpl(std::istream& ifs)
     : m_ifs(ifs)
     , m_size(0)
     , m_current(0)
@@ -70,14 +75,14 @@ ReaderImpl::ReaderImpl(std::istream& ifs)
     , m_filters(0)
     , m_transforms(0)
 {
-
+    new LASunzipper();
 }
 
-ReaderImpl::~ReaderImpl()
+ZReaderImpl::~ZReaderImpl()
 {
 }
 
-void ReaderImpl::Reset()
+void ZReaderImpl::Reset()
 {
     m_ifs.clear();
     m_ifs.seekg(0);
@@ -94,7 +99,7 @@ void ReaderImpl::Reset()
     } 
 }
 
-void ReaderImpl::TransformPoint(liblas::Point& p)
+void ZReaderImpl::TransformPoint(liblas::Point& p)
 {    
 
     // Apply the transforms to each point
@@ -108,7 +113,7 @@ void ReaderImpl::TransformPoint(liblas::Point& p)
 }
 
 
-bool ReaderImpl::FilterPoint(liblas::Point const& p)
+bool ZReaderImpl::FilterPoint(liblas::Point const& p)
 {    
     // If there's no filters on this reader, we keep 
     // the point no matter what.
@@ -130,7 +135,7 @@ bool ReaderImpl::FilterPoint(liblas::Point const& p)
 
 
     
-void ReaderImpl::ReadHeader()
+void ZReaderImpl::ReadHeader()
 {
     // If we're eof, we need to reset the state
     if (m_ifs.eof())
@@ -144,12 +149,12 @@ void ReaderImpl::ReadHeader()
 
 }
 
-void ReaderImpl::SetHeader(liblas::Header const& header) 
+void ZReaderImpl::SetHeader(liblas::Header const& header) 
 {
     m_header = HeaderPtr(new liblas::Header(header));
 }
     
-void ReaderImpl::ReadNextPoint()
+void ZReaderImpl::ReadNextPoint()
 {
     if (0 == m_current)
     {
@@ -200,7 +205,7 @@ void ReaderImpl::ReadNextPoint()
 
 }
 
-liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n)
+liblas::Point const& ZReaderImpl::ReadPointAt(std::size_t n)
 {
     if (m_size == n) {
         throw std::out_of_range("file has no more points to read, end of file reached");
@@ -226,7 +231,7 @@ liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n)
     return *m_point;
 }
 
-void ReaderImpl::Seek(std::size_t n)
+void ZReaderImpl::Seek(std::size_t n)
 {
     if (m_size == n) {
         throw std::out_of_range("file has no more points to read, end of file reached");
@@ -244,15 +249,16 @@ void ReaderImpl::Seek(std::size_t n)
     m_current = n;
 }
 
-void ReaderImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
+void ZReaderImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
 {
     m_filters = filters;
 }
 
-void ReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
+void ZReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
     m_transforms = transforms;
 }
 
 }} // namespace liblas::detail
 
+#endif

@@ -2,12 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS factories 
- * Author:   Howard Butler, hobu.inc@gmail.com
+ * Purpose:  LAS 1.0 reader implementation for C++ libLAS 
+ * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
- * Copyright (c) 2010, Howard Butler
+ * Copyright (c) 2010, Michael P. Gerlek
  *
  * All rights reserved.
  * 
@@ -40,60 +39,77 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/factory.hpp>
-#include <liblas/detail/reader/reader.hpp>
-#include <liblas/detail/reader/zipreader.hpp>
-#include <liblas/detail/reader/cachedreader.hpp>
-#include <liblas/utility.hpp>
-
-// boost
-#include <boost/cstdint.hpp>
-
-// std
-#include <stdexcept>
-#include <fstream>
-#include <string>
-#include <cstring> // std::memset
-#include <cassert>
-#include <iostream>
-
-using namespace boost;
-
-namespace liblas
-{
-
-Reader ReaderFactory::CreateWithImpl(ReaderIPtr r)
-{
-    liblas::Reader reader(r);
-    return reader;
-}
-
-Reader ReaderFactory::CreateCached(std::istream& stream, boost::uint32_t cache_size)
-{
-    ReaderIPtr r = ReaderIPtr(new detail::CachedReaderImpl(stream, cache_size) );
-    return liblas::Reader(r);
-}
-
-Reader ReaderFactory::Create(std::istream& stream)
-{
-    detail::HeaderReaderPtr h(new detail::reader::Header(stream));
-    h->read();
-    HeaderPtr header = h->GetHeader();
-
-    ReaderIPtr r;
+#ifndef LIBLAS_DETAIL_ZIPREADERIMPL_HPP_INCLUDED
+#define LIBLAS_DETAIL_ZIPREADERIMPL_HPP_INCLUDED
 
 #ifdef HAVE_LASZIP
-    if (header->IsCompressed())
-    {
-        r = ReaderIPtr(new detail::ZReaderImpl(stream) );
-    }
-    else
-#endif
-    {
-        r = ReaderIPtr(new detail::ReaderImpl(stream) );
-    }
-    
-    return liblas::Reader(r);
-}
-} // namespace liblas
 
+#include <liblas/detail/fwd.hpp>
+#include <liblas/detail/reader/point.hpp>
+#include <liblas/detail/reader/header.hpp>
+#include <liblas/liblas.hpp>
+// boost
+#include <boost/cstdint.hpp>
+// std
+#include <iosfwd>
+#include <boost/shared_ptr.hpp>
+
+namespace liblas { namespace detail { 
+
+typedef boost::shared_ptr< reader::Point > PointReaderPtr;
+typedef boost::shared_ptr< reader::Header > HeaderReaderPtr;
+
+class ZReaderImpl : public ReaderI
+{
+public:
+
+    ZReaderImpl(std::istream& ifs);
+    ~ZReaderImpl();
+
+    void ReadHeader();
+    liblas::Header const& GetHeader() const {return *m_header;}
+    void SetHeader(liblas::Header const& header);
+    liblas::Point const& GetPoint() const { return *m_point; }
+    void ReadNextPoint();
+    liblas::Point const& ReadPointAt(std::size_t n);
+    void Seek(std::size_t n);
+    
+    void Reset();
+
+    void SetFilters(std::vector<liblas::FilterPtr> const& filters);
+    void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
+
+
+protected:
+
+    bool FilterPoint(liblas::Point const& p);
+    void TransformPoint(liblas::Point& p);
+
+    typedef std::istream::off_type off_type;
+    typedef std::istream::pos_type pos_type;
+    
+    std::istream& m_ifs;
+    boost::uint32_t m_size;
+    boost::uint32_t m_current;
+    
+    PointReaderPtr m_point_reader;
+    HeaderReaderPtr m_header_reader;
+    
+    HeaderPtr m_header;
+    
+    PointPtr m_point;
+
+    std::vector<liblas::FilterPtr> m_filters;
+    std::vector<liblas::TransformPtr> m_transforms;
+private:
+
+    // Blocked copying operations, declared but not defined.
+    ZReaderImpl(ZReaderImpl const& other);
+    ZReaderImpl& operator=(ZReaderImpl const& rhs);
+};
+
+}} // namespace liblas::detail
+
+#endif
+
+#endif // LIBLAS_DETAIL_ZIPREADERIMPL_HPP_INCLUDED

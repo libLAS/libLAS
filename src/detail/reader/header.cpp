@@ -159,6 +159,13 @@ void Header::read()
 
     // 17. Point Data Format ID
     read_n(n1, m_ifs, sizeof(n1));
+
+    if (n1 >> 7)
+    {
+        m_header->SetIsCompressed(true);
+        n1 &= 0x7f;
+    }
+
     if (n1 == liblas::ePointFormat0)
     {
         m_header->SetDataFormatId(liblas::ePointFormat0);

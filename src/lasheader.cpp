@@ -93,7 +93,8 @@ Header::Header(Header const& other) :
     m_offsets(other.m_offsets),
     m_extent(other.m_extent),
     m_srs(other.m_srs),
-    m_schema(other.m_schema)
+    m_schema(other.m_schema),
+    m_isCompressed(other.m_isCompressed)
 {
     void* p = 0;
 
@@ -151,6 +152,7 @@ Header& Header::operator=(Header const& rhs)
         m_extent = rhs.m_extent;
         m_srs = rhs.m_srs;
         m_schema = rhs.m_schema;
+        m_isCompressed = rhs.m_isCompressed;
 
     }
     return *this;
@@ -183,6 +185,7 @@ bool Header::operator==(Header const& other) const
     if (m_scales != other.m_scales) return false;
     if (m_offsets != other.m_offsets) return false;
     if (m_extent != other.m_extent) return false;
+    if (m_isCompressed != other.m_isCompressed) return false;
     
     return true;
 }
@@ -594,6 +597,8 @@ void Header::Init()
 
     // Zero scale value is useless, so we need to use a small value.
     SetScale(0.01, 0.01, 0.01);
+
+    m_isCompressed = false;
 }
 
 bool SameVLRs(std::string const& name, boost::uint16_t id, liblas::VariableRecord const& record)
@@ -706,6 +711,16 @@ void Header::SetSchema(const Schema& format)
     m_schema.SetDimension(z);
     
 } 
+
+void Header::SetIsCompressed(bool b)
+{
+    m_isCompressed = b;
+}
+
+bool Header::IsCompressed() const
+{
+    return m_isCompressed;
+}
 
 liblas::property_tree::ptree Header::GetPTree( ) const
 {

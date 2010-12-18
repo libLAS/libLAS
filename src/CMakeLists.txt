@@ -98,6 +98,7 @@ set(LIBLAS_DETAIL_INDEX_HPP
 set(LIBLAS_DETAIL_READER_HPP
   ${LIBLAS_HEADERS_DIR}/detail/reader/cachedreader.hpp
   ${LIBLAS_HEADERS_DIR}/detail/reader/reader.hpp  
+  ${LIBLAS_HEADERS_DIR}/detail/reader/zipreader.hpp  
   ${LIBLAS_HEADERS_DIR}/detail/reader/header.hpp
   ${LIBLAS_HEADERS_DIR}/detail/reader/point.hpp)
 
@@ -138,6 +139,7 @@ set(LIBLAS_DETAIL_READER_CPP
   detail/reader/header.cpp
   detail/reader/point.cpp
   detail/reader/reader.cpp
+  detail/reader/zipreader.cpp
   detail/reader/cachedreader.cpp)
 
 set(LIBLAS_DETAIL_WRITER_CPP
