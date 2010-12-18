@@ -68,18 +68,39 @@ ZipReaderImpl::ZipReaderImpl(std::istream& ifs)
     : m_ifs(ifs)
     , m_size(0)
     , m_current(0)
-    , m_point_reader(PointReaderPtr())
+    //, m_point_reader(PointReaderPtr())
     , m_header_reader(new reader::Header(m_ifs))
     , m_header(HeaderPtr())
     , m_point(PointPtr(new liblas::Point()))
     , m_filters(0)
-    , m_transforms(0)
+    , m_transforms(0),
+    m_unzipper(NULL),
+    m_num_items(0),
+    m_items(NULL),
+    m_lz_point(NULL),
+    m_lz_point_data(NULL),
+    m_lz_point_size(0)
 {
-    new LASunzipper();
+    return;
 }
 
 ZipReaderImpl::~ZipReaderImpl()
 {
+    if (m_unzipper)
+    {
+        m_unzipper->close();
+        delete m_unzipper;
+        m_unzipper = NULL;
+    }
+
+    m_num_items = 0;
+    delete[] m_items;
+    m_items = NULL;
+
+    delete[] m_lz_point;
+    delete[] m_lz_point_data;
+
+    return;
 }
 
 void ZipReaderImpl::Reset()
@@ -93,10 +114,84 @@ void ZipReaderImpl::Reset()
     
     // If we reset the reader, we're ready to start reading points, so 
     // we'll create a point reader at this point.
-    if (!m_point_reader)
+    if (!m_unzipper)
     {
-        m_point_reader = PointReaderPtr(new reader::Point(m_ifs, m_header));
-    } 
+        m_unzipper = new LASunzipper();
+
+        ConstructItems();
+
+        bool ok = m_unzipper->open(&m_ifs, m_num_items, m_items, LASZIP_COMPRESSION_NONE);
+        if (!ok) throw 0; // BUG: need status codes?
+    }
+
+    return;
+}
+
+
+void ZipReaderImpl::ConstructItems()
+{
+    PointFormatName format = m_header->GetDataFormatId();
+
+    switch (format)
+    {
+    case ePointFormat0:
+        m_num_items = 1;
+        m_items = new LASitem[1];
+        m_items[0].set(LASitem::POINT10);
+        break;
+
+    case ePointFormat1:
+        m_num_items = 2;
+        m_items = new LASitem[2];
+        m_items[0].set(LASitem::POINT10);
+        m_items[1].set(LASitem::GPSTIME);
+        break;
+
+    case ePointFormat2:
+        m_num_items = 2;
+        m_items = new LASitem[2];
+        m_items[0].set(LASitem::POINT10);
+        m_items[1].set(LASitem::RGB);
+        break;
+
+    case ePointFormat3:
+        m_num_items = 3;
+        m_items = new LASitem[3];
+        m_items[0].set(LASitem::POINT10);
+        m_items[1].set(LASitem::GPSTIME);
+        m_items[2].set(LASitem::RGB);
+        break;
+
+    case ePointFormat4:
+        m_num_items = 3;
+        m_items = new LASitem[3];
+        m_items[0].set(LASitem::POINT10);
+        m_items[1].set(LASitem::GPSTIME);
+        m_items[2].set(LASitem::WAVEPACKET);
+        break;
+
+    default:
+        throw 0;
+    }
+
+    // construct the object that will hold a laszip point
+
+    // compute the point size
+    m_lz_point_size = 0;
+    for (unsigned int i = 0; i < m_num_items; i++) 
+        m_lz_point_size += m_items[i].size;
+
+    // create the point data
+    unsigned int point_offset = 0;
+    m_lz_point = new unsigned char*[m_num_items];
+    m_lz_point_data = new unsigned char[m_lz_point_size];
+    for (unsigned i = 0; i < m_num_items; i++)
+    {
+        m_lz_point[i] = &(m_lz_point_data[point_offset]);
+        point_offset += m_items[i].size;
+    }
+
+    return;
 }
 
 void ZipReaderImpl::TransformPoint(liblas::Point& p)
@@ -144,9 +239,9 @@ void ZipReaderImpl::ReadHeader()
     m_header_reader->read();
     m_header = m_header_reader->GetHeader();
 
-    Reset();
-    
+    m_point->SetHeaderPtr(m_header);
 
+    Reset();
 }
 
 void ZipReaderImpl::SetHeader(liblas::Header const& header) 
@@ -154,6 +249,23 @@ void ZipReaderImpl::SetHeader(liblas::Header const& header)
     m_header = HeaderPtr(new liblas::Header(header));
 }
     
+void ZipReaderImpl::ReadIdiom()
+{
+    //////m_point_reader->read();
+    //////++m_current;
+    //////*m_point = m_point_reader->GetPoint();
+
+    bool ok = m_unzipper->read(m_lz_point);
+    if (!ok) throw 0;
+
+    std::vector<boost::uint8_t> v(m_lz_point_size);
+    for (unsigned int i=0; i<m_lz_point_size; i++)
+        v[i] = m_lz_point_data[i];
+    m_point->SetData(v);
+
+    ++m_current;
+}
+
 void ZipReaderImpl::ReadNextPoint()
 {
     if (0 == m_current)
@@ -166,9 +278,7 @@ void ZipReaderImpl::ReadNextPoint()
         throw std::out_of_range("ReadNextPoint: file has no more points to read, end of file reached");
     } 
 
-    m_point_reader->read();
-    ++m_current;
-    *m_point = m_point_reader->GetPoint();
+    ReadIdiom();    
 
     // Filter the points and continue reading until we either find 
     // one to keep or throw an exception.
@@ -176,15 +286,11 @@ void ZipReaderImpl::ReadNextPoint()
     bool bLastPoint = false;
     if (!FilterPoint(*m_point))
     {
-        m_point_reader->read();
-        ++m_current;
-        *m_point = m_point_reader->GetPoint();
+        ReadIdiom();
 
         while (!FilterPoint(*m_point))
         {
-            m_point_reader->read();
-            ++m_current;
-            *m_point = m_point_reader->GetPoint();
+            ReadIdiom();
             if (m_current == m_size) 
             {
                 bLastPoint = true;
@@ -215,13 +321,18 @@ liblas::Point const& ZipReaderImpl::ReadPointAt(std::size_t n)
         throw std::runtime_error(msg.str());
     } 
 
-    std::streamsize const pos = (static_cast<std::streamsize>(n) * m_header->GetDataRecordLength()) + m_header->GetDataOffset();    
+    if (n!=0)
+    {
+        throw std::runtime_error("not yet implemented");
+    }
+
+    std::streamsize const pos = /*(static_cast<std::streamsize>(n) * m_header->GetDataRecordLength()) +*/ m_header->GetDataOffset();    
 
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
 
-    m_point_reader->read();
-    *m_point = m_point_reader->GetPoint();
+    ReadIdiom();
+    --m_current; // undo what was done in Idiom
 
     if (!m_transforms.empty())
     {
@@ -241,7 +352,12 @@ void ZipReaderImpl::Seek(std::size_t n)
         throw std::runtime_error(msg.str());
     } 
 
-    std::streamsize pos = (static_cast<std::streamsize>(n) * m_header->GetDataRecordLength()) + m_header->GetDataOffset();    
+    if (n!=0)
+    {
+        throw std::runtime_error("not yet implemented");
+    }
+
+    std::streamsize pos = /*(static_cast<std::streamsize>(n) * m_header->GetDataRecordLength()) +*/ m_header->GetDataOffset();    
 
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);

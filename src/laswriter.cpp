@@ -42,6 +42,7 @@
 #include <liblas/lasversion.hpp>
 #include <liblas/laswriter.hpp>
 #include <liblas/detail/writer/writer.hpp>
+#include <liblas/detail/writer/zipwriter.hpp>
 #include <liblas/factory.hpp>
 
 // std
@@ -55,7 +56,11 @@ namespace liblas
 {
 
 Writer::Writer(std::ostream& ofs, Header const& header) :
+#ifdef HAVE_LASZIP
+    m_pimpl(WriterIPtr(header.IsCompressed() ? (WriterIPtr)(new detail::ZipWriterImpl(ofs)) : (WriterIPtr)(new detail::WriterImpl(ofs))))
+#else
     m_pimpl(WriterIPtr(new detail::WriterImpl(ofs)))
+#endif
 
 {
     m_pimpl->SetHeader(header);

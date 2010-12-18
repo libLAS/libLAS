@@ -52,6 +52,10 @@
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 
+// liblaszip
+class LASzipper;
+class LASitem;
+
 namespace liblas { namespace detail { 
 
 typedef boost::shared_ptr< writer::Point > PointWriterPtr;
@@ -88,8 +92,16 @@ protected:
     HeaderPtr m_header;
 
 private:
-
     boost::uint32_t m_pointCount;
+
+    void ConstructItems();
+
+    LASzipper* m_zipper;
+    unsigned int m_num_items;
+    LASitem* m_items;
+    unsigned char** m_lz_point;
+    unsigned char* m_lz_point_data;
+    unsigned int m_lz_point_size;
 
     // block copying operations
     ZipWriterImpl(ZipWriterImpl const& other);

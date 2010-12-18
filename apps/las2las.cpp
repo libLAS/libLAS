@@ -60,7 +60,8 @@ bool process(   std::string const& input,
         return false;
     }
 
-    liblas::Reader reader(ifs);
+    liblas::ReaderFactory f;
+    liblas::Reader reader = f.CreateWithStream(ifs);
     SummaryPtr summary(new::liblas::Summary);
     
     reader.SetFilters(filters);
@@ -300,7 +301,8 @@ int main(int argc, char* argv[])
             }
             // set_ifstream_buffer(ifs, default_buffer_size);
 
-            liblas::Reader reader(ifs);
+            liblas::ReaderFactory f;
+            liblas::Reader reader = f.CreateWithStream(ifs);
             header = reader.GetHeader();
         } else {
             std::cerr << "Input LAS file not specified!\n";
@@ -322,6 +324,15 @@ int main(int argc, char* argv[])
         // Transforms alter our header as well.  Setting scales, offsets, etc.
         transforms = GetTransforms(vm, verbose, header);
         
+        if (output.compare(output.length()-4,4,".laz")==0)
+        {
+#ifdef HAVE_LASZIP
+            header.SetIsCompressed(true);
+#else
+            throw std::runtime_error("Compression support not enabled in liblas configuration");
+#endif
+        }
+
         bool op = process(  input, 
                             output,
                             header, 

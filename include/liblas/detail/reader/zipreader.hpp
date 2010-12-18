@@ -54,6 +54,10 @@
 #include <iosfwd>
 #include <boost/shared_ptr.hpp>
 
+// liblaszip
+class LASitem;
+class LASunzipper;
+
 namespace liblas { namespace detail { 
 
 typedef boost::shared_ptr< reader::Point > PointReaderPtr;
@@ -62,7 +66,6 @@ typedef boost::shared_ptr< reader::Header > HeaderReaderPtr;
 class ZipReaderImpl : public ReaderI
 {
 public:
-
     ZipReaderImpl(std::istream& ifs);
     ~ZipReaderImpl();
 
@@ -79,9 +82,7 @@ public:
     void SetFilters(std::vector<liblas::FilterPtr> const& filters);
     void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
 
-
 protected:
-
     bool FilterPoint(liblas::Point const& p);
     void TransformPoint(liblas::Point& p);
 
@@ -92,7 +93,7 @@ protected:
     boost::uint32_t m_size;
     boost::uint32_t m_current;
     
-    PointReaderPtr m_point_reader;
+    //PointReaderPtr m_point_reader;
     HeaderReaderPtr m_header_reader;
     
     HeaderPtr m_header;
@@ -101,7 +102,17 @@ protected:
 
     std::vector<liblas::FilterPtr> m_filters;
     std::vector<liblas::TransformPtr> m_transforms;
+
 private:
+    void ConstructItems();
+    void ReadIdiom();
+
+    LASunzipper* m_unzipper;
+    unsigned int m_num_items;
+    LASitem* m_items;
+    unsigned char** m_lz_point;
+    unsigned char* m_lz_point_data;
+    unsigned int m_lz_point_size;
 
     // Blocked copying operations, declared but not defined.
     ZipReaderImpl(ZipReaderImpl const& other);
