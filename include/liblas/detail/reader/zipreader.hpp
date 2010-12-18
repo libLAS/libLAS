@@ -2,8 +2,8 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS 1.0 reader implementation for C++ libLAS 
- * Author:   Mateusz Loskot, mateusz@loskot.net
+ * Purpose:  laszip reader implementation for C++ libLAS 
+ * Author:   Michael P. Gerlek (mpog@flaxen.com)
  *
  ******************************************************************************
  * Copyright (c) 2010, Michael P. Gerlek
@@ -59,12 +59,12 @@ namespace liblas { namespace detail {
 typedef boost::shared_ptr< reader::Point > PointReaderPtr;
 typedef boost::shared_ptr< reader::Header > HeaderReaderPtr;
 
-class ZReaderImpl : public ReaderI
+class ZipReaderImpl : public ReaderI
 {
 public:
 
-    ZReaderImpl(std::istream& ifs);
-    ~ZReaderImpl();
+    ZipReaderImpl(std::istream& ifs);
+    ~ZipReaderImpl();
 
     void ReadHeader();
     liblas::Header const& GetHeader() const {return *m_header;}
@@ -104,12 +104,12 @@ protected:
 private:
 
     // Blocked copying operations, declared but not defined.
-    ZReaderImpl(ZReaderImpl const& other);
-    ZReaderImpl& operator=(ZReaderImpl const& rhs);
+    ZipReaderImpl(ZipReaderImpl const& other);
+    ZipReaderImpl& operator=(ZipReaderImpl const& rhs);
 };
 
 }} // namespace liblas::detail
 
-#endif
+#endif // HAVE_LASZIP
 
 #endif // LIBLAS_DETAIL_ZIPREADERIMPL_HPP_INCLUDED

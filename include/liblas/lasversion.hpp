@@ -92,6 +92,7 @@ enum PointSize
 
 bool LAS_DLL IsGDALEnabled(void);
 bool LAS_DLL IsLibGeoTIFFEnabled(void);
+bool LAS_DLL IsLasZipEnabled(void);
 std::string LAS_DLL GetFullVersion(void);
 std::string LAS_DLL GetVersion(void);
 

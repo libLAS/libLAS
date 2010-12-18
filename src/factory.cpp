@@ -45,6 +45,7 @@
 #include <liblas/detail/reader/zipreader.hpp>
 #include <liblas/detail/reader/cachedreader.hpp>
 #include <liblas/detail/writer/writer.hpp>
+#include <liblas/detail/writer/zipwriter.hpp>
 #include <liblas/utility.hpp>
 
 // boost
@@ -81,19 +82,17 @@ Reader ReaderFactory::CreateWithStream(std::istream& stream)
     h->read();
     HeaderPtr header = h->GetHeader();
 
-    ReaderIPtr r;
-
-#ifdef HAVE_LASZIP
     if (header->IsCompressed())
     {
-        r = ReaderIPtr(new detail::ZReaderImpl(stream) );
-    }
-    else
+#ifdef HAVE_LASZIP
+        ReaderIPtr r = ReaderIPtr(new detail::ZipReaderImpl(stream) );
+        return liblas::Reader(r);
+#else
+        throw std::runtime_error("Compression support not enabled in liblas configuration");
 #endif
-    {
-        r = ReaderIPtr(new detail::ReaderImpl(stream) );
     }
-    
+
+    ReaderIPtr r = ReaderIPtr(new detail::ReaderImpl(stream) );
     return liblas::Reader(r);
 }
 
@@ -107,11 +106,19 @@ Writer WriterFactory::CreateWithImpl(WriterIPtr w)
 
 Writer WriterFactory::CreateWithStream(std::ostream& stream)
 {
-
     WriterIPtr w  = WriterIPtr(new detail::WriterImpl(stream));
     return liblas::Writer(w);
 }
 
+Writer WriterFactory::CreateCompressedWithStream(std::ostream& stream)
+{
+#ifdef HAVE_LASZIP
+    WriterIPtr w  = WriterIPtr(new detail::ZipWriterImpl(stream));
+    return liblas::Writer(w);
+#else
+    throw std::runtime_error("Compression support not enabled in liblas configuration");
+#endif
+}
 
 } // namespace liblas
 

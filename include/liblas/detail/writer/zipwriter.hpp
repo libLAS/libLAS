@@ -2,13 +2,11 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS version related functions.
- * Author:   Mateusz Loskot, mateusz@loskot.net
- *           Frank Warmerdam, warmerdam@pobox.com
+ * Purpose:  laszip writer implementation for C++ libLAS 
+ * Author:   Michael P. Gerlek (mpg@flaxen.com)
  *
  ******************************************************************************
- * Copyright (c) 2008, Mateusz Loskot
- * Copyright (c) 2010, Frank Warmerdam
+ * Copyright (c) 2010, Michael P. Gerlek
  *
  * All rights reserved.
  * 
@@ -41,94 +39,65 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasversion.hpp>
-
-#ifdef HAVE_LIBGEOTIFF
-#include <geotiff.h>
-#endif
-
-#ifdef HAVE_GDAL 
-#include <gdal.h>
-#endif
+#ifndef LIBLAS_DETAIL_ZIPWRITER_HPP_INCLUDED
+#define LIBLAS_DETAIL_ZIPWRITER_HPP_INCLUDED
 
 #ifdef HAVE_LASZIP
-#include <laszip/laszip.hpp>
-#endif
 
-#include <liblas/lasspatialreference.hpp>
+#include <liblas/detail/fwd.hpp>
+#include <liblas/liblas.hpp>
+#include <liblas/detail/writer/point.hpp>
+#include <liblas/detail/writer/header.hpp>
+// boost
+#include <boost/cstdint.hpp>
+#include <boost/shared_ptr.hpp>
 
-using namespace boost;
+namespace liblas { namespace detail { 
 
-namespace liblas
+typedef boost::shared_ptr< writer::Point > PointWriterPtr;
+typedef boost::shared_ptr< writer::Header > HeaderWriterPtr;
+
+class ZipWriterImpl : public WriterI
 {
+public:
 
-/// Check if GDAL support has been built in to libLAS.
-bool IsGDALEnabled()
-{
-#ifdef HAVE_GDAL
-    return true;
-#else
-    return false;
-#endif
-}
+    ZipWriterImpl(std::ostream& ofs);
+    ~ZipWriterImpl();
+    LASVersion GetVersion() const;
+    void WritePoint(liblas::Point const& record);
 
-/// Check if GeoTIFF support has been built in to libLAS.
-bool IsLibGeoTIFFEnabled()
-{
-#ifdef HAVE_LIBGEOTIFF
-    return true;
-#else
-    return false;
-#endif
-}
+    liblas::Header& GetHeader() const;
+    void WriteHeader();
 
-/// Check if LasZip compression support has been built in to libLAS.
-bool IsLasZipEnabled()
-{
-#ifdef HAVE_LASZIP
-    return true;
-#else
-    return false;
-#endif
-}
+    void UpdatePointCount(boost::uint32_t count);
+    void SetHeader(liblas::Header const& header);
+    
+    void SetFilters(std::vector<liblas::FilterPtr> const& filters);
+    void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
 
-/// Tell the user a bit about libLAS' compilation
-std::string  GetFullVersion(void) {
+protected:
 
-    std::ostringstream os;
-#ifdef HAVE_LIBGEOTIFF
-    os << " GeoTIFF "
-       << (LIBGEOTIFF_VERSION / 1000) << '.'
-       << (LIBGEOTIFF_VERSION / 100 % 10) << '.'
-       << (LIBGEOTIFF_VERSION % 100 / 10);
-#endif
-#ifdef HAVE_GDAL
-    os << " GDAL " << GDALVersionInfo("RELEASE_NAME");
-#endif
+    std::ostream& m_ofs;
+     
+    PointWriterPtr m_point_writer;
+    HeaderWriterPtr m_header_writer;
 
-#ifdef HAVE_LASZIP
-    os << " LasZip " 
-       << LASZIP_VERSION_MAJOR << "."
-       << LASZIP_VERSION_MINOR << "."
-       << LASZIP_VERSION_REVISION;
-#endif
+    std::vector<liblas::FilterPtr> m_filters;
+    std::vector<liblas::TransformPtr> m_transforms;
 
-    std::string info(os.str());
-    os.str("");
-    os << "libLAS " << LIBLAS_RELEASE_NAME;
-    if (!info.empty())
-    {
-        os << " with" << info;
-    }
+    HeaderPtr m_header;
 
+private:
 
-    return os.str();
-}
+    boost::uint32_t m_pointCount;
 
-/// Tell the user our dotted release name.
-std::string GetVersion() {
-    return std::string(LIBLAS_RELEASE_NAME);
-}
+    // block copying operations
+    ZipWriterImpl(ZipWriterImpl const& other);
+    ZipWriterImpl& operator=(ZipWriterImpl const& other);
+};
 
-} // namespace liblas
+}} // namespace liblas::detail
 
+#endif // HAVE_LASZIP
+
+#endif // LIBLAS_DETAIL_ZIPWRITER_HPP_INCLUDED

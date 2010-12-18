@@ -89,7 +89,8 @@ public:
     WriterFactory& operator=(WriterFactory const& rhs);    
 
     Writer CreateWithImpl(WriterIPtr w);
-    Writer CreateWithStream(std::ostream& stream);
+    Writer CreateWithStream(std::ostream& stream); // makes a WriterImpl
+    Writer CreateCompressedWithStream(std::ostream& stream); // makes ZipWriterImpl
     
     /// Destructor.
     /// @exception nothrow
