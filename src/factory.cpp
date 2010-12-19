@@ -116,7 +116,8 @@ Writer WriterFactory::CreateCompressedWithStream(std::ostream& stream)
     WriterIPtr w  = WriterIPtr(new detail::ZipWriterImpl(stream));
     return liblas::Writer(w);
 #else
-    throw std::runtime_error("Compression support not enabled in liblas configuration");
+    boost::ignore_unused_variable_warning(stream);
+    throw std::runtime_error("Compression support not enabled in libLAS configuration");
 #endif
 }
 
