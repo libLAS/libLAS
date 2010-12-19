@@ -188,7 +188,34 @@ if(WITH_LIBXML2)
     endif()
 endif()
 
+# GDAL/OGR support - optional, default=OFF
+set(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
 
+if(WITH_GDAL)
+
+  find_package(GDAL 1.6.0)
+
+  if(GDAL_FOUND)
+    # Confirm required API is available
+    include(CheckFunctionExists) 
+    set(CMAKE_REQUIRED_LIBRARIES ${GDAL_LIBRARY})
+    check_function_exists(OSRSetEquirectangular2 HAVE_OSRSETEQUIRECTANGULAR2)
+    
+    if(NOT HAVE_OSRSETEQUIRECTANGULAR2)
+      # Reset to NOT found for GDAL/OGR
+      set(GDAL_FOUND)
+      message(FATAL_ERROR
+        "Unable to find OSRSetEquirectangular2 within GDAL library at ${GDAL_INCLUDE_DIR} ${GDAL_LIBRARY}")
+    else()
+      include_directories(${GDAL_INCLUDE_DIR})
+      add_definitions(-DHAVE_GDAL=1)
+    endif()
+  endif()
+
+  mark_as_advanced(CLEAR GDAL_INCLUDE_DIR) 
+  mark_as_advanced(CLEAR GDAL_LIBRARY) 
+
+endif()
 
 # GeoTIFF support - optional, default=OFF
 set(WITH_GEOTIFF FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
@@ -227,38 +254,14 @@ if(WITH_GEOTIFF)
   endif()
 endif()
 
-# GDAL/OGR support - optional, default=OFF
-set(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
-
 if(WITH_GDAL)
   if (NOT GEOTIFF_FOUND)
     message(FATAL_ERROR
       "GDAL support requires GeoTIFF library which was not selected")
   endif()
-
-  find_package(GDAL 1.6.0)
-
-#  if(GDAL_FOUND)
-#    # Confirm required API is available
-#    include(CheckFunctionExists) 
-#    set(CMAKE_REQUIRED_LIBRARIES ${GDAL_LIBRARY})
-#    check_function_exists(OSRSetEquirectangular2 HAVE_OSRSETEQUIRECTANGULAR2)
-    
-#    if(NOT HAVE_OSRSETEQUIRECTANGULAR2)
-#      # Reset to NOT found for GDAL/OGR
-#      set(GDAL_FOUND)
-#      message(FATAL_ERROR
-#        "Unable to find OSRSetEquirectangular2 within GDAL library at ${GDAL_INCLUDE_DIR} ${GDAL_LIBRARY}")
-#    else()
-      include_directories(${GDAL_INCLUDE_DIR})
-      add_definitions(-DHAVE_GDAL=1)
-#    endif()
-#  endif()
-
-  mark_as_advanced(CLEAR GDAL_INCLUDE_DIR) 
-  mark_as_advanced(CLEAR GDAL_LIBRARY) 
-
 endif()
+
+
 
 # Oracle support - optional, default=OFF
 set(WITH_ORACLE FALSE CACHE BOOL "Choose if Oracle support should be built")
@@ -368,7 +371,7 @@ endif()
 SET(CPACK_PACKAGE_VERSION_MAJOR "1")
 SET(CPACK_PACKAGE_VERSION_MINOR "6")
 SET(CPACK_PACKAGE_VERSION_PATCH "0b3")
-SET(OSGEO4W_UPSTREAM_RELEASE "1")
+SET(OSGEO4W_UPSTREAM_RELEASE "2")
 
 SET(CPACK_SOURCE_GENERATOR "TGZ;ZIP;TBZ2")
 SET(CPACK_CMAKE_GENERATOR "Unix Makefiles")
