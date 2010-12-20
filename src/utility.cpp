@@ -456,6 +456,151 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
     
 }
 
+CoordinateSummary::CoordinateSummary() :
+    count(0)
+    , first(true)
+    , bHaveHeader(false)
+    
+{
+    points_by_return.assign(0);
+    returns_of_given_pulse.assign(0);    
+}
+
+CoordinateSummary::CoordinateSummary(CoordinateSummary const& other)
+    : 
+    count(other.count)
+    , points_by_return(other.points_by_return)
+    , returns_of_given_pulse(other.returns_of_given_pulse)
+    , first(other.first)
+    , min(other.min)
+    , max(other.max)
+    , m_header(other.m_header)
+    , bHaveHeader(other.bHaveHeader)
+{
+}
+
+CoordinateSummary& CoordinateSummary::operator=(CoordinateSummary const& rhs)
+{
+    if (&rhs != this)
+    {
+        count = rhs.count;
+        first = rhs.first;
+        points_by_return = rhs.points_by_return;
+        returns_of_given_pulse = rhs.returns_of_given_pulse;
+        min = rhs.min;
+        max = rhs.max;
+        m_header = rhs.m_header;
+        bHaveHeader = rhs.bHaveHeader;
+    }
+    return *this;
+}
+
+void CoordinateSummary::AddPoint(liblas::Point const& p)
+{
+        count++;
+
+        if (first) {
+            min = p;
+            max = p;
+            
+            // We only summarize the base dimensions 
+            // but we want to be able to read/set them all.  The 
+            // point copy here would set the header ptr of min/max
+            // to be whatever might have come off of the file, 
+            // and this may/may not have space for time/color
+            
+            // If we do have scale/offset values, we do want to keep those, 
+            // however.  
+            liblas::HeaderPtr hdr = p.GetHeaderPtr();
+            if (hdr.get()) 
+            {
+                // Keep scale/offset values around because we need these 
+                liblas::Header header;
+                header.SetScale(hdr->GetScaleX(), hdr->GetScaleY(), hdr->GetScaleZ());
+                header.SetOffset(hdr->GetOffsetX(), hdr->GetOffsetY(), hdr->GetOffsetZ());
+                liblas::HeaderPtr h(new liblas::Header(header));
+                min.SetHeaderPtr(h);
+                max.SetHeaderPtr(h);
+            } else 
+            {
+                min.SetHeaderPtr(HeaderPtr());
+                max.SetHeaderPtr(HeaderPtr()); 
+            }
+
+            first = false;
+        }
+        
+        min.SetX(std::min(p.GetX(), min.GetX()));
+        max.SetX(std::max(p.GetX(), max.GetX()));
+
+        min.SetY(std::min(p.GetY(), min.GetY()));
+        max.SetY(std::max(p.GetY(), max.GetY()));        
+
+        min.SetZ(std::min(p.GetZ(), min.GetZ()));
+        max.SetZ(std::max(p.GetZ(), max.GetZ()));
+
+
+
+        points_by_return[p.GetReturnNumber()]++;
+        returns_of_given_pulse[p.GetNumberOfReturns()]++;    
+}
+
+void CoordinateSummary::SetHeader(liblas::Header const& h) 
+{
+    m_header = h;
+    bHaveHeader = true;
+}
+
+ptree CoordinateSummary::GetPTree() const
+{
+    ptree pt;
+    
+    ptree pmin = min.GetPTree();
+    ptree pmax = max.GetPTree();
+    
+     
+    pt.add_child("minimum", pmin);
+    pt.add_child("maximum", pmax);
+
+    ptree returns;
+    bool have_returns = false;
+    for (boost::array<boost::uint32_t,8>::size_type i=0; i < points_by_return.size(); i++) {
+        if (i == 0) continue;
+
+        if (points_by_return[i] != 0)
+        {
+            have_returns = true;
+            returns.put("id", i);
+            returns.put("count", points_by_return[i]);
+            pt.add_child("points_by_return.return", returns);
+            
+        }
+    }
+    
+    if (! have_returns) {
+        // Assume all points are first return
+        returns.put("id", 1);
+        returns.put("count", count);
+        pt.add_child("points_by_return.return", returns);        
+    }
+    
+    ptree pulses;
+    for (boost::array<boost::uint32_t,8>::size_type i=0; i < returns_of_given_pulse.size(); i++) {
+        if (returns_of_given_pulse[i] != 0) {
+            pulses.put("id",i);
+            pulses.put("count", returns_of_given_pulse[i]);
+            pt.add_child("returns_of_given_pulse.pulse", pulses);
+        }
+    }
+    
+    pt.put("count", count);
+
+    liblas::property_tree::ptree top;
+    if (bHaveHeader)
+        top.add_child("summary.header",m_header.GetPTree());
+    top.add_child("summary.points",pt);
+    return top;
+}
 
 boost::uint32_t GetStreamPrecision(double scale)
 {

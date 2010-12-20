@@ -101,7 +101,7 @@ LAS_DLL void SetStreamPrecision(std::ostream& os, double scale);
 
 LAS_DLL liblas::Header FetchHeader(std::string const& filename);
 LAS_DLL void RewriteHeader(liblas::Header const& header, std::string const& filename);
-LAS_DLL void RepairHeader(liblas::Summary const& summary, liblas::Header& header);
+LAS_DLL void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& header);
 LAS_DLL liblas::property_tree::ptree SummarizeReader(liblas::Reader& reader) ;
 
 #endif // LIBLAS_ITERATOR_HPP_INCLUDED
