@@ -240,6 +240,10 @@ if (APPLE)
     ${LIBLAS_C_LIB_NAME}
     PROPERTIES
     INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+  set_target_properties(
+    ${LIBLAS_LIB_NAME}
+    PROPERTIES
+    INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
 ###############################################################################
