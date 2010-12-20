@@ -323,15 +323,16 @@ int main(int argc, char* argv[])
         
         // Transforms alter our header as well.  Setting scales, offsets, etc.
         transforms = GetTransforms(vm, verbose, header);
-        
-        if (output.compare(output.length()-4,4,".laz")==0)
-        {
-#ifdef HAVE_LASZIP
-            header.SetIsCompressed(true);
-#else
-            throw std::runtime_error("Compression support not enabled in liblas configuration");
-#endif
-        }
+
+        // This is quite busted for me on OS X...        
+//         if (output.compare(output.length()-4,4,".laz")==0)
+//         {
+// #ifdef HAVE_LASZIP
+//             header.SetIsCompressed(true);
+// #else
+//             throw std::runtime_error("Compression support not enabled in liblas configuration");
+// #endif
+//         }
 
         bool op = process(  input, 
                             output,
