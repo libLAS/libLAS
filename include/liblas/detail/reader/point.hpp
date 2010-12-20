@@ -79,7 +79,7 @@ private:
     std::istream& m_ifs;
     HeaderPtr m_header;
     liblas::Point m_point;
-    std::vector<boost::uint8_t> m_raw_data;
+    std::vector<boost::uint8_t>::size_type m_record_size;
 };
 
 

@@ -59,7 +59,7 @@ Point::Point(std::istream& ifs, HeaderPtr header)
     : m_ifs(ifs)
     , m_header(header)
     , m_point(m_header)
-    , m_raw_data(m_header->GetSchema().GetByteSize())
+    , m_record_size(m_header->GetSchema().GetByteSize())
 {
 }
 
@@ -71,12 +71,12 @@ void Point::read()
 {
     assert(m_header);
     assert(m_point.GetHeaderPtr());
-    assert(m_raw_data.size() > 0);
+    assert(m_record_size > 0);
     
     m_point.SetHeaderPtr(m_header);
-    detail::read_n(m_raw_data.front(), m_ifs, m_raw_data.size());
+    
+    detail::read_n(m_point.GetData().front(), m_ifs, m_record_size);
 
-    m_point.SetData(m_raw_data);
 }
 
 }}} // namespace liblas::detail::reader

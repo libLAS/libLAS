@@ -198,6 +198,7 @@ public:
 
 
     std::vector<boost::uint8_t> const& GetData() const {return m_data; }
+    std::vector<boost::uint8_t> & GetData() {return m_data; }
     void SetData(std::vector<boost::uint8_t> const& v) { m_data = v;}
     
     void SetHeaderPtr(HeaderPtr header);
