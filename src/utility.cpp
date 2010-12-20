@@ -134,42 +134,68 @@ void Summary::AddPoint(liblas::Point const& p)
             first = false;
         }
         
-        min.SetX(std::min(p.GetX(), min.GetX()));
-        max.SetX(std::max(p.GetX(), max.GetX()));
+        if (p.GetRawX() < min.GetRawX() )
+            min.SetRawX(p.GetRawX());
+        if (p.GetRawX() > max.GetRawX() )
+            max.SetRawX(p.GetRawX());
 
-        min.SetY(std::min(p.GetY(), min.GetY()));
-        max.SetY(std::max(p.GetY(), max.GetY()));        
+        if (p.GetRawY() < min.GetRawY() )
+            min.SetRawY(p.GetRawY());
+        if (p.GetRawY() > max.GetRawY() )
+            max.SetRawY(p.GetRawY());
 
-        min.SetZ(std::min(p.GetZ(), min.GetZ()));
-        max.SetZ(std::max(p.GetZ(), max.GetZ()));
+        if (p.GetRawZ() < min.GetRawZ() )
+            min.SetRawZ(p.GetRawZ());
+        if (p.GetRawZ() > max.GetRawZ() )
+            max.SetRawZ(p.GetRawZ());
 
-        min.SetIntensity(std::min(p.GetIntensity(), min.GetIntensity()));
-        max.SetIntensity(std::max(p.GetIntensity(), max.GetIntensity()));
+        if (p.GetIntensity() < min.GetIntensity() )
+            min.SetIntensity(p.GetIntensity());
+        if (p.GetIntensity() > max.GetIntensity() )
+            max.SetIntensity(p.GetIntensity());
 
-        min.SetTime(std::min(p.GetTime(), min.GetTime()));
-        max.SetTime(std::max(p.GetTime(), max.GetTime()));
+        if (p.GetTime() < min.GetTime() )
+            min.SetTime(p.GetTime());
+        if (p.GetTime() > max.GetTime() )
+            max.SetTime(p.GetTime());
 
-        min.SetReturnNumber(std::min(p.GetReturnNumber(), min.GetReturnNumber()));
-        max.SetReturnNumber(std::max(p.GetReturnNumber(), max.GetReturnNumber()));
+        if (p.GetReturnNumber() < min.GetReturnNumber() )
+            min.SetReturnNumber(p.GetReturnNumber());
+        if (p.GetReturnNumber() > max.GetReturnNumber() )
+            max.SetReturnNumber(p.GetReturnNumber());
 
-        min.SetNumberOfReturns(std::min(p.GetNumberOfReturns(), min.GetNumberOfReturns()));
-        max.SetNumberOfReturns(std::max(p.GetNumberOfReturns(), max.GetNumberOfReturns()));
+        if (p.GetNumberOfReturns() < min.GetNumberOfReturns() )
+            min.SetNumberOfReturns(p.GetNumberOfReturns());
+        if (p.GetNumberOfReturns() > max.GetNumberOfReturns() )
+            max.SetNumberOfReturns(p.GetNumberOfReturns());
 
-        min.SetScanDirection(std::min(p.GetScanDirection(), min.GetScanDirection()));
-        max.SetScanDirection(std::max(p.GetScanDirection(), max.GetScanDirection()));
+        if (p.GetScanDirection() < min.GetScanDirection() )
+            min.SetScanDirection(p.GetScanDirection());
+        if (p.GetScanDirection() > max.GetScanDirection() )
+            max.SetScanDirection(p.GetScanDirection());
 
-        min.SetFlightLineEdge(std::min(p.GetFlightLineEdge(), min.GetFlightLineEdge()));
-        max.SetFlightLineEdge(std::max(p.GetFlightLineEdge(), max.GetFlightLineEdge()));
 
-        min.SetScanAngleRank(std::min(p.GetScanAngleRank(), min.GetScanAngleRank()));
-        max.SetScanAngleRank(std::max(p.GetScanAngleRank(), max.GetScanAngleRank()));
+        if (p.GetFlightLineEdge() < min.GetFlightLineEdge() )
+            min.SetFlightLineEdge(p.GetFlightLineEdge());
+        if (p.GetFlightLineEdge() > max.GetFlightLineEdge() )
+            max.SetFlightLineEdge(p.GetFlightLineEdge());
 
-        min.SetUserData(std::min(p.GetUserData(), min.GetUserData()));
-        max.SetUserData(std::max(p.GetUserData(), max.GetUserData()));
+        if (p.GetScanAngleRank() < min.GetScanAngleRank() )
+            min.SetScanAngleRank(p.GetScanAngleRank());
+        if (p.GetScanAngleRank() > max.GetScanAngleRank() )
+            max.SetScanAngleRank(p.GetScanAngleRank());
 
-        min.SetPointSourceID(std::min(p.GetPointSourceID(), min.GetPointSourceID()));
-        max.SetPointSourceID(std::max(p.GetPointSourceID(), max.GetPointSourceID()));
-        
+        if (p.GetUserData() < min.GetUserData() )
+            min.SetUserData(p.GetUserData());
+        if (p.GetUserData() > max.GetUserData() )
+            max.SetUserData(p.GetUserData());
+
+        if (p.GetPointSourceID() < min.GetPointSourceID() )
+            min.SetPointSourceID(p.GetPointSourceID());
+        if (p.GetPointSourceID() > max.GetPointSourceID() )
+            max.SetPointSourceID(p.GetPointSourceID());
+
+     
         liblas::Classification const& cls = p.GetClassification();
         
         boost::uint8_t minc = std::min(cls.GetClass(), min.GetClassification().GetClass());
@@ -181,26 +207,39 @@ void Summary::AddPoint(liblas::Point const& p)
         if (cls.IsKeyPoint()) keypoint++;
         if (cls.IsSynthetic()) synthetic++;
         
-        min.SetClassification(liblas::Classification(minc));
-        max.SetClassification(liblas::Classification(maxc));
+        if (minc < min.GetClassification().GetClass())
+            min.SetClassification(liblas::Classification(minc));
+        if (maxc > max.GetClassification().GetClass())
+            max.SetClassification(liblas::Classification(maxc));
         
         liblas::Color const& color = p.GetColor();
         
-        liblas::Color::value_type red;
-        liblas::Color::value_type green;
-        liblas::Color::value_type blue;
+        bool bSetMin = false;
+        if (color.GetRed() < min.GetColor().GetRed())
+            bSetMin = true;
+        if (color.GetGreen() < min.GetColor().GetGreen())
+            bSetMin = true;
+        if (color.GetBlue() < min.GetColor().GetBlue())
+            bSetMin = true;
         
-        red = std::min(color.GetRed(), min.GetColor().GetRed());
-        green = std::min(color.GetGreen(), min.GetColor().GetGreen());
-        blue = std::min(color.GetBlue(), min.GetColor().GetBlue());
-        
-        min.SetColor(liblas::Color(red, green, blue));
-        
-        red = std::max(color.GetRed(), max.GetColor().GetRed());
-        green = std::max(color.GetGreen(), max.GetColor().GetGreen());
-        blue = std::max(color.GetBlue(), max.GetColor().GetBlue());        
+        bool bSetMax = false;
+        if (color.GetRed() > max.GetColor().GetRed())
+            bSetMax = true;
+        if (color.GetGreen() > max.GetColor().GetGreen())
+            bSetMax = true;
+        if (color.GetBlue() > max.GetColor().GetBlue())
+            bSetMax = true;
 
-        max.SetColor(liblas::Color(red, green, blue));
+        if (bSetMin)
+            min.SetColor(liblas::Color( color.GetRed(), 
+                                        color.GetGreen(), 
+                                        color.GetBlue()));
+
+        if (bSetMax)
+            max.SetColor(liblas::Color( color.GetRed(), 
+                                        color.GetGreen(), 
+                                        color.GetBlue()));
+        
 
         points_by_return[p.GetReturnNumber()]++;
         returns_of_given_pulse[p.GetNumberOfReturns()]++;    
@@ -530,16 +569,20 @@ void CoordinateSummary::AddPoint(liblas::Point const& p)
             first = false;
         }
         
-        min.SetX(std::min(p.GetX(), min.GetX()));
-        max.SetX(std::max(p.GetX(), max.GetX()));
+        if (p.GetRawX() < min.GetRawX() )
+            min.SetRawX(p.GetRawX());
+        if (p.GetRawX() > max.GetRawX() )
+            max.SetRawX(p.GetRawX());
 
-        min.SetY(std::min(p.GetY(), min.GetY()));
-        max.SetY(std::max(p.GetY(), max.GetY()));        
+        if (p.GetRawY() < min.GetRawY() )
+            min.SetRawY(p.GetRawY());
+        if (p.GetRawY() > max.GetRawY() )
+            max.SetRawY(p.GetRawY());
 
-        min.SetZ(std::min(p.GetZ(), min.GetZ()));
-        max.SetZ(std::max(p.GetZ(), max.GetZ()));
-
-
+        if (p.GetRawZ() < min.GetRawZ() )
+            min.SetRawZ(p.GetRawZ());
+        if (p.GetRawZ() > max.GetRawZ() )
+            max.SetRawZ(p.GetRawZ());
 
         points_by_return[p.GetReturnNumber()]++;
         returns_of_given_pulse[p.GetNumberOfReturns()]++;    
