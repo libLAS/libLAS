@@ -170,24 +170,29 @@ void ReaderImpl::ReadNextPoint()
     // one to keep or throw an exception.
 
     bool bLastPoint = false;
-    if (!FilterPoint(*m_point))
+    
+    if (!m_filters.empty())
     {
-
-        detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
-        ++m_current;
-
-        while (!FilterPoint(*m_point))
+        if (!FilterPoint(*m_point))
         {
 
             detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
             ++m_current;
-            if (m_current == m_size) 
+
+            while (!FilterPoint(*m_point))
             {
-                bLastPoint = true;
-                break;
+
+                detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
+                ++m_current;
+                if (m_current == m_size) 
+                {
+                    bLastPoint = true;
+                    break;
+                }
             }
         }
     }
+
 
     if (!m_transforms.empty())
     {
