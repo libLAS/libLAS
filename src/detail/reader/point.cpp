@@ -73,7 +73,7 @@ void Point::read()
     assert(m_point.GetHeaderPtr());
     assert(m_record_size > 0);
     
-    if (m_point.GetHeaderPtr().get() != m_header.get())
+    if (m_point.GetHeaderPtr() != m_header)
         m_point.SetHeaderPtr(m_header);
     
     detail::read_n(m_point.GetData().front(), m_ifs, m_record_size);
