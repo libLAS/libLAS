@@ -128,6 +128,7 @@ void Summary::AddPoint(liblas::Point const& p)
                 liblas::Header header;
                 header.SetScale(hdr->GetScaleX(), hdr->GetScaleY(), hdr->GetScaleZ());
                 header.SetOffset(hdr->GetOffsetX(), hdr->GetOffsetY(), hdr->GetOffsetZ());
+                header.SetDataFormatId(hdr->GetDataFormatId());
                 liblas::HeaderPtr h(new liblas::Header(header));
                 min.SetHeaderPtr(h);
                 max.SetHeaderPtr(h);

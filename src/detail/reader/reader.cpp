@@ -134,6 +134,7 @@ void ReaderImpl::ReadHeader()
     
     m_header_reader->read();
     m_header = m_header_reader->GetHeader();
+    m_point->SetHeaderPtr(m_header);
     
     Reset();
     
@@ -159,7 +160,7 @@ void ReaderImpl::ReadNextPoint()
 
     if (bNeedHeaderCheck) 
     {
-        if (m_point->GetHeaderPtr() != m_header)
+        if (m_point->GetHeaderPtr().get() != m_header.get())
             m_point->SetHeaderPtr(m_header);
     }
     
@@ -222,7 +223,7 @@ liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n)
 
     if (bNeedHeaderCheck) 
     {
-        if (m_point->GetHeaderPtr() != m_header)
+        if (m_point->GetHeaderPtr().get() != m_header.get())
             m_point->SetHeaderPtr(m_header);
     }
     
