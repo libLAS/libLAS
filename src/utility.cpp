@@ -55,7 +55,9 @@ Summary::Summary() :
     keypoint(0),
     count(0),
     first(true),
-    bHaveHeader(false)
+    bHaveHeader(false),
+    bHaveColor(true),
+    bHaveTime(true)
     
 {
     classes.assign(0);
@@ -76,6 +78,8 @@ Summary::Summary(Summary const& other)
     , max(other.max)
     , m_header(other.m_header)
     , bHaveHeader(other.bHaveHeader)
+    , bHaveColor(other.bHaveColor)
+    , bHaveTime(other.bHaveTime)
 {
 }
 
@@ -95,6 +99,8 @@ Summary& Summary::operator=(Summary const& rhs)
         max = rhs.max;
         m_header = rhs.m_header;
         bHaveHeader = rhs.bHaveHeader;
+        bHaveColor = rhs.bHaveColor;
+        bHaveTime = rhs.bHaveTime;
     }
     return *this;
 }
@@ -125,6 +131,27 @@ void Summary::AddPoint(liblas::Point const& p)
                 liblas::HeaderPtr h(new liblas::Header(header));
                 min.SetHeaderPtr(h);
                 max.SetHeaderPtr(h);
+                liblas::Schema const& schema = hdr->GetSchema();
+                try {
+
+                    schema.GetDimension("Red");
+                    schema.GetDimension("Green");
+                    schema.GetDimension("Blue");
+                    bHaveColor = true;
+
+                } catch (std::runtime_error const&)
+                {
+                    bHaveColor = false;
+                }
+                try {
+
+                    schema.GetDimension("Time");
+                    bHaveTime = true;
+
+                } catch (std::runtime_error const&)
+                {
+                    bHaveTime = false;
+                }
             } else 
             {
                 min.SetHeaderPtr(HeaderPtr());
@@ -153,11 +180,15 @@ void Summary::AddPoint(liblas::Point const& p)
             min.SetIntensity(p.GetIntensity());
         if (p.GetIntensity() > max.GetIntensity() )
             max.SetIntensity(p.GetIntensity());
+        
+        if (bHaveTime)
+        {
+            if (p.GetTime() < min.GetTime() )
+                min.SetTime(p.GetTime());
+            if (p.GetTime() > max.GetTime() )
+                max.SetTime(p.GetTime());
+        }
 
-        if (p.GetTime() < min.GetTime() )
-            min.SetTime(p.GetTime());
-        if (p.GetTime() > max.GetTime() )
-            max.SetTime(p.GetTime());
 
         if (p.GetReturnNumber() < min.GetReturnNumber() )
             min.SetReturnNumber(p.GetReturnNumber());
@@ -212,33 +243,35 @@ void Summary::AddPoint(liblas::Point const& p)
         if (maxc > max.GetClassification().GetClass())
             max.SetClassification(liblas::Classification(maxc));
         
-        liblas::Color const& color = p.GetColor();
+        if (bHaveColor)
+        {
+            liblas::Color const& color = p.GetColor();
         
-        bool bSetMin = false;
-        if (color.GetRed() < min.GetColor().GetRed())
-            bSetMin = true;
-        if (color.GetGreen() < min.GetColor().GetGreen())
-            bSetMin = true;
-        if (color.GetBlue() < min.GetColor().GetBlue())
-            bSetMin = true;
+            bool bSetMinColor = false;
+            if (color.GetRed() < min.GetColor().GetRed())
+                bSetMinColor = true;
+            if (color.GetGreen() < min.GetColor().GetGreen())
+                bSetMinColor = true;
+            if (color.GetBlue() < min.GetColor().GetBlue())
+                bSetMinColor = true;
         
-        bool bSetMax = false;
-        if (color.GetRed() > max.GetColor().GetRed())
-            bSetMax = true;
-        if (color.GetGreen() > max.GetColor().GetGreen())
-            bSetMax = true;
-        if (color.GetBlue() > max.GetColor().GetBlue())
-            bSetMax = true;
+            bool bSetMaxColor = false;
+            if (color.GetRed() > max.GetColor().GetRed())
+                bSetMaxColor = true;
+            if (color.GetGreen() > max.GetColor().GetGreen())
+                bSetMaxColor = true;
+            if (color.GetBlue() > max.GetColor().GetBlue())
+                bSetMaxColor = true;
 
-        if (bSetMin)
-            min.SetColor(liblas::Color( color.GetRed(), 
-                                        color.GetGreen(), 
-                                        color.GetBlue()));
-
-        if (bSetMax)
-            max.SetColor(liblas::Color( color.GetRed(), 
-                                        color.GetGreen(), 
-                                        color.GetBlue()));
+            if (bSetMinColor)
+                min.SetColor(liblas::Color( color.GetRed(), 
+                                            color.GetGreen(), 
+                                            color.GetBlue()));
+            if (bSetMaxColor)
+                max.SetColor(liblas::Color( color.GetRed(), 
+                                            color.GetGreen(), 
+                                            color.GetBlue()));
+        }
         
 
         points_by_return[p.GetReturnNumber()]++;
@@ -499,6 +532,8 @@ CoordinateSummary::CoordinateSummary() :
     count(0)
     , first(true)
     , bHaveHeader(false)
+    , bHaveColor(true)
+    , bHaveTime(true)
     
 {
     points_by_return.assign(0);
@@ -515,6 +550,9 @@ CoordinateSummary::CoordinateSummary(CoordinateSummary const& other)
     , max(other.max)
     , m_header(other.m_header)
     , bHaveHeader(other.bHaveHeader)
+    , bHaveColor(other.bHaveColor)
+    , bHaveTime(other.bHaveTime)
+    
 {
 }
 
@@ -530,6 +568,8 @@ CoordinateSummary& CoordinateSummary::operator=(CoordinateSummary const& rhs)
         max = rhs.max;
         m_header = rhs.m_header;
         bHaveHeader = rhs.bHaveHeader;
+        bHaveColor = rhs.bHaveColor;
+        bHaveTime = rhs.bHaveTime;        
     }
     return *this;
 }
@@ -560,10 +600,31 @@ void CoordinateSummary::AddPoint(liblas::Point const& p)
                 liblas::HeaderPtr h(new liblas::Header(header));
                 min.SetHeaderPtr(h);
                 max.SetHeaderPtr(h);
+                
+                liblas::Schema const& schema = hdr->GetSchema();
+                try {
+
+                    schema.GetDimension("Red");
+                    schema.GetDimension("Green");
+                    schema.GetDimension("Blue");
+                    bHaveColor = true;
+
+                } catch (std::runtime_error const&)
+                {
+                }
+                try {
+
+                    schema.GetDimension("Time");
+                    bHaveTime = true;
+
+                } catch (std::runtime_error const&)
+                {
+                }
             } else 
             {
                 min.SetHeaderPtr(HeaderPtr());
-                max.SetHeaderPtr(HeaderPtr()); 
+                max.SetHeaderPtr(HeaderPtr());
+                
             }
 
             first = false;
