@@ -138,7 +138,6 @@ set(LIBLAS_DETAIL_INDEX_CPP
 
 set(LIBLAS_DETAIL_READER_CPP
   detail/reader/header.cpp
-  detail/reader/point.cpp
   detail/reader/reader.cpp
   detail/reader/zipreader.cpp
   detail/reader/cachedreader.cpp)
