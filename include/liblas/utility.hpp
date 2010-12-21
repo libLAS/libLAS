@@ -87,6 +87,8 @@ private:
     liblas::Point max;
     liblas::Header m_header;
     bool bHaveHeader; 
+    bool bHaveColor;
+    bool bHaveTime;
 };
 
 class LAS_DLL CoordinateSummary
@@ -111,6 +113,8 @@ private:
     liblas::Point max;
     liblas::Header m_header;
     bool bHaveHeader; 
+    bool bHaveColor;
+    bool bHaveTime;    
 };
 
 LAS_DLL std::ostream& operator<<(std::ostream& os, liblas::Summary const& s);
