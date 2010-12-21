@@ -63,12 +63,13 @@ ReaderImpl::ReaderImpl(std::istream& ifs)
     : m_ifs(ifs)
     , m_size(0)
     , m_current(0)
-    , m_point_reader(PointReaderPtr())
+    // , m_point_reader(PointReaderPtr())
     , m_header_reader(new reader::Header(m_ifs))
     , m_header(HeaderPtr())
     , m_point(PointPtr(new liblas::Point()))
     , m_filters(0)
     , m_transforms(0)
+    , bNeedHeaderCheck(false)
 {
 
 }
@@ -85,13 +86,8 @@ void ReaderImpl::Reset()
     // Reset sizes and set internal cursor to the beginning of file.
     m_current = 0;
     m_size = m_header->GetPointRecordsCount();
-    
-    // If we reset the reader, we're ready to start reading points, so 
-    // we'll create a point reader at this point.
-    if (!m_point_reader)
-    {
-        m_point_reader = PointReaderPtr(new reader::Point(m_ifs, m_header));
-    } 
+
+    m_record_size = m_header->GetSchema().GetByteSize();
 }
 
 void ReaderImpl::TransformPoint(liblas::Point& p)
@@ -138,7 +134,7 @@ void ReaderImpl::ReadHeader()
     
     m_header_reader->read();
     m_header = m_header_reader->GetHeader();
-
+    
     Reset();
     
 
@@ -161,9 +157,14 @@ void ReaderImpl::ReadNextPoint()
         throw std::out_of_range("ReadNextPoint: file has no more points to read, end of file reached");
     } 
 
-    m_point_reader->read();
+    if (bNeedHeaderCheck) 
+    {
+        if (m_point->GetHeaderPtr() != m_header)
+            m_point->SetHeaderPtr(m_header);
+    }
+    
+    detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
     ++m_current;
-    *m_point = m_point_reader->GetPoint();
 
     // Filter the points and continue reading until we either find 
     // one to keep or throw an exception.
@@ -171,15 +172,15 @@ void ReaderImpl::ReadNextPoint()
     bool bLastPoint = false;
     if (!FilterPoint(*m_point))
     {
-        m_point_reader->read();
+
+        detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
         ++m_current;
-        *m_point = m_point_reader->GetPoint();
 
         while (!FilterPoint(*m_point))
         {
-            m_point_reader->read();
+
+            detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
             ++m_current;
-            *m_point = m_point_reader->GetPoint();
             if (m_current == m_size) 
             {
                 bLastPoint = true;
@@ -187,7 +188,6 @@ void ReaderImpl::ReadNextPoint()
             }
         }
     }
-
 
     if (!m_transforms.empty())
     {
@@ -215,12 +215,16 @@ liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n)
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
 
-    m_point_reader->read();
-    *m_point = m_point_reader->GetPoint();
+    if (bNeedHeaderCheck) 
+    {
+        if (m_point->GetHeaderPtr() != m_header)
+            m_point->SetHeaderPtr(m_header);
+    }
+    
+    detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
 
     if (!m_transforms.empty())
     {
-        std::cout << "Should be transforming point" << std::endl;
         TransformPoint(*m_point);
     }
     return *m_point;
@@ -252,6 +256,12 @@ void ReaderImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
 void ReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
     m_transforms = transforms;
+    
+    // Transforms are allowed to change the point, including moving the 
+    // point's HeaderPtr.  We need to check if we need to set that 
+    // back on any subsequent reads.
+    if (m_transforms.size() > 0)
+        bNeedHeaderCheck = true;
 }
 
 }} // namespace liblas::detail
