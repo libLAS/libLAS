@@ -467,13 +467,13 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
        << tree.get<boost::uint32_t>("summary.points.maximum.userdata");
 
     os << std::endl;
-    os << "  Minimum Color:\t" 
+    os << "  Minimum Color (RGB):\t" 
        << tree.get<boost::uint32_t>("summary.points.minimum.color.red") << " "
        << tree.get<boost::uint32_t>("summary.points.minimum.color.green") << " "
        << tree.get<boost::uint32_t>("summary.points.minimum.color.blue") << " ";
 
     os << std::endl;
-    os << "  Maximum Color:\t" 
+    os << "  Maximum Color (RGB):\t" 
        << tree.get<boost::uint32_t>("summary.points.maximum.color.red") << " "
        << tree.get<boost::uint32_t>("summary.points.maximum.color.green") << " "
        << tree.get<boost::uint32_t>("summary.points.maximum.color.blue") << " ";
