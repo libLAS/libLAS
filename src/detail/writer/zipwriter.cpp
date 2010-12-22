@@ -41,8 +41,6 @@
 
 #ifdef HAVE_LASZIP
 
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
 #include <liblas/liblas.hpp>
 #include <liblas/detail/writer/zipwriter.hpp>
 #include <liblas/detail/writer/header.hpp>
