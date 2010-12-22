@@ -43,7 +43,6 @@
 #define LIBLAS_DETAIL_CACHEDREADERIMPL_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
-#include <liblas/detail/reader/point.hpp>
 #include <liblas/detail/reader/header.hpp>
 #include <liblas/liblas.hpp>
 // boost

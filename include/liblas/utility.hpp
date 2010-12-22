@@ -87,6 +87,34 @@ private:
     liblas::Point max;
     liblas::Header m_header;
     bool bHaveHeader; 
+    bool bHaveColor;
+    bool bHaveTime;
+};
+
+class LAS_DLL CoordinateSummary
+{
+public:
+    
+    CoordinateSummary();
+    CoordinateSummary(CoordinateSummary const& other);
+    CoordinateSummary& operator=(CoordinateSummary const& rhs);
+
+    void AddPoint(liblas::Point const& p);
+    ptree GetPTree() const;
+    void SetHeader(liblas::Header const& h);
+    
+private:
+
+    boost::uint32_t count;
+    boost::array<boost::uint32_t, 8> points_by_return; 
+    boost::array<boost::uint32_t, 8> returns_of_given_pulse;
+    bool first;
+    liblas::Point min;
+    liblas::Point max;
+    liblas::Header m_header;
+    bool bHaveHeader; 
+    bool bHaveColor;
+    bool bHaveTime;    
 };
 
 LAS_DLL std::ostream& operator<<(std::ostream& os, liblas::Summary const& s);

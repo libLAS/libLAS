@@ -55,7 +55,9 @@ Summary::Summary() :
     keypoint(0),
     count(0),
     first(true),
-    bHaveHeader(false)
+    bHaveHeader(false),
+    bHaveColor(true),
+    bHaveTime(true)
     
 {
     classes.assign(0);
@@ -76,6 +78,8 @@ Summary::Summary(Summary const& other)
     , max(other.max)
     , m_header(other.m_header)
     , bHaveHeader(other.bHaveHeader)
+    , bHaveColor(other.bHaveColor)
+    , bHaveTime(other.bHaveTime)
 {
 }
 
@@ -95,6 +99,8 @@ Summary& Summary::operator=(Summary const& rhs)
         max = rhs.max;
         m_header = rhs.m_header;
         bHaveHeader = rhs.bHaveHeader;
+        bHaveColor = rhs.bHaveColor;
+        bHaveTime = rhs.bHaveTime;
     }
     return *this;
 }
@@ -122,9 +128,31 @@ void Summary::AddPoint(liblas::Point const& p)
                 liblas::Header header;
                 header.SetScale(hdr->GetScaleX(), hdr->GetScaleY(), hdr->GetScaleZ());
                 header.SetOffset(hdr->GetOffsetX(), hdr->GetOffsetY(), hdr->GetOffsetZ());
+                header.SetDataFormatId(hdr->GetDataFormatId());
                 liblas::HeaderPtr h(new liblas::Header(header));
                 min.SetHeaderPtr(h);
                 max.SetHeaderPtr(h);
+                liblas::Schema const& schema = hdr->GetSchema();
+                try {
+
+                    schema.GetDimension("Red");
+                    schema.GetDimension("Green");
+                    schema.GetDimension("Blue");
+                    bHaveColor = true;
+
+                } catch (std::runtime_error const&)
+                {
+                    bHaveColor = false;
+                }
+                try {
+
+                    schema.GetDimension("Time");
+                    bHaveTime = true;
+
+                } catch (std::runtime_error const&)
+                {
+                    bHaveTime = false;
+                }
             } else 
             {
                 min.SetHeaderPtr(HeaderPtr());
@@ -134,42 +162,72 @@ void Summary::AddPoint(liblas::Point const& p)
             first = false;
         }
         
-        min.SetX(std::min(p.GetX(), min.GetX()));
-        max.SetX(std::max(p.GetX(), max.GetX()));
+        if (p.GetRawX() < min.GetRawX() )
+            min.SetRawX(p.GetRawX());
+        if (p.GetRawX() > max.GetRawX() )
+            max.SetRawX(p.GetRawX());
 
-        min.SetY(std::min(p.GetY(), min.GetY()));
-        max.SetY(std::max(p.GetY(), max.GetY()));        
+        if (p.GetRawY() < min.GetRawY() )
+            min.SetRawY(p.GetRawY());
+        if (p.GetRawY() > max.GetRawY() )
+            max.SetRawY(p.GetRawY());
 
-        min.SetZ(std::min(p.GetZ(), min.GetZ()));
-        max.SetZ(std::max(p.GetZ(), max.GetZ()));
+        if (p.GetRawZ() < min.GetRawZ() )
+            min.SetRawZ(p.GetRawZ());
+        if (p.GetRawZ() > max.GetRawZ() )
+            max.SetRawZ(p.GetRawZ());
 
-        min.SetIntensity(std::min(p.GetIntensity(), min.GetIntensity()));
-        max.SetIntensity(std::max(p.GetIntensity(), max.GetIntensity()));
-
-        min.SetTime(std::min(p.GetTime(), min.GetTime()));
-        max.SetTime(std::max(p.GetTime(), max.GetTime()));
-
-        min.SetReturnNumber(std::min(p.GetReturnNumber(), min.GetReturnNumber()));
-        max.SetReturnNumber(std::max(p.GetReturnNumber(), max.GetReturnNumber()));
-
-        min.SetNumberOfReturns(std::min(p.GetNumberOfReturns(), min.GetNumberOfReturns()));
-        max.SetNumberOfReturns(std::max(p.GetNumberOfReturns(), max.GetNumberOfReturns()));
-
-        min.SetScanDirection(std::min(p.GetScanDirection(), min.GetScanDirection()));
-        max.SetScanDirection(std::max(p.GetScanDirection(), max.GetScanDirection()));
-
-        min.SetFlightLineEdge(std::min(p.GetFlightLineEdge(), min.GetFlightLineEdge()));
-        max.SetFlightLineEdge(std::max(p.GetFlightLineEdge(), max.GetFlightLineEdge()));
-
-        min.SetScanAngleRank(std::min(p.GetScanAngleRank(), min.GetScanAngleRank()));
-        max.SetScanAngleRank(std::max(p.GetScanAngleRank(), max.GetScanAngleRank()));
-
-        min.SetUserData(std::min(p.GetUserData(), min.GetUserData()));
-        max.SetUserData(std::max(p.GetUserData(), max.GetUserData()));
-
-        min.SetPointSourceID(std::min(p.GetPointSourceID(), min.GetPointSourceID()));
-        max.SetPointSourceID(std::max(p.GetPointSourceID(), max.GetPointSourceID()));
+        if (p.GetIntensity() < min.GetIntensity() )
+            min.SetIntensity(p.GetIntensity());
+        if (p.GetIntensity() > max.GetIntensity() )
+            max.SetIntensity(p.GetIntensity());
         
+        if (bHaveTime)
+        {
+            if (p.GetTime() < min.GetTime() )
+                min.SetTime(p.GetTime());
+            if (p.GetTime() > max.GetTime() )
+                max.SetTime(p.GetTime());
+        }
+
+
+        if (p.GetReturnNumber() < min.GetReturnNumber() )
+            min.SetReturnNumber(p.GetReturnNumber());
+        if (p.GetReturnNumber() > max.GetReturnNumber() )
+            max.SetReturnNumber(p.GetReturnNumber());
+
+        if (p.GetNumberOfReturns() < min.GetNumberOfReturns() )
+            min.SetNumberOfReturns(p.GetNumberOfReturns());
+        if (p.GetNumberOfReturns() > max.GetNumberOfReturns() )
+            max.SetNumberOfReturns(p.GetNumberOfReturns());
+
+        if (p.GetScanDirection() < min.GetScanDirection() )
+            min.SetScanDirection(p.GetScanDirection());
+        if (p.GetScanDirection() > max.GetScanDirection() )
+            max.SetScanDirection(p.GetScanDirection());
+
+
+        if (p.GetFlightLineEdge() < min.GetFlightLineEdge() )
+            min.SetFlightLineEdge(p.GetFlightLineEdge());
+        if (p.GetFlightLineEdge() > max.GetFlightLineEdge() )
+            max.SetFlightLineEdge(p.GetFlightLineEdge());
+
+        if (p.GetScanAngleRank() < min.GetScanAngleRank() )
+            min.SetScanAngleRank(p.GetScanAngleRank());
+        if (p.GetScanAngleRank() > max.GetScanAngleRank() )
+            max.SetScanAngleRank(p.GetScanAngleRank());
+
+        if (p.GetUserData() < min.GetUserData() )
+            min.SetUserData(p.GetUserData());
+        if (p.GetUserData() > max.GetUserData() )
+            max.SetUserData(p.GetUserData());
+
+        if (p.GetPointSourceID() < min.GetPointSourceID() )
+            min.SetPointSourceID(p.GetPointSourceID());
+        if (p.GetPointSourceID() > max.GetPointSourceID() )
+            max.SetPointSourceID(p.GetPointSourceID());
+
+     
         liblas::Classification const& cls = p.GetClassification();
         
         boost::uint8_t minc = std::min(cls.GetClass(), min.GetClassification().GetClass());
@@ -181,26 +239,69 @@ void Summary::AddPoint(liblas::Point const& p)
         if (cls.IsKeyPoint()) keypoint++;
         if (cls.IsSynthetic()) synthetic++;
         
-        min.SetClassification(liblas::Classification(minc));
-        max.SetClassification(liblas::Classification(maxc));
+        if (minc < min.GetClassification().GetClass())
+            min.SetClassification(liblas::Classification(minc));
+        if (maxc > max.GetClassification().GetClass())
+            max.SetClassification(liblas::Classification(maxc));
         
-        liblas::Color const& color = p.GetColor();
-        
-        liblas::Color::value_type red;
-        liblas::Color::value_type green;
-        liblas::Color::value_type blue;
-        
-        red = std::min(color.GetRed(), min.GetColor().GetRed());
-        green = std::min(color.GetGreen(), min.GetColor().GetGreen());
-        blue = std::min(color.GetBlue(), min.GetColor().GetBlue());
-        
-        min.SetColor(liblas::Color(red, green, blue));
-        
-        red = std::max(color.GetRed(), max.GetColor().GetRed());
-        green = std::max(color.GetGreen(), max.GetColor().GetGreen());
-        blue = std::max(color.GetBlue(), max.GetColor().GetBlue());        
+        if (bHaveColor)
+        {
+            liblas::Color const& color = p.GetColor();
+            liblas::Color::value_type min_red = min.GetColor().GetRed();
+            liblas::Color::value_type min_green = min.GetColor().GetGreen();
+            liblas::Color::value_type min_blue = min.GetColor().GetBlue();
 
-        max.SetColor(liblas::Color(red, green, blue));
+            liblas::Color::value_type max_red = max.GetColor().GetRed();
+            liblas::Color::value_type max_green = max.GetColor().GetGreen();
+            liblas::Color::value_type max_blue = max.GetColor().GetBlue();
+                        
+            bool bSetMinColor = false;
+            if (color.GetRed() < min_red)
+            {
+                bSetMinColor = true;
+                min_red = color.GetRed();
+            }
+            if (color.GetGreen() < min_green)
+            {
+                bSetMinColor = true;
+                min_green = color.GetGreen();
+            }
+            if (color.GetBlue() < min_blue)
+            {
+                bSetMinColor = true;
+                min_blue = color.GetBlue();
+            }
+
+        
+            bool bSetMaxColor = false;
+            if (color.GetRed() > max_red)
+            {
+                bSetMaxColor = true;
+                max_red = color.GetRed();
+            }
+
+                
+            if (color.GetGreen() > max_green)
+            {
+                bSetMaxColor = true;
+                max_green = color.GetGreen();
+            }
+            if (color.GetBlue() > max_blue)
+            {
+                bSetMaxColor = true;
+                max_blue = color.GetBlue();
+            }
+
+            if (bSetMinColor)
+                min.SetColor(liblas::Color( min_red, 
+                                            min_green,
+                                            min_blue));
+            if (bSetMaxColor)
+                max.SetColor(liblas::Color( max_red, 
+                                            max_green, 
+                                            max_blue));
+        }
+        
 
         points_by_return[p.GetReturnNumber()]++;
         returns_of_given_pulse[p.GetNumberOfReturns()]++;    
@@ -394,13 +495,13 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
        << tree.get<boost::uint32_t>("summary.points.maximum.userdata");
 
     os << std::endl;
-    os << "  Minimum Color:\t" 
+    os << "  Minimum Color (RGB):\t" 
        << tree.get<boost::uint32_t>("summary.points.minimum.color.red") << " "
        << tree.get<boost::uint32_t>("summary.points.minimum.color.green") << " "
        << tree.get<boost::uint32_t>("summary.points.minimum.color.blue") << " ";
 
     os << std::endl;
-    os << "  Maximum Color:\t" 
+    os << "  Maximum Color (RGB):\t" 
        << tree.get<boost::uint32_t>("summary.points.maximum.color.red") << " "
        << tree.get<boost::uint32_t>("summary.points.maximum.color.green") << " "
        << tree.get<boost::uint32_t>("summary.points.maximum.color.blue") << " ";
@@ -456,6 +557,183 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
     
 }
 
+CoordinateSummary::CoordinateSummary() :
+    count(0)
+    , first(true)
+    , bHaveHeader(false)
+    , bHaveColor(true)
+    , bHaveTime(true)
+    
+{
+    points_by_return.assign(0);
+    returns_of_given_pulse.assign(0);    
+}
+
+CoordinateSummary::CoordinateSummary(CoordinateSummary const& other)
+    : 
+    count(other.count)
+    , points_by_return(other.points_by_return)
+    , returns_of_given_pulse(other.returns_of_given_pulse)
+    , first(other.first)
+    , min(other.min)
+    , max(other.max)
+    , m_header(other.m_header)
+    , bHaveHeader(other.bHaveHeader)
+    , bHaveColor(other.bHaveColor)
+    , bHaveTime(other.bHaveTime)
+    
+{
+}
+
+CoordinateSummary& CoordinateSummary::operator=(CoordinateSummary const& rhs)
+{
+    if (&rhs != this)
+    {
+        count = rhs.count;
+        first = rhs.first;
+        points_by_return = rhs.points_by_return;
+        returns_of_given_pulse = rhs.returns_of_given_pulse;
+        min = rhs.min;
+        max = rhs.max;
+        m_header = rhs.m_header;
+        bHaveHeader = rhs.bHaveHeader;
+        bHaveColor = rhs.bHaveColor;
+        bHaveTime = rhs.bHaveTime;        
+    }
+    return *this;
+}
+
+void CoordinateSummary::AddPoint(liblas::Point const& p)
+{
+        count++;
+
+        if (first) {
+            min = p;
+            max = p;
+            
+            // We only summarize the base dimensions 
+            // but we want to be able to read/set them all.  The 
+            // point copy here would set the header ptr of min/max
+            // to be whatever might have come off of the file, 
+            // and this may/may not have space for time/color
+            
+            // If we do have scale/offset values, we do want to keep those, 
+            // however.  
+            liblas::HeaderPtr hdr = p.GetHeaderPtr();
+            if (hdr.get()) 
+            {
+                // Keep scale/offset values around because we need these 
+                liblas::Header header;
+                header.SetScale(hdr->GetScaleX(), hdr->GetScaleY(), hdr->GetScaleZ());
+                header.SetOffset(hdr->GetOffsetX(), hdr->GetOffsetY(), hdr->GetOffsetZ());
+                liblas::HeaderPtr h(new liblas::Header(header));
+                min.SetHeaderPtr(h);
+                max.SetHeaderPtr(h);
+                
+                liblas::Schema const& schema = hdr->GetSchema();
+                try {
+
+                    schema.GetDimension("Red");
+                    schema.GetDimension("Green");
+                    schema.GetDimension("Blue");
+                    bHaveColor = true;
+
+                } catch (std::runtime_error const&)
+                {
+                }
+                try {
+
+                    schema.GetDimension("Time");
+                    bHaveTime = true;
+
+                } catch (std::runtime_error const&)
+                {
+                }
+            } else 
+            {
+                min.SetHeaderPtr(HeaderPtr());
+                max.SetHeaderPtr(HeaderPtr());
+                
+            }
+
+            first = false;
+        }
+        
+        if (p.GetRawX() < min.GetRawX() )
+            min.SetRawX(p.GetRawX());
+        if (p.GetRawX() > max.GetRawX() )
+            max.SetRawX(p.GetRawX());
+
+        if (p.GetRawY() < min.GetRawY() )
+            min.SetRawY(p.GetRawY());
+        if (p.GetRawY() > max.GetRawY() )
+            max.SetRawY(p.GetRawY());
+
+        if (p.GetRawZ() < min.GetRawZ() )
+            min.SetRawZ(p.GetRawZ());
+        if (p.GetRawZ() > max.GetRawZ() )
+            max.SetRawZ(p.GetRawZ());
+
+        points_by_return[p.GetReturnNumber()]++;
+        returns_of_given_pulse[p.GetNumberOfReturns()]++;    
+}
+
+void CoordinateSummary::SetHeader(liblas::Header const& h) 
+{
+    m_header = h;
+    bHaveHeader = true;
+}
+
+ptree CoordinateSummary::GetPTree() const
+{
+    ptree pt;
+    
+    ptree pmin = min.GetPTree();
+    ptree pmax = max.GetPTree();
+    
+     
+    pt.add_child("minimum", pmin);
+    pt.add_child("maximum", pmax);
+
+    ptree returns;
+    bool have_returns = false;
+    for (boost::array<boost::uint32_t,8>::size_type i=0; i < points_by_return.size(); i++) {
+        if (i == 0) continue;
+
+        if (points_by_return[i] != 0)
+        {
+            have_returns = true;
+            returns.put("id", i);
+            returns.put("count", points_by_return[i]);
+            pt.add_child("points_by_return.return", returns);
+            
+        }
+    }
+    
+    if (! have_returns) {
+        // Assume all points are first return
+        returns.put("id", 1);
+        returns.put("count", count);
+        pt.add_child("points_by_return.return", returns);        
+    }
+    
+    ptree pulses;
+    for (boost::array<boost::uint32_t,8>::size_type i=0; i < returns_of_given_pulse.size(); i++) {
+        if (returns_of_given_pulse[i] != 0) {
+            pulses.put("id",i);
+            pulses.put("count", returns_of_given_pulse[i]);
+            pt.add_child("returns_of_given_pulse.pulse", pulses);
+        }
+    }
+    
+    pt.put("count", count);
+
+    liblas::property_tree::ptree top;
+    if (bHaveHeader)
+        top.add_child("summary.header",m_header.GetPTree());
+    top.add_child("summary.points",pt);
+    return top;
+}
 
 boost::uint32_t GetStreamPrecision(double scale)
 {

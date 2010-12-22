@@ -14,6 +14,9 @@ set BUILD_TYPE=Release
 
 set PATH=%OSGEO4W%\apps\gdal-dev\bin;%OSGEO4W%\bin;%PATH%
 
+REM    -DLASZIP_INCLUDE_DIR=%LASZIP_ROOT%\include ^
+REM    -DLASZIP_LIBRARY=%LASZIP_ROOT%\bin\Debug\Debug\liblaszip.lib ^
+    
 cmake -G %G% ^
     -DBOOST_INCLUDEDIR=%BOOST% ^
     -DWITH_GDAL=ON ^
@@ -28,8 +31,6 @@ cmake -G %G% ^
     -DGDAL_LIBRARY=%OSGEO4W%\apps\gdal-dev\lib\gdal_i.lib ^
     -DORACLE_INCLUDE_DIR=%ORACLE_HOME%\include ^
     -DORACLE_OCI_LIBRARY=%ORACLE_HOME%\lib\oci.lib ^
-    -DLASZIP_INCLUDE_DIR=%LASZIP_ROOT%\include ^
-    -DLASZIP_LIBRARY=%LASZIP_ROOT%\bin\Debug\Debug\liblaszip.lib ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
-    -DCMAKE_VERBOSE_MAKEFILE=ON ^
+    -DCMAKE_VERBOSE_MAKEFILE=OFF ^
     %LIBLAS%

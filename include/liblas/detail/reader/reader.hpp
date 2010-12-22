@@ -43,7 +43,7 @@
 #define LIBLAS_DETAIL_READERIMPL_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
-#include <liblas/detail/reader/point.hpp>
+// #include <liblas/detail/reader/point.hpp>
 #include <liblas/detail/reader/header.hpp>
 #include <liblas/liblas.hpp>
 // boost
@@ -54,7 +54,7 @@
 
 namespace liblas { namespace detail { 
 
-typedef boost::shared_ptr< reader::Point > PointReaderPtr;
+// typedef boost::shared_ptr< reader::Point > PointReaderPtr;
 typedef boost::shared_ptr< reader::Header > HeaderReaderPtr;
 
 class ReaderImpl : public ReaderI
@@ -90,7 +90,7 @@ protected:
     boost::uint32_t m_size;
     boost::uint32_t m_current;
     
-    PointReaderPtr m_point_reader;
+    // PointReaderPtr m_point_reader;
     HeaderReaderPtr m_header_reader;
     
     HeaderPtr m_header;
@@ -99,6 +99,9 @@ protected:
 
     std::vector<liblas::FilterPtr> m_filters;
     std::vector<liblas::TransformPtr> m_transforms;
+    std::vector<boost::uint8_t>::size_type m_record_size;
+    bool bNeedHeaderCheck;
+    
 private:
 
     // Blocked copying operations, declared but not defined.

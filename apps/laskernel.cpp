@@ -136,7 +136,7 @@ void RewriteHeader(liblas::Header const& header, std::string const& filename)
     }
 }  
   
-void RepairHeader(liblas::Summary const& summary, liblas::Header& header)
+void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& header)
 {
 
     for (boost::uint32_t i = 0; i < 5; i++)

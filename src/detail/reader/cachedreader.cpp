@@ -142,9 +142,10 @@ void CachedReaderImpl::ReadNextUncachedPoint()
         throw std::out_of_range("ReadNextPoint: file has no more points to read, end of file reached");
     } 
 
-    m_point_reader->read();
+    // m_point_reader->read();
+    detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
     ++m_current;
-    *m_point = m_point_reader->GetPoint();
+    // *m_point = m_point_reader->GetPoint();
 
 
     if (!m_transforms.empty())

@@ -190,7 +190,7 @@ void Point::SetHeaderPtr(HeaderPtr header)
 {
     boost::uint16_t wanted_length;
     
-    if (header) 
+    if (header.get()) 
         wanted_length = header->GetDataRecordLength();
     else
         wanted_length = m_default_header.GetDataRecordLength();
@@ -200,8 +200,10 @@ void Point::SetHeaderPtr(HeaderPtr header)
     boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
     
     if (!sum) {
-        m_data.resize(wanted_length);
-        m_data.assign(wanted_length, 0);
+        std::vector<boost::uint8_t> data;
+        data.resize(wanted_length);
+        data.assign(wanted_length, 0);
+        m_data = data;
         m_header = header;
         return;
     }
@@ -213,9 +215,12 @@ void Point::SetHeaderPtr(HeaderPtr header)
         // layout is likely changing as a result of the 
         // schema change.
         Point p(*this);
-    
-        m_data.resize(wanted_length);
-        m_data.assign(wanted_length, 0);
+
+        std::vector<boost::uint8_t> data;
+        data.resize(wanted_length);
+        data.assign(wanted_length, 0);
+        m_data = data;
+        m_header = header;
     
         SetX(p.GetX());
         SetY(p.GetY());
@@ -231,6 +236,13 @@ void Point::SetHeaderPtr(HeaderPtr header)
         try
         {
             SetTime(p.GetTime());
+        }
+        catch (std::runtime_error const&)
+        {   
+        }
+        
+        try
+        {
             SetColor(p.GetColor());
         }
         catch (std::runtime_error const&)
@@ -239,6 +251,10 @@ void Point::SetHeaderPtr(HeaderPtr header)
 
         // FIXME: copy other custom dimensions here?  resetting the 
         // headerptr can be catastrophic in a lot of cases.  
+    } else 
+    {
+        m_header = header;
+        return;
     }
     
     double x = GetX();
@@ -849,17 +865,18 @@ Color Point::GetColor() const
     if (f == ePointFormat3) 
         index_pos = index_pos + 8; // increment to include position of Time.
         
+
+
     std::vector<boost::uint8_t>::size_type red_pos = index_pos;
-
-    assert(red_pos + sizeof(Color::value_type) <= m_data.size());
-    red = bitsToInt<boost::uint16_t>(red, m_data, red_pos);
-
     std::vector<boost::uint8_t>::size_type green_pos = index_pos + 2;
-    assert(green_pos + sizeof(Color::value_type) <= m_data.size());
-    green = bitsToInt<boost::uint16_t>(green, m_data, green_pos);
-
     std::vector<boost::uint8_t>::size_type blue_pos = index_pos + 4;
-    assert(blue_pos + sizeof(Color::value_type) <= m_data.size());
+
+    assert(red_pos <= m_data.size());
+    assert(blue_pos <= m_data.size());
+    assert(green_pos <= m_data.size());
+    
+    red = bitsToInt<boost::uint16_t>(red, m_data, red_pos);
+    green = bitsToInt<boost::uint16_t>(green, m_data, green_pos);
     blue = bitsToInt<boost::uint16_t>(blue, m_data, blue_pos);
 
   return Color(red, green, blue);
@@ -872,7 +889,7 @@ void Point::SetColor(Color const& value)
     // std::size_t index_pos = 13;
 
     PointFormatName f;
-    if (m_header) {
+    if (m_header.get()) {
         f = m_header->GetDataFormatId();
     } else {
         f = m_default_header.GetDataFormatId();
@@ -885,6 +902,13 @@ void Point::SetColor(Color const& value)
         throw std::runtime_error(msg.str());
     }
 
+    if ( m_data.size() == ePointFormat0 || f == ePointFormat1 ) {
+        std::ostringstream msg;
+        msg << "Point::SetColor - Unable to set color for ePointFormat0 or ePointFormat1, "
+            << "no Color dimension exists on this format";
+        throw std::runtime_error(msg.str());
+    }
+    
     using liblas::detail::intToBits;
 
     std::size_t index_pos = 20;
@@ -896,9 +920,9 @@ void Point::SetColor(Color const& value)
     std::vector<boost::uint8_t>::size_type green_pos = index_pos + 2;
     std::vector<boost::uint8_t>::size_type blue_pos = index_pos + 4;
 
-    assert(red_pos + sizeof(Color::value_type) <= m_data.size());
-    assert(blue_pos + sizeof(Color::value_type) <= m_data.size());
-    assert(green_pos + sizeof(Color::value_type) <= m_data.size());
+    assert(red_pos <= m_data.size());
+    assert(blue_pos <= m_data.size());
+    assert(green_pos <= m_data.size());
     
     intToBits<boost::uint16_t>(value.GetRed(), m_data, red_pos);
     intToBits<boost::uint16_t>(value.GetGreen(), m_data, green_pos);

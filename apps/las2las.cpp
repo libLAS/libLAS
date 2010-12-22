@@ -22,7 +22,7 @@ using namespace liblas;
 using namespace std;
 
 typedef boost::shared_ptr<liblas::Writer> WriterPtr;
-typedef boost::shared_ptr<liblas::Summary> SummaryPtr;
+typedef boost::shared_ptr<liblas::CoordinateSummary> SummaryPtr;
 typedef boost::shared_ptr<std::ofstream> OStreamPtr;
 
 WriterPtr start_writer(   OStreamPtr strm, 
@@ -62,7 +62,7 @@ bool process(   std::string const& input,
 
     liblas::ReaderFactory f;
     liblas::Reader reader = f.CreateWithStream(ifs);
-    SummaryPtr summary(new::liblas::Summary);
+    SummaryPtr summary(new::liblas::CoordinateSummary);
     
     reader.SetFilters(filters);
     reader.SetTransforms(transforms);    
@@ -162,7 +162,7 @@ bool process(   std::string const& input,
             RepairHeader(*summary, hnew);
             RewriteHeader(hnew, old_filename.str());
 
-            summary =  SummaryPtr(new liblas::Summary); 
+            summary =  SummaryPtr(new liblas::CoordinateSummary); 
             fileno++;
             split_bytes_count = 1024*1024*split_mb;
         }
@@ -190,7 +190,7 @@ bool process(   std::string const& input,
             RepairHeader(*summary, hnew);
             RewriteHeader(hnew, old_filename.str());
 
-            summary =  SummaryPtr(new liblas::Summary); 
+            summary =  SummaryPtr(new liblas::CoordinateSummary); 
             fileno++;
             split_points_count = 0;
         }
@@ -323,7 +323,7 @@ int main(int argc, char* argv[])
         
         // Transforms alter our header as well.  Setting scales, offsets, etc.
         transforms = GetTransforms(vm, verbose, header);
-        
+
         switch (WriterFactory::InferFileTypeFromExtension(output))
         {
         case WriterFactory::FileType_LAS:

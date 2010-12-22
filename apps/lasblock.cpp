@@ -38,7 +38,7 @@ namespace po = boost::program_options;
 #endif
 
 typedef boost::shared_ptr<liblas::Writer> WriterPtr;
-typedef boost::shared_ptr<liblas::Summary> SummaryPtr;
+typedef boost::shared_ptr<liblas::CoordinateSummary> SummaryPtr;
 typedef boost::shared_ptr<std::ofstream> OStreamPtr;
 
 WriterPtr start_writer(   OStreamPtr strm, 
@@ -103,7 +103,7 @@ void write_tiles(std::string& output,
     for ( boost::uint32_t i = 0; i < c.GetBlockCount(); ++i )
     {
         OStreamPtr ofs(new std::ofstream);
-        SummaryPtr summary(new::liblas::Summary);
+        SummaryPtr summary(new::liblas::CoordinateSummary);
 
         std::ostringstream name;
         name << out << "-" << i <<".las";

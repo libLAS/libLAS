@@ -100,7 +100,7 @@ set(LIBLAS_DETAIL_READER_HPP
   ${LIBLAS_HEADERS_DIR}/detail/reader/reader.hpp  
   ${LIBLAS_HEADERS_DIR}/detail/reader/zipreader.hpp  
   ${LIBLAS_HEADERS_DIR}/detail/reader/header.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/reader/point.hpp)
+  )
 
 set(LIBLAS_DETAIL_WRITER_HPP
   ${LIBLAS_HEADERS_DIR}/detail/writer/writer.hpp
@@ -138,7 +138,6 @@ set(LIBLAS_DETAIL_INDEX_CPP
 
 set(LIBLAS_DETAIL_READER_CPP
   detail/reader/header.cpp
-  detail/reader/point.cpp
   detail/reader/reader.cpp
   detail/reader/zipreader.cpp
   detail/reader/cachedreader.cpp)
@@ -238,6 +237,10 @@ target_link_libraries(${LIBLAS_C_LIB_NAME}
 if (APPLE)
   set_target_properties(
     ${LIBLAS_C_LIB_NAME}
+    PROPERTIES
+    INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+  set_target_properties(
+    ${LIBLAS_LIB_NAME}
     PROPERTIES
     INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
