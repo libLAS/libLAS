@@ -236,6 +236,13 @@ void Point::SetHeaderPtr(HeaderPtr header)
         try
         {
             SetTime(p.GetTime());
+        }
+        catch (std::runtime_error const&)
+        {   
+        }
+        
+        try
+        {
             SetColor(p.GetColor());
         }
         catch (std::runtime_error const&)
