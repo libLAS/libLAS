@@ -2,11 +2,13 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS writer class 
+ * Purpose:  An error encapsulation class
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
  * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2008, Howard Butler
+ * Copyright (c) 2008, Phil Vachon
  *
  * All rights reserved.
  * 
@@ -39,88 +41,37 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasversion.hpp>
-#include <liblas/laswriter.hpp>
-#include <liblas/detail/writer/writer.hpp>
-#include <liblas/detail/writer/zipwriter.hpp>
-#include <liblas/factory.hpp>
-
+#include <liblas/error.hpp>
 // std
-#include <stdexcept>
-#include <fstream>
 #include <string>
-#include <cstring> // std::memset
-#include <cassert>
 
 namespace liblas
 {
 
-Writer::Writer(std::ostream& ofs, Header const& header) :
-#ifdef HAVE_LASZIP
-    m_pimpl(WriterIPtr( WriterFactory::CreateWithStream(ofs, header) ) )
-#else
-    m_pimpl(WriterIPtr(new detail::WriterImpl(ofs)))
-#endif
-
-{
-    m_pimpl->SetHeader(header);
-    m_pimpl->WriteHeader();
-}
-
-
-Writer::Writer(Writer const& other) 
-    : m_pimpl(other.m_pimpl)
+Error::Error(int code, std::string const& message, std::string const& method) :
+    m_code(code),
+    m_message(message),
+    m_method(method)
 {
 }
 
-Writer& Writer::operator=(Writer const& rhs)
+Error::Error(Error const& other) :
+    m_code(other.m_code),
+    m_message(other.m_message),
+    m_method(other.m_method)
+{
+}
+
+Error& Error::operator=(Error const& rhs)
 {
     if (&rhs != this)
     {
-        m_pimpl = rhs.m_pimpl;
+        m_code = rhs.m_code;
+        m_message = rhs.m_message;
+        m_method = rhs.m_method;
+
     }
     return *this;
 }
 
-Writer::Writer(WriterIPtr ptr) :
-    m_pimpl(ptr)
-
-{
-}
-
-Writer::~Writer()
-{
-
-}
-
-Header const& Writer::GetHeader() const
-{
-    return m_pimpl->GetHeader();
-}
-
-bool Writer::WritePoint(Point const& point)
-{
-    m_pimpl->WritePoint(point);
-    return true;
-}
-
-void Writer::WriteHeader(Header& header)
-{
-    // The writer may update our header as part of its 
-    // writing process (change VLRs for SRS's, for instance).
-    m_pimpl->SetHeader(header);
-    m_pimpl->WriteHeader();
-}
-
-void Writer::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
-{
-    m_pimpl->SetTransforms(transforms);
-}
-
-void Writer::SetFilters(std::vector<liblas::FilterPtr> const& filters)
-{
-    m_pimpl->SetFilters(filters);
-}    
-
 } // namespace liblas
-

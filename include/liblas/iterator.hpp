@@ -42,9 +42,9 @@
 #ifndef LIBLAS_ITERATOR_HPP_INCLUDED
 #define LIBLAS_ITERATOR_HPP_INCLUDED
 
-#include <liblas/lasreader.hpp>
-#include <liblas/laswriter.hpp>
-#include <liblas/lasindex.hpp>
+#include <liblas/reader.hpp>
+#include <liblas/writer.hpp>
+#include <liblas/index.hpp>
 #include <liblas/export.hpp>
 #include <iterator>
 #include <cassert>

@@ -44,7 +44,7 @@
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/private_utility.hpp>
-#include <liblas/lasvariablerecord.hpp>
+#include <liblas/variablerecord.hpp>
 #include <liblas/exception.hpp>
 #include <liblas/capi/las_config.h>
 #include <liblas/export.hpp>

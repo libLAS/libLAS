@@ -42,11 +42,11 @@
 #ifndef LIBLAS_LASWRITER_HPP_INCLUDED
 #define LIBLAS_LASWRITER_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lastransform.hpp>
-#include <liblas/lasfilter.hpp>
+#include <liblas/version.hpp>
+#include <liblas/header.hpp>
+#include <liblas/point.hpp>
+#include <liblas/transform.hpp>
+#include <liblas/filter.hpp>
 #include <liblas/export.hpp>
 // boost
 #include <boost/shared_ptr.hpp>

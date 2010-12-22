@@ -42,10 +42,10 @@
 #ifndef LIBLAS_LASINDEX_HPP_INCLUDED
 #define LIBLAS_LASINDEX_HPP_INCLUDED
 
-#include <liblas/lasreader.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/lasbounds.hpp>
-#include <liblas/lasvariablerecord.hpp>
+#include <liblas/reader.hpp>
+#include <liblas/header.hpp>
+#include <liblas/bounds.hpp>
+#include <liblas/variablerecord.hpp>
 #include <liblas/detail/index/indexcell.hpp>
 #include <liblas/export.hpp>
 

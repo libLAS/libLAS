@@ -39,8 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  
-#include <liblas/lasheader.hpp>
-#include <liblas/lasvariablerecord.hpp>
+#include <liblas/header.hpp>
+#include <liblas/variablerecord.hpp>
 #include <liblas/detail/reader/header.hpp>
 #include <liblas/detail/private_utility.hpp>
 // boost

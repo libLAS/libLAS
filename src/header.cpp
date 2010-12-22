@@ -41,9 +41,9 @@
  ****************************************************************************/
 
 #include <liblas/guid.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/lasspatialreference.hpp>
-#include <liblas/lasschema.hpp>
+#include <liblas/header.hpp>
+#include <liblas/spatialreference.hpp>
+#include <liblas/schema.hpp>
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/utility.hpp>
 // boost

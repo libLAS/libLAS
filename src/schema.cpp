@@ -39,7 +39,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasschema.hpp>
+#include <liblas/schema.hpp>
 #include <liblas/detail/private_utility.hpp>
 
 #ifdef _MSC_VER

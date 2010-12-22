@@ -39,8 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lastransform.hpp>
-#include <liblas/lasheader.hpp>
+#include <liblas/transform.hpp>
+#include <liblas/header.hpp>
 // boost
 #include <boost/concept_check.hpp>
 #include <boost/tokenizer.hpp>

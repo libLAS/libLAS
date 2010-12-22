@@ -42,7 +42,7 @@
 #ifndef LIBLAS_DETAIL_WRITER_BASE_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_BASE_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
+#include <liblas/version.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/private_utility.hpp>
 // boost

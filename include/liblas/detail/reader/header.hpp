@@ -42,9 +42,9 @@
 #ifndef LIBLAS_DETAIL_READER_HEADER_HPP_INCLUDED
 #define LIBLAS_DETAIL_READER_HEADER_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
-#include <liblas/lasspatialreference.hpp>
-#include <liblas/lasheader.hpp>
+#include <liblas/version.hpp>
+#include <liblas/spatialreference.hpp>
+#include <liblas/header.hpp>
 
 // std
 #include <iosfwd>

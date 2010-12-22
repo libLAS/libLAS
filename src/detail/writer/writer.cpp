@@ -39,8 +39,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
 #include <liblas/liblas.hpp>
 #include <liblas/detail/writer/writer.hpp>
 #include <liblas/detail/writer/header.hpp>

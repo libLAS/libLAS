@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  Definition of LAS version constants
+ * Purpose:  LAS writer class 
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
@@ -39,63 +39,88 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_LASVERSION_HPP_INCLUDED
-#define LIBLAS_LASVERSION_HPP_INCLUDED
+#include <liblas/version.hpp>
+#include <liblas/writer.hpp>
+#include <liblas/detail/writer/writer.hpp>
+#include <liblas/detail/writer/zipwriter.hpp>
+#include <liblas/factory.hpp>
 
-#include <liblas/capi/las_version.h>
-#include <liblas/export.hpp>
-
+// std
+#include <stdexcept>
+#include <fstream>
 #include <string>
+#include <cstring> // std::memset
+#include <cassert>
 
-namespace liblas {
-
-/// Version numbers of the ASPRS LAS Specification.
-/// Numerical representation of versions is calculated according to 
-/// following formula: <em>major * 100000 + minor</em>
-enum LASVersion
+namespace liblas
 {
-    eLASVersion10 = 1 * 100000 + 0, ///< LAS Format 1.0
-    eLASVersion11 = 1 * 100000 + 1, ///< LAS Format 1.1
-    eLASVersion12 = 1 * 100000 + 2, ///< LAS Format 1.2
-    eLASVersion20 = 2 * 100000 + 0  ///< LAS Format 2.0
-};
 
-/// Range of allowed ASPRS LAS file format versions.
-enum FormatVersion
+Writer::Writer(std::ostream& ofs, Header const& header) :
+#ifdef HAVE_LASZIP
+    m_pimpl(WriterIPtr( WriterFactory::CreateWithStream(ofs, header) ) )
+#else
+    m_pimpl(WriterIPtr(new detail::WriterImpl(ofs)))
+#endif
+
 {
-    eVersionMajorMin = 1, ///< Minimum of major component
-    eVersionMajorMax = 1, ///< Maximum of major component
-    eVersionMinorMin = 0, ///< Minimum of minor component
-    eVersionMinorMax = 3  ///< Maximum of minor component
-};
+    m_pimpl->SetHeader(header);
+    m_pimpl->WriteHeader();
+}
 
-/// Versions of point record format.
-enum PointFormatName
+
+Writer::Writer(Writer const& other) 
+    : m_pimpl(other.m_pimpl)
 {
-    ePointFormat0 = 0,  ///< Point Data Format \e 0
-    ePointFormat1 = 1,  ///< Point Data Format \e 1
-    ePointFormat2 = 2,  ///< Point Data Format \e 2
-    ePointFormat3 = 3,  ///< Point Data Format \e 3
-    ePointFormat4 = 4,  ///< Point Data Format \e 3
-    ePointFormat5 = 5,  ///< Point Data Format \e 3
-    ePointFormatUnknown = -99 ///< Point Data Format is unknown
-};
+}
 
-/// Number of bytes of point record storage in particular format.
-enum PointSize
+Writer& Writer::operator=(Writer const& rhs)
 {
-    ePointSize0 = 20, ///< Size of point record in data format \e 0
-    ePointSize1 = 28, ///< Size of point record in data format \e 1
-    ePointSize2 = 26, ///< Size of point record in data format \e 2
-    ePointSize3 = 34  ///< Size of point record in data format \e 3
-};
+    if (&rhs != this)
+    {
+        m_pimpl = rhs.m_pimpl;
+    }
+    return *this;
+}
 
-bool LAS_DLL IsGDALEnabled(void);
-bool LAS_DLL IsLibGeoTIFFEnabled(void);
-bool LAS_DLL IsLasZipEnabled(void);
-std::string LAS_DLL GetFullVersion(void);
-std::string LAS_DLL GetVersion(void);
+Writer::Writer(WriterIPtr ptr) :
+    m_pimpl(ptr)
+
+{
+}
+
+Writer::~Writer()
+{
+
+}
+
+Header const& Writer::GetHeader() const
+{
+    return m_pimpl->GetHeader();
+}
+
+bool Writer::WritePoint(Point const& point)
+{
+    m_pimpl->WritePoint(point);
+    return true;
+}
+
+void Writer::WriteHeader(Header& header)
+{
+    // The writer may update our header as part of its 
+    // writing process (change VLRs for SRS's, for instance).
+    m_pimpl->SetHeader(header);
+    m_pimpl->WriteHeader();
+}
+
+void Writer::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
+{
+    m_pimpl->SetTransforms(transforms);
+}
+
+void Writer::SetFilters(std::vector<liblas::FilterPtr> const& filters)
+{
+    m_pimpl->SetFilters(filters);
+}    
 
 } // namespace liblas
 
-#endif // LIBLAS_LASVERSION_HPP_INCLUDED

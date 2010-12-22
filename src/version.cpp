@@ -2,11 +2,13 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS color class 
- * Author:   Howard Butler, hobu.inc@gmail.com
+ * Purpose:  LAS version related functions.
+ * Author:   Mateusz Loskot, mateusz@loskot.net
+ *           Frank Warmerdam, warmerdam@pobox.com
  *
  ******************************************************************************
- * Copyright (c) 2008, Howard Butler
+ * Copyright (c) 2008, Mateusz Loskot
+ * Copyright (c) 2010, Frank Warmerdam
  *
  * All rights reserved.
  * 
@@ -39,61 +41,94 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lascolor.hpp>
-// boost
-#include <boost/cstdint.hpp>
-// std
-#include <stdexcept>
-#include <limits>
+#include <liblas/version.hpp>
 
-namespace liblas {
+#ifdef HAVE_LIBGEOTIFF
+#include <geotiff.h>
+#endif
 
-Color::Color()
+#ifdef HAVE_GDAL 
+#include <gdal.h>
+#endif
+
+#ifdef HAVE_LASZIP
+#include <laszip/laszip.hpp>
+#endif
+
+#include <liblas/spatialreference.hpp>
+
+using namespace boost;
+
+namespace liblas
 {
-    m_color.assign(0);
+
+/// Check if GDAL support has been built in to libLAS.
+bool IsGDALEnabled()
+{
+#ifdef HAVE_GDAL
+    return true;
+#else
+    return false;
+#endif
 }
 
-Color::Color(boost::uint32_t red, boost::uint32_t green, boost::uint32_t blue)
+/// Check if GeoTIFF support has been built in to libLAS.
+bool IsLibGeoTIFFEnabled()
 {
-    if (red > std::numeric_limits<boost::uint16_t>::max() || 
-        green > std::numeric_limits<boost::uint16_t>::max() || 
-        blue > std::numeric_limits<boost::uint16_t>::max())
-        throw_invalid_color_component();
-
-    using boost::uint16_t;
-
-    m_color[0] = static_cast<uint16_t>(red);
-    m_color[1] = static_cast<uint16_t>(green);
-    m_color[2] = static_cast<uint16_t>(blue);
+#ifdef HAVE_LIBGEOTIFF
+    return true;
+#else
+    return false;
+#endif
 }
 
-Color::Color(boost::array<value_type, 3> const& color)
+/// Check if LasZip compression support has been built in to libLAS.
+bool IsLasZipEnabled()
 {
-    m_color = color;
+#ifdef HAVE_LASZIP
+    return true;
+#else
+    return false;
+#endif
 }
 
-Color::Color(Color const& other)
-    : m_color(other.m_color)
-{
-}
+/// Tell the user a bit about libLAS' compilation
+std::string  GetFullVersion(void) {
 
-Color& Color::operator=(Color const& rhs)
-{
-    if (&rhs != this)
+    std::ostringstream os;
+#ifdef HAVE_LIBGEOTIFF
+    os << " GeoTIFF "
+       << (LIBGEOTIFF_VERSION / 1000) << '.'
+       << (LIBGEOTIFF_VERSION / 100 % 10) << '.'
+       << (LIBGEOTIFF_VERSION % 100 / 10);
+#endif
+#ifdef HAVE_GDAL
+    os << " GDAL " << GDALVersionInfo("RELEASE_NAME");
+#endif
+
+#ifdef HAVE_LASZIP
+    os << " LasZip " 
+       << LASZIP_VERSION_MAJOR << "."
+       << LASZIP_VERSION_MINOR << "."
+       << LASZIP_VERSION_REVISION;
+#endif
+
+    std::string info(os.str());
+    os.str("");
+    os << "libLAS " << LIBLAS_RELEASE_NAME;
+    if (!info.empty())
     {
-        m_color = rhs.m_color;
+        os << " with" << info;
     }
-    return *this;
+
+
+    return os.str();
 }
 
-void Color::throw_index_out_of_range() const
-{
-    throw std::out_of_range("subscript out of range");
-}
-
-void Color::throw_invalid_color_component() const
-{
-    throw std::invalid_argument("Color component value too large.  Each must be less than 65536");
+/// Tell the user our dotted release name.
+std::string GetVersion() {
+    return std::string(LIBLAS_RELEASE_NAME);
 }
 
 } // namespace liblas
+

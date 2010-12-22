@@ -42,7 +42,7 @@
 #ifndef LIBLAS_DETAIL_WRITER_HEADER_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_HEADER_HPP_INCLUDED
 
-#include <liblas/lasheader.hpp>
+#include <liblas/header.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/detail/writer/base.hpp>

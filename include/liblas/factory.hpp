@@ -43,8 +43,8 @@
 #ifndef LIBLAS_FACTORY_HPP_INCLUDED
 #define LIBLAS_FACTORY_HPP_INCLUDED
 
-#include <liblas/lasreader.hpp>
-#include <liblas/laswriter.hpp>
+#include <liblas/reader.hpp>
+#include <liblas/writer.hpp>
 #include <liblas/export.hpp>
 // boost
 #include <boost/cstdint.hpp>

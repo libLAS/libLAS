@@ -40,8 +40,6 @@
  ****************************************************************************/
 
 #include <liblas/liblas.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
 #include <liblas/detail/reader/reader.hpp>
 #include <liblas/detail/reader/cachedreader.hpp>
 #include <liblas/detail/private_utility.hpp>

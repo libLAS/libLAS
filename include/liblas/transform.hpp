@@ -42,9 +42,9 @@
 #ifndef LIBLAS_LASTRANSFORM_HPP_INCLUDED
 #define LIBLAS_LASTRANSFORM_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lasspatialreference.hpp>
+#include <liblas/version.hpp>
+#include <liblas/point.hpp>
+#include <liblas/spatialreference.hpp>
 #include <liblas/export.hpp>
 // boost
 #include <boost/shared_ptr.hpp>

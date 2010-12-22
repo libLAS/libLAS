@@ -5,11 +5,7 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
-#include <liblas/laswriter.hpp>
-#include <liblas/lasreader.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lasclassification.hpp>
+
 #include <liblas/liblas.hpp>
 #include <tut/tut.hpp>
 #include <cstdio>

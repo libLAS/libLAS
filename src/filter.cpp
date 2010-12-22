@@ -39,8 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasfilter.hpp>
-#include <liblas/lasclassification.hpp>
+#include <liblas/filter.hpp>
+#include <liblas/classification.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std

@@ -43,7 +43,7 @@
 #ifndef LIBLAS_DETAIL_INDEXOUTPUT_HPP_INCLUDED
 #define LIBLAS_DETAIL_INDEXOUTPUT_HPP_INCLUDED
 
-#include <liblas/lasindex.hpp>
+#include <liblas/index.hpp>
 #include <liblas/detail/index/indexcell.hpp>
 
 namespace liblas { namespace detail {

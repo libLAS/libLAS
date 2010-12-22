@@ -52,17 +52,7 @@
 #endif
 
 #include <liblas/liblas.hpp>
-#include <liblas/lasreader.hpp>
-#include <liblas/laserror.hpp>
-#include <liblas/laswriter.hpp>
-#include <liblas/exception.hpp>
-#include <liblas/lasvariablerecord.hpp>
-#include <liblas/guid.hpp>
-#include <liblas/lasspatialreference.hpp>
-#include <liblas/lasschema.hpp>
-#include <liblas/capi/las_config.h>
-#include <liblas/capi/las_version.h>
-#include <liblas/factory.hpp>
+
 
 typedef struct LASWriterHS *LASWriterH;
 typedef struct LASReaderHS *LASReaderH;

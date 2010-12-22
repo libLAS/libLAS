@@ -39,9 +39,9 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lasspatialreference.hpp>
+#include <liblas/header.hpp>
+#include <liblas/point.hpp>
+#include <liblas/spatialreference.hpp>
 #include <liblas/detail/writer/header.hpp>
 #include <liblas/detail/private_utility.hpp>
 // boost

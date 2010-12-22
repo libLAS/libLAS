@@ -26,22 +26,21 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/factory.hpp 
   ${LIBLAS_HEADERS_DIR}/guid.hpp
   ${LIBLAS_HEADERS_DIR}/iterator.hpp
-  ${LIBLAS_HEADERS_DIR}/lasbounds.hpp
-  ${LIBLAS_HEADERS_DIR}/lasclassification.hpp
-  ${LIBLAS_HEADERS_DIR}/lascolor.hpp
-  ${LIBLAS_HEADERS_DIR}/lasdimension.hpp  
-  ${LIBLAS_HEADERS_DIR}/laserror.hpp
-  ${LIBLAS_HEADERS_DIR}/lasfilter.hpp
-  ${LIBLAS_HEADERS_DIR}/lasheader.hpp
-  ${LIBLAS_HEADERS_DIR}/lasindex.hpp
-  ${LIBLAS_HEADERS_DIR}/laspoint.hpp
-  ${LIBLAS_HEADERS_DIR}/lasreader.hpp
-  ${LIBLAS_HEADERS_DIR}/lasschema.hpp
-  ${LIBLAS_HEADERS_DIR}/lasspatialreference.hpp
-  ${LIBLAS_HEADERS_DIR}/lastransform.hpp  
-  ${LIBLAS_HEADERS_DIR}/lasvariablerecord.hpp
-  ${LIBLAS_HEADERS_DIR}/lasversion.hpp
-  ${LIBLAS_HEADERS_DIR}/laswriter.hpp
+  ${LIBLAS_HEADERS_DIR}/bounds.hpp
+  ${LIBLAS_HEADERS_DIR}/classification.hpp
+  ${LIBLAS_HEADERS_DIR}/color.hpp
+  ${LIBLAS_HEADERS_DIR}/dimension.hpp  
+  ${LIBLAS_HEADERS_DIR}/error.hpp
+  ${LIBLAS_HEADERS_DIR}/filter.hpp
+  ${LIBLAS_HEADERS_DIR}/header.hpp
+  ${LIBLAS_HEADERS_DIR}/index.hpp
+  ${LIBLAS_HEADERS_DIR}/point.hpp
+  ${LIBLAS_HEADERS_DIR}/reader.hpp
+  ${LIBLAS_HEADERS_DIR}/schema.hpp
+  ${LIBLAS_HEADERS_DIR}/spatialreference.hpp
+  ${LIBLAS_HEADERS_DIR}/transform.hpp  
+  ${LIBLAS_HEADERS_DIR}/variablerecord.hpp
+  ${LIBLAS_HEADERS_DIR}/writer.hpp
   ${LIBLAS_HEADERS_DIR}/liblas.hpp
   ${LIBLAS_HEADERS_DIR}/utility.hpp
   ${LIBLAS_HEADERS_DIR}/version.hpp)
@@ -112,22 +111,22 @@ set(LIBLAS_DETAIL_WRITER_HPP
 set(LIBLAS_CPP
   chipper.cpp
   factory.cpp
-  lasclassification.cpp
-  lascolor.cpp
-  lasdimension.cpp
-  laserror.cpp
-  lasfilter.cpp
-  lasheader.cpp
-  lasindex.cpp
-  laspoint.cpp
-  lasreader.cpp
-  lasspatialreference.cpp
-  lasschema.cpp
-  lastransform.cpp
+  classification.cpp
+  color.cpp
+  dimension.cpp
+  error.cpp
+  filter.cpp
+  header.cpp
+  index.cpp
+  point.cpp
+  reader.cpp
+  spatialreference.cpp
+  schema.cpp
+  transform.cpp
   utility.cpp
-  lasvariablerecord.cpp
-  laswriter.cpp
-  lasversion.cpp)
+  variablerecord.cpp
+  writer.cpp
+  version.cpp)
 
 set(LIBLAS_DETAIL_CPP
   detail/utility.cpp)
@@ -201,7 +200,7 @@ set(LIBLAS_C_SOURCES
   ${LIBLAS_HEADERS_DIR}/capi/las_config.h
   ${LIBLAS_HEADERS_DIR}/capi/las_version.h
   ${LIBLAS_HEADERS_DIR}/capi/liblas.h
-  las_c_api.cpp)
+  c_api.cpp)
 
 # NOTE:
 # This hack is required to correctly link static into shared library.

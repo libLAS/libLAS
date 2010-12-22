@@ -5,7 +5,7 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
-#include <liblas/lasclassification.hpp>
+#include <liblas/classification.hpp>
 #include <tut/tut.hpp>
 #include <bitset>
 #include <sstream>

@@ -39,8 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasindex.hpp>
-#include <liblas/laswriter.hpp>
+#include <liblas/index.hpp>
+#include <liblas/writer.hpp>
 #include <liblas/detail/index/indexoutput.hpp>
 #include <liblas/detail/index/indexcell.hpp>
 #include <liblas/detail/writer/writer.hpp>

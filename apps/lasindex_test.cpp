@@ -17,7 +17,7 @@
 #include <typeinfo>
 #include <vector>
 
-#include <liblas/lasindex.hpp>
+#include <liblas/index.hpp>
 
 using namespace liblas;
 using namespace boost;
