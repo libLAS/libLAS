@@ -136,7 +136,7 @@ void ZipWriterImpl::ConstructItems()
         break;
 
     default:
-        throw 0;
+        throw std::out_of_range("Bad point format in header"); 
     }
 
     // construct the object that will hold a laszip point
@@ -173,8 +173,9 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
 
         ConstructItems();
 
-        unsigned int stat = m_zipper->open(m_ofs, m_num_items, m_items, LASZIP_COMPRESSION_NONE);
-        if (stat) throw 0; // BUG: status code
+        unsigned int stat = m_zipper->open(m_ofs, m_num_items, m_items, LASZIP_COMPRESSION_DEFAULT);
+        if (stat != 0)
+            throw std::runtime_error("Error opening compression engine");
     }
 
     const std::vector<boost::uint8_t>& v = point.GetData();
@@ -182,7 +183,8 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
         m_lz_point_data[i] = v[i];
 
     bool ok = m_zipper->write(m_lz_point);
-    if (!ok) throw 0;
+    if (!ok)
+        throw std::runtime_error("Error writing compressed point data");
 
     return;
 }

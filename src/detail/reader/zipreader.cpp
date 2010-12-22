@@ -120,8 +120,9 @@ void ZipReaderImpl::Reset()
 
         ConstructItems();
 
-        unsigned int stat = m_unzipper->open(m_ifs, m_num_items, m_items, LASZIP_COMPRESSION_NONE);
-        if (stat) throw 0; // BUG: need status codes?
+        unsigned int stat = m_unzipper->open(m_ifs, m_num_items, m_items, LASZIP_COMPRESSION_DEFAULT);
+        if (stat != 0)
+            throw std::runtime_error("Failed to open laszip decompression engine"); 
     }
 
     return;
@@ -171,7 +172,7 @@ void ZipReaderImpl::ConstructItems()
         break;
 
     default:
-        throw 0;
+        throw std::out_of_range("Bad point format in header"); 
     }
 
     // construct the object that will hold a laszip point
@@ -256,7 +257,8 @@ void ZipReaderImpl::ReadIdiom()
     //////*m_point = m_point_reader->GetPoint();
 
     bool ok = m_unzipper->read(m_lz_point);
-    if (!ok) throw 0;
+    if (!ok)
+        throw std::runtime_error("Error reading compressed point data");
 
     std::vector<boost::uint8_t> v(m_lz_point_size);
     for (unsigned int i=0; i<m_lz_point_size; i++)
