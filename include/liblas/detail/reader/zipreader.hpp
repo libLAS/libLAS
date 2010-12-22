@@ -45,7 +45,6 @@
 #ifdef HAVE_LASZIP
 
 #include <liblas/detail/fwd.hpp>
-#include <liblas/detail/reader/point.hpp>
 #include <liblas/detail/reader/header.hpp>
 #include <liblas/liblas.hpp>
 // boost
@@ -60,7 +59,6 @@ class LASunzipper;
 
 namespace liblas { namespace detail { 
 
-typedef boost::shared_ptr< reader::Point > PointReaderPtr;
 typedef boost::shared_ptr< reader::Header > HeaderReaderPtr;
 
 class ZipReaderImpl : public ReaderI
@@ -93,7 +91,6 @@ protected:
     boost::uint32_t m_size;
     boost::uint32_t m_current;
     
-    //PointReaderPtr m_point_reader;
     HeaderReaderPtr m_header_reader;
     
     HeaderPtr m_header;

@@ -120,7 +120,7 @@ void ZipReaderImpl::Reset()
 
         ConstructItems();
 
-        unsigned int stat = m_unzipper->open(m_ifs, m_num_items, m_items, LASZIP_COMPRESSION_ARITHMETIC);
+        unsigned int stat = m_unzipper->open(m_ifs, m_num_items, m_items, LASZIP_COMPRESSION_NONE);
         if (stat) throw 0; // BUG: need status codes?
     }
 
@@ -144,30 +144,30 @@ void ZipReaderImpl::ConstructItems()
         m_num_items = 2;
         m_items = new LASitem[2];
         m_items[0].set(LASitem::POINT10);
-        m_items[1].set(LASitem::GPSTIME);
+        m_items[1].set(LASitem::GPSTIME11);
         break;
 
     case ePointFormat2:
         m_num_items = 2;
         m_items = new LASitem[2];
         m_items[0].set(LASitem::POINT10);
-        m_items[1].set(LASitem::RGB);
+        m_items[1].set(LASitem::RGB12);
         break;
 
     case ePointFormat3:
         m_num_items = 3;
         m_items = new LASitem[3];
         m_items[0].set(LASitem::POINT10);
-        m_items[1].set(LASitem::GPSTIME);
-        m_items[2].set(LASitem::RGB);
+        m_items[1].set(LASitem::GPSTIME11);
+        m_items[2].set(LASitem::RGB12);
         break;
 
     case ePointFormat4:
         m_num_items = 3;
         m_items = new LASitem[3];
         m_items[0].set(LASitem::POINT10);
-        m_items[1].set(LASitem::GPSTIME);
-        m_items[2].set(LASitem::WAVEPACKET);
+        m_items[1].set(LASitem::GPSTIME11);
+        m_items[2].set(LASitem::WAVEPACKET13);
         break;
 
     default:
