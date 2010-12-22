@@ -324,15 +324,23 @@ int main(int argc, char* argv[])
         // Transforms alter our header as well.  Setting scales, offsets, etc.
         transforms = GetTransforms(vm, verbose, header);
 
-        // This is quite busted for me on OS X...        
-//         if (output.compare(output.length()-4,4,".laz")==0)
-//         {
-// #ifdef HAVE_LASZIP
-//             header.SetIsCompressed(true);
-// #else
-//             throw std::runtime_error("Compression support not enabled in liblas configuration");
-// #endif
-//         }
+        switch (WriterFactory::InferFileTypeFromExtension(output))
+        {
+        case WriterFactory::FileType_LAS:
+            header.SetIsCompressed(false);
+            break;
+        case WriterFactory::FileType_LAZ:
+#ifdef HAVE_LASZIP
+            header.SetIsCompressed(true);
+#else
+            throw std::runtime_error("Compression support not enabled in liblas configuration");
+#endif
+            break;
+        case WriterFactory::FileType_Unknown:
+        default:
+            throw std::runtime_error("Unknown output file type");
+            break;
+        }
 
         bool op = process(  input, 
                             output,

@@ -291,6 +291,7 @@ void Header::read()
     // windows, use boost's iostreams or similar, which do not have an overflow 
     // problem.
     
+#ifndef HAVE_LASZIP
     if (m_header->GetVersionMinor() < 3) 
     {
         // Seek to the beginning 
@@ -342,6 +343,8 @@ void Header::read()
         
         }
     }
+#endif
+
     // Seek to the data offset so we can start reading points
     m_ifs.seekg(m_header->GetDataOffset());
 

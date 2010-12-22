@@ -111,7 +111,8 @@ liblas::Header FetchHeader(std::string const& filename)
         oss << "Cannot open " << filename << "for read.  Exiting...";
         throw std::runtime_error(oss.str());
     }
-    liblas::Reader reader(ifs);
+    liblas::ReaderFactory factory;
+    liblas::Reader reader = factory.CreateWithStream(ifs);
     liblas::Header header = reader.GetHeader();
     ifs.close();
     return header;
