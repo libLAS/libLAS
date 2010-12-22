@@ -6,9 +6,6 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/liblas.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lascolor.hpp>
-#include <liblas/exception.hpp>
 #include <tut/tut.hpp>
 
 #include <bitset>
@@ -329,14 +326,14 @@ namespace tut
     template<>
     void to::test<14>()
     {
-        ensure_equals("invalid default time",
-            m_default.GetTime(), 0);
+        ensure_distance("invalid default time",
+            m_default.GetTime(), 0.0, 0.01);
 
         double const time = 3.14; // dummy value
         m_default.SetTime(time);
 
-        ensure_equals("invalid time",
-            m_default.GetTime(), time);
+        ensure_distance("invalid time",
+            m_default.GetTime(), time, 0.01);
     }
 
     // Test IsValid method

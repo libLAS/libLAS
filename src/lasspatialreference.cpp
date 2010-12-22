@@ -67,7 +67,7 @@
 #include <geovalues.h>
 #endif // HAVE_LIBGEOTIFF
 
-#include <liblas/lasspatialreference.hpp>
+#include <liblas/spatialreference.hpp>
 #include <liblas/detail/private_utility.hpp>
 // boost
 #include <boost/concept_check.hpp>

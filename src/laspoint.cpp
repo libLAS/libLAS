@@ -39,9 +39,9 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/laspoint.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/lasschema.hpp>
+#include <liblas/point.hpp>
+#include <liblas/header.hpp>
+#include <liblas/schema.hpp>
 #include <liblas/exception.hpp>
 #include <liblas/detail/binary.hpp>
 #include <liblas/detail/pointrecord.hpp>

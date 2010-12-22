@@ -41,7 +41,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasversion.hpp>
+#include <liblas/version.hpp>
 
 #ifdef HAVE_LIBGEOTIFF
 #include <geotiff.h>
@@ -55,7 +55,7 @@
 #include <laszip/laszip.hpp>
 #endif
 
-#include <liblas/lasspatialreference.hpp>
+#include <liblas/spatialreference.hpp>
 
 using namespace boost;
 

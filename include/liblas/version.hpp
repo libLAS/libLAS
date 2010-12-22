@@ -42,6 +42,11 @@
 #ifndef LIBLAS_VERSION_HPP_INCLUDED
 #define LIBLAS_VERSION_HPP_INCLUDED
 
+#include <liblas/capi/las_version.h>
+#include <liblas/export.hpp>
+
+#include <string>
+
 // Caution, this is the only libLAS header that is guarenteed to change with
 // every libLAS release, including this header will cause a recompile every
 // time a new libLAS version is released.
@@ -58,4 +63,55 @@
 
 #define LIBLAS_LIB_VERSION "1_6"
 
+
+namespace liblas {
+
+/// Version numbers of the ASPRS LAS Specification.
+/// Numerical representation of versions is calculated according to 
+/// following formula: <em>major * 100000 + minor</em>
+enum LASVersion
+{
+    eLASVersion10 = 1 * 100000 + 0, ///< LAS Format 1.0
+    eLASVersion11 = 1 * 100000 + 1, ///< LAS Format 1.1
+    eLASVersion12 = 1 * 100000 + 2, ///< LAS Format 1.2
+    eLASVersion20 = 2 * 100000 + 0  ///< LAS Format 2.0
+};
+
+/// Range of allowed ASPRS LAS file format versions.
+enum FormatVersion
+{
+    eVersionMajorMin = 1, ///< Minimum of major component
+    eVersionMajorMax = 1, ///< Maximum of major component
+    eVersionMinorMin = 0, ///< Minimum of minor component
+    eVersionMinorMax = 3  ///< Maximum of minor component
+};
+
+/// Versions of point record format.
+enum PointFormatName
+{
+    ePointFormat0 = 0,  ///< Point Data Format \e 0
+    ePointFormat1 = 1,  ///< Point Data Format \e 1
+    ePointFormat2 = 2,  ///< Point Data Format \e 2
+    ePointFormat3 = 3,  ///< Point Data Format \e 3
+    ePointFormat4 = 4,  ///< Point Data Format \e 3
+    ePointFormat5 = 5,  ///< Point Data Format \e 3
+    ePointFormatUnknown = -99 ///< Point Data Format is unknown
+};
+
+/// Number of bytes of point record storage in particular format.
+enum PointSize
+{
+    ePointSize0 = 20, ///< Size of point record in data format \e 0
+    ePointSize1 = 28, ///< Size of point record in data format \e 1
+    ePointSize2 = 26, ///< Size of point record in data format \e 2
+    ePointSize3 = 34  ///< Size of point record in data format \e 3
+};
+
+bool LAS_DLL IsGDALEnabled(void);
+bool LAS_DLL IsLibGeoTIFFEnabled(void);
+bool LAS_DLL IsLasZipEnabled(void);
+std::string LAS_DLL GetFullVersion(void);
+std::string LAS_DLL GetVersion(void);
+
+} // namespace liblas
 #endif // LIBLAS_VERSION_HPP_INCLUDED

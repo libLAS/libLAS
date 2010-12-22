@@ -44,11 +44,11 @@
 #define LIBLAS_LASHEADER_HPP_INCLUDED
 
 #include <liblas/guid.hpp>
-#include <liblas/lasbounds.hpp>
-#include <liblas/lasschema.hpp>
-#include <liblas/lasspatialreference.hpp>
-#include <liblas/lasvariablerecord.hpp>
-#include <liblas/lasversion.hpp>
+#include <liblas/bounds.hpp>
+#include <liblas/schema.hpp>
+#include <liblas/spatialreference.hpp>
+#include <liblas/variablerecord.hpp>
+#include <liblas/version.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/export.hpp>
 // boost

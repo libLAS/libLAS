@@ -39,7 +39,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasclassification.hpp>
+#include <liblas/classification.hpp>
 #include <liblas/detail/private_utility.hpp>
 // boost
 #include <boost/cstdint.hpp>

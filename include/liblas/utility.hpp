@@ -42,8 +42,8 @@
 #ifndef LIBLAS_LASSUMMARY_HPP_INCLUDED
 #define LIBLAS_LASSUMMARY_HPP_INCLUDED
 
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
+#include <liblas/header.hpp>
+#include <liblas/point.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/export.hpp>

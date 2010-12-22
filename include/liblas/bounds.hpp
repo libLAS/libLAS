@@ -43,8 +43,8 @@
 #define LIBLAS_LASBOUNDS_HPP_INCLUDED
 
 #include <liblas/detail/fwd.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lastransform.hpp>
+#include <liblas/point.hpp>
+#include <liblas/transform.hpp>
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/export.hpp>
 // boost

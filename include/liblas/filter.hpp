@@ -42,9 +42,9 @@
 #ifndef LIBLAS_LASFILTER_HPP_INCLUDED
 #define LIBLAS_LASFILTER_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
-#include <liblas/lasheader.hpp>
-#include <liblas/laspoint.hpp>
+#include <liblas/version.hpp>
+#include <liblas/header.hpp>
+#include <liblas/point.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/export.hpp>
 // boost

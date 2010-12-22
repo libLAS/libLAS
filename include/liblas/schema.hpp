@@ -42,11 +42,10 @@
 #ifndef LIBLAS_SCHEMA_HPP_INCLUDED
 #define LIBLAS_SCHEMA_HPP_INCLUDED
 
-#include <liblas/lasversion.hpp>
+#include <liblas/version.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
-#include <liblas/lasvariablerecord.hpp>
-#include <liblas/lasversion.hpp>
-#include <liblas/lasdimension.hpp>
+#include <liblas/variablerecord.hpp>
+#include <liblas/dimension.hpp>
 #include <liblas/export.hpp>
 
 // boost

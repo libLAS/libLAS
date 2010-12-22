@@ -41,7 +41,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/laserror.hpp>
+#include <liblas/error.hpp>
 // std
 #include <string>
 

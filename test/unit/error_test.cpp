@@ -5,7 +5,7 @@
 // (See accompanying file LICENSE.txt or copy at
 // http://www.opensource.org/licenses/bsd-license.php)
 //
-#include <liblas/laserror.hpp>
+#include <liblas/error.hpp>
 #include <tut/tut.hpp>
 #include <string>
 

@@ -6,8 +6,6 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/liblas.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lasheader.hpp>
 
 #include <iostream>
 

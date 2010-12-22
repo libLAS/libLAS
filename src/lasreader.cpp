@@ -40,8 +40,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasversion.hpp>
-#include <liblas/lasreader.hpp>
+#include <liblas/version.hpp>
+#include <liblas/reader.hpp>
 #include <liblas/detail/reader/reader.hpp>
 #include <liblas/detail/reader/cachedreader.hpp>
 #include <liblas/utility.hpp>

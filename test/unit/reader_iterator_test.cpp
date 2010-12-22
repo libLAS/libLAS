@@ -6,9 +6,6 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/liblas.hpp>
-#include <liblas/iterator.hpp>
-#include <liblas/laspoint.hpp>
-#include <liblas/lasreader.hpp>
 #include <liblas/detail/private_utility.hpp>
 #include <tut/tut.hpp>
 #include <algorithm>

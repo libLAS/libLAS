@@ -41,7 +41,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasvariablerecord.hpp>
+#include <liblas/variablerecord.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std

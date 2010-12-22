@@ -7,7 +7,6 @@
 //
 // liblas
 #include <liblas/liblas.hpp>
-#include <liblas/lasvariablerecord.hpp>
 // tut
 #include <tut/tut.hpp>
 // std

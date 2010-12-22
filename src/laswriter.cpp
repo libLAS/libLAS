@@ -39,8 +39,8 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lasversion.hpp>
-#include <liblas/laswriter.hpp>
+#include <liblas/version.hpp>
+#include <liblas/writer.hpp>
 #include <liblas/detail/writer/writer.hpp>
 #include <liblas/detail/writer/zipwriter.hpp>
 #include <liblas/factory.hpp>

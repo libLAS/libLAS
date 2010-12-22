@@ -26,22 +26,21 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/factory.hpp 
   ${LIBLAS_HEADERS_DIR}/guid.hpp
   ${LIBLAS_HEADERS_DIR}/iterator.hpp
-  ${LIBLAS_HEADERS_DIR}/lasbounds.hpp
-  ${LIBLAS_HEADERS_DIR}/lasclassification.hpp
-  ${LIBLAS_HEADERS_DIR}/lascolor.hpp
-  ${LIBLAS_HEADERS_DIR}/lasdimension.hpp  
-  ${LIBLAS_HEADERS_DIR}/laserror.hpp
-  ${LIBLAS_HEADERS_DIR}/lasfilter.hpp
-  ${LIBLAS_HEADERS_DIR}/lasheader.hpp
-  ${LIBLAS_HEADERS_DIR}/lasindex.hpp
-  ${LIBLAS_HEADERS_DIR}/laspoint.hpp
-  ${LIBLAS_HEADERS_DIR}/lasreader.hpp
-  ${LIBLAS_HEADERS_DIR}/lasschema.hpp
-  ${LIBLAS_HEADERS_DIR}/lasspatialreference.hpp
-  ${LIBLAS_HEADERS_DIR}/lastransform.hpp  
-  ${LIBLAS_HEADERS_DIR}/lasvariablerecord.hpp
-  ${LIBLAS_HEADERS_DIR}/lasversion.hpp
-  ${LIBLAS_HEADERS_DIR}/laswriter.hpp
+  ${LIBLAS_HEADERS_DIR}/bounds.hpp
+  ${LIBLAS_HEADERS_DIR}/classification.hpp
+  ${LIBLAS_HEADERS_DIR}/color.hpp
+  ${LIBLAS_HEADERS_DIR}/dimension.hpp  
+  ${LIBLAS_HEADERS_DIR}/error.hpp
+  ${LIBLAS_HEADERS_DIR}/filter.hpp
+  ${LIBLAS_HEADERS_DIR}/header.hpp
+  ${LIBLAS_HEADERS_DIR}/index.hpp
+  ${LIBLAS_HEADERS_DIR}/point.hpp
+  ${LIBLAS_HEADERS_DIR}/reader.hpp
+  ${LIBLAS_HEADERS_DIR}/schema.hpp
+  ${LIBLAS_HEADERS_DIR}/spatialreference.hpp
+  ${LIBLAS_HEADERS_DIR}/transform.hpp  
+  ${LIBLAS_HEADERS_DIR}/variablerecord.hpp
+  ${LIBLAS_HEADERS_DIR}/writer.hpp
   ${LIBLAS_HEADERS_DIR}/liblas.hpp
   ${LIBLAS_HEADERS_DIR}/utility.hpp
   ${LIBLAS_HEADERS_DIR}/version.hpp)

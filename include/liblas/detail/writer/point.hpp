@@ -42,9 +42,9 @@
 #ifndef LIBLAS_DETAIL_WRITER_POINT_HPP_INCLUDED
 #define LIBLAS_DETAIL_WRITER_POINT_HPP_INCLUDED
 
-#include <liblas/laspoint.hpp>
-#include <liblas/lasschema.hpp>
-#include <liblas/lasheader.hpp>
+#include <liblas/point.hpp>
+#include <liblas/schema.hpp>
+#include <liblas/header.hpp>
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/detail/writer/base.hpp>
 #include <liblas/detail/fwd.hpp>

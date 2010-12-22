@@ -39,7 +39,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/lascolor.hpp>
+#include <liblas/color.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std

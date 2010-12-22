@@ -42,13 +42,13 @@
 #ifndef LIBLAS_LASPOINT_HPP_INCLUDED
 #define LIBLAS_LASPOINT_HPP_INCLUDED
 
-#include <liblas/lasclassification.hpp>
-#include <liblas/lascolor.hpp>
+#include <liblas/classification.hpp>
+#include <liblas/color.hpp>
+#include <liblas/schema.hpp>
 #include <liblas/detail/pointrecord.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
-#include <liblas/lasschema.hpp>
 #include <liblas/export.hpp>
 
 // boost
