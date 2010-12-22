@@ -111,22 +111,22 @@ set(LIBLAS_DETAIL_WRITER_HPP
 set(LIBLAS_CPP
   chipper.cpp
   factory.cpp
-  lasclassification.cpp
-  lascolor.cpp
-  lasdimension.cpp
-  laserror.cpp
-  lasfilter.cpp
-  lasheader.cpp
-  lasindex.cpp
-  laspoint.cpp
-  lasreader.cpp
-  lasspatialreference.cpp
-  lasschema.cpp
-  lastransform.cpp
+  classification.cpp
+  color.cpp
+  dimension.cpp
+  error.cpp
+  filter.cpp
+  header.cpp
+  index.cpp
+  point.cpp
+  reader.cpp
+  spatialreference.cpp
+  schema.cpp
+  transform.cpp
   utility.cpp
-  lasvariablerecord.cpp
-  laswriter.cpp
-  lasversion.cpp)
+  variablerecord.cpp
+  writer.cpp
+  version.cpp)
 
 set(LIBLAS_DETAIL_CPP
   detail/utility.cpp)
@@ -200,7 +200,7 @@ set(LIBLAS_C_SOURCES
   ${LIBLAS_HEADERS_DIR}/capi/las_config.h
   ${LIBLAS_HEADERS_DIR}/capi/las_version.h
   ${LIBLAS_HEADERS_DIR}/capi/liblas.h
-  las_c_api.cpp)
+  c_api.cpp)
 
 # NOTE:
 # This hack is required to correctly link static into shared library.
