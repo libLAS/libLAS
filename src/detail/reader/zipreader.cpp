@@ -120,8 +120,8 @@ void ZipReaderImpl::Reset()
 
         ConstructItems();
 
-        bool ok = m_unzipper->open(&m_ifs, m_num_items, m_items, LASZIP_COMPRESSION_NONE);
-        if (!ok) throw 0; // BUG: need status codes?
+        unsigned int stat = m_unzipper->open(m_ifs, m_num_items, m_items, LASZIP_COMPRESSION_ARITHMETIC);
+        if (stat) throw 0; // BUG: need status codes?
     }
 
     return;

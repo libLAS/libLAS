@@ -173,8 +173,8 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
 
         ConstructItems();
 
-        bool ok = m_zipper->open(&m_ofs, m_num_items, m_items, LASZIP_COMPRESSION_NONE);
-        if (!ok) throw 0; // BUG: status code
+        unsigned int stat = m_zipper->open(m_ofs, m_num_items, m_items, LASZIP_COMPRESSION_ARITHMETIC);
+        if (stat) throw 0; // BUG: status code
     }
 
     const std::vector<boost::uint8_t>& v = point.GetData();

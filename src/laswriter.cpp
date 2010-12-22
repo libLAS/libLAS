@@ -57,7 +57,7 @@ namespace liblas
 
 Writer::Writer(std::ostream& ofs, Header const& header) :
 #ifdef HAVE_LASZIP
-    m_pimpl(WriterIPtr(header.IsCompressed() ? (WriterIPtr)(new detail::ZipWriterImpl(ofs)) : (WriterIPtr)(new detail::WriterImpl(ofs))))
+    m_pimpl(WriterIPtr( WriterFactory::CreateWithStream(ofs, header) ) )
 #else
     m_pimpl(WriterIPtr(new detail::WriterImpl(ofs)))
 #endif

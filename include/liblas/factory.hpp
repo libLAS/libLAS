@@ -81,7 +81,12 @@ private:
 class LAS_DLL WriterFactory
 {
 public:
-
+    enum FileType
+    {
+        FileType_Unknown,
+        FileType_LAS,
+        FileType_LAZ
+    };
 
     WriterFactory() {};
 
@@ -89,14 +94,15 @@ public:
     WriterFactory& operator=(WriterFactory const& rhs);    
 
     Writer CreateWithImpl(WriterIPtr w);
-    Writer CreateWithStream(std::ostream& stream); // makes a WriterImpl
-    Writer CreateCompressedWithStream(std::ostream& stream); // makes ZipWriterImpl
+
+    // makes a WriterImpl or a ZipWriterImpl, depending on header type
+    static WriterIPtr CreateWithStream(std::ostream& stream, Header const& header); 
     
     /// Destructor.
     /// @exception nothrow
     ~WriterFactory() {};
 
-
+    static FileType InferFileTypeFromExtension(const std::string&);
 private:
 
 };

@@ -58,6 +58,7 @@
 #include <cstring> // std::memset
 #include <cassert>
 #include <iostream>
+#include <locale> // tolower()
 
 using namespace boost;
 
@@ -104,21 +105,51 @@ Writer WriterFactory::CreateWithImpl(WriterIPtr w)
 }
 
 
-Writer WriterFactory::CreateWithStream(std::ostream& stream)
+WriterIPtr WriterFactory::CreateWithStream(std::ostream& stream, Header const& header)
 {
+    if (header.IsCompressed())
+    {
+#ifdef HAVE_LASZIP
+        WriterIPtr w  = WriterIPtr(new detail::ZipWriterImpl(stream));
+        return w;
+#else
+        throw std::runtime_error("Compression support not enabled in liblas configuration");
+#endif
+    }
+
     WriterIPtr w  = WriterIPtr(new detail::WriterImpl(stream));
-    return liblas::Writer(w);
+    return w;
 }
 
-Writer WriterFactory::CreateCompressedWithStream(std::ostream& stream)
+
+static bool streq_insensitive(const std::string& p, const std::string& q)
 {
-#ifdef HAVE_LASZIP
-    WriterIPtr w  = WriterIPtr(new detail::ZipWriterImpl(stream));
-    return liblas::Writer(w);
-#else
-    throw std::runtime_error("Compression support not enabled in liblas configuration");
-#endif
+    if (p.length() != q.length()) return false;
+    for (size_t i=0; i<p.length(); i++)
+    {
+        if (tolower(p[i]) != tolower(q[i])) return false;
+    }
+    return true;
+}
+
+
+WriterFactory::FileType WriterFactory::InferFileTypeFromExtension(const std::string& filename)
+{
+    size_t pos = filename.rfind('.');
+    if (pos == std::string::npos)
+        return FileType_Unknown;
+    
+    std::string ext = filename.substr(pos, filename.length()-pos);
+
+    if (streq_insensitive(ext, ".laz"))
+    {
+        return FileType_LAZ;
+    }
+    if (streq_insensitive(ext, ".las"))
+    {
+        return FileType_LAS;
+    }
+    return FileType_Unknown;
 }
 
 } // namespace liblas
-
