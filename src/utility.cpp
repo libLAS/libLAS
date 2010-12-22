@@ -247,31 +247,59 @@ void Summary::AddPoint(liblas::Point const& p)
         if (bHaveColor)
         {
             liblas::Color const& color = p.GetColor();
-        
+            liblas::Color::value_type min_red = min.GetColor().GetRed();
+            liblas::Color::value_type min_green = min.GetColor().GetGreen();
+            liblas::Color::value_type min_blue = min.GetColor().GetBlue();
+
+            liblas::Color::value_type max_red = max.GetColor().GetRed();
+            liblas::Color::value_type max_green = max.GetColor().GetGreen();
+            liblas::Color::value_type max_blue = max.GetColor().GetBlue();
+                        
             bool bSetMinColor = false;
-            if (color.GetRed() < min.GetColor().GetRed())
+            if (color.GetRed() < min_red)
+            {
                 bSetMinColor = true;
-            if (color.GetGreen() < min.GetColor().GetGreen())
+                min_red = color.GetRed();
+            }
+            if (color.GetGreen() < min_green)
+            {
                 bSetMinColor = true;
-            if (color.GetBlue() < min.GetColor().GetBlue())
+                min_green = color.GetGreen();
+            }
+            if (color.GetBlue() < min_blue)
+            {
                 bSetMinColor = true;
+                min_blue = color.GetBlue();
+            }
+
         
             bool bSetMaxColor = false;
-            if (color.GetRed() > max.GetColor().GetRed())
+            if (color.GetRed() > max_red)
+            {
                 bSetMaxColor = true;
-            if (color.GetGreen() > max.GetColor().GetGreen())
+                max_red = color.GetRed();
+            }
+
+                
+            if (color.GetGreen() > max_green)
+            {
                 bSetMaxColor = true;
-            if (color.GetBlue() > max.GetColor().GetBlue())
+                max_green = color.GetGreen();
+            }
+            if (color.GetBlue() > max_blue)
+            {
                 bSetMaxColor = true;
+                max_blue = color.GetBlue();
+            }
 
             if (bSetMinColor)
-                min.SetColor(liblas::Color( color.GetRed(), 
-                                            color.GetGreen(), 
-                                            color.GetBlue()));
+                min.SetColor(liblas::Color( min_red, 
+                                            min_green,
+                                            min_blue));
             if (bSetMaxColor)
-                max.SetColor(liblas::Color( color.GetRed(), 
-                                            color.GetGreen(), 
-                                            color.GetBlue()));
+                max.SetColor(liblas::Color( max_red, 
+                                            max_green, 
+                                            max_blue));
         }
         
 
