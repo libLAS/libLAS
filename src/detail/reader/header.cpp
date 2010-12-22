@@ -291,7 +291,6 @@ void Header::read()
     // windows, use boost's iostreams or similar, which do not have an overflow 
     // problem.
     
-#ifndef HAVE_LASZIP
     if (m_header->GetVersionMinor() < 3) 
     {
         // Seek to the beginning 
@@ -312,14 +311,14 @@ void Header::read()
         std::ios::off_type remainder = point_bytes % length;
         
 
-        if ( m_header->GetPointRecordsCount() != static_cast<uint32_t>(count)) {
+        if ( !m_header->IsCompressed() && m_header->GetPointRecordsCount() != static_cast<uint32_t>(count)) {
             if (remainder == 0)
             {
                 // The point bytes are exactly long enough, let's use it
                 // Set the count to what we calculated
                 m_header->SetPointRecordsCount(static_cast<boost::uint32_t>(count));
                 
-            } 
+            }
             else 
             {
                 std::ostringstream msg; 
@@ -343,7 +342,6 @@ void Header::read()
         
         }
     }
-#endif
 
     // Seek to the data offset so we can start reading points
     m_ifs.seekg(m_header->GetDataOffset());
