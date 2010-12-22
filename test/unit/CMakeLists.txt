@@ -8,17 +8,18 @@
 SET(LIBLAS_UNIT_TEST liblas_test)
 
 SET(LIBLAS_UNIT_TEST_SRC
+    bounds_test.cpp
     common.cpp
+    error_test.cpp
     guid_test.cpp
-    lasbounds_test.cpp
-    laserror_test.cpp
-    lasheader_test.cpp
-    laspoint_test.cpp
-    lasreader_iterator_test.cpp
-    lasreader_test.cpp
-    lasspatialreference_test.cpp
-    lasvariablerecord_test.cpp
-    laswriter_test.cpp
+    header_test.cpp
+    point_test.cpp
+    reader_iterator_test.cpp
+    reader_test.cpp
+    spatialreference_test.cpp
+    transform_test.cpp
+    variablerecord_test.cpp
+    writer_test.cpp
     liblas_test_suite.cpp)
 
 INCLUDE_DIRECTORIES(
