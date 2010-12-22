@@ -275,6 +275,8 @@ std::string GetPointString( std::string const& parse_string,
 
 std::string GetHeader(liblas::Reader& reader)
 {
+    boost::ignore_unused_variable_warning(reader);
+
     std::ostringstream oss;
     
     return oss.str();
