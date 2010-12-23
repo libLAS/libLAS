@@ -28,6 +28,7 @@ syntax: glob
 *.vcproj
 *.sln
 .deps
+./bin
 .DS_Store
 .libs
 aclocal.m4
