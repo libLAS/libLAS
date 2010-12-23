@@ -195,22 +195,22 @@ if(WITH_GDAL)
 
   find_package(GDAL 1.6.0)
 
-  if(GDAL_FOUND)
-    # Confirm required API is available
-    include(CheckFunctionExists) 
-    set(CMAKE_REQUIRED_LIBRARIES ${GDAL_LIBRARY})
-    check_function_exists(OSRSetEquirectangular2 HAVE_OSRSETEQUIRECTANGULAR2)
-    
-    if(NOT HAVE_OSRSETEQUIRECTANGULAR2)
-      # Reset to NOT found for GDAL/OGR
-      set(GDAL_FOUND)
-      message(FATAL_ERROR
-        "Unable to find OSRSetEquirectangular2 within GDAL library at ${GDAL_INCLUDE_DIR} ${GDAL_LIBRARY}")
-    else()
+  # if(GDAL_FOUND)
+  #   # Confirm required API is available
+  #   include(CheckFunctionExists) 
+  #   set(CMAKE_REQUIRED_LIBRARIES ${GDAL_LIBRARY})
+  #   check_function_exists(OSRSetEquirectangular2 HAVE_OSRSETEQUIRECTANGULAR2)
+  #   
+  #   if(NOT HAVE_OSRSETEQUIRECTANGULAR2)
+  #     # Reset to NOT found for GDAL/OGR
+  #     set(GDAL_FOUND)
+  #     message(FATAL_ERROR
+  #       "Unable to find OSRSetEquirectangular2 within GDAL library at ${GDAL_INCLUDE_DIR} ${GDAL_LIBRARY}")
+  #   else()
       include_directories(${GDAL_INCLUDE_DIR})
       add_definitions(-DHAVE_GDAL=1)
-    endif()
-  endif()
+  #   endif()
+  # endif()
 
   mark_as_advanced(CLEAR GDAL_INCLUDE_DIR) 
   mark_as_advanced(CLEAR GDAL_LIBRARY) 
