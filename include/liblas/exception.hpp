@@ -71,6 +71,34 @@ private:
     unsigned int m_who;
 };
 
+class liblas_error : public std::runtime_error
+{
+public:
+
+    liblas_error(std::string const& msg)
+        : std::runtime_error(msg)
+    {}
+};
+
+class invalid_expression : public liblas_error
+{
+public:
+
+    invalid_expression(std::string const& msg)
+        : liblas_error(msg)
+    {}
+};
+
+class invalid_format : public liblas_error
+{
+public:
+
+    invalid_format(std::string const& msg)
+        : liblas_error(msg)
+    {}
+};
+
+
 } // namespace liblas
 
 #endif // LIBLAS_EXCEPTION_HPP_INCLUDED
