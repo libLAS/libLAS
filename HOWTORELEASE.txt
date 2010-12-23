@@ -25,9 +25,9 @@ Release Process
  
   - CMakeLists.txt
    
-    * SET(CPACK_PACKAGE_VERSION_MAJOR "1")
-    * SET(CPACK_PACKAGE_VERSION_MINOR "6")
-    * SET(CPACK_PACKAGE_VERSION_PATCH "0b1")
+    * SET(LIBLAS_VERSION_MAJOR "1")
+    * SET(LIBLAS_VERSION_MINOR "6")
+    * SET(LIBLAS_VERSION_PATCH "0b1")
     
   - include/liblas/capi/las_version.h
 

@@ -23,27 +23,27 @@ fi
 
 case $1 in 
   --libs)
-    echo @LIBS@
+    echo "${LIBS}"
     ;;
 
   --defines)
-    echo @DEFS@
+    echo 
     ;;
 
   --includes)
-    echo @GEOTIFF_INC@ @GDAL_INC@
+    echo -I${GDAL_INCLUDE_DIR} -I${GEOTIFF_INCLUDE_DIR} -I${LIBXML2_INCLUDE_DIR} -I${ORACLE_INCLUDE_DIR} -I${TIFF_INCLUDE_DIR}
     ;;
 
   --cflags)
-    echo @CFLAGS@
+    echo ${CMAKE_C_FLAGS}
     ;;
 
   --cxxflags)
-    echo @CXXFLAGS@
+    echo ${CMAKE_CXX_FLAGS}
     ;;
     
   --version)
-    echo @RELEASE_VERSION@
+    echo ${LIBLAS_VERSION_MAJOR}.${LIBLAS_VERSION_MINOR}.${LIBLAS_VERSION_PATCH}
     ;;
 
   *)
