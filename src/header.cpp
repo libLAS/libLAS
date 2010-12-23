@@ -863,35 +863,22 @@ void Header::to_rst(std::ostream& os) const
     os.precision(z_precision);
     os << tree.get<double>("maximum.z") << std::endl;         
 
-    os << "  Spatial Reference:  " << std::endl;
-    os << tree.get<std::string>("srs.prettywkt") << std::endl;
-    os << tree.get<std::string>("srs.gtiff") << std::endl;   
+    
+    os << "  Spatial Reference:           ";
+#ifdef HAVE_GDAL
+    if (tree.get<std::string>("srs.prettywkt").size() > 0)
+#else
+    if (tree.get<std::string>("srs.gtiff").size() > 0)
+#endif
+    {
+        os << std::endl << tree.get<std::string>("srs.prettywkt") << std::endl;
+        os << std::endl << tree.get<std::string>("srs.gtiff") << std::endl; 
+    } else 
+    {
+        os << "None" << std::endl;
+    }
 
-    // os << "---------------------------------------------------------" << std::endl;
-    // os << "  VLR Summary" << std::endl;
-    // os << "---------------------------------------------------------" << std::endl;
 
-    // try {
-    //     std::ostringstream vlrs_oss;
-    //     BOOST_FOREACH(ptree::value_type &v,
-    //             tree.get_child("vlrs"))
-    //     {
-    //             vlrs_oss << "    User: '" 
-    //                      << v.second.get<std::string>("userid")
-    //                      << "' - Description: '"
-    //                      << v.second.get<std::string>("description") 
-    //                      <<"'" 
-    //                      << std::endl;
-    //             vlrs_oss << "    ID: " << v.second.get<boost::uint32_t>("id")
-    //                      << " Length: " <<v.second.get<boost::uint32_t>("length")
-    //                      << std::endl;
-    //     }
-    // 
-    //     os << vlrs_oss.str();
-    // }
-    // catch (liblas::property_tree::ptree_bad_path const& e) {
-    //     ::boost::ignore_unused_variable_warning(e);
-    // }
 }
 std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
 {
