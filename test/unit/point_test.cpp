@@ -465,9 +465,9 @@ namespace tut
         
         liblas::Schema schema = reader.GetHeader().GetSchema();
 
-        liblas::Dimension x = schema.GetDimension("X");
+        boost::optional<liblas::Dimension const&> x = schema.GetDimension("X");
         
-        boost::any d = p.GetValue(x);
+        boost::any d = p.GetValue(*x);
     
         ensure_equals("invalid GetRawY value",
             (int) p.GetRawY(), 483450000);

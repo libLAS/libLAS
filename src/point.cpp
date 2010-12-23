@@ -190,10 +190,17 @@ void Point::SetHeaderPtr(HeaderPtr header)
 {
     boost::uint16_t wanted_length;
     
-    if (header.get()) 
+    const liblas::Schema* schema;
+    if (header.get()) {
         wanted_length = header->GetDataRecordLength();
+        schema = &header->GetSchema();
+        
+    }
     else
+    {
         wanted_length = m_default_header.GetDataRecordLength();
+        schema = &m_default_header.GetSchema();
+    }
     
     // This is hopefully faster than copying everything if we don't have 
     // any data set and nothing to worry about.
@@ -233,21 +240,13 @@ void Point::SetHeaderPtr(HeaderPtr header)
         SetUserData(p.GetUserData());
         SetPointSourceID(p.GetPointSourceID());
         
-        try
-        {
+        boost::optional< Dimension const& > t = schema->GetDimension("Time");
+        if (t)
             SetTime(p.GetTime());
-        }
-        catch (std::runtime_error const&)
-        {   
-        }
-        
-        try
-        {
+
+        boost::optional< Dimension const& > c = schema->GetDimension("Red");
+        if (c)
             SetColor(p.GetColor());
-        }
-        catch (std::runtime_error const&)
-        {   
-        }
 
         // FIXME: copy other custom dimensions here?  resetting the 
         // headerptr can be catastrophic in a lot of cases.  
@@ -792,7 +791,7 @@ void Point::SetTime(double const& t)
         std::ostringstream msg;
         msg << "Point::SetTime - Unable to set time for ePointFormat0 or ePointFormat2, "
             << "no Time dimension exists on this format";
-        throw std::runtime_error(msg.str());
+        throw liblas::invalid_format(msg.str());
     }
 
     // std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(index_pos);
@@ -849,10 +848,6 @@ Color Point::GetColor() const
     }   
     
     if ( f == ePointFormat0 || f == ePointFormat1 ) {
-        // std::ostringstream msg;
-        //         msg << "Point::GetColor - Unable to set color for ePointFormat0 or ePointFormat1, "
-        //             << "no Color dimension exists on this format";
-        //         throw std::runtime_error(msg.str());
         return Color(0, 0, 0);
     }
     
@@ -899,14 +894,14 @@ void Point::SetColor(Color const& value)
         std::ostringstream msg;
         msg << "Point::SetColor - Unable to set color for ePointFormat0 or ePointFormat1, "
             << "no Color dimension exists on this format";
-        throw std::runtime_error(msg.str());
+        throw liblas::invalid_format(msg.str());
     }
 
     if ( m_data.size() == ePointFormat0 || f == ePointFormat1 ) {
         std::ostringstream msg;
         msg << "Point::SetColor - Unable to set color for ePointFormat0 or ePointFormat1, "
             << "no Color dimension exists on this format";
-        throw std::runtime_error(msg.str());
+        throw liblas::invalid_format(msg.str());
     }
     
     using liblas::detail::intToBits;
@@ -931,15 +926,20 @@ void Point::SetColor(Color const& value)
 
 std::vector<boost::uint8_t>::size_type Point::GetDimensionBytePosition(std::size_t dim_pos) const
 {
-    std::size_t output = 0;
+    boost::optional<Dimension const&> d;
     if (m_header) {
-        Dimension const& d = m_header->GetSchema().GetDimension(dim_pos);
-        output = d.GetByteOffset();
+        d = m_header->GetSchema().GetDimension(dim_pos);
     } else {
-        Dimension const& d = m_default_header.GetSchema().GetDimension(dim_pos);
-        output = d.GetByteOffset();
-    }   
-    return output;
+        d= m_default_header.GetSchema().GetDimension(dim_pos);
+    }
+    
+    if (!d)
+    {
+        std::ostringstream oss;
+        oss <<"Dimension at position " << dim_pos << " not found";
+        throw liblas_error(oss.str());
+    }
+    return d->GetByteOffset();
 }
 
 boost::any Point::GetValue(Dimension const& d) const

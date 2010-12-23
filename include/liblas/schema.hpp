@@ -54,6 +54,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
 #include <boost/array.hpp>
+#include <boost/optional.hpp>
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/member.hpp>
@@ -126,8 +127,8 @@ public:
     void SetDataFormatId(PointFormatName const& value);
     
     void AddDimension(Dimension const& dim);
-    Dimension const& GetDimension(std::string const& n) const;
-    Dimension const& GetDimension(index_by_index::size_type t) const;
+    boost::optional< Dimension const& > GetDimension(std::string const& n) const;
+    boost::optional< Dimension const& > GetDimension(index_by_index::size_type t) const;
     
     // DimensionPtr GetDimension(std::size_t index) const;
     void RemoveDimension(Dimension const& dim);

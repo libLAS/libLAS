@@ -40,6 +40,7 @@
  ****************************************************************************/
 
 #include <liblas/transform.hpp>
+#include <liblas/exception.hpp>
 #include <liblas/header.hpp>
 // boost
 #include <boost/concept_check.hpp>
@@ -194,7 +195,7 @@ TranslationTransform::operation TranslationTransform::GetOperation(std::string c
     if (expr.find(x) == std::string::npos &&
         expr.find(y) == std::string::npos &&
         expr.find(z) == std::string::npos)
-        throw std::runtime_error("expression is invalid -- use x, y, or z to define a dimension.  No 'x', 'y', or 'z' was found");
+        throw liblas::invalid_expression("expression is invalid -- use x, y, or z to define a dimension.  No 'x', 'y', or 'z' was found");
 
     operation output("X");
     
@@ -215,7 +216,7 @@ TranslationTransform::operation TranslationTransform::GetOperation(std::string c
     if (found_x != std::string::npos &&
         found_y != std::string::npos &&
         found_z != std::string::npos)
-        throw std::runtime_error("expression is invalid");
+        throw liblas::invalid_expression("expression is invalid");
     
     std::string::size_type op_pos=std::string::npos;
     if (found_x != std::string::npos)
@@ -240,7 +241,7 @@ TranslationTransform::operation TranslationTransform::GetOperation(std::string c
     {
         std::ostringstream oss;
         oss << "Expression '" << expression << "' does not have 'x', 'y', or 'z' to denote fields";
-        throw std::runtime_error(oss.str());
+        throw liblas::invalid_expression(oss.str());
     }
     
     std::string::size_type data_pos = std::string::npos;
@@ -271,7 +272,7 @@ TranslationTransform::operation TranslationTransform::GetOperation(std::string c
     {
         std::ostringstream oss;
         oss << "Expression '" << expression << "' does not have '*', '/', '+', or '-' to denote operations";
-        throw std::runtime_error(oss.str());
+        throw liblas::invalid_expression(oss.str());
     }
     
     std::string out;

@@ -690,25 +690,30 @@ void Schema::AddDimension(Dimension const& dim)
     CalculateSizes();
 }
 
-Dimension const& Schema::GetDimension(std::string const& n) const
+
+
+boost::optional< Dimension const& > Schema::GetDimension(std::string const& n) const
 {
     
     index_by_name::const_iterator it = m_index.get<name>().find(n);
 
     if (it != m_index.get<name>().end())
     {
-        return *it;
+        liblas::Dimension const& d = *it;
+        return boost::optional<liblas::Dimension const&>(d);
     }    
-
-    std::ostringstream oss;
-    oss << "Dimension with name '" << n << "' not found.";
-    throw std::runtime_error(oss.str());
+    
+    return boost::optional< Dimension const& >();
 }
 
-Dimension const& Schema::GetDimension(index_by_index::size_type t) const
+boost::optional< Dimension const& >  Schema::GetDimension(index_by_index::size_type t) const
 {
     index_by_index const& idx = m_index.get<index>();
-    return idx.at(t);
+    
+    if (t <= idx.size())
+        return boost::optional<liblas::Dimension const&>(idx.at(t));
+    else 
+        return boost::optional<liblas::Dimension const&>();
 
 }
 void Schema::SetDimension(Dimension const& dim)

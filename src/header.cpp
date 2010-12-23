@@ -692,23 +692,30 @@ void Header::SetSchema(const Schema& format)
     
     m_schema = format;
     
-    Dimension x = m_schema.GetDimension("X");
+    // Reset the X, Y, Z dimensions with offset and scale values
+    boost::optional< Dimension const& > x_c = m_schema.GetDimension("X");
+    if (!x_c)
+        throw liblas_error("X dimension not on schema, you\'ve got big problems!");
+    liblas::Dimension x(*x_c);
     x.SetScale(m_scales.x);
     x.IsFinitePrecision(true);
     x.SetOffset(m_offsets.x);
-    m_schema.SetDimension(x);
+    m_schema.AddDimension(x);
     
-    Dimension y = m_schema.GetDimension("Y");
+    boost::optional< Dimension const& > y_c = m_schema.GetDimension("Y");
+    liblas::Dimension y(*y_c);
     y.SetScale(m_scales.y);
     y.IsFinitePrecision(true);
     y.SetOffset(m_offsets.y);
-    m_schema.SetDimension(y);
+    m_schema.AddDimension(y);
     
-    Dimension z = m_schema.GetDimension("Z");
+    boost::optional< Dimension const& > z_c = m_schema.GetDimension("Z");
+
+    liblas::Dimension z(*z_c);
     z.SetScale(m_scales.z);
     z.IsFinitePrecision(true);
     z.SetOffset(m_offsets.z);
-    m_schema.SetDimension(z);
+    m_schema.AddDimension(z);
     
 } 
 
