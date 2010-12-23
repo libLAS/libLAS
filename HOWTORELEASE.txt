@@ -37,6 +37,10 @@ Release Process
 
   - python/setup.py
 
+  - src/header.cpp
+
+    char const* const Header::SoftwareIdentifier = "libLAS 1.6.0b2";
+
 2) Update README to include any relevant info about the release that 
    might have changed.
 
