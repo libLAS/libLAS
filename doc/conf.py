@@ -55,9 +55,9 @@ copyright = u'2010, Howard Butler, Mateusz Loskot and others'
 def read_version(filename):
     # oh yes, this is brittle
     data = open(filename).readlines()
-    major = 'CPACK_PACKAGE_VERSION_MAJOR'
-    minor = 'CPACK_PACKAGE_VERSION_MINOR'
-    patch = 'CPACK_PACKAGE_VERSION_PATCH'
+    major = 'LIBLAS_VERSION_MAJOR'
+    minor = 'LIBLAS_VERSION_MINOR'
+    patch = 'LIBLAS_VERSION_PATCH'
     
     for line in data:
         if str(major) in line:

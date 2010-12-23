@@ -8,6 +8,11 @@
 # libLAS general settings
 project(libLAS)
 
+
+SET(LIBLAS_VERSION_MAJOR "1")
+SET(LIBLAS_VERSION_MINOR "6")
+SET(LIBLAS_VERSION_PATCH "0b3")
+
 if(WIN32)
   # Name of C++ library
   set(LIBLAS_LIB_NAME liblas)
@@ -303,6 +308,7 @@ else()
   set(DEFAULT_LIB_SUBDIR lib)
   set(DEFAULT_DATA_SUBDIR share/liblas)
   set(DEFAULT_INCLUDE_SUBDIR include)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/apps/liblas-config.in ${CMAKE_CURRENT_BINARY_DIR}/apps/liblas-config)
 endif()
 
 # Locations are changeable by user to customize layout of libLAS installation
@@ -367,10 +373,11 @@ else()
 endif()
 
 
+
 # Version information
-SET(CPACK_PACKAGE_VERSION_MAJOR "1")
-SET(CPACK_PACKAGE_VERSION_MINOR "6")
-SET(CPACK_PACKAGE_VERSION_PATCH "0b3")
+SET(CPACK_PACKAGE_VERSION_MAJOR ${LIBLAS_VERSION_MAJOR})
+SET(CPACK_PACKAGE_VERSION_MINOR ${LIBLAS_VERSION_MINOR})
+SET(CPACK_PACKAGE_VERSION_PATCH ${LIBLAS_VERSION_MINOR})
 SET(OSGEO4W_UPSTREAM_RELEASE "2")
 
 SET(CPACK_SOURCE_GENERATOR "TGZ;ZIP;TBZ2")
