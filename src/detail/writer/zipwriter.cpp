@@ -178,7 +178,10 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
 
     const std::vector<boost::uint8_t>& v = point.GetData();
     for (unsigned int i=0; i<m_lz_point_size; i++)
+    {
         m_lz_point_data[i] = v[i];
+        //printf("%d %d\n", v[i], i);
+    }
 
     bool ok = m_zipper->write(m_lz_point);
     if (!ok)
@@ -191,14 +194,14 @@ ZipWriterImpl::~ZipWriterImpl()
 {
     // Try to update the point count on our way out, but we don't really
     // care if we weren't able to write it.
-    try
-    {
-        UpdatePointCount(0);
-        
-    } catch (std::runtime_error const&)
-    {
-        
-    }
+    //try
+    //{
+    //    UpdatePointCount(0);
+    //    
+    //} catch (std::runtime_error const&)
+    //{
+    //    
+    //}
 
     delete m_zipper;
 }
