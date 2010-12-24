@@ -98,6 +98,23 @@ public:
     {}
 };
 
+// use this for attempts to use a feature not compiled in, e.g. laszip or gdal
+class configuration_error : public liblas_error
+{
+public:
+    configuration_error(std::string const& msg)
+        : liblas_error(msg)
+    {}
+};
+
+// use this for code still under development
+class not_yet_implemented : public liblas_error
+{
+public:
+    not_yet_implemented(std::string const& msg)
+        : liblas_error(msg)
+    {}
+};
 
 } // namespace liblas
 

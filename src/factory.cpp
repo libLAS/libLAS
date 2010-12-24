@@ -89,7 +89,7 @@ Reader ReaderFactory::CreateWithStream(std::istream& stream)
         ReaderIPtr r = ReaderIPtr(new detail::ZipReaderImpl(stream) );
         return liblas::Reader(r);
 #else
-        throw std::runtime_error("Compression support not enabled in liblas configuration");
+        throw configuration_error("Compression support not enabled in liblas configuration");
 #endif
     }
 
@@ -114,7 +114,7 @@ WriterIPtr WriterFactory::CreateWithStream(std::ostream& stream, Header const& h
         return w;
 #else
     boost::ignore_unused_variable_warning(stream);
-    throw std::runtime_error("Compression support not enabled in libLAS configuration");
+    throw configuration_error("Compression support not enabled in libLAS configuration");
 #endif
     }
 

@@ -334,12 +334,12 @@ int main(int argc, char* argv[])
 #ifdef HAVE_LASZIP
             header.SetCompressed(true);
 #else
-            throw std::runtime_error("Compression support not enabled in liblas configuration");
+            throw configuration_error("Compression support not enabled in liblas configuration");
 #endif
             break;
         case WriterFactory::FileType_Unknown:
         default:
-            throw std::runtime_error("Unknown output file type");
+            throw liblas_error("Unknown output file type");
             break;
         }
 

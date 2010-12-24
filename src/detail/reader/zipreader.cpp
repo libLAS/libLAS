@@ -120,7 +120,7 @@ void ZipReaderImpl::Reset()
 
         unsigned int stat = m_unzipper->open(m_ifs, m_num_items, m_items, LASZIP_COMPRESSION_DEFAULT);
         if (stat != 0)
-            throw std::runtime_error("Failed to open laszip decompression engine"); 
+            throw liblas_error("Failed to open laszip decompression engine"); 
     }
 
     return;
@@ -170,7 +170,7 @@ void ZipReaderImpl::ConstructItems()
         break;
 
     default:
-        throw std::out_of_range("Bad point format in header"); 
+        throw liblas_error("Bad point format in header"); 
     }
 
     // construct the object that will hold a laszip point
@@ -239,7 +239,7 @@ void ZipReaderImpl::ReadHeader()
     m_header = m_header_reader->GetHeader();
 
     if (!m_header->Compressed())
-        throw std::runtime_error("Internal error: compressed reader encountered uncompressed header"); 
+        throw liblas_error("Internal error: compressed reader encountered uncompressed header"); 
 
     m_point->SetHeaderPtr(m_header);
 
@@ -259,7 +259,7 @@ void ZipReaderImpl::ReadIdiom()
 
     bool ok = m_unzipper->read(m_lz_point);
     if (!ok)
-        throw std::runtime_error("Error reading compressed point data");
+        throw liblas_error("Error reading compressed point data");
 
     std::vector<boost::uint8_t> v(m_lz_point_size);
     for (unsigned int i=0; i<m_lz_point_size; i++)
@@ -329,7 +329,7 @@ liblas::Point const& ZipReaderImpl::ReadPointAt(std::size_t n)
 
     if (n!=0)
     {
-        throw std::runtime_error("not yet implemented");
+        throw not_yet_implemented("not yet implemented");
     }
 
     std::streamsize const pos = /*(static_cast<std::streamsize>(n) * m_header->GetDataRecordLength()) +*/ m_header->GetDataOffset();    
@@ -360,7 +360,7 @@ void ZipReaderImpl::Seek(std::size_t n)
 
     if (n!=0)
     {
-        throw std::runtime_error("not yet implemented");
+        throw not_yet_implemented("not yet implemented");
     }
 
     std::streamsize pos = /*(static_cast<std::streamsize>(n) * m_header->GetDataRecordLength()) +*/ m_header->GetDataOffset();    
