@@ -691,12 +691,12 @@ void Header::SetSchema(const Schema& format)
     
 } 
 
-void Header::SetIsCompressed(bool b)
+void Header::SetCompressed(bool b)
 {
     m_isCompressed = b;
 }
 
-bool Header::IsCompressed() const
+bool Header::Compressed() const
 {
     return m_isCompressed;
 }

@@ -162,7 +162,7 @@ void Header::read()
 
     if (n1 >> 7)
     {
-        m_header->SetIsCompressed(true);
+        m_header->SetCompressed(true);
         n1 &= 0x7f;
     }
 
@@ -311,7 +311,7 @@ void Header::read()
         std::ios::off_type remainder = point_bytes % length;
         
 
-        if ( !m_header->IsCompressed() && m_header->GetPointRecordsCount() != static_cast<uint32_t>(count)) {
+        if ( !m_header->Compressed() && m_header->GetPointRecordsCount() != static_cast<uint32_t>(count)) {
             if (remainder == 0)
             {
                 // The point bytes are exactly long enough, let's use it

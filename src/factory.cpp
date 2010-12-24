@@ -83,7 +83,7 @@ Reader ReaderFactory::CreateWithStream(std::istream& stream)
     h->read();
     HeaderPtr header = h->GetHeader();
 
-    if (header->IsCompressed())
+    if (header->Compressed())
     {
 #ifdef HAVE_LASZIP
         ReaderIPtr r = ReaderIPtr(new detail::ZipReaderImpl(stream) );
@@ -107,7 +107,7 @@ Writer WriterFactory::CreateWithImpl(WriterIPtr w)
 
 WriterIPtr WriterFactory::CreateWithStream(std::ostream& stream, Header const& header)
 {
-    if (header.IsCompressed())
+    if (header.Compressed())
     {
 #ifdef HAVE_LASZIP
         WriterIPtr w  = WriterIPtr(new detail::ZipWriterImpl(stream));

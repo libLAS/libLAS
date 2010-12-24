@@ -328,11 +328,11 @@ int main(int argc, char* argv[])
         switch (WriterFactory::InferFileTypeFromExtension(output))
         {
         case WriterFactory::FileType_LAS:
-            header.SetIsCompressed(false);
+            header.SetCompressed(false);
             break;
         case WriterFactory::FileType_LAZ:
 #ifdef HAVE_LASZIP
-            header.SetIsCompressed(true);
+            header.SetCompressed(true);
 #else
             throw std::runtime_error("Compression support not enabled in liblas configuration");
 #endif

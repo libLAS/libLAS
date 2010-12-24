@@ -133,7 +133,7 @@ void ReaderImpl::ReadHeader()
     m_header_reader->read();
     m_header = m_header_reader->GetHeader();
 
-    if (m_header->IsCompressed())
+    if (m_header->Compressed())
         throw std::runtime_error("Internal error: uncompressed reader encountered compressed header"); 
         
     m_point->SetHeaderPtr(m_header);

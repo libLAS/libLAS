@@ -351,10 +351,10 @@ public:
     
     /// Returns true iff the file is compressed (laszip),
     /// as determined by the high bit in the point type
-    bool IsCompressed() const;
+    bool Compressed() const;
 
     /// Sets whether or not the points are compressed.
-    void SetIsCompressed(bool b);
+    void SetCompressed(bool b);
 
     void to_rst(std::ostream& os) const;
     void to_xml(std::ostream& os) const;
