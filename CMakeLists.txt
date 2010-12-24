@@ -284,10 +284,16 @@ endif()
 # LASZIP support - optional, default=OFF
 set(WITH_LASZIP FALSE CACHE BOOL "Choose if LASZIP support should be built")
 if(WITH_LASZIP)
-  include_directories(${LASZIP_INCLUDE_DIR})
-  add_definitions(-DHAVE_LASZIP=1)
-  mark_as_advanced(CLEAR LASZIP_INCLUDE_DIR) 
-  mark_as_advanced(CLEAR LASZIP_LIBRARY) 
+  find_package(LASzip 1.0.0)
+
+  if(LASZIP_FOUND)    
+    set(CMAKE_REQUIRED_LIBRARIES ${LASZIP_LIBRARY})
+    include_directories(${LASZIP_INCLUDE_DIR})
+    add_definitions(-DHAVE_LASZIP=1)
+    mark_as_advanced(CLEAR LASZIP_INCLUDE_DIR) 
+    mark_as_advanced(CLEAR LASZIP_LIBRARY) 
+    mark_as_advanced(CLEAR LASZIP_VERSION) 
+  endif()
 endif()
 
 ###############################################################################
