@@ -132,11 +132,13 @@ void ReaderImpl::ReadHeader()
     
     m_header_reader->read();
     m_header = m_header_reader->GetHeader();
-    m_point->SetHeaderPtr(m_header);
-    
-    Reset();
-    
 
+    if (m_header->IsCompressed())
+        throw std::runtime_error("Internal error: uncompressed reader encountered compressed header"); 
+        
+    m_point->SetHeaderPtr(m_header);
+
+    Reset();
 }
 
 void ReaderImpl::SetHeader(liblas::Header const& header) 
