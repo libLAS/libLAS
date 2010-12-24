@@ -592,7 +592,8 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
             
         } 
 
-        liblas::Reader reader(ifs);
+        liblas::ReaderFactory f;
+        liblas::Reader reader = f.CreateWithStream(ifs);
 
         write_points(  reader,
                     *os,
