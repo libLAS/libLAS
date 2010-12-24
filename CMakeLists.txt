@@ -12,6 +12,7 @@ project(libLAS)
 SET(LIBLAS_VERSION_MAJOR "1")
 SET(LIBLAS_VERSION_MINOR "6")
 SET(LIBLAS_VERSION_PATCH "0b3")
+set(VERSION "${LIBLAS_VERSION_MAJOR}.${LIBLAS_VERSION_MINOR}.${LIBLAS_VERSION_PATCH}")
 
 if(WIN32)
   # Name of C++ library
@@ -308,7 +309,6 @@ else()
   set(DEFAULT_LIB_SUBDIR lib)
   set(DEFAULT_DATA_SUBDIR share/liblas)
   set(DEFAULT_INCLUDE_SUBDIR include)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/apps/liblas-config.in ${CMAKE_CURRENT_BINARY_DIR}/apps/liblas-config)
 endif()
 
 # Locations are changeable by user to customize layout of libLAS installation
