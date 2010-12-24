@@ -460,7 +460,8 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
                 std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
                 return 1;
             }
-            liblas::Reader reader(ifs);
+            liblas::ReaderFactory f;
+            liblas::Reader reader = f.CreateWithStream(ifs);
             header = reader.GetHeader();
         } else {
             std::cerr << "Input LAS file not specified!\n";
