@@ -199,6 +199,12 @@ bool process(   std::string const& input,
     if (verbose)
         std::cout << std::endl;
 
+    // cheap hackery.  We need the Writer to disappear before the stream.  
+    // Fix this up to not suck so bad.
+    writer = WriterPtr();
+    ofs->close();
+    ofs = OStreamPtr();
+    
     if (!split_mb && !split_pts) {
         reader.Reset();
 
@@ -207,11 +213,6 @@ bool process(   std::string const& input,
         RewriteHeader(hnew, output);
     }
 
-    // cheap hackery.  We need the Writer to disappear before the stream.  
-    // Fix this up to not suck so bad.
-    writer = WriterPtr();   
-    ofs = OStreamPtr();
-    
     return true;
 }
 
