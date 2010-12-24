@@ -238,6 +238,9 @@ void ZipReaderImpl::ReadHeader()
     m_header_reader->read();
     m_header = m_header_reader->GetHeader();
 
+    if (!m_header->IsCompressed())
+        throw std::runtime_error("Internal error: compressed reader encountered uncompressed header"); 
+
     m_point->SetHeaderPtr(m_header);
 
     Reset();
@@ -260,7 +263,10 @@ void ZipReaderImpl::ReadIdiom()
 
     std::vector<boost::uint8_t> v(m_lz_point_size);
     for (unsigned int i=0; i<m_lz_point_size; i++)
+    {
         v[i] = m_lz_point_data[i];
+        //printf("%d %d\n", v[i], i);
+    }
     m_point->SetData(v);
 
     ++m_current;
