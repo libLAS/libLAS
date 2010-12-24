@@ -119,22 +119,23 @@ liblas::Header FetchHeader(std::string const& filename)
 }
 void RewriteHeader(liblas::Header const& header, std::string const& filename)
 {
-
     std::ios::openmode m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
 
+    // Write a blank PointRecordsByReturnCount first
+    std::ofstream ofs(filename.c_str(), m);
     {
-        // Write a blank PointRecordsByReturnCount first
-        std::ofstream ofs(filename.c_str(), m);
+        // scope this, so the dtor can write to the stream before we close it
         liblas::Writer writer(ofs, header);
-        ofs.close();
     }
+    ofs.close();
     
+    // Write our updated header with summary info
+    std::ofstream ofs2(filename.c_str(), m);
     {
-        // Write our updated header with summary info
-        std::ofstream ofs2(filename.c_str(), m);
+        // scope this, so the dtor can write to the stream before we close it
         liblas::Writer writer2(ofs2, header);
-        ofs2.close();
     }
+    ofs2.close();
 }  
   
 void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& header)
