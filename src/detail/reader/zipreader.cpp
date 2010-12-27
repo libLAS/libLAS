@@ -118,7 +118,7 @@ void ZipReaderImpl::Reset()
 
         ConstructItems();
 
-        unsigned int stat = m_unzipper->open(m_ifs, m_num_items, m_items, LASZIP_COMPRESSION_DEFAULT);
+        unsigned int stat = m_unzipper->open(m_ifs, m_num_items, m_items, LASzip::COMPRESSION_DEFAULT);
         if (stat != 0)
             throw liblas_error("Failed to open laszip decompression engine"); 
     }

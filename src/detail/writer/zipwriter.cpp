@@ -171,7 +171,7 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
 
         ConstructItems();
 
-        unsigned int stat = m_zipper->open(m_ofs, m_num_items, m_items, LASZIP_COMPRESSION_DEFAULT);
+        unsigned int stat = m_zipper->open(m_ofs, m_num_items, m_items, LASzip::COMPRESSION_DEFAULT);
         if (stat != 0)
             throw liblas_error("Error opening compression engine");
     }
