@@ -731,11 +731,11 @@ liblas::property_tree::ptree Header::GetPTree( ) const
     pt.put("size", GetHeaderSize());
     pt.put("dataoffset", GetDataOffset());
 
-    
     pt.put("count", GetPointRecordsCount());
     pt.put("dataformatid", GetDataFormatId());
     pt.put("datarecordlength", GetDataRecordLength());
-    
+    pt.put("compressed", Compressed());
+
     ptree return_count;
     liblas::Header::RecordsByReturnArray returns = GetPointRecordsByReturnCount();
     for (boost::uint32_t i=0; i< 5; i++){
@@ -807,7 +807,7 @@ void Header::to_rst(std::ostream& os) const
 
     os << "  Point Data Format:           " << tree.get<boost::uint32_t>("dataformatid") << std::endl;
     os << "  Number of Point Records:     " << tree.get<boost::uint32_t>("count") << std::endl;
-
+    os << "  Compressed:                  " << (tree.get<bool>("compressed")?"True":"False") << std::endl;
     std::ostringstream returns_oss;
     BOOST_FOREACH(ptree::value_type &v,
           tree.get_child("returns"))
