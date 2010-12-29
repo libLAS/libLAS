@@ -233,6 +233,11 @@ target_link_libraries(${LIBLAS_C_LIB_NAME}
   ${LASZIP_LIBRARY}
   ${Boost_LIBRARIES})
 
+set_target_properties(${LIBLAS_LIB_NAME}
+  PROPERTIES SOVERSION "${LIBLAS_LIB_SOVERSION}" )
+set_target_properties(${LIBLAS_C_LIB_NAME}
+  PROPERTIES SOVERSION "${LIBLAS_C_LIB_SOVERSION}" )
+
 if (APPLE)
   set_target_properties(
     ${LIBLAS_C_LIB_NAME}
