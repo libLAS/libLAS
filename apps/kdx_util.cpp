@@ -151,7 +151,7 @@ bool GetPointData(  liblas::Point const& p,
     // Classification is only a single byte, but 
     // we need to store it in an 8 byte big-endian 
     // double to satisfy OPC
-    for (int i = sizeof(double) - 1; i >= 0; i--) {
+    for (int i = sizeof(boost::uint8_t) - 1; i >= 0; i--) {
         point_data.push_back(c_b[i]);
     }
 
