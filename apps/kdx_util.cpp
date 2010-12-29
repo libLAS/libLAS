@@ -113,7 +113,7 @@ bool GetPointData(  liblas::Point const& p,
     // std::cout.precision(6);
     // std::cout.setf(std::ios::fixed);
     // // std::cout << "X: " << x << " y: " << y << " z: " << z << std::endl;
-    boost::uint8_t c = p.GetClassification().GetClass();
+    double c = static_cast<double>(p.GetClassification().GetClass());
 
     boost::uint8_t* x_b =  reinterpret_cast<boost::uint8_t*>(&x);
     boost::uint8_t* y_b =  reinterpret_cast<boost::uint8_t*>(&y);
