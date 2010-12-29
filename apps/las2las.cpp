@@ -245,7 +245,8 @@ int main(int argc, char* argv[])
     
     std::vector<liblas::FilterPtr> filters;
     std::vector<liblas::TransformPtr> transforms;
-    
+
+    bool bCompressed = false;
     liblas::Header header;
 
     try {
@@ -265,7 +266,7 @@ int main(int argc, char* argv[])
             ("split-pts", po::value<boost::uint32_t>(&split_pts)->default_value(0), "Split file into multiple files with each being this many points or less. If this value is 0, no splitting is done")
             ("input,i", po::value< string >(), "input LAS file")
             ("output,o", po::value< string >(&output)->default_value("output.las"), "output LAS file")
-            ("output-format", po::value< string >(&output_format)->default_value(""), "output format type ('las' or 'laz')")
+            ("compressed,c", po::value<bool>(&bCompressed)->zero_tokens()->implicit_value(true), "Produce .laz compressed data")
             ("verbose,v", po::value<bool>(&verbose)->zero_tokens(), "Verbose message output")
         ;
 
@@ -327,23 +328,10 @@ int main(int argc, char* argv[])
         // Transforms alter our header as well.  Setting scales, offsets, etc.
         transforms = GetTransforms(vm, verbose, header);
 
-        WriterFactory::FileType output_file_type = WriterFactory::FileType_Unknown;
-        if (output_format == "")
-        {
-            // use file extension
-            output_file_type = WriterFactory::InferFileTypeFromExtension(output);
-        }
-        else if (output_format == "las")
-        {
-            output_file_type = WriterFactory::FileType_LAS;
-        }
-        else if (output_format == "laz")
+        WriterFactory::FileType output_file_type = WriterFactory::FileType_LAS;
+        if (bCompressed)
         {
             output_file_type = WriterFactory::FileType_LAZ;
-        }
-        else
-        {
-            output_file_type = WriterFactory::FileType_Unknown;
         }
 
         switch (output_file_type)
@@ -355,7 +343,7 @@ int main(int argc, char* argv[])
 #ifdef HAVE_LASZIP
             header.SetCompressed(true);
 #else
-            throw configuration_error("Compression support not enabled in liblas configuration");
+            throw configuration_error("LASzip compression support not enabled in this libLAS configuration.");
 #endif
             break;
         case WriterFactory::FileType_Unknown:
