@@ -72,10 +72,14 @@ set(CMAKE_MODULE_PATH ${libLAS_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 ###############################################################################
 # General build settings
 
-# Default to release mode 
+# Default to debug mode until final 1.6.0 release 
 if(NOT MSVC_IDE)
-  set(CMAKE_BUILD_TYPE Release CACHE STRING 
-    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel")
+  if(NOT CMAKE_BUILD_TYPE)
+
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING 
+    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
+  endif()
+    message(STATUS "Setting libLAS build type - ${CMAKE_BUILD_TYPE}")
 endif()
 
 # TODO: Still testing the output paths --mloskot
