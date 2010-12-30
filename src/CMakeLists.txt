@@ -212,6 +212,7 @@ endif()
 
 if(WIN32)
     add_definitions("-DLAS_DLL_EXPORT=1")
+    add_definitions("-DLASZIP_DLL_IMPORT=1")
 endif()
 
 add_library(${LIBLAS_LIB_NAME} SHARED ${LIBLAS_SOURCES})
