@@ -52,6 +52,10 @@ set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 set(WITH_UTILITIES TRUE CACHE BOOL "Choose if libLAS utilities should be built")
 set(WITH_TESTS TRUE CACHE BOOL "Choose if libLAS unit tests should be built")
 
+# Choose to use pkg-config or not
+set(WITH_PKGCONFIG FALSE CACHE BOOL
+  "Choose whether a pkgconfig file (libLAS.pc) should be installed")
+
 # Enable CTest and submissions to libLAS dashboard at CDash
 # http://my.cdash.org/index.php?project=libLAS
 set(ENABLE_CTEST FALSE CACHE BOOL
