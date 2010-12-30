@@ -188,17 +188,45 @@ install(TARGETS ${LIBLAS_UTILITIES}
 
 if(UNIX)
 
-  # Autoconf compatibility variables to use the same script source.
-  set(prefix ${CMAKE_INSTALL_PREFIX})
-  set(exec_prefix ${CMAKE_INSTALL_PREFIX}/bin)
-  set(libdir ${CMAKE_INSTALL_PREFIX}/lib)
+  if(WITH_PKGCONFIG)
+    
+    set(PKGCFG_PREFIX "${CMAKE_INSTALL_PREFIX}")
+    set(PKGCFG_INC_DIR "${CMAKE_INSTALL_PREFIX}/${LIBLAS_INCLUDE_SUBDIR}")
+    set(PKGCFG_LIB_DIR "${CMAKE_INSTALL_PREFIX}/${LIBLAS_LIB_SUBDIR}")
+    set(PKGCFG_REQUIRES  "")
+    set(PKGCFG_VERSION ${VERSION})
+    set(PKGCFG_LINK_FLAGS "-llas -llas_c")
+    set(PKGCFG_COMPILE_FLAGS "")
+    if(LIBXML2_FOUND)
+      set(PKGCFG_REQUIRES "${PKGCFG_REQUIRES} libxml-2.0")
+    endif()
+    if(GEOTIFF_FOUND)
+      set(PKGCFG_REQUIRES "${PKGCFG_REQUIRES} geotiff")
+    endif()
+    #  if(WITH_GDAL)
+    #    set(PKGCFG_INC_DIR "${PKGCFG_INC_DIR} ${GDAL_INCLUDE_DIR}")
+    #  endif()
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liblas.pc.in
+      ${CMAKE_CURRENT_BINARY_DIR}/liblas.pc @ONLY)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/liblas.pc
+      DESTINATION ${LIBLAS_LIB_DIR}/pkgconfig
+      PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+    
+  else()
 
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liblas-config.in
-    ${CMAKE_CURRENT_BINARY_DIR}/liblas-config @ONLY)
+    # Autoconf compatibility variables to use the same script source.
+    set(prefix ${CMAKE_INSTALL_PREFIX})
+    set(exec_prefix ${CMAKE_INSTALL_PREFIX}/bin)
+    set(libdir ${CMAKE_INSTALL_PREFIX}/lib)
+    
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liblas-config.in
+      ${CMAKE_CURRENT_BINARY_DIR}/liblas-config @ONLY)
+    
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/liblas-config
+      DESTINATION bin/
+      PERMISSIONS
+      OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/liblas-config
-    DESTINATION bin/
-    PERMISSIONS
-    OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+  endif()
 
 endif()
