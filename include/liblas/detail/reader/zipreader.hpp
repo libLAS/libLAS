@@ -46,7 +46,6 @@
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/reader/header.hpp>
-#include <liblas/liblas.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std
@@ -59,6 +58,7 @@ class LASunzipper;
 
 namespace liblas { namespace detail { 
 
+class ZipPoint;
 typedef boost::shared_ptr< reader::Header > HeaderReaderPtr;
 
 class ZipReaderImpl : public ReaderI
@@ -101,15 +101,10 @@ protected:
     std::vector<liblas::TransformPtr> m_transforms;
 
 private:
-    void ConstructItems();
     void ReadIdiom();
 
     LASunzipper* m_unzipper;
-    unsigned int m_num_items;
-    LASitem* m_items;
-    unsigned char** m_lz_point;
-    unsigned char* m_lz_point_data;
-    unsigned int m_lz_point_size;
+    ZipPoint* m_zipPoint;
 
     // Blocked copying operations, declared but not defined.
     ZipReaderImpl(ZipReaderImpl const& other);

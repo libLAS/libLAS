@@ -44,6 +44,7 @@
 #include <liblas/liblas.hpp>
 #include <liblas/detail/reader/zipreader.hpp>
 #include <liblas/detail/private_utility.hpp>
+#include <liblas/detail/zippoint.hpp>
 // laszip
 #include <laszip/lasunzipper.hpp>
 // boost
@@ -73,11 +74,7 @@ ZipReaderImpl::ZipReaderImpl(std::istream& ifs)
     , m_filters(0)
     , m_transforms(0),
     m_unzipper(NULL),
-    m_num_items(0),
-    m_items(NULL),
-    m_lz_point(NULL),
-    m_lz_point_data(NULL),
-    m_lz_point_size(0)
+    m_zipPoint(NULL)
 {
     return;
 }
@@ -91,12 +88,7 @@ ZipReaderImpl::~ZipReaderImpl()
         m_unzipper = NULL;
     }
 
-    m_num_items = 0;
-    delete[] m_items;
-    m_items = NULL;
-
-    delete[] m_lz_point;
-    delete[] m_lz_point_data;
+    delete m_zipPoint;
 
     return;
 }
@@ -116,78 +108,12 @@ void ZipReaderImpl::Reset()
     {
         m_unzipper = new LASunzipper();
 
-        ConstructItems();
+        PointFormatName format = m_header->GetDataFormatId();
+        m_zipPoint = new ZipPoint(format);
 
-        unsigned int stat = m_unzipper->open(m_ifs, m_num_items, m_items, LASzip::COMPRESSION_DEFAULT);
+        unsigned int stat = m_unzipper->open(m_ifs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::COMPRESSION_DEFAULT);
         if (stat != 0)
             throw liblas_error("Failed to open laszip decompression engine"); 
-    }
-
-    return;
-}
-
-
-void ZipReaderImpl::ConstructItems()
-{
-    PointFormatName format = m_header->GetDataFormatId();
-
-    switch (format)
-    {
-    case ePointFormat0:
-        m_num_items = 1;
-        m_items = new LASitem[1];
-        m_items[0].set(LASitem::POINT10);
-        break;
-
-    case ePointFormat1:
-        m_num_items = 2;
-        m_items = new LASitem[2];
-        m_items[0].set(LASitem::POINT10);
-        m_items[1].set(LASitem::GPSTIME11);
-        break;
-
-    case ePointFormat2:
-        m_num_items = 2;
-        m_items = new LASitem[2];
-        m_items[0].set(LASitem::POINT10);
-        m_items[1].set(LASitem::RGB12);
-        break;
-
-    case ePointFormat3:
-        m_num_items = 3;
-        m_items = new LASitem[3];
-        m_items[0].set(LASitem::POINT10);
-        m_items[1].set(LASitem::GPSTIME11);
-        m_items[2].set(LASitem::RGB12);
-        break;
-
-    case ePointFormat4:
-        m_num_items = 3;
-        m_items = new LASitem[3];
-        m_items[0].set(LASitem::POINT10);
-        m_items[1].set(LASitem::GPSTIME11);
-        m_items[2].set(LASitem::WAVEPACKET13);
-        break;
-
-    default:
-        throw liblas_error("Bad point format in header"); 
-    }
-
-    // construct the object that will hold a laszip point
-
-    // compute the point size
-    m_lz_point_size = 0;
-    for (unsigned int i = 0; i < m_num_items; i++) 
-        m_lz_point_size += m_items[i].size;
-
-    // create the point data
-    unsigned int point_offset = 0;
-    m_lz_point = new unsigned char*[m_num_items];
-    m_lz_point_data = new unsigned char[m_lz_point_size];
-    for (unsigned i = 0; i < m_num_items; i++)
-    {
-        m_lz_point[i] = &(m_lz_point_data[point_offset]);
-        point_offset += m_items[i].size;
     }
 
     return;
@@ -257,14 +183,14 @@ void ZipReaderImpl::ReadIdiom()
     //////++m_current;
     //////*m_point = m_point_reader->GetPoint();
 
-    bool ok = m_unzipper->read(m_lz_point);
+    bool ok = m_unzipper->read(m_zipPoint->m_lz_point);
     if (!ok)
         throw liblas_error("Error reading compressed point data");
 
-    std::vector<boost::uint8_t> v(m_lz_point_size);
-    for (unsigned int i=0; i<m_lz_point_size; i++)
+    std::vector<boost::uint8_t> v(m_zipPoint->m_lz_point_size);
+    for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
     {
-        v[i] = m_lz_point_data[i];
+        v[i] = m_zipPoint->m_lz_point_data[i];
         //printf("%d %d\n", v[i], i);
     }
     m_point->SetData(v);

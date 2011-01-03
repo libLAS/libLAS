@@ -43,6 +43,7 @@
 #include <liblas/variablerecord.hpp>
 #include <liblas/detail/reader/header.hpp>
 #include <liblas/detail/private_utility.hpp>
+#include <liblas/detail/zippoint.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/concept_check.hpp>
@@ -453,9 +454,19 @@ void Header::readvlrs()
         // FIXME: handle custom bytes here.
         m_header->SetSchema(schema);
         boost::ignore_unused_variable_warning(e);
-        
     }
 
+#ifdef HAVE_LASZIP
+    if (m_header->Compressed())
+    {
+         ZipPoint zpd(m_header->GetDataFormatId());
+         bool ok = zpd.ValidateVLR(m_header->GetVLRs());
+         if (!ok)
+         {
+            throw configuration_error("LASzip compression format does not match the LAS header format.");
+         }
+    }
+#endif
 }
 
 }}} // namespace liblas::detail::reader

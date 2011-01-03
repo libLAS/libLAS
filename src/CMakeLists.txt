@@ -88,7 +88,8 @@ set(LIBLAS_DETAIL_HPP
   ${LIBLAS_HEADERS_DIR}/detail/pointrecord.hpp
   ${LIBLAS_HEADERS_DIR}/detail/sha1.hpp
   ${LIBLAS_HEADERS_DIR}/detail/timer.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/private_utility.hpp)
+  ${LIBLAS_HEADERS_DIR}/detail/private_utility.hpp
+  ${LIBLAS_HEADERS_DIR}/detail/zippoint.hpp)
 
 set(LIBLAS_DETAIL_INDEX_HPP
   ${LIBLAS_HEADERS_DIR}/detail/index/indexoutput.hpp
@@ -129,7 +130,8 @@ set(LIBLAS_CPP
   version.cpp)
 
 set(LIBLAS_DETAIL_CPP
-  detail/utility.cpp)
+  detail/utility.cpp
+  detail/zippoint.cpp)
   
 set(LIBLAS_DETAIL_INDEX_CPP
   detail/index/indexcell.cpp

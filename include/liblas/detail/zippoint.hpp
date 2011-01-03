@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  laszip writer implementation for C++ libLAS 
+ * Purpose:  laszip helper functions for C++ libLAS 
  * Author:   Michael P. Gerlek (mpg@flaxen.com)
  *
  ******************************************************************************
@@ -39,15 +39,14 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#ifndef LIBLAS_DETAIL_ZIPWRITER_HPP_INCLUDED
-#define LIBLAS_DETAIL_ZIPWRITER_HPP_INCLUDED
+#ifndef LIBLAS_DETAIL_ZIPPOINT_HPP_INCLUDED
+#define LIBLAS_DETAIL_ZIPPOINT_HPP_INCLUDED
 
 #ifdef HAVE_LASZIP
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/liblas.hpp>
-#include <liblas/detail/writer/point.hpp>
-#include <liblas/detail/writer/header.hpp>
+
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
@@ -58,53 +57,34 @@ class LASitem;
 
 namespace liblas { namespace detail { 
 
-class ZipPoint;
-typedef boost::shared_ptr< writer::Point > PointWriterPtr;
-typedef boost::shared_ptr< writer::Header > HeaderWriterPtr;
-
-class ZipWriterImpl : public WriterI
+class ZipPoint
 {
 public:
+    ZipPoint(PointFormatName);
+    ~ZipPoint();
 
-    ZipWriterImpl(std::ostream& ofs);
-    ~ZipWriterImpl();
-    LASVersion GetVersion() const;
-    void WritePoint(liblas::Point const& record);
+    void ConstructVLR(VariableRecord&) const;
 
-    liblas::Header& GetHeader() const;
-    void WriteHeader();
-
-    void UpdatePointCount(boost::uint32_t count);
-    void SetHeader(liblas::Header const& header);
+    // these will return false iff we find a laszip VLR and it doesn't match
+    // the point format this object wasd constructed with
+    bool ValidateVLR(std::vector<VariableRecord> const& vlrs) const;
+    bool ValidateVLR(const VariableRecord& vlr) const;
     
-    void SetFilters(std::vector<liblas::FilterPtr> const& filters);
-    void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
-
-protected:
-
-    std::ostream& m_ofs;
-     
-    PointWriterPtr m_point_writer;
-    HeaderWriterPtr m_header_writer;
-
-    std::vector<liblas::FilterPtr> m_filters;
-    std::vector<liblas::TransformPtr> m_transforms;
-
-    HeaderPtr m_header;
+    bool IsZipVLR(const VariableRecord& vlr) const;
 
 private:
-    boost::uint32_t m_pointCount;
+    void ConstructItems(PointFormatName);
 
-    LASzipper* m_zipper;
-    ZipPoint* m_zipPoint;
-
-    // block copying operations
-    ZipWriterImpl(ZipWriterImpl const& other);
-    ZipWriterImpl& operator=(ZipWriterImpl const& other);
+public: // for now
+    unsigned int m_num_items;
+    LASitem* m_items;
+    unsigned char** m_lz_point;
+    unsigned char* m_lz_point_data;
+    unsigned int m_lz_point_size;
 };
 
 }} // namespace liblas::detail
 
 #endif // HAVE_LASZIP
 
-#endif // LIBLAS_DETAIL_ZIPWRITER_HPP_INCLUDED
+#endif // LIBLAS_DETAIL_ZIPPOINT_HPP_INCLUDED

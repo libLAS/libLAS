@@ -44,6 +44,7 @@
 #include <liblas/spatialreference.hpp>
 #include <liblas/detail/writer/header.hpp>
 #include <liblas/detail/private_utility.hpp>
+#include <liblas/detail/zippoint.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std
@@ -135,6 +136,19 @@ void Header::write()
             m_header.AddVLR(v);
         }
     
+        // add the laszip VLR, if needed
+        if (m_header.Compressed())
+        {
+#ifdef HAVE_LASZIP
+            ZipPoint zpd(m_header.GetDataFormatId());
+            VariableRecord v;
+            zpd.ConstructVLR(v);
+            m_header.AddVLR(v);
+#else
+            throw configuration_error("LASzip compression support not enabled in this libLAS configuration.");
+#endif
+        }
+
         int32_t difference = m_header.GetDataOffset() - GetRequiredHeaderSize();
 
         if (difference <= 0) 
