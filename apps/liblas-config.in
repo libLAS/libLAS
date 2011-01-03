@@ -95,7 +95,7 @@ case $1 in
     ;;
 
   --defines)
-    echo 
+    echo @LIBLAS_CONFIG_DEFINITIONS@
     ;;
 
   --includes)
@@ -103,7 +103,7 @@ case $1 in
     ;;
 
   --cflags)
-    echo -I${prefix}/include 
+    echo @CMAKE_C_FLAGS@
     ;;
 
   --cxxflags)

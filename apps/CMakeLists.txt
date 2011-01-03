@@ -218,10 +218,18 @@ if(UNIX)
     set(prefix ${CMAKE_INSTALL_PREFIX})
     set(exec_prefix ${CMAKE_INSTALL_PREFIX}/bin)
     set(libdir ${CMAKE_INSTALL_PREFIX}/lib)
-    
+
+    GET_DIRECTORY_PROPERTY(LIBLAS_DEFINITIONS DIRECTORY ${libLAS_SOURCE_DIR}/ COMPILE_DEFINITIONS)   
+
+    set(LIBLAS_CONFIG_DEFINITIONS "")
+    foreach(definition ${LIBLAS_DEFINITIONS})
+        set(LIBLAS_CONFIG_DEFINITIONS "${LIBLAS_CONFIG_DEFINITIONS} -D${definition}")
+    endforeach()
+
+     
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liblas-config.in
       ${CMAKE_CURRENT_BINARY_DIR}/liblas-config @ONLY)
-    
+      
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/liblas-config
       DESTINATION bin/
       PERMISSIONS
