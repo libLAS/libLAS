@@ -144,7 +144,7 @@ void write_tiles(std::string& output,
 }
 void write_index(std::string& output, 
                  liblas::chipper::Chipper& c, 
-                 liblas::Reader& reader, 
+                 liblas::Reader& /*reader*/, 
                  long precision, 
                  bool verbose)
 {

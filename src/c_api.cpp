@@ -136,6 +136,7 @@ static std::map<liblas::Writer*, std::ostream*> writers;
 
 #ifdef _MSC_VER
 # pragma warning(disable: 4127) // warning C4127: conditional expression is constant
+# pragma warning(disable: 4702)  // unreachable code
 #endif
 
 #define VALIDATE_LAS_POINTER0(ptr, func) \
@@ -2131,4 +2132,5 @@ LAS_C_END
 
 #ifdef _MSC_VER
 # pragma warning(default: 4127) // enable warning C4127: conditional expression is constant
+# pragma warning(default: 4702)  // unreachable code
 #endif
