@@ -101,7 +101,7 @@ public:
     /// you have libgeotiff linked in.
     const GTIF* GetGTIF();
 
-    void SetGTIF(const GTIF* pgtiff, const ST_TIFF* ptiff);
+    void SetGTIF(GTIF* pgtiff, ST_TIFF* ptiff);
 
     /// Returns the OGC WKT describing Spatial Reference System.
     /// If GDAL is linked, it uses GDAL's operations and methods to determine 
