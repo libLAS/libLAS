@@ -237,7 +237,7 @@ void Header::write()
     // 16. Point Data Format ID
     n1 = static_cast<uint8_t>(m_header.GetDataFormatId());
     uint8_t n1tmp = n1;
-    if (m_header.Compressed())
+    if (m_header.Compressed()) // high bit set indicates laszip compression
         n1tmp |= 0x80;
     detail::write_n(m_ofs, n1tmp, sizeof(n1tmp));
 
