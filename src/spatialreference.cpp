@@ -437,7 +437,7 @@ void SpatialReference::ResetVLRs()
     }
 }
 
-void SpatialReference::SetGTIF(const GTIF* pgtiff, const ST_TIFF* ptiff) 
+void SpatialReference::SetGTIF(GTIF* pgtiff, ST_TIFF* ptiff) 
 {
     m_gtiff = (GTIF*)pgtiff;
     m_tiff = (ST_TIFF*)ptiff;
@@ -635,7 +635,7 @@ void SpatialReference::SetFromUserInput(std::string const& v)
     
     // OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
     OGRSpatialReference srs(NULL);
-    if (OGRERR_NONE != srs.SetFromUserInput((char *) input))
+    if (OGRERR_NONE != srs.SetFromUserInput(const_cast<char *> (input)))
     {
         throw std::invalid_argument("could not import coordinate system into OSRSpatialReference SetFromUserInput");
     }
@@ -733,7 +733,7 @@ std::string SpatialReference::GetProj4() const
     const char* poWKT = wkt.c_str();
     
     OGRSpatialReference srs(NULL);
-    if (OGRERR_NONE != srs.importFromWkt((char **) &poWKT))
+    if (OGRERR_NONE != srs.importFromWkt(const_cast<char **> (&poWKT)))
     {
         return std::string();
     }
@@ -780,7 +780,7 @@ void SpatialReference::SetProj4(std::string const& v)
     const char* poProj4 = v.c_str();
 
     OGRSpatialReference srs(NULL);
-    if (OGRERR_NONE != srs.importFromProj4((char *) poProj4))
+    if (OGRERR_NONE != srs.importFromProj4(const_cast<char *>(poProj4)))
     {
         throw std::invalid_argument("could not import proj4 into OSRSpatialReference SetProj4");
     }

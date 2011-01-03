@@ -1900,7 +1900,12 @@ LAS_DLL LASErrorEnum LASSRS_SetGTIF(LASSRSH hSRS, const void* pgtiff, const void
     VALIDATE_LAS_POINTER1(pgtiff, "LASSRS_SetGTIF", LE_Failure);
     VALIDATE_LAS_POINTER1(ptiff, "LASSRS_SetGTIF", LE_Failure);
     try {
-        ((liblas::SpatialReference*) hSRS)->SetGTIF((const GTIF*)pgtiff, (const ST_TIFF*) ptiff);
+        const GTIF* cgtiff = static_cast<const GTIF*>(pgtiff);
+        const ST_TIFF* ctiff = static_cast<const ST_TIFF*>(ptiff);
+        GTIF* gtiff = const_cast<GTIF*>(cgtiff);
+        ST_TIFF* tiff = const_cast<ST_TIFF*>(ctiff);
+        
+        ((liblas::SpatialReference*) hSRS)->SetGTIF(gtiff, tiff);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASSRS_SetGTIF");
