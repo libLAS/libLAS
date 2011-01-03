@@ -147,53 +147,20 @@ void ZipPoint::ConstructItems(PointFormatName format)
     return;
 }
 
-static inline boost::uint8_t* putU8(boost::uint8_t* p, boost::uint8_t d)
+template<class T>
+static inline boost::uint8_t* PutBytes(boost::uint8_t* p, T d)
 {
-    memcpy(p, &d, 1);
-    return p+1;
+    LIBLAS_SWAP_BYTES(d);
+    memcpy(p, &d, sizeof(T));
+    return p+sizeof(T);
 }
 
-static inline boost::uint8_t* putU16(boost::uint8_t* p, boost::uint16_t d)
+template<class T>
+static inline boost::uint8_t* GetBytes(boost::uint8_t* p, T& d)
 {
-    // BUG: handle endianness
-    memcpy(p, &d, 2);
-    return p+2;
-}
-
-static inline boost::uint8_t* putU32(boost::uint8_t* p, boost::uint32_t d)
-{
-    memcpy(p, &d, 4);
-    return p+4;
-}
-
-static inline boost::uint8_t* putS64(boost::uint8_t* p, boost::int64_t d)
-{
-    memcpy(p, &d, 8);
-    return p+8;
-}
-
-static inline boost::uint8_t* getU8(boost::uint8_t* p, boost::uint8_t& d)
-{
-    memcpy(&d, p, 1);
-    return p+1;
-}
-
-static inline boost::uint8_t* getU16(boost::uint8_t* p, boost::uint16_t& d)
-{
-    memcpy(&d, p, 2);
-    return p+2;
-}
-
-static inline boost::uint8_t* getU32(boost::uint8_t* p, boost::uint32_t& d)
-{
-    memcpy(&d, p, 4);
-    return p+4;
-}
-
-static inline boost::uint8_t* getS64(boost::uint8_t* p, boost::int64_t& d)
-{
-    memcpy(&d, p, 8);
-    return p+8;
+    memcpy(&d, p, sizeof(T));
+    LIBLAS_SWAP_BYTES(d);
+    return p+sizeof(T);
 }
 
 
@@ -230,34 +197,34 @@ void ZipPoint::ConstructVLR(VariableRecord& v) const
     // will be doing, but since we only ever use the default we'll just
     // use that for now
     boost::uint32_t compression_type = LASzip::COMPRESSION_DEFAULT;
-    p = putU32(p, compression_type);
+    p = PutBytes<boost::uint32_t>(p, compression_type);
 
     boost::uint8_t version_major = LASZIP_VERSION_MAJOR;
-    p = putU8(p, version_major);
+    p = PutBytes<boost::uint8_t>(p, version_major);
     boost::uint8_t version_minor = LASZIP_VERSION_MINOR;
-    p = putU8(p, version_minor);
+    p = PutBytes<boost::uint8_t>(p, version_minor);
     boost::uint16_t version_revision = LASZIP_VERSION_REVISION;
-    p = putU16(p, version_revision);
+    p = PutBytes<boost::uint16_t>(p, version_revision);
     
     boost::uint32_t options = 0;
-    p = putU32(p, options);
+    p = PutBytes<boost::uint32_t>(p, options);
     boost::uint32_t num_chunks = 1;
-    p = putU32(p, num_chunks);
+    p = PutBytes<boost::uint32_t>(p, num_chunks);
     boost::int64_t num_points = -1;
-    p = putS64(p, num_points);
+    p = PutBytes<boost::int64_t>(p, num_points);
     boost::int64_t num_bytes = -1;
-    p = putS64(p, num_bytes);
+    p = PutBytes<boost::int64_t>(p, num_bytes);
     boost::uint16_t num_items = (boost::uint16_t)m_num_items;
-    p = putU16(p, num_items);
+    p = PutBytes<boost::uint16_t>(p, num_items);
 
     for (boost::uint32_t i = 0; i < num_items; i++)
     {
         boost::uint16_t type = (boost::uint16_t)m_items[i].type;
-        p = putU16(p, type);
+        p = PutBytes<boost::uint16_t>(p, type);
         boost::uint16_t size = (boost::uint16_t)m_items[i].size;
-        p = putU16(p, size);
+        p = PutBytes<boost::uint16_t>(p, size);
         boost::uint16_t version = (boost::uint16_t)m_items[i].version;
-        p = putU16(p, version);
+        p = PutBytes<boost::uint16_t>(p, version);
     }
 
     assert(p == data + record_length_after_header);
@@ -343,56 +310,56 @@ bool ZipPoint::ValidateVLR(const VariableRecord& vlr) const
     // will be doing, but since we only ever use the default we'll just
     // use that for now
     boost::uint32_t compression_type = 0;
-    p = getU32(p, compression_type);
+    p = GetBytes<boost::uint32_t>(p, compression_type);
     if (compression_type != LASzip::COMPRESSION_DEFAULT)
         return false;
 
     boost::uint8_t version_major = 0;
-    p = getU8(p, version_major);
+    p = GetBytes<boost::uint8_t>(p, version_major);
     if (version_major != LASZIP_VERSION_MAJOR)
         return false;
     boost::uint8_t version_minor = 0;
-    p = getU8(p, version_minor);
+    p = GetBytes<boost::uint8_t>(p, version_minor);
     if (version_minor != LASZIP_VERSION_MINOR)
         return false;
     boost::uint16_t version_revision = 0;
-    p = getU16(p, version_revision);
+    p = GetBytes<boost::uint16_t>(p, version_revision);
     if (version_revision != LASZIP_VERSION_REVISION)
         return false;
     
     boost::uint32_t options = 0;
-    p = getU32(p, options);
+    p = GetBytes<boost::uint32_t>(p, options);
     if (options != 0)
         return false;
     boost::uint32_t num_chunks = 0;
-    p = getU32(p, num_chunks);
+    p = GetBytes<boost::uint32_t>(p, num_chunks);
     if (num_chunks != 1)
         return false;
     boost::int64_t num_points = 0;
-    p = getS64(p, num_points);
+    p = GetBytes<boost::int64_t>(p, num_points);
     if (num_points != -1)  // BUG: or allow it to match header
         return false;
     boost::int64_t num_bytes = 0;
-    p = getS64(p, num_bytes);
+    p = GetBytes<boost::int64_t>(p, num_bytes);
     if (num_bytes != -1)  // BUG: or allow it to match header
         return false;
     boost::uint16_t num_items = 0;
-    p = getU16(p, num_items);
+    p = GetBytes<boost::uint16_t>(p, num_items);
     if (num_items != (boost::uint16_t)m_num_items)
         return false;
 
     for (boost::uint32_t i = 0; i < num_items; i++)
     {
         boost::uint16_t type = 0;
-        p = getU16(p, type);
+        p = GetBytes<boost::uint16_t>(p, type);
         if (type != (boost::uint16_t)m_items[i].type)
             return false;
         boost::uint16_t size = 0;
-        p = getU16(p, size);
+        p = GetBytes<boost::uint16_t>(p, size);
         if (size != (boost::uint16_t)m_items[i].size)
             return false;
         boost::uint16_t version = 0;
-        p = getU16(p, version);
+        p = GetBytes<boost::uint16_t>(p, version);
         if (version != (boost::uint16_t)m_items[i].version)
             return false;
     }
