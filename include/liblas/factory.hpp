@@ -102,6 +102,7 @@ public:
     /// @exception nothrow
     ~WriterFactory() {};
 
+    // returns Unknown, unless we find a .laz or .las extension
     static FileType InferFileTypeFromExtension(const std::string&);
 private:
 

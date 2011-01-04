@@ -328,10 +328,26 @@ int main(int argc, char* argv[])
         // Transforms alter our header as well.  Setting scales, offsets, etc.
         transforms = GetTransforms(vm, verbose, header);
 
-        WriterFactory::FileType output_file_type = WriterFactory::FileType_LAS;
+        // our policy for determining the output format is this:
+        //   if -compressed given, use LAZ
+        //   else if we see .las or .laz, use LAS or LAZ (resp.)
+        //   else just use LAS
+        WriterFactory::FileType output_file_type = WriterFactory::FileType_Unknown;
         if (bCompressed)
         {
             output_file_type = WriterFactory::FileType_LAZ;
+        }
+        else 
+        {
+            WriterFactory::FileType ext_type = WriterFactory::InferFileTypeFromExtension(output);
+            if (ext_type != WriterFactory::FileType_Unknown)
+            {
+                output_file_type = ext_type;
+            }
+            else
+            {
+                output_file_type = WriterFactory::FileType_LAS;
+            }
         }
 
         switch (output_file_type)
