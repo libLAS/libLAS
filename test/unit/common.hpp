@@ -87,5 +87,13 @@ void test_file10_point2(liblas::Point const& p);
 // Test of 4th point record in trunk/test/data/TO_core_last_clip.las file
 void test_file10_point4(liblas::Point const& p);
 
+// Test of 1st, 2nd, 3rd point record in trunk/test/data/1.2-with-color.laz file
+void test_file_12Color_point0(liblas::Point const& p);
+void test_file_12Color_point1(liblas::Point const& p);
+void test_file_12Color_point2(liblas::Point const& p);
+
+// make sure we have a valid laszip VLR block
+void test_laszip_vlr(liblas::Header const& header);
+
 } // namespace tut
 

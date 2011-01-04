@@ -20,6 +20,8 @@ SET(LIBLAS_UNIT_TEST_SRC
     transform_test.cpp
     variablerecord_test.cpp
     writer_test.cpp
+    zipreader_test.cpp
+    zipwriter_test.cpp
     liblas_test_suite.cpp)
 
 INCLUDE_DIRECTORIES(

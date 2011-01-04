@@ -202,4 +202,99 @@ void test_file10_point4(liblas::Point const& p)
     ensure_distance(p.GetTime(), double(414093.84360000002), 0.0001);
 }
 
+void test_file_12Color_point0(liblas::Point const& p)
+{
+    ensure_distance(p.GetX(), double(637012.240000), 0.0001);
+    ensure_distance(p.GetY(), double(849028.310000), 0.0001);
+    ensure_distance(p.GetZ(), double(431.660000), 0.0001);
+    ensure_distance(p.GetTime(), double(245380.782550), 0.0001);
+
+    ensure_equals(p.GetReturnNumber(), 1);
+    ensure_equals(p.GetNumberOfReturns(), 1);
+    ensure_equals(p.GetFlightLineEdge(), 0);
+    ensure_equals(p.GetIntensity(), 143);
+    ensure_equals(p.GetScanDirection(), 1);
+    ensure_equals(p.GetScanAngleRank(), -9);
+
+    ensure_equals(p.GetClassification().GetClass(), 1);
+    ensure_equals(p.GetClassification().IsWithheld(), false);
+    ensure_equals(p.GetClassification().IsKeyPoint(), false);
+    ensure_equals(p.GetClassification().IsSynthetic(), false);
+
+    ensure_equals(p.GetColor().GetRed(), 68);
+    ensure_equals(p.GetColor().GetGreen(), 77);
+    ensure_equals(p.GetColor().GetBlue(), 88);
+}
+
+void test_file_12Color_point1(liblas::Point const& p)
+{
+    ensure_distance(p.GetX(), double(636896.330000), 0.0001);
+    ensure_distance(p.GetY(), double(849087.700000), 0.0001);
+    ensure_distance(p.GetZ(), double(446.390000), 0.0001);
+    ensure_distance(p.GetTime(), double(245381.452799), 0.0001);
+
+    ensure_equals(p.GetReturnNumber(), 1);
+    ensure_equals(p.GetNumberOfReturns(), 2);
+    ensure_equals(p.GetFlightLineEdge(), 0);
+    ensure_equals(p.GetIntensity(), 18);
+    ensure_equals(p.GetScanDirection(), 1);
+    ensure_equals(p.GetScanAngleRank(), -11);
+
+    ensure_equals(p.GetClassification().GetClass(), 1);
+    ensure_equals(p.GetClassification().IsWithheld(), false);
+    ensure_equals(p.GetClassification().IsKeyPoint(), false);
+    ensure_equals(p.GetClassification().IsSynthetic(), false);
+
+    ensure_equals(p.GetColor().GetRed(), 54);
+    ensure_equals(p.GetColor().GetGreen(), 66);
+    ensure_equals(p.GetColor().GetBlue(), 68);
+}
+    
+void test_file_12Color_point2(liblas::Point const& p)
+{
+    ensure_distance(p.GetX(), double(636784.740000), 0.0001);
+    ensure_distance(p.GetY(), double(849106.660000), 0.0001);
+    ensure_distance(p.GetZ(), double(426.710000), 0.0001);
+    ensure_distance(p.GetTime(), double(245382.135950), 0.0001);
+
+    ensure_equals(p.GetReturnNumber(), 1);
+    ensure_equals(p.GetNumberOfReturns(), 1);
+    ensure_equals(p.GetFlightLineEdge(), 0);
+    ensure_equals(p.GetIntensity(), 118);
+    ensure_equals(p.GetScanDirection(), 0);
+    ensure_equals(p.GetScanAngleRank(), -10);
+
+    ensure_equals(p.GetClassification().GetClass(), 1);
+    ensure_equals(p.GetClassification().IsWithheld(), false);
+    ensure_equals(p.GetClassification().IsKeyPoint(), false);
+    ensure_equals(p.GetClassification().IsSynthetic(), false);
+
+    ensure_equals(p.GetColor().GetRed(), 112);
+    ensure_equals(p.GetColor().GetGreen(), 97);
+    ensure_equals(p.GetColor().GetBlue(), 114);
+}
+
+void test_laszip_vlr(liblas::Header const& header)
+{
+    bool found_vlr = false;
+
+    std::vector<liblas::VariableRecord> const& vlrs = header.GetVLRs();
+    std::vector<liblas::VariableRecord>::const_iterator it;
+    for (it = vlrs.begin(); it != vlrs.end(); ++it)
+    {
+        liblas::VariableRecord const& vlr = *it;
+        if (vlr.GetUserId(false).compare("laszip encoded") == 0)
+        {
+            ensure_equals(found_vlr, false); // make sure we only find one
+            found_vlr = true;
+
+            ensure_equals(vlr.GetRecordId(), 22204);
+            ensure_equals(vlr.GetRecordLength(), 52);
+        }
+    }
+    
+    ensure_equals(found_vlr, true); // make sure we found exactly one
+
+    return;
+}
 }
