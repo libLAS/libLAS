@@ -101,19 +101,26 @@ void Header::write()
     {
         // We're opened in append mode
         
-        ios::off_type points = end - static_cast<ios::off_type>(m_header.GetDataOffset());
-        ios::off_type count = points / static_cast<ios::off_type>(m_header.GetDataRecordLength());
-        
-        if (points < 0) {
-            std::ostringstream oss;
-            oss << "The header's data offset, " << m_header.GetDataOffset() 
-                <<", is much larger than the size of the file, " << end
-                <<", and something is amiss.  Did you use the right header"
-                <<" offset value?";
-            throw std::runtime_error(oss.str());
+        if (m_header.Compressed())
+        {
+            m_pointCount = m_header.GetPointRecordsCount();
         }
+        else
+        {
+            ios::off_type points = end - static_cast<ios::off_type>(m_header.GetDataOffset());
+            ios::off_type count = points / static_cast<ios::off_type>(m_header.GetDataRecordLength());
+        
+            if (points < 0) {
+                std::ostringstream oss;
+                oss << "The header's data offset, " << m_header.GetDataOffset() 
+                    <<", is much larger than the size of the file, " << end
+                    <<", and something is amiss.  Did you use the right header"
+                    <<" offset value?";
+                throw std::runtime_error(oss.str());
+            }
 
-        m_pointCount = static_cast<uint32_t>(count);
+            m_pointCount = static_cast<uint32_t>(count);
+        }
 
         // Position to the beginning of the file to start writing the header
         m_ofs.seekp(0, ios::beg);
