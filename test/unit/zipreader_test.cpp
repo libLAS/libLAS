@@ -5,7 +5,7 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 
-#ifdef HAVE_LASZIPxxx
+#ifdef HAVE_LASZIP
 
 #include <liblas/liblas.hpp>
 #include <liblas/variablerecord.hpp>
