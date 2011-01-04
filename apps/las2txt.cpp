@@ -213,7 +213,7 @@ std::string GetPointString( std::string const& parse_string,
             break;
         /* the classification */
         case 'c':
-            output << p.GetClassification().GetClass();
+            output << static_cast<boost::uint32_t>(p.GetClassification().GetClass());
             break;
         /* the classification name */
         case 'C':
