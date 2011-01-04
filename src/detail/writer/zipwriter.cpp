@@ -81,6 +81,8 @@ void ZipWriterImpl::WriteHeader()
 
 void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
 {
+    std::streamoff orig_pos = m_ofs.tellp();
+
     boost::uint32_t out = m_pointCount;
     
     if ( count != 0 ) { out = count; }
@@ -90,6 +92,8 @@ void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
     std::streamsize const dataPos = 107; 
     m_ofs.seekp(dataPos, std::ios::beg);
     detail::write_n(m_ofs, out , sizeof(out));
+
+    m_ofs.seekp(orig_pos, std::ios::beg);
 }
 
 
@@ -123,7 +127,7 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
     if (!ok)
         throw liblas_error("Error writing compressed point data");
 
-    /*++m_pointCount;*/
+    ++m_pointCount;
 
     return;
 }
@@ -132,14 +136,14 @@ ZipWriterImpl::~ZipWriterImpl()
 {
     // Try to update the point count on our way out, but we don't really
     // care if we weren't able to write it.
-    /*try
+    try
     {
         UpdatePointCount(0);
         
     } catch (std::runtime_error const&)
     {
         
-    }*/
+    }
 
     delete m_zipper;
     delete m_zipPoint;
