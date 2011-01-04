@@ -123,6 +123,8 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
     if (!ok)
         throw liblas_error("Error writing compressed point data");
 
+    /*++m_pointCount;*/
+
     return;
 }
 
@@ -130,14 +132,14 @@ ZipWriterImpl::~ZipWriterImpl()
 {
     // Try to update the point count on our way out, but we don't really
     // care if we weren't able to write it.
-    //try
-    //{
-    //    UpdatePointCount(0);
-    //    
-    //} catch (std::runtime_error const&)
-    //{
-    //    
-    //}
+    /*try
+    {
+        UpdatePointCount(0);
+        
+    } catch (std::runtime_error const&)
+    {
+        
+    }*/
 
     delete m_zipper;
     delete m_zipPoint;
