@@ -44,9 +44,7 @@ add_custom_target(make_osgeo4w_directories
   COMMAND ${CMAKE_COMMAND} -E echo "Building OSGeo4W install directories")
 
 foreach(utility ${LIBLAS_UTILITIES})
-    MESSAGE("Adding dependency for $utility")
     add_dependencies(  make_osgeo4w_directories  ${utility} )
-
 endforeach()
 
 
