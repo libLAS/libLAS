@@ -26,7 +26,7 @@ IF(LASZIP_INCLUDE_DIR)
 ENDIF()
 
 IF(WIN32)
-  SET(OSGEO4W_IMPORT_LIBRARY laszip_i)
+  SET(OSGEO4W_IMPORT_LIBRARY laszip)
   IF(DEFINED ENV{OSGEO4W_ROOT})
     SET(OSGEO4W_ROOT_DIR $ENV{OSGEO4W_ROOT})
     MESSAGE(STATUS "Trying OSGeo4W using environment variable OSGEO4W_ROOT=$ENV{OSGEO4W_ROOT}")
@@ -35,11 +35,15 @@ IF(WIN32)
     MESSAGE(STATUS "Trying OSGeo4W using default location OSGEO4W_ROOT=${OSGEO4W_ROOT_DIR}")
   ENDIF()
 ENDIF()
-     
+
+
 FIND_PATH(LASZIP_INCLUDE_DIR
   laszip.hpp
   PATH_PREFIXES laszip
   PATHS
+  /usr/include
+  /usr/local/include
+  /tmp/lasjunk/include
   ${OSGEO4W_ROOT_DIR}/include)
 
 SET(LASZIP_NAMES ${OSGEO4W_IMPORT_LIBRARY} laszip)
@@ -47,6 +51,9 @@ SET(LASZIP_NAMES ${OSGEO4W_IMPORT_LIBRARY} laszip)
 FIND_LIBRARY(LASZIP_LIBRARY
   NAMES ${LASZIP_NAMES}
   PATHS
+  /usr/lib
+  /usr/local/lib
+  /tmp/lasjunk/lib
   ${OSGEO4W_ROOT_DIR}/lib)
 
 IF(LASZIP_FOUND)
