@@ -234,6 +234,7 @@ class test_group : public group_base, public test_group_posix
                 }
 #else
                 bool d = delete_obj();
+                (void)d; // unused variable in Release mode
                 assert(d && "delete failed with SEH disabled: runtime bug?");
 #endif
             }
