@@ -219,13 +219,11 @@ void ZipReaderImpl::ReadIdiom(bool recordPoint)
         std::vector<boost::uint8_t>& data = m_point->GetData();
         assert(m_zipPoint->m_lz_point_size == data.size());
         
-        // std::vector<boost::uint8_t> v(m_zipPoint->m_lz_point_size);
         for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
         {
             data[i] = m_zipPoint->m_lz_point_data[i];
             //printf("%d %d\n", v[i], i);
         }
-        // m_point->SetData(v);
 
         ++m_current;
     }
