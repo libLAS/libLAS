@@ -50,7 +50,7 @@ namespace tut
         // Create new LAS file using default header block
         {
             std::ofstream ofs;
-            ofs.open(file_laz, std::ios::out | std::ios::binary);
+            ofs.open(file_laz.c_str(), std::ios::out | std::ios::binary);
 
             // LAS 1.2, Point Format 0
             liblas::Header header;
@@ -64,7 +64,7 @@ namespace tut
         // Read previously created LAS file and check its header block, laszip VLR
         {
             std::ifstream ifs;
-            ifs.open(file_laz, std::ios::in | std::ios::binary);
+            ifs.open(file_laz.c_str(), std::ios::in | std::ios::binary);
             ensure(ifs.is_open());
 
             liblas::ReaderFactory factory;
@@ -85,7 +85,7 @@ namespace tut
     {
         {
             std::ofstream ofs;
-            ofs.open(file_laz, std::ios::out | std::ios::binary);
+            ofs.open(file_laz.c_str(), std::ios::out | std::ios::binary);
 
             // LAS 1.1, Point Format 0
             liblas::Header header;
@@ -123,7 +123,7 @@ namespace tut
         // Read previously create LAS file with 3 point records
         {
             std::ifstream ifs;
-            ifs.open(file_laz, std::ios::in | std::ios::binary);
+            ifs.open(file_laz.c_str(), std::ios::in | std::ios::binary);
             ensure(ifs.is_open());
 
             liblas::ReaderFactory factory;
