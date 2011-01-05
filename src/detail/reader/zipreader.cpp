@@ -106,14 +106,31 @@ void ZipReaderImpl::Reset()
     // we'll create a point reader at this point.
     if (!m_unzipper)
     {
-        m_unzipper = new LASunzipper();
+        try
+        {
+            m_unzipper = new LASunzipper();
+        }
+        catch(...)
+        {
+            throw liblas_error("Failed to open laszip decompression engine (1)"); 
+        }
 
         PointFormatName format = m_header->GetDataFormatId();
         m_zipPoint = new ZipPoint(format);
 
-        unsigned int stat = m_unzipper->open(m_ifs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::COMPRESSION_DEFAULT);
+        unsigned int stat = 1;
+        try
+        {
+            stat = m_unzipper->open(m_ifs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::COMPRESSION_DEFAULT);
+        }
+        catch(...)
+        {
+            throw liblas_error("Failed to open laszip decompression engine (2)"); 
+        }
         if (stat != 0)
-            throw liblas_error("Failed to open laszip decompression engine"); 
+        {
+            throw liblas_error("Failed to open laszip decompression engine (3)"); 
+        }
     }
 
     return;
@@ -183,9 +200,19 @@ void ZipReaderImpl::ReadIdiom()
     //////++m_current;
     //////*m_point = m_point_reader->GetPoint();
 
-    bool ok = m_unzipper->read(m_zipPoint->m_lz_point);
+    bool ok = false;
+    try
+    {
+        ok = m_unzipper->read(m_zipPoint->m_lz_point);
+    }
+    catch(...)
+    {
+        throw liblas_error("Error reading compressed point data (1)");
+    }
     if (!ok)
-        throw liblas_error("Error reading compressed point data");
+    {
+        throw liblas_error("Error reading compressed point data (2)");
+    }
 
     std::vector<boost::uint8_t> v(m_zipPoint->m_lz_point_size);
     for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
