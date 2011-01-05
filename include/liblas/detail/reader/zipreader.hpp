@@ -101,7 +101,8 @@ protected:
     std::vector<liblas::TransformPtr> m_transforms;
 
 private:
-    void ReadIdiom();
+    void ReadIdiom(bool recordPoint);
+    void ResetUnzipper();
 
     LASunzipper* m_unzipper;
     ZipPoint* m_zipPoint;
