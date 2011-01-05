@@ -72,6 +72,11 @@ public:
     void SetHeader(liblas::Header const& header);
     liblas::Point const& GetPoint() const { return *m_point; }
     void ReadNextPoint();
+
+    // Warning: seeking is not supporting in the laszip format, so 
+    // ReadPointAt() and Seek() are implemented to rewind to the 
+    // beginning of the file and read through all the N-1 previous
+    // point first.  That is, these functions are SLOW.
     liblas::Point const& ReadPointAt(std::size_t n);
     void Seek(std::size_t n);
     
