@@ -102,35 +102,34 @@ void write_tiles(std::string& output,
     
     for ( boost::uint32_t i = 0; i < c.GetBlockCount(); ++i )
     {
-        OStreamPtr ofs(new std::ofstream);
-        SummaryPtr summary(new::liblas::CoordinateSummary);
-
         std::ostringstream name;
         name << out << "-" << i <<".las";
+        SummaryPtr summary(new::liblas::CoordinateSummary);        
 
-        const liblas::chipper::Block& b = c.GetBlock(i);
-        header.SetExtent(b.GetBounds());
-
-        WriterPtr writer = start_writer(ofs, name.str(), header);
-
-        
-
-        std::vector<boost::uint32_t> ids = b.GetIDs();
-        
-        
-        for ( boost::uint32_t pi = 0; pi < ids.size(); ++pi )
         {
-            bool read = reader.ReadPointAt(pi);
-            if (read) {
-                liblas::Point const& p = reader.GetPoint();
-                summary->AddPoint(p);
-                writer->WritePoint(p);
+            OStreamPtr ofs(new std::ofstream);
+
+            const liblas::chipper::Block& b = c.GetBlock(i);
+            header.SetExtent(b.GetBounds());
+        
+            WriterPtr writer = start_writer(ofs, name.str(), header);
+
+            std::vector<boost::uint32_t> ids = b.GetIDs();
+        
+        
+            for ( boost::uint32_t pi = 0; pi < ids.size(); ++pi )
+            {
+            
+                bool read = reader.ReadPointAt(ids[pi]);
+                if (read) {
+                    liblas::Point const& p = reader.GetPoint();
+                    summary->AddPoint(p);
+                    writer->WritePoint(p);
+                }
             }
+
+            
         }
-
-
-        writer = WriterPtr();
-        ofs = OStreamPtr();
         
         liblas::Header hnew = FetchHeader(name.str());
         RepairHeader(*summary, hnew);
