@@ -162,21 +162,27 @@ void Header::read()
     read_n(n1, m_ifs, sizeof(n1));
 
     // the high two bits are reserved for laszip compression type
-    uint8_t compression_bits = (n1 & 0xC0) >> 6;
-    if (compression_bits == 0)
+    uint8_t compression_bit_7 = (n1 & 0x80) >> 7;
+    uint8_t compression_bit_6 = (n1 & 0x40) >> 6;
+    if (!compression_bit_7 && !compression_bit_6)
     {
         m_header->SetCompressed(false);
     }
-    else if (compression_bits == 2)
+    else if (compression_bit_7 && !compression_bit_6)
     {
         m_header->SetCompressed(true);
     }
+    else if (compression_bit_7 && compression_bit_6)
+    {
+        throw std::domain_error("This file was compressed with an earlier, experimental version of laszip; please contact 'martin.isenburg@gmail.com' for assistance.");
+    }
     else
     {
+        assert(!compression_bit_7 && compression_bit_6);
         throw std::domain_error("invalid point compression format");
     }
 
-    // strip the hgih bits, to determine point type
+    // strip the high bits, to determine point type
     n1 &= 0x3f;
     if (n1 == liblas::ePointFormat0)
     {
