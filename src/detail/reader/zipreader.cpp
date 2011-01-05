@@ -279,8 +279,6 @@ void ZipReaderImpl::ReadNextPoint()
 // laszip doesn't support seeking, or any want to do a reset, so we do it manually instead
 void ZipReaderImpl::ResetUnzipper()
 {
-    PointFormatName format = m_header->GetDataFormatId();
-
     if (!m_unzipper)
         throw liblas_error("Error resetting uncompression engine (1)");
  
