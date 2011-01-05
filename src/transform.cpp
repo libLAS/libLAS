@@ -46,7 +46,15 @@
 #include <boost/concept_check.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
+
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable: 4100) // unreferenced formal param
+#endif
 #include <boost/algorithm/string/erase.hpp>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif
 
 // std
 #include <sstream>
