@@ -196,10 +196,6 @@ void ZipReaderImpl::SetHeader(liblas::Header const& header)
     
 void ZipReaderImpl::ReadIdiom(bool recordPoint)
 {
-    //////m_point_reader->read();
-    //////++m_current;
-    //////*m_point = m_point_reader->GetPoint();
-
     bool ok = false;
     try
     {
@@ -217,13 +213,12 @@ void ZipReaderImpl::ReadIdiom(bool recordPoint)
     if (recordPoint)
     {
         std::vector<boost::uint8_t>& data = m_point->GetData();
-        assert(m_zipPoint->m_lz_point_size == data.size());
+
+        unsigned int size = m_zipPoint->m_lz_point_size;
+        assert(size == data.size());
         
-        for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
-        {
-            data[i] = m_zipPoint->m_lz_point_data[i];
-            //printf("%d %d\n", v[i], i);
-        }
+        unsigned char* p = m_zipPoint->m_lz_point_data;
+        data.assign(p, p+size);
 
         ++m_current;
     }
