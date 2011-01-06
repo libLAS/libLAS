@@ -121,7 +121,7 @@ void ZipReaderImpl::Reset()
         unsigned int stat = 1;
         try
         {
-            stat = m_unzipper->open(m_ifs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::COMPRESSION_DEFAULT);
+            stat = m_unzipper->open(m_ifs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::DEFAULT_COMPRESSION);
         }
         catch(...)
         {
@@ -281,7 +281,7 @@ void ZipReaderImpl::ResetUnzipper()
     try
     {
         m_unzipper->close();
-        stat = m_unzipper->open(m_ifs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::COMPRESSION_DEFAULT);
+        stat = m_unzipper->open(m_ifs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::DEFAULT_COMPRESSION);
     }
     catch(...)
     {

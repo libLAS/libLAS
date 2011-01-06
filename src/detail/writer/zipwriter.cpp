@@ -121,7 +121,7 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
         unsigned int stat = 1;
         try
         {
-            stat = m_zipper->open(m_ofs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::COMPRESSION_DEFAULT);
+            stat = m_zipper->open(m_ofs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::DEFAULT_COMPRESSION);
         }
         catch(...)
         {

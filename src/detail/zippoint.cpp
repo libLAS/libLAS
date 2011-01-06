@@ -196,7 +196,7 @@ void ZipPoint::ConstructVLR(VariableRecord& v) const
     // the header doesn't know what kind of compression the zipwriter 
     // will be doing, but since we only ever use the default we'll just
     // use that for now
-    boost::uint32_t compression_type = LASzip::COMPRESSION_DEFAULT;
+    boost::uint32_t compression_type = LASzip::DEFAULT_COMPRESSION;
     p = PutBytes<boost::uint32_t>(p, compression_type);
 
     boost::uint8_t version_major = LASZIP_VERSION_MAJOR;
@@ -311,7 +311,7 @@ bool ZipPoint::ValidateVLR(const VariableRecord& vlr) const
     // use that for now
     boost::uint32_t compression_type = 0;
     p = GetBytes<boost::uint32_t>(p, compression_type);
-    if (compression_type != LASzip::COMPRESSION_DEFAULT)
+    if (compression_type != LASzip::DEFAULT_COMPRESSION)
         return false;
 
     boost::uint8_t version_major = 0;
