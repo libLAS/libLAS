@@ -133,26 +133,21 @@ void Summary::AddPoint(liblas::Point const& p)
                 min.SetHeaderPtr(h);
                 max.SetHeaderPtr(h);
                 liblas::Schema const& schema = hdr->GetSchema();
-                try {
+                boost::optional<Dimension const&> red;
+                boost::optional<Dimension const&> green;
+                boost::optional<Dimension const&> blue;
+                boost::optional<Dimension const&> time;
 
-                    schema.GetDimension("Red");
-                    schema.GetDimension("Green");
-                    schema.GetDimension("Blue");
+                red = schema.GetDimension("Red");
+                green = schema.GetDimension("Green");
+                blue = schema.GetDimension("Blue");
+                if (red && green && blue)
                     bHaveColor = true;
-
-                } catch (std::runtime_error const&)
-                {
+                else 
                     bHaveColor = false;
-                }
-                try {
 
-                    schema.GetDimension("Time");
-                    bHaveTime = true;
-
-                } catch (std::runtime_error const&)
-                {
-                    bHaveTime = false;
-                }
+                time = schema.GetDimension("Time");
+                if (time) bHaveTime = true; else bHaveTime = false;
             } else 
             {
                 min.SetHeaderPtr(HeaderPtr());
@@ -630,25 +625,6 @@ void CoordinateSummary::AddPoint(liblas::Point const& p)
                 min.SetHeaderPtr(h);
                 max.SetHeaderPtr(h);
                 
-                liblas::Schema const& schema = hdr->GetSchema();
-                try {
-
-                    schema.GetDimension("Red");
-                    schema.GetDimension("Green");
-                    schema.GetDimension("Blue");
-                    bHaveColor = true;
-
-                } catch (std::runtime_error const&)
-                {
-                }
-                try {
-
-                    schema.GetDimension("Time");
-                    bHaveTime = true;
-
-                } catch (std::runtime_error const&)
-                {
-                }
             } else 
             {
                 min.SetHeaderPtr(HeaderPtr());
