@@ -16,6 +16,14 @@
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 
+//#define USE_BOOST_IO
+#ifdef USE_BOOST_IO
+#include <ostream>
+#include <boost/iostreams/device/file.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/stream_buffer.hpp>
+#endif
+
 namespace po = boost::program_options;
 
 using namespace liblas;
@@ -23,26 +31,59 @@ using namespace std;
 
 typedef boost::shared_ptr<liblas::Writer> WriterPtr;
 typedef boost::shared_ptr<liblas::CoordinateSummary> SummaryPtr;
-typedef boost::shared_ptr<std::ofstream> OStreamPtr;
 
-WriterPtr start_writer(   OStreamPtr strm, 
+
+static std::ostream* FileCreate(std::string const& filename)
+{
+#ifdef USE_BOOST_IO
+    namespace io = boost::iostreams;
+    io::stream<io::file_sink>* ofs = new io::stream<io::file_sink>();
+    ofs->open(filename.c_str(), std::ios::out | std::ios::binary);
+    if (ofs->is_open() == false) return NULL;
+    return ofs;
+#else
+    std::ofstream* ofs = new std::ofstream();
+    ofs->open(filename.c_str(), std::ios::out | std::ios::binary);
+    if (ofs->is_open() == false) return NULL;
+    return ofs;
+#endif
+}
+
+static std::istream* FileOpen(std::string const& filename)
+{
+#ifdef USE_BOOST_IO
+    namespace io = boost::iostreams;
+    io::stream<io::file_source>* ifs = new io::stream<io::file_source>();
+    ifs->open(filename.c_str(), std::ios::in | std::ios::binary);
+    if (ifs->is_open() == false) return NULL;
+    return ifs;
+#else
+    std::ifstream* ifs = new std::ifstream();
+    ifs->open(filename.c_str(), std::ios::in | std::ios::binary);
+    if (ifs->is_open() == false) return NULL;
+    return ifs;
+#endif
+}
+
+
+WriterPtr start_writer(   std::ostream*& ofs, 
                           std::string const& output, 
                           liblas::Header const& header)
 {
-    
-    if (!liblas::Create(*strm, output.c_str()))
+    ofs = FileCreate(output);
+    if (!ofs)
     {
         std::ostringstream oss;
         oss << "Cannot create " << output << "for write.  Exiting...";
         throw std::runtime_error(oss.str());
     }
 
-    WriterPtr writer( new liblas::Writer(*strm, header));
+    WriterPtr writer( new liblas::Writer(*ofs, header));
     return writer;
     
 }
 
-bool process(   std::string const& input,
+bool process(   std::istream& ifs,
                 std::string const& output,
                 liblas::Header & header,
                 std::vector<liblas::FilterPtr>& filters,
@@ -53,12 +94,7 @@ bool process(   std::string const& input,
                 bool min_offset)
 {
 
-    std::ifstream ifs;
-    if (!liblas::Open(ifs, input.c_str()))
-    {
-        std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
-        return false;
-    }
+
 
     liblas::ReaderFactory f;
     liblas::Reader reader = f.CreateWithStream(ifs);
@@ -99,7 +135,7 @@ bool process(   std::string const& input,
         reader.Reset();
     }
 
-    OStreamPtr ofs(new std::ofstream);
+    std::ostream* ofs = NULL;
     std::string out = output;
     
     WriterPtr writer;
@@ -148,8 +184,10 @@ bool process(   std::string const& input,
 
             // dereference the writer so it is deleted before the ofs
             writer = WriterPtr();
-                        
-            ofs = OStreamPtr(new std::ofstream);
+            
+            delete ofs;
+            ofs = NULL;
+
             ostringstream oss;
             oss << out << "-"<< fileno <<".las";
 
@@ -176,8 +214,9 @@ bool process(   std::string const& input,
             // dereference the writer so it is deleted before the ofs
             writer = WriterPtr();
             
-            
-            ofs = OStreamPtr(new std::ofstream);
+            delete ofs;
+            ofs = NULL;
+
             ostringstream oss;
             oss << out << "-"<< fileno <<".las";
 
@@ -202,9 +241,9 @@ bool process(   std::string const& input,
     // cheap hackery.  We need the Writer to disappear before the stream.  
     // Fix this up to not suck so bad.
     writer = WriterPtr();
-    ofs->close();
-    ofs = OStreamPtr();
-    
+    delete ofs;
+    ofs = NULL;
+        
     if (!split_mb && !split_pts) {
         reader.Reset();
 
@@ -297,17 +336,20 @@ int main(int argc, char* argv[])
             if (verbose)
                 std::cout << "Opening " << input << " to fetch Header" << std::endl;
 
-            std::ifstream ifs;
-            if (!liblas::Open(ifs, input.c_str()))
+            std::istream* ifs = FileOpen(input);
+            if (!ifs)
             {
                 std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
                 return 1;
             }
             // set_ifstream_buffer(ifs, default_buffer_size);
 
-            liblas::ReaderFactory f;
-            liblas::Reader reader = f.CreateWithStream(ifs);
-            header = reader.GetHeader();
+            {// scope the reader, so it goes away before the stream does
+                liblas::ReaderFactory f;
+                liblas::Reader reader = f.CreateWithStream(*ifs);
+                header = reader.GetHeader();
+            }
+            delete ifs;
         } else {
             std::cerr << "Input LAS file not specified!\n";
             OutputHelp(std::cout, options);
@@ -368,7 +410,14 @@ int main(int argc, char* argv[])
             break;
         }
 
-        bool op = process(  input, 
+        std::istream* ifs = FileOpen(input);
+        if (!ifs)
+        {
+            std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
+            return 1;
+        }
+
+        bool op = process(  *ifs, 
                             output,
                             header, 
                             filters,
@@ -382,6 +431,7 @@ int main(int argc, char* argv[])
             return (1);
         }
         
+        delete ifs;
     }
     catch(std::exception& e)
     {
