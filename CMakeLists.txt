@@ -56,6 +56,8 @@ set(WITH_TESTS TRUE CACHE BOOL "Choose if libLAS unit tests should be built")
 set(WITH_PKGCONFIG FALSE CACHE BOOL
   "Choose whether a pkgconfig file (libLAS.pc) should be installed")
 
+set(WITH_ENDIANAWARE FALSE CACHE BOOL "Choose whether or not libLAS should do runtime endianness switching.  Note that this can slow things down considerably if enabled by default")
+
 # Enable CTest and submissions to libLAS dashboard at CDash
 # http://my.cdash.org/index.php?project=libLAS
 set(ENABLE_CTEST FALSE CACHE BOOL
@@ -306,6 +308,9 @@ if(WITH_LASZIP)
   endif()
 endif()
 
+if(WITH_ENDIANAWARE)
+    add_definitions(-DLIBLAS_ENDIAN_AWARE=1)
+endif()
 ###############################################################################
 # Installation settings
 
