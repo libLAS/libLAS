@@ -22,6 +22,9 @@ Current Release(s)
 
 .. _`libLAS-1.6.0b3-src.tar.gz`: http://download.osgeo.org/liblas/libLAS-1.6.0b3.tar.gz
 
+.. note::
+    You may also want :ref:`laszip` for compression support.
+
 .. seealso::
     :ref:`source`
 
