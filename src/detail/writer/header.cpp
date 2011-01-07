@@ -155,6 +155,10 @@ void Header::write()
             throw configuration_error("LASzip compression support not enabled in this libLAS configuration.");
 #endif
         }
+        else
+        {
+            m_header.DeleteVLRs("laszip encoded", 22204);
+        }
 
         int32_t difference = m_header.GetDataOffset() - GetRequiredHeaderSize();
 
