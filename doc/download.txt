@@ -10,7 +10,7 @@ Current Release(s)
 
 * **2010-12-15** 
 
-  - `libLAS-1.6.0b4-src.tar.gz`_ 
+  - `libLAS-1.6.0b4-src.tar.gz  <http://download.osgeo.org/liblas/libLAS-1.6.0b4.tar.gz>`_ 
     `(md5) <http://download.osgeo.org/liblas/libLAS-1.6.0b4.tar.gz.md5>`__ 
 
   - `libLAS-1.6.0b4-src.zip <http://download.osgeo.org/liblas/libLAS-1.6.0b4.zip>`_ 
