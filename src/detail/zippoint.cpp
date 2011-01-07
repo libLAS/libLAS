@@ -230,7 +230,7 @@ void ZipPoint::ConstructVLR(VariableRecord& v) const
     assert(p == data + record_length_after_header);
 
     // Ick.
-    std::vector<uint8_t> vdata;
+    std::vector<boost::uint8_t> vdata;
     for (boost::uint32_t i=0; i<record_length_after_header; i++)
     {
         vdata.push_back(data[i]);
@@ -285,7 +285,7 @@ bool ZipPoint::ValidateVLR(const VariableRecord& vlr) const
     boost::uint8_t* data = new boost::uint8_t[record_length_after_header];
     boost::uint8_t* p = data;
 
-    const std::vector<uint8_t>& vdata = vlr.GetData();
+    const std::vector<boost::uint8_t>& vdata = vlr.GetData();
     for (boost::uint32_t i=0; i<record_length_after_header; i++)
     {
         data[i] = vdata[i];
