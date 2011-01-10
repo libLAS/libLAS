@@ -65,18 +65,18 @@ template <typename T>
 class LAS_DLL Range
 {
 public:
-    T min;
-    T max;
+    T minimum;
+    T maximum;
 
 	typedef T value_type;
 
     Range(T mmin=std::numeric_limits<T>::max(), T mmax=std::numeric_limits<T>::min())
-        : min(mmin), max(mmax) {}
+        : minimum(mmin), maximum(mmax) {}
     
 
     Range(Range const& other)
-        : min(other.min)
-        , max(other.max)
+        : minimum(other.minimum)
+        , maximum(other.maximum)
     {
     }
 
@@ -84,8 +84,8 @@ public:
     {
         if (&rhs != this)
         {
-            min = rhs.min;
-            max = rhs.max;
+            minimum = rhs.minimum;
+            maximum = rhs.maximum;
         }
         return *this;
     }
@@ -103,8 +103,8 @@ public:
     bool equal(Range const& other) const
     {
         
-        if    (!(detail::compare_distance(min, other.min))  
-            || !(detail::compare_distance(max, other.max))) 
+        if    (!(detail::compare_distance(minimum, other.minimum))  
+            || !(detail::compare_distance(maximum, other.maximum))) 
         {
             return false;
         }
@@ -114,61 +114,61 @@ public:
     
     bool overlaps(Range const& r) const 
     {
-        return min <= r.max && max >= r.min;
+        return minimum <= r.maximum && maximum >= r.minimum;
     }
 
     bool contains(Range const& r) const
     {
-        return min <= r.min && r.max <= max;
+        return minimum <= r.minimum && r.maximum <= maximum;
     }
     
     bool contains(T v) const
     {
-        return min <= v && v <= max;
+        return minimum <= v && v <= maximum;
     }
     
     bool empty(void) const 
     {
-        return detail::compare_distance(min, std::numeric_limits<T>::max()) && detail::compare_distance(max, std::numeric_limits<T>::min());
+        return detail::compare_distance(minimum, std::numeric_limits<T>::max()) && detail::compare_distance(maximum, std::numeric_limits<T>::min());
     }
     
     void shift(T v) 
     {
-        min += v;
-        max += v;
+        minimum += v;
+        maximum += v;
     }
     
     void scale(T v) 
     {
-        min *= v;
-        max *= v;
+        minimum *= v;
+        maximum *= v;
     }
     
     void clip(Range const& r)
     {
-        if (r.min > min)
-            min = r.min;
-        if (r.max < max)
-            max = r.max;
+        if (r.minimum > minimum)
+            minimum = r.minimum;
+        if (r.maximum < maximum)
+            maximum = r.maximum;
     }
     
     void grow(T v) 
     {
-        if (v < min) 
-            min = v;
-        if (v > max)
-            max = v;
+        if (v < minimum) 
+            minimum = v;
+        if (v > maximum)
+            maximum = v;
     }
 
     void grow(Range const& r) 
     {
-        grow(r.min);
-        grow(r.max);
+        grow(r.minimum);
+        grow(r.maximum);
     }
 
     T length() const
     {
-        return max - min;
+        return maximum - minimum;
     }
 };
     
@@ -213,13 +213,13 @@ Bounds( T minx,
 {
     ranges.resize(3);
     
-    ranges[0].min = minx;
-    ranges[1].min = miny;
-    ranges[2].min = minz;
+    ranges[0].minimum = minx;
+    ranges[1].minimum = miny;
+    ranges[2].minimum = minz;
 
-    ranges[0].max = maxx;
-    ranges[1].max = maxy;
-    ranges[2].max = maxz;
+    ranges[0].maximum = maxx;
+    ranges[1].maximum = maxy;
+    ranges[2].maximum = maxz;
     
 #ifdef DEBUG
     verify();
@@ -235,11 +235,11 @@ Bounds( T minx,
 
     ranges.resize(2);
 
-    ranges[0].min = minx;
-    ranges[1].min = miny;
+    ranges[0].minimum = minx;
+    ranges[1].minimum = miny;
 
-    ranges[0].max = maxx;
-    ranges[1].max = maxy;
+    ranges[0].maximum = maxx;
+    ranges[1].maximum = maxy;
     
 #ifdef DEBUG
     verify();
@@ -251,13 +251,13 @@ Bounds( const Point& min, const Point& max)
 {
     ranges.resize(3);
     
-    ranges[0].min = min.GetX();
-    ranges[1].min = min.GetY();
-    ranges[2].min = min.GetZ();
+    ranges[0].minimum = min.GetX();
+    ranges[1].minimum = min.GetY();
+    ranges[2].minimum = min.GetZ();
 
-    ranges[0].max = max.GetX();
-    ranges[1].max = max.GetY();
-    ranges[2].max = max.GetZ();
+    ranges[0].maximum = max.GetX();
+    ranges[1].maximum = max.GetY();
+    ranges[2].maximum = max.GetZ();
     
 #ifdef DEBUG
     verify();
@@ -294,7 +294,7 @@ T min(std::size_t const& index) const
         // throw std::runtime_error(msg.str());                
         return 0;
     }
-    return ranges[index].min;
+    return ranges[index].minimum;
 }
 
 void min(std::size_t const& index, T v)
@@ -302,7 +302,7 @@ void min(std::size_t const& index, T v)
     if (ranges.size() <= index) {
         ranges.resize(index + 1);
     }
-    ranges[index].min = v;
+    ranges[index].minimum = v;
 }
 
 T max(std::size_t const& index) const
@@ -314,7 +314,7 @@ T max(std::size_t const& index) const
         // throw std::runtime_error(msg.str());    
         return 0;
     }
-    return ranges[index].max;
+    return ranges[index].maximum;
 }
 
 void max(std::size_t const& index, T v)
@@ -322,19 +322,19 @@ void max(std::size_t const& index, T v)
     if (ranges.size() <= index) {
         ranges.resize(index + 1);
     }
-    ranges[index].max = v;
+    ranges[index].maximum = v;
 }
 
 liblas::Point min() {
     liblas::Point p;
     try 
     {
-        p.SetCoordinates(ranges[0].min, ranges[1].min, ranges[2].min);
+        p.SetCoordinates(ranges[0].minimum, ranges[1].minimum, ranges[2].minimum);
     } 
     catch (std::runtime_error const& e)
     {
         ::boost::ignore_unused_variable_warning(e);
-        p.SetCoordinates(ranges[0].min, ranges[1].min, 0);
+        p.SetCoordinates(ranges[0].minimum, ranges[1].minimum, 0);
         
     }
 
@@ -345,23 +345,23 @@ liblas::Point max() {
     liblas::Point p;
     try 
     {
-        p.SetCoordinates(ranges[0].max, ranges[1].max, ranges[2].max);
+        p.SetCoordinates(ranges[0].maximum, ranges[1].maximum, ranges[2].maximum);
     } 
     catch (std::runtime_error const& e)
     {
         ::boost::ignore_unused_variable_warning(e);
-        p.SetCoordinates(ranges[0].max, ranges[1].max, 0);
+        p.SetCoordinates(ranges[0].maximum, ranges[1].maximum, 0);
         
     }
     return p;
 }
 
-T minx() const { if (ranges.size() == 0) return 0; return ranges[0].min; }
-T miny() const { if (ranges.size() < 2) return 0; return ranges[1].min; }
-T minz() const { if (ranges.size() < 3) return 0; return ranges[2].min; }
-T maxx() const { if (ranges.size() == 0) return 0; return ranges[0].max; }
-T maxy() const { if (ranges.size() < 2) return 0; return ranges[1].max; }
-T maxz() const { if (ranges.size() < 3) return 0; return ranges[2].max; }
+T minx() const { if (ranges.size() == 0) return 0; return ranges[0].minimum; }
+T miny() const { if (ranges.size() < 2) return 0; return ranges[1].minimum; }
+T minz() const { if (ranges.size() < 3) return 0; return ranges[2].minimum; }
+T maxx() const { if (ranges.size() == 0) return 0; return ranges[0].maximum; }
+T maxy() const { if (ranges.size() < 2) return 0; return ranges[1].maximum; }
+T maxz() const { if (ranges.size() < 3) return 0; return ranges[2].maximum; }
 
 inline bool operator==(Bounds<T> const& rhs) const
 {
