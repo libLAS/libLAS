@@ -25,6 +25,32 @@ Development Source
 * Current Trunk: http://hg.liblas.org/zip
 
 
+Background
+------------------------------------------------------------------------------
+
+LASzip is a compression library that was developed by `Martin Isenburg`_ for 
+compressing `ASPRS LAS format`_ data in his :ref:`LAStools <lastools_liblas>`.  
+It has been provided as an `LGPL`_-licensed stand-alone software library to allow 
+other softwares that handle LAS data to read and write LASzip-compressed data.  
+libLAS can optionally take advantage of LASzip as of libLAS 1.6.0b4 to read 
+and write compressed data. Currently, both LAStools and libLAS can 
+interchange data using LASzip compression
+
+The compression can be many times smaller and many times
+faster than `bz2`_, `gzip`_, and `rar` due to the fact that it can take advantage 
+of known and regular data patterns that exist in LAS data.  LASzip uses 
+two widely known and open compression techniques that have been adapted to 
+LAS data to accomplish its task.  The first is a 
 
 
 
+
+
+
+
+.. _`Martin Isenburg`: http://www.cs.unc.edu/~isenburg/lastools/
+.. _`ASPRS LAS format`: http://www.asprs.org/society/committees/standards/lidar_exchange_format.html
+.. _`LGPL`: http://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License
+.. _`bz2`: http://en.wikipedia.org/wiki/Bzip2
+.. _`gz`: http://en.wikipedia.org/wiki/Gzip
+.. _`rar`: http://en.wikipedia.org/wiki/Rar
