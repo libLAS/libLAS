@@ -238,6 +238,12 @@ void ZipReaderImpl::ReadNextPoint()
         throw std::out_of_range("ReadNextPoint: file has no more points to read, end of file reached");
     } 
 
+    if (bNeedHeaderCheck) 
+    {
+        if (m_point->GetHeaderPtr().get() != m_header.get())
+            m_point->SetHeaderPtr(m_header);
+    }
+    
     ReadIdiom(true);
 
     // Filter the points and continue reading until we either find 
@@ -311,6 +317,12 @@ liblas::Point const& ZipReaderImpl::ReadPointAt(std::size_t n)
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
 
+    if (bNeedHeaderCheck) 
+    {
+        if (m_point->GetHeaderPtr().get() != m_header.get())
+            m_point->SetHeaderPtr(m_header);
+    }
+
     ResetUnzipper();
 
     // skip over a whole bunch
@@ -350,7 +362,7 @@ void ZipReaderImpl::Seek(std::size_t n)
 
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
-    
+        
     ResetUnzipper();
 
     // skip over a whole bunch
@@ -373,6 +385,12 @@ void ZipReaderImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
 void ZipReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
     m_transforms = transforms;
+    
+    // Transforms are allowed to change the point, including moving the 
+    // point's HeaderPtr.  We need to check if we need to set that 
+    // back on any subsequent reads.
+    if (m_transforms.size() > 0)
+        bNeedHeaderCheck = true;
 }
 
 }} // namespace liblas::detail

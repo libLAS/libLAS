@@ -105,6 +105,8 @@ protected:
     std::vector<liblas::FilterPtr> m_filters;
     std::vector<liblas::TransformPtr> m_transforms;
 
+    bool bNeedHeaderCheck;
+    
 private:
     void ReadIdiom(bool recordPoint);
     void ResetUnzipper();
