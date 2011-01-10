@@ -106,3 +106,4 @@ DartConfiguration.tcl
 *.vcxproj.filters
 libLAS.opensdf
 libLAS.sdf
+*.tlog
