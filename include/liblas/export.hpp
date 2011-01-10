@@ -48,6 +48,8 @@
 #   define LAS_DLL   __declspec(dllexport)
 #elif defined(LAS_DLL_IMPORT)
 #   define LAS_DLL   __declspec(dllimport)
+#else
+#   define LAS_DLL
 #endif
 #else
 #  if defined(USE_GCC_VISIBILITY_FLAG)
