@@ -225,8 +225,8 @@ void Summary::AddPoint(liblas::Point const& p)
      
         liblas::Classification const& cls = p.GetClassification();
         
-        boost::uint8_t minc = std::min(cls.GetClass(), min.GetClassification().GetClass());
-        boost::uint8_t maxc = std::max(cls.GetClass(), max.GetClassification().GetClass());
+        boost::uint8_t minc = (std::min)(cls.GetClass(), min.GetClassification().GetClass());
+        boost::uint8_t maxc = (std::max)(cls.GetClass(), max.GetClassification().GetClass());
         
         classes[cls.GetClass()]++;
         

@@ -98,9 +98,9 @@ void CachedReaderImpl::CacheData(boost::uint32_t position)
     m_cache_start_position = position;
 
     cache_mask_type::size_type header_size = static_cast<cache_mask_type::size_type>(m_header->GetPointRecordsCount());
-    cache_mask_type::size_type left_to_cache = std::min(m_cache_size, header_size - m_cache_start_position);
+    cache_mask_type::size_type left_to_cache = (std::min)(m_cache_size, header_size - m_cache_start_position);
 
-    cache_mask_type::size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position);
+    cache_mask_type::size_type to_mark = (std::min)(m_cache_size, header_size - old_cache_start_position);
 
     for (uint32_t i = 0; i < to_mark; ++i)
     {
@@ -290,7 +290,7 @@ void CachedReaderImpl::Reset()
     typedef cache_mask_type::size_type size_type;
     size_type old_cache_start_position = m_cache_start_position;
     size_type header_size = static_cast<size_type>(m_header->GetPointRecordsCount());
-    size_type to_mark = std::min(m_cache_size, header_size - old_cache_start_position); 
+    size_type to_mark = (std::min)(m_cache_size, header_size - old_cache_start_position); 
 
     for (uint32_t i = 0; i < to_mark; ++i) {
 

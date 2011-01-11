@@ -51,8 +51,8 @@ namespace liblas { namespace detail {
 IndexCell::IndexCell() :
 	m_FileOffset(0), 
 	m_NumPoints(0), 
-	m_MinZ(numeric_limits<ElevExtrema>::max()), 
-	m_MaxZ(numeric_limits<ElevExtrema>::min())
+	m_MinZ((std::numeric_limits<ElevExtrema>::max())), 
+	m_MaxZ((std::numeric_limits<ElevExtrema>::min()))
 {
 } // IndexCell::IndexCell
 
@@ -94,7 +94,7 @@ boost::uint32_t IndexCell::GetNumZCellRecords(void) const
 
 bool IndexCell::RoomToAdd(boost::uint32_t a)
 {
-	return (m_PtRecords[a] < numeric_limits<ConsecPtAccumulator>::max());
+	return (m_PtRecords[a] < (std::numeric_limits<ConsecPtAccumulator>::max()));
 } // IndexCell::RoomToAdd
 
 void IndexCell::AddPointRecord(boost::uint32_t a)
@@ -115,7 +115,7 @@ bool IndexCell::IncrementPointRecord(boost::uint32_t a)
 
 	if ((MyIT = m_PtRecords.find(a)) != m_PtRecords.end())
 	{
-		if (MyIT->second < numeric_limits<ConsecPtAccumulator>::max())
+		if (MyIT->second < (std::numeric_limits<ConsecPtAccumulator>::max()))
 		{
 			++MyIT->second;
 			++m_NumPoints;
@@ -148,10 +148,10 @@ void IndexCell::RemoveAllRecords(void)
 
 void IndexCell::UpdateZBounds(double TestZ)
 {
-	if (TestZ > numeric_limits<ElevExtrema>::max())
-		m_MaxZ = numeric_limits<ElevExtrema>::max();
-	else if (TestZ < numeric_limits<ElevExtrema>::min())
-		m_MinZ = numeric_limits<ElevExtrema>::min();
+	if (TestZ > (std::numeric_limits<ElevExtrema>::max()))
+		m_MaxZ = (std::numeric_limits<ElevExtrema>::max());
+	else if (TestZ < (std::numeric_limits<ElevExtrema>::min()))
+		m_MinZ = (std::numeric_limits<ElevExtrema>::min());
 	else
 	{
 		if (TestZ > m_MaxZ)
@@ -191,7 +191,7 @@ bool IndexCell::IncrementZCell(boost::uint32_t a, boost::uint32_t b)
 	{
 		if ((YourIT = MyIT->second.find(b)) != MyIT->second.end())
 		{
-			if (YourIT->second < numeric_limits<ConsecPtAccumulator>::max())
+			if (YourIT->second < (std::numeric_limits<ConsecPtAccumulator>::max()))
 			{
 				++YourIT->second;
 				return true;
@@ -227,7 +227,7 @@ bool IndexCell::IncrementSubCell(boost::uint32_t a, boost::uint32_t b)
 	{
 		if ((YourIT = MyIT->second.find(b)) != MyIT->second.end())
 		{
-			if (YourIT->second < numeric_limits<ConsecPtAccumulator>::max())
+			if (YourIT->second < (std::numeric_limits<ConsecPtAccumulator>::max()))
 			{
 				++YourIT->second;
 				return true;

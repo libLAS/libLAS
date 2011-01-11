@@ -30,11 +30,11 @@ KDXIndexSummary::KDXIndexSummary(liblas::Reader& reader, boost::uint32_t capacit
            first = false;
        }
        
-       mins[0] = std::min(mins[0], bnd.min(0));
-       mins[1] = std::min(mins[1], bnd.min(1));
+       mins[0] = (std::min)(mins[0], bnd.min(0));
+       mins[1] = (std::min)(mins[1], bnd.min(1));
        
-       maxs[0] = std::max(maxs[0], bnd.max(0));
-       maxs[1] = std::max(maxs[1], bnd.max(1));
+       maxs[0] = (std::max)(maxs[0], bnd.max(0));
+       maxs[1] = (std::max)(maxs[1], bnd.max(1));
 
        IndexResult result(static_cast<boost::uint32_t>(i));
        result.SetIDs(ids);
@@ -73,11 +73,11 @@ KDXIndexSummary::KDXIndexSummary(std::istream& input) :  bounds(), m_first(true)
             first = false;
         }
         
-        mins[0] = std::min(mins[0], low[0]);
-        mins[1] = std::min(mins[1], low[1]);
+        mins[0] = (std::min)(mins[0], low[0]);
+        mins[1] = (std::min)(mins[1], low[1]);
         
-        maxs[0] = std::max(maxs[0], high[0]);
-        maxs[1] = std::max(maxs[1], high[1]);
+        maxs[0] = (std::max)(maxs[0], high[0]);
+        maxs[1] = (std::max)(maxs[1], high[1]);
         // if (!input.good()) continue;
         
         IDVector ids;

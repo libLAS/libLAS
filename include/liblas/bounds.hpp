@@ -70,7 +70,7 @@ public:
 
 	typedef T value_type;
 
-    Range(T mmin=std::numeric_limits<T>::max(), T mmax=std::numeric_limits<T>::min())
+    Range(T mmin=(std::numeric_limits<T>::max()), T mmax=(std::numeric_limits<T>::min()))
         : minimum(mmin), maximum(mmax) {}
     
 
@@ -129,7 +129,7 @@ public:
     
     bool empty(void) const 
     {
-        return detail::compare_distance(minimum, std::numeric_limits<T>::max()) && detail::compare_distance(maximum, std::numeric_limits<T>::min());
+        return detail::compare_distance(minimum, (std::numeric_limits<T>::max())) && detail::compare_distance(maximum, (std::numeric_limits<T>::min()));
     }
     
     void shift(T v) 

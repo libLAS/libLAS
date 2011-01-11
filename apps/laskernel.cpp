@@ -677,8 +677,8 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
             {
                 int color_val = atoi((*c).c_str());
-                if (color_val < std::numeric_limits<boost::uint16_t>::min() || 
-                    color_val > std::numeric_limits<boost::uint16_t>::max()) 
+                if (color_val < (std::numeric_limits<boost::uint16_t>::min()) || 
+                    color_val > (std::numeric_limits<boost::uint16_t>::max())) 
                 {
                     ostringstream oss;
                     oss << "Color value must be between 0-65536, not " << color_val;

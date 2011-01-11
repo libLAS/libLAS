@@ -768,11 +768,11 @@ VariableRecord Schema::GetVLR() const
     {
         data.push_back(*i);
     }
-    if (data.size() > std::numeric_limits<boost::uint16_t>::max()) {
+    if (data.size() > (std::numeric_limits<boost::uint16_t>::max())) {
         std::ostringstream oss;
         oss << "This schema with length " << data.size() << " does" 
             << " not fit within the maximum VLR size of " 
-            << std::numeric_limits<boost::uint16_t>::max();
+            << (std::numeric_limits<boost::uint16_t>::max());
         throw std::runtime_error(oss.str());
     }
     vlr.SetData(data);

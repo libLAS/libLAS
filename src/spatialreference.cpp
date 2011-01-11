@@ -380,13 +380,13 @@ void SpatialReference::ResetVLRs()
          }
          record.SetData(data);
 
-        if (data.size() > std::numeric_limits<boost::uint16_t>::max())
+        if (data.size() > (std::numeric_limits<boost::uint16_t>::max()))
         {
             std::ostringstream oss;
             std::vector<uint8_t>::size_type overrun = data.size() - static_cast<std::vector<uint8_t>::size_type>(std::numeric_limits<boost::uint16_t>::max());
             oss << "The size of the GeoTIFF GeoAsciiParamsTag, " << data.size() << ", is " << overrun 
                 << " bytes too large to fit inside the maximum size of a VLR which is " 
-                << std::numeric_limits<boost::uint16_t>::max() << " bytes.";
+                << (std::numeric_limits<boost::uint16_t>::max()) << " bytes.";
             throw std::runtime_error(oss.str());
 
         }

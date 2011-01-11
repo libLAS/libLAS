@@ -55,9 +55,9 @@ Color::Color()
 
 Color::Color(boost::uint32_t red, boost::uint32_t green, boost::uint32_t blue)
 {
-    if (red > std::numeric_limits<boost::uint16_t>::max() || 
-        green > std::numeric_limits<boost::uint16_t>::max() || 
-        blue > std::numeric_limits<boost::uint16_t>::max())
+    if (red > (std::numeric_limits<boost::uint16_t>::max()) || 
+        green > (std::numeric_limits<boost::uint16_t>::max()) || 
+        blue > (std::numeric_limits<boost::uint16_t>::max()))
         throw_invalid_color_component();
 
     using boost::uint16_t;
