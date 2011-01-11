@@ -29,8 +29,8 @@ cmake -G %G% ^
     -DGDAL_LIBRARY=%OSGEO4W%\apps\gdal-dev\lib\gdal_i.lib ^
     -DORACLE_INCLUDE_DIR=%ORACLE_HOME%\include ^
     -DORACLE_OCI_LIBRARY=%ORACLE_HOME%\lib\oci.lib ^
-    -DLASZIP_INCLUDE_DIR=%LASZIP_ROOT%\include ^
-    -DLASZIP_LIBRARY=%LASZIP_ROOT%\bin\Release\liblaszip.lib ^
+    -DLASZIP_INCLUDE_DIR=%OSGEO4W%\include ^
+    -DLASZIP_LIBRARY=%OSGEO4W%\lib\laszip.lib ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
     -DCMAKE_VERBOSE_MAKEFILE=OFF ^
     %LIBLAS%
