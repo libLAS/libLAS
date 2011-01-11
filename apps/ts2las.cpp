@@ -289,8 +289,6 @@ void OutputHelp( std::ostream & oss, po::options_description const& options)
 
 int main(int argc, char* argv[])
 {
-    int rc = 0;
-
     std::string input;
     std::string output;
     bool verbose = false;
