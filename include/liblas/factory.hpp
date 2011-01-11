@@ -69,6 +69,10 @@ public:
     Reader CreateCached(std::istream& stream, boost::uint32_t cache_size);
     Reader CreateWithStream(std::istream& stream);
     
+    // help function to create an input stream
+    // returns NULL if failed to open
+    static std::istream* FileOpen(std::string const& filename);
+
     /// Destructor.
     /// @exception nothrow
     ~ReaderFactory() {};
@@ -104,6 +108,11 @@ public:
 
     // returns Unknown, unless we find a .laz or .las extension
     static FileType InferFileTypeFromExtension(const std::string&);
+
+    // help function to create an output stream
+    // returns NULL if failed to open
+    static std::ostream* WriterFactory::FileCreate(std::string const& filename);
+
 private:
 
 };
