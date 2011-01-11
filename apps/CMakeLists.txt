@@ -132,7 +132,7 @@ if(TXT2LAS)
 endif()
 
 if(TS2LAS)
-    add_executable(${TS2LAS} ts2las.cpp )
+    add_executable(${TS2LAS} ts2las.cpp laskernel.cpp)
     target_link_libraries(${TS2LAS} ${APPS_CPP_DEPENDENCIES} )
 endif()
 
