@@ -107,7 +107,7 @@ std::string  GetFullVersion(void) {
 #endif
 
 #ifdef HAVE_LASZIP
-    os << " LasZip " 
+    os << " LASzip " 
        << LASZIP_VERSION_MAJOR << "."
        << LASZIP_VERSION_MINOR << "."
        << LASZIP_VERSION_REVISION;

@@ -41,7 +41,7 @@ std::vector<char> TryReadRawFileData(std::string const& filename)
     std::vector<char> data;
     if (infile->good()){
         size = infile->tellg();
-        data.resize(size);
+        data.resize(static_cast<std::vector<char>::size_type>(size));
         // data = new char [size];
         infile->seekg (0, std::ios::beg);
         infile->read (&data.front(), size);
