@@ -91,10 +91,6 @@ public:
     /// @exception nothrow
     Point const& GetPoint() const;
 
-    /// Provides read-only access to collection of variable-length records.
-    /// @exception nothrow
-    std::vector<VariableRecord> const& GetVLRs() const;
-
     /// Fetches next point record in file.
     /// @exception may throw std::exception
     bool ReadNextPoint();
