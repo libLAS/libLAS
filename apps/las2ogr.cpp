@@ -94,7 +94,7 @@ bool term_progress(std::ostream& os, double complete)
     static int lastTick = -1;
     int tick = static_cast<int>(complete * 40.0);
 
-    tick = (std::min)(40, std::max(0, tick));
+    tick = (std::min)(40, (std::max)(0, tick));
 
     // Have we started a new progress run?  
     if (tick < lastTick && lastTick >= 39)

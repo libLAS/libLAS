@@ -78,15 +78,15 @@ void SetOrdinates(   OWStatement* statement,
                      liblas::Bounds<double> const& extent)
 {
     
-    statement->AddElement(ordinates, extent.min(0));
-    statement->AddElement(ordinates, extent.min(1));
+    statement->AddElement(ordinates, (extent.min)(0));
+    statement->AddElement(ordinates, (extent.min)(1));
     if (extent.dimension() > 2)
-        statement->AddElement(ordinates, extent.min(2));
+        statement->AddElement(ordinates, (extent.min)(2));
     
-    statement->AddElement(ordinates, extent.max(0));
-    statement->AddElement(ordinates, extent.max(1));
+    statement->AddElement(ordinates, (extent.max)(0));
+    statement->AddElement(ordinates, (extent.max)(1));
     if (extent.dimension() > 2)
-        statement->AddElement(ordinates, extent.max(2));
+        statement->AddElement(ordinates, (extent.max)(2));
         
 
 }
@@ -332,9 +332,9 @@ bool CreateSDOEntry(    OWConnection* connection,
     liblas::Bounds<double> e = *query->bounds.get();
 
     if (IsGeographic(connection, srid)) {
-        e.min(0,-180.0); e.max(0,180.0);
-        e.min(1,-90.0); e.max(1,90.0);
-        e.min(2,0.0); e.max(2,20000.0);
+        (e.min)(0,-180.0); (e.max)(0,180.0);
+        (e.min)(1,-90.0); (e.max)(1,90.0);
+        (e.min)(2,0.0); (e.max)(2,20000.0);
 
         tolerance = 0.000000005;
     }
@@ -348,12 +348,12 @@ bool CreateSDOEntry(    OWConnection* connection,
     oss <<  "INSERT INTO user_sdo_geom_metadata VALUES ('" << tableName <<
         "','blk_extent', MDSYS.SDO_DIM_ARRAY(";
     
-    oss << "MDSYS.SDO_DIM_ELEMENT('X', " << e.min(0) << "," << e.max(0) <<"," << tolerance << "),"
-           "MDSYS.SDO_DIM_ELEMENT('Y', " << e.min(1) << "," << e.max(1) <<"," << tolerance << ")";
+    oss << "MDSYS.SDO_DIM_ELEMENT('X', " << (e.min)(0) << "," << (e.max)(0) <<"," << tolerance << "),"
+           "MDSYS.SDO_DIM_ELEMENT('Y', " << (e.min)(1) << "," << (e.max)(1) <<"," << tolerance << ")";
            
     if (bUse3d) {
         oss << ",";
-        oss <<"MDSYS.SDO_DIM_ELEMENT('Z', "<< e.min(2) << "," << e.max(2) << "," << tolerance << ")";
+        oss <<"MDSYS.SDO_DIM_ELEMENT('Z', "<< (e.min)(2) << "," << (e.max)(2) << "," << tolerance << ")";
     }
     oss << ")," << s_srid.str() << ")";
     
@@ -467,16 +467,16 @@ long CreatePCEntry( OWConnection* connection,
 "              mdsys.sdo_elem_info_array"<< s_eleminfo.str() <<",\n"
 "              mdsys.sdo_ordinate_array(\n";
 
-    s_geom << e.min(0) << "," << e.min(1) << ",";
+    s_geom << (e.min)(0) << "," << (e.min)(1) << ",";
 
     if (bUse3d) {
-        s_geom << e.min(2) << ",";
+        s_geom << (e.min)(2) << ",";
     }
     
-    s_geom << e.max(0) << "," << e.max(1);
+    s_geom << (e.max)(0) << "," << (e.max)(1);
 
     if (bUse3d) {
-        s_geom << "," << e.max(2);
+        s_geom << "," << (e.max)(2);
     }
 
     s_geom << "))";
@@ -952,42 +952,42 @@ int main(int argc, char* argv[])
         if (vm.count("xmin")) 
         {
             double xmin = vm["xmin"].as< double >();
-            global_extent.min(0, xmin);
+            (global_extent.min)(0, xmin);
             if (verbose)
                 std::cout << "Setting xmin to: " << xmin << std::endl;
         }
         if (vm.count("ymin")) 
         {
             double ymin = vm["ymin"].as< double >();
-            global_extent.min(1, ymin);
+            (global_extent.min)(1, ymin);
             if (verbose)
                 std::cout << "Setting ymin to: " << ymin << std::endl;
         }
         if (vm.count("zmin")) 
         {
             double zmin = vm["zmin"].as< double >();
-            global_extent.min(2, zmin);
+            (global_extent.min)(2, zmin);
             if (verbose)
                 std::cout << "Setting zmin to: " << zmin << std::endl;
         }
         if (vm.count("xmax")) 
         {
             double xmax = vm["xmax"].as< double >();
-            global_extent.max(0, xmax);
+            (global_extent.max)(0, xmax);
             if (verbose)
                 std::cout << "Setting xmax to: " << xmax << std::endl;
         }
         if (vm.count("ymax")) 
         {
             double ymax = vm["ymax"].as< double >();
-            global_extent.max(1, ymax);
+            (global_extent.max)(1, ymax);
             if (verbose)
                 std::cout << "Setting ymax to: " << ymax << std::endl;
         }
         if (vm.count("zmax")) 
         {
             double zmax = vm["zmax"].as< double >();
-            global_extent.max(2, zmax);
+            (global_extent.max)(2, zmax);
             if (verbose)
                 std::cout << "Setting zmax to: " << zmax << std::endl;
         }

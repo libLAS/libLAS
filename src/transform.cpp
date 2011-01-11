@@ -148,18 +148,18 @@ bool ReprojectionTransform::transform(Point& point)
     point.SetY(y);
     point.SetZ(z);
     
-    if (detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::max())) ||
-        detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::min()))) {
+    if (detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::min)())) {
         throw std::domain_error("X scale and offset combination is insufficient to represent the data");
     }
 
-    if (detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::max())) ||
-        detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::min()))) {
+    if (detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::min)())) {
         throw std::domain_error("Y scale and offset combination is insufficient to represent the data");
     }    
 
-    if (detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::max())) ||
-        detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::min()))) {
+    if (detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::min)())) {
         throw std::domain_error("Z scale and offset combination is insufficient to represent the data");
     }        
 
@@ -366,18 +366,18 @@ bool TranslationTransform::transform(Point& point)
                     throw std::runtime_error(oss.str());
             }
 
-    if (detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::max())) ||
-        detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::min()))) {
+    if (detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::min)())) {
         throw std::domain_error("X scale and offset combination of this file is insufficient to represent the data given the expression ");
     }
 
-    if (detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::max())) ||
-        detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::min()))) {
+    if (detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::min)())) {
         throw std::domain_error("Y scale and offset combination of this file is insufficient to represent the data given the expression");
     }    
 
-    if (detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::max())) ||
-        detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::min()))) {
+    if (detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::min)())) {
         throw std::domain_error("Z scale and offset combination of this file is insufficient to represent the data given the expression");
     }   
 

@@ -53,6 +53,14 @@
 #include <sstream>
 #include <stdexcept>
 
+
+// I hate you windows
+#ifdef _MSC_VER
+#ifdef GetClassName
+#undef GetClassName
+#endif
+#endif
+
 namespace liblas {
 
 /// Class definition to manipulate properties of point record classification.

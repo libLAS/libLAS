@@ -166,7 +166,7 @@ void write_index(std::string& output,
         out.setf(std::ios::fixed,std::ios::floatfield);
         out.precision(precision);
         liblas::Bounds<double> const& bnd = b.GetBounds();
-        out << bnd.min(0) << " " << bnd.min(1) << " " << bnd.max(0) << " " <<  bnd.max(1) << " " ;
+        out << (bnd.min)(0) << " " << (bnd.min)(1) << " " << (bnd.max)(0) << " " <<  (bnd.max)(1) << " " ;
         
         for ( boost::uint32_t pi = 0; pi < ids.size(); ++pi )
         {

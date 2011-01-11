@@ -472,44 +472,44 @@ void Header::SetOffset(double x, double y, double z)
 
 double Header::GetMaxX() const
 {
-    return m_extent.max(0);
+    return (m_extent.max)(0);
 }
 
 double Header::GetMinX() const
 {
-    return m_extent.min(0);
+    return (m_extent.min)(0);
 }
 
 double Header::GetMaxY() const
 {
-    return m_extent.max(1);
+    return (m_extent.max)(1);
 }
 
 double Header::GetMinY() const
 {
-    return m_extent.min(1);
+    return (m_extent.min)(1);
 }
 
 double Header::GetMaxZ() const
 {
-    return m_extent.max(2);
+    return (m_extent.max)(2);
 }
 
 double Header::GetMinZ() const
 {
-    return m_extent.min(2);
+    return (m_extent.min)(2);
 }
 
 void Header::SetMax(double x, double y, double z)
 {
     // m_extent = Bounds(m_extent.min(0), m_extent.min(1), m_extent.max(0), m_extent.max(1), m_extent.min(2), m_extent.max(2));
     // Bounds(minx, miny, minz, maxx, maxy, maxz)
-    m_extent = Bounds<double>(m_extent.min(0), m_extent.min(1), m_extent.min(2), x, y, z);
+    m_extent = Bounds<double>((m_extent.min)(0), (m_extent.min)(1), (m_extent.min)(2), x, y, z);
 }
 
 void Header::SetMin(double x, double y, double z)
 {
-    m_extent = Bounds<double>(x, y, z, m_extent.max(0), m_extent.max(1), m_extent.max(2));
+    m_extent = Bounds<double>(x, y, z, (m_extent.max)(0), (m_extent.max)(1), (m_extent.max)(2));
 }
 
 void Header::SetExtent(Bounds<double> const& extent)

@@ -1056,7 +1056,7 @@ bool Index::BuildIndex(void)
 		m_cellsZ = 1;
 		
 	// under the conditions of one dimension (x or y) being 0 or negative in size, no index is possible
-	if (m_bounds.max(0) <= m_bounds.min(0) || m_bounds.max(1) <= m_bounds.min(1))
+	if ((m_bounds.max)(0) <= (m_bounds.min)(0) || (m_bounds.max)(1) <= (m_bounds.min)(1))
 	{
 		return (PointBoundsError("Index::BuildIndex"));
 	} // if
@@ -1092,8 +1092,8 @@ bool Index::BuildIndex(void)
 	{
 		fprintf(m_debugger, "Points in file %d, Cell matrix x %d, y %d, z %d\n", m_pointRecordsCount, m_cellsX, m_cellsY,
 			m_cellsZ);
-		fprintf(m_debugger, "Point ranges x %.2f-%.2f, y %.2f-%.2f, z %.2f-%.2f, z range %.2f\n", m_bounds.min(0), m_bounds.max(0), m_bounds.min(1), m_bounds.max(1), 
-			m_bounds.min(2), m_bounds.max(2), m_rangeZ);
+		fprintf(m_debugger, "Point ranges x %.2f-%.2f, y %.2f-%.2f, z %.2f-%.2f, z range %.2f\n", (m_bounds.min)(0), (m_bounds.max)(0), (m_bounds.min)(1), (m_bounds.max)(1), 
+			(m_bounds.min)(2), (m_bounds.max)(2), m_rangeZ);
 	} // if
 	
 	// now we know how large our index array is going to be
@@ -1313,7 +1313,7 @@ bool Index::IdentifyCell(Point const& CurPt, boost::uint32_t& CurCellX, boost::u
 {
 	double OffsetX, OffsetY;
 
-	OffsetX = (CurPt.GetX() - m_bounds.min(0)) / m_rangeX;
+	OffsetX = (CurPt.GetX() - (m_bounds.min)(0)) / m_rangeX;
 	if (OffsetX >= 0 && OffsetX < 1.0)
 		CurCellX = static_cast<boost::uint32_t>(OffsetX * m_cellsX);
 	else if (detail::compare_distance(OffsetX, 1.0))
@@ -1323,7 +1323,7 @@ bool Index::IdentifyCell(Point const& CurPt, boost::uint32_t& CurCellX, boost::u
 		return (PointBoundsError("Index::IdentifyCell"));
 	} // else
 	
-	OffsetY = (CurPt.GetY() - m_bounds.min(1)) / m_rangeY;
+	OffsetY = (CurPt.GetY() - (m_bounds.min)(1)) / m_rangeY;
 	if (OffsetY >= 0 && OffsetY < 1.0)
 		CurCellY = static_cast<boost::uint32_t>(OffsetY * m_cellsY);
 	else if (detail::compare_distance(OffsetY, 1.0))
@@ -1341,7 +1341,7 @@ bool Index::IdentifyCellZ(Point const& CurPt, boost::uint32_t& CurCellZ) const
 {
 	double OffsetZ;
 
-	OffsetZ = (CurPt.GetZ() - m_bounds.min(2)) / m_rangeZ;
+	OffsetZ = (CurPt.GetZ() - (m_bounds.min)(2)) / m_rangeZ;
 	if (OffsetZ >= 0 && OffsetZ < 1.0)
 		CurCellZ = static_cast<boost::uint32_t>(OffsetZ * m_cellsZ);
 	else if (detail::compare_distance(OffsetZ, 1.0))
@@ -1359,8 +1359,8 @@ bool Index::IdentifySubCell(Point const& CurPt, boost::uint32_t x, boost::uint32
 {
 	double Offset, CellMinX, CellMinY;
 
-	CellMinX = x * m_cellSizeX + m_bounds.min(0);
-	CellMinY = y * m_cellSizeY + m_bounds.min(1);
+	CellMinX = x * m_cellSizeX + (m_bounds.min)(0);
+	CellMinY = y * m_cellSizeY + (m_bounds.min)(1);
 	// find point position in X
 	Offset = (CurPt.GetX() - CellMinX) / m_cellSizeX;
 	if (Offset > .5)	//upper half X
@@ -2044,11 +2044,11 @@ bool IndexData::SetFilterValues(Bounds<double> const& src, Index const& index)
 
 bool IndexData::CalcFilterEnablers(void)
 {
-	if (detail::compare_distance(m_filter.min(0), m_filter.max(0)))
+	if (detail::compare_distance((m_filter.min)(0), (m_filter.max)(0)))
 		m_noFilterX = true;
-	if (detail::compare_distance(m_filter.min(1), m_filter.max(1)))
+	if (detail::compare_distance((m_filter.min)(1), (m_filter.max)(1)))
 		m_noFilterY = true;
-	if (detail::compare_distance(m_filter.min(2), m_filter.max(2)))
+	if (detail::compare_distance((m_filter.min)(2), (m_filter.max)(2)))
 		m_noFilterZ = true;
 	return (! (m_noFilterX && m_noFilterY && m_noFilterZ));
 } // IndexData::CalcFilterEnablers

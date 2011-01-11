@@ -74,8 +74,8 @@ Summary::Summary(Summary const& other)
     , points_by_return(other.points_by_return)
     , returns_of_given_pulse(other.returns_of_given_pulse)
     , first(other.first)
-    , min(other.min)
-    , max(other.max)
+    , minimum(other.maximum)
+    , maximum(other.maximum)
     , m_header(other.m_header)
     , bHaveHeader(other.bHaveHeader)
     , bHaveColor(other.bHaveColor)
@@ -95,8 +95,8 @@ Summary& Summary::operator=(Summary const& rhs)
         first = rhs.first;
         points_by_return = rhs.points_by_return;
         returns_of_given_pulse = rhs.returns_of_given_pulse;
-        min = rhs.min;
-        max = rhs.max;
+        minimum = rhs.minimum;
+        maximum = rhs.maximum;
         m_header = rhs.m_header;
         bHaveHeader = rhs.bHaveHeader;
         bHaveColor = rhs.bHaveColor;
@@ -110,8 +110,8 @@ void Summary::AddPoint(liblas::Point const& p)
         count++;
 
         if (first) {
-            min = p;
-            max = p;
+            minimum = p;
+            maximum = p;
             
             // We only summarize the base dimensions 
             // but we want to be able to read/set them all.  The 
@@ -130,8 +130,8 @@ void Summary::AddPoint(liblas::Point const& p)
                 header.SetOffset(hdr->GetOffsetX(), hdr->GetOffsetY(), hdr->GetOffsetZ());
                 header.SetDataFormatId(hdr->GetDataFormatId());
                 liblas::HeaderPtr h(new liblas::Header(header));
-                min.SetHeaderPtr(h);
-                max.SetHeaderPtr(h);
+                minimum.SetHeaderPtr(h);
+                maximum.SetHeaderPtr(h);
                 liblas::Schema const& schema = hdr->GetSchema();
                 boost::optional<Dimension const&> red;
                 boost::optional<Dimension const&> green;
@@ -150,83 +150,83 @@ void Summary::AddPoint(liblas::Point const& p)
                 if (time) bHaveTime = true; else bHaveTime = false;
             } else 
             {
-                min.SetHeaderPtr(HeaderPtr());
-                max.SetHeaderPtr(HeaderPtr()); 
+                minimum.SetHeaderPtr(HeaderPtr());
+                maximum.SetHeaderPtr(HeaderPtr()); 
             }
 
             first = false;
         }
         
-        if (p.GetRawX() < min.GetRawX() )
-            min.SetRawX(p.GetRawX());
-        if (p.GetRawX() > max.GetRawX() )
-            max.SetRawX(p.GetRawX());
+        if (p.GetRawX() < minimum.GetRawX() )
+            minimum.SetRawX(p.GetRawX());
+        if (p.GetRawX() > maximum.GetRawX() )
+            maximum.SetRawX(p.GetRawX());
 
-        if (p.GetRawY() < min.GetRawY() )
-            min.SetRawY(p.GetRawY());
-        if (p.GetRawY() > max.GetRawY() )
-            max.SetRawY(p.GetRawY());
+        if (p.GetRawY() < minimum.GetRawY() )
+            minimum.SetRawY(p.GetRawY());
+        if (p.GetRawY() > maximum.GetRawY() )
+            maximum.SetRawY(p.GetRawY());
 
-        if (p.GetRawZ() < min.GetRawZ() )
-            min.SetRawZ(p.GetRawZ());
-        if (p.GetRawZ() > max.GetRawZ() )
-            max.SetRawZ(p.GetRawZ());
+        if (p.GetRawZ() < minimum.GetRawZ() )
+            minimum.SetRawZ(p.GetRawZ());
+        if (p.GetRawZ() > maximum.GetRawZ() )
+            maximum.SetRawZ(p.GetRawZ());
 
-        if (p.GetIntensity() < min.GetIntensity() )
-            min.SetIntensity(p.GetIntensity());
-        if (p.GetIntensity() > max.GetIntensity() )
-            max.SetIntensity(p.GetIntensity());
+        if (p.GetIntensity() < minimum.GetIntensity() )
+            minimum.SetIntensity(p.GetIntensity());
+        if (p.GetIntensity() > maximum.GetIntensity() )
+            maximum.SetIntensity(p.GetIntensity());
         
         if (bHaveTime)
         {
-            if (p.GetTime() < min.GetTime() )
-                min.SetTime(p.GetTime());
-            if (p.GetTime() > max.GetTime() )
-                max.SetTime(p.GetTime());
+            if (p.GetTime() < minimum.GetTime() )
+                minimum.SetTime(p.GetTime());
+            if (p.GetTime() > maximum.GetTime() )
+                maximum.SetTime(p.GetTime());
         }
 
 
-        if (p.GetReturnNumber() < min.GetReturnNumber() )
-            min.SetReturnNumber(p.GetReturnNumber());
-        if (p.GetReturnNumber() > max.GetReturnNumber() )
-            max.SetReturnNumber(p.GetReturnNumber());
+        if (p.GetReturnNumber() < minimum.GetReturnNumber() )
+            minimum.SetReturnNumber(p.GetReturnNumber());
+        if (p.GetReturnNumber() > maximum.GetReturnNumber() )
+            maximum.SetReturnNumber(p.GetReturnNumber());
 
-        if (p.GetNumberOfReturns() < min.GetNumberOfReturns() )
-            min.SetNumberOfReturns(p.GetNumberOfReturns());
-        if (p.GetNumberOfReturns() > max.GetNumberOfReturns() )
-            max.SetNumberOfReturns(p.GetNumberOfReturns());
+        if (p.GetNumberOfReturns() < minimum.GetNumberOfReturns() )
+            minimum.SetNumberOfReturns(p.GetNumberOfReturns());
+        if (p.GetNumberOfReturns() > maximum.GetNumberOfReturns() )
+            maximum.SetNumberOfReturns(p.GetNumberOfReturns());
 
-        if (p.GetScanDirection() < min.GetScanDirection() )
-            min.SetScanDirection(p.GetScanDirection());
-        if (p.GetScanDirection() > max.GetScanDirection() )
-            max.SetScanDirection(p.GetScanDirection());
+        if (p.GetScanDirection() < minimum.GetScanDirection() )
+            minimum.SetScanDirection(p.GetScanDirection());
+        if (p.GetScanDirection() > maximum.GetScanDirection() )
+            maximum.SetScanDirection(p.GetScanDirection());
 
 
-        if (p.GetFlightLineEdge() < min.GetFlightLineEdge() )
-            min.SetFlightLineEdge(p.GetFlightLineEdge());
-        if (p.GetFlightLineEdge() > max.GetFlightLineEdge() )
-            max.SetFlightLineEdge(p.GetFlightLineEdge());
+        if (p.GetFlightLineEdge() < minimum.GetFlightLineEdge() )
+            minimum.SetFlightLineEdge(p.GetFlightLineEdge());
+        if (p.GetFlightLineEdge() > maximum.GetFlightLineEdge() )
+            maximum.SetFlightLineEdge(p.GetFlightLineEdge());
 
-        if (p.GetScanAngleRank() < min.GetScanAngleRank() )
-            min.SetScanAngleRank(p.GetScanAngleRank());
-        if (p.GetScanAngleRank() > max.GetScanAngleRank() )
-            max.SetScanAngleRank(p.GetScanAngleRank());
+        if (p.GetScanAngleRank() < minimum.GetScanAngleRank() )
+            minimum.SetScanAngleRank(p.GetScanAngleRank());
+        if (p.GetScanAngleRank() > maximum.GetScanAngleRank() )
+            maximum.SetScanAngleRank(p.GetScanAngleRank());
 
-        if (p.GetUserData() < min.GetUserData() )
-            min.SetUserData(p.GetUserData());
-        if (p.GetUserData() > max.GetUserData() )
-            max.SetUserData(p.GetUserData());
+        if (p.GetUserData() < minimum.GetUserData() )
+            minimum.SetUserData(p.GetUserData());
+        if (p.GetUserData() > maximum.GetUserData() )
+            maximum.SetUserData(p.GetUserData());
 
-        if (p.GetPointSourceID() < min.GetPointSourceID() )
-            min.SetPointSourceID(p.GetPointSourceID());
-        if (p.GetPointSourceID() > max.GetPointSourceID() )
-            max.SetPointSourceID(p.GetPointSourceID());
+        if (p.GetPointSourceID() < minimum.GetPointSourceID() )
+            minimum.SetPointSourceID(p.GetPointSourceID());
+        if (p.GetPointSourceID() > maximum.GetPointSourceID() )
+            maximum.SetPointSourceID(p.GetPointSourceID());
 
      
         liblas::Classification const& cls = p.GetClassification();
         
-        boost::uint8_t minc = (std::min)(cls.GetClass(), min.GetClassification().GetClass());
-        boost::uint8_t maxc = (std::max)(cls.GetClass(), max.GetClassification().GetClass());
+        boost::uint8_t minc = (std::min)(cls.GetClass(), minimum.GetClassification().GetClass());
+        boost::uint8_t maxc = (std::max)(cls.GetClass(), maximum.GetClassification().GetClass());
         
         classes[cls.GetClass()]++;
         
@@ -234,21 +234,21 @@ void Summary::AddPoint(liblas::Point const& p)
         if (cls.IsKeyPoint()) keypoint++;
         if (cls.IsSynthetic()) synthetic++;
         
-        if (minc < min.GetClassification().GetClass())
-            min.SetClassification(liblas::Classification(minc));
-        if (maxc > max.GetClassification().GetClass())
-            max.SetClassification(liblas::Classification(maxc));
+        if (minc < minimum.GetClassification().GetClass())
+            minimum.SetClassification(liblas::Classification(minc));
+        if (maxc > maximum.GetClassification().GetClass())
+            maximum.SetClassification(liblas::Classification(maxc));
         
         if (bHaveColor)
         {
             liblas::Color const& color = p.GetColor();
-            liblas::Color::value_type min_red = min.GetColor().GetRed();
-            liblas::Color::value_type min_green = min.GetColor().GetGreen();
-            liblas::Color::value_type min_blue = min.GetColor().GetBlue();
+            liblas::Color::value_type min_red = minimum.GetColor().GetRed();
+            liblas::Color::value_type min_green = minimum.GetColor().GetGreen();
+            liblas::Color::value_type min_blue = minimum.GetColor().GetBlue();
 
-            liblas::Color::value_type max_red = max.GetColor().GetRed();
-            liblas::Color::value_type max_green = max.GetColor().GetGreen();
-            liblas::Color::value_type max_blue = max.GetColor().GetBlue();
+            liblas::Color::value_type max_red = maximum.GetColor().GetRed();
+            liblas::Color::value_type max_green = maximum.GetColor().GetGreen();
+            liblas::Color::value_type max_blue = maximum.GetColor().GetBlue();
                         
             bool bSetMinColor = false;
             if (color.GetRed() < min_red)
@@ -288,11 +288,11 @@ void Summary::AddPoint(liblas::Point const& p)
             }
 
             if (bSetMinColor)
-                min.SetColor(liblas::Color( min_red, 
+                minimum.SetColor(liblas::Color( min_red, 
                                             min_green,
                                             min_blue));
             if (bSetMaxColor)
-                max.SetColor(liblas::Color( max_red, 
+                maximum.SetColor(liblas::Color( max_red, 
                                             max_green, 
                                             max_blue));
         }
@@ -312,8 +312,8 @@ ptree Summary::GetPTree() const
 {
     ptree pt;
     
-    ptree pmin = min.GetPTree();
-    ptree pmax = max.GetPTree();
+    ptree pmin = minimum.GetPTree();
+    ptree pmax = maximum.GetPTree();
     
      
     pt.add_child("minimum", pmin);
@@ -570,8 +570,8 @@ CoordinateSummary::CoordinateSummary(CoordinateSummary const& other)
     , points_by_return(other.points_by_return)
     , returns_of_given_pulse(other.returns_of_given_pulse)
     , first(other.first)
-    , min(other.min)
-    , max(other.max)
+    , minimum(other.minimum)
+    , maximum(other.maximum)
     , m_header(other.m_header)
     , bHaveHeader(other.bHaveHeader)
     , bHaveColor(other.bHaveColor)
@@ -588,8 +588,8 @@ CoordinateSummary& CoordinateSummary::operator=(CoordinateSummary const& rhs)
         first = rhs.first;
         points_by_return = rhs.points_by_return;
         returns_of_given_pulse = rhs.returns_of_given_pulse;
-        min = rhs.min;
-        max = rhs.max;
+        minimum = rhs.minimum;
+        maximum = rhs.maximum;
         m_header = rhs.m_header;
         bHaveHeader = rhs.bHaveHeader;
         bHaveColor = rhs.bHaveColor;
@@ -603,8 +603,8 @@ void CoordinateSummary::AddPoint(liblas::Point const& p)
         count++;
 
         if (first) {
-            min = p;
-            max = p;
+            minimum = p;
+            maximum = p;
             
             // We only summarize the base dimensions 
             // but we want to be able to read/set them all.  The 
@@ -622,33 +622,33 @@ void CoordinateSummary::AddPoint(liblas::Point const& p)
                 header.SetScale(hdr->GetScaleX(), hdr->GetScaleY(), hdr->GetScaleZ());
                 header.SetOffset(hdr->GetOffsetX(), hdr->GetOffsetY(), hdr->GetOffsetZ());
                 liblas::HeaderPtr h(new liblas::Header(header));
-                min.SetHeaderPtr(h);
-                max.SetHeaderPtr(h);
+                minimum.SetHeaderPtr(h);
+                maximum.SetHeaderPtr(h);
                 
             } else 
             {
-                min.SetHeaderPtr(HeaderPtr());
-                max.SetHeaderPtr(HeaderPtr());
+                minimum.SetHeaderPtr(HeaderPtr());
+                maximum.SetHeaderPtr(HeaderPtr());
                 
             }
 
             first = false;
         }
         
-        if (p.GetRawX() < min.GetRawX() )
-            min.SetRawX(p.GetRawX());
-        if (p.GetRawX() > max.GetRawX() )
-            max.SetRawX(p.GetRawX());
+        if (p.GetRawX() < minimum.GetRawX() )
+            minimum.SetRawX(p.GetRawX());
+        if (p.GetRawX() > maximum.GetRawX() )
+            maximum.SetRawX(p.GetRawX());
 
-        if (p.GetRawY() < min.GetRawY() )
-            min.SetRawY(p.GetRawY());
-        if (p.GetRawY() > max.GetRawY() )
-            max.SetRawY(p.GetRawY());
+        if (p.GetRawY() < minimum.GetRawY() )
+            minimum.SetRawY(p.GetRawY());
+        if (p.GetRawY() > maximum.GetRawY() )
+            maximum.SetRawY(p.GetRawY());
 
-        if (p.GetRawZ() < min.GetRawZ() )
-            min.SetRawZ(p.GetRawZ());
-        if (p.GetRawZ() > max.GetRawZ() )
-            max.SetRawZ(p.GetRawZ());
+        if (p.GetRawZ() < minimum.GetRawZ() )
+            minimum.SetRawZ(p.GetRawZ());
+        if (p.GetRawZ() > maximum.GetRawZ() )
+            maximum.SetRawZ(p.GetRawZ());
 
         points_by_return[p.GetReturnNumber()]++;
         returns_of_given_pulse[p.GetNumberOfReturns()]++;    
@@ -664,8 +664,8 @@ ptree CoordinateSummary::GetPTree() const
 {
     ptree pt;
     
-    ptree pmin = min.GetPTree();
-    ptree pmax = max.GetPTree();
+    ptree pmin = minimum.GetPTree();
+    ptree pmax = maximum.GetPTree();
     
      
     pt.add_child("minimum", pmin);
