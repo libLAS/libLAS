@@ -16,14 +16,6 @@
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 
-//#define USE_BOOST_IO
-#ifdef USE_BOOST_IO
-#include <ostream>
-#include <boost/iostreams/device/file.hpp>
-#include <boost/iostreams/stream.hpp>
-#include <boost/iostreams/stream_buffer.hpp>
-#endif
-
 namespace po = boost::program_options;
 
 using namespace liblas;
@@ -33,44 +25,11 @@ typedef boost::shared_ptr<liblas::Writer> WriterPtr;
 typedef boost::shared_ptr<liblas::CoordinateSummary> SummaryPtr;
 
 
-static std::ostream* FileCreate(std::string const& filename)
-{
-#ifdef USE_BOOST_IO
-    namespace io = boost::iostreams;
-    io::stream<io::file_sink>* ofs = new io::stream<io::file_sink>();
-    ofs->open(filename.c_str(), std::ios::out | std::ios::binary);
-    if (ofs->is_open() == false) return NULL;
-    return ofs;
-#else
-    std::ofstream* ofs = new std::ofstream();
-    ofs->open(filename.c_str(), std::ios::out | std::ios::binary);
-    if (ofs->is_open() == false) return NULL;
-    return ofs;
-#endif
-}
-
-static std::istream* FileOpen(std::string const& filename)
-{
-#ifdef USE_BOOST_IO
-    namespace io = boost::iostreams;
-    io::stream<io::file_source>* ifs = new io::stream<io::file_source>();
-    ifs->open(filename.c_str(), std::ios::in | std::ios::binary);
-    if (ifs->is_open() == false) return NULL;
-    return ifs;
-#else
-    std::ifstream* ifs = new std::ifstream();
-    ifs->open(filename.c_str(), std::ios::in | std::ios::binary);
-    if (ifs->is_open() == false) return NULL;
-    return ifs;
-#endif
-}
-
-
 WriterPtr start_writer(   std::ostream*& ofs, 
                           std::string const& output, 
                           liblas::Header const& header)
 {
-    ofs = FileCreate(output);
+    ofs = WriterFactory::FileCreate(output);
     if (!ofs)
     {
         std::ostringstream oss;
@@ -80,7 +39,6 @@ WriterPtr start_writer(   std::ostream*& ofs,
 
     WriterPtr writer( new liblas::Writer(*ofs, header));
     return writer;
-    
 }
 
 bool process(   std::istream& ifs,
@@ -93,9 +51,6 @@ bool process(   std::istream& ifs,
                 bool verbose,
                 bool min_offset)
 {
-
-
-
     liblas::ReaderFactory f;
     liblas::Reader reader = f.CreateWithStream(ifs);
     SummaryPtr summary(new::liblas::CoordinateSummary);
@@ -336,7 +291,7 @@ int main(int argc, char* argv[])
             if (verbose)
                 std::cout << "Opening " << input << " to fetch Header" << std::endl;
 
-            std::istream* ifs = FileOpen(input);
+            std::istream* ifs = ReaderFactory::FileOpen(input);
             if (!ifs)
             {
                 std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
@@ -410,7 +365,7 @@ int main(int argc, char* argv[])
             break;
         }
 
-        std::istream* ifs = FileOpen(input);
+        std::istream* ifs = ReaderFactory::FileOpen(input);
         if (!ifs)
         {
             std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;

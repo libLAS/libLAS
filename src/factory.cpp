@@ -51,6 +51,14 @@
 // boost
 #include <boost/cstdint.hpp>
 
+//#define USE_BOOST_IO
+#ifdef USE_BOOST_IO
+#include <ostream>
+#include <boost/iostreams/device/file.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/stream_buffer.hpp>
+#endif
+
 // std
 #include <stdexcept>
 #include <fstream>
@@ -97,6 +105,21 @@ Reader ReaderFactory::CreateWithStream(std::istream& stream)
     return liblas::Reader(r);
 }
 
+std::istream* ReaderFactory::FileOpen(std::string const& filename)
+{
+#ifdef USE_BOOST_IO
+    namespace io = boost::iostreams;
+    io::stream<io::file_source>* ifs = new io::stream<io::file_source>();
+    ifs->open(filename.c_str(), std::ios::in | std::ios::binary);
+    if (ifs->is_open() == false) return NULL;
+    return ifs;
+#else
+    std::ifstream* ifs = new std::ifstream();
+    ifs->open(filename.c_str(), std::ios::in | std::ios::binary);
+    if (ifs->is_open() == false) return NULL;
+    return ifs;
+#endif
+}
 
 Writer WriterFactory::CreateWithImpl(WriterIPtr w)
 {
@@ -151,6 +174,22 @@ WriterFactory::FileType WriterFactory::InferFileTypeFromExtension(const std::str
         return FileType_LAS;
     }
     return FileType_Unknown;
+}
+
+std::ostream* WriterFactory::FileCreate(std::string const& filename)
+{
+#ifdef USE_BOOST_IO
+    namespace io = boost::iostreams;
+    io::stream<io::file_sink>* ofs = new io::stream<io::file_sink>();
+    ofs->open(filename.c_str(), std::ios::out | std::ios::binary);
+    if (ofs->is_open() == false) return NULL;
+    return ofs;
+#else
+    std::ofstream* ofs = new std::ofstream();
+    ofs->open(filename.c_str(), std::ios::out | std::ios::binary);
+    if (ofs->is_open() == false) return NULL;
+    return ofs;
+#endif
 }
 
 } // namespace liblas
