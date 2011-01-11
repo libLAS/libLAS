@@ -107,3 +107,9 @@ DartConfiguration.tcl
 libLAS.opensdf
 libLAS.sdf
 *.tlog
+csharp-new/liblas_swig.opensdf
+csharp-new/liblas_swig.sdf
+
+# swig-generated files
+csharp-new/liblas_swig_cs/*.cs
+csharp-new/liblas_swig_cpp/liblas_wrap.cpp
