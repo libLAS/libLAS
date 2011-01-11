@@ -292,7 +292,8 @@ int main(int argc, char* argv[])
     std::string input;
     std::string output;
     bool verbose = false;
-
+    std::vector<liblas::FilterPtr> filters;
+    
     po::options_description ts2las_options("ts2las options");
     po::options_description filtering_options = GetFilteringOptions();
     po::positional_options_description p;
@@ -322,7 +323,16 @@ int main(int argc, char* argv[])
         return 1;
     }
     
+    if (input.empty())
+    {
+        std::cerr << "No input TerraSolid .bin file was specfied!" << std::endl;
+        OutputHelp(std::cout, options);
+        return 1;
+    }
     
+    
+    filters = GetFilters(vm, verbose);
+
     if (verbose)
         std::cout << "input: " << input<<  " output: " <<output<<std::endl;
     
@@ -332,7 +342,7 @@ int main(int argc, char* argv[])
     bool opened = liblas::Open(istrm, input);
     if (!opened)
     {
-        std::cerr << "Could not open file " << input << " to read TerraSolid .bin data! " << std::endl;
+        std::cerr << "Could not open file '" << input << "' to read TerraSolid .bin data! " << std::endl;
         return 1;
     }
     
@@ -355,6 +365,8 @@ int main(int argc, char* argv[])
     // std::cout << "stream position is: " << istrm->tellg() << std::endl;
     liblas::Header header = CreateHeader(hdr, verbose);
     liblas::Writer writer(ostrm, header);
+    
+    writer.SetFilters(filters);
     
     success = WritePoints(writer, istrm, hdr, verbose);
 
