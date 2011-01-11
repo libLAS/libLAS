@@ -631,60 +631,60 @@ int main(int argc, char* argv[])
 											{
 												CovgStr = "middle half of all 3 axes";
 												filterBounds = Bounds<double>
-													(indexBounds.min(0) + .25 * RangeX,
-													indexBounds.min(1) + .25 * RangeY,
-													indexBounds.min(2) + .25 * RangeZ,
-													indexBounds.max(0) - .25 * RangeX,
-													indexBounds.max(1) - .25 * RangeY,
-													indexBounds.max(2) - .25 * RangeZ);
+													((indexBounds.min)(0) + .25 * RangeX,
+													(indexBounds.min)(1) + .25 * RangeY,
+													(indexBounds.min)(2) + .25 * RangeZ,
+													(indexBounds.max)(0) - .25 * RangeX,
+													(indexBounds.max)(1) - .25 * RangeY,
+													(indexBounds.max)(2) - .25 * RangeZ);
 												break;
 											} // 1
 											case 2:
 											{
 												CovgStr = "upper left, all Z range";
 												filterBounds = Bounds<double>
-													(indexBounds.min(0),
-													indexBounds.min(1) + .5 * RangeY,
-													indexBounds.min(2),
-													indexBounds.min(0) + .5 * RangeX,
-													indexBounds.max(1),
-													indexBounds.max(2));
+													((indexBounds.min)(0),
+													(indexBounds.min)(1) + .5 * RangeY,
+													(indexBounds.min)(2),
+													(indexBounds.min)(0) + .5 * RangeX,
+													(indexBounds.max)(1),
+													(indexBounds.max)(2));
 												break;
 											} // 2
 											case 3:
 											{
 												CovgStr = "upper right, all Z range";
 												filterBounds = Bounds<double>
-													(indexBounds.min(0) + .5 * RangeX,
-													indexBounds.min(1) + .5 * RangeY,
-													indexBounds.min(2),
-													indexBounds.max(0),
-													indexBounds.max(1),
-													indexBounds.max(2));
+													((indexBounds.min)(0) + .5 * RangeX,
+													(indexBounds.min)(1) + .5 * RangeY,
+													(indexBounds.min)(2),
+													(indexBounds.max)(0),
+													(indexBounds.max)(1),
+													(indexBounds.max)(2));
 												break;
 											} // 3
 											case 4:
 											{
 												CovgStr = "lower left, all Z range";
 												filterBounds = Bounds<double>
-													(indexBounds.min(0),
-													indexBounds.min(1),
-													indexBounds.min(2),
-													indexBounds.min(0) + .5 * RangeX,
-													indexBounds.min(1) + .5 * RangeY,
-													indexBounds.max(2));
+													((indexBounds.min)(0),
+													(indexBounds.min)(1),
+													(indexBounds.min)(2),
+													(indexBounds.min)(0) + .5 * RangeX,
+													(indexBounds.min)(1) + .5 * RangeY,
+													(indexBounds.max)(2));
 												break;
 											} // 4
 											case 5:
 											{
 												CovgStr = "lower right, all Z range";
 												filterBounds = Bounds<double>
-													(indexBounds.min(0)+ .5 * RangeX,
-													indexBounds.min(1),
-													indexBounds.min(2),
-													indexBounds.max(0),
-													indexBounds.min(1) + .5 * RangeY,
-													indexBounds.max(2));
+													((indexBounds.min)(0)+ .5 * RangeX,
+													(indexBounds.min)(1),
+													(indexBounds.min)(2),
+													(indexBounds.max)(0),
+													(indexBounds.min)(1) + .5 * RangeY,
+													(indexBounds.max)(2));
 												break;
 											} // 5
                                             default:

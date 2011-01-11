@@ -193,9 +193,9 @@ private:
 	// Creates a Writer from m_ofs and re-saves LAS header with new index, but not with data point records
 	bool SaveIndexInStandAloneFile(void);
 	// Calculate index bounds dimensions
-	void CalcRangeX(void)	{m_rangeX = m_bounds.max(0) - m_bounds.min(0);}
-	void CalcRangeY(void)	{m_rangeY = m_bounds.max(1) - m_bounds.min(1);}
-	void CalcRangeZ(void)	{m_rangeZ = m_bounds.max(2) - m_bounds.min(2);}
+	void CalcRangeX(void)	{m_rangeX = (m_bounds.max)(0) - (m_bounds.min)(0);}
+	void CalcRangeY(void)	{m_rangeY = (m_bounds.max)(1) - (m_bounds.min)(1);}
+	void CalcRangeZ(void)	{m_rangeZ = (m_bounds.max)(2) - (m_bounds.min)(2);}
 
 	// error messages
 	bool FileError(const char *Reporter);
@@ -226,12 +226,12 @@ public:
     IndexIterator* Filter(Bounds<double> const& BoundsSrc, boost::uint32_t ChunkSize);
     
     // Return the bounds of the current Index
-	double GetMinX(void) const	{return m_bounds.min(0);}
-	double GetMaxX(void) const	{return m_bounds.max(0);}
-	double GetMinY(void) const	{return m_bounds.min(1);}
-	double GetMaxY(void) const	{return m_bounds.max(1);}
-	double GetMinZ(void) const	{return m_bounds.min(2);}
-	double GetMaxZ(void) const	{return m_bounds.max(2);}
+	double GetMinX(void) const	{return (m_bounds.min)(0);}
+	double GetMaxX(void) const	{return (m_bounds.max)(0);}
+	double GetMinY(void) const	{return (m_bounds.min)(1);}
+	double GetMaxY(void) const	{return (m_bounds.max)(1);}
+	double GetMinZ(void) const	{return (m_bounds.min)(2);}
+	double GetMaxZ(void) const	{return (m_bounds.max)(2);}
 	// Ranges are updated when an index is built or the index header VLR read
 	double GetRangeX(void) const	{return m_rangeX;}
 	double GetRangeY(void) const	{return m_rangeY;}
@@ -274,12 +274,12 @@ public:
 	void SetIndexAuthorStr(const char *ias)	{m_indexAuthor = ias;}
 	void SetIndexCommentStr(const char *ics)	{m_indexComment = ics;}
 	void SetIndexDateStr(const char *ids)	{m_indexDate = ids;}
-	void SetMinX(double minX)	{m_bounds.min(0, minX);}
-	void SetMaxX(double maxX)	{m_bounds.max(0, maxX);}
-	void SetMinY(double minY)	{m_bounds.min(1, minY);}
-	void SetMaxY(double maxY)	{m_bounds.max(1, maxY);}
-	void SetMinZ(double minZ)	{m_bounds.min(2, minZ);}
-	void SetMaxZ(double maxZ)	{m_bounds.max(2, maxZ);}
+	void SetMinX(double minX)	{(m_bounds.min)(0, minX);}
+	void SetMaxX(double maxX)	{(m_bounds.max)(0, maxX);}
+	void SetMinY(double minY)	{(m_bounds.min)(1, minY);}
+	void SetMaxY(double maxY)	{(m_bounds.max)(1, maxY);}
+	void SetMinZ(double minZ)	{(m_bounds.min)(2, minZ);}
+	void SetMaxZ(double maxZ)	{(m_bounds.max)(2, maxZ);}
 	void SetPointRecordsCount(boost::uint32_t prc)	{m_pointRecordsCount = prc;}
 	void SetCellsX(boost::uint32_t cellsX)	{m_cellsX = cellsX;}
 	void SetCellsY(boost::uint32_t cellsY)	{m_cellsY = cellsY;}
@@ -442,12 +442,12 @@ public:
 	const char *GetIndexAuthorStr(void)  const;
 	const char *GetIndexCommentStr(void)  const;
 	const char *GetIndexDateStr(void)  const;
-	double GetMinFilterX(void) const	{return m_filter.min(0);}
-	double GetMaxFilterX(void) const	{return m_filter.max(0);}
-	double GetMinFilterY(void) const	{return m_filter.min(1);}
-	double GetMaxFilterY(void) const	{return m_filter.max(1);}
-	double GetMinFilterZ(void) const	{return m_filter.min(2);}
-	double GetMaxFilterZ(void) const	{return m_filter.max(2);}
+	double GetMinFilterX(void) const	{return (m_filter.min)(0);}
+	double GetMaxFilterX(void) const	{return (m_filter.max)(0);}
+	double GetMinFilterY(void) const	{return (m_filter.min)(1);}
+	double GetMaxFilterY(void) const	{return (m_filter.max)(1);}
+	double GetMinFilterZ(void) const	{return (m_filter.min)(2);}
+	double GetMaxFilterZ(void) const	{return (m_filter.max)(2);}
 	void ClampFilterBounds(Bounds<double> const& m_bounds);
 	void SetReader(Reader *reader)	{m_reader = reader;}
 	void SetIStream(std::istream *ifs)	{m_ifs = ifs;}

@@ -70,7 +70,7 @@ public:
 
 	typedef T value_type;
 
-    Range(T mmin=(std::numeric_limits<T>::max()), T mmax=(std::numeric_limits<T>::min()))
+    Range(T mmin=(std::numeric_limits<T>::max)(), T mmax=(std::numeric_limits<T>::min)())
         : minimum(mmin), maximum(mmax) {}
     
 
@@ -129,7 +129,7 @@ public:
     
     bool empty(void) const 
     {
-        return detail::compare_distance(minimum, (std::numeric_limits<T>::max())) && detail::compare_distance(maximum, (std::numeric_limits<T>::min()));
+        return detail::compare_distance(minimum, (std::numeric_limits<T>::max)()) && detail::compare_distance(maximum, (std::numeric_limits<T>::min)());
     }
     
     void shift(T v) 
@@ -285,7 +285,7 @@ Bounds( const Point& min, const Point& max)
 // 
 // }
 
-T min(std::size_t const& index) const
+T (min)(std::size_t const& index) const
 {
     if (ranges.size() <= index) {
         // std::ostringstream msg; 
@@ -297,7 +297,7 @@ T min(std::size_t const& index) const
     return ranges[index].minimum;
 }
 
-void min(std::size_t const& index, T v)
+void (min)(std::size_t const& index, T v)
 {
     if (ranges.size() <= index) {
         ranges.resize(index + 1);
@@ -305,7 +305,7 @@ void min(std::size_t const& index, T v)
     ranges[index].minimum = v;
 }
 
-T max(std::size_t const& index) const
+T (max)(std::size_t const& index) const
 {
     if (ranges.size() <= index) {
         // std::ostringstream msg; 
@@ -317,7 +317,7 @@ T max(std::size_t const& index) const
     return ranges[index].maximum;
 }
 
-void max(std::size_t const& index, T v)
+void (max)(std::size_t const& index, T v)
 {
     if (ranges.size() <= index) {
         ranges.resize(index + 1);
@@ -325,7 +325,7 @@ void max(std::size_t const& index, T v)
     ranges[index].maximum = v;
 }
 
-liblas::Point min() {
+liblas::Point (min)() {
     liblas::Point p;
     try 
     {
@@ -341,7 +341,7 @@ liblas::Point min() {
     return p;
 }
 
-liblas::Point max() {
+liblas::Point (max)() {
     liblas::Point p;
     try 
     {
@@ -556,11 +556,11 @@ void verify()
 {
     for (size_type d = 0; d < dimension(); ++d)
     {
-        if (min(d) > max(d) )
+        if ((min)(d) > (max)(d) )
         {
             // Check that we're not infinity either way
-            if ( (detail::compare_distance(min(d), std::numeric_limits<T>::max()) ||
-                  detail::compare_distance(max(d), -std::numeric_limits<T>::max()) ))
+            if ( (detail::compare_distance((min)(d), (std::numeric_limits<T>::max)()) ||
+                  detail::compare_distance((max)(d), -(std::numeric_limits<T>::max)()) ))
             {
                 std::ostringstream msg; 
                 msg << "liblas::Bounds::verify: Minimum point at dimension " << d
@@ -575,8 +575,8 @@ Bounds<T> project(liblas::SpatialReference const& in_ref, liblas::SpatialReferen
 {
     liblas::ReprojectionTransform trans(in_ref, out_ref);
     
-    liblas::Point minimum = min();
-    liblas::Point maximum = max();
+    liblas::Point minimum = (min)();
+    liblas::Point maximum = (max)();
     trans.transform(minimum);
     trans.transform(maximum);
     return Bounds<T>(minimum, maximum);

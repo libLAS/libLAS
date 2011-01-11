@@ -298,8 +298,15 @@ liblas::property_tree::ptree Point::GetPTree() const
     ptree klasses;
     
     liblas::Classification const& c = GetClassification();
-    std::string name = c.GetClassName();
 
+// I hate you windows
+#ifdef _MSC_VER
+#ifdef GetClassName
+#undef GetClassName
+#endif
+#endif
+    std::string name = c.GetClassName();
+ 
     klasses.put("name", name);
     klasses.put("id", c.GetClass());
     klasses.put("withheld", c.IsWithheld());

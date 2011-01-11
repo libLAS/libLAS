@@ -63,7 +63,7 @@ bool term_progress(std::ostream& os, double complete)
     static int lastTick = -1;
     int tick = static_cast<int>(complete * 40.0);
 
-    tick = (std::min)(40, std::max(0, tick));
+    tick = (std::min)(40, (std::max)(0, tick));
 
     // Have we started a new progress run?  
     if (tick < lastTick && lastTick >= 39)
@@ -430,7 +430,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
     if (vm.count("minx")) 
     {
         double minx = vm["minx"].as< double >();
-        extent.min(0, minx);
+        (extent.min)(0, minx);
         bSetExtent = true;
         if (verbose)
             std::cout << "Setting minx to: " << minx << std::endl;
@@ -439,7 +439,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
     if (vm.count("maxx")) 
     {
         double maxx = vm["maxx"].as< double >();
-        extent.max(0, maxx);
+        (extent.max)(0, maxx);
         bSetExtent = true;
         if (verbose)
             std::cout << "Setting maxx to: " << maxx << std::endl;
@@ -448,7 +448,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
     if (vm.count("miny")) 
     {
         double miny = vm["miny"].as< double >();
-        extent.min(1, miny);
+        (extent.min)(1, miny);
         bSetExtent = true;
         if (verbose)
             std::cout << "Setting miny to: " << miny << std::endl;
@@ -457,7 +457,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
     if (vm.count("maxx")) 
     {
         double maxy = vm["maxy"].as< double >();
-        extent.max(1, maxy);
+        (extent.max)(1, maxy);
         bSetExtent = true;
         if (verbose)
             std::cout << "Setting maxy to: " << maxy << std::endl;
@@ -466,7 +466,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
     if (vm.count("minz")) 
     {
         double minz = vm["minz"].as< double >();
-        extent.min(2, minz);
+        (extent.min)(2, minz);
         bSetExtent = true;
         if (verbose)
             std::cout << "Setting minz to: " << minz << std::endl;
@@ -475,7 +475,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
     if (vm.count("maxz")) 
     {
         double maxz = vm["maxz"].as< double >();
-        extent.max(2, maxz);
+        (extent.max)(2, maxz);
         bSetExtent = true;
         if (verbose)
             std::cout << "Setting maxz to: " << maxz << std::endl;
@@ -677,8 +677,8 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
             {
                 int color_val = atoi((*c).c_str());
-                if (color_val < (std::numeric_limits<boost::uint16_t>::min()) || 
-                    color_val > (std::numeric_limits<boost::uint16_t>::max())) 
+                if (color_val < ((std::numeric_limits<boost::uint16_t>::min)()) || 
+                    color_val > ((std::numeric_limits<boost::uint16_t>::max)())) 
                 {
                     ostringstream oss;
                     oss << "Color value must be between 0-65536, not " << color_val;
@@ -712,8 +712,8 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
             {
                 int color_val = atoi((*c).c_str());
-                if (color_val < std::numeric_limits<boost::uint16_t>::min() || 
-                    color_val > std::numeric_limits<boost::uint16_t>::max()) 
+                if (color_val < (std::numeric_limits<boost::uint16_t>::min)() || 
+                    color_val > (std::numeric_limits<boost::uint16_t>::max)()) 
                 {
                     ostringstream oss;
                     oss << "Color value must be between 0-65536, not " << color_val;
@@ -1008,9 +1008,9 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             {
                 throw std::runtime_error("VLR ID must be > 0");
             }
-            if (id > std::numeric_limits<boost::uint16_t>::max()) {
+            if (id > (std::numeric_limits<boost::uint16_t>::max)()) {
                 ostringstream oss;
-                oss << "ID must be less than "<< std::numeric_limits<boost::uint16_t>::max() <<", not " << id;
+                oss << "ID must be less than "<< (std::numeric_limits<boost::uint16_t>::max)() <<", not " << id;
                 throw std::runtime_error(oss.str());
             }
             header.DeleteVLRs(vlrs[i], static_cast<boost::uint16_t>(id));
@@ -1048,9 +1048,9 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         {
             throw std::runtime_error("VLR ID must be > 0");
         }
-        if (id > std::numeric_limits<boost::uint16_t>::max()) {
+        if (id > (std::numeric_limits<boost::uint16_t>::max)()) {
             ostringstream oss;
-            oss << "ID must be less than "<< std::numeric_limits<boost::uint16_t>::max() <<", not " << id;
+            oss << "ID must be less than "<< (std::numeric_limits<boost::uint16_t>::max)() <<", not " << id;
             throw std::runtime_error(oss.str());
         }
 
@@ -1083,11 +1083,11 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             }
         }    
 
-        if (data.size() > std::numeric_limits<boost::uint16_t>::max()) {
+        if (data.size() > (std::numeric_limits<boost::uint16_t>::max)()) {
             std::ostringstream oss;
             oss << "This VLR with length " << data.size() << " does" 
                 << " not fit within the maximum VLR size of " 
-                << std::numeric_limits<boost::uint16_t>::max();
+                << (std::numeric_limits<boost::uint16_t>::max)();
             throw std::runtime_error(oss.str());
         }
 
