@@ -38,12 +38,13 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  
-%module WrapperCpp
+%module liblas_swig_cpp
 
 %{
 #include "liblas/liblas.hpp"
 #include "liblas/version.hpp"
 #include "liblas/reader.hpp"
+#include "liblas/writer.hpp"
 #include "liblas/classification.hpp"
 #include "liblas/header.hpp"
 #include "liblas/point.hpp"
@@ -105,8 +106,8 @@ enum PointFormatName
 class guid
 {
 public:
+    guid(char const* const str);
     std::string to_string() const;
-    //void output_data(boost::uint32_t& d1, boost::uint16_t& d2, boost::uint16_t& d3, boost::uint8_t (&d4)[8]) const;
 };
 
 
@@ -175,13 +176,11 @@ public:
 class VariableRecord
 {
 public:
-    boost::uint16_t GetReserved() const;
-    std::string GetUserId(bool pad ) const;
+    std::string GetUserId(bool pad) const;
     boost::uint16_t GetRecordId() const;
     boost::uint16_t GetRecordLength() const;
-    std::string GetDescription(bool pad ) const;
+    std::string GetDescription(bool pad) const;
     std::vector<boost::uint8_t> const& GetData() const;
-    std::size_t GetTotalSize() const;
 };
 
 
@@ -213,17 +212,30 @@ public:
 class Header
 {
 public:
+    Header(Header const& other);
+
     std::string GetFileSignature() const;
     boost::uint16_t GetFileSourceId() const;
+    void SetFileSourceId(boost::uint16_t v);
     guid GetProjectId() const;
+    void SetProjectId(guid const& v);
     boost::uint8_t GetVersionMajor() const;
+    void SetVersionMajor(boost::uint8_t v);
     boost::uint8_t GetVersionMinor() const;
+    void SetVersionMinor(boost::uint8_t v);
     std::string GetSystemId(bool pad = false) const;
+    void SetSystemId(std::string const& v);
     std::string GetSoftwareId(bool pad = false) const;
+    void SetSoftwareId(std::string const& v);
     boost::uint16_t GetCreationDOY() const;
+    void SetCreationDOY(boost::uint16_t v);
     boost::uint16_t GetCreationYear() const;
-    boost::uint32_t GetRecordsCount() const;
+    void SetCreationYear(boost::uint16_t v);
+
     PointFormatName GetDataFormatId() const;
+    void SetDataFormatId(PointFormatName v);
+
+    boost::uint32_t GetRecordsCount() const;
     boost::uint32_t GetPointRecordsCount() const;
 
     double GetScaleX() const;
@@ -238,12 +250,17 @@ public:
     double GetMinY() const;
     double GetMaxZ() const;
     double GetMinZ() const;
+    void SetScale(double x, double y, double z);
+    void SetOffset(double x, double y, double z);
+    void SetMax(double x, double y, double z);
+    void SetMin(double x, double y, double z);
 
     const std::vector<VariableRecord>& GetVLRs() const;
 
     SpatialReference GetSRS() const;
 
     bool Compressed() const;
+    void SetCompressed(bool b);
 };
 
 
@@ -266,30 +283,34 @@ public:
 
 //---------------------------------------------------------------------------
 
+class Writer
+{
+public:
+    Writer(std::ostream& ofs, Header const& header);
+    Header const& GetHeader() const;
+    bool WritePoint(Point const& point);
+    //void WriteHeader(Header& header);
+    //void SetFilters(std::vector<liblas::FilterPtr> const& filters);
+    //void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
+};
+
+//---------------------------------------------------------------------------
+
+
 class ReaderFactory
 {
 public:
     Reader CreateCached(std::istream& stream, boost::uint32_t cache_size);
     Reader CreateWithStream(std::istream& stream);
     static std::istream* FileOpen(std::string const& filename);
+    static void FileClose(std::istream*);
 };
-
-
-//---------------------------------------------------------------------------
 
 class WriterFactory
 {
 public:
-    enum FileType
-    {
-        FileType_Unknown,
-        FileType_LAS,
-        FileType_LAZ
-    };
-
-    //static WriterIPtr CreateWithStream(std::ostream& stream, Header const& header); 
-    static FileType InferFileTypeFromExtension(const std::string&);
-    static std::ostream* WriterFactory::FileCreate(std::string const& filename);
+    static std::ostream* FileCreate(std::string const& filename);
+    static void FileClose(std::ostream*);
 };
 
-}; // end namespace
+}; // namespace

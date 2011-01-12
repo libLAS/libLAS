@@ -50,6 +50,10 @@ namespace swig_test
 {
    public class Program
    {
+      static string fileA = @"..\..\test\data\1.2-with-color.las";
+      static string fileB = @"..\..\test\data\1.2-with-color.laz";
+      static string fileT = @"tmp.laz";
+      
       static public bool IsApprox(double a, double b, double tol)
       {
          double min = Math.Min(a, b);
@@ -62,43 +66,143 @@ namespace swig_test
 
       static int Main(string[] args)
       {
-         string fileA = @"..\..\test\data\1.2-with-color.las";
-         string fileB = @"..\..\test\data\1.2-with-color.laz";
-         ReaderFactory factory = new ReaderFactory();
+         // reader tests for A
+         Test_ReadA();
 
-         // tests for A
-         {
-            SWIGTYPE_p_std__istream ifs = Liblas.ReaderFactory.FileOpen(fileA);
+         // reader tests for B
+         Test_ReadB();
 
-            Reader reader = factory.CreateWithStream(ifs);
-            TestReader.Test_A(reader);
+         // writer tests
+         Test_WriteT();
 
-            Header header = reader.GetHeader();
-            TestHeader.Test_A(header);
-
-            bool ok = reader.ReadPointAt(2);
-            Debug.Assert(ok);
-            Point pt = reader.GetPoint();
-            TestPoint.Test_A2(pt);
-         }
-
-         // tests for B
-         {
-            SWIGTYPE_p_std__istream ifs = Liblas.ReaderFactory.FileOpen(fileB);
-
-            Reader reader = factory.CreateWithStream(ifs);
-            TestReader.Test_B(reader);
-
-            Header header = reader.GetHeader();
-            TestHeader.Test_B(header);
-
-            bool ok = reader.ReadPointAt(2);
-            Debug.Assert(ok);
-            Point pt = reader.GetPoint();
-            TestPoint.Test_B2(pt);
-         }
+         // reader tests for the generated B
+         Test_ReadT();
 
          return 0;
       }
+
+      private static void Test_ReadA()
+      {
+         ReaderFactory factory = new ReaderFactory();
+
+         SWIGTYPE_p_std__istream ifs = Liblas.ReaderFactory.FileOpen(fileA);
+
+         Reader reader = factory.CreateWithStream(ifs);
+         TestReader.Test_A(reader);
+
+         Header header = reader.GetHeader();
+         TestHeader.Test_A(header);
+
+         TestGuid.Test_A(header.GetProjectId());
+
+         VectorVariableRecord vlrs = header.GetVLRs();
+         TestVariableRecord.Test_A(vlrs);
+
+         SpatialReference srs = header.GetSRS();
+         TestSpatialReference.Test(srs);
+
+         bool ok = reader.ReadPointAt(2);
+         Debug.Assert(ok);
+         Point pt = reader.GetPoint();
+         TestPoint.Test_A2(pt);
+
+         Liblas.ReaderFactory.FileClose(ifs);
+      }
+
+      private static void Test_ReadB()
+      {
+         ReaderFactory factory = new ReaderFactory();
+
+         SWIGTYPE_p_std__istream ifs = Liblas.ReaderFactory.FileOpen(fileB);
+
+         Reader reader = factory.CreateWithStream(ifs);
+         TestReader.Test_B(reader);
+
+         Header header = reader.GetHeader();
+         TestHeader.Test_B(header);
+
+         TestGuid.Test_B(header.GetProjectId());
+
+         VectorVariableRecord vlrs = header.GetVLRs();
+         TestVariableRecord.Test_B(vlrs);
+
+         SpatialReference srs = header.GetSRS();
+         TestSpatialReference.Test(srs);
+
+         bool ok = reader.ReadPointAt(2);
+         Debug.Assert(ok);
+         Point pt = reader.GetPoint();
+         TestPoint.Test_B2(pt);
+
+         Liblas.ReaderFactory.FileClose(ifs);
+      }
+
+      private static void Test_WriteT()
+      {
+         // read in all the points from A, and write out to a temp file that looks like B
+
+         ReaderFactory factory = new ReaderFactory();
+
+         SWIGTYPE_p_std__istream ifs = Liblas.ReaderFactory.FileOpen(fileB);
+         SWIGTYPE_p_std__ostream ofs = Liblas.WriterFactory.FileCreate(fileT);
+
+         Reader reader = factory.CreateWithStream(ifs);
+         Header rHeader = reader.GetHeader();
+
+         {
+            Header wHeader = new Header(rHeader);
+            {
+               wHeader.SetSystemId("liblas test");
+               wHeader.SetSoftwareId("swig test");
+               wHeader.SetCompressed(true);
+               guid g = new guid("D59B08E7-79EE-47E4-AAE1-2B8DE4B87331");
+               wHeader.SetProjectId(g);
+               wHeader.SetCreationYear(2011);
+               wHeader.SetCreationDOY(12);
+            }
+            {
+               Writer writer = new Writer(ofs, wHeader);
+
+               while (reader.ReadNextPoint())
+               {
+                  Point pt = reader.GetPoint();
+                  bool ok = writer.WritePoint(pt);
+                  Debug.Assert(ok);
+               }
+            }
+         }
+
+         Liblas.WriterFactory.FileClose(ofs);
+         Liblas.ReaderFactory.FileClose(ifs);
+      }
+
+      private static void Test_ReadT()
+      {
+         SWIGTYPE_p_std__istream ifs = Liblas.ReaderFactory.FileOpen(fileT);
+
+         ReaderFactory factory = new ReaderFactory();
+
+         Reader reader = factory.CreateWithStream(ifs);
+         TestReader.Test_T(reader);
+
+         Header header = reader.GetHeader();
+         TestHeader.Test_T(header);
+
+         TestGuid.Test_T(header.GetProjectId());
+
+         VectorVariableRecord vlrs = header.GetVLRs();
+         TestVariableRecord.Test_T(vlrs);
+
+         SpatialReference srs = header.GetSRS();
+         TestSpatialReference.Test(srs);
+
+         bool ok = reader.ReadPointAt(2);
+         Debug.Assert(ok);
+         Point pt = reader.GetPoint();
+         TestPoint.Test_B2(pt);
+
+         Liblas.ReaderFactory.FileClose(ifs);
+      }
+
    }
 }

@@ -23,34 +23,28 @@
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">swig.exe -c++ -csharp -outdir ../liblas_swig_cs -namespace Liblas -o liblas_wrap.cpp "%(FullPath)"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo Invoking SWIG...
-echo on
-..\..\..\swig.exe -csharp "%(FullPath)"
-%40echo off
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">swig.exe -c++ -csharp -outdir ../liblas_swig_cs -namespace Liblas -o liblas_wrap.cpp "%(FullPath)"
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo Invoking SWIG...
-echo on
-..\..\..\swig.exe -csharp "%(FullPath)"
-%40echo off
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">swig.exe -c++ -csharp -outdir ../liblas_swig_cs -namespace Liblas -o liblas_wrap.cpp "%(FullPath)"
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">echo Invoking SWIG...
-echo on
-..\..\..\swig.exe -csharp "%(FullPath)"
-%40echo off
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">swig.exe -c++ -csharp -outdir ../liblas_swig_cs -namespace Liblas -o liblas_wrap.cpp "%(FullPath)"
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename)_wrap.cpp;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)_wrap.c;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename)_wrap.c;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename)_wrap.c;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)_wrap.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename)_wrap.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename)_wrap.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Invoking SWIG...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Invoking SWIG...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Invoking SWIG...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Invoking SWIG...</Message>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -130,9 +124,9 @@ echo on
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>C:\Program Files (x86)\boost\boost_1_44\lib\libboost_program_options-vc100-mt-gd-1_44.lib;%(AdditionalDependencies);C:\Program Files (x86)\boost\boost_1_44\lib\libboost_serialization-vc100-mt-gd-1_44.lib;c:\dev\liblas\bin\RelWithDebInfo\Debug\liblas.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);c:\dev\liblas\bin\Debug\Debug\liblas.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>C:/Program Files (x86)/boost/boost_1_44/lib;C:/Program Files (x86)/boost/boost_1_44/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -148,7 +142,7 @@ echo on
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies);c:\dev\liblas\bin\Debug\Debug\liblas.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>C:/Program Files (x86)/boost/boost_1_44/lib;C:/Program Files (x86)/boost/boost_1_44/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\boost\boost_1_44\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -162,6 +156,7 @@ echo on
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>%(AdditionalDependencies);c:\dev\liblas\bin\Release\Release\liblas.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -175,6 +170,7 @@ echo on
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>%(AdditionalDependencies);c:\dev\liblas\bin\Release\Release\liblas.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
