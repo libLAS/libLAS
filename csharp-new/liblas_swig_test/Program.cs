@@ -44,26 +44,59 @@ using System.Linq;
 using System.Text;
 
 using Liblas;
+using System.Diagnostics;
 
-namespace tester
+namespace swig_test
 {
-   class Program
+   public class Program
    {
-      static void Assert(bool b)
+      static public bool IsApprox(double a, double b, double tol)
       {
-         if (!b)
-            Environment.Exit(1);
+         double min = Math.Min(a, b);
+         double max = Math.Max(a, b);
+         double delta = max - min;
+         if (delta > tol)
+            return false;
+         return true;
       }
 
       static int Main(string[] args)
       {
-         SWIGTYPE_p_std__istream ifs = Liblas.ReaderFactory.FileOpen(@"..\..\test\data\TO_core_last_zoom.las");
+         string fileA = @"..\..\test\data\1.2-with-color.las";
+         string fileB = @"..\..\test\data\1.2-with-color.laz";
+         ReaderFactory factory = new ReaderFactory();
 
-         Reader r = new Reader(ifs);
+         // tests for A
+         {
+            SWIGTYPE_p_std__istream ifs = Liblas.ReaderFactory.FileOpen(fileA);
 
-         double maxx = r.GetHeader().GetMaxX();
-         Assert(maxx == 630500.0);
-         Console.WriteLine("maxx = {0}", maxx);
+            Reader reader = factory.CreateWithStream(ifs);
+            TestReader.Test_A(reader);
+
+            Header header = reader.GetHeader();
+            TestHeader.Test_A(header);
+
+            bool ok = reader.ReadPointAt(2);
+            Debug.Assert(ok);
+            Point pt = reader.GetPoint();
+            TestPoint.Test_A2(pt);
+         }
+
+         // tests for B
+         {
+            SWIGTYPE_p_std__istream ifs = Liblas.ReaderFactory.FileOpen(fileB);
+
+            Reader reader = factory.CreateWithStream(ifs);
+            TestReader.Test_B(reader);
+
+            Header header = reader.GetHeader();
+            TestHeader.Test_B(header);
+
+            bool ok = reader.ReadPointAt(2);
+            Debug.Assert(ok);
+            Point pt = reader.GetPoint();
+            TestPoint.Test_B2(pt);
+         }
 
          return 0;
       }

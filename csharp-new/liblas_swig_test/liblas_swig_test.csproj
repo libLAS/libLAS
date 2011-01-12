@@ -77,6 +77,9 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestHeader.cs" />
+    <Compile Include="TestPoint.cs" />
+    <Compile Include="TestReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\liblas_swig_cs\liblas_swig_cs.csproj">

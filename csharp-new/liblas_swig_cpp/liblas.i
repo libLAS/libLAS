@@ -38,7 +38,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  
- %module WrapperCpp
+%module WrapperCpp
 
 %{
 #include "liblas/liblas.hpp"
@@ -52,25 +52,25 @@
 #include "liblas/factory.hpp"
 %}
 
-
 %include "typemaps.i"
 
+// C# support for std::string
 %include "std_string.i"
 
+// C# support for std::vector<T>
 %include "std_vector.i"
 namespace std {
    %template(VectorU8) vector<unsigned char>;
    %template(VectorU32) vector<unsigned int>;
-
    %template(VectorVariableRecord) vector<liblas::VariableRecord>;
 };
  
+
+// fix up some missing types
 namespace std
 {
 	typedef unsigned int size_t;
 };
-
-
 
 namespace boost
 {
@@ -86,24 +86,7 @@ namespace boost
 namespace liblas
 {
 
-
-class guid
-{
-public:
-    std::string to_string() const;
-    //void output_data(boost::uint32_t& d1, boost::uint16_t& d2, boost::uint16_t& d3, boost::uint8_t (&d4)[8]) const;
-};
-
-
-class Color
-{
-public:
-    typedef boost::uint16_t value_type;
-
-    value_type GetRed() const;
-    value_type GetBlue() const;
-    value_type GetGreen() const;
-};
+//---------------------------------------------------------------------------
 	
 enum PointFormatName
 {
@@ -116,40 +99,47 @@ enum PointFormatName
     ePointFormatUnknown = -99 ///< Point Data Format is unknown
 };
 
+
+//---------------------------------------------------------------------------
+
+class guid
+{
+public:
+    std::string to_string() const;
+    //void output_data(boost::uint32_t& d1, boost::uint16_t& d2, boost::uint16_t& d3, boost::uint8_t (&d4)[8]) const;
+};
+
+
+//---------------------------------------------------------------------------
+
+class Color
+{
+public:
+    typedef boost::uint16_t value_type;
+
+    value_type GetRed() const;
+    value_type GetBlue() const;
+    value_type GetGreen() const;
+};
+
+
+//---------------------------------------------------------------------------
+
 class Classification
 {
 public:
-    typedef std::bitset<8> bitset_type;
-    enum BitPosition
-    {
-        eClassBit     = 0, ///< First bit position of 0:4 range.
-        eSyntheticBit = 5, ///< Synthetic flag.
-        eKeyPointBit  = 6, ///< Key-point flag.
-        eWithheldBit  = 7  ///< Withheld flag.
-    };
     std::string GetClassName() const;
-    boost::uint8_t GetClass() const;
     bool IsSynthetic() const;
-    /// Tests if this point is considered to be a model keypoint.
     bool IsKeyPoint() const;
     bool IsWithheld() const;
 };
 
 
+//---------------------------------------------------------------------------
+
 class Point
 {
 public:
-    enum DataMemberFlag
-    {
-        eReturnNumber = 1,
-        eNumberOfReturns = 2,
-        eScanDirection = 4,
-        eFlightLineEdge = 8,
-        eClassification = 16,
-        eScanAngleRank = 32,
-        eTime = 64
-    };
-
     enum ClassificationType
     {
         eCreated = 0,
@@ -168,38 +158,19 @@ public:
         // = 13-31 // reserved for ASPRS Definition
     };
 
-    enum ScanAngleRankRange
-    {
-        eScanAngleRankMin = -90,
-        eScanAngleRankMax = 90
-    };
-
     double GetX() const;
     double GetY() const;
     double GetZ() const;
-      
     boost::uint16_t GetIntensity() const;
-
-    boost::uint8_t GetScanFlags() const;
-
     boost::uint16_t GetReturnNumber() const;
-
     boost::uint16_t GetNumberOfReturns() const;
-
-    boost::uint16_t GetScanDirection() const;
-    
-    boost::uint16_t GetFlightLineEdge() const;
     Classification GetClassification() const;
-    boost::int8_t GetScanAngleRank() const;
-    boost::uint8_t GetUserData() const;
-    boost::uint16_t GetPointSourceID() const;
-
     Color GetColor() const;
     double GetTime() const;
-
-    std::vector<boost::uint8_t> const& GetData() const {return m_data; }
 };
 
+
+//---------------------------------------------------------------------------
 
 class VariableRecord
 {
@@ -212,6 +183,9 @@ public:
     std::vector<boost::uint8_t> const& GetData() const;
     std::size_t GetTotalSize() const;
 };
+
+
+//---------------------------------------------------------------------------
 
 class SpatialReference
 {
@@ -228,23 +202,19 @@ public:
         eOGRWKT = 2
     };
 
-    const GTIF* GetGTIF();
-    std::string GetWKT(WKTModeFlag mode_flag = eHorizontalOnly) const;
     std::string GetWKT(WKTModeFlag mode_flag, bool pretty) const;
     std::string GetProj4() const;
     std::vector<VariableRecord> GetVLRs() const;
 };
 
 
+//---------------------------------------------------------------------------
 
 class Header
 {
 public:
-    typedef std::vector<boost::uint32_t> RecordsByReturnArray;
-
     std::string GetFileSignature() const;
     boost::uint16_t GetFileSourceId() const;
-    boost::uint16_t GetReserved() const;
     guid GetProjectId() const;
     boost::uint8_t GetVersionMajor() const;
     boost::uint8_t GetVersionMinor() const;
@@ -252,13 +222,9 @@ public:
     std::string GetSoftwareId(bool pad = false) const;
     boost::uint16_t GetCreationDOY() const;
     boost::uint16_t GetCreationYear() const;
-    boost::uint16_t GetHeaderSize() const;
-    boost::uint32_t GetDataOffset() const;
     boost::uint32_t GetRecordsCount() const;
     PointFormatName GetDataFormatId() const;
-    boost::uint16_t GetDataRecordLength() const;
     boost::uint32_t GetPointRecordsCount() const;
-    RecordsByReturnArray const& GetPointRecordsByReturnCount() const;
 
     double GetScaleX() const;
     double GetScaleY() const;
@@ -272,12 +238,16 @@ public:
     double GetMinY() const;
     double GetMaxZ() const;
     double GetMinZ() const;
+
     const std::vector<VariableRecord>& GetVLRs() const;
 
     SpatialReference GetSRS() const;
 
     bool Compressed() const;
 };
+
+
+//---------------------------------------------------------------------------
 
 class Reader
 {
@@ -294,6 +264,7 @@ public:
 };
 
 
+//---------------------------------------------------------------------------
 
 class ReaderFactory
 {
@@ -302,6 +273,9 @@ public:
     Reader CreateWithStream(std::istream& stream);
     static std::istream* FileOpen(std::string const& filename);
 };
+
+
+//---------------------------------------------------------------------------
 
 class WriterFactory
 {
@@ -318,4 +292,4 @@ public:
     static std::ostream* WriterFactory::FileCreate(std::string const& filename);
 };
 
-};
+}; // end namespace

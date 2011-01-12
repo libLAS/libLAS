@@ -97,7 +97,6 @@
     <Compile Include="Reader.cs" />
     <Compile Include="ReaderFactory.cs" />
     <Compile Include="SpatialReference.cs" />
-    <Compile Include="SWIGTYPE_p_GTIF.cs" />
     <Compile Include="SWIGTYPE_p_std__istream.cs" />
     <Compile Include="SWIGTYPE_p_std__ostream.cs" />
     <Compile Include="VariableRecord.cs" />
