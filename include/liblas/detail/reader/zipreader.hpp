@@ -105,15 +105,15 @@ protected:
     std::vector<liblas::FilterPtr> m_filters;
     std::vector<liblas::TransformPtr> m_transforms;
 
-    bool bNeedHeaderCheck;
-    
+
 private:
     void ReadIdiom(bool recordPoint);
     void ResetUnzipper();
 
     LASunzipper* m_unzipper;
     ZipPoint* m_zipPoint;
-
+    bool bNeedHeaderCheck;
+    
     // Blocked copying operations, declared but not defined.
     ZipReaderImpl(ZipReaderImpl const& other);
     ZipReaderImpl& operator=(ZipReaderImpl const& rhs);

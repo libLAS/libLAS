@@ -72,9 +72,11 @@ ZipReaderImpl::ZipReaderImpl(std::istream& ifs)
     , m_header(HeaderPtr())
     , m_point(PointPtr(new liblas::Point()))
     , m_filters(0)
-    , m_transforms(0),
-    m_unzipper(NULL),
-    m_zipPoint(NULL)
+    , m_transforms(0)
+    , m_unzipper(0)
+    , m_zipPoint(0)
+    , bNeedHeaderCheck(false)
+    
 {
     return;
 }
@@ -85,7 +87,7 @@ ZipReaderImpl::~ZipReaderImpl()
     {
         m_unzipper->close();
         delete m_unzipper;
-        m_unzipper = NULL;
+        m_unzipper = 0;
     }
 
     delete m_zipPoint;
