@@ -365,6 +365,9 @@ bool ZipPoint::ValidateVLR(const VariableRecord& vlr) const
     }
 
     assert(p == data + record_length_after_header);
+    
+    if (data != 0 )
+        delete[] data;
 
     return true;
 }
