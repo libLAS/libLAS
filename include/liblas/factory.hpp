@@ -111,7 +111,7 @@ public:
 
     // help function to create an output stream
     // returns NULL if failed to open
-    static std::ostream* WriterFactory::FileCreate(std::string const& filename);
+    static std::ostream* FileCreate(std::string const& filename);
 
 private:
 
