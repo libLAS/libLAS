@@ -101,6 +101,46 @@ void SetStreamPrecision(std::ostream& os, double scale)
     os.precision(prec);    
 }
 
+void SetHeaderCompression(liblas::Header& header, std::string const& filename)
+{
+    
+       // our policy for determining the output format is this:
+        //   if -compressed given, use LAZ
+        //   else if we see .las or .laz, use LAS or LAZ (resp.)
+        //   else just use LAS
+        liblas::WriterFactory::FileType output_file_type = liblas::WriterFactory::FileType_Unknown;
+
+        liblas::WriterFactory::FileType ext_type = liblas::WriterFactory::InferFileTypeFromExtension(filename);
+        if (ext_type != liblas::WriterFactory::FileType_Unknown)
+        {
+            output_file_type = ext_type;
+        }
+        else
+        {
+            output_file_type = liblas::WriterFactory::FileType_LAS;
+        }
+
+
+        switch (output_file_type)
+        {
+        case liblas::WriterFactory::FileType_LAS:
+            header.SetCompressed(false);
+            break;
+        case liblas::WriterFactory::FileType_LAZ:
+#ifdef HAVE_LASZIP
+            header.SetCompressed(true);
+#else
+            throw liblas::configuration_error("LASzip compression support not enabled in this libLAS configuration.");
+#endif
+            break;
+        case liblas::WriterFactory::FileType_Unknown:
+        default:
+            throw liblas::liblas_error("Unknown output file type");
+            break;
+        }
+        
+}
+
 liblas::Header FetchHeader(std::string const& filename)
 {
     

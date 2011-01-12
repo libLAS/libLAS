@@ -98,6 +98,7 @@ LAS_DLL std::string TryReadFileData(std::string const& filename);
 LAS_DLL std::vector<char> TryReadRawFileData(std::string const& filename);
 LAS_DLL bool term_progress(std::ostream& os, double complete);
 LAS_DLL void SetStreamPrecision(std::ostream& os, double scale);
+LAS_DLL void SetHeaderCompression(liblas::Header& header, std::string const& filename);
 
 LAS_DLL liblas::Header FetchHeader(std::string const& filename);
 LAS_DLL void RewriteHeader(liblas::Header const& header, std::string const& filename);

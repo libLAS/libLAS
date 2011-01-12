@@ -26,19 +26,19 @@ typedef boost::shared_ptr<liblas::CoordinateSummary> SummaryPtr;
 
 
 WriterPtr start_writer(   std::ostream*& ofs, 
-                          std::string const& output, 
-                          liblas::Header const& header)
+                      std::string const& output, 
+                      liblas::Header const& header)
 {
-    ofs = WriterFactory::FileCreate(output);
-    if (!ofs)
-    {
-        std::ostringstream oss;
-        oss << "Cannot create " << output << "for write.  Exiting...";
-        throw std::runtime_error(oss.str());
-    }
+ofs = WriterFactory::FileCreate(output);
+if (!ofs)
+{
+    std::ostringstream oss;
+    oss << "Cannot create " << output << "for write.  Exiting...";
+    throw std::runtime_error(oss.str());
+}
 
-    WriterPtr writer( new liblas::Writer(*ofs, header));
-    return writer;
+WriterPtr writer( new liblas::Writer(*ofs, header));
+return writer;
 }
 
 bool process(   std::istream& ifs,
@@ -325,44 +325,13 @@ int main(int argc, char* argv[])
         // Transforms alter our header as well.  Setting scales, offsets, etc.
         transforms = GetTransforms(vm, verbose, header);
 
-        // our policy for determining the output format is this:
-        //   if -compressed given, use LAZ
-        //   else if we see .las or .laz, use LAS or LAZ (resp.)
-        //   else just use LAS
-        WriterFactory::FileType output_file_type = WriterFactory::FileType_Unknown;
         if (bCompressed)
         {
-            output_file_type = WriterFactory::FileType_LAZ;
+            header.SetCompressed(true);
         }
         else 
         {
-            WriterFactory::FileType ext_type = WriterFactory::InferFileTypeFromExtension(output);
-            if (ext_type != WriterFactory::FileType_Unknown)
-            {
-                output_file_type = ext_type;
-            }
-            else
-            {
-                output_file_type = WriterFactory::FileType_LAS;
-            }
-        }
-
-        switch (output_file_type)
-        {
-        case WriterFactory::FileType_LAS:
-            header.SetCompressed(false);
-            break;
-        case WriterFactory::FileType_LAZ:
-#ifdef HAVE_LASZIP
-            header.SetCompressed(true);
-#else
-            throw configuration_error("LASzip compression support not enabled in this libLAS configuration.");
-#endif
-            break;
-        case WriterFactory::FileType_Unknown:
-        default:
-            throw liblas_error("Unknown output file type");
-            break;
+            SetHeaderCompression(header, output);
         }
 
         std::istream* ifs = ReaderFactory::FileOpen(input);
