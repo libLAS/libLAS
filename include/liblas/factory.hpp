@@ -72,6 +72,7 @@ public:
     // help function to create an input stream
     // returns NULL if failed to open
     static std::istream* FileOpen(std::string const& filename);
+    static void FileClose(std::istream*);
 
     /// Destructor.
     /// @exception nothrow
@@ -112,6 +113,7 @@ public:
     // help function to create an output stream
     // returns NULL if failed to open
     static std::ostream* FileCreate(std::string const& filename);
+    static void FileClose(std::ostream*);
 
 private:
 

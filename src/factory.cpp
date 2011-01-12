@@ -121,6 +121,15 @@ std::istream* ReaderFactory::FileOpen(std::string const& filename)
 #endif
 }
 
+void ReaderFactory::FileClose(std::istream* ifs)
+{
+#ifdef USE_BOOST_IO
+    delete ifs;
+#else
+    delete ifs;
+#endif
+}
+
 Writer WriterFactory::CreateWithImpl(WriterIPtr w)
 {
     liblas::Writer writer(w);
@@ -189,6 +198,15 @@ std::ostream* WriterFactory::FileCreate(std::string const& filename)
     ofs->open(filename.c_str(), std::ios::out | std::ios::binary);
     if (ofs->is_open() == false) return NULL;
     return ofs;
+#endif
+}
+
+void WriterFactory::FileClose(std::ostream* ifs)
+{
+#ifdef USE_BOOST_IO
+    delete ifs;
+#else
+    delete ifs;
 #endif
 }
 
