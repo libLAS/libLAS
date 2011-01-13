@@ -2131,8 +2131,7 @@ LAS_DLL LASErrorEnum LASHeader_SetSchema( LASHeaderH hHeader, const LASSchemaH h
 LAS_DLL int LASHeader_Compressed(const LASHeaderH hHeader )
 {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_Compressed", 0);
-    bool compressed = ((liblas::Header*) hHeader)->Compressed();
-    return (int) compressed;
+    return ((liblas::Header*) hHeader)->Compressed();
 }
 
 LAS_DLL LASErrorEnum LASHeader_SetCompressed( LASHeaderH hHeader, int b)
