@@ -490,6 +490,15 @@ class Header(object):
     def set_compressed(self, value):
         return core.las.LASHeader_SetCompressed(self.handle, value)
 
+    doc = """Controls compression for this file.
+
+    If True, the file is compressed with lasZIP compression and will
+    be written with lasZIP compression.  If False, the file is not
+    compressed.
+    """
+
+    compressed = property(get_compressed, set_compressed, None, doc)
+
     def get_pointrecordscount(self):
         """Returns the expected number of point records in the file.
 
