@@ -65,7 +65,7 @@ namespace swig_test
          Test(header);
          Debug.Assert(header.GetCreationDOY() == 12);
          Debug.Assert(header.GetCreationYear() == 2011);
-         Debug.Assert(header.GetRecordsCount() == 2);    // BUG
+         Debug.Assert(header.GetRecordsCount() == 1);
          Debug.Assert(header.Compressed());
          Debug.Assert(header.GetSystemId(false) == "liblas test");
          Debug.Assert(header.GetSoftwareId(true) == "swig test");

@@ -83,9 +83,12 @@ namespace boost
 	typedef signed int int32_t;
 };
 
+// BUG: how do I do a rename such that "SWIGTYPE_p_std__istream" can
+// become something like "IStreamHandle"?
 
 namespace liblas
 {
+typedef Header HeaderPtr;
 
 //---------------------------------------------------------------------------
 	
@@ -107,6 +110,7 @@ class guid
 {
 public:
     guid(char const* const str);
+    ~guid();
     std::string to_string() const;
 };
 
@@ -141,7 +145,18 @@ public:
 class Point
 {
 public:
-    enum ClassificationType
+	enum DataMemberFlag
+    {
+        eReturnNumber = 1,
+        eNumberOfReturns = 2,
+        eScanDirection = 4,
+        eFlightLineEdge = 8,
+        eClassification = 16,
+        eScanAngleRank = 32,
+        eTime = 64
+    };
+
+	enum ClassificationType
     {
         eCreated = 0,
         eUnclassified,
@@ -159,15 +174,44 @@ public:
         // = 13-31 // reserved for ASPRS Definition
     };
 
+    Point();
+    Point(HeaderPtr header);
+    Point(Point const& other);
+
     double GetX() const;
     double GetY() const;
     double GetZ() const;
-    boost::uint16_t GetIntensity() const;
+    void SetCoordinates(double const& x, double const& y, double const& z);
+    void SetX(double const& value);
+    void SetY(double const& value);
+    void SetZ(double const& value);
+	
+	boost::uint16_t GetIntensity() const;
+    void SetIntensity(boost::uint16_t const& intensity);
+
+    boost::uint8_t GetScanFlags() const;
+    void SetScanFlags(boost::uint8_t const& flags);
+
     boost::uint16_t GetReturnNumber() const;
+    void SetReturnNumber(boost::uint16_t const& num);
+
     boost::uint16_t GetNumberOfReturns() const;
+    void SetNumberOfReturns(boost::uint16_t const& num);
+
+    boost::uint16_t GetScanDirection() const;
+    void SetScanDirection(boost::uint16_t const& dir);
+    
+    boost::uint16_t GetFlightLineEdge() const;
+    void SetFlightLineEdge(boost::uint16_t const& edge);
+
     Classification GetClassification() const;
+    void SetClassification(Classification const& cls);
+
     Color GetColor() const;
+    void SetColor(Color const& value);
+
     double GetTime() const;
+    void SetTime(double const& time);
 };
 
 
@@ -176,7 +220,11 @@ public:
 class VariableRecord
 {
 public:
-    std::string GetUserId(bool pad) const;
+    VariableRecord(); 
+    VariableRecord(VariableRecord const& other);
+    ~VariableRecord();
+	
+	std::string GetUserId(bool pad) const;
     boost::uint16_t GetRecordId() const;
     boost::uint16_t GetRecordLength() const;
     std::string GetDescription(bool pad) const;
@@ -201,6 +249,11 @@ public:
         eOGRWKT = 2
     };
 
+    SpatialReference();
+    ~SpatialReference();
+    SpatialReference(std::vector<VariableRecord> const& vlrs);
+    SpatialReference(SpatialReference const& other);
+
     std::string GetWKT(WKTModeFlag mode_flag, bool pretty) const;
     std::string GetProj4() const;
     std::vector<VariableRecord> GetVLRs() const;
@@ -212,6 +265,7 @@ public:
 class Header
 {
 public:
+    Header();
     Header(Header const& other);
 
     std::string GetFileSignature() const;
@@ -270,10 +324,17 @@ class Reader
 {
 public:
     Reader(std::istream& ifs);
+    Reader(Reader const& other);
     ~Reader();
 
+	// BUG: GetHeader and GetPoint make new proxy objects at every call.
+	// For perf reasons, it'd be nice to avoid that.
+	// BUG: GetHeader and GetPoint will cause GC issues if the Reader goes
+	// away while you're still using the Point or Header (see 18.6.1 of the
+	// swig manual)
     Header const& GetHeader() const;
     Point const& GetPoint() const;
+
     bool ReadNextPoint();
     bool ReadPointAt(std::size_t n);
     void Reset();
@@ -287,28 +348,41 @@ class Writer
 {
 public:
     Writer(std::ostream& ofs, Header const& header);
+    Writer(Writer const& other);
+    ~Writer();
+
+	// BUG: see Reader::GetHeader() above
     Header const& GetHeader() const;
+
     bool WritePoint(Point const& point);
+
     //void WriteHeader(Header& header);
     //void SetFilters(std::vector<liblas::FilterPtr> const& filters);
     //void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
 };
 
-//---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
 
 class ReaderFactory
 {
 public:
+    ReaderFactory();
+    ~ReaderFactory();
     Reader CreateCached(std::istream& stream, boost::uint32_t cache_size);
     Reader CreateWithStream(std::istream& stream);
     static std::istream* FileOpen(std::string const& filename);
     static void FileClose(std::istream*);
 };
 
+
+//---------------------------------------------------------------------------
+
 class WriterFactory
 {
 public:
+    WriterFactory();
+    ~WriterFactory();
     static std::ostream* FileCreate(std::string const& filename);
     static void FileClose(std::ostream*);
 };

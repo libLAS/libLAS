@@ -37,11 +37,10 @@ namespace swig_test
 
       static public void Test_T(VectorVariableRecord vlrs)
       {
-         Debug.Assert(vlrs.Count == 2); // BUG
+         Debug.Assert(vlrs.Count == 1);
 
          VariableRecord vlr = vlrs[0];
          Test(vlrs[0]);
-         Test(vlrs[1]);
       }
    }
 }
