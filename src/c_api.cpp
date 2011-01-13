@@ -223,7 +223,8 @@ LAS_DLL LASReaderH LASReader_Create(const char* filename)
     try {
         
         std::istream* istrm = OpenInput(std::string(filename));
-        liblas::Reader* reader = new liblas::Reader(*istrm);
+        liblas::ReaderFactory f;
+        liblas::Reader* reader = new liblas::Reader(f.CreateWithStream(*istrm));
         readers.insert(std::pair<liblas::Reader*, std::istream*>(reader, istrm));
         return (LASReaderH) reader;
     
