@@ -52,7 +52,10 @@ class Translator(object):
         g.add_option("-q", "--quiet",
                           action="store_false", dest="verbose", default=False,
                           help="Don't say what we're doing on stdout")
-                          
+        
+        g.add_option("--compressed", action="store_true", dest="compressed",
+                          default=False)
+                  
         parser.add_option_group(g)
 
         if self.opts:
@@ -183,6 +186,8 @@ class Translator(object):
             h.offset = [self.min.x, self.min.y, self.min.z]
             if self.options.verbose:
                 print 'using minimum offsets', h.offset
+
+            h.compressed = self.options.compressed
         
         if self.srs:
             h.srs = self.srs
