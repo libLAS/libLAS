@@ -248,7 +248,7 @@ int main(int argc, char* argv[])
             ("precision,p", po::value<long>(&precision)->default_value(8), "Number of decimal points to write for each bbox")
             ("stdout", po::value<bool>(&bUseStdout)->zero_tokens()->implicit_value(true), "Output data to stdout")
             ("write-points", po::value<bool>(&tiling)->zero_tokens()->implicit_value(true), "Write .las files for each block instead of an index file")
-            ("compressed,c", po::value<bool>(&bCompressed)->zero_tokens()->implicit_value(true), "Produce .laz compressed data for --write-points tiles")
+            ("compressed", po::value<bool>(&bCompressed)->zero_tokens()->implicit_value(true), "Produce .laz compressed data for --write-points tiles")
 
             ("input,i", po::value< std::string >(), "input LAS file")
             ("output,o", po::value< std::string >(&output)->default_value(""), "The output .kdx file (defaults to input filename + .kdx)")
