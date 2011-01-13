@@ -484,6 +484,12 @@ class Header(object):
     """
     schema = property(get_schema, set_schema, None, doc)
 
+    def get_compressed(self):
+        return bool(core.las.LASHeader_Compressed(self.handle))
+
+    def set_compressed(self, value):
+        return core.las.LASHeader_SetCompressed(self.handle, value)
+
     def get_pointrecordscount(self):
         """Returns the expected number of point records in the file.
 
