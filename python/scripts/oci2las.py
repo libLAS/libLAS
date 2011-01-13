@@ -187,8 +187,8 @@ class Translator(object):
             if self.options.verbose:
                 print 'using minimum offsets', h.offset
 
-            h.compressed = self.options.compressed
-        
+        h.compressed = self.options.compressed
+ 
         if self.srs:
             h.srs = self.srs
             
