@@ -147,6 +147,7 @@ void Header::write()
         if (m_header.Compressed())
         {
 #ifdef HAVE_LASZIP
+            m_header.DeleteVLRs("laszip encoded", 22204);
             ZipPoint zpd(m_header.GetDataFormatId());
             VariableRecord v;
             zpd.ConstructVLR(v);

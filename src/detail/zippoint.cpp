@@ -237,6 +237,9 @@ void ZipPoint::ConstructVLR(VariableRecord& v) const
     }
         
     v.SetData(vdata);
+    
+    if (data != 0)
+	delete [] data;
 
     return;
 }

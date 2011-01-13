@@ -91,6 +91,8 @@
     <Compile Include="Color.cs" />
     <Compile Include="guid.cs" />
     <Compile Include="Header.cs" />
+    <Compile Include="liblas_swig_cpp.cs" />
+    <Compile Include="liblas_swig_cppPINVOKE.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="PointFormatName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -103,8 +105,7 @@
     <Compile Include="VectorU32.cs" />
     <Compile Include="VectorU8.cs" />
     <Compile Include="VectorVariableRecord.cs" />
-    <Compile Include="WrapperCpp.cs" />
-    <Compile Include="WrapperCppPINVOKE.cs" />
+    <Compile Include="Writer.cs" />
     <Compile Include="WriterFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
