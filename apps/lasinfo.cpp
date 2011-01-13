@@ -243,7 +243,9 @@ int main(int argc, char* argv[])
             if (check)
                 tree = summary.GetPTree();
             else 
-                tree = header.GetPTree();
+            {
+                tree.add_child("summary.header", header.GetPTree());
+            }
             
             liblas::property_tree::write_xml(std::cout, tree);
             return 0;
