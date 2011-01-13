@@ -2134,12 +2134,12 @@ LAS_DLL int LASHeader_Compressed(const LASHeaderH hHeader )
     return ((liblas::Header*) hHeader)->Compressed();
 }
 
-LAS_DLL LASErrorEnum LASHeader_SetCompressed( LASHeaderH hHeader, int b)
+LAS_DLL LASErrorEnum LASHeader_SetCompressed( LASHeaderH hHeader, int value)
 {
     VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetCompressed", LE_Failure);
     
     try {
-      ((liblas::Header*) hHeader)->SetCompressed((bool) b);
+      ((liblas::Header*) hHeader)->SetCompressed(value);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetCompressed");
