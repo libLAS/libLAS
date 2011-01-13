@@ -2128,6 +2128,28 @@ LAS_DLL LASErrorEnum LASHeader_SetSchema( LASHeaderH hHeader, const LASSchemaH h
     return LE_None;
 }
 
+LAS_DLL int LASHeader_Compressed(const LASHeaderH hHeader )
+{
+    VALIDATE_LAS_POINTER1(hHeader, "LASHeader_Compressed", 0);
+    return ((liblas::Header*) hHeader)->Compressed();
+}
+
+LAS_DLL LASErrorEnum LASHeader_SetCompressed( LASHeaderH hHeader, int value)
+{
+    VALIDATE_LAS_POINTER1(hHeader, "LASHeader_SetCompressed", LE_Failure);
+    
+    try {
+      ((liblas::Header*) hHeader)->SetCompressed(value);
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetCompressed");
+        return LE_Failure;
+    }
+
+    return LE_None;
+}
+    
+
 LAS_C_END
 
 #ifdef _MSC_VER

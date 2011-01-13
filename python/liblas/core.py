@@ -737,6 +737,14 @@ las.LASHeader_SetSchema.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASHeader_SetSchema.errcheck = check_return
 las.LASHeader_SetSchema.restype = ctypes.c_int
 
+las.LASHeader_Compressed.argtypes = [ctypes.c_void_p]
+las.LASHeader_Compressed.errcheck = check_value
+las.LASHeader_Compressed.restype = ctypes.c_int
+
+las.LASHeader_SetCompressed.argtypes = [ctypes.c_void_p, ctypes.c_int]
+las.LASHeader_SetCompressed.errcheck = check_return
+las.LASHeader_SetCompressed.restype = ctypes.c_int
+
 las.LASSchema_Create.argtypes = [ctypes.c_uint32]
                                         
 las.LASSchema_Create.errcheck = check_void

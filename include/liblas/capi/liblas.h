@@ -1156,6 +1156,18 @@ LAS_DLL LASError LASHeader_SetSchema( LASHeaderH hHeader, LASSchemaH hFormat);
 
 LAS_DLL void LASSchema_Destroy(LASSchemaH hFormat);
 
+/** Returns the compression status of the header
+ *  @param hHeader LASHeaderH instance
+ *  @return 1 if the file is compressed, 0 otherwise
+ */
+LAS_DLL int LASHeader_Compressed(const LASHeaderH hHeader);
+
+/** Sets the compression status of the header
+ *  @param hHeader LASHeaderH instance
+ *  @param b 1if the file is compressed, 0 otherwise
+ *  @return LASerror enum
+ */
+LAS_DLL LASError LASHeader_SetCompressed(LASHeaderH hHeader, int b);
 
 LAS_C_END
 #endif
