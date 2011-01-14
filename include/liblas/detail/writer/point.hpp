@@ -82,8 +82,6 @@ private:
     
     std::ostream& m_ofs;
     HeaderPtr m_header;
-        
-    PointRecord m_record;
     
     Schema m_format;
     
