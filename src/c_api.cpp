@@ -52,7 +52,9 @@
 #endif
 
 #include <liblas/liblas.hpp>
-
+#include <liblas/detail/reader/reader.hpp>
+#include <liblas/detail/reader/zipreader.hpp>
+#include <liblas/detail/reader/cachedreader.hpp>
 
 typedef struct LASWriterHS *LASWriterH;
 typedef struct LASReaderHS *LASReaderH;
@@ -248,7 +250,22 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
         std::istream* istrm = OpenInput(std::string(filename));
         
         liblas::Header* header = ((liblas::Header*) hHeader);
-        liblas::Reader* reader = new liblas::Reader(*istrm);
+	liblas::Reader* reader = NULL;
+
+        if (header->Compressed())
+        {
+#ifdef HAVE_LASZIP
+            ReaderIPtr r = ReaderIPtr(new liblas::detail::ZipReaderImpl(*istrm) );
+            reader = new liblas::Reader(r);
+#else
+            throw configuration_error("Compression support not enabled in liblas configuration");
+#endif
+        }
+        else {
+            ReaderIPtr r = ReaderIPtr(new liblas::detail::ReaderImpl(*istrm) );
+            reader = new liblas::Reader(r);
+        }
+
         reader->SetHeader(*header);
         readers.insert(std::pair<liblas::Reader*, std::istream*>(reader, istrm));
         return (LASReaderH) reader;
