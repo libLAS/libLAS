@@ -128,7 +128,9 @@ void Header::write()
     } 
     else 
     {
+        
         // Rewrite the georeference VLR entries if they exist
+        m_header.DeleteVLRs("liblas", 2112);
         m_header.SetGeoreference();
 
         // If we have a custom schema, add the VLR and write it into the 
