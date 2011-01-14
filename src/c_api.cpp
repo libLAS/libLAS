@@ -247,25 +247,19 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
 
     try {
         
-        std::istream* istrm = OpenInput(std::string(filename));
+        liblas::ReaderFactory f;
+        std::istream* istrm = liblas::ReaderFactory::FileOpen(filename);
+        liblas::Reader* reader = new liblas::Reader(f.CreateWithStream(*istrm));
         
+        liblas::Header const& current_header = reader->GetHeader();
+        
+        // If the original data were compressed, we need to override whatever value
+        // our incoming header has for that value
         liblas::Header* header = ((liblas::Header*) hHeader);
-	liblas::Reader* reader = NULL;
-
-        if (header->Compressed())
+        if (current_header.Compressed())
         {
-#ifdef HAVE_LASZIP
-            ReaderIPtr r = ReaderIPtr(new liblas::detail::ZipReaderImpl(*istrm) );
-            reader = new liblas::Reader(r);
-#else
-            throw configuration_error("Compression support not enabled in liblas configuration");
-#endif
+            header->SetCompressed(true);
         }
-        else {
-            ReaderIPtr r = ReaderIPtr(new liblas::detail::ReaderImpl(*istrm) );
-            reader = new liblas::Reader(r);
-        }
-
         reader->SetHeader(*header);
         readers.insert(std::pair<liblas::Reader*, std::istream*>(reader, istrm));
         return (LASReaderH) reader;
