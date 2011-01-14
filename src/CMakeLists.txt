@@ -89,6 +89,7 @@ set(LIBLAS_DETAIL_HPP
   ${LIBLAS_HEADERS_DIR}/detail/sha1.hpp
   ${LIBLAS_HEADERS_DIR}/detail/timer.hpp
   ${LIBLAS_HEADERS_DIR}/detail/private_utility.hpp
+  ${LIBLAS_HEADERS_DIR}/detail/singleton.hpp
   ${LIBLAS_HEADERS_DIR}/detail/zippoint.hpp)
 
 set(LIBLAS_DETAIL_INDEX_HPP

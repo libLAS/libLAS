@@ -51,6 +51,7 @@
 #include <liblas/version.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/export.hpp>
+#include <liblas/detail/singleton.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>
@@ -421,16 +422,10 @@ LAS_DLL std::ostream& operator<<(std::ostream& os, liblas::Header const&);
 /// a reader creates the point, the HeaderPtr from the file that was 
 /// read will be used, but all stand-alone points will have EmptyHeader 
 /// as their base.
-class LAS_DLL DefaultHeader
+class LAS_DLL DefaultHeader : public Singleton<Header>
 {
 public:
-    virtual ~DefaultHeader() {}
-    
-    static Header const& get() 
-    {
-        static Header object;
-        return object;
-    }
+
 
 protected:
     DefaultHeader();
