@@ -304,6 +304,39 @@ header after you subtract the VLRs
   630320.96
   630280.89
 
+  >>> comp_header = header.Header()
+  >>> comp_header.minor_version = 2
+  >>> comp_header.compressed = True
+  >>> compressed = file.File('output.laz', mode='w', header=comp_header)
+
+  >>> comp_header.compressed
+  True
+
+  >>> for i in points:
+  ...    compressed.write(i)
+  
+  >>> compressed.close()
+  >>> del compressed
+
+  >>> read_compressed = file.File('output.laz', mode='r')
+
+  >>> read_compressed.header.compressed
+  True
+
+  >>> for i in read_compressed:
+  ...   print round(i.x, 6)
+  630262.3
+  630282.45
+  630300.08
+  630346.83
+  630327.59
+  630323.57
+  630320.96
+  630280.89
+
+  
+  >>> read_compressed.close()
+  >>> del read_compressed    
 
 # The following tests writing out point data that are larger in size than 
 # the base point format, allowing you to store extra data.  
@@ -368,7 +401,7 @@ header after you subtract the VLRs
   >>> os.remove('junk3.las')
   >>> os.remove('junk4.las')
 
-# >>> os.remove('junk5.las')
+#  >>> os.remove('junk5.las')
        
   >>> f = file.File('junk.las', mode="w", header=h)
   >>> import liblas.core
@@ -383,6 +416,7 @@ header after you subtract the VLRs
 
   >>> import os
   >>> os.remove('junk.las')
+  
   
 
 
