@@ -927,7 +927,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 		} // if
 		if (PtRead)
 		{
-			Point TestPt = m_reader->GetPoint();
+			Point const& TestPt = m_reader->GetPoint();
 			PtX = TestPt.GetX();
 			PtY = TestPt.GetY();
 			PtZ = TestPt.GetZ();
@@ -970,7 +970,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 				} // if
 				if (PtRead)
 				{
-					Point TestPt = m_reader->GetPoint();
+					Point const& TestPt = m_reader->GetPoint();
 					PtY = TestPt.GetY();
 					PtZ = TestPt.GetZ();
 					if (PtY >= ParamSrc.GetMinFilterY() && PtY <= ParamSrc.GetMaxFilterY())
@@ -1014,7 +1014,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 				} // if
 				if (PtRead)
 				{
-					Point TestPt = m_reader->GetPoint();
+					Point const& TestPt = m_reader->GetPoint();
 					PtZ = TestPt.GetZ();
 					if (PtZ >= ParamSrc.GetMinFilterZ() && PtZ <= ParamSrc.GetMaxFilterZ())
 						ZGood = true;
@@ -1565,7 +1565,7 @@ bool Index::SaveIndexInLASFile(void)
 		m_reader->Seek(0);
 		while (m_reader->ReadNextPoint())
 		{
-			Point CurPt = m_reader->GetPoint();
+			Point const& CurPt = m_reader->GetPoint();
 			if (! writer.WritePoint(CurPt))
 				return (OutputFileError("Index::SaveIndexInLASFile"));
 		} // while
@@ -1584,7 +1584,7 @@ bool Index::SaveIndexInStandAloneFile(void)
 		m_reader->Seek(0);
 		while (m_reader->ReadNextPoint())
 		{
-			Point CurPt = m_reader->GetPoint();
+			Point const& CurPt = m_reader->GetPoint();
 			if (! writer.WritePoint(CurPt))
 				return (OutputFileError("Index::SaveIndexInLASFile"));
 		} // while
