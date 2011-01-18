@@ -76,23 +76,21 @@ namespace liblas {
 
 typedef std::vector<Dimension> DimensionArray;
 
-using namespace boost::multi_index;
-
 struct name{};
 struct position{};
 struct index{};
 
 
-typedef multi_index_container<
+typedef boost::multi_index::multi_index_container<
   Dimension,
-  indexed_by<
+  boost::multi_index::indexed_by<
     // sort by Dimension::operator<
-    ordered_unique<tag<position>, identity<Dimension> >,
+    boost::multi_index::ordered_unique<boost::multi_index::tag<position>, boost::multi_index::identity<Dimension> >,
     
     // Random access
-    random_access<tag<index> >,
+    boost::multi_index::random_access<boost::multi_index::tag<index> >,
     // sort by less<string> on GetName
-    hashed_unique<tag<name>, const_mem_fun<Dimension,std::string const&,&Dimension::GetName> >
+    boost::multi_index::hashed_unique<boost::multi_index::tag<name>, boost::multi_index::const_mem_fun<Dimension,std::string const&,&Dimension::GetName> >
       >
 > IndexMap;
 
