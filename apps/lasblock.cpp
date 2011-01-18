@@ -46,36 +46,16 @@ liblas::Writer* start_writer(   std::ostream*& ofs,
                       std::string const& output, 
                       liblas::Header const& header)
 {
-ofs = liblas::WriterFactory::FileCreate(output);
-if (!ofs)
-{
-    std::ostringstream oss;
-    oss << "Cannot create " << output << "for write.  Exiting...";
-    throw std::runtime_error(oss.str());
+    ofs = liblas::Create(output, std::ios::out | std::ios::binary);
+    if (!ofs)
+    {
+        std::ostringstream oss;
+        oss << "Cannot create " << output << "for write.  Exiting...";
+        throw std::runtime_error(oss.str());
+    }
+
+    return new liblas::Writer(*ofs, header);
 }
-
-return new liblas::Writer(*ofs, header);
-}
-
-
-
-// WriterPtr start_writer(   OStreamPtr strm, 
-//                           std::string const& output, 
-//                           liblas::Header const& header)
-// {
-//     
-//     if (!liblas::Create(*strm, output.c_str()))
-//     {
-//         std::ostringstream oss;
-//         oss << "Cannot create " << output << "for write.  Exiting...";
-//         throw std::runtime_error(oss.str());
-//     }
-// 
-//     WriterPtr writer( new liblas::Writer(*strm, header));
-//     return writer;
-//     
-// }
-
 
 using namespace liblas;
 
@@ -104,10 +84,6 @@ void write_tiles(std::string& output,
 
 
     std::string out = output;
-    
-
-
-    
     liblas::Header header = reader.GetHeader();
     
     if (bCompressed)
@@ -157,7 +133,9 @@ void write_tiles(std::string& output,
             if (writer != 0)
                 delete writer;
             if (ofs != 0)
-                delete ofs;
+            {
+                liblas::Cleanup(ofs);
+            }
             
         }
         
@@ -295,7 +273,7 @@ int main(int argc, char* argv[])
             output = std::string(input) + ".kdx";
         }
 
-        std::istream* ifs = liblas::ReaderFactory::FileOpen(input);
+        std::istream* ifs = liblas::Open(input, std::ios::in | std::ios::binary);
         if (!ifs)
         {
             std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
@@ -327,7 +305,10 @@ int main(int argc, char* argv[])
         }
         
         if (ifs != 0)
-            delete ifs;
+        {
+            liblas::Cleanup(ifs);
+            ifs = 0;
+        }
     }
 
     catch(std::exception& e)

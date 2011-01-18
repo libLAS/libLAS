@@ -71,8 +71,8 @@ public:
     
     // help function to create an input stream
     // returns NULL if failed to open
-    static std::istream* FileOpen(std::string const& filename);
-    static void FileClose(std::istream*);
+    // static std::istream* FileOpen(std::string const& filename, std::ios::openmode mode);
+    // static void FileClose(std::istream*);
 
     /// Destructor.
     /// @exception nothrow
@@ -110,11 +110,7 @@ public:
     // returns Unknown, unless we find a .laz or .las extension
     static FileType InferFileTypeFromExtension(const std::string&);
 
-    // help function to create an output stream
-    // returns NULL if failed to open
-    static std::ostream* FileCreate(std::string const& filename);
-    static void FileClose(std::ostream*);
-
+// 
 private:
 
 };

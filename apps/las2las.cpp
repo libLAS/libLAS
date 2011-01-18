@@ -29,7 +29,7 @@ WriterPtr start_writer(   std::ostream*& ofs,
                       std::string const& output, 
                       liblas::Header const& header)
 {
-ofs = WriterFactory::FileCreate(output);
+ofs = liblas::Create(output, std::ios::out | std::ios::binary);
 if (!ofs)
 {
     std::ostringstream oss;
@@ -291,7 +291,7 @@ int main(int argc, char* argv[])
             if (verbose)
                 std::cout << "Opening " << input << " to fetch Header" << std::endl;
 
-            std::istream* ifs = ReaderFactory::FileOpen(input);
+            std::istream* ifs = Open(input, std::ios::in | std::ios::binary);
             if (!ifs)
             {
                 std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
@@ -334,7 +334,7 @@ int main(int argc, char* argv[])
             SetHeaderCompression(header, output);
         }
 
-        std::istream* ifs = ReaderFactory::FileOpen(input);
+        std::istream* ifs = Open(input, std::ios::in | std::ios::binary);
         if (!ifs)
         {
             std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
@@ -355,7 +355,10 @@ int main(int argc, char* argv[])
             return (1);
         }
         
-        delete ifs;
+        if (ifs != 0)
+        {
+            liblas::Cleanup(ifs);
+        }
     }
     catch(std::exception& e)
     {

@@ -75,6 +75,16 @@
 #include <boost/concept_check.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
+
+//#define USE_BOOST_IO
+#ifdef USE_BOOST_IO
+#include <ostream>
+#include <boost/iostreams/device/file.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/stream_buffer.hpp>
+#endif
+
+
 // std
 #include <cstring>
 #include <fstream>
@@ -105,6 +115,22 @@ inline bool Open(std::ifstream& ifs, std::string const& filename) // throw()
     return ifs.is_open();
 }
 
+inline std::istream* Open(std::string const& filename, std::ios::openmode mode) // throw()
+{
+#ifdef USE_BOOST_IO
+    namespace io = boost::iostreams;
+    io::stream<io::file_source>* ifs = new io::stream<io::file_source>();
+    ifs->open(filename.c_str(), mode);
+    if (ifs->is_open() == false) return NULL;
+    return ifs;
+#else
+    std::ifstream* ifs = new std::ifstream();
+    ifs->open(filename.c_str(), mode);
+    if (ifs->is_open() == false) return NULL;
+    return ifs;
+#endif
+}
+
 /// Create file and open to write in binary mode.
 /// The output file is also attached to output stream.
 /// \param ofs - reference to output file stream to
@@ -117,6 +143,44 @@ inline bool Create(std::ofstream& ofs, std::string const& filename) // throw()
 {
     ofs.open(filename.c_str(), std::ios::out | std::ios::binary);
     return ofs.is_open();
+}
+
+inline std::ostream* Create(std::string const& filename, std::ios::openmode mode)
+{
+#ifdef USE_BOOST_IO
+    namespace io = boost::iostreams;
+    io::stream<io::file_sink>* ofs = new io::stream<io::file_sink>();
+    ofs->open(filename.c_str(), mode);
+    if (ofs->is_open() == false) return NULL;
+    return ofs;
+#else
+    std::ofstream* ofs = new std::ofstream();
+    ofs->open(filename.c_str(), mode);
+    if (ofs->is_open() == false) return NULL;
+    return ofs;
+#endif    
+}
+
+inline void Cleanup(std::ostream* ofs)
+{
+    // An ofstream is closeable and deletable, but 
+    // an ostream like &std::cout isn't.
+    if (static_cast<std::ofstream&>(*ofs))
+    {
+        static_cast<std::ofstream&>(*ofs).close();
+        delete ofs;
+    }
+}
+
+inline void Cleanup(std::istream* ifs)
+{
+    // An ifstream is closeable and deletable, but 
+    // an istream like &std::cin isn't.
+    if (static_cast<std::ifstream&>(*ifs))
+    {
+        static_cast<std::ifstream&>(*ifs).close();
+        delete ifs;
+    }
 }
 
 class ReaderI
