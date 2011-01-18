@@ -442,6 +442,23 @@ LAS_DLL LASPointH LASPoint_Copy(const LASPointH hPoint) {
         return (LASPointH) new liblas::Point(*((liblas::Point*) hPoint));
 }
 
+LAS_DLL LASHeaderH LASPoint_GetHeader(const LASPointH hPoint)
+{
+    VALIDATE_LAS_POINTER1(hPoint    , "LASPoint_GetHeader", NULL);
+
+    liblas::Point const& p= *((liblas::Point*) hPoint);
+    liblas::HeaderPtr h = p.GetHeaderPtr();
+    if (h.get())
+    {
+        return (LASHeaderH) new liblas::Header( *h.get() );
+    } else
+    {
+        return (LASHeaderH) new liblas::Header((liblas::DefaultHeader::get()));
+    }
+        
+}
+
+
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint) {
     VALIDATE_LAS_POINTER0(hPoint, "LASPoint_Destroy");
     delete (liblas::Point*) hPoint;
@@ -465,6 +482,30 @@ LAS_DLL LASErrorEnum LASPoint_SetX(LASPointH hPoint, double value) {
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetX");
+        return LE_Failure;
+    }
+
+    return LE_None;
+
+}
+
+LAS_DLL boost::int32_t LASPoint_GetRawX(const LASPointH hPoint) {
+
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawX", 0.0);
+    
+    boost::int32_t value = ((liblas::Point*) hPoint)->GetRawX();
+    return value;
+}
+
+LAS_DLL LASErrorEnum LASPoint_SetRawX(LASPointH hPoint, boost::int32_t value) {
+
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetRawX", LE_Failure);
+
+    try {
+            ((liblas::Point*) hPoint)->SetRawX(value);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetRawX");
         return LE_Failure;
     }
 
@@ -496,6 +537,29 @@ LAS_DLL LASErrorEnum LASPoint_SetY(LASPointH hPoint, double value) {
 
 }
 
+LAS_DLL boost::int32_t LASPoint_GetRawY(const LASPointH hPoint) {
+
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawY", 0.0);
+    
+    boost::int32_t value = ((liblas::Point*) hPoint)->GetRawY();
+    return value;
+}
+
+LAS_DLL LASErrorEnum LASPoint_SetRawY(LASPointH hPoint, boost::int32_t value) {
+
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetRawY", LE_Failure);
+
+    try {
+            ((liblas::Point*) hPoint)->SetRawY(value);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetRawY");
+        return LE_Failure;
+    }
+
+    return LE_None;
+
+}
 LAS_DLL double LASPoint_GetZ(const LASPointH hPoint) {
     
     VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetZ", 0.0);
@@ -513,6 +577,30 @@ LAS_DLL LASErrorEnum LASPoint_SetZ(LASPointH hPoint, double value) {
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASPoint_SetZ");
+        return LE_Failure;
+    }
+
+    return LE_None;
+
+}
+
+LAS_DLL boost::int32_t LASPoint_GetRawZ(const LASPointH hPoint) {
+
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawZ", 0.0);
+    
+    boost::int32_t value = ((liblas::Point*) hPoint)->GetRawZ();
+    return value;
+}
+
+LAS_DLL LASErrorEnum LASPoint_SetRawZ(LASPointH hPoint, boost::int32_t value) {
+
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetRawZ", LE_Failure);
+
+    try {
+            ((liblas::Point*) hPoint)->SetRawZ(value);
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetRawZ");
         return LE_Failure;
     }
 

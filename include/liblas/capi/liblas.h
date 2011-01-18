@@ -78,35 +78,6 @@ typedef enum
     LE_Fatal = 4
 } LASError;
 
-/**
- * \todo to be documented
- */
-typedef struct  {
-
-    double t;
-    double x, y, z;
-    unsigned short intensity;
-    unsigned char cls;
-    char scan_angle;
-    unsigned char user_data;
-    unsigned short retnum;
-    unsigned short numret;
-    unsigned short scandir;
-    unsigned short fedge;
-    unsigned short red;
-    unsigned short green;
-    unsigned short blue;
-    long rgpsum;    
-    int number_of_point_records;
-    int number_of_points_by_return[8];
-    int number_of_returns_of_given_pulse[8];
-    int classification[32];
-    int classification_synthetic;
-    int classification_keypoint;
-    int classification_withheld;
-    LASPointH pmax;
-    LASPointH pmin;
-} LASPointSummary;
 
 
 /** Returns the version string for this library.
@@ -241,27 +212,44 @@ LAS_DLL LASError LASReader_Seek(LASReaderH hReader, unsigned int position);
 /* Point operations                                                         */
 /****************************************************************************/
 
-/** Returns the X value for the point.  This value is not scaled or offset
- *  by any header values and stands on its own.  If you need points to have 
- *  a scale and/or offset applied, this must be done in conjunction with the 
+/** Returns the X value for the point.  This value is scaled by any header 
+ *  information that is present for the point.  Use GetRawX if you want unscaled 
+ *  data.  
  *  header values after the value is read.
  *  @param hPoint the opaque pointer to the LASPointH instance  
  *  @return the X value for the LASPointH
 */
 LAS_DLL double LASPoint_GetX(const LASPointH hPoint);
 
-/** Sets the X value for the point.  This value must be scaled or offset 
- *  by any header values before being set.
+/** Sets the X value for the point.  This value is scaled by any header 
+ *  information that is present for the point.  Use SetRawX if you want unscaled 
+ *  data. 
  *  @param hPoint the opaque pointer to the LASPointH instance
  *  @param value the double value to set for the X value of the point
  *  @return an error number if an error occured during the setting of the point.
 */
 LAS_DLL LASError LASPoint_SetX(LASPointH hPoint, double value);
 
-/** Returns the Y value for the point.  This value is not scaled or offset
+/** Returns the raw X value for the point.  This value is not scaled or offset
  *  by any header values and stands on its own.  If you need points to have 
  *  a scale and/or offset applied, this must be done in conjunction with the 
  *  header values after the value is read.
+ *  @param hPoint the opaque pointer to the LASPointH instance  
+ *  @return the raw(unscaled) X value for the LASPointH
+*/
+LAS_DLL long LASPoint_GetRawX(const LASPointH hPoint);
+
+/** Sets the raw X value for the point.  This value will be scaled and offset 
+ *  by any header values to get interpreted values (double GetX())
+ *  @param hPoint the opaque pointer to the LASPointH instance
+ *  @param value the double value to set for the raw X value of the point
+ *  @return an error number if an error occured during the setting of the point.
+*/
+LAS_DLL LASError LASPoint_SetRawX(LASPointH hPoint, long value);
+
+/** Gets the Y value for the point.  This value is scaled by any header 
+ *  information that is present for the point.  Use SetRawY if you want unscaled 
+ *  data. 
  *  @param hPoint the opaque pointer to the LASPointH instance  
  *  @return the Y value for the LASPointH
 */
@@ -275,10 +263,24 @@ LAS_DLL double LASPoint_GetY(const LASPointH hPoint);
 */
 LAS_DLL LASError LASPoint_SetY(LASPointH hPoint, double value);
 
-/** Returns the Z value for the point.  This value is not scaled or offset
- *  by any header values and stands on its own.  If you need points to have 
- *  a scale and/or offset applied, this must be done in conjunction with the 
- *  header values after the value is read.
+/** Gets the raw Y value for the point.  This value will be scaled and offset 
+ *  by any header values to get interpreted values (double GetY())
+ *  @param hPoint the opaque pointer to the LASPointH instance  
+ *  @return the raw(unscaled) Y value for the LASPointH
+*/
+LAS_DLL long LASPoint_GetRawY(const LASPointH hPoint);
+
+/** Sets the raw Y value for the point.  This value will be scaled and offset 
+ *  by any header values to get interpreted values (double GetY())
+ *  @param hPoint the opaque pointer to the LASPointH instance
+ *  @param value the double value to set for the raw Y value of the point
+ *  @return an error number if an error occured during the setting of the point.
+*/
+LAS_DLL LASError LASPoint_SetRawY(LASPointH hPoint, long value);
+
+/** Gets the Z value for the point.  This value is scaled by any header 
+ *  information that is present for the point.  Use SetRawZ if you want unscaled 
+ *  data. 
  *  @param hPoint the opaque pointer to the LASPointH instance  
  *  @return the Z value for the LASPointH
 */
@@ -291,6 +293,22 @@ LAS_DLL double LASPoint_GetZ(const LASPointH hPoint);
  *  @return an error number if an error occured during the setting of the point.
 */
 LAS_DLL LASError LASPoint_SetZ(LASPointH hPoint, double value);
+
+/** Gets the raw Z value for the point.  This value will be scaled and offset 
+ *  by any header values to get interpreted values (double GetZ())
+ *  @param hPoint the opaque pointer to the LASPointH instance  
+ *  @return the raw(unscaled) Z value for the LASPointH
+*/
+LAS_DLL long LASPoint_GetRawZ(const LASPointH hPoint);
+
+/** Sets the raw Z value for the point.  This value will be scaled and offset 
+ *  by any header values to get interpreted values (double GetZ())
+ *  @param hPoint the opaque pointer to the LASPointH instance
+ *  @param value the double value to set for the raw Z value of the point
+ *  @return an error number if an error occured during the setting of the point.
+*/
+LAS_DLL LASError LASPoint_SetRawZ(LASPointH hPoint, long value);
+
 
 /** Returns the intensity value for the point.  This value is the pulse return 
  *  magnitude, it is optional, and it is LiDAR system specific.
@@ -480,6 +498,12 @@ LAS_DLL LASPointH LASPoint_Copy(const LASPointH hPoint);
 /** Destroys/deletes a LASPointH instance
 */
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint);
+
+/** Returns a LASHeaderH representing the header for the point
+ *  @param hPoint the LASPointH instance
+ *  @return a LASHeaderH representing the header for the point
+*/
+ LAS_DLL LASHeaderH LASPoint_GetHeader(const LASPointH hPoint);
 
 /****************************************************************************/
 /* Header operations                                                        */
