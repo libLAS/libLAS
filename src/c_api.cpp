@@ -65,6 +65,7 @@ typedef struct LASVLRHS *LASVLRH;
 typedef struct LASColorHS *LASColorH;
 typedef struct LASSRSHS *LASSRSH;
 typedef struct LASSchemaHS *LASSchemaH;
+typedef struct LASFilterHS *LASFilterH;
 
 // boost
 #include <boost/cstdint.hpp>
@@ -89,27 +90,6 @@ using namespace liblas;
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
 #endif
 
-std::istream* OpenInput(std::string filename) 
-{
-    std::ios::openmode const mode = std::ios::in | std::ios::binary;
-    std::istream* istrm = 0;
-    if (compare_no_case(filename.c_str(),"STDIN",5) == 0)
-    {
-        istrm = &std::cin;
-    }
-    else 
-    {
-        istrm = new std::ifstream(filename.c_str(), mode);
-    }
-    
-    if (!istrm->good())
-    {
-        delete istrm;
-        throw std::runtime_error("Reading stream was not able to be created");
-    }
-    return istrm;
-}
-
 
 
 LAS_C_START
@@ -120,8 +100,6 @@ LAS_C_START
 
 
 // Error stuff
-
-
 typedef enum
 {
     LE_None = 0,
@@ -131,8 +109,28 @@ typedef enum
     LE_Fatal = 4
 } LASErrorEnum;
 
+typedef enum
+{
+    LE_Filter_Bounds = 0,
+    LE_Filter_Classification = 1,
+    LE_Filter_Thin = 2,
+    LE_Filter_Return = 3,
+    LE_Filter_Color = 4,
+    LE_Filter_Intensity = 5,
+    LE_Filter_ScanAngleRank = 6,
+    LE_Filter_Time = 7
+} LASFilterEnum;
+
+typedef enum
+{
+    LE_Transform_Reprojection = 0
+} LASTransformEnum;
 
 static std::stack<liblas::Error > errors;
+static std::vector<liblas::TransformPtr> transforms;
+static std::vector<liblas::FilterPtr> filters;
+
+
 static std::map<liblas::Reader*, std::istream*> readers;
 static std::map<liblas::Writer*, std::ostream*> writers;
 
@@ -223,8 +221,7 @@ LAS_DLL LASReaderH LASReader_Create(const char* filename)
     VALIDATE_LAS_POINTER1(filename, "LASReader_Create", NULL);
 
     try {
-        
-        std::istream* istrm = OpenInput(std::string(filename));
+        std::istream* istrm = liblas::Open(filename, std::ios::in | std::ios::binary);
         liblas::ReaderFactory f;
         liblas::Reader* reader = new liblas::Reader(f.CreateWithStream(*istrm));
         readers.insert(std::pair<liblas::Reader*, std::istream*>(reader, istrm));
@@ -248,7 +245,7 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
     try {
         
         liblas::ReaderFactory f;
-        std::istream* istrm = liblas::ReaderFactory::FileOpen(filename);
+        std::istream* istrm = liblas::Open(filename, std::ios::in | std::ios::binary);
         liblas::Reader* reader = new liblas::Reader(f.CreateWithStream(*istrm));
         
         liblas::Header const& current_header = reader->GetHeader();
@@ -296,11 +293,9 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader)
             return;            
         }
         
-        if (static_cast<std::ifstream&>(*istrm))
-            static_cast<std::ifstream&>(*istrm).close();
+        liblas::Cleanup(istrm);
             
         readers.erase(reader);
-        delete istrm;
         istrm = NULL;
   
         }  catch (std::runtime_error const& e/* e */) 
