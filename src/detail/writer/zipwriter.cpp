@@ -179,10 +179,18 @@ void ZipWriterImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
 {
     m_filters = filters;
 }
+std::vector<liblas::FilterPtr>  ZipWriterImpl::GetFilters() const
+{
+    return m_filters;
+}
 
 void ZipWriterImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
     m_transforms = transforms;
+}
+std::vector<liblas::TransformPtr>  ZipWriterImpl::GetTransforms() const
+{
+    return m_transforms;
 }
 
 liblas::Header& ZipWriterImpl::GetHeader() const

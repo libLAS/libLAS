@@ -201,7 +201,10 @@ public:
     
     virtual void SetFilters(std::vector<liblas::FilterPtr> const& filters) = 0;
     virtual void SetTransforms(std::vector<liblas::TransformPtr> const& transforms) = 0;
-
+    
+    virtual std::vector<liblas::TransformPtr> GetTransforms() const = 0;
+    virtual std::vector<liblas::FilterPtr> GetFilters() const = 0;
+    
     virtual ~ReaderI() {}
 };
 
@@ -219,6 +222,9 @@ public:
 
     virtual void SetFilters(std::vector<liblas::FilterPtr> const& filters) = 0;
     virtual void SetTransforms(std::vector<liblas::TransformPtr> const& transforms) = 0;
+
+    virtual std::vector<liblas::TransformPtr> GetTransforms() const = 0;
+    virtual std::vector<liblas::FilterPtr> GetFilters() const = 0;
 
 
     virtual ~WriterI() {}

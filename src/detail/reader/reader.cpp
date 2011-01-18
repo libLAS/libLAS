@@ -259,6 +259,11 @@ void ReaderImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
     m_filters = filters;
 }
 
+std::vector<liblas::FilterPtr>  ReaderImpl::GetFilters() const
+{
+    return m_filters;
+}
+
 void ReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
     m_transforms = transforms;
@@ -268,6 +273,11 @@ void ReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transfor
     // back on any subsequent reads.
     if (m_transforms.size() > 0)
         bNeedHeaderCheck = true;
+}
+
+std::vector<liblas::TransformPtr>  ReaderImpl::GetTransforms() const
+{
+    return m_transforms;
 }
 
 }} // namespace liblas::detail

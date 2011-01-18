@@ -120,18 +120,17 @@ public:
     /// They only affect reading ReadNextPoint-style operations
     /// Filters are applied *before* transforms.
     void SetFilters(std::vector<liblas::FilterPtr> const& filters);
+    
+    /// Gets the list of filters to be applied to points as they are read
+    std::vector<liblas::FilterPtr> GetFilters() const;
 
     /// Sets transforms to apply to points.  Points are transformed in 
     /// place *in the order* of the transform list.
-    /// Filters are applied *before* transforms.  If an input/output SRS 
-    /// is set on the reader, the reprojection transform will happen *first* 
-    /// before any other transforms are applied.  This transform is a 
-    /// special case.  You can define your own reprojection transforms and add 
-    /// it to the list, but be sure to not issue a SetOutputSRS to trigger 
-    /// the internal transform creation
+    /// Filters are applied *before* transforms.  
     void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
 
-
+    /// Gets the list of transforms to be applied to points as they are read
+    std::vector<liblas::TransformPtr> GetTransforms() const;
 
 private:
 

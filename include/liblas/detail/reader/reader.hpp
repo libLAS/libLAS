@@ -74,7 +74,10 @@ public:
     void Reset();
 
     void SetFilters(std::vector<liblas::FilterPtr> const& filters);
+    std::vector<liblas::FilterPtr> GetFilters() const;
+
     void SetTransforms(std::vector<liblas::TransformPtr> const& transforms);
+    std::vector<liblas::TransformPtr> GetTransforms() const;
 
 
 protected:

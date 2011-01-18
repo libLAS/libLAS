@@ -188,9 +188,19 @@ void Reader::SetFilters(std::vector<liblas::FilterPtr> const& filters)
     m_pimpl->SetFilters(filters);
 }
 
+std::vector<liblas::FilterPtr>  Reader::GetFilters() const
+{
+    return m_pimpl->GetFilters();
+}
+
 void Reader::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
     m_pimpl->SetTransforms(transforms);
+}
+
+std::vector<liblas::TransformPtr>  Reader::GetTransforms() const
+{
+    return m_pimpl->GetTransforms();
 }
 
 } // namespace liblas

@@ -383,6 +383,10 @@ void ZipReaderImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
 {
     m_filters = filters;
 }
+std::vector<liblas::FilterPtr>  ZipReaderImpl::GetFilters() const
+{
+    return m_filters;
+}
 
 void ZipReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
@@ -393,6 +397,11 @@ void ZipReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& trans
     // back on any subsequent reads.
     if (m_transforms.size() > 0)
         bNeedHeaderCheck = true;
+}
+
+std::vector<liblas::TransformPtr>  ZipReaderImpl::GetTransforms() const
+{
+    return m_transforms;
 }
 
 }} // namespace liblas::detail

@@ -323,6 +323,10 @@ void CachedReaderImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
     Reset();
     ReaderImpl::SetFilters(filters);
 }
+std::vector<liblas::FilterPtr>  CachedReaderImpl::GetFilters() const
+{
+    return ReaderImpl::GetFilters();
+}
 
 void CachedReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
@@ -332,5 +336,9 @@ void CachedReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& tr
 
 }
 
+std::vector<liblas::TransformPtr>  CachedReaderImpl::GetTransforms() const
+{
+    return ReaderImpl::GetTransforms();
+}
 }} // namespace liblas::detail
 

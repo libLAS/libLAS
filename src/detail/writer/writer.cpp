@@ -112,10 +112,18 @@ void WriterImpl::SetFilters(std::vector<liblas::FilterPtr> const& filters)
 {
     m_filters = filters;
 }
+std::vector<liblas::FilterPtr>  WriterImpl::GetFilters() const
+{
+    return m_filters;
+}
 
 void WriterImpl::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
     m_transforms = transforms;
+}
+std::vector<liblas::TransformPtr>  WriterImpl::GetTransforms() const
+{
+    return m_transforms;
 }
 
 liblas::Header& WriterImpl::GetHeader() const

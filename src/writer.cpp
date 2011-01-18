@@ -116,11 +116,18 @@ void Writer::SetTransforms(std::vector<liblas::TransformPtr> const& transforms)
 {
     m_pimpl->SetTransforms(transforms);
 }
+std::vector<liblas::FilterPtr>  Writer::GetFilters() const
+{
+    return m_pimpl->GetFilters();
+}
 
 void Writer::SetFilters(std::vector<liblas::FilterPtr> const& filters)
 {
     m_pimpl->SetFilters(filters);
 }    
-
+std::vector<liblas::TransformPtr>  Writer::GetTransforms() const
+{
+    return m_pimpl->GetTransforms();
+}
 } // namespace liblas
 
