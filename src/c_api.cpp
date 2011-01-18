@@ -169,7 +169,7 @@ LAS_DLL int LAS_IsLibGeoTIFFEnabled(void) {
 
 LAS_DLL void LASError_Reset(void) {
     if (errors.empty()) return;
-    for (std::size_t i=0;i<errors.size();i++) errors.pop();
+    for (std::stack<liblas::Error >::size_type i=0;i<errors.size();i++) errors.pop();
 }
 
 LAS_DLL void LASError_Pop(void) {
