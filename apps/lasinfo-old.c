@@ -28,6 +28,8 @@
 #include <cpl_string.h>
 #endif
 
+#include "lascommon.h"
+
 LASPointSummary* SummarizePoints(LASReaderH reader);
 void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header);
 void print_header(FILE *file, LASHeaderH header, const char* file_name, int bSkipVLR, int bWKT);

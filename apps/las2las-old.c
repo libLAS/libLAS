@@ -12,6 +12,8 @@
  **************************************************************************/
 
 #include "liblas.h"
+#include "lascommon.h"
+
 /* std */
 #include <assert.h>
 #include <time.h>

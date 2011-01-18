@@ -1,3 +1,5 @@
+
+
 /* liblas */
 #include <liblas.h>
 #ifdef HAVE_LIBGEOTIFF
@@ -8,6 +10,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "lascommon.h"
+
 
 static const char * LASPointClassification [] = {
   "Created, never classified",

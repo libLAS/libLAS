@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include "liblas.h"
+#include "lascommon.h"
 
 LASPointSummary* SummarizePoints(LASReaderH reader);
 void print_point_summary(FILE *file, LASPointSummary* summary, LASHeaderH header);
