@@ -165,6 +165,7 @@ inline void Cleanup(std::ostream* ofs)
 {
     // An ofstream is closeable and deletable, but 
     // an ostream like &std::cout isn't.
+    if (!ofs) return;
     if (static_cast<std::ofstream&>(*ofs))
     {
         static_cast<std::ofstream&>(*ofs).close();
@@ -176,6 +177,7 @@ inline void Cleanup(std::istream* ifs)
 {
     // An ifstream is closeable and deletable, but 
     // an istream like &std::cin isn't.
+    if (!ifs) return;
     if (static_cast<std::ifstream&>(*ifs))
     {
         static_cast<std::ifstream&>(*ifs).close();
