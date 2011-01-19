@@ -266,7 +266,7 @@ namespace tut
             for ( size_t i = 0; i < count ; i++ )
             {
                 liblas::Point point;
-                point.SetCoordinates( 10 + i, 20 + i, 30 + i );
+                point.SetCoordinates( 10.0 + i, 20.0 + i, 30.0 + i );
                 test2Writer.WritePoint( point );
             }
         }
