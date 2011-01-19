@@ -42,7 +42,6 @@
 #ifndef LIBLAS_DETAIL_ZIPPOINT_HPP_INCLUDED
 #define LIBLAS_DETAIL_ZIPPOINT_HPP_INCLUDED
 
-#ifdef HAVE_LASZIP
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/liblas.hpp>
@@ -85,6 +84,5 @@ public: // for now
 
 }} // namespace liblas::detail
 
-#endif // HAVE_LASZIP
 
 #endif // LIBLAS_DETAIL_ZIPPOINT_HPP_INCLUDED

@@ -42,7 +42,6 @@
 #ifndef LIBLAS_DETAIL_ZIPREADERIMPL_HPP_INCLUDED
 #define LIBLAS_DETAIL_ZIPREADERIMPL_HPP_INCLUDED
 
-#ifdef HAVE_LASZIP
 
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/reader/header.hpp>
@@ -124,6 +123,5 @@ private:
 
 }} // namespace liblas::detail
 
-#endif // HAVE_LASZIP
 
 #endif // LIBLAS_DETAIL_ZIPREADERIMPL_HPP_INCLUDED
