@@ -491,9 +491,9 @@ LAS_DLL LASErrorEnum LASPoint_SetX(LASPointH hPoint, double value) {
 
 LAS_DLL boost::int32_t LASPoint_GetRawX(const LASPointH hPoint) {
 
-    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawX", 0.0);
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawX", 0);
     
-    boost::int32_t value = ((liblas::Point*) hPoint)->GetRawX();
+    long value = static_cast<long>(((liblas::Point*) hPoint)->GetRawX());
     return value;
 }
 
@@ -539,9 +539,9 @@ LAS_DLL LASErrorEnum LASPoint_SetY(LASPointH hPoint, double value) {
 
 LAS_DLL boost::int32_t LASPoint_GetRawY(const LASPointH hPoint) {
 
-    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawY", 0.0);
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawY", 0);
     
-    boost::int32_t value = ((liblas::Point*) hPoint)->GetRawY();
+    long value = static_cast<long>(((liblas::Point*) hPoint)->GetRawY());
     return value;
 }
 
@@ -586,9 +586,9 @@ LAS_DLL LASErrorEnum LASPoint_SetZ(LASPointH hPoint, double value) {
 
 LAS_DLL boost::int32_t LASPoint_GetRawZ(const LASPointH hPoint) {
 
-    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawZ", 0.0);
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawZ", 0);
     
-    boost::int32_t value = ((liblas::Point*) hPoint)->GetRawZ();
+    long value = static_cast<long>(((liblas::Point*) hPoint)->GetRawZ());
     return value;
 }
 
