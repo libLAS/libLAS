@@ -53,11 +53,6 @@
 #include <vector>
 #include <string>
 
-#ifdef HAVE_GDAL
-#include <gdal.h>
-#include <ogr_spatialref.h>
-#endif
-
 namespace liblas {
 
 /// Defines public interface to LAS transform implementation.
@@ -82,27 +77,6 @@ public:
     bool transform(Point& point);
 
 private:
-
-#ifdef HAVE_GDAL
-    struct OGRSpatialReferenceDeleter
-    {
-       template <typename T>
-       void operator()(T* ptr)
-       {
-           ::OSRDestroySpatialReference(ptr);
-       }
-    };
-
-    struct OSRTransformDeleter
-    {
-       template <typename T>
-       void operator()(T* ptr)
-       {
-           ::OCTDestroyCoordinateTransformation(ptr);
-       }
-    };
-
-#endif
 
     liblas::HeaderPtr m_new_header;
     
@@ -180,19 +154,6 @@ public:
     bool transform(Point& point);
 
 private:
-
-#ifdef HAVE_GDAL
-    struct GDALSourceDeleter
-    {
-       template <typename T>
-       void operator()(T* ptr)
-       {
-           ::GDALClose(ptr);
-       }
-    };
-
-
-#endif
 
     liblas::HeaderPtr m_new_header;
     

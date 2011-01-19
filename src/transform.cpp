@@ -62,9 +62,48 @@
 #include <string>
 #include <algorithm>
 
+#ifdef HAVE_GDAL
+#include <gdal.h>
+#include <ogr_spatialref.h>
+#endif
+
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
 namespace liblas { 
+    
+
+#ifdef HAVE_GDAL
+    struct OGRSpatialReferenceDeleter
+    {
+       template <typename T>
+       void operator()(T* ptr)
+       {
+           ::OSRDestroySpatialReference(ptr);
+       }
+    };
+
+    struct OSRTransformDeleter
+    {
+       template <typename T>
+       void operator()(T* ptr)
+       {
+           ::OCTDestroyCoordinateTransformation(ptr);
+       }
+    };
+
+
+    struct GDALSourceDeleter
+    {
+       template <typename T>
+       void operator()(T* ptr)
+       {
+           ::GDALClose(ptr);
+       }
+    };
+
+
+#endif
+
 
 ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS)
     : m_new_header(HeaderPtr())
