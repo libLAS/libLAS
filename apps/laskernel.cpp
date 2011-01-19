@@ -222,7 +222,8 @@ void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& head
         
     }     catch (liblas::property_tree::ptree_bad_path const& ) 
     {
-        std::cerr << "Unable to write header point return count info.  Does the outputted file have any points?";
+        std::cerr << "Unable to write header point return count info.  "
+                     "Does the outputted file have any points?";
         return;
     }
     
@@ -239,54 +240,66 @@ if (dash != std::string::npos) {
 return false;
 }
 
-liblas::FilterPtr  MakeReturnFilter(std::vector<boost::uint16_t> const& returns, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeReturnFilter( std::vector<boost::uint16_t> const& returns, 
+                                    liblas::FilterI::FilterType ftype) 
 {
-
-    liblas::ReturnFilter* return_filter = new liblas::ReturnFilter(returns, false);
+    typedef liblas::ReturnFilter filter;
+    filter* return_filter = new filter(returns, false);
     return_filter->SetType(ftype);
     return liblas::FilterPtr(return_filter);
 }
 
-liblas::FilterPtr  MakeClassFilter(std::vector<liblas::Classification> const& classes, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeClassFilter(std::vector<liblas::Classification> const& classes, 
+                                  liblas::FilterI::FilterType ftype) 
 {
-
-    liblas::ClassificationFilter* class_filter = new liblas::ClassificationFilter(classes); 
+    typedef liblas::ClassificationFilter filter;
+    filter* class_filter = new filter(classes); 
     class_filter->SetType(ftype);
     return liblas::FilterPtr(class_filter);
 }
 
-liblas::FilterPtr  MakeBoundsFilter(liblas::Bounds<double> const& bounds, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeBoundsFilter(liblas::Bounds<double> const& bounds, 
+                                   liblas::FilterI::FilterType ftype) 
 {
-    liblas::BoundsFilter* bounds_filter = new liblas::BoundsFilter(bounds);
+    typedef liblas::BoundsFilter filter;
+    filter* bounds_filter = new filter(bounds);
     bounds_filter->SetType(ftype);
     return liblas::FilterPtr(bounds_filter);
 }
 
-liblas::FilterPtr  MakeIntensityFilter(std::string intensities, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeIntensityFilter(std::string intensities, 
+                                      liblas::FilterI::FilterType ftype) 
 {
-    liblas::ContinuousValueFilter<boost::uint16_t>::filter_func f = &liblas::Point::GetIntensity;
-    liblas::ContinuousValueFilter<boost::uint16_t>* intensity_filter = new liblas::ContinuousValueFilter<boost::uint16_t>(f, intensities);
+    typedef liblas::ContinuousValueFilter<boost::uint16_t> filter;
+    filter::filter_func f = &liblas::Point::GetIntensity;
+    filter* intensity_filter = new filter(f, intensities);
     intensity_filter->SetType(ftype);
     return liblas::FilterPtr(intensity_filter);
 }
 
-liblas::FilterPtr MakeTimeFilter(std::string times, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeTimeFilter(std::string times, 
+                                 liblas::FilterI::FilterType ftype) 
 {
-    liblas::ContinuousValueFilter<double>::filter_func f = &liblas::Point::GetTime;
-    liblas::ContinuousValueFilter<double>* time_filter = new liblas::ContinuousValueFilter<double>(f, times);
+    typedef liblas::ContinuousValueFilter<double> filter;
+    filter::filter_func f = &liblas::Point::GetTime;
+    filter* time_filter = new filter(f, times);
     time_filter->SetType(ftype);
     return liblas::FilterPtr(time_filter);
 }
 
-liblas::FilterPtr MakeScanAngleFilter(std::string intensities, liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeScanAngleFilter(std::string intensities, 
+                                      liblas::FilterI::FilterType ftype) 
 {
-    liblas::ContinuousValueFilter<boost::int8_t>::filter_func f = &liblas::Point::GetScanAngleRank;
-    liblas::ContinuousValueFilter<boost::int8_t>* intensity_filter = new liblas::ContinuousValueFilter<boost::int8_t>(f, intensities);
+    typedef liblas::ContinuousValueFilter<boost::int8_t> filter;
+    filter::filter_func f = &liblas::Point::GetScanAngleRank;
+    filter* intensity_filter = new filter(f, intensities);
     intensity_filter->SetType(ftype);
     return liblas::FilterPtr(intensity_filter);
 }
 
-liblas::FilterPtr MakeColorFilter(liblas::Color const& low, liblas::Color const& high, liblas::FilterI::FilterType ftype)
+liblas::FilterPtr MakeColorFilter(liblas::Color const& low, 
+                                  liblas::Color const& high, 
+                                  liblas::FilterI::FilterType ftype)
 {
     liblas::ColorFilter* filter = new liblas::ColorFilter(low, high);
     filter->SetType(ftype);
