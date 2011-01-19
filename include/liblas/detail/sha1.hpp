@@ -117,21 +117,21 @@ public:
      *  Comments:
      *
      */
-	void Reset()
-	{
-		Length_Low          = 0;
-		Length_High         = 0;
-		Message_Block_Index = 0;
+    void Reset()
+    {
+        Length_Low          = 0;
+        Length_High         = 0;
+        Message_Block_Index = 0;
 
-		H[0]        = 0x67452301;
-		H[1]        = 0xEFCDAB89;
-		H[2]        = 0x98BADCFE;
-		H[3]        = 0x10325476;
-		H[4]        = 0xC3D2E1F0;
+        H[0]        = 0x67452301;
+        H[1]        = 0xEFCDAB89;
+        H[2]        = 0x98BADCFE;
+        H[3]        = 0x10325476;
+        H[4]        = 0xC3D2E1F0;
 
-		Computed    = false;
-		Corrupted   = false;
-	}
+        Computed    = false;
+        Corrupted   = false;
+    }
     
     /*  
      *  Result
@@ -197,9 +197,9 @@ public:
      *  Comments:
      *
      */
-    void Input(unsigned char const* message_array, unsigned int length)
+    void Input(unsigned char const* message_array, std::size_t length)
     {
-		if (0 == message_array || 0 == length)
+        if (0 == message_array || 0 == length)
         {
             return;
         }
@@ -260,10 +260,10 @@ public:
         assert(0 != message_array);
         assert(0 != length);
 
-		typedef unsigned char const* target_type;
-		typedef void const* proxy_type;
+        typedef unsigned char const* target_type;
+        typedef void const* proxy_type;
 
-		target_type p = static_cast<target_type>(static_cast<proxy_type>(message_array));
+        target_type p = static_cast<target_type>(static_cast<proxy_type>(message_array));
         Input(p, length);
     }
     
@@ -283,10 +283,10 @@ public:
      *  Comments:
      *
      */
-	void Input(unsigned char message_element)
-	{
-		Input(&message_element, 1);
-	}
+    void Input(unsigned char message_element)
+    {
+        Input(&message_element, 1);
+    }
     
     /*  
      *  Input
@@ -304,11 +304,11 @@ public:
      *  Comments:
      *
      */
-	void Input(char message_element)
-	{
-		unsigned char ch = static_cast<unsigned char>(message_element);
-		Input(&ch, 1);
-	}
+    void Input(char message_element)
+    {
+        unsigned char ch = static_cast<unsigned char>(message_element);
+        Input(&ch, 1);
+    }
     
     /*  
      *  operator<<
@@ -328,20 +328,20 @@ public:
      *      Each character is assumed to hold 8 bits of information.
      *
      */
-	SHA1& operator<<(const char *message_array)
-	{
+    SHA1& operator<<(const char *message_array)
+    {
         assert(0 != message_array);
 
         const char* p = message_array;
 
-		while(0 != p && *p)
-		{
-			Input(*p);
-			p++;
-		}
+        while(0 != p && *p)
+        {
+            Input(*p);
+            p++;
+        }
 
-		return *this;
-	}
+        return *this;
+    }
     
     /*  
      *  operator<<
@@ -363,7 +363,7 @@ public:
      */
     SHA1& operator<<(const unsigned char *message_array)
     {
-		assert(0 != message_array);
+        assert(0 != message_array);
 
         const unsigned char *p = message_array;
     
@@ -444,100 +444,100 @@ private:
      *      in the publication.
      *
      */
-	void ProcessMessageBlock()
-	{
-		const unsigned K[] =
-		{               // Constants defined for SHA-1
-			0x5A827999,
-			0x6ED9EBA1,
-			0x8F1BBCDC,
-			0xCA62C1D6
-		};
+    void ProcessMessageBlock()
+    {
+        const unsigned K[] =
+        {               // Constants defined for SHA-1
+            0x5A827999,
+            0x6ED9EBA1,
+            0x8F1BBCDC,
+            0xCA62C1D6
+        };
 
-		int t = 0; // Loop counter
-		unsigned int temp = 0; // Temporary word value
-		unsigned int W[80]; // Word sequence
-		unsigned int A = 0; // Word buffers
-		unsigned int B = 0;
-		unsigned int C = 0;
-		unsigned int D = 0;
-		unsigned int E = 0;
+        int t = 0; // Loop counter
+        unsigned int temp = 0; // Temporary word value
+        unsigned int W[80]; // Word sequence
+        unsigned int A = 0; // Word buffers
+        unsigned int B = 0;
+        unsigned int C = 0;
+        unsigned int D = 0;
+        unsigned int E = 0;
 
-		/*
-		*  Initialize the first 16 words in the array W
-		*/
-		for(t = 0; t < 16; t++)
-		{
-			W[t] = ((unsigned) Message_Block[t * 4]) << 24;
-			W[t] |= ((unsigned) Message_Block[t * 4 + 1]) << 16;
-			W[t] |= ((unsigned) Message_Block[t * 4 + 2]) << 8;
-			W[t] |= ((unsigned) Message_Block[t * 4 + 3]);
-		}
+        /*
+        *  Initialize the first 16 words in the array W
+        */
+        for(t = 0; t < 16; t++)
+        {
+            W[t] = ((unsigned) Message_Block[t * 4]) << 24;
+            W[t] |= ((unsigned) Message_Block[t * 4 + 1]) << 16;
+            W[t] |= ((unsigned) Message_Block[t * 4 + 2]) << 8;
+            W[t] |= ((unsigned) Message_Block[t * 4 + 3]);
+        }
 
-		for(t = 16; t < 80; t++)
-		{
-			W[t] = CircularShift(1,W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16]);
-		}
+        for(t = 16; t < 80; t++)
+        {
+            W[t] = CircularShift(1,W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16]);
+        }
 
-		A = H[0];
-		B = H[1];
-		C = H[2];
-		D = H[3];
-		E = H[4];
+        A = H[0];
+        B = H[1];
+        C = H[2];
+        D = H[3];
+        E = H[4];
 
-		for(t = 0; t < 20; t++)
-		{
-			temp = CircularShift(5,A) + ((B & C) | ((~B) & D)) + E + W[t] + K[0];
-			temp &= 0xFFFFFFFF;
-			E = D;
-			D = C;
-			C = CircularShift(30,B);
-			B = A;
-			A = temp;
-		}
+        for(t = 0; t < 20; t++)
+        {
+            temp = CircularShift(5,A) + ((B & C) | ((~B) & D)) + E + W[t] + K[0];
+            temp &= 0xFFFFFFFF;
+            E = D;
+            D = C;
+            C = CircularShift(30,B);
+            B = A;
+            A = temp;
+        }
 
-		for(t = 20; t < 40; t++)
-		{
-			temp = CircularShift(5,A) + (B ^ C ^ D) + E + W[t] + K[1];
-			temp &= 0xFFFFFFFF;
-			E = D;
-			D = C;
-			C = CircularShift(30,B);
-			B = A;
-			A = temp;
-		}
+        for(t = 20; t < 40; t++)
+        {
+            temp = CircularShift(5,A) + (B ^ C ^ D) + E + W[t] + K[1];
+            temp &= 0xFFFFFFFF;
+            E = D;
+            D = C;
+            C = CircularShift(30,B);
+            B = A;
+            A = temp;
+        }
 
-		for(t = 40; t < 60; t++)
-		{
-			temp = CircularShift(5,A) +
-				((B & C) | (B & D) | (C & D)) + E + W[t] + K[2];
-			temp &= 0xFFFFFFFF;
-			E = D;
-			D = C;
-			C = CircularShift(30,B);
-			B = A;
-			A = temp;
-		}
+        for(t = 40; t < 60; t++)
+        {
+            temp = CircularShift(5,A) +
+                ((B & C) | (B & D) | (C & D)) + E + W[t] + K[2];
+            temp &= 0xFFFFFFFF;
+            E = D;
+            D = C;
+            C = CircularShift(30,B);
+            B = A;
+            A = temp;
+        }
 
-		for(t = 60; t < 80; t++)
-		{
-			temp = CircularShift(5,A) + (B ^ C ^ D) + E + W[t] + K[3];
-			temp &= 0xFFFFFFFF;
-			E = D;
-			D = C;
-			C = CircularShift(30,B);
-			B = A;
-			A = temp;
-		}
+        for(t = 60; t < 80; t++)
+        {
+            temp = CircularShift(5,A) + (B ^ C ^ D) + E + W[t] + K[3];
+            temp &= 0xFFFFFFFF;
+            E = D;
+            D = C;
+            C = CircularShift(30,B);
+            B = A;
+            A = temp;
+        }
 
-		H[0] = (H[0] + A) & 0xFFFFFFFF;
-		H[1] = (H[1] + B) & 0xFFFFFFFF;
-		H[2] = (H[2] + C) & 0xFFFFFFFF;
-		H[3] = (H[3] + D) & 0xFFFFFFFF;
-		H[4] = (H[4] + E) & 0xFFFFFFFF;
+        H[0] = (H[0] + A) & 0xFFFFFFFF;
+        H[1] = (H[1] + B) & 0xFFFFFFFF;
+        H[2] = (H[2] + C) & 0xFFFFFFFF;
+        H[3] = (H[3] + D) & 0xFFFFFFFF;
+        H[4] = (H[4] + E) & 0xFFFFFFFF;
 
-		Message_Block_Index = 0;
-	}
+        Message_Block_Index = 0;
+    }
     
     /*  
      *  PadMessage
@@ -560,51 +560,51 @@ private:
      *  Comments:
      *
      */
-	void PadMessage()
-	{
-		/*
-		*  Check to see if the current message block is too small to hold
-		*  the initial padding bits and length.  If so, we will pad the
-		*  block, process it, and then continue padding into a second block.
-		*/
-		if (Message_Block_Index > 55)
-		{
-			Message_Block[Message_Block_Index++] = 0x80;
-			while(Message_Block_Index < 64)
-			{
-				Message_Block[Message_Block_Index++] = 0;
-			}
+    void PadMessage()
+    {
+        /*
+        *  Check to see if the current message block is too small to hold
+        *  the initial padding bits and length.  If so, we will pad the
+        *  block, process it, and then continue padding into a second block.
+        */
+        if (Message_Block_Index > 55)
+        {
+            Message_Block[Message_Block_Index++] = 0x80;
+            while(Message_Block_Index < 64)
+            {
+                Message_Block[Message_Block_Index++] = 0;
+            }
 
-			ProcessMessageBlock();
+            ProcessMessageBlock();
 
-			while(Message_Block_Index < 56)
-			{
-				Message_Block[Message_Block_Index++] = 0;
-			}
-		}
-		else
-		{
-			Message_Block[Message_Block_Index++] = 0x80;
-			while(Message_Block_Index < 56)
-			{
-				Message_Block[Message_Block_Index++] = 0;
-			}
-		}
+            while(Message_Block_Index < 56)
+            {
+                Message_Block[Message_Block_Index++] = 0;
+            }
+        }
+        else
+        {
+            Message_Block[Message_Block_Index++] = 0x80;
+            while(Message_Block_Index < 56)
+            {
+                Message_Block[Message_Block_Index++] = 0;
+            }
+        }
 
-		/*
-		*  Store the message length as the last 8 octets
-		*/
-		Message_Block[56] = static_cast<unsigned char>((Length_High >> 24) & 0xFF);
-		Message_Block[57] = static_cast<unsigned char>((Length_High >> 16) & 0xFF);
-		Message_Block[58] = static_cast<unsigned char>((Length_High >> 8) & 0xFF);
-		Message_Block[59] = static_cast<unsigned char>((Length_High) & 0xFF);
-		Message_Block[60] = static_cast<unsigned char>((Length_Low >> 24) & 0xFF);
-		Message_Block[61] = static_cast<unsigned char>((Length_Low >> 16) & 0xFF);
-		Message_Block[62] = static_cast<unsigned char>((Length_Low >> 8) & 0xFF);
-		Message_Block[63] = static_cast<unsigned char>((Length_Low) & 0xFF);
+        /*
+        *  Store the message length as the last 8 octets
+        */
+        Message_Block[56] = static_cast<unsigned char>((Length_High >> 24) & 0xFF);
+        Message_Block[57] = static_cast<unsigned char>((Length_High >> 16) & 0xFF);
+        Message_Block[58] = static_cast<unsigned char>((Length_High >> 8) & 0xFF);
+        Message_Block[59] = static_cast<unsigned char>((Length_High) & 0xFF);
+        Message_Block[60] = static_cast<unsigned char>((Length_Low >> 24) & 0xFF);
+        Message_Block[61] = static_cast<unsigned char>((Length_Low >> 16) & 0xFF);
+        Message_Block[62] = static_cast<unsigned char>((Length_Low >> 8) & 0xFF);
+        Message_Block[63] = static_cast<unsigned char>((Length_Low) & 0xFF);
 
-		ProcessMessageBlock();
-	}
+        ProcessMessageBlock();
+    }
 
     /*  
      *  CircularShift
@@ -624,10 +624,10 @@ private:
      *  Comments:
      *
      */
-	unsigned CircularShift(int bits, unsigned word)
-	{
-		return ((word << bits) & 0xFFFFFFFF) | ((word & 0xFFFFFFFF) >> (32-bits));
-	}
+    unsigned CircularShift(int bits, unsigned word)
+    {
+        return ((word << bits) & 0xFFFFFFFF) | ((word & 0xFFFFFFFF) >> (32-bits));
+    }
     
 private:
 
