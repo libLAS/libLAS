@@ -52,22 +52,22 @@ class IndexOutput
 {
 friend class liblas::Index;
 public:
-	IndexOutput(liblas::Index *indexsource);
+    IndexOutput(liblas::Index *indexsource);
 
 private:
-	liblas::Index *m_index;
-	liblas::VariableRecord m_indexVLRHeaderRecord, m_indexVLRCellRecord;
-	IndexVLRData m_indexVLRHeaderData, m_indexVLRCellPointData, m_indexVLRTempData;
-	boost::uint32_t m_VLRCommonDataSize, m_VLRDataSizeLocation, m_FirstCellLocation, m_LastCellLocation, m_VLRPointCountLocation;
-	boost::uint32_t  m_DataRecordSize, m_TempWritePos, m_DataPointsThisVLR;
-	bool m_FirstCellInVLR, m_SomeDataReadyToWrite;
-	
+    liblas::Index *m_index;
+    liblas::VariableRecord m_indexVLRHeaderRecord, m_indexVLRCellRecord;
+    IndexVLRData m_indexVLRHeaderData, m_indexVLRCellPointData, m_indexVLRTempData;
+    boost::uint32_t m_VLRCommonDataSize, m_VLRDataSizeLocation, m_FirstCellLocation, m_LastCellLocation, m_VLRPointCountLocation;
+    boost::uint32_t  m_DataRecordSize, m_TempWritePos, m_DataPointsThisVLR;
+    bool m_FirstCellInVLR, m_SomeDataReadyToWrite;
+    
 protected:
-	bool InitiateOutput(void);
-	bool OutputCell(liblas::detail::IndexCell *CellBlock, boost::uint32_t CurCellX, boost::uint32_t CurCellY);
-	bool InitializeVLRData(boost::uint32_t CurCellX, boost::uint32_t CurCellY);
-	bool FinalizeOutput(void);
-	
+    bool InitiateOutput(void);
+    bool OutputCell(liblas::detail::IndexCell *CellBlock, boost::uint32_t CurCellX, boost::uint32_t CurCellY);
+    bool InitializeVLRData(boost::uint32_t CurCellX, boost::uint32_t CurCellY);
+    bool FinalizeOutput(void);
+    
 };
 
 template <typename T, typename Q>
@@ -77,8 +77,8 @@ inline void WriteVLRData_n(IndexVLRData& dest, T& src, Q& pos)
     LIBLAS_SWAP_BYTES_N(src, sizeof(T));
     // error if writing past array end
     if (static_cast<size_t>(pos) + sizeof(T) > dest.size())
-		throw std::out_of_range("liblas::detail::WriteVLRData_n: array index out of range");
-	// copy sizeof(T) bytes to destination
+        throw std::out_of_range("liblas::detail::WriteVLRData_n: array index out of range");
+    // copy sizeof(T) bytes to destination
     memcpy(&dest[pos], &src, sizeof(T));
     // increment the write position to end of written data
     pos += sizeof(T);
@@ -91,19 +91,19 @@ inline void WriteVLRDataNoInc_n(IndexVLRData& dest, T& src, Q const& pos)
     LIBLAS_SWAP_BYTES_N(src, sizeof(T));
     // error if writing past array end
     if (static_cast<size_t>(pos) + sizeof(T) > dest.size())
-		throw std::out_of_range("liblas::detail::WriteVLRDataNoInc_n: array index out of range");
-	// copy sizeof(T) bytes to destination
+        throw std::out_of_range("liblas::detail::WriteVLRDataNoInc_n: array index out of range");
+    // copy sizeof(T) bytes to destination
     memcpy(&dest[pos], &src, sizeof(T));
 }
 
 template <typename T, typename Q>
 inline void WriteVLRData_str(IndexVLRData& dest, char * const src, T const srclen, Q& pos)
 {
- 	// copy srclen bytes to destination
+    // copy srclen bytes to destination
     std::memcpy(&dest[pos], src, srclen);
     // error if writing past array end
     if (static_cast<size_t>(pos) + static_cast<size_t>(srclen) > dest.size())
-		throw std::out_of_range("liblas::detail::WriteVLRData_str: array index out of range");
+        throw std::out_of_range("liblas::detail::WriteVLRData_str: array index out of range");
     // increment the write position to end of written data
     pos += srclen;
 }
@@ -113,9 +113,9 @@ inline void WriteVLRDataNoInc_str(IndexVLRData& dest, char * const src, T const 
 {
     // error if writing past array end
     if (static_cast<size_t>(pos) + static_cast<size_t>(srclen) > dest.size())
-		throw std::out_of_range("liblas::detail::WriteVLRDataNoInc_str: array index out of range");
- 	// copy srclen bytes to destination
-	memcpy(&dest[pos], src, srclen);
+        throw std::out_of_range("liblas::detail::WriteVLRDataNoInc_str: array index out of range");
+    // copy srclen bytes to destination
+    memcpy(&dest[pos], src, srclen);
 }
 
 }} // namespace liblas::detail
