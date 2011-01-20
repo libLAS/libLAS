@@ -469,6 +469,17 @@ LAS_DLL LASHeaderH LASPoint_GetHeader(const LASPointH hPoint)
         
 }
 
+LAS_DLL void LASPoint_SetHeader( LASPointH hPoint, const LASHeaderH hHeader) 
+
+{
+    VALIDATE_LAS_POINTER0(hPoint, "LASPoint_SetHeader");
+    VALIDATE_LAS_POINTER0(hHeader, "LASPoint_SetHeader");
+
+    liblas::Point* point = (liblas::Point*)hPoint;
+    liblas::Header* header = (liblas::Header*)hHeader;
+    liblas::HeaderPtr h = liblas::HeaderPtr(new liblas::Header(*header));
+    point->SetHeaderPtr(h);
+}
 
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint) {
     VALIDATE_LAS_POINTER0(hPoint, "LASPoint_Destroy");

@@ -503,8 +503,10 @@ LAS_DLL void LASPoint_Destroy(LASPointH hPoint);
 /** Returns a LASHeaderH representing the header for the point
  *  @param hPoint the LASPointH instance
  *  @return a LASHeaderH representing the header for the point
-*/
- LAS_DLL LASHeaderH LASPoint_GetHeader(const LASPointH hPoint);
+*/ 
+LAS_DLL LASHeaderH LASPoint_GetHeader(const LASPointH hPoint);
+
+LAS_DLL void LASPoint_SetHeader( LASPointH hPoint, const LASHeaderH hHeader);
 
 /****************************************************************************/
 /* Header operations                                                        */
