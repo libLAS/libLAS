@@ -269,6 +269,17 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
 
 }
 
+LAS_DLL void LASReader_SetHeader(  LASReaderH hReader, const LASHeaderH hHeader) 
+
+{
+    VALIDATE_LAS_POINTER0(hReader, "LASReader_SetHeader");
+    VALIDATE_LAS_POINTER0(hHeader, "LASReader_SetHeader");
+
+    liblas::Reader* reader = (liblas::Reader*)hReader;
+    liblas::Header* header = (liblas::Header*)hHeader;
+    reader->SetHeader(*header);
+}
+
 LAS_DLL void LASReader_Destroy(LASReaderH hReader)
 {
     VALIDATE_LAS_POINTER0(hReader, "LASReader_Destroy");
@@ -458,6 +469,87 @@ LAS_DLL LASHeaderH LASPoint_GetHeader(const LASPointH hPoint)
         
 }
 
+LAS_DLL void LASPoint_SetHeader( LASPointH hPoint, const LASHeaderH hHeader) 
+
+{
+    VALIDATE_LAS_POINTER0(hPoint, "LASPoint_SetHeader");
+    VALIDATE_LAS_POINTER0(hHeader, "LASPoint_SetHeader");
+
+    liblas::Point* point = (liblas::Point*)hPoint;
+    liblas::Header* header = (liblas::Header*)hHeader;
+    liblas::HeaderPtr h = liblas::HeaderPtr(new liblas::Header(*header));
+    point->SetHeaderPtr(h);
+}
+
+LAS_DLL LASErrorEnum LASPoint_SetData(LASPointH hPoint, unsigned char* data) {
+    
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetData", LE_Failure);
+    VALIDATE_LAS_POINTER1(data, "LASPoint_SetData", LE_Failure);
+    
+    try {
+        liblas::Point* p = ((liblas::Point*) hPoint);
+        boost::uint16_t size = 0;
+
+        liblas::HeaderPtr h = p->GetHeaderPtr();
+        if (h.get())
+        {
+            size = h->GetDataRecordLength();
+        } else
+        {
+            size = liblas::DefaultHeader::get().GetDataRecordLength();
+        }
+        
+        std::vector<boost::uint8_t> & d = p->GetData();
+        if (d.size() != size)
+        {
+            d.resize(size);
+            d.assign(0, size);
+        }
+                
+        for (boost::uint16_t i=0; i < size; i++) {
+            d[i] = data[i];
+        }
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetData");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASPoint_GetData( const LASPointH hPoint, boost::uint8_t* data) {
+    
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetData", LE_Failure);
+    VALIDATE_LAS_POINTER1(data, "LASPoint_GetData", LE_Failure);
+    
+    try {
+        liblas::Point* p = ((liblas::Point*) hPoint);
+        boost::uint16_t size = 0;
+        std::vector<boost::uint8_t> const& d = p->GetData();
+
+        liblas::HeaderPtr h = p->GetHeaderPtr();
+        if (h.get())
+        {
+            size = h->GetDataRecordLength();
+        } else
+        {
+            size = liblas::DefaultHeader::get().GetDataRecordLength();
+        }        
+        for (boost::uint16_t i=0; i < size; i++) {
+            data[i] = d[i];
+        }
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_GetData");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
+
 
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint) {
     VALIDATE_LAS_POINTER0(hPoint, "LASPoint_Destroy");
@@ -491,9 +583,9 @@ LAS_DLL LASErrorEnum LASPoint_SetX(LASPointH hPoint, double value) {
 
 LAS_DLL boost::int32_t LASPoint_GetRawX(const LASPointH hPoint) {
 
-    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawX", 0.0);
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawX", 0);
     
-    boost::int32_t value = ((liblas::Point*) hPoint)->GetRawX();
+    long value = static_cast<long>(((liblas::Point*) hPoint)->GetRawX());
     return value;
 }
 
@@ -539,9 +631,9 @@ LAS_DLL LASErrorEnum LASPoint_SetY(LASPointH hPoint, double value) {
 
 LAS_DLL boost::int32_t LASPoint_GetRawY(const LASPointH hPoint) {
 
-    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawY", 0.0);
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawY", 0);
     
-    boost::int32_t value = ((liblas::Point*) hPoint)->GetRawY();
+    long value = static_cast<long>(((liblas::Point*) hPoint)->GetRawY());
     return value;
 }
 
@@ -586,9 +678,9 @@ LAS_DLL LASErrorEnum LASPoint_SetZ(LASPointH hPoint, double value) {
 
 LAS_DLL boost::int32_t LASPoint_GetRawZ(const LASPointH hPoint) {
 
-    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawZ", 0.0);
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetRawZ", 0);
     
-    boost::int32_t value = ((liblas::Point*) hPoint)->GetRawZ();
+    long value = static_cast<long>(((liblas::Point*) hPoint)->GetRawZ());
     return value;
 }
 
@@ -1518,7 +1610,8 @@ LAS_DLL LASErrorEnum LASWriter_WriteHeader(const LASWriterH hWriter, const LASHe
     VALIDATE_LAS_POINTER1(hWriter, "LASWriter_WriteHeader", LE_Failure);
     
     try {
-            ((liblas::Writer*) hWriter)->WriteHeader(*((liblas::Header*) hHeader));
+        ((liblas::Writer*) hWriter)->SetHeader(*((liblas::Header*) hHeader));
+        ((liblas::Writer*) hWriter)->WriteHeader();
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_WriteHeader");
@@ -1526,6 +1619,33 @@ LAS_DLL LASErrorEnum LASWriter_WriteHeader(const LASWriterH hWriter, const LASHe
     }
 
     return LE_None;    
+}
+
+LAS_DLL LASErrorEnum LASWriter_WriteOwnedHeader(const LASWriterH hWriter)
+{
+    VALIDATE_LAS_POINTER1(hWriter, "LASWriter_WriteOwnedHeader", LE_Failure);
+
+    try {
+        ((liblas::Writer*) hWriter)->WriteHeader();
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASWriter_WriteOwnedHeader");
+        return LE_Failure;
+    }
+
+    return LE_None;    
+}
+
+
+LAS_DLL void LASWriter_SetHeader(  LASWriterH hWriter, const LASHeaderH hHeader) 
+
+{
+    VALIDATE_LAS_POINTER0(hWriter, "LASWriter_SetHeader");
+    VALIDATE_LAS_POINTER0(hHeader, "LASWriter_SetHeader");
+
+    liblas::Writer* writer = (liblas::Writer*)hWriter;
+    liblas::Header* header = (liblas::Header*)hHeader;
+    writer->SetHeader(*header);
 }
 
 LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
@@ -1758,7 +1878,7 @@ LAS_DLL LASErrorEnum LASVLR_GetData(const LASVLRH hVLR, boost::uint8_t* data) {
 
     try {
         liblas::VariableRecord* vlr = ((liblas::VariableRecord*) hVLR);
-        std::vector<boost::uint8_t> d = vlr->GetData();
+        std::vector<boost::uint8_t> const& d = vlr->GetData();
         boost::uint16_t length = vlr->GetRecordLength();
         for (boost::uint16_t i=0; i < length; i++) {
             data[i] = d[i];

@@ -207,7 +207,8 @@ namespace tut
             header.SetScale(1.123, 2.123, 3.123);
             header.SetOffset(4.321, 5.321, 6.321);
 
-            writer.WriteHeader(header);
+            writer.SetHeader(header);
+            writer.WriteHeader();
             liblas::Header const& written_header = writer.GetHeader();
             ensure_equals("written_header fileSource id", written_header.GetFileSourceId(), 65535);
             ensure_equals("written_header SystemId", written_header.GetSystemId(), "Unit Test libLAS System");

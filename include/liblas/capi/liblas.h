@@ -194,6 +194,7 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader);
 */
 LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader);
 
+LAS_DLL void LASReader_SetHeader(  LASReaderH hReader, const LASHeaderH hHeader);
 
 LAS_DLL LASError LASReader_SetSRS(LASReaderH hReader, const LASSRSH hSRS);
 LAS_DLL LASError LASReader_SetInputSRS(LASReaderH hReader, const LASSRSH hSRS);
@@ -502,8 +503,28 @@ LAS_DLL void LASPoint_Destroy(LASPointH hPoint);
 /** Returns a LASHeaderH representing the header for the point
  *  @param hPoint the LASPointH instance
  *  @return a LASHeaderH representing the header for the point
+*/ 
+LAS_DLL LASHeaderH LASPoint_GetHeader(const LASPointH hPoint);
+
+LAS_DLL void LASPoint_SetHeader( LASPointH hPoint, const LASHeaderH hHeader);
+
+/** Gets the data stream for the VLR as an array of bytes.  The length of this 
+ *  array should be the same as LASVLR_GetRecordLength.  You must allocate it on 
+ *  the heap and you are responsible for its destruction.
+ *  @param hPoint the LASPointH instance
+ *  @param data a pointer to your array where you want the data copied
+ *  @return LASErrorEnum
 */
- LAS_DLL LASHeaderH LASPoint_GetHeader(const LASPointH hPoint);
+LAS_DLL LASError LASPoint_GetData(const LASPointH hPoint, unsigned char* data);
+
+/** Sets the data stream for the Point as an array of bytes.  The length of this 
+ *  array should be the same as LASPoint_GetHeader(LASHeader_GetDataRecordLength()).  The data are copied into 
+ *  the Point .
+ *  @param hPoint the LASPointH instance
+ *  @param data a pointer to your array.  It must be LASPoint_GetHeader(LASHeader_GetDataRecordLength()) in size
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASPoint_SetData(LASPointH hPoint, unsigned char* data);
 
 /****************************************************************************/
 /* Header operations                                                        */
@@ -906,13 +927,24 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
 LAS_DLL LASError LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoint);
 
 /** Overwrites the header for the file represented by the LASWriterH.  It does 
- *  not matter if the file is opened for append or for write.
+ *  not matter if the file is opened for append or for write.  This function is 
+ *  equivalent to calling LASWriter_SetHeader and LASWriter_WriteOwnedHeader
+ *  simultaneously.
  *  @param hWriter opaque pointer to the LASWriterH instance
  *  @param hHeader LASHeaderH instance to write into the file
  *  @return LE_None if no error occurred during the operation.
 */
 
 LAS_DLL LASError LASWriter_WriteHeader(const LASWriterH hWriter, const LASHeaderH hHeader);
+
+/** Overwrites the header for the file represented by the LASWriterH that was 
+ *  set using LASWriter_SetHeader or flushes the existing header that is on the
+ *  the writer to the file and resets the file for writing.
+ *  @param hWriter opaque pointer to the LASWriterH instance
+ *  @return LE_None if no error occurred during the operation.
+*/
+
+LAS_DLL LASError LASWriter_WriteOwnedHeader(const LASWriterH hWriter);
 
 /** Destroys the LASWriterH instance, effectively closing the file and performing 
  *  housekeeping operations.
@@ -927,6 +959,7 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);
  *  in the event of a NULL return.
 */
 LAS_DLL LASHeaderH LASWriter_GetHeader(const LASWriterH hWriter);
+LAS_DLL void LASWriter_SetHeader(  LASWriterH hWriter, const LASHeaderH hHeader) ;
 
 LAS_DLL LASError LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS);
 LAS_DLL LASError LASWriter_SetInputSRS(LASWriterH hWriter, const LASSRSH hSRS);
