@@ -231,19 +231,13 @@ void Header::read()
     // A few versions of the spec had this as 7, but 
     // https://lidarbb.cr.usgs.gov/index.php?showtopic=11388 says 
     // it is supposed to always be 5
-    std::vector<uint32_t>::size_type  return_count_length;
-    return_count_length = 5;
-
-    uint32_t* point_counts = new uint32_t[return_count_length];
-    for (uint32_t i = 0; i < return_count_length; ++i) {
-        point_counts[i] = 0;
-    }
-    read_n(point_counts, m_ifs, return_count_length*sizeof(uint32_t));
+    std::size_t const return_count_length = 5; 
     for (std::size_t i = 0; i < return_count_length; ++i)
     {
-        m_header->SetPointRecordsByReturnCount(i, point_counts[i]);
+        uint32_t count = 0;
+        read_n(count, m_ifs, sizeof(uint32_t));
+        m_header->SetPointRecordsByReturnCount(i, count);
     }  
-    delete[] point_counts;
 
     // 21-23. Scale factors
     read_n(x1, m_ifs, sizeof(x1));
