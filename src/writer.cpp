@@ -98,17 +98,21 @@ Header const& Writer::GetHeader() const
     return m_pimpl->GetHeader();
 }
 
+void Writer::SetHeader(Header const& header)
+{
+    return m_pimpl->SetHeader(header);
+}
+
 bool Writer::WritePoint(Point const& point)
 {
     m_pimpl->WritePoint(point);
     return true;
 }
 
-void Writer::WriteHeader(Header& header)
+void Writer::WriteHeader()
 {
     // The writer may update our header as part of its 
     // writing process (change VLRs for SRS's, for instance).
-    m_pimpl->SetHeader(header);
     m_pimpl->WriteHeader();
 }
 

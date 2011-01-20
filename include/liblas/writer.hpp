@@ -82,13 +82,16 @@ public:
     
     /// Provides access to header structure.
     Header const& GetHeader() const;
+    
+    void SetHeader(Header const& header);
+    
 
     /// \todo TODO: Move point record composition deep into writer implementation.
     /// \todo TODO: How to handle point_source_id in portable way, for LAS 1.0 and 1.1
     bool WritePoint(Point const& point);
 
     /// Allow in-place writing of header
-    void WriteHeader(Header& header);
+    void WriteHeader();
 
     /// Sets filters that are used to determine wither or not to 
     /// keep a point that before we write it

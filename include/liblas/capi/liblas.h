@@ -194,6 +194,7 @@ LAS_DLL void LASReader_Destroy(LASReaderH hReader);
 */
 LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader);
 
+LAS_DLL void LASReader_SetHeader(  LASReaderH hReader, const LASHeaderH hHeader);
 
 LAS_DLL LASError LASReader_SetSRS(LASReaderH hReader, const LASSRSH hSRS);
 LAS_DLL LASError LASReader_SetInputSRS(LASReaderH hReader, const LASSRSH hSRS);
@@ -906,13 +907,24 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
 LAS_DLL LASError LASWriter_WritePoint(const LASWriterH hWriter, const LASPointH hPoint);
 
 /** Overwrites the header for the file represented by the LASWriterH.  It does 
- *  not matter if the file is opened for append or for write.
+ *  not matter if the file is opened for append or for write.  This function is 
+ *  equivalent to calling LASWriter_SetHeader and LASWriter_WriteOwnedHeader
+ *  simultaneously.
  *  @param hWriter opaque pointer to the LASWriterH instance
  *  @param hHeader LASHeaderH instance to write into the file
  *  @return LE_None if no error occurred during the operation.
 */
 
 LAS_DLL LASError LASWriter_WriteHeader(const LASWriterH hWriter, const LASHeaderH hHeader);
+
+/** Overwrites the header for the file represented by the LASWriterH that was 
+ *  set using LASWriter_SetHeader or flushes the existing header that is on the
+ *  the writer to the file and resets the file for writing.
+ *  @param hWriter opaque pointer to the LASWriterH instance
+ *  @return LE_None if no error occurred during the operation.
+*/
+
+LAS_DLL LASError LASWriter_WriteOwnedHeader(const LASWriterH hWriter);
 
 /** Destroys the LASWriterH instance, effectively closing the file and performing 
  *  housekeeping operations.
@@ -927,6 +939,7 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter);
  *  in the event of a NULL return.
 */
 LAS_DLL LASHeaderH LASWriter_GetHeader(const LASWriterH hWriter);
+LAS_DLL void LASWriter_SetHeader(  LASWriterH hWriter, const LASHeaderH hHeader) ;
 
 LAS_DLL LASError LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS);
 LAS_DLL LASError LASWriter_SetInputSRS(LASWriterH hWriter, const LASSRSH hSRS);

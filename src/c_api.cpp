@@ -269,6 +269,17 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
 
 }
 
+LAS_DLL void LASReader_SetHeader(  LASReaderH hReader, const LASHeaderH hHeader) 
+
+{
+    VALIDATE_LAS_POINTER0(hReader, "LASReader_SetHeader");
+    VALIDATE_LAS_POINTER0(hHeader, "LASReader_SetHeader");
+
+    liblas::Reader* reader = (liblas::Reader*)hReader;
+    liblas::Header* header = (liblas::Header*)hHeader;
+    reader->SetHeader(*header);
+}
+
 LAS_DLL void LASReader_Destroy(LASReaderH hReader)
 {
     VALIDATE_LAS_POINTER0(hReader, "LASReader_Destroy");
@@ -1518,7 +1529,8 @@ LAS_DLL LASErrorEnum LASWriter_WriteHeader(const LASWriterH hWriter, const LASHe
     VALIDATE_LAS_POINTER1(hWriter, "LASWriter_WriteHeader", LE_Failure);
     
     try {
-            ((liblas::Writer*) hWriter)->WriteHeader(*((liblas::Header*) hHeader));
+        ((liblas::Writer*) hWriter)->SetHeader(*((liblas::Header*) hHeader));
+        ((liblas::Writer*) hWriter)->WriteHeader();
     } catch (std::exception const& e)
     {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_WriteHeader");
@@ -1526,6 +1538,33 @@ LAS_DLL LASErrorEnum LASWriter_WriteHeader(const LASWriterH hWriter, const LASHe
     }
 
     return LE_None;    
+}
+
+LAS_DLL LASErrorEnum LASWriter_WriteOwnedHeader(const LASWriterH hWriter)
+{
+    VALIDATE_LAS_POINTER1(hWriter, "LASWriter_WriteOwnedHeader", LE_Failure);
+
+    try {
+        ((liblas::Writer*) hWriter)->WriteHeader();
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASWriter_WriteOwnedHeader");
+        return LE_Failure;
+    }
+
+    return LE_None;    
+}
+
+
+LAS_DLL void LASWriter_SetHeader(  LASWriterH hWriter, const LASHeaderH hHeader) 
+
+{
+    VALIDATE_LAS_POINTER0(hWriter, "LASWriter_SetHeader");
+    VALIDATE_LAS_POINTER0(hHeader, "LASWriter_SetHeader");
+
+    liblas::Writer* writer = (liblas::Writer*)hWriter;
+    liblas::Header* header = (liblas::Header*)hHeader;
+    writer->SetHeader(*header);
 }
 
 LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
