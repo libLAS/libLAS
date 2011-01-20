@@ -508,6 +508,24 @@ LAS_DLL LASHeaderH LASPoint_GetHeader(const LASPointH hPoint);
 
 LAS_DLL void LASPoint_SetHeader( LASPointH hPoint, const LASHeaderH hHeader);
 
+/** Gets the data stream for the VLR as an array of bytes.  The length of this 
+ *  array should be the same as LASVLR_GetRecordLength.  You must allocate it on 
+ *  the heap and you are responsible for its destruction.
+ *  @param hPoint the LASPointH instance
+ *  @param data a pointer to your array where you want the data copied
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASPoint_GetData(const LASPointH hPoint, unsigned char* data);
+
+/** Sets the data stream for the Point as an array of bytes.  The length of this 
+ *  array should be the same as LASPoint_GetHeader(LASHeader_GetDataRecordLength()).  The data are copied into 
+ *  the Point .
+ *  @param hPoint the LASPointH instance
+ *  @param data a pointer to your array.  It must be LASPoint_GetHeader(LASHeader_GetDataRecordLength()) in size
+ *  @return LASErrorEnum
+*/
+LAS_DLL LASError LASPoint_SetData(LASPointH hPoint, unsigned char* data);
+
 /****************************************************************************/
 /* Header operations                                                        */
 /****************************************************************************/

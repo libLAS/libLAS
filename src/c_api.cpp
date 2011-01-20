@@ -481,6 +481,76 @@ LAS_DLL void LASPoint_SetHeader( LASPointH hPoint, const LASHeaderH hHeader)
     point->SetHeaderPtr(h);
 }
 
+LAS_DLL LASErrorEnum LASPoint_SetData(LASPointH hPoint, unsigned char* data) {
+    
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_SetData", LE_Failure);
+    VALIDATE_LAS_POINTER1(data, "LASPoint_SetData", LE_Failure);
+    
+    try {
+        liblas::Point* p = ((liblas::Point*) hPoint);
+        boost::uint16_t size = 0;
+
+        liblas::HeaderPtr h = p->GetHeaderPtr();
+        if (h.get())
+        {
+            size = h->GetDataRecordLength();
+        } else
+        {
+            size = liblas::DefaultHeader::get().GetDataRecordLength();
+        }
+        
+        std::vector<boost::uint8_t> & d = p->GetData();
+        if (d.size() != size)
+        {
+            d.resize(size);
+            d.assign(0, size);
+        }
+                
+        for (boost::uint16_t i=0; i < size; i++) {
+            d[i] = data[i];
+        }
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_SetData");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASPoint_GetData( const LASPointH hPoint, boost::uint8_t* data) {
+    
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetData", LE_Failure);
+    VALIDATE_LAS_POINTER1(data, "LASPoint_GetData", LE_Failure);
+    
+    try {
+        liblas::Point* p = ((liblas::Point*) hPoint);
+        boost::uint16_t size = 0;
+        std::vector<boost::uint8_t> const& d = p->GetData();
+
+        liblas::HeaderPtr h = p->GetHeaderPtr();
+        if (h.get())
+        {
+            size = h->GetDataRecordLength();
+        } else
+        {
+            size = liblas::DefaultHeader::get().GetDataRecordLength();
+        }        
+        for (boost::uint16_t i=0; i < size; i++) {
+            data[i] = d[i];
+        }
+    }
+    catch (std::exception const& e) {
+        LASError_PushError(LE_Failure, e.what(), "LASPoint_GetData");
+        return LE_Failure;
+    }
+
+
+    return LE_None;
+}
+
+
 LAS_DLL void LASPoint_Destroy(LASPointH hPoint) {
     VALIDATE_LAS_POINTER0(hPoint, "LASPoint_Destroy");
     delete (liblas::Point*) hPoint;
@@ -1808,7 +1878,7 @@ LAS_DLL LASErrorEnum LASVLR_GetData(const LASVLRH hVLR, boost::uint8_t* data) {
 
     try {
         liblas::VariableRecord* vlr = ((liblas::VariableRecord*) hVLR);
-        std::vector<boost::uint8_t> d = vlr->GetData();
+        std::vector<boost::uint8_t> const& d = vlr->GetData();
         boost::uint16_t length = vlr->GetRecordLength();
         for (boost::uint16_t i=0; i < length; i++) {
             data[i] = d[i];
