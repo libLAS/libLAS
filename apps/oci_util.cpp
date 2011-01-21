@@ -34,7 +34,7 @@ std::string ReadSQLData(std::string filename)
     char* data;
     if (infile->good()){
         size = infile->tellg();
-        data = new char [size];
+        data = new char [static_cast<boost::uint32_t>(size)];
         infile->seekg (0, std::ios::beg);
         infile->read (data, size);
         // infile->close();
