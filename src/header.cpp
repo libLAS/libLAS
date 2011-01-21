@@ -793,7 +793,7 @@ void Header::to_rst(std::ostream& os) const
     os << "  Generating Software:         '" << tree.get<std::string>("softwareid") << "'" << std::endl;
     os << "  File Creation Day/Year:      " << tree.get<std::string>("date") << std::endl;
     os << "  Header Byte Size             " << tree.get<boost::uint32_t>("size") << std::endl;
-    os << "  Data Offset:                 " << tree.get<std::string>("dataoffset") << std::endl;
+    os << "  Data Offset:                 " << tree.get<boost::uint32_t>("dataoffset") << std::endl;
 
     os << "  Number Var. Length Records:  ";
     try {
@@ -812,7 +812,7 @@ void Header::to_rst(std::ostream& os) const
     BOOST_FOREACH(ptree::value_type &v,
           tree.get_child("returns"))
     {
-          returns_oss << v.second.get<std::string>("count")<< " ";
+          returns_oss << v.second.get<boost::uint32_t>("count")<< " ";
 
     }        
 
