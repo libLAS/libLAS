@@ -2,7 +2,7 @@
 
 set G="NMake Makefiles"
 REM set G="Visual Studio 9 2008"
-REM set G="Visual Studio 2010"
+REM set G="Visual Studio 10"
 set LIBLAS=D:\liblas
 set OSGEO4W=C:\OSGeo4W
 set BOOST=D:\boost\boost_1_44
