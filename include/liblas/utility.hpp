@@ -47,6 +47,7 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/external/property_tree/ptree.hpp>
 #include <liblas/export.hpp>
+#include <liblas/filter.hpp>
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>
@@ -61,18 +62,20 @@ typedef boost::array<boost::uint32_t, 32> classes_type;
 namespace liblas {
 
 /// A summarization utililty for LAS points
-class LAS_DLL Summary
+class LAS_DLL Summary : public FilterI
 {
 public:
     
     Summary();
     Summary(Summary const& other);
     Summary& operator=(Summary const& rhs);
+    bool filter(const Point& point);
 
     void AddPoint(liblas::Point const& p);
     ptree GetPTree() const;
     void SetHeader(liblas::Header const& h);
     
+    ~Summary() {};
 private:
 
     classes_type classes;
@@ -91,17 +94,20 @@ private:
     bool bHaveTime;
 };
 
-class LAS_DLL CoordinateSummary
+class LAS_DLL CoordinateSummary : public FilterI
 {
 public:
     
     CoordinateSummary();
     CoordinateSummary(CoordinateSummary const& other);
     CoordinateSummary& operator=(CoordinateSummary const& rhs);
+    bool filter(const Point& point);
 
     void AddPoint(liblas::Point const& p);
     ptree GetPTree() const;
     void SetHeader(liblas::Header const& h);
+    
+    ~CoordinateSummary() {};
     
 private:
 

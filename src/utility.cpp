@@ -49,7 +49,8 @@ using namespace boost;
 
 namespace liblas { 
 
-Summary::Summary() :
+Summary::Summary() : 
+    FilterI(liblas::FilterI::eInclusion),
     synthetic(0),
     withheld(0),
     keypoint(0),
@@ -58,6 +59,7 @@ Summary::Summary() :
     bHaveHeader(false),
     bHaveColor(true),
     bHaveTime(true)
+
     
 {
     classes.assign(0);
@@ -66,7 +68,8 @@ Summary::Summary() :
 }
 
 Summary::Summary(Summary const& other)
-    : classes(other.classes)
+    : FilterI(liblas::FilterI::eInclusion)
+    , classes(other.classes)
     , synthetic(other.synthetic)
     , withheld(other.withheld)
     , keypoint(other.keypoint)
@@ -306,6 +309,12 @@ void Summary::SetHeader(liblas::Header const& h)
 {
     m_header = h;
     bHaveHeader = true;
+}
+
+bool Summary::filter(liblas::Point const& p)
+{
+    AddPoint(p);
+    return true;
 }
 
 ptree Summary::GetPTree() const
@@ -553,7 +562,8 @@ std::ostream& operator<<(std::ostream& os, liblas::Summary const& s)
 }
 
 CoordinateSummary::CoordinateSummary() :
-    count(0)
+    FilterI(eInclusion)
+    , count(0)
     , first(true)
     , bHaveHeader(false)
     , bHaveColor(true)
@@ -565,8 +575,8 @@ CoordinateSummary::CoordinateSummary() :
 }
 
 CoordinateSummary::CoordinateSummary(CoordinateSummary const& other)
-    : 
-    count(other.count)
+    : FilterI(eInclusion)
+    , count(other.count)
     , points_by_return(other.points_by_return)
     , returns_of_given_pulse(other.returns_of_given_pulse)
     , first(other.first)
@@ -710,6 +720,13 @@ ptree CoordinateSummary::GetPTree() const
     top.add_child("summary.points",pt);
     return top;
 }
+
+bool CoordinateSummary::filter(liblas::Point const& p)
+{
+    AddPoint(p);
+    return true;
+}
+
 
 boost::uint32_t GetStreamPrecision(double scale)
 {
