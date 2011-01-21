@@ -808,15 +808,14 @@ void Header::to_rst(std::ostream& os) const
     os << "  Point Data Format:           " << tree.get<boost::uint32_t>("dataformatid") << std::endl;
     os << "  Number of Point Records:     " << tree.get<boost::uint32_t>("count") << std::endl;
     os << "  Compressed:                  " << (tree.get<bool>("compressed")?"True":"False") << std::endl;
-    std::ostringstream returns_oss;
+    os << "  Number of Points by Return:  " ;
     BOOST_FOREACH(ptree::value_type &v,
           tree.get_child("returns"))
     {
-          returns_oss << v.second.get<boost::uint32_t>("count")<< " ";
+          os << v.second.get<boost::uint32_t>("count")<< " ";
 
-    }        
-
-    os << "  Number of Points by Return:  " << returns_oss.str() << std::endl;
+    }      
+    os << std::endl;
 
     os.setf(std::ios_base::fixed, std::ios_base::floatfield);
     double x_scale = tree.get<double>("scale.x");
