@@ -295,7 +295,10 @@ if(WITH_ORACLE)
 endif()
 
 # LASZIP support - optional, default=OFF
-set(WITH_LASZIP FALSE CACHE BOOL "Choose if LASZIP support should be built")
+set(WITH_LASZIP FALSE CACHE BOOL "Choose if LASzip support should be built")
+set(WITH_STATIC_LASZIP FALSE CACHE BOOL "Choose of LASzip should be statically linked")
+mark_as_advanced(WITH_STATIC_LASZIP)
+
 if(WITH_LASZIP)
   find_package(LASzip 1.0.0)
 
