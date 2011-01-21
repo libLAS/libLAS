@@ -1550,23 +1550,8 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
         else {
             m = std::ios::out | std::ios::binary | std::ios::ate;
         }
-                
-        if (compare_no_case(filename,"STOUT",5) == 0)
-        {
-            ostrm = &std::cout;
-        }
-        else 
-        {
-            ostrm = new std::ofstream(filename, m);
-        }
 
-        
-        if (!ostrm->good())
-        {
-            delete ostrm;
-            throw std::runtime_error("Writing stream was not able to be created");
-        }
-        
+        ostrm = liblas::Create(filename, m);
         liblas::Header* header = ((liblas::Header*) hHeader);
         liblas::Writer* writer = new liblas::Writer(*ostrm, *header);
 
@@ -1672,11 +1657,7 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
             return;            
         }
     
-        if (static_cast<std::ofstream&>(*ostrm))
-            static_cast<std::ofstream&>(*ostrm).close();
-        
-        if (ostrm != NULL)
-            delete ostrm;
+        liblas::Cleanup(ostrm);
         
         writers.erase(writer);
         
