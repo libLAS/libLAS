@@ -15,6 +15,8 @@
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>
 
+#include <locale>
+
 
 using namespace liblas;
 using namespace std;
@@ -106,6 +108,7 @@ int main(int argc, char* argv[])
     bool output_xml = false;
     bool output_json = false;
     bool show_point = false;
+    bool use_locale = false;
     boost::uint32_t point = 0;
     
     std::vector<liblas::FilterPtr> filters;
@@ -134,7 +137,7 @@ int main(int argc, char* argv[])
             ("xml", po::value<bool>(&output_xml)->zero_tokens()->implicit_value(true), "Output as XML")
             ("point,p", po::value<boost::uint32_t>(&point), "Display a point with a given id.  --point 44")
 
-            // ("json", po::value<bool>(&output_json)->zero_tokens()->implicit_value(true), "Output summary as JSON")
+            ("locale", po::value<bool>(&use_locale)->zero_tokens()->implicit_value(true), "Use the environment's locale for output")
 
 // --xml
 // --json
@@ -207,6 +210,11 @@ int main(int argc, char* argv[])
                 } 
                 else 
                 {
+                    if (use_locale)
+                    {
+                        std::locale l("");
+                        std::cout.imbue(l);
+                    }
                     std::cout <<  p << std::endl;
                     exit(0);    
                 }
@@ -249,6 +257,12 @@ int main(int argc, char* argv[])
             
             liblas::property_tree::write_xml(std::cout, tree);
             return 0;
+        }
+
+        if (use_locale)
+        {
+            std::locale l("");
+            std::cout.imbue(l);
         }
 
         std::cout << header << std::endl;        
