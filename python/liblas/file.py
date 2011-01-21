@@ -261,9 +261,9 @@ class File(object):
             return None
         
         if self.mode == 0:
-            return lasheader.Header(handle=core.las.LASReader_GetHeader(self.handle))
+            return lasheader.Header(handle=core.las.LASReader_GetHeader(self.handle), owned=True)
         else:
-            return lasheader.Header(handle=core.las.LASWriter_GetHeader(self.handle))
+            return lasheader.Header(handle=core.las.LASWriter_GetHeader(self.handle), owned=True)
 
         return None
 
