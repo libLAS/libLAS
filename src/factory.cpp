@@ -73,6 +73,15 @@ Reader ReaderFactory::CreateWithImpl(ReaderIPtr r)
 
 Reader ReaderFactory::CreateCached(std::istream& stream, boost::uint32_t cache_size)
 {
+    detail::HeaderReaderPtr h(new detail::reader::Header(stream));
+    h->read();
+    HeaderPtr header = h->GetHeader();
+
+    if (header->Compressed())
+    {
+        throw configuration_error("Compressed files are not readable with cached reader");
+    }
+
     ReaderIPtr r = ReaderIPtr(new detail::CachedReaderImpl(stream, cache_size) );
     return liblas::Reader(r);
 }
