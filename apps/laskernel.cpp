@@ -1,6 +1,36 @@
 
 #include "laskernel.hpp"
 
+bool OptechScanAngleFixer::transform(liblas::Point& p)
+{
+    boost::int8_t angle = p.GetScanAngleRank();
+    double a = static_cast<double>(angle);
+    
+    double da = 1.944445 * a;
+    
+    double rda = liblas::detail::sround(da);
+    
+    boost::int32_t new_a = static_cast<boost::int32_t>(rda);
+    
+    boost::int8_t output = 0;
+    if (new_a > (std::numeric_limits<boost::int8_t>::max)())
+    {
+        output = (std::numeric_limits<boost::int8_t>::max)();
+    }
+    else if (new_a < (std::numeric_limits<boost::int8_t>::min)())
+    {
+        output = (std::numeric_limits<boost::int8_t>::min)();
+    }
+    else
+    {
+        output = static_cast<boost::int8_t>(new_a);
+    }
+    
+    p.SetScanAngleRank(output);
+    return true;
+    
+}
+
 std::istream* OpenInput(std::string const& filename, bool bEnd) 
 {
     std::ios::openmode mode = std::ios::in | std::ios::binary;
@@ -375,6 +405,7 @@ po::options_description GetHeaderOptions()
         ("add-vlr", po::value<std::vector<std::string> >()->multitoken(), "Add VLRs with the given name and id combination. --add-vlr hobu 1234 \"Description of the VLR\" \"filename.ext\"")
         ("system-identifier", po::value<std::string>(), "Set the SystemID for the file. --system-identifier \"MODIFICATION\"")
         ("generating-software", po::value<std::string>(), "Set the SoftwareID for the file. --generating-software \"liblas.org\"")
+        ("fix-optech-scan-angle", po::value<bool>()->zero_tokens(), "Multiply the scan angle by 1.944445 to fix up scan angle generation output by some Optech scanners")
     ;
     
     return transform_options;
@@ -1401,6 +1432,16 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         liblas::TransformPtr trans_trans = liblas::TransformPtr(new liblas::TranslationTransform(translate));
         transforms.push_back(trans_trans);
     }
+
+    if (vm.count("fix-optech-scan-angle")) 
+    {
+        if (verbose)
+            std::cout << "Fixing Scan Angles by multiplying by 1.944445" << std::endl;
+
+        liblas::TransformPtr transform = liblas::TransformPtr(new OptechScanAngleFixer());
+        transforms.push_back(transform);
+    }
+
     return transforms;
 }
 

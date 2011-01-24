@@ -105,4 +105,19 @@ LAS_DLL void RewriteHeader(liblas::Header const& header, std::string const& file
 LAS_DLL void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& header);
 LAS_DLL liblas::property_tree::ptree SummarizeReader(liblas::Reader& reader) ;
 
+
+class OptechScanAngleFixer: public liblas::TransformI
+{
+public:
+    
+    OptechScanAngleFixer() {};
+    ~OptechScanAngleFixer() {};
+
+    bool transform(liblas::Point& point);
+
+private:
+    OptechScanAngleFixer(OptechScanAngleFixer const& other);
+    OptechScanAngleFixer& operator=(OptechScanAngleFixer const& rhs);
+};
+
 #endif // LIBLAS_ITERATOR_HPP_INCLUDED
