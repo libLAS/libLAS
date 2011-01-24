@@ -1108,7 +1108,7 @@ int main(int argc, char* argv[])
 
 
         std::istream* istrm2;
-        istrm2 = OpenInput(input, false);
+        istrm2 = liblas::Open(input, std::ios::in | std::ios::binary);
         
         liblas::Reader* reader2 = 0;
         if (bCachedReader)
@@ -1119,7 +1119,11 @@ int main(int argc, char* argv[])
             // reader2 = new liblas::Reader(*istrm2,0);
         }
         else
+        {
+            liblas::ReaderFactory rf;
+            liblas::Reader r =  rf.CreateWithStream(*istrm2);            
             reader2 = new liblas::Reader(*istrm2);
+        }
 
         reader2->SetFilters(filters);
         reader2->SetTransforms(transforms);
