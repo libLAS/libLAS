@@ -93,6 +93,7 @@ void Point::write(const liblas::Point& point)
     detail::write_n(m_ofs, data.front(), m_header->GetDataRecordLength());
 
     m_pointCount++;
+    m_header->SetPointRecordsCount(m_pointCount);
 
     // write in our extra data that the user set on the 
     // point up to the header's specified DataRecordLength

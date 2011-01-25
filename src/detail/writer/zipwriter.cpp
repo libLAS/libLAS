@@ -86,6 +86,7 @@ void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
     boost::uint32_t out = m_pointCount;
     
     if ( count != 0 ) { out = count; }
+    m_header->SetPointRecordsCount(out);
     
     if (!m_ofs.good() ) return;
     // Skip to first byte of number of point records data member
@@ -133,17 +134,38 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
         }
     }
 
-    const std::vector<boost::uint8_t>& v = point.GetData();
-    for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
-    {
-        m_zipPoint->m_lz_point_data[i] = v[i];
-        //printf("%d %d\n", v[i], i);
-    }
-
     bool ok = false;
     try
     {
-        ok = m_zipper->write(m_zipPoint->m_lz_point);
+        const std::vector<boost::uint8_t>* data;
+    
+        data = &point.GetData();
+
+        if (data->size() != m_zipPoint->m_lz_point_size)
+        {
+            // We need to repack the data.  
+            liblas::Point p(point);
+            p.SetHeaderPtr(m_header);
+            data = &p.GetData();
+    //      m_zipPoint->m_lz_point_data = const_cast<unsigned char*>(&(data->front()));
+            for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
+            {
+                m_zipPoint->m_lz_point_data[i] = data->at(i);
+                //printf("%d %d\n", v[i], i);
+            }
+            ok = m_zipper->write(m_zipPoint->m_lz_point);
+        } else 
+        {
+//          m_zipPoint->m_lz_point_data = const_cast<unsigned char*>(&(data->front()));
+            for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
+            {
+                m_zipPoint->m_lz_point_data[i] = data->at(i);
+                //printf("%d %d\n", v[i], i);
+            }
+
+            ok = m_zipper->write(m_zipPoint->m_lz_point);
+        }
+       
     }
     catch(...)
     {
@@ -153,10 +175,8 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
     {
         throw liblas_error("Error writing compressed point data (2)");
     }
-
     ++m_pointCount;
-
-    return;
+    m_header->SetPointRecordsCount(m_pointCount);
 }
 
 ZipWriterImpl::~ZipWriterImpl()

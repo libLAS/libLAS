@@ -77,6 +77,8 @@ void WriterImpl::UpdatePointCount(boost::uint32_t count)
     
     if ( count != 0 ) { out = count; }
     
+    m_header->SetPointRecordsCount(out);
+    
     if (!m_ofs.good() ) return;
     // Skip to first byte of number of point records data member
     std::streamsize const dataPos = 107; 
