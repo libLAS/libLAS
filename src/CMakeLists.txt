@@ -106,7 +106,6 @@ set(LIBLAS_DETAIL_READER_HPP
 set(LIBLAS_DETAIL_WRITER_HPP
   ${LIBLAS_HEADERS_DIR}/detail/writer/writer.hpp
   ${LIBLAS_HEADERS_DIR}/detail/writer/zipwriter.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/writer/base.hpp
   ${LIBLAS_HEADERS_DIR}/detail/writer/point.hpp
   ${LIBLAS_HEADERS_DIR}/detail/writer/header.hpp)
 
@@ -145,7 +144,6 @@ set(LIBLAS_DETAIL_READER_CPP
   detail/reader/cachedreader.cpp)
 
 set(LIBLAS_DETAIL_WRITER_CPP
-  detail/writer/base.cpp
   detail/writer/header.cpp
   detail/writer/point.cpp
   detail/writer/zipwriter.cpp

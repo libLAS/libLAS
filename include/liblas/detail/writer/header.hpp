@@ -45,7 +45,6 @@
 #include <liblas/header.hpp>
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/private_utility.hpp>
-#include <liblas/detail/writer/base.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std
@@ -53,13 +52,12 @@
 
 namespace liblas { namespace detail { namespace writer {
 
-class Header : public WriterBase
+class Header 
 {
     
 public:
-    typedef WriterBase Base;
 
-    Header(std::ostream& ofs, boost::uint32_t& count, liblas::Header const& header );
+    Header(std::ostream& ofs, liblas::Header const& header );
 
     liblas::Header const& GetHeader() const { return m_header; }
     void write();
@@ -69,8 +67,9 @@ private:
     void WriteVLRs();
     void WriteLAS10PadSignature();
     boost::int32_t GetRequiredHeaderSize() const;
+
     
-    
+    std::ostream& m_ofs;    
     liblas::Header m_header;
 };
 

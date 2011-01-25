@@ -46,7 +46,6 @@
 #include <liblas/schema.hpp>
 #include <liblas/header.hpp>
 #include <liblas/detail/private_utility.hpp>
-#include <liblas/detail/writer/base.hpp>
 #include <liblas/detail/fwd.hpp>
 // boost
 #include <boost/cstdint.hpp>
@@ -57,13 +56,11 @@
 
 namespace liblas { namespace detail { namespace writer {
 
-class Point : public WriterBase
+class Point 
 {
 public:
     
-    typedef WriterBase Base;
-    
-    Point(std::ostream& ofs, boost::uint32_t& count, HeaderPtr header);
+    Point(std::ostream& ofs, HeaderPtr header);
     virtual ~Point();
 
     // const liblas::Point& GetPoint() const { return m_point; }

@@ -64,10 +64,10 @@ using namespace std;
 
 namespace liblas { namespace detail { namespace writer {
 
-Header::Header(std::ostream& ofs, uint32_t& count, liblas::Header const& header)
-    : Base(ofs, count)
+Header::Header(std::ostream& ofs, liblas::Header const& header)
+    : m_ofs(ofs)
+    , m_header(header)
 {
-    m_header = header;
 }
 
 void Header::write()
@@ -101,11 +101,7 @@ void Header::write()
     {
         // We're opened in append mode
         
-        if (m_header.Compressed())
-        {
-            m_pointCount = m_header.GetPointRecordsCount();
-        }
-        else
+        if (!m_header.Compressed())
         {
             ios::off_type points = end - static_cast<ios::off_type>(m_header.GetDataOffset());
             ios::off_type count = points / static_cast<ios::off_type>(m_header.GetDataRecordLength());
@@ -118,8 +114,8 @@ void Header::write()
                     <<" offset value?";
                 throw std::runtime_error(oss.str());
             }
-
-            m_pointCount = static_cast<uint32_t>(count);
+            
+            m_header.SetPointRecordsCount(count);
         }
 
         // Position to the beginning of the file to start writing the header
@@ -311,7 +307,7 @@ void Header::write()
     }           
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
-    if (m_pointCount != 0)
+    if (m_header.GetPointRecordsCount() != 0)
     {
         m_ofs.seekp(0, std::ios::end);
     }

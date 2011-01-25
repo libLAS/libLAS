@@ -56,15 +56,14 @@ namespace liblas { namespace detail {
 WriterImpl::WriterImpl(std::ostream& ofs) :
     m_ofs(ofs), 
     m_point_writer(PointWriterPtr( )), 
-    m_header_writer(HeaderWriterPtr()), 
-    m_pointCount(0)
+    m_header_writer(HeaderWriterPtr())
 {
 }
 
 
 void WriterImpl::WriteHeader()
 {
-    m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs,m_pointCount, *m_header) );
+    m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs, *m_header) );
     
     m_header_writer->write();
     
@@ -73,7 +72,7 @@ void WriterImpl::WriteHeader()
 
 void WriterImpl::UpdatePointCount(boost::uint32_t count)
 {
-    boost::uint32_t out = m_pointCount;
+    boost::uint32_t out = m_header->GetPointRecordsCount();
     
     if ( count != 0 ) { out = count; }
     
@@ -89,7 +88,7 @@ void WriterImpl::UpdatePointCount(boost::uint32_t count)
 void WriterImpl::WritePoint(liblas::Point const& point)
 {
     if (m_point_writer.get() == 0) {
-        m_point_writer = PointWriterPtr(new writer::Point(m_ofs, m_pointCount, m_header));
+        m_point_writer = PointWriterPtr(new writer::Point(m_ofs, m_header));
     } 
     m_point_writer->write(point);
 
