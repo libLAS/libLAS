@@ -59,10 +59,12 @@ public:
     virtual ~Header();
 
     HeaderPtr GetHeader() const { return m_header; }
-    void read();
-    void readvlrs();
+    void ReadHeader();
+    void ReadVLRs();
 
 protected:
+    
+    void Validate();
 
     std::istream& m_ifs;
     HeaderPtr m_header;

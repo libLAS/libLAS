@@ -74,7 +74,7 @@ Reader ReaderFactory::CreateWithImpl(ReaderIPtr r)
 Reader ReaderFactory::CreateCached(std::istream& stream, boost::uint32_t cache_size)
 {
     detail::HeaderReaderPtr h(new detail::reader::Header(stream));
-    h->read();
+    h->ReadHeader();
     HeaderPtr header = h->GetHeader();
 
     if (header->Compressed())
@@ -89,7 +89,7 @@ Reader ReaderFactory::CreateCached(std::istream& stream, boost::uint32_t cache_s
 Reader ReaderFactory::CreateWithStream(std::istream& stream)
 {
     detail::HeaderReaderPtr h(new detail::reader::Header(stream));
-    h->read();
+    h->ReadHeader();
     HeaderPtr header = h->GetHeader();
 
     if (header->Compressed())

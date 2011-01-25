@@ -63,7 +63,7 @@ Header::~Header()
 {
 }
 
-void Header::read()
+void Header::ReadHeader()
 {
     using detail::read_n;
 
@@ -284,76 +284,13 @@ void Header::read()
      
     // only go read VLRs if we have them.
     if (m_header->GetRecordsCount() > 0)
-        readvlrs();
+        ReadVLRs();
 
-    // Check that the point count actually describes the number of points 
-    // in the file.  If it doesn't, we're going to throw an error telling 
-    // the user why.  It may also be a problem that the dataoffset is 
-    // really what is wrong, but there's no real way to know that unless 
-    // you go start mucking around in the bytes with hexdump or od
+
 
     // If we're eof, we need to reset the state
     if (m_ifs.eof())
         m_ifs.clear();
-    
-    // LAS 1.3 specification no longer mandates that the end of the file is the
-    // end of the points. See http://trac.liblas.org/ticket/147 for more details
-    // on this issue and why the seek can be trouble in the windows case.  
-    // If you are having trouble properly seeking to the end of the stream on 
-    // windows, use boost's iostreams or similar, which do not have an overflow 
-    // problem.
-    
-    if (m_header->GetVersionMinor() < 3) 
-    {
-        // Seek to the beginning 
-        m_ifs.seekg(0, std::ios::beg);
-        std::ios::pos_type beginning = m_ifs.tellg();
-    
-        // Seek to the end
-        m_ifs.seekg(0, std::ios::end);
-        std::ios::pos_type end = m_ifs.tellg();
-        std::ios::off_type size = end - beginning;
-        std::ios::off_type offset = static_cast<std::ios::off_type>(m_header->GetDataOffset());
-        std::ios::off_type length = static_cast<std::ios::off_type>(m_header->GetDataRecordLength());
-        std::ios::off_type point_bytes = end - offset;
-
-        // Figure out how many points we have and whether or not we have 
-        // extra slop in there.
-        std::ios::off_type count = point_bytes / length;
-        std::ios::off_type remainder = point_bytes % length;
-        
-
-        if ( !m_header->Compressed() && m_header->GetPointRecordsCount() != static_cast<uint32_t>(count)) {
-            if (remainder == 0)
-            {
-                // The point bytes are exactly long enough, let's use it
-                // Set the count to what we calculated
-                m_header->SetPointRecordsCount(static_cast<boost::uint32_t>(count));
-                
-            }
-            else 
-            {
-                std::ostringstream msg; 
-                msg <<  "The number of points in the header that was set "
-                        "by the software '" << m_header->GetSoftwareId() <<
-                        "' does not match the actual number of points in the file "
-                        "as determined by subtracting the data offset (" 
-                        <<m_header->GetDataOffset() << ") from the file length (" 
-                        << size <<  ") and dividing by the point record length (" 
-                        << m_header->GetDataRecordLength() << ")."
-                        " It also does not perfectly contain an exact number of"
-                        " point data and we cannot infer a point count."
-                        " Calculated number of points: " << count << 
-                        " Header-specified number of points: " 
-                        << m_header->GetPointRecordsCount() <<
-                        " Point data remainder: " << remainder;
-                throw std::runtime_error(msg.str());                
-            }
-
-
-        
-        }
-    }
 
     // Seek to the data offset so we can start reading points
     m_ifs.seekg(m_header->GetDataOffset());
@@ -405,7 +342,7 @@ bool Header::HasLAS10PadSignature()
     return found;
 }
 
-void Header::readvlrs()
+void Header::ReadVLRs()
 {
     VLRHeader vlrh = { 0 };
 
@@ -480,4 +417,61 @@ void Header::readvlrs()
 #endif
 }
 
+
+void Header::Validate()
+{
+    // Check that the point count actually describes the number of points 
+    // in the file.  If it doesn't, we're going to throw an error telling 
+    // the user why.  It may also be a problem that the dataoffset is 
+    // really what is wrong, but there's no real way to know that unless 
+    // you go start mucking around in the bytes with hexdump or od
+        
+    // LAS 1.3 specification no longer mandates that the end of the file is the
+    // end of the points. See http://trac.liblas.org/ticket/147 for more details
+    // on this issue and why the seek can be trouble in the windows case.  
+    // If you are having trouble properly seeking to the end of the stream on 
+    // windows, use boost's iostreams or similar, which do not have an overflow 
+    // problem.
+    
+    if (m_header->GetVersionMinor() < 3 && !m_header->Compressed() ) 
+    {
+        // Seek to the beginning 
+        m_ifs.seekg(0, std::ios::beg);
+        std::ios::pos_type beginning = m_ifs.tellg();
+    
+        // Seek to the end
+        m_ifs.seekg(0, std::ios::end);
+        std::ios::pos_type end = m_ifs.tellg();
+        std::ios::off_type size = end - beginning;
+        std::ios::off_type offset = static_cast<std::ios::off_type>(m_header->GetDataOffset());
+        std::ios::off_type length = static_cast<std::ios::off_type>(m_header->GetDataRecordLength());
+        std::ios::off_type point_bytes = end - offset;
+
+        // Figure out how many points we have and whether or not we have 
+        // extra slop in there.
+        std::ios::off_type count = point_bytes / length;
+        std::ios::off_type remainder = point_bytes % length;
+        
+
+        if ( m_header->GetPointRecordsCount() != static_cast<uint32_t>(count)) {
+  
+                std::ostringstream msg; 
+                msg <<  "The number of points in the header that was set "
+                        "by the software '" << m_header->GetSoftwareId() <<
+                        "' does not match the actual number of points in the file "
+                        "as determined by subtracting the data offset (" 
+                        <<m_header->GetDataOffset() << ") from the file length (" 
+                        << size <<  ") and dividing by the point record length (" 
+                        << m_header->GetDataRecordLength() << ")."
+                        " It also does not perfectly contain an exact number of"
+                        " point data and we cannot infer a point count."
+                        " Calculated number of points: " << count << 
+                        " Header-specified number of points: " 
+                        << m_header->GetPointRecordsCount() <<
+                        " Point data remainder: " << remainder;
+                throw std::runtime_error(msg.str());                
+
+        }
+    }
+}
 }}} // namespace liblas::detail::reader

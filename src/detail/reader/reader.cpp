@@ -130,7 +130,7 @@ void ReaderImpl::ReadHeader()
     if (m_ifs.eof())
         m_ifs.clear();
     
-    m_header_reader->read();
+    m_header_reader->ReadHeader();
     m_header = m_header_reader->GetHeader();
 
     if (m_header->Compressed())
