@@ -395,8 +395,12 @@ void ZipReaderImpl::SetTransforms(std::vector<liblas::TransformPtr> const& trans
     // Transforms are allowed to change the point, including moving the 
     // point's HeaderPtr.  We need to check if we need to set that 
     // back on any subsequent reads.
-    if (m_transforms.size() > 0)
-        bNeedHeaderCheck = true;
+    for (std::vector<liblas::TransformPtr>::const_iterator i = transforms.begin(); i != transforms.end(); i++)
+    {
+        if (i->get()->ModifiesHeader())
+            bNeedHeaderCheck = true;
+    }
+
 }
 
 std::vector<liblas::TransformPtr>  ZipReaderImpl::GetTransforms() const

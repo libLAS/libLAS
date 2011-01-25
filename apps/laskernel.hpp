@@ -114,6 +114,7 @@ public:
     ~OptechScanAngleFixer() {};
 
     bool transform(liblas::Point& point);
+    bool ModifiesHeader() { return false; }    
 
 private:
     OptechScanAngleFixer(OptechScanAngleFixer const& other);

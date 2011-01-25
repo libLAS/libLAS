@@ -61,6 +61,7 @@ class LAS_DLL TransformI
 public:
     
     virtual bool transform(Point& point) = 0;
+    virtual bool ModifiesHeader() = 0;
     virtual ~TransformI() {}
 };
 
@@ -75,6 +76,7 @@ public:
     ~ReprojectionTransform();
 
     bool transform(Point& point);
+    bool ModifiesHeader() { return true; }
 
 private:
 
@@ -102,6 +104,7 @@ public:
     ~TranslationTransform();
 
     bool transform(Point& point);
+    bool ModifiesHeader() { return false; }
     
     enum OPER_TYPE
     {
@@ -152,6 +155,8 @@ public:
     ~ColorFetchingTransform();
 
     bool transform(Point& point);
+    bool ModifiesHeader() { return true; }
+
 
 private:
 
