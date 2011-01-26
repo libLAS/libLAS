@@ -90,7 +90,14 @@ using namespace liblas;
 #define compare_no_case(a,b,n)  strncasecmp( (a), (b), (n) )
 #endif
 
+#include <boost/lambda/lambda.hpp>
 
+bool IsReprojectionTransform(liblas::TransformPtr const& p)
+{
+    if (dynamic_cast<liblas::ReprojectionTransform*>(p.get()))
+        return true;
+    return false;
+}
 
 LAS_C_START
 
@@ -393,21 +400,7 @@ LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader)
     return (LASHeaderH) new liblas::Header( header );
 }
 
-LAS_DLL LASErrorEnum LASReader_SetSRS(LASHeaderH hReader, const LASSRSH hSRS) {
-    
-    VALIDATE_LAS_POINTER1(hReader, "LASReader_SetSRS", LE_Failure);
-    VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetSRS", LE_Failure);
 
-    try {
-        // ((liblas::Reader*) hReader)->SetSRS(*((liblas::SpatialReference*)hSRS));
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASReader_SetSRS");
-        return LE_Failure;
-    }
-
-    return LE_None;
-}
 
 LAS_DLL LASErrorEnum LASReader_SetInputSRS(LASHeaderH hReader, const LASSRSH hSRS) {
     
@@ -415,7 +408,11 @@ LAS_DLL LASErrorEnum LASReader_SetInputSRS(LASHeaderH hReader, const LASSRSH hSR
     VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetInputSRS", LE_Failure);
 
     try {
-        // ((liblas::Reader*) hReader)->SetInputSRS(*((liblas::SpatialReference*)hSRS));
+        liblas::Reader* reader = ((liblas::Reader*) hReader);
+        liblas::Header h = reader->GetHeader();
+        liblas::SpatialReference* ref = ((liblas::SpatialReference*) hSRS);
+        h.SetSRS(*ref);
+        reader->SetHeader(h);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASReader_SetInputSRS");
@@ -425,12 +422,27 @@ LAS_DLL LASErrorEnum LASReader_SetInputSRS(LASHeaderH hReader, const LASSRSH hSR
     return LE_None;
 }
 
+
 LAS_DLL LASErrorEnum LASReader_SetOutputSRS(LASHeaderH hReader, const LASSRSH hSRS) {
     
     VALIDATE_LAS_POINTER1(hReader, "LASReader_SetOutputSRS", LE_Failure);
     VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetOutputSRS", LE_Failure);
 
     try {
+        liblas::Reader* reader = ((liblas::Reader*) hReader);
+        liblas::Header h = reader->GetHeader();
+        liblas::SpatialReference in_ref = h.GetSRS();
+        liblas::SpatialReference* out_ref = ((liblas::SpatialReference*) hSRS);
+        std::vector<liblas::TransformPtr> transforms = reader->GetTransforms();
+        
+        transforms.erase( std::remove_if( transforms.begin(), 
+                                  transforms.end(),
+                                  boost::bind( &IsReprojectionTransform, _1 ) ),
+                  transforms.end());
+        
+        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, *out_ref, liblas::HeaderPtr(new liblas::Header(h))));
+        transforms.insert(transforms.begin(), srs_transform);
+        
         // ((liblas::Reader*) hReader)->SetOutputSRS(*((liblas::SpatialReference*)hSRS));
     }
     catch (std::exception const& e) {
@@ -439,6 +451,14 @@ LAS_DLL LASErrorEnum LASReader_SetOutputSRS(LASHeaderH hReader, const LASSRSH hS
     }
 
     return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASReader_SetSRS(LASHeaderH hReader, const LASSRSH hSRS) {
+    
+    VALIDATE_LAS_POINTER1(hReader, "LASReader_SetSRS", LE_Failure);
+    VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetSRS", LE_Failure);
+
+    return LASReader_SetOutputSRS(hReader, hSRS);
 }
 
 LAS_DLL LASHeaderH LASHeader_Create(void) {
@@ -1671,29 +1691,17 @@ LAS_DLL void LASWriter_Destroy(LASWriterH hWriter)
 
 }
 
-LAS_DLL LASErrorEnum LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS) {
-    
-    VALIDATE_LAS_POINTER1(hWriter, "LASWriter_SetSRS", LE_Failure);
-    VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetSRS", LE_Failure);
-
-    try {
-        // ((liblas::Writer*) hWriter)->SetSRS(*((liblas::SpatialReference*)hSRS));
-    }
-    catch (std::exception const& e) {
-        LASError_PushError(LE_Failure, e.what(), "LASWriter_SetSRS");
-        return LE_Failure;
-    }
-
-    return LE_None;
-}
-
 LAS_DLL LASErrorEnum LASWriter_SetInputSRS(LASWriterH hWriter, const LASSRSH hSRS) {
     
     VALIDATE_LAS_POINTER1(hWriter, "LASWriter_SetInputSRS", LE_Failure);
     VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetInputSRS", LE_Failure);
 
     try {
-        // ((liblas::Writer*) hWriter)->SetInputSRS(*((liblas::SpatialReference*)hSRS));
+        liblas::Writer* writer = ((liblas::Writer*) hWriter);
+        liblas::Header h = writer->GetHeader();
+        liblas::SpatialReference* srs =  ((liblas::SpatialReference*) hSRS);
+        h.SetSRS(*srs);
+        writer->SetHeader(h);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_SetInputSRS");
@@ -1709,7 +1717,19 @@ LAS_DLL LASErrorEnum LASWriter_SetOutputSRS(LASWriterH hWriter, const LASSRSH hS
     VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetOutputSRS", LE_Failure);
 
     try {
-        // ((liblas::Writer*) hWriter)->SetOutputSRS(*((liblas::SpatialReference*)hSRS));
+        liblas::Writer* writer = ((liblas::Writer*) hWriter);
+        liblas::Header h = writer->GetHeader();
+        liblas::SpatialReference in_ref = h.GetSRS();
+        liblas::SpatialReference* out_ref = ((liblas::SpatialReference*) hSRS);
+        std::vector<liblas::TransformPtr> transforms = writer->GetTransforms();
+        
+        transforms.erase( std::remove_if( transforms.begin(), 
+                                  transforms.end(),
+                                  boost::bind( &IsReprojectionTransform, _1 ) ),
+                  transforms.end());
+        
+        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, *out_ref, liblas::HeaderPtr(new liblas::Header(h))));
+        transforms.insert(transforms.begin(), srs_transform);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_SetOutputSRS");
@@ -1717,6 +1737,14 @@ LAS_DLL LASErrorEnum LASWriter_SetOutputSRS(LASWriterH hWriter, const LASSRSH hS
     }
 
     return LE_None;
+}
+
+LAS_DLL LASErrorEnum LASWriter_SetSRS(LASWriterH hWriter, const LASSRSH hSRS) {
+    
+    VALIDATE_LAS_POINTER1(hWriter, "LASWriter_SetSRS", LE_Failure);
+    VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetSRS", LE_Failure);
+
+    return LASWriter_SetOutputSRS(hWriter, hSRS);
 }
 
 LAS_DLL LASHeaderH LASWriter_GetHeader(const LASWriterH hWriter)
