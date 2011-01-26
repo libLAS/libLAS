@@ -164,8 +164,16 @@ void ReaderImpl::ReadNextPoint()
             m_point->SetHeaderPtr(m_header);
     }
     
-    detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
-    ++m_current;
+    try
+    {
+        detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
+        ++m_current;
+        
+    } catch (std::runtime_error&)
+    {
+        // If the stream is no good anymore, we're done reading points
+        return;
+    }
 
     // Filter the points and continue reading until we either find 
     // one to keep or throw an exception.
@@ -177,14 +185,30 @@ void ReaderImpl::ReadNextPoint()
         if (!FilterPoint(*m_point))
         {
 
-            detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
-            ++m_current;
+            try
+            {
+                detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
+                ++m_current;
+        
+            } catch (std::runtime_error&)
+            {
+                // If the stream is no good anymore, we're done reading points
+                return;
+            }
 
             while (!FilterPoint(*m_point))
             {
 
-                detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
-                ++m_current;
+                try
+                {
+                    detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);
+                    ++m_current;
+        
+                } catch (std::runtime_error&)
+                {
+                    // If the stream is no good anymore, we're done reading points
+                    return;
+                }
                 if (m_current == m_size) 
                 {
                     bLastPoint = true;
