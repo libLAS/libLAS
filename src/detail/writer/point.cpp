@@ -55,10 +55,11 @@ using namespace boost;
 
 namespace liblas { namespace detail { namespace writer {
 
-Point::Point(std::ostream& ofs, HeaderPtr header)
+Point::Point(std::ostream& ofs, boost::uint32_t& count, HeaderPtr header)
     : m_ofs(ofs)
     , m_header(header)
     , m_format(header->GetSchema())
+    , m_pointCount(count)
 {
     setup();
 }
@@ -90,8 +91,8 @@ void Point::write(const liblas::Point& point)
     
     std::vector<boost::uint8_t> const& data = point.GetData();    
     detail::write_n(m_ofs, data.front(), m_header->GetDataRecordLength());
-
-    m_header->SetPointRecordsCount(m_header->GetPointRecordsCount() + 1);
+    
+    m_pointCount++;
 
     // write in our extra data that the user set on the 
     // point up to the header's specified DataRecordLength

@@ -60,7 +60,7 @@ class Point
 {
 public:
     
-    Point(std::ostream& ofs, HeaderPtr header);
+    Point(std::ostream& ofs, boost::uint32_t& count, HeaderPtr header);
     virtual ~Point();
 
     // const liblas::Point& GetPoint() const { return m_point; }
@@ -85,6 +85,7 @@ private:
     std::vector<boost::uint8_t> m_blanks; 
 
     void setup();
+    boost::uint32_t& m_pointCount;
     // void fill();
 };
 

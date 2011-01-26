@@ -57,7 +57,7 @@ class Header
     
 public:
 
-    Header(std::ostream& ofs, liblas::Header const& header );
+    Header(std::ostream& ofs, boost::uint32_t& count, liblas::Header const& header );
 
     liblas::Header const& GetHeader() const { return m_header; }
     void write();
@@ -71,6 +71,7 @@ private:
     
     std::ostream& m_ofs;    
     liblas::Header m_header;
+    boost::uint32_t& m_pointCount;
 };
 
 }}} // namespace liblas::detail::writer

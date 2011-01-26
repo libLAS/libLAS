@@ -72,7 +72,7 @@ ZipWriterImpl::ZipWriterImpl(std::ostream& ofs) :
 
 void ZipWriterImpl::WriteHeader()
 {
-    m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs, *m_header) );
+    m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs, m_pointCount, *m_header) );
     
     m_header_writer->write();
     
@@ -86,7 +86,6 @@ void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
     boost::uint32_t out = m_pointCount;
     
     if ( count != 0 ) { out = count; }
-    m_header->SetPointRecordsCount(out);
     
     if (!m_ofs.good() ) return;
     // Skip to first byte of number of point records data member
@@ -219,16 +218,7 @@ liblas::Header& ZipWriterImpl::GetHeader() const
 }
 void ZipWriterImpl::SetHeader(liblas::Header const& header)
 {
-    boost::uint32_t count = 0;
-    if (m_header.get())
-        count = m_header->GetPointRecordsCount();
-
     m_header = HeaderPtr(new liblas::Header(header));
-    
-    if (count)
-        m_header->SetPointRecordsCount(count);
-    else
-        m_header->SetPointRecordsCount(0);
 }
 
 
