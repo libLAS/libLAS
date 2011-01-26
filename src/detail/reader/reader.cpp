@@ -193,6 +193,7 @@ void ReaderImpl::ReadNextPoint()
             } catch (std::runtime_error&)
             {
                 // If the stream is no good anymore, we're done reading points
+                bLastPoint = true;
                 return;
             }
 
@@ -207,6 +208,7 @@ void ReaderImpl::ReadNextPoint()
                 } catch (std::runtime_error&)
                 {
                     // If the stream is no good anymore, we're done reading points
+                    bLastPoint = true;
                     return;
                 }
                 if (m_current == m_size) 
