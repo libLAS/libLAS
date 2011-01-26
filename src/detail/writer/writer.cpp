@@ -133,7 +133,16 @@ liblas::Header& WriterImpl::GetHeader() const
 }
 void WriterImpl::SetHeader(liblas::Header const& header)
 {
+    boost::uint32_t count = 0;
+    if (m_header.get())
+        count = m_header->GetPointRecordsCount();
+
     m_header = HeaderPtr(new liblas::Header(header));
+    
+    if (count)
+        m_header->SetPointRecordsCount(count);
+    else
+        m_header->SetPointRecordsCount(0);
 }
 
 

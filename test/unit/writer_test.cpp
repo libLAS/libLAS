@@ -313,6 +313,46 @@ namespace tut
 
     }
 
+    // Test using a bogus record count in the header
+    template<>
+    template<>
+    void to::test<6>()
+    {
+        size_t count = 10;
+        
+        // Create new LAS file using default header block
+        {
+            std::ofstream ofs;
+            ofs.open(tmpfile_.c_str(), std::ios::out | std::ios::binary);
+
+            // LAS 1.2, Point Format 0
+            liblas::Header header;
+            header.SetPointRecordsCount(12);
+            liblas::Writer writer(ofs, header);
+            
+            for ( size_t i = 0; i < count ; i++ )
+            {
+                liblas::Point point;
+                point.SetCoordinates( 10.0 + i, 20.0 + i, 30.0 + i );
+                writer.WritePoint( point );
+            }
+
+        }
+
+        // Read previously created LAS file and check its header block
+        {
+            std::ifstream ifs;
+            ifs.open(tmpfile_.c_str(), std::ios::in | std::ios::binary);
+            ensure(ifs.is_open());
+
+            liblas::Reader reader(ifs);
+
+            ensure_equals(reader.GetHeader().GetPointRecordsCount(), count);
+
+
+        }
+    }
+
 
 }
 
