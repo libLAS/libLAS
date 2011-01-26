@@ -193,8 +193,7 @@ void ReaderImpl::ReadNextPoint()
             } catch (std::runtime_error&)
             {
                 // If the stream is no good anymore, we're done reading points
-                bLastPoint = true;
-                return;
+                throw std::out_of_range("ReadNextPoint: file has no more points to read, end of file reached");
             }
 
             while (!FilterPoint(*m_point))
@@ -208,8 +207,7 @@ void ReaderImpl::ReadNextPoint()
                 } catch (std::runtime_error&)
                 {
                     // If the stream is no good anymore, we're done reading points
-                    bLastPoint = true;
-                    return;
+                    throw std::out_of_range("ReadNextPoint: file has no more points to read, end of file reached");
                 }
                 if (m_current == m_size) 
                 {
