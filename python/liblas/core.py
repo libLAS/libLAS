@@ -674,6 +674,15 @@ las.LASPoint_GetColor.restype = ctypes.c_void_p
 las.LASPoint_SetColor.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASPoint_SetColor.errcheck = check_return
 
+las.LASPoint_SetHeader.restype = None
+las.LASPoint_SetHeader.argtypes = [ctypes.c_void_p,
+                                    ctypes.c_void_p]
+las.LASPoint_SetHeader.errcheck = check_void_done
+
+las.LASPoint_GetHeader.restype = ctypes.c_void_p
+las.LASPoint_GetHeader.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetHeader.errcheck = check_void
+
 las.LASPoint_Destroy.argtypes = [ctypes.c_void_p]
 las.LASPoint_Destroy.errcheck = check_void_done
 las.LASPoint_Destroy.restype = None

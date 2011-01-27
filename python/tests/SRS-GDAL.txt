@@ -72,7 +72,7 @@
 #  >>> utm_header.scale = [0.000001,0.000001,0.000001]
   >>> utm_header.srs = s_utm
   
-  >>> dd_header.scale = [0.000001,0.000001,0.000001]
+#  >>> dd_header.scale = [0.000001,0.000001,0.000001]
   >>> dd_header.srs = s_dd
   
   >>> f = file.File('../test/data/1.2_3.las',mode='r', header = utm_header)
@@ -100,6 +100,11 @@ values are 0.01
   
 
   >>> f_project = file.File('junk_srs_project.las',mode='w',header=dd_header)
+ 
+  >>> p.header = dd_header
+  >>> p.x, p.y
+  (-93.350000000000009, 41.579999999999998)
+
   >>> dd_header.srs.proj4
   '+proj=longlat +datum=WGS84 +no_defs '
   >>> f_project.write(p);f_project.write(p);f_project.write(p)
@@ -107,7 +112,7 @@ values are 0.01
   >>> del f_project
   >>> f3 = file.File('junk_srs_project.las')
   >>> f3.header.data_offset
-  477L
+  789L
 
   >>> s_utm = srs.SRS()
   >>> s_utm.wkt = utm_wkt
