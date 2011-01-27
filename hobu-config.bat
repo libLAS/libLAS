@@ -17,7 +17,7 @@ set PATH=%OSGEO4W%\apps\gdal-dev\bin;%OSGEO4W%\bin;%PATH%
     
 cmake -G %G% ^
     -DBOOST_INCLUDEDIR=%BOOST% ^
-    -DWITH_GDAL=ON= ^
+    -DWITH_GDAL=ON ^
     -DWITH_GEOTIFF=ON ^
     -DWITH_ORACLE=ON ^
     -DWITH_LASZIP=OFF ^
