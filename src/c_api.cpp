@@ -441,7 +441,11 @@ LAS_DLL LASErrorEnum LASReader_SetOutputSRS(LASHeaderH hReader, const LASSRSH hS
                   transforms.end());
         
         liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, *out_ref, liblas::HeaderPtr(new liblas::Header(h))));
-        transforms.insert(transforms.begin(), srs_transform);
+        if (transforms.size())
+            transforms.insert(transforms.begin(), srs_transform);
+        else
+            transforms.push_back(srs_transform);
+        reader->SetTransforms(transforms);
         
         // ((liblas::Reader*) hReader)->SetOutputSRS(*((liblas::SpatialReference*)hSRS));
     }
@@ -1729,7 +1733,11 @@ LAS_DLL LASErrorEnum LASWriter_SetOutputSRS(LASWriterH hWriter, const LASSRSH hS
                   transforms.end());
         
         liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, *out_ref, liblas::HeaderPtr(new liblas::Header(h))));
-        transforms.insert(transforms.begin(), srs_transform);
+        if (transforms.size())
+            transforms.insert(transforms.begin(), srs_transform);
+        else
+            transforms.push_back(srs_transform);
+        writer->SetTransforms(transforms);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASWriter_SetOutputSRS");

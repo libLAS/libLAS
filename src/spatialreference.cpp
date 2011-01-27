@@ -714,8 +714,9 @@ void SpatialReference::SetVerticalCS(boost::int32_t verticalCSType,
         throw std::runtime_error("The geotiff keys could not be written");
     }
 
-    // TODO: Should we clear WKT so it gets regenerated? 
-
+    // Clear WKT so it gets regenerated 
+    m_wkt = std::string("");
+    
     ResetVLRs();
 #else
     boost::ignore_unused_variable_warning(citation);

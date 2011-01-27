@@ -234,6 +234,12 @@ text that will be inserted directly into the VLR.
     escaped arguments that are larger than 64k in size will cause an error 
     to be thrown.  Automatic truncation will not happen.
 
+.. note::
+    If you attempt to add VLRs with an ID of 34735, 34736, or 34737, your 
+    VLR will not be added.  This is because libLAS expects to manage the 
+    GeoTIFF keys for you.  You should use the SRS handling facilities if 
+    you need to set GeoTIFF keys instead of attempting to overwrite them
+    directly.
 
 VLR removal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

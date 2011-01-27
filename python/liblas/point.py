@@ -48,6 +48,7 @@ import math
 import color
 import ctypes
 
+import header
 
 class Point(object):
     def __init__(self, owned=True, handle=None, copy=False):
@@ -468,6 +469,12 @@ class Point(object):
         """
     color = property(get_color, set_color, None, doc)
 
+    def get_header(self):
+        return header.Header(handle=core.las.LASPoint_GetHeader(self.handle))
+    
+    def set_header(self, value):
+        return core.las.LASPoint_SetHeader(self.handle, value.handle)
+    header = property(get_header, set_header, None, None)
     # def descale(self, header):
     #     """Descales the point with a given :obj:`liblas.header.Header` instance
     # 
