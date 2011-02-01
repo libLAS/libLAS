@@ -45,7 +45,7 @@
 #ifndef LIBLAS_VERSION_MAJOR
 #define LIBLAS_VERSION_MAJOR    1
 #define LIBLAS_VERSION_MINOR    6
-#define LIBLAS_VERSION_REV      0b4
+#define LIBLAS_VERSION_REV      0
 #define LIBLAS_VERSION_BUILD    0
 #endif
 
@@ -54,11 +54,11 @@
 #endif
 
 #ifndef LIBLAS_RELEASE_DATE
-#define LIBLAS_RELEASE_DATE     20100107
+#define LIBLAS_RELEASE_DATE     20100201
 #endif
 
 #ifndef LIBLAS_RELEASE_NAME
-#define LIBLAS_RELEASE_NAME     "1.6.0b4"
+#define LIBLAS_RELEASE_NAME     "1.6.0"
 #endif
 
 #endif /* LAS_VERSION_H_INCLUDED */
