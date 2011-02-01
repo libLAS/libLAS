@@ -327,7 +327,7 @@ bool ZipPoint::ValidateVLR(const VariableRecord& vlr) const
         return false;
     boost::uint16_t version_revision = 0;
     p = GetBytes<boost::uint16_t>(p, version_revision);
-    if (version_revision != LASZIP_VERSION_REVISION)
+    if (version_revision > LASZIP_VERSION_REVISION)
         return false;
     
     boost::uint32_t options = 0;
