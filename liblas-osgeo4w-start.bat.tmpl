@@ -1,7 +1,7 @@
 @echo off
 SET OSGEO4W_ROOT=@osgeo4w@
-SET GDAL_DATA=%OSGEO4W_ROOT%\apps\gdal-dev\share\gdal
-SET PYTHONPATH=%OSGEO4W_ROOT%\apps\gdal-dev\pymod;%PYTHONPATH%
-PATH=%OSGEO4W_ROOT%\apps\gdal-dev\bin;%OSGEO4W_ROOT%\bin;%PATH%
+SET GDAL_DATA=%OSGEO4W_ROOT%\share\gdal
+SET PROJ_LIB=%OSGEO4W_ROOT%\share\proj
+SET PYTHONPATH=%OSGEO4W_ROOT%\pymod;%PYTHONPATH%
 start "libLAS OSGeo4W Shell"
 @echo on
