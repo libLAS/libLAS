@@ -22,7 +22,7 @@ Current Release(s)
 
 
 .. note::
-    You may also want :ref:`laszip` for compression support.
+    You may also want `LASzip`_ for compression support.
 
 .. seealso::
     :ref:`source`
@@ -173,4 +173,4 @@ Linux
 .. _`DebianGIS`: http://wiki.debian.org/DebianGis
 
 
-
+.. _`LASzip`: http://laszip.org

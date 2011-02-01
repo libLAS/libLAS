@@ -18,7 +18,7 @@ install_requires = ['setuptools']
 
 import os
 
-version = '1.6.0b4'
+version = '1.6.0'
 
 scripts =['scripts/oci2las.py']
         
