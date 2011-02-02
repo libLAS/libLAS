@@ -18,7 +18,7 @@ Current Release(s)
 
   - See `OSGeo4W <http://trac.osgeo.org/osgeo4w>`__ for Windows release.
   
-  - `Release Notes <http://lists.osgeo.org/pipermail/liblas-devel/2010-December/001108.html>`__
+  - `Release Notes <http://lists.osgeo.org/pipermail/liblas-devel/2011-February/001194.html>`__
 
 
 .. note::
