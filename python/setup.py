@@ -10,7 +10,7 @@ except ImportError:
 from sys import version_info
 
 try:
-    readme = file('../doc/index.txt','rb').read()
+    readme = file('README.txt','rb').read()
 except:
     readme = ''
 
