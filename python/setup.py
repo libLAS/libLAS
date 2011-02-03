@@ -20,7 +20,14 @@ import os
 
 version = '1.6.0'
 
-scripts =['scripts/oci2las.py']
+import socket
+
+# if we're building on Howard's XP VM, we'll include DLLs from his setup
+if socket.gethostname() == 'fire-windows':
+    data_files=[('DLLs',[r'D:\liblas\bin\RelWithDebInfo\liblas_c.dll',
+                         r'D:\liblas\bin\RelWithDebInfo\liblas.dll',]),]
+else:
+    data_files = None
         
 setup(name          = 'libLAS',
       version       = version,
@@ -36,6 +43,8 @@ setup(name          = 'libLAS',
       packages      = ['liblas'],
       install_requires = install_requires,
       test_suite = 'tests.test_suite',
+      data_files = data_files,
+      zip_safe = False,
       classifiers   = [
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -44,7 +53,6 @@ setup(name          = 'libLAS',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Scientific/Engineering :: GIS',
-        ],
-      scripts = scripts
+        ]
 )
 
