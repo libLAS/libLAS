@@ -43,10 +43,24 @@ Updates to the Python API include support for manipulating raw point data,
 rescaling support through manipulation of `point.header`, and a number of 
 additions to bring things in line with the libLAS C++ API.
 
+Notes
+------------------------------------------------------------------------------
+
+The Windows builds provided by PyPI include statically-linked `LASzip`_ support, 
+but do not provide coordinate system support via `GDAL`_ or `libgeotiff`_.  
+Because the Windows binaries provide `LASzip`_ support, which is LGPL, they 
+should be considered LGPL as well.  
+
+If you need coordinate system support, or fully-featured `tools`_, obtain an 
+install via `OSGeo4W`_.  `OSGeo4W`_ does include its own Python 2.5, however, 
+which may what you need, but libLAS' bindings are not tied to any specific 
+Python version (they use `ctypes`_), and you should be able to piece together 
+a system that way.
+
 Documentation
 ------------------------------------------------------------------------------
 
-A `tutorial`_ and `class documentation`_ are provided for working 
+A `tutorial`_ and `class documentation`_ are provided.
 
 License
 ------------------------------------------------------------------------------
@@ -54,7 +68,10 @@ License
 libLAS is available under the terms of the `BSD License`_. 
 See `License`_ for a copy.
 
-
+.. _`ctypes`: http://docs.python.org/library/ctypes.html
+.. _`tools`: http://liblas.org/utilities/
+.. _`GDAL`: http://gdal.org
+.. _`libgeotiff`: http://trac.osgeo.org/geotiff/
 .. _`lasblock`: http://liblas.org/utilities/lasblock.html
 .. _`LASzip`: http://laszip.org
 .. _`las2oci`: http://liblas.org/utilities/las2oci.html
