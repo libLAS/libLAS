@@ -442,7 +442,7 @@ inline void write_n<std::string>(std::ostream& dest, std::string const& src, std
 }
 
 #ifdef _MSC_VER
-# pragma warning(push)
+# pragma warning(pop)
 #endif
 
 // Utility functor with accompanying to print GeoTIFF directory.
