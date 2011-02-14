@@ -489,7 +489,7 @@ boost::int32_t Point::GetRawX() const
     
 #ifdef LIBLAS_ENDIAN_AWARE
     boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
-    return output
+    return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
     boost::int32_t* output = reinterpret_cast<boost::int32_t*>(data);
@@ -505,7 +505,7 @@ boost::int32_t Point::GetRawY() const
 
 #ifdef LIBLAS_ENDIAN_AWARE
     boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
-    return output
+    return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
     boost::int32_t* output = reinterpret_cast<boost::int32_t*>(data);
@@ -521,7 +521,7 @@ boost::int32_t Point::GetRawZ() const
 
 #ifdef LIBLAS_ENDIAN_AWARE
     boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
-    return output
+    return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
     boost::int32_t* output = reinterpret_cast<boost::int32_t*>(data);
@@ -561,7 +561,7 @@ boost::uint16_t Point::GetIntensity() const
 
 #ifdef LIBLAS_ENDIAN_AWARE
     boost::uint16_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
-    return output
+    return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
     boost::uint16_t* output = reinterpret_cast<boost::uint16_t*>(data);
@@ -789,7 +789,7 @@ boost::uint16_t Point::GetPointSourceID() const
 
 #ifdef LIBLAS_ENDIAN_AWARE
     boost::uint16_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
-    return output
+    return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
     boost::uint16_t* output = reinterpret_cast<boost::uint16_t*>(data);
