@@ -13,17 +13,28 @@ authors probably intend for it to be widely used, licensing rights are not prope
 affixed to the source code, and it must be assumed that the software is currently
 "All Rights Reserved" and individually licensable.  
 
+.. note::
+    2/11/2011: Martin has started to release the library that focusses on
+    reading and writing LAS data (not the tools or utilities) in the form of
+    an LGPL library. You can find out more information `here
+    <http://www.cs.unc.edu/~isenburg/lastools/download/laslib_README.txt>`__.
+
 Utilities
 ..............................................................................
 
 Because libLAS' focus is on being a software development library to enable 
-LAS processing, and not so much a processing library per se, libLAS *does* 
+LAS processing, and not so much a processing library per se, libLAS *did* 
 re-implement many of the `LAStools`_ :ref:`command-line utilities <utilities>` 
 to provide utility and test the functionality of the library.  libLAS' port 
 of these utilities will always lag LAStools implementations, however, and if 
 you are looking for the latest and greatest in functionality, you should 
 look there.  The port that libLAS contains of the LAStools has been blessed 
 by the Isenburg and Shewchuk as BSD-licensed.
+
+Additionally, the libLAS version of the LAStools utilities are no longer 
+command-line compatible.  So while they may have some common heritage, and 
+the two packages copy each other in terms of features and behaviors, they 
+are now quite divergent.
 
 Which one to use for what
 ..............................................................................
@@ -32,7 +43,7 @@ Use libLAS for:
 
 * Manipulating LAS files directly in C, C++, Python, .NET, and Ruby (caveats
   apply)
-* Embedding LAS read/write support in your own software
+* Embedding LAS read/write support in your own commercial software
 * Plucking out first/last returns (:ref:`las2las` or do it yourself with
   libLAS' programatic API)
 * Reclassifying point data with your own algorithm(s)
@@ -43,6 +54,7 @@ Use libLAS for:
 * Reprojecting data from one coordinate system to another (vertical datum
   transformation included soon!)
 * Spatially indexing data for fast bounds lookup
+* Working in a commercial setting
 
 Use LAStools for:
 
@@ -56,6 +68,7 @@ Use LAStools for:
   programatic API)
 * Decimating data (thinning by removing points within a grid or window)
 * Converting data between formats (1.0 <-> 1.2, etc)
+* Working in an academic or non-commercial setting
 
 .. _`LAStools`: http://www.cs.unc.edu/~isenburg/lastools/
 .. _`BSD license`: http://www.opensource.org/licenses/bsd-license.php
