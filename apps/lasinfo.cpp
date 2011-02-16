@@ -236,7 +236,7 @@ int main(int argc, char* argv[])
                             verbose
                             );
 
-        liblas::Header const& header = reader.GetHeader();
+        header = reader.GetHeader();
 
         // Add the header to the summary so we can get more detailed 
         // info
