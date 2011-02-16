@@ -13,7 +13,7 @@ Summary
 ------------------------------------------------------------------------------
 
 This document proposes how to handle describing spatial reference systems 
-in `ASRPS LAS`_ 1.4. LAS 1.4 prescribes that software developers add and 
+in `ASPRS LAS`_ 1.4. LAS 1.4 prescribes that software developers add and 
 prefer to use OGC WKT coordinate system description in the form of VLR 
 records in LAS files.  Softwares can choose to continue to write GeoTIFF keys 
 to support older applications, but they should prefer the OGC WKT if it is 
@@ -53,8 +53,8 @@ features -- notably TOWGS84 and AUTHORITY nodes. If you have questions about
 how to produce WKT, please participate on the `MetaCRS`_ mailing list.
 Examples of WKT may also be found on the http://spatialreference.org website.
 
-.. `OGC Simple Feature Access`: http://www.opengeospatial.org/standards/sfa
-.. `MetaCRS`: http://trac.osgeo.org/metacrs/
+.. _`OGC Simple Feature Access`: http://www.opengeospatial.org/standards/sfa
+.. _`MetaCRS`: http://trac.osgeo.org/metacrs/
 
 Transition
 ------------------------------------------------------------------------------
