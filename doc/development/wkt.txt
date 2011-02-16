@@ -69,7 +69,7 @@ domains that take advantage of the OGC WKT specification.
 Softwares that currently write GeoTIFF VLR records into LAS files can continue
 to do so in LAS 1.4. It is acceptable to write *only* GeoTIFF VLR records into
 an LAS file, while softwares that choose to write OGC WKT VLRs should also
-write GeoTIFF VLRs to promote backward compatibility If a file is found to
+write GeoTIFF VLRs to promote backward compatibility. If a file is found to
 have both OGC WKT and GeoTIFF VLRs, the OGC WKT description, which is more
 expressive, should be preferred if possible.
 
@@ -83,7 +83,7 @@ OGC WKT strings shall be provided in a VLR with the following attributes:
 
 The following conditions should also apply:
 
-* Because VLRs can only be 65536 size, an OGC WKT string in a VLR data block 
+* Because VLRs can only be 65536 bytes size, an OGC WKT string in a VLR data block 
   is functionally limited to 64K in size.
 * The OGC WKT VLR data shall be a null-terminated string.
 * The OGC WKT VLR data shall be considered UTF-8.
