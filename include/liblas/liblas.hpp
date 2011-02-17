@@ -168,17 +168,22 @@ inline void Cleanup(std::ostream* ofs)
     if (!ofs) return;
 #ifdef USE_BOOST_IO
     namespace io = boost::iostreams;
-    if (static_cast<io::stream<io::file_sink>&>(*ofs))
+    namespace io = boost::iostreams;
+    io::stream<io::file_sink>* source = dynamic_cast<io::stream<io::file_sink>*>(ofs);
+    if (source)
     {
-        static_cast<io::stream<io::file_sink>&>(*ofs).close();
+        source->close();
         delete ofs;
     }
+
 #else
-    if (static_cast<std::ofstream&>(*ofs))
+    std::ofstream* source = dynamic_cast<std::ofstream*>(ofs);
+    if (source)
     {
-        static_cast<std::ofstream&>(*ofs).close();
+        source->close();
         delete ofs;
     }
+    
 #endif
 }
 
@@ -189,17 +194,21 @@ inline void Cleanup(std::istream* ifs)
     if (!ifs) return;
 #ifdef USE_BOOST_IO
     namespace io = boost::iostreams;
-    if (static_cast<io::stream<io::file_source>&>(*ifs))
+    io::stream<io::file_source>* source = dynamic_cast<io::stream<io::file_source>*>(ifs);
+    if (source)
     {
-        static_cast<io::stream<io::file_source>&>(*ifs).close();
+        source->close();
         delete ifs;
     }
 #else
-    if (static_cast<std::ifstream&>(*ifs))
+    std::ifstream* source = dynamic_cast<std::ifstream*>(ifs);
+    if (source)
     {
-        static_cast<std::ifstream&>(*ifs).close();
+        source->close();
         delete ifs;
     }
+
+
 #endif
 }
 
