@@ -214,6 +214,8 @@ pdf_stylesheets = ['liblas']
 pdf_language = "en_US"
 pdf_fit_mode = "overflow"
 pdf_use_toc = True
+pdf_splittables = True
+pdf_appendices = []
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
