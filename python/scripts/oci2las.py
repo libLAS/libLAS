@@ -115,6 +115,7 @@ class Translator(object):
         self.count = 0
         self.first_point = True
         self.cloud_column = True
+        self.header = None
         
         if self.options.srs:
             self.srs = srs.SRS()
@@ -147,6 +148,7 @@ class Translator(object):
             d = struct.unpack(format,blob[ptsize*i:ptsize*(i+1)])
             x, y, z, time, classification, blk_id, pt_id = d
             p = point.Point()
+            p.header = self.header
             p.x = x; p.y = y; p.z = z
             p.classification = int(classification)
             p.raw_time = time
@@ -179,22 +181,22 @@ class Translator(object):
         pass
     
     def open_output(self):
-        h = header.Header()
+        self.header = header.Header()
         
         prec = 10**-(self.options.precision-1)
-        h.scale = [prec, prec, prec]
+        self.header.scale = [prec, prec, prec]
         
         if self.options.offset:
             h.offset = [self.min.x, self.min.y, self.min.z]
             if self.options.verbose:
                 print 'using minimum offsets', h.offset
 
-        h.compressed = self.options.compressed
+        self.header.compressed = self.options.compressed
  
         if self.srs:
-            h.srs = self.srs
+            self.header.srs = self.srs
             
-        output = lasfile.File(self.options.output,mode='w',header=h)
+        output = lasfile.File(self.options.output,mode='w',header=self.header)
         return output
     
     def write_points(self, points):
@@ -275,6 +277,9 @@ class Translator(object):
         clouds = None
         points = []
         print 'have srs?: %s' % bool(self.srs)
+
+        self.output = self.open_output()
+
         if not clouds:
             cur = self.cur.execute(self.options.sql)
             num_pts_index, blob_index = self.get_block_indexes(cur)
@@ -297,7 +302,6 @@ class Translator(object):
                     if not self.srs:
                         self.srs = srs.SRS()
 
-        self.output = self.open_output()
         for pts in points:
             self.write_points(pts)
         
