@@ -14,7 +14,7 @@ import os, sys
 import cx_Oracle as oci
 
 # big-endian DOUBLE, DOUBLE, DOUBLE, LONG, LONG
-format = '>dddll'
+format = '>dddddll'
 ptsize = struct.calcsize(format)
 
 
@@ -145,9 +145,11 @@ class Translator(object):
         for i in xrange(num_points):
             rng = ptsize*i,ptsize*(i+1)
             d = struct.unpack(format,blob[ptsize*i:ptsize*(i+1)])
-            x, y, z, blk_id, pt_id = d
+            x, y, z, time, classification, blk_id, pt_id = d
             p = point.Point()
             p.x = x; p.y = y; p.z = z
+            p.classification = classification
+            p.raw_time = time
 
             if self.first_point:
                 self.min.x = p.x
