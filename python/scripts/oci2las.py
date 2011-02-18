@@ -148,7 +148,7 @@ class Translator(object):
             x, y, z, time, classification, blk_id, pt_id = d
             p = point.Point()
             p.x = x; p.y = y; p.z = z
-            p.classification = classification
+            p.classification = int(classification)
             p.raw_time = time
 
             if self.first_point:
