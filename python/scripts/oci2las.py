@@ -141,16 +141,18 @@ class Translator(object):
 
             
     def write_points(self, num_points, blob):
+#	print 'writing block...', num_points
+
         if not self.points:
             for i in xrange(num_points):
                 p = point.Point()
                 p.header = self.header
                 self.points.append(p)
-            if (num_points > len(self.points)):
-                for i in xrange(num_points):
-                    p = point.Point()
-                    p.header = self.header
-                    self.points.append(p)
+        if (num_points > len(self.points)):
+            for i in xrange(num_points-len(self.points)):
+                p = point.Point()
+                p.header = self.header
+                self.points.append(p)
                     
         for i in xrange(num_points):
             rng = ptsize*i,ptsize*(i+1)
