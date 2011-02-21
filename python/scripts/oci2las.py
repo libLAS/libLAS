@@ -209,7 +209,7 @@ class Translator(object):
         if self.srs:
             self.header.srs = self.srs
             
-        self.header.format = 1
+        self.header.data_format_id = 1
         output = lasfile.File(self.options.output,mode='w',header=self.header)
         return output
     
