@@ -18,7 +18,6 @@ format = '>dddddll'
 ptsize = struct.calcsize(format)
 
 
-
 class Translator(object):
 
     def construct_parser(self):
@@ -116,6 +115,7 @@ class Translator(object):
         self.first_point = True
         self.cloud_column = True
         self.header = None
+        self.points = []
         
         if self.options.srs:
             self.srs = srs.SRS()
@@ -140,15 +140,23 @@ class Translator(object):
                 return False
 
             
-    def get_points(self, num_points, blob):
-        points = []
-
+    def write_points(self, num_points, blob):
+        if not self.points:
+            for i in xrange(num_points):
+                p = point.Point()
+                p.header = self.header
+                self.points.append(p)
+            if (num_points > len(self.points)):
+                for i in xrange(num_points):
+                    p = point.Point()
+                    p.header = self.header
+                    self.points.append(p)
+                    
         for i in xrange(num_points):
             rng = ptsize*i,ptsize*(i+1)
             d = struct.unpack(format,blob[ptsize*i:ptsize*(i+1)])
             x, y, z, time, classification, blk_id, pt_id = d
-            p = point.Point()
-            p.header = self.header
+            p = self.points[i]
             p.x = x; p.y = y; p.z = z
             p.classification = int(classification)
             p.raw_time = time
@@ -174,8 +182,7 @@ class Translator(object):
         
             self.count += 1
             
-            points.append(p)
-        return points
+            self.output.write(p)
     
     def summarize_files(self):
         pass
@@ -199,10 +206,6 @@ class Translator(object):
         output = lasfile.File(self.options.output,mode='w',header=self.header)
         return output
     
-    def write_points(self, points):
-        
-        for p in points:
-            self.output.write(p)
     
     def rewrite_header(self):
         self.output.close()
@@ -286,7 +289,7 @@ class Translator(object):
             for row in cur:
                 num_points = row[num_pts_index]
                 blob = row[blob_index].read()
-                points.append(self.get_points(num_points, blob))
+                self.write_points(num_points, blob)
                 # try to set the SRS
                 if not self.srs:
                     for col in row:
@@ -302,8 +305,6 @@ class Translator(object):
                     if not self.srs:
                         self.srs = srs.SRS()
 
-        for pts in points:
-            self.write_points(pts)
         
         self.rewrite_header()
 
