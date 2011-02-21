@@ -44,7 +44,8 @@ FIND_PATH(LASZIP_INCLUDE_DIR
   /usr/include
   /usr/local/include
   /tmp/lasjunk/include
-  ${OSGEO4W_ROOT_DIR}/include)
+  ${OSGEO4W_ROOT_DIR}/include
+  NO_DEFAULT_PATH)
 
 SET(LASZIP_NAMES ${OSGEO4W_IMPORT_LIBRARY} laszip)
 
