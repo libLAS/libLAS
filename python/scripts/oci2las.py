@@ -205,6 +205,7 @@ class Translator(object):
         if self.srs:
             self.header.srs = self.srs
             
+        self.header.format = 1
         output = lasfile.File(self.options.output,mode='w',header=self.header)
         return output
     
