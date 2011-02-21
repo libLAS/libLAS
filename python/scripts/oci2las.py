@@ -109,8 +109,12 @@ class Translator(object):
         except:
             raise self.parser.error("Precision was not an number")
             
-        self.min = point.Point()
-        self.max = point.Point()
+        self.minx = None
+        self.miny = None
+        self.minz = None
+        self.maxx = None
+        self.maxy = None
+        self.maxz = None
         self.count = 0
         self.first_point = True
         self.cloud_column = True
@@ -164,23 +168,23 @@ class Translator(object):
             p.raw_time = time
 
             if self.first_point:
-                self.min.x = p.x
-                self.min.y = p.y
-                self.max.x = p.x
-                self.max.y = p.y
-                self.min.z = p.z
-                self.max.z = p.z
+                self.minx = p.x
+                self.miny = p.y
+                self.maxx = p.x
+                self.maxy = p.y
+                self.minz = p.z
+                self.maxz = p.z
                 self.first_point = False
 
             # cumulate min/max for the header
-            self.min.x = min(self.min.x, p.x)
-            self.max.x = max(self.max.x, p.x)
+            self.minx = min(self.minx, p.x)
+            self.maxx = max(self.maxx, p.x)
         
-            self.min.y = min(self.min.y, p.y)
-            self.max.y = max(self.max.y, p.y)
+            self.miny = min(self.miny, p.y)
+            self.maxy = max(self.maxy, p.y)
         
-            self.min.z = min(self.min.z, p.z)
-            self.max.z = max(self.max.z, p.z)
+            self.minz = min(self.minz, p.z)
+            self.maxz = max(self.maxz, p.z)
         
             self.count += 1
             
@@ -196,7 +200,7 @@ class Translator(object):
         self.header.scale = [prec, prec, prec]
         
         if self.options.offset:
-            h.offset = [self.min.x, self.min.y, self.min.z]
+            h.offset = [self.minx, self.miny, self.minz]
             if self.options.verbose:
                 print 'using minimum offsets', h.offset
 
@@ -215,8 +219,8 @@ class Translator(object):
         self.output = lasfile.File(self.options.output)
         h = self.output.header
         self.output.close()
-        h.min = [self.min.x, self.min.y, self.min.z]
-        h.max = [self.max.x, self.max.y, self.max.z]
+        h.min = [self.minx, self.miny, self.minz]
+        h.max = [self.maxx, self.maxy, self.maxz]
 
         rc = h.point_return_count
         rc[0] = self.count
