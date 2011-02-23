@@ -58,7 +58,7 @@ namespace liblas {
 
 VariableRecord::VariableRecord()
     : m_data(40)
-    , m_reserved(0)
+    , m_reserved(0xAABB)
     , m_record_id(0)
     , m_record_size(0)
 {    
