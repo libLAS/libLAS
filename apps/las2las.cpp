@@ -89,6 +89,10 @@ bool process(   std::istream& ifs,
         }
         reader.Reset();
         
+        // If we have any reprojection going on, we have to reset the offsets 
+        // of the HeaderPtr that is applied to the points as they are reprojected
+        // or things will get screwed up when we go to re-assign the header
+        // as we write the points with the min-offset
         std::vector<liblas::TransformPtr> transforms = reader.GetTransforms();
         std::vector<liblas::TransformPtr> new_transforms;
         for (std::size_t i = 0; i < transforms.size(); i++)
