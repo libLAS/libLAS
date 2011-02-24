@@ -8,8 +8,8 @@
 // For more information, see www.boost.org
 // ----------------------------------------------------------------------------
 
-#ifndef BOOST_PROPERTY_TREE_STRING_PATH_HPP_INCLUDED
-#define BOOST_PROPERTY_TREE_STRING_PATH_HPP_INCLUDED
+#ifndef LIBLAS_BOOST_PROPERTY_TREE_STRING_PATH_HPP_INCLUDED
+#define LIBLAS_BOOST_PROPERTY_TREE_STRING_PATH_HPP_INCLUDED
 
 #include <liblas/external/property_tree/ptree_fwd.hpp>
 #include <liblas/external/property_tree/id_translator.hpp>

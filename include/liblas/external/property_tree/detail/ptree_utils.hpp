@@ -7,8 +7,8 @@
 //
 // For more information, see www.boost.org
 // ----------------------------------------------------------------------------
-#ifndef BOOST_PROPERTY_TREE_DETAIL_PTREE_UTILS_HPP_INCLUDED
-#define BOOST_PROPERTY_TREE_DETAIL_PTREE_UTILS_HPP_INCLUDED
+#ifndef LIBLAS_BOOST_PROPERTY_TREE_DETAIL_PTREE_UTILS_HPP_INCLUDED
+#define LIBLAS_BOOST_PROPERTY_TREE_DETAIL_PTREE_UTILS_HPP_INCLUDED
 
 #include <boost/limits.hpp>
 #include <boost/type_traits/integral_constant.hpp>
