@@ -131,7 +131,7 @@ domains that take advantage of the OGC WKT specification.
 
 Softwares that currently write GeoTIFF VLR records into LAS files can continue
 to do so in LAS 1.4. It is acceptable to write *only* GeoTIFF VLR records into
-an LAS file, while softwares that choose to write OGC WKT VLRs should also
+an LAS file, while softwares that choose to write OGC WKT VLRs must also
 write GeoTIFF VLRs to promote backward compatibility. If a file is found to
 have both OGC WKT and GeoTIFF VLRs, the OGC WKT description, which is more
 expressive, should be preferred if possible.
