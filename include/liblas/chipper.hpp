@@ -61,6 +61,8 @@ public:
         else
             return "NONE";
     }
+    void SortByOIndex(boost::uint32_t left, boost::uint32_t center,
+        boost::uint32_t right);
 };
 
 class LAS_DLL Chipper;
@@ -74,32 +76,43 @@ private:
     boost::uint32_t m_left;
     boost::uint32_t m_right;
     liblas::Bounds<double> m_bounds;
-    // double m_xmin;
-    // double m_ymin;
-    // double m_xmax;
-    // double m_ymax;
 
 public:
     std::vector<boost::uint32_t> GetIDs() const; 
-    liblas::Bounds<double> const& GetBounds() const {return m_bounds;} 
-    void SetBounds(liblas::Bounds<double> const& bounds) {m_bounds = bounds;}
-    // double GetXmin() const
-    //     { return m_xmin; }
-    // double GetYmin() const
-    //     { return m_ymin; }
-    // double GetXmax() const
-    //     { return m_xmax; }
-    // double GetYmax() const
-    //     { return m_ymax; }
+    Bounds<double> const& GetBounds() const
+        {return m_bounds;} 
+    void SetBounds(liblas::Bounds<double> const& bounds)
+        {m_bounds = bounds;}
+};
+
+// Options that can be used to modify the behavior of the chipper.
+class LAS_DLL Options
+{
+public:
+    Options() : m_threshold( 1000 ), m_use_sort( false ),
+       m_use_maps( false )
+    {}
+
+    // Maximum number of pointer per output block.
+    boost::uint32_t m_threshold;
+    // If true, use sorting instead of copying to reduce memory.
+    bool m_use_sort;
+    // If true, use memory mapped files instead of main memory
+    // (not currently impelemented).
+    bool m_use_maps;
+    // Directory to hold map files.
+    std::string m_map_dir;
 };
 
 class LAS_DLL Chipper
 {
 public:
+    Chipper(Reader *reader, Options *options );
     Chipper(Reader *reader, boost::uint32_t max_partition_size) :
-        m_reader(reader), m_threshold(max_partition_size),
-        m_xvec(DIR_X), m_yvec(DIR_Y), m_spare(DIR_NONE)
-    {}
+        m_reader(reader), m_xvec(DIR_X), m_yvec(DIR_Y), m_spare(DIR_NONE)
+    {
+        m_options.m_threshold = max_partition_size;
+    }
 
     void Chip();
     std::vector<Block>::size_type GetBlockCount()
@@ -108,25 +121,28 @@ public:
         { return m_blocks[i]; }
 
 private:
-    void Load(RefList& xvec, RefList& yvec, RefList& spare);
+    void Allocate();
+    void Load();
     void Partition(boost::uint32_t size);
     void Split(RefList& xvec, RefList& yvec, RefList& spare);
     void DecideSplit(RefList& v1, RefList& v2, RefList& spare,
         boost::uint32_t left, boost::uint32_t right);
+    void RearrangeNarrow(RefList& wide, RefList& narrow, RefList& spare,
+        boost::uint32_t left, boost::uint32_t center, boost::uint32_t right);
     void Split(RefList& wide, RefList& narrow, RefList& spare,
         boost::uint32_t left, boost::uint32_t right);
     void FinalSplit(RefList& wide, RefList& narrow,
         boost::uint32_t pleft, boost::uint32_t pcenter);
     void Emit(RefList& wide, boost::uint32_t widemin, boost::uint32_t widemax,
-        RefList& narrow, boost::uint32_t narrowmin, boost::uint32_t narrowmax );
+        RefList& narrow, boost::uint32_t narrowmin, boost::uint32_t narrowmax);
 
     Reader *m_reader;
-    boost::uint32_t m_threshold;
     std::vector<Block> m_blocks;
     std::vector<boost::uint32_t> m_partitions;
     RefList m_xvec;
     RefList m_yvec;
     RefList m_spare;
+    Options m_options;
 };
 
 } // namespace chipper

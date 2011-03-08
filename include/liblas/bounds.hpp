@@ -114,7 +114,7 @@ public:
     
     bool overlaps(Range const& r) const 
     {
-        return minimum <= r.maximum && maximum >= r.minimum;
+        return minimum < r.maximum && maximum > r.minimum;
     }
 
     bool contains(Range const& r) const
