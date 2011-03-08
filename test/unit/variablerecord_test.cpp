@@ -21,7 +21,7 @@ namespace tut
         void test_default(liblas::VariableRecord const& h)
         {
             ensure_equals("wrong default reserved bytes",
-                h.GetReserved(), boost::uint16_t());
+                h.GetReserved(), 0xAABB);
 
             ensure_equals("wrong default record identifier",
                 h.GetRecordId(), boost::uint16_t());

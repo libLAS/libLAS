@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: gt_wkt_srs.cpp 21448 2011-01-09 18:28:40Z rouault $
  *
  * Project:  GeoTIFF Driver
  * Purpose:  Implements translation between GeoTIFF normalized projection
@@ -30,24 +30,38 @@
  * DEALINGS IN THE SOFTWARE.
  ****************************************************************************/
 
-#include "cpl_port.h"
 #include "cpl_serv.h"
 #include "geo_tiffp.h"
 #define CPL_ERROR_H_INCLUDED
 
-#include "geo_normalize.h"
 #include "geovalues.h"
 #include "ogr_spatialref.h"
 #include "gdal.h"
 #include "xtiffio.h"
 #include "cpl_multiproc.h"
+#include "tifvsi.h"
+#include "gt_wkt_srs.h"
+#include "gt_wkt_srs_for_gdal.h"
+#include "gt_citation.h"
 
-CPL_CVSID("$Id$")
+CPL_CVSID("$Id: gt_wkt_srs.cpp 21448 2011-01-09 18:28:40Z rouault $")
 
 CPL_C_START
-int CPL_DLL VSIFCloseL( FILE * );
+#ifndef CPL_SERV_H_INTERNAL
+/* Make VSIL_STRICT_ENFORCE active in DEBUG builds */
+#ifdef DEBUG
+#define VSIL_STRICT_ENFORCE
+#endif
+
+#ifdef VSIL_STRICT_ENFORCE
+typedef struct _VSILFILE VSILFILE;
+#else
+typedef FILE VSILFILE;
+#endif
+
+int CPL_DLL VSIFCloseL( VSILFILE * );
 int CPL_DLL VSIUnlink( const char * );
-FILE CPL_DLL *VSIFileFromMemBuffer( const char *pszFilename, 
+VSILFILE CPL_DLL *VSIFileFromMemBuffer( const char *pszFilename,
                                     GByte *pabyData, 
                                     GUIntBig nDataLength,
                                     int bTakeOwnership );
@@ -55,25 +69,29 @@ GByte CPL_DLL *VSIGetMemFileBuffer( const char *pszFilename,
                                     GUIntBig *pnDataLength, 
                                     int bUnlinkAndSeize );
 
-char CPL_DLL *  GTIFGetOGISDefn( GTIF *, GTIFDefn * );
-int  CPL_DLL   GTIFSetFromOGISDefn( GTIF *, const char * );
-
-CPLErr CPL_DLL GTIFMemBufFromWkt( const char *pszWKT, 
-                                  const double *padfGeoTransform,
-                                  int nGCPCount, const GDAL_GCP *pasGCPList,
-                                  int *pnSize, unsigned char **ppabyBuffer );
-CPLErr CPL_DLL GTIFWktFromMemBuf( int nSize, unsigned char *pabyBuffer, 
-                          char **ppszWKT, double *padfGeoTransform,
-                          int *pnGCPCount, GDAL_GCP **ppasGCPList );
+/* Those stuff are redefined in external libgeotiff cpl_serv.h */
+/* as macros. Let's use GDAL functions instead */
+/* E.Rouault : I'm wondering why we just don't #define CPL_SERV_H_INCLUDED */
+/* at the beginning of this file to avoid cpl_serv.h to be used at all ??? */
 
 #undef CSVReadParseLine
 char CPL_DLL  **CSVReadParseLine( FILE *fp);
 #undef CSLDestroy
 void CPL_DLL CPL_STDCALL CSLDestroy(char **papszStrList);
+#undef VSIFree
+void CPL_DLL    VSIFree( void * );
+#undef CPLFree
+#define CPLFree VSIFree
+#undef CPLMalloc
+void CPL_DLL *CPLMalloc( size_t );
+#undef CPLCalloc
+void CPL_DLL *CPLCalloc( size_t, size_t );
+#undef CPLStrdup
+char CPL_DLL *CPLStrdup( const char * );
+
+#endif /* CPL_SERV_H_INTERNAL */
 
 CPL_C_END
-
-TIFF* VSI_TIFFOpen(const char* name, const char* mode);
 
 static const char *papszDatumEquiv[] =
 {
@@ -94,18 +112,6 @@ static const char *papszDatumEquiv[] =
 #ifndef CT_CylindricalEqualArea
 # define CT_CylindricalEqualArea 28
 #endif
-
-void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName);
-void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, char* angUnitName, int nDatum, short nSpheroid);
-OGRBoolean SetCitationToSRS(GTIF* hGTIF, char* szCTString, int nCTStringLen,
-                            geokey_t geoKey, OGRSpatialReference* poSRS, OGRBoolean* linearUnitIsSet);
-void GetGeogCSFromCitation(char* szGCSName, int nGCSName,
-                           geokey_t geoKey, 
-                          char	**ppszGeogName,
-                          char	**ppszDatumName,
-                          char	**ppszPMName,
-                          char	**ppszSpheroidName,
-                          char	**ppszAngularUnits);
 
 /************************************************************************/
 /*                       GTIFToCPLRecyleString()                        */
@@ -196,11 +202,11 @@ static void WKTMassageDatum( char ** ppszDatum )
 /************************************************************************/
 
 /* For example:
-   GTCitationGeoKey (Ascii,215): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision$ $Date$\nProjection Name = UTM\nUnits = meters\nGeoTIFF Units = meters"
+   GTCitationGeoKey (Ascii,215): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 21448 $ $Date: 2011-01-09 13:28:40 -0500 (Sun, 09 Jan 2011) $\nProjection Name = UTM\nUnits = meters\nGeoTIFF Units = meters"
 
-   GeogCitationGeoKey (Ascii,267): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision$ $Date$\nUnable to match Ellipsoid (Datum) to a GeographicTypeGeoKey value\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
+   GeogCitationGeoKey (Ascii,267): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 21448 $ $Date: 2011-01-09 13:28:40 -0500 (Sun, 09 Jan 2011) $\nUnable to match Ellipsoid (Datum) to a GeographicTypeGeoKey value\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
 
-   PCSCitationGeoKey (Ascii,214): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision$ $Date$\nUTM Zone 10N\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
+   PCSCitationGeoKey (Ascii,214): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 21448 $ $Date: 2011-01-09 13:28:40 -0500 (Sun, 09 Jan 2011) $\nUTM Zone 10N\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
  
 */
 
@@ -2047,7 +2053,7 @@ CPLErr GTIFWktFromMemBuf( int nSize, unsigned char *pabyBuffer,
 /* -------------------------------------------------------------------- */
 /*      Create a memory file from the buffer.                           */
 /* -------------------------------------------------------------------- */
-    FILE *fp = VSIFileFromMemBuffer( szFilename, pabyBuffer, nSize, FALSE );
+    VSILFILE *fp = VSIFileFromMemBuffer( szFilename, pabyBuffer, nSize, FALSE );
     if( fp == NULL )
         return CE_Failure;
     VSIFCloseL( fp );

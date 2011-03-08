@@ -8,8 +8,8 @@
 //
 // For more information, see www.boost.org
 // ----------------------------------------------------------------------------
-#ifndef BOOST_PROPERTY_TREE_PTREE_FWD_HPP_INCLUDED
-#define BOOST_PROPERTY_TREE_PTREE_FWD_HPP_INCLUDED
+#ifndef LIBLAS_BOOST_PROPERTY_TREE_PTREE_FWD_HPP_INCLUDED
+#define LIBLAS_BOOST_PROPERTY_TREE_PTREE_FWD_HPP_INCLUDED
 
 #include <boost/config.hpp>
 #include <boost/optional/optional_fwd.hpp>

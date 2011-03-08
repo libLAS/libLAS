@@ -489,5 +489,30 @@ namespace tut
             (int) x2, 78900);          
         
     }
-}
 
+    template<>
+    template<>
+    void to::test<19>()
+    {
+        liblas::Header header;
+        header.SetDataFormatId(liblas::ePointFormat2);
+        liblas::HeaderPtr hdr = liblas::HeaderPtr(new liblas::Header(header));
+        
+        liblas::Point p;
+        p.SetHeaderPtr(hdr);
+        
+        liblas::Color c;
+        c.SetRed(123);
+        c.SetGreen(456);
+        c.SetBlue(789);
+        
+        p.SetColor(c);
+        
+        liblas::Color new_c = p.GetColor();
+        ensure_equals("red not equal", new_c.GetRed(), c.GetRed());
+        ensure_equals("green not equal", new_c.GetGreen(), c.GetGreen());
+        ensure_equals("blue not equal", new_c.GetBlue(), c.GetBlue());
+        
+    }
+
+}

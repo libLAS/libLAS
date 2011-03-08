@@ -842,12 +842,47 @@ liblas::property_tree::ptree SpatialReference::GetPTree( ) const
     using liblas::property_tree::ptree;
     ptree srs;
 
+#if defined(HAVE_GDAL)
     srs.put("proj4", GetProj4());
     srs.put("prettywkt", GetWKT(liblas::SpatialReference::eHorizontalOnly, true));
     srs.put("wkt", GetWKT(liblas::SpatialReference::eHorizontalOnly, false));
     srs.put("compoundwkt", GetWKT(eCompoundOK, false));
     srs.put("prettycompoundwkt", GetWKT(eCompoundOK, true));
     srs.put("gtiff", GetGTIFFText());
+#endif
+
+#if defined(HAVE_LIBGEOTIFF) && !defined(HAVE_GDAL)
+
+    std::string message("Reference defined, but GDAL is not available for WKT support");
+    srs.put("proj4", GetProj4());
+    srs.put("prettywkt", message);
+    srs.put("wkt", message);
+    srs.put("compoundwkt", message);
+    srs.put("prettycompoundwkt", message);
+    srs.put("gtiff", GetGTIFFText());
+#endif
+
+#if !defined(HAVE_LIBGEOTIFF) && !defined(HAVE_GDAL)
+
+    std::string message;
+    if (m_vlrs.size() > 0 && m_wkt.size() == 0)
+    {
+        message = "Reference defined with VLR keys, but GeoTIFF and GDAL support are not available to produce definition";
+    } else if (m_wkt.size() > 0)
+    {
+        message = "Reference defined with WKT, but GeoTIFF and GDAL support are not available to produce definition";
+    } else
+    {
+        message = "None";
+    }
+
+    srs.put("proj4", message);
+    srs.put("prettywkt", message);
+    srs.put("wkt", message);
+    srs.put("compoundwkt", message);
+    srs.put("prettycompoundwkt", message);
+    srs.put("gtiff", message);
+#endif
     
     return srs;
     

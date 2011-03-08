@@ -22,10 +22,10 @@ Berkeley in their `LAStools`_ project to do a number of things. First, the
 libLAS focuses almost completely on providing an easy-to-program-with library
 for software developers wishing to implement the LAS specification in their
 own software. Second, libLAS exists to provide a truly open source library
-(see :ref:`license` for terms ) -- `LAStools`_ has no explicit licensing terms.
-Third, libLAS exists to provide advanced functionality and concentrate almost
-solely on the specification -- not LiDAR data processing in general. libLAS a
-building block for developers to use to implement their own LiDAR data
+(see :ref:`license` for terms ) -- `LAStools`_ has no explicit licensing terms and 
+is merely `free-as-in-beer`_ with usage restrictions.
+libLAS a
+building block for developers looking to implement their own LiDAR data
 processing when working with ASPRS LAS data.
 
 For more information, :ref:`this document <lastools_liblas>` provides a
@@ -44,7 +44,7 @@ comparison and description of the relationship of libLAS to LAStools.
 
 
 
-
+.. _`free-as-in-beer`: http://en.wikipedia.org/wiki/Gratis_versus_Libre#.22Free_beer.22_vs_.22free_speech.22_distinction
 
 
 

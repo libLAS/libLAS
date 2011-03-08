@@ -8,8 +8,8 @@
 // For more information, see www.boost.org
 // ----------------------------------------------------------------------------
 
-#ifndef BOOST_PROPERTY_TREE_STREAM_TRANSLATOR_HPP_INCLUDED
-#define BOOST_PROPERTY_TREE_STREAM_TRANSLATOR_HPP_INCLUDED
+#ifndef LIBLAS_BOOST_PROPERTY_TREE_STREAM_TRANSLATOR_HPP_INCLUDED
+#define LIBLAS_BOOST_PROPERTY_TREE_STREAM_TRANSLATOR_HPP_INCLUDED
 
 #include <liblas/external/property_tree/ptree_fwd.hpp>
 

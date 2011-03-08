@@ -204,7 +204,7 @@ int main(int argc, char* argv[])
                 liblas::Point const& p = reader.GetPoint();
                 if (output_xml) {
                     liblas::property_tree::ptree tree;
-                    tree = p.GetPTree();
+                    tree.add_child("points.point", p.GetPTree());
                     liblas::property_tree::write_xml(std::cout, tree);
                     exit(0);
                 } 
@@ -236,7 +236,7 @@ int main(int argc, char* argv[])
                             verbose
                             );
 
-        liblas::Header const& header = reader.GetHeader();
+        header = reader.GetHeader();
 
         // Add the header to the summary so we can get more detailed 
         // info

@@ -166,11 +166,25 @@ inline void Cleanup(std::ostream* ofs)
     // An ofstream is closeable and deletable, but 
     // an ostream like &std::cout isn't.
     if (!ofs) return;
-    if (static_cast<std::ofstream&>(*ofs))
+#ifdef USE_BOOST_IO
+    namespace io = boost::iostreams;
+    namespace io = boost::iostreams;
+    io::stream<io::file_sink>* source = dynamic_cast<io::stream<io::file_sink>*>(ofs);
+    if (source)
     {
-        static_cast<std::ofstream&>(*ofs).close();
+        source->close();
         delete ofs;
     }
+
+#else
+    std::ofstream* source = dynamic_cast<std::ofstream*>(ofs);
+    if (source)
+    {
+        source->close();
+        delete ofs;
+    }
+    
+#endif
 }
 
 inline void Cleanup(std::istream* ifs)
@@ -178,11 +192,24 @@ inline void Cleanup(std::istream* ifs)
     // An ifstream is closeable and deletable, but 
     // an istream like &std::cin isn't.
     if (!ifs) return;
-    if (static_cast<std::ifstream&>(*ifs))
+#ifdef USE_BOOST_IO
+    namespace io = boost::iostreams;
+    io::stream<io::file_source>* source = dynamic_cast<io::stream<io::file_source>*>(ifs);
+    if (source)
     {
-        static_cast<std::ifstream&>(*ifs).close();
+        source->close();
         delete ifs;
     }
+#else
+    std::ifstream* source = dynamic_cast<std::ifstream*>(ifs);
+    if (source)
+    {
+        source->close();
+        delete ifs;
+    }
+
+
+#endif
 }
 
 class ReaderI

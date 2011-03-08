@@ -190,10 +190,32 @@ void Point::SetHeaderPtr(HeaderPtr header)
 {
     boost::uint16_t wanted_length;
     
+    bool bSetCoordinates = true;
+    
     const liblas::Schema* schema;
     if (header.get()) {
         wanted_length = header->GetDataRecordLength();
         schema = &header->GetSchema();
+        
+        if (m_header.get())
+        {
+            if (detail::compare_distance(header->GetScaleX(), m_header->GetScaleX()) ||
+                detail::compare_distance(header->GetScaleY(), m_header->GetScaleY()) ||
+                detail::compare_distance(header->GetScaleZ(), m_header->GetScaleZ()))
+                bSetCoordinates = false;
+            else
+                bSetCoordinates = true;
+            
+            if (detail::compare_distance(header->GetOffsetX(), m_header->GetOffsetX()) ||
+                detail::compare_distance(header->GetOffsetY(), m_header->GetOffsetY()) ||
+                detail::compare_distance(header->GetOffsetZ(), m_header->GetOffsetZ()))
+                bSetCoordinates = false;
+            else
+                bSetCoordinates = true;
+            
+            // if (!bSetCoordinates)
+            //     std::cout << "Scales and offsets are equal, not resetting coordinates" << std::endl;
+        }
         
     }
     else
@@ -255,18 +277,28 @@ void Point::SetHeaderPtr(HeaderPtr header)
         m_header = header;
         return;
     }
+
+    double x;
+    double y;
+    double z;
     
-    double x = GetX();
-    double y = GetY();
-    double z = GetZ();
+    if (bSetCoordinates)
+    {
+        x = GetX();
+        y = GetY();
+        z = GetZ();        
+    }
     
     // The header's scale/offset can change the raw storage of xyz.  
     // SetHeaderPtr can result in a rescaling of the data.
     m_header = header;
-    
-    SetX(x);
-    SetY(y);
-    SetZ(z);
+
+    if (bSetCoordinates)
+    {
+        SetX(x);
+        SetY(y);
+        SetZ(z);
+    }
 }
 
 HeaderPtr Point::GetHeaderPtr() const
@@ -489,7 +521,7 @@ boost::int32_t Point::GetRawX() const
     
 #ifdef LIBLAS_ENDIAN_AWARE
     boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
-    return output
+    return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
     boost::int32_t* output = reinterpret_cast<boost::int32_t*>(data);
@@ -505,7 +537,7 @@ boost::int32_t Point::GetRawY() const
 
 #ifdef LIBLAS_ENDIAN_AWARE
     boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
-    return output
+    return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
     boost::int32_t* output = reinterpret_cast<boost::int32_t*>(data);
@@ -521,7 +553,7 @@ boost::int32_t Point::GetRawZ() const
 
 #ifdef LIBLAS_ENDIAN_AWARE
     boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
-    return output
+    return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
     boost::int32_t* output = reinterpret_cast<boost::int32_t*>(data);
@@ -560,8 +592,8 @@ boost::uint16_t Point::GetIntensity() const
     std::vector<boost::uint8_t>::size_type pos = 12;
 
 #ifdef LIBLAS_ENDIAN_AWARE
-    boost::uint16_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
-    return output
+    boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
+    return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
     boost::uint16_t* output = reinterpret_cast<boost::uint16_t*>(data);
@@ -788,8 +820,8 @@ boost::uint16_t Point::GetPointSourceID() const
     std::vector<boost::uint8_t>::size_type pos = 18;
 
 #ifdef LIBLAS_ENDIAN_AWARE
-    boost::uint16_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
-    return output
+    boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
+    return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
     boost::uint16_t* output = reinterpret_cast<boost::uint16_t*>(data);

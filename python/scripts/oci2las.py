@@ -14,9 +14,8 @@ import os, sys
 import cx_Oracle as oci
 
 # big-endian DOUBLE, DOUBLE, DOUBLE, LONG, LONG
-format = '>dddll'
+format = '>dddddll'
 ptsize = struct.calcsize(format)
-
 
 
 class Translator(object):
@@ -110,11 +109,17 @@ class Translator(object):
         except:
             raise self.parser.error("Precision was not an number")
             
-        self.min = point.Point()
-        self.max = point.Point()
+        self.minx = None
+        self.miny = None
+        self.minz = None
+        self.maxx = None
+        self.maxy = None
+        self.maxz = None
         self.count = 0
         self.first_point = True
         self.cloud_column = True
+        self.header = None
+        self.points = []
         
         if self.options.srs:
             self.srs = srs.SRS()
@@ -139,74 +144,83 @@ class Translator(object):
                 return False
 
             
-    def get_points(self, num_points, blob):
-        points = []
+    def write_points(self, num_points, blob):
+#	print 'writing block...', num_points
 
+        if not self.points:
+            for i in xrange(num_points):
+                p = point.Point()
+                p.header = self.header
+                self.points.append(p)
+        if (num_points > len(self.points)):
+            for i in xrange(num_points-len(self.points)):
+                p = point.Point()
+                p.header = self.header
+                self.points.append(p)
+                    
         for i in xrange(num_points):
             rng = ptsize*i,ptsize*(i+1)
             d = struct.unpack(format,blob[ptsize*i:ptsize*(i+1)])
-            x, y, z, blk_id, pt_id = d
-            p = point.Point()
+            x, y, z, time, classification, blk_id, pt_id = d
+            p = self.points[i]
             p.x = x; p.y = y; p.z = z
+            p.classification = int(classification)
+            p.raw_time = time
 
             if self.first_point:
-                self.min.x = p.x
-                self.min.y = p.y
-                self.max.x = p.x
-                self.max.y = p.y
-                self.min.z = p.z
-                self.max.z = p.z
+                self.minx = p.x
+                self.miny = p.y
+                self.maxx = p.x
+                self.maxy = p.y
+                self.minz = p.z
+                self.maxz = p.z
                 self.first_point = False
 
             # cumulate min/max for the header
-            self.min.x = min(self.min.x, p.x)
-            self.max.x = max(self.max.x, p.x)
+            self.minx = min(self.minx, p.x)
+            self.maxx = max(self.maxx, p.x)
         
-            self.min.y = min(self.min.y, p.y)
-            self.max.y = max(self.max.y, p.y)
+            self.miny = min(self.miny, p.y)
+            self.maxy = max(self.maxy, p.y)
         
-            self.min.z = min(self.min.z, p.z)
-            self.max.z = max(self.max.z, p.z)
+            self.minz = min(self.minz, p.z)
+            self.maxz = max(self.maxz, p.z)
         
             self.count += 1
             
-            points.append(p)
-        return points
+            self.output.write(p)
     
     def summarize_files(self):
         pass
     
     def open_output(self):
-        h = header.Header()
+        self.header = header.Header()
         
         prec = 10**-(self.options.precision-1)
-        h.scale = [prec, prec, prec]
+        self.header.scale = [prec, prec, prec]
         
         if self.options.offset:
-            h.offset = [self.min.x, self.min.y, self.min.z]
+            h.offset = [self.minx, self.miny, self.minz]
             if self.options.verbose:
                 print 'using minimum offsets', h.offset
 
-        h.compressed = self.options.compressed
+        self.header.compressed = self.options.compressed
  
         if self.srs:
-            h.srs = self.srs
-            
-        output = lasfile.File(self.options.output,mode='w',header=h)
+            self.header.srs = self.srs
+        
+        self.header.data_format_id = 1
+        output = lasfile.File(self.options.output,mode='w',header=self.header)
         return output
     
-    def write_points(self, points):
-        
-        for p in points:
-            self.output.write(p)
     
     def rewrite_header(self):
         self.output.close()
         self.output = lasfile.File(self.options.output)
         h = self.output.header
         self.output.close()
-        h.min = [self.min.x, self.min.y, self.min.z]
-        h.max = [self.max.x, self.max.y, self.max.z]
+        h.min = [self.minx, self.miny, self.minz]
+        h.max = [self.maxx, self.maxy, self.maxz]
 
         rc = h.point_return_count
         rc[0] = self.count
@@ -273,13 +287,16 @@ class Translator(object):
         clouds = None
         points = []
         print 'have srs?: %s' % bool(self.srs)
+
+        self.output = self.open_output()
+
         if not clouds:
             cur = self.cur.execute(self.options.sql)
             num_pts_index, blob_index = self.get_block_indexes(cur)
             for row in cur:
                 num_points = row[num_pts_index]
                 blob = row[blob_index].read()
-                points.append(self.get_points(num_points, blob))
+                self.write_points(num_points, blob)
                 # try to set the SRS
                 if not self.srs:
                     for col in row:
@@ -295,9 +312,6 @@ class Translator(object):
                     if not self.srs:
                         self.srs = srs.SRS()
 
-        self.output = self.open_output()
-        for pts in points:
-            self.write_points(pts)
         
         self.rewrite_header()
 

@@ -76,6 +76,7 @@ public:
     ~ReprojectionTransform();
 
     bool transform(Point& point);
+    void SetHeaderPtr(liblas::HeaderPtr header) {m_new_header = header;}
     bool ModifiesHeader() { return true; }
 
 private:

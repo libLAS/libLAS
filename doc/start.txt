@@ -268,9 +268,16 @@ is linked in at compile-time.
 
 .. note::
     :ref:`assign_color` contains more detailed information about this process.
- 
+
+Compressing an LAS file with `LASzip`_
+..............................................................................
+
+libLAS provides the ability to compress data using the fantastic `LASzip`_ 
+compression library.
 
 
+
+.. _`LASzip`: http://laszip.org
 .. _`CMake`: http://www.cmake.org/
 .. _`CTest`: http://cmake.org/cmake/help/ctest-2-8-docs.html
 .. _`CMake 2.8.0+`: http://www.cmake.org/cmake/help/cmake-2-8-docs.html

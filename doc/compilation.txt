@@ -255,12 +255,12 @@ you can run lasinfo.
 
 ::
 
-    $ lasinfo -c ../test/data/TO_core_last_zoom.las 
+    $ lasinfo ../test/data/TO_core_last_clip.las 
 
     ---------------------------------------------------------
       Header Summary
     ---------------------------------------------------------
-      File Name: ../test/data/TO_core_last_zoom.las
+      File Name: ../test/data/TO_core_last_clip.las
       Version:                    1.0
       Source ID:                  0
       Reserved:                   0
