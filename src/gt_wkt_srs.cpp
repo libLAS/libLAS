@@ -338,8 +338,9 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
             GTIFKeyGet( hGTIF, GeogCitationGeoKey, szName, 
                         0, sizeof(szName) );
 
+#if GDAL_VERSION_NUM >=1900
         oSRS.SetGeocCS( szName );
-
+#endif
         char	*pszUnitsName = NULL;
           
         GTIFGetUOMLengthInfo( psDefn->UOMLength, &pszUnitsName, NULL );
@@ -1180,11 +1181,13 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
                    ModelTypeProjected);
         GTIFKeySet(psGTIF, ProjectedCSTypeGeoKey, TYPE_SHORT, 1, nPCS );
     }
+#if GDAL_VERSION_NUM >=1900
     else if( poSRS->IsGeocentric() )
     {
         GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1, 
                    ModelTypeGeocentric );
     }
+#endif
     else if( pszProjection == NULL )
     {
         if( poSRS->IsGeographic() )
@@ -1949,6 +1952,8 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 /* -------------------------------------------------------------------- */
 /*      Write linear units information.                                 */
 /* -------------------------------------------------------------------- */
+#if GDAL_VERSION_NUM >=1900
+
     if( poSRS->IsGeocentric() )
     {
         GTIFKeySet(psGTIF, GeogLinearUnitsGeoKey, TYPE_SHORT, 1, 
@@ -1957,7 +1962,9 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
             GTIFKeySet( psGTIF, GeogLinearUnitSizeGeoKey, TYPE_DOUBLE, 1, 
                         dfLinearUOM);
     }
-    else if( !poSRS->IsGeographic() )
+    else 
+#endif
+    if( !poSRS->IsGeographic() )
     {
         GTIFKeySet(psGTIF, ProjLinearUnitsGeoKey, TYPE_SHORT, 1, 
                    nUOMLengthCode );
@@ -1994,7 +2001,12 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 /* -------------------------------------------------------------------- */
     if( poSRS->GetRoot() != NULL
         && poSRS->GetRoot()->GetChild(0) != NULL 
-        && (poSRS->IsProjected() || poSRS->IsLocal() || poSRS->IsGeocentric()) )
+        && (poSRS->IsProjected() || poSRS->IsLocal()  
+
+#if GDAL_VERSION_NUM >=1900
+        || poSRS->IsGeocentric()
+#endif        
+        ) )
     {
         GTIFKeySet( psGTIF, GTCitationGeoKey, TYPE_ASCII, 0, 
                     poSRS->GetRoot()->GetChild(0)->GetValue() );

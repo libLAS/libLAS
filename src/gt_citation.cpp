@@ -34,7 +34,7 @@
 #include "geovalues.h"
 #include "gt_citation.h"
 
-CPL_CVSID("$Id: gt_citation.cpp 21848 2011-02-25 16:41:38Z warmerdam $");
+CPL_CVSID("$Id: gt_citation.cpp 21848 2011-02-25 16:41:38Z warmerdam $")
 
 static const char *apszUnitMap[] = {
     "meters", "1.0",
@@ -575,6 +575,7 @@ OGRBoolean CheckCitationKeyForStatePlaneUTM(GTIF* hGTIF, GTIFDefn* psDefn, OGRSp
       char CSName[128];
       strncpy(CSName, pStr, pReturn-pStr);
       CSName[pReturn-pStr] = '\0';
+#if GDAL_VERSION_NUM >=1900
       if( poSRS->ImportFromESRIStatePlaneWKT(0, NULL, NULL, 32767, CSName) == OGRERR_NONE )
       {
         // for some erdas citation keys, the state plane CS name is incomplete, the unit check is necessary.
@@ -606,6 +607,7 @@ OGRBoolean CheckCitationKeyForStatePlaneUTM(GTIF* hGTIF, GTIFDefn* psDefn, OGRSp
         if (done)
           return TRUE;
       }
+#endif
     }
   }
   if( !hasUnits )
@@ -650,8 +652,10 @@ OGRBoolean CheckCitationKeyForStatePlaneUTM(GTIF* hGTIF, GTIFDefn* psDefn, OGRSp
           strcpy(nad, "NAD83");
         else if( strstr(szCTString, "NAD27") || strstr(szCTString, "NAD = 27") )
           strcpy(nad, "NAD27");
+#if GDAL_VERSION_NUM >=1900
         if( poSRS->ImportFromESRIStatePlaneWKT(statePlaneZone, (const char*)nad, (const char*)units, psDefn->PCS) == OGRERR_NONE )
           return TRUE;
+#endif
       }
       else if( pcsName && (pStr = strstr(pcsName, "UTM Zone ")) != NULL )
         CheckUTM( psDefn, szCTString );
@@ -660,8 +664,10 @@ OGRBoolean CheckCitationKeyForStatePlaneUTM(GTIF* hGTIF, GTIFDefn* psDefn, OGRSp
   /* check state plane again to see if a pe string is available */
   if( psDefn->PCS != KvUserDefined )
   {
+#if GDAL_VERSION_NUM >=1900
     if( poSRS->ImportFromESRIStatePlaneWKT(0, NULL, (const char*)units, psDefn->PCS) == OGRERR_NONE )
       return TRUE;
+#endif
   }
   return FALSE;
 }
