@@ -385,7 +385,9 @@ long CreatePCEntry( OWConnection* connection,
                     bool bUse3d,
                     bool bInsertHeaderBlob,
                     std::string const& header_blob_column,
-                    std::vector<boost::uint8_t> const& header_data)
+                    std::vector<boost::uint8_t> const& header_data,
+                    std::string const& boundary_column,
+                    std::string const& bounary_wkt)
 {
     ostringstream oss;
 
@@ -399,7 +401,8 @@ long CreatePCEntry( OWConnection* connection,
     std::string cloudColumnName_u = to_upper(cloudColumnName);
     std::string aux_columns_u = to_upper(aux_columns);
     std::string header_blob_column_u = to_upper(header_blob_column);
-
+    std::string boundary_column_u = to_upper(boundary_column);
+    
     ostringstream columns;
     ostringstream values;
     
@@ -415,6 +418,11 @@ long CreatePCEntry( OWConnection* connection,
     if (!header_blob_column_u.empty()){
         columns << "," << header_blob_column_u;
         values <<", :2";
+    }
+
+    if (!boundary_column_u.empty()){
+        columns << "," << header_blob_column_u;
+        values <<", SDO_GEOMETRY(:3, :4)";
     }
 
 
@@ -594,6 +602,8 @@ file_options.add_options()
     ("base-table-name", po::value< string >()->default_value("HOBU"), "The table name in which to put the point cloud object.  This table must have a column of type SDO_PC, with the name to be specified with --cloud-column-name")
     ("base-table-aux-columns", po::value< string >(), "Quoted, comma-separated list of columns to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
     ("base-table-aux-values", po::value< string >(), "Quoted, comma-separated list of values to add to the SQL that gets executed as part of the point cloud insertion into the base-table-name")
+    ("base-table-boundary-column", po::value< string >(), "A SDO_GEOMETRY column in which to insert a bounds into the SDO_PC entry")
+    ("base-table-boundary-wkt", po::value< string >(), "A file or string with OGC Geometry WKT to insert into base-table-boundary-column")
     ("cloud-column-name", po::value< string >()->default_value("CLOUD"), "The column name that contains the point cloud object in the base table")
     ("header-blob-column", po::value< string >(), "Blob column name in the base table in which to optionally insert the contents of the input file's header.")
     ("block-table-name", po::value< string >(), "The table name in which to put the block data.  This table must be of type SDO_PC.BLK_TABLE.  This table will be created using the filename of the input LAS file if not specified.  Use -d to delete the table if it already exists.")
@@ -647,6 +657,8 @@ int main(int argc, char* argv[])
     std::string base_table_name("HOBU");
     std::string block_table_name("");
     std::string header_blob_column("");
+    std::string base_table_boundary_column("");
+    std::string base_table_boundary_wkt("");
     
     std::string pre_sql("");
     std::string post_sql("");
@@ -789,6 +801,23 @@ int main(int argc, char* argv[])
             if (verbose)
                 std::cout << "Setting output point cloud column to: " << point_cloud_name << std::endl;
         }
+
+        if (vm.count("header-blob-column")) 
+        {
+            base_table_boundary_column = vm["base-table-boundary-column"].as< string >();
+            base_table_boundary_wkt = vm["base-table-boundary-wkt"].as< string >();
+            
+            if (base_table_boundary_wkt.size() == 0)
+            {
+                std::cerr << "base-table-boundary-column specified, but no wkt given with base-table-boundary-wkt!\n";
+                return 1;                
+            }
+
+            if (verbose)
+                std::cout << "Insertting boundary into column: " << base_table_boundary_column << std::endl;
+        }    
+
+
         if (vm.count("header-blob-column")) 
         {
             header_blob_column = vm["header-blob-column"].as< string >();
@@ -1165,7 +1194,9 @@ int main(int argc, char* argv[])
                         bUse3d,
                         bInsertHeaderBlob,
                         header_blob_column,
-                        header_data);
+                        header_data,
+                        base_table_boundary_column,
+                        base_table_boundary_wkt);
 
 
         if (!pre_block_sql.empty()) {
