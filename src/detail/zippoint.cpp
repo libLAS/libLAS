@@ -176,15 +176,15 @@ void ZipPoint::ConstructVLR(VariableRecord& v) const
     v.SetDescription(laszip_description);
 
     // the data following the header of the variable length record is
-    //     U32  compression        4 bytes
-    //     U8   version_major      1 byte
-    //     U8   version_minor      1 byte
-    //     U16  version_revision   2 bytes
-    //     U32  options            4 bytes
-    //     U32  num_chunks         4 bytes
-    //     I64  num_points         8 bytes
-    //     I64  num_bytes          8 bytes
-    //     U16  num_items          2 bytes
+    //     U32  compression        4 bytes   0
+    //     U8   version_major      1 byte    4
+    //     U8   version_minor      1 byte    5
+    //     U16  version_revision   2 bytes   6
+    //     U32  options            4 bytes   8
+    //     U32  num_chunks         4 bytes   12
+    //     I64  num_points         8 bytes   16
+    //     I64  num_bytes          8 bytes   24
+    //     U16  num_items          2 bytes   32
     //        U16 type                2 bytes * num_items
     //        U16 size                2 bytes * num_items
     //        U16 version             2 bytes * num_items
