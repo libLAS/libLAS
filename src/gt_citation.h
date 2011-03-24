@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: gt_citation.h 21102 2010-11-08 20:47:38Z rouault $
+ * $Id: gt_citation.h 21844 2011-02-25 04:33:10Z warmerdam $
  *
  * Project:  GeoTIFF Driver
  * Purpose:  Implements special parsing of Imagine citation strings, and
@@ -35,16 +35,38 @@
 #include "geo_normalize.h"
 #include "ogr_spatialref.h"
 
+char* ImagineCitationTranslation(char* psCitation, geokey_t keyID);
+char** CitationStringParse(char* psCitation, geokey_t keyID);
+
+#define nCitationNameTypes 9
+typedef enum 
+{
+  CitCsName = 0,
+  CitPcsName = 1,
+  CitProjectionName = 2,
+  CitLUnitsName = 3,
+  CitGcsName = 4,
+  CitDatumName = 5,
+  CitEllipsoidName = 6,
+  CitPrimemName = 7,
+  CitAUnitsName = 8
+} CitationNameType;
+
+OGRBoolean CheckCitationKeyForStatePlaneUTM(GTIF* hGTIF, GTIFDefn* psDefn, OGRSpatialReference* poSRS, OGRBoolean* pLinearUnitIsSet);
+//char* ImagineCitationTranslation(char* psCitation, geokey_t keyID);
+//char** CitationStringParse(char* psCitation, geokey_t keyID);
 void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName);
 void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, char* angUnitName, int nDatum, short nSpheroid);
 OGRBoolean SetCitationToSRS(GTIF* hGTIF, char* szCTString, int nCTStringLen,
                             geokey_t geoKey, OGRSpatialReference* poSRS, OGRBoolean* linearUnitIsSet);
 void GetGeogCSFromCitation(char* szGCSName, int nGCSName,
-                           geokey_t geoKey,
-                          char  **ppszGeogName,
-                          char  **ppszDatumName,
-                          char  **ppszPMName,
-                          char  **ppszSpheroidName,
-                          char  **ppszAngularUnits);
+                           geokey_t geoKey, 
+                          char	**ppszGeogName,
+                          char	**ppszDatumName,
+                          char	**ppszPMName,
+                          char	**ppszSpheroidName,
+                          char	**ppszAngularUnits);
+void CheckUTM( GTIFDefn * psDefn, char * pszCtString );
+
 
 #endif // GT_CITATION_H_INCLUDED

@@ -42,6 +42,7 @@
 // boost
 #include <boost/cstdint.hpp>
 // std
+#include <algorithm>
 #include <cmath>
 
 using namespace std;
@@ -78,6 +79,39 @@ be stored.
 
 namespace liblas { namespace chipper {
 
+class OIndexSorter
+{
+public:
+    OIndexSorter(boost::uint32_t center) : m_center(center)
+    {}
+    
+    bool operator()(const PtRef& p1, const PtRef& p2)
+    {
+        if ( p1.m_oindex < m_center && p2.m_oindex >= m_center )
+        {
+            return true;
+        }
+        if ( p1.m_oindex >= m_center && p2.m_oindex < m_center )
+        {
+            return false;
+        }
+        return p1.m_pos < p2.m_pos;
+    }
+
+private:
+    boost::uint32_t m_center;
+};
+
+void RefList::SortByOIndex(boost::uint32_t left, boost::uint32_t center,
+    boost::uint32_t right)
+{
+    OIndexSorter comparator(center);
+    vector<PtRef>::iterator li = m_vec.begin() + left;
+    vector<PtRef>::iterator ri = m_vec.begin() + right + 1;
+    sort(li, ri, comparator);
+}
+
+
 vector<boost::uint32_t> Block::GetIDs() const
 {
     vector<boost::uint32_t> ids;
@@ -87,65 +121,91 @@ vector<boost::uint32_t> Block::GetIDs() const
     return ids;
 }
 
+Chipper::Chipper(Reader *reader, Options *options) :
+    m_reader(reader), m_xvec(DIR_X), m_yvec(DIR_Y), m_spare(DIR_NONE)
+{
+    m_options = *options;
+    if (!m_options.m_map_dir.size())
+    {
+        if (m_options.m_use_maps)
+            std::cerr << "Can use memory mapped files without specifying "
+                "a directory - setting m_use_maps to false.";
+        m_options.m_use_maps = false;
+    }
+    if (m_options.m_use_maps)
+    {
+        std::cerr << "Memory mapped files not currently supported - "
+            "setting m_use_maps to false.";
+        m_options.m_use_maps = false;
+    }
+}
+
 void Chipper::Chip()
 {
-    Load(m_xvec, m_yvec, m_spare);
+    Load();
     Partition(m_xvec.size());
     DecideSplit(m_xvec, m_yvec, m_spare, 0, m_partitions.size() - 1);
 }
 
-void Chipper::Load(RefList& xvec, RefList& yvec, RefList& spare )
+void Chipper::Allocate()
+{
+    boost::uint32_t count = m_reader->GetHeader().GetPointRecordsCount();
+
+    m_xvec.reserve(count);
+    m_yvec.reserve(count);
+    if ( !m_options.m_use_sort )
+        m_spare.resize(count);
+}
+
+void Chipper::Load()
 {
     PtRef ref;
     boost::uint32_t idx;
     boost::uint32_t count;
     vector<PtRef>::iterator it;
    
-    count = m_reader->GetHeader().GetPointRecordsCount();
-    xvec.reserve(count);
-    yvec.reserve(count);
-    spare.resize(count);
-
+    Allocate();
     count = 0;
     while (m_reader->ReadNextPoint()) {
         const liblas::Point& pt = m_reader->GetPoint();
 
         ref.m_pos = pt.GetX();
         ref.m_ptindex = count;
-        xvec.push_back(ref);
+        m_xvec.push_back(ref);
 
         ref.m_pos = pt.GetY();
-        yvec.push_back(ref);
+        m_yvec.push_back(ref);
         count++;
     }
     // Sort xvec and assign other index in yvec to sorted indices in xvec.
-    sort(xvec.begin(), xvec.end());
-    for (boost::uint32_t i = 0; i < xvec.size(); ++i) {
-        idx = xvec[i].m_ptindex;
-        yvec[idx].m_oindex = i;
+    sort(m_xvec.begin(), m_xvec.end());
+    for (boost::uint32_t i = 0; i < m_xvec.size(); ++i) {
+        idx = m_xvec[i].m_ptindex;
+        m_yvec[idx].m_oindex = i;
     }
 
     // Sort yvec.
-    sort(yvec.begin(), yvec.end());
+    sort(m_yvec.begin(), m_yvec.end());
 
     //Iterate through the yvector, setting the xvector appropriately.
-    for (boost::uint32_t i = 0; i < yvec.size(); ++i)
-        xvec[yvec[i].m_oindex].m_oindex = i;
+    for (boost::uint32_t i = 0; i < m_yvec.size(); ++i)
+        m_xvec[m_yvec[i].m_oindex].m_oindex = i;
 }
 
 void Chipper::Partition(boost::uint32_t size)
 {
     boost::uint32_t num_partitions;
 
-    num_partitions = size / m_threshold;
-    if ( size % m_threshold )
+    num_partitions = size / m_options.m_threshold;
+    if ( size % m_options.m_threshold )
         num_partitions++;
     double total = 0;
     double partition_size = static_cast<double>(size) / num_partitions;
     m_partitions.push_back(0);
     for (boost::uint32_t i = 0; i < num_partitions; ++i) {
         total += partition_size;
-        m_partitions.push_back(static_cast<boost::uint32_t>(detail::sround(total)));
+        double rtotal = detail::sround(total);
+        m_partitions.push_back(static_cast<boost::uint32_t>(rtotal));
     }
 }
 
@@ -170,8 +230,6 @@ void Chipper::DecideSplit(RefList& v1, RefList& v2, RefList& spare,
 void Chipper::Split(RefList& wide, RefList& narrow, RefList& spare,
     boost::uint32_t pleft, boost::uint32_t pright)
 {
-    boost::uint32_t lstart;
-    boost::uint32_t rstart;
     boost::uint32_t pcenter;
     boost::uint32_t left;
     boost::uint32_t right;
@@ -193,12 +251,44 @@ void Chipper::Split(RefList& wide, RefList& narrow, RefList& spare,
         pcenter = (pleft + pright) / 2;
         center = m_partitions[pcenter];
 
+        RearrangeNarrow(wide, narrow, spare, left, center, right);
+
+        // Save away the direction so we know which array is X and which is Y
+        // so that when we emit, we can properly label the max/min points.
+        Direction dir = narrow.m_dir;
+        spare.m_dir = dir;
+        if ( m_options.m_use_sort )
+        {
+            DecideSplit(wide, narrow, spare, pleft, pcenter);
+            DecideSplit(wide, narrow, spare, pcenter, pright);
+        }
+        else {
+            DecideSplit(wide, spare, narrow, pleft, pcenter);
+            DecideSplit(wide, spare, narrow, pcenter, pright);
+        }
+        narrow.m_dir = dir;
+    }
+}
+
+void Chipper::RearrangeNarrow(RefList& wide, RefList& narrow, RefList& spare,
+    boost::uint32_t left, boost::uint32_t center, boost::uint32_t right)
+{
+    if (m_options.m_use_sort)
+    {
+        narrow.SortByOIndex(left, center, right);
+        for (boost::uint32_t i = left; i <= right; ++i)
+        {
+            wide[narrow[i].m_oindex].m_oindex = i;
+        }
+    }
+    else
+    {
         // We are splitting in the wide direction - split elements in the
         // narrow array by copying them to the spare array in the correct
         // partition.  The spare array then becomes the active narrow array
         // for the [left,right] partition.
-        lstart = left;
-        rstart = center;
+        uint32_t lstart = left;
+        uint32_t rstart = center;
         for (boost::uint32_t i = left; i <= right; ++i)
         {
             if (narrow[i].m_oindex < center)
@@ -214,14 +304,6 @@ void Chipper::Split(RefList& wide, RefList& narrow, RefList& spare,
                 rstart++;
             }
         }
-
-        // Save away the direction so we know which array is X and which is Y
-        // so that when we emit, we can properly label the max/min points.
-        Direction dir = narrow.m_dir;
-        spare.m_dir = dir;
-        DecideSplit(wide, spare, narrow, pleft, pcenter);
-        DecideSplit(wide, spare, narrow, pcenter, pright);
-        narrow.m_dir = dir;
     }
 }
 
@@ -240,16 +322,22 @@ void Chipper::FinalSplit(RefList& wide, RefList& narrow,
     // It appears we're using int64_t here because we're using -1 as 
     // an indicator.  I'm not 100% sure that i ends up <0, but I don't 
     // think so.  These casts will at least shut up the compiler, but 
-    // I think this code should be revisited to use std::vector<boost::uint32_t>::const_iterator
-    // or std::vector<boost::uint32_t>::size_type instead of this int64_t stuff -- hobu 11/15/10
-    boost::int64_t left = static_cast<boost::int64_t>(m_partitions[pleft]);
-    boost::int64_t right = static_cast<boost::int64_t>(m_partitions[pright] - 1);
-    boost::int64_t center = static_cast<boost::int64_t>(m_partitions[pright - 1]);
+    // I think this code should be revisited to use
+    // std::vector<boost::uint32_t>::const_iterator or
+    // std::vector<boost::uint32_t>::size_type instead of this int64_t
+    // stuff -- hobu 11/15/10
+    //
+    // I'm not sure if there would be any advantage in using an iterator.
+    // I'm also not sure if size_t will be bigger than 32 bits on a 32 bit
+    // machine, thus the int64_t, which should be guaranteed.  abell 2/15/11
+    boost::int64_t left = m_partitions[pleft];
+    boost::int64_t right = m_partitions[pright] - 1;
+    boost::int64_t center = m_partitions[pright - 1];
 
     // Find left values for the partitions.
     for (boost::int64_t i = left; i <= right; ++i)
     {        
-        boost::int64_t idx = static_cast<boost::int64_t>(narrow[static_cast<boost::uint32_t>(i)].m_oindex);
+        boost::int64_t idx = narrow[static_cast<boost::uint32_t>(i)].m_oindex;
         if (left1 < 0 && (idx < center))
         {
             left1 = i;
@@ -266,7 +354,7 @@ void Chipper::FinalSplit(RefList& wide, RefList& narrow,
     // Find right values for the partitions.
     for (boost::int64_t i = right; i >= left; --i)
     {
-        boost::int64_t idx = static_cast<boost::int64_t>(narrow[static_cast<boost::uint32_t>(i)].m_oindex);        
+        boost::int64_t idx = narrow[static_cast<boost::uint32_t>(i)].m_oindex;        
         if (right1 < 0 && (idx < center))
         {
             right1 = i;
@@ -296,31 +384,23 @@ void Chipper::FinalSplit(RefList& wide, RefList& narrow,
          static_cast<boost::uint32_t>(right2) );
 }
 
-void Chipper::Emit(RefList& wide, boost::uint32_t widemin, boost::uint32_t widemax,
-    RefList& narrow, boost::uint32_t narrowmin, boost::uint32_t narrowmax )
+void Chipper::Emit(RefList& wide, boost::uint32_t widemin,
+    boost::uint32_t widemax, RefList& narrow, boost::uint32_t narrowmin,
+    boost::uint32_t narrowmax )
 {
     Block b;
 
     b.m_list_p = &wide;
     if (wide.m_dir == DIR_X) { 
-        
         // minx, miny, maxx, maxy
-        liblas::Bounds<double> bnd(wide[widemin].m_pos, narrow[narrowmin].m_pos, wide[widemax].m_pos,  narrow[narrowmax].m_pos);
+        liblas::Bounds<double> bnd(wide[widemin].m_pos, narrow[narrowmin].m_pos,
+            wide[widemax].m_pos,  narrow[narrowmax].m_pos);
         b.SetBounds(bnd);
-
-        // b.m_xmin = wide[widemin].m_pos;
-        // b.m_xmax = wide[widemax].m_pos;
-        // b.m_ymin = narrow[narrowmin].m_pos;
-        // b.m_ymax = narrow[narrowmax].m_pos;
     }
     else {
-        liblas::Bounds<double> bnd(narrow[narrowmin].m_pos, wide[widemin].m_pos, narrow[narrowmax].m_pos, wide[widemax].m_pos);
+        liblas::Bounds<double> bnd(narrow[narrowmin].m_pos, wide[widemin].m_pos,
+        narrow[narrowmax].m_pos, wide[widemax].m_pos);
         b.SetBounds(bnd);
-
-        // b.m_xmin = narrow[narrowmin].m_pos;
-        // b.m_xmax = narrow[narrowmax].m_pos;
-        // b.m_ymin = wide[widemin].m_pos;
-        // b.m_ymax = wide[widemax].m_pos;
     }
     b.m_left = widemin;
     b.m_right = widemax;
