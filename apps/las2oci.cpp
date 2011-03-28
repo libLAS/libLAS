@@ -802,7 +802,7 @@ int main(int argc, char* argv[])
                 std::cout << "Setting output point cloud column to: " << point_cloud_name << std::endl;
         }
 
-        if (vm.count("header-blob-column")) 
+        if (vm.count("base-table-boundary-column")) 
         {
             base_table_boundary_column = vm["base-table-boundary-column"].as< string >();
             base_table_boundary_wkt = vm["base-table-boundary-wkt"].as< string >();
