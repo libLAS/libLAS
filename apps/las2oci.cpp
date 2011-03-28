@@ -822,7 +822,7 @@ int main(int argc, char* argv[])
             base_table_boundary_column = vm["base-table-boundary-column"].as< string >();
             std::string wkt = vm["base-table-boundary-wkt"].as< string >();
             // base_table_boundary_wkt
-            if (base_table_boundary_wkt.size() == 0)
+            if (wkt.size() == 0)
             {
                 std::cerr << "base-table-boundary-column specified, but no wkt given with base-table-boundary-wkt!\n";
                 return 1;                
