@@ -633,7 +633,7 @@ file_options.add_options()
     ("post-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run after inserting block data.")
     ("solid", po::value<bool>()->zero_tokens(), "Define the point cloud's PC_EXTENT geometry gtype as (1,1007,3) instead of the normal (1,1003,3), and use gtype 3008/2008 vs 3003/2003 for BLK_EXTENT geometry values.")
     ("3d", po::value<bool>()->zero_tokens(), "Use Z values for insertion of all extent (PC_EXTENT, BLK_EXTENT, USER_SDO_GEOM_METADATA) entries")
-    ("global-extent", po::value< std::string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated or quoted, space-separated list, for example, \n -e minx, miny, maxx, maxy\n or \n -e minx, miny, minz, maxx, maxy, maxz\n -e \"minx miny minz maxx maxy maxz\"")
+    ("global-extent", po::value< std::string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated or quoted, space-separated list, for example, \n -e xmin, ymin, maxx, maxy\n or \n -e xmin, ymin, zmin, maxx, maxy, maxz\n -e \"xmin ymin zmin maxx maxy maxz\"")
     ("cached", po::value<bool>()->zero_tokens(), "Cache the entire file on the first read")
 
 
@@ -646,9 +646,9 @@ po::options_description GetHiddenOptions()
 {
     po::options_description hidden_options("hidden options");
 hidden_options.add_options()
-    ("xmin", po::value< double >(), "global-extent minx value")
-    ("ymin", po::value< double >(), "global-extent miny value")
-    ("zmin", po::value< double >(), "global-extent minz value")
+    ("xmin", po::value< double >(), "global-extent xmin value")
+    ("ymin", po::value< double >(), "global-extent ymin value")
+    ("zmin", po::value< double >(), "global-extent zmin value")
     ("xmax", po::value< double >(), "global-extent maxx value")
     ("ymax", po::value< double >(), "global-extent maxy value")
     ("zmax", po::value< double >(), "global-extent maxz value")
