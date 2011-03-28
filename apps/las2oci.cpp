@@ -422,7 +422,7 @@ long CreatePCEntry( OWConnection* connection,
 
     if (!boundary_column_u.empty()){
         columns << "," << header_blob_column_u;
-        values <<", SDO_GEOMETRY(:3, :4)";
+        values <<", :3";
     }
 
 
@@ -528,6 +528,17 @@ oss << "declare\n"
         statement->Bind((char*)&(header_data[0]),(long)header_data.size());
     
     }
+    
+    std::string wkt(bounary_wkt); // copy the string to satisfy the compiler's const complaints
+    if (!boundary_column_u.empty()){
+        OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
+        statement->Define( locator, 1 ); 
+
+        statement->Bind((char*)&(wkt[0]),(long)bounary_wkt.size());
+    
+    }
+
+
     try {
         statement->Execute();
     } catch (std::runtime_error const& e) {
@@ -805,13 +816,30 @@ int main(int argc, char* argv[])
         if (vm.count("base-table-boundary-column")) 
         {
             base_table_boundary_column = vm["base-table-boundary-column"].as< string >();
-            base_table_boundary_wkt = vm["base-table-boundary-wkt"].as< string >();
-            
+            std::string wkt = vm["base-table-boundary-wkt"].as< string >();
+            // base_table_boundary_wkt
             if (base_table_boundary_wkt.size() == 0)
             {
                 std::cerr << "base-table-boundary-column specified, but no wkt given with base-table-boundary-wkt!\n";
                 return 1;                
             }
+
+            std::string sql = vm["pre-sql"].as< string >();
+            bool used_file = false;
+            try {
+                base_table_boundary_wkt = ReadSQLData(wkt);
+                used_file = true;
+            } catch (std::runtime_error const& e) {
+                boost::ignore_unused_variable_warning(e);
+                base_table_boundary_wkt = std::string(wkt);
+                used_file = false;
+            }
+            if (verbose)
+                if (!used_file)
+                    std::cout << "Setting output base-table-boundary-wkt to: " << base_table_boundary_wkt << std::endl;
+                else
+                    std::cout << "Setting output base-table-boundary-wkt to: " << wkt << std::endl; // Tell filename instead
+
 
             if (verbose)
                 std::cout << "Insertting boundary into column: " << base_table_boundary_column << std::endl;
