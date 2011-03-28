@@ -421,8 +421,8 @@ long CreatePCEntry( OWConnection* connection,
     }
 
     if (!boundary_column_u.empty()){
-        columns << "," << header_blob_column_u;
-        values <<", :3";
+        columns << "," << boundary_column_u;
+        values <<", SDO_GEOMETRY(:3, :4)";
     }
 
 
@@ -535,7 +535,11 @@ oss << "declare\n"
         statement->Define( locator, 1 ); 
 
         statement->Bind((char*)&(wkt[0]),(long)bounary_wkt.size());
-    
+
+        long* srid_d = 0;
+        srid_d = (long*) malloc (1 * sizeof(long));
+        srid_d[0] = srid;
+        statement->Bind(srid_d);        
     }
 
 
