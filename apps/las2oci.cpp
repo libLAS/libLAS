@@ -828,7 +828,6 @@ int main(int argc, char* argv[])
                 return 1;                
             }
 
-            std::string sql = vm["pre-sql"].as< string >();
             bool used_file = false;
             try {
                 base_table_boundary_wkt = ReadSQLData(wkt);
@@ -846,7 +845,7 @@ int main(int argc, char* argv[])
 
 
             if (verbose)
-                std::cout << "Insertting boundary into column: " << base_table_boundary_column << std::endl;
+                std::cout << "Inserting boundary into column: " << base_table_boundary_column << std::endl;
         }    
 
 
