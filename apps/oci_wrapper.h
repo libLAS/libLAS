@@ -374,6 +374,7 @@ public:
     void                Bind( long* pnData );
     void                Bind( double* pnData );
     void                Bind( char* pData, long nData );
+    void                BindClob( char* pData, long nData );
     void                Bind( sdo_geometry** pphData );
     void                Bind( OCILobLocator** pphLocator );
     void                Bind( OCIArray** pphData, OCIType* type );
@@ -383,6 +384,7 @@ public:
     void                Define( double* pnData );
     void                Define( char* pszData, int nSize = OWNAME );
     void                Define( OCILobLocator** pphLocator);
+    void                DefineClob( OCILobLocator** pphLocator, long nIterations );
     void                Define( OCIArray** pphData );
     void                Define( sdo_georaster** pphData );
     void                Define( sdo_geometry** pphData );

@@ -387,7 +387,7 @@ long CreatePCEntry( OWConnection* connection,
                     std::string const& header_blob_column,
                     std::vector<boost::uint8_t> const& header_data,
                     std::string const& boundary_column,
-                    std::string const& bounary_wkt)
+                    std::string const& boundary_wkt)
 {
     ostringstream oss;
 
@@ -529,17 +529,21 @@ oss << "declare\n"
     
     }
     
-    std::string wkt(bounary_wkt); // copy the string to satisfy the compiler's const complaints
+    std::string wkt(boundary_wkt); // copy the string to satisfy the compiler's const complaints
+    
     if (!boundary_column_u.empty()){
         OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
-        statement->Define( locator, 1 ); 
+        statement->DefineClob( locator, 1 ); 
+    
+        
+        statement->BindClob((char*)wkt.c_str(),(long)wkt.size());
 
-        statement->Bind((char*)&(wkt[0]),(long)bounary_wkt.size());
+        // statement->Bind((char*)&(wkt[0]),(long)wkt.size());
 
-        long* srid_d = 0;
-        srid_d = (long*) malloc (1 * sizeof(long));
-        srid_d[0] = srid;
-        statement->Bind(srid_d);        
+        // long* srid_d = 0;
+        // srid_d = (long*) malloc (1 * sizeof(long));
+        // srid_d[0] = srid;
+        statement->Bind(&srid);        
     }
 
 
