@@ -592,7 +592,7 @@ boost::uint16_t Point::GetIntensity() const
     std::vector<boost::uint8_t>::size_type pos = 12;
 
 #ifdef LIBLAS_ENDIAN_AWARE
-    boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
+    boost::uint16_t output = liblas::detail::bitsToInt<boost::uint16_t>(output, m_data, pos);
     return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
@@ -820,7 +820,7 @@ boost::uint16_t Point::GetPointSourceID() const
     std::vector<boost::uint8_t>::size_type pos = 18;
 
 #ifdef LIBLAS_ENDIAN_AWARE
-    boost::int32_t output = liblas::detail::bitsToInt<boost::int32_t>(output, m_data, pos);
+    boost::uint16_t output = liblas::detail::bitsToInt<boost::uint16_t>(output, m_data, pos);
     return output;
 #else
     boost::uint8_t* data = const_cast<boost::uint8_t*>(&m_data[0] + pos);
