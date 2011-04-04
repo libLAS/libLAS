@@ -414,16 +414,21 @@ long CreatePCEntry( OWConnection* connection,
         columns << cloudColumnName_u;
         values << "pc";
     }
-    
+
+    int nPos = 1; // Bind column position    
     if (!header_blob_column_u.empty()){
         columns << "," << header_blob_column_u;
-        values <<", :2";
+        values <<", :" << nPos++;
     }
 
     if (!boundary_column_u.empty()){
         columns << "," << boundary_column_u;
-        values <<", SDO_GEOMETRY(:3, :4)";
+        nPos++;
+        values <<", SDO_GEOMETRY(:"<<nPos;
+        nPos++;
+        values <<", :"<<nPos<<")";
     }
+    
 
 
     ostringstream s_srid;
