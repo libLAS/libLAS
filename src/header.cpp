@@ -323,9 +323,6 @@ uint16_t Header::GetCreationDOY() const
 
 void Header::SetCreationDOY(uint16_t v)
 {
-    if (v > 366)
-        throw std::out_of_range("day of year out of range");
-
     m_createDOY = v;
 }
 
@@ -336,10 +333,6 @@ uint16_t Header::GetCreationYear() const
 
 void Header::SetCreationYear(uint16_t v)
 {
-    // mloskot: I've taken these values arbitrarily
-    if (v > 9999)
-        throw std::out_of_range("year out of range");
-
     m_createYear = v;
 }
 
