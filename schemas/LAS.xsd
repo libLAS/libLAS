@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xs:schema xmlns:las="http://liblas.org/schemas/LAS/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://liblas.org/schemas/LAS/1.0" version="1.0">
+<xs:schema xmlns:pc="http://libpc.org/schemas/PC/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://libpc.org/schemas/PC/1.0" version="1.0">
 
-    <xs:simpleType name="sizeType">
-        <xs:annotation>
-      <xs:documentation>
-            The storage size type of the dimension.
-        </xs:documentation>
-    </xs:annotation>   
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="byte"/>
-            <xs:enumeration value="bit"/>
-        </xs:restriction>
-    </xs:simpleType>
- 
     <xs:simpleType name="interpretationType">
         <xs:annotation>
       <xs:documentation>
@@ -22,7 +10,7 @@
             data, use uint8_t (common byte) as the interpretation 
             and transform accordingly.  Because nulls (or even 
             multi-byte strings) might be allowed, there are 
-            no common string interpretations provided by defaut.
+            no common string interpretations provided by default.
         </xs:documentation>
     </xs:annotation>   
         <xs:restriction base="xs:string">
@@ -41,7 +29,7 @@
     </xs:simpleType>
 
     <xs:complexType name="rangeType">
-        <xs:attribute name="units" type="las:interpretationType"/>
+        <xs:attribute name="units" type="pc:interpretationType"/>
         <xs:attribute name="value" type="xs:decimal"/>
     </xs:complexType>
     
@@ -59,19 +47,10 @@
             <xs:element name="size" type="xs:nonNegativeInteger">
                 <xs:annotation>
                     <xs:documentation>
-                        The size of this dimension (assumed to be in bytes if
-                        no units element is available).
+                        The size of this dimension in bytes.
                     </xs:documentation>
                 </xs:annotation>
-            </xs:element>
-            <xs:element name="required" type="xs:boolean">
-                <xs:annotation>
-                    <xs:documentation>
-                        Is this dimension required by the LAS Point Format?
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            
+            </xs:element>            
             
             <xs:element minOccurs="0" name="name" type="xs:string"/>
             <xs:element minOccurs="0" name="description" type="xs:string"/>
@@ -86,29 +65,20 @@
                 </xs:annotation>
             </xs:element>
 
-            <xs:element minOccurs="0" name="units" type="las:sizeType">
-                <xs:annotation>
-                    <xs:documentation>
-                        The units to use for size measurements for this
-                        dimension. If no units element is specified, "bytes"
-                        is the assumed unit.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
             
-            <xs:element minOccurs="0" name="interpretation" type="las:interpretationType">
+            <xs:element minOccurs="0" name="interpretation" type="pc:interpretationType">
                 <xs:annotation>
                     <xs:documentation>
                         This element describes how the data should be
                         interpreted. In the case of conflicting data, for
-                        example when then size is 2, the units "byte", but the
+                        example when then size is 2,  but the
                         interpretation is "uint32_t", the size determines how
                         much precision is available.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
             
-            <xs:element minOccurs="0" name="minimum" type="las:rangeType">
+            <xs:element minOccurs="0" name="minimum" type="pc:rangeType">
                 <xs:annotation>
                     <xs:documentation>
                         The minimum value of this dimension.
@@ -116,7 +86,7 @@
                 </xs:annotation>                   
             </xs:element>
 
-            <xs:element minOccurs="0" name="maximum" type="las:rangeType">
+            <xs:element minOccurs="0" name="maximum" type="pc:rangeType">
                 <xs:annotation>
                     <xs:documentation>
                         The maximum value of this dimension.
@@ -135,36 +105,18 @@
             <xs:element minOccurs="0" name="scale" type="xs:double">
                 <xs:annotation>
                     <xs:documentation>
-                        The scale (usually a negative log10 exponent) of this 
-                        dimension.  Used to support scaled integer types
+                        The scale of this dimension.  Used to support scaled integer types
                     </xs:documentation>
                 </xs:annotation>   
-            </xs:element>
-            <xs:element minOccurs="0" name="byteOffset" type="xs:nonNegativeInteger">
-                <xs:annotation>
-                    <xs:documentation>
-                        The byte offset to start reading this dimension from 
-                        the front of the point record.
-                    </xs:documentation>
-                </xs:annotation>   
-            </xs:element>
-            <xs:element minOccurs="0" name="bitOffset" type="xs:nonNegativeInteger">
-                <xs:annotation>
-                    <xs:documentation>
-                        The bit offset to start reading this dimension from the 
-                        calculated (or specified, using byteOffset) byte offset 
-                        of the dimension.  
-                    </xs:documentation>
-                </xs:annotation>   
-            </xs:element>            
+            </xs:element>        
         </xs:all>
     </xs:complexType>
     
   
-    <xs:element name="LASSchema">
+    <xs:element name="PointCloudSchema">
         <xs:complexType>
             <xs:sequence>
-                <xs:element maxOccurs="unbounded" minOccurs="1" name="dimension" type="las:dimensionType"/>
+                <xs:element maxOccurs="unbounded" minOccurs="1" name="dimension" type="pc:dimensionType"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
