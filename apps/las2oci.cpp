@@ -415,10 +415,10 @@ long CreatePCEntry( OWConnection* connection,
         values << "pc";
     }
 
-    int nPos = 1; // Bind column position    
+    int nPos = 2; // Bind column position    
     if (!header_blob_column_u.empty()){
         columns << "," << header_blob_column_u;
-        values <<", :" << nPos++;
+        values <<", :" << nPos;
     }
 
     if (!boundary_column_u.empty()){
@@ -534,14 +534,15 @@ oss << "declare\n"
     
     }
     
-    std::string wkt(boundary_wkt); // copy the string to satisfy the compiler's const complaints
-    
+
+    char* wkt = (char*) malloc(boundary_wkt.size() * sizeof(char));
+    strncpy(wkt, boundary_wkt.c_str(), boundary_wkt.size());    
     if (!boundary_column_u.empty()){
         OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
         statement->DefineClob( locator, 1 ); 
     
         
-        statement->BindClob((char*)wkt.c_str(),(long)wkt.size());
+        statement->BindClob(wkt,(long)boundary_wkt.size());
 
         // statement->Bind((char*)&(wkt[0]),(long)wkt.size());
 
