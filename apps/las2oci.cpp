@@ -419,11 +419,11 @@ long CreatePCEntry( OWConnection* connection,
     if (!header_blob_column_u.empty()){
         columns << "," << header_blob_column_u;
         values <<", :" << nPos;
+        nPos++;
     }
 
     if (!boundary_column_u.empty()){
         columns << "," << boundary_column_u;
-        nPos++;
         values <<", SDO_GEOMETRY(:"<<nPos;
         nPos++;
         values <<", :"<<nPos<<")";
@@ -538,17 +538,9 @@ oss << "declare\n"
     char* wkt = (char*) malloc(boundary_wkt.size() * sizeof(char));
     strncpy(wkt, boundary_wkt.c_str(), boundary_wkt.size());    
     if (!boundary_column_u.empty()){
-        OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
-        statement->DefineClob( locator, 1 ); 
-    
-        
-        statement->BindClob(wkt,(long)boundary_wkt.size());
-
-        // statement->Bind((char*)&(wkt[0]),(long)wkt.size());
-
-        // long* srid_d = 0;
-        // srid_d = (long*) malloc (1 * sizeof(long));
-        // srid_d[0] = srid;
+        OCILobLocator* locator ; 
+        statement->WriteCLob( &locator, wkt ); 
+        statement->Bind(&locator);
         statement->Bind(&srid);        
     }
 
