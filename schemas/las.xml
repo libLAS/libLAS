@@ -81,7 +81,7 @@
     <pc:position>11</pc:position>
     <pc:size>1</pc:size>
     <pc:name>User Data</pc:name>
-    <pc:description>This field may be used at the user's discretion</pc:description>
+    <pc:description>This field may be used at the users discretion</pc:description>
     <pc:active>false</pc:active>
   </pc:dimension>
   <pc:dimension>
