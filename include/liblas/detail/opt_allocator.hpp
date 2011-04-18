@@ -38,6 +38,9 @@
 #ifndef LIBLAS_DETAIL_MAP_ALLOCATOR_HPP_INCLUDED
 #define LIBLAS_DETAIL_MAP_ALLOCATOR_HPP_INCLUDED
 
+#include <iostream>
+using namespace std;
+
 #include <map>
 #include <boost/interprocess/file_mapping.hpp>
 #include <boost/interprocess/mapped_region.hpp>
@@ -48,7 +51,7 @@ namespace detail {
 **/
 
 template <typename T>
-class map_allocator
+class opt_allocator
 {
 public:
     typedef T value_type;
@@ -67,6 +70,7 @@ private:
     static size_type m_next_offset;
     static boost::interprocess::file_mapping *m_file_p;
     static size_type m_max_size;
+    static bool m_initialized;
 
 public:
     pointer address(reference r) const
@@ -75,10 +79,28 @@ public:
     const_pointer address(const_reference r) const
         { return &r; }
 
-    map_allocator(const std::string& file_name)
+    opt_allocator() throw()
+    {
+cerr << "Base allocator!\n";
+        if (m_initialized && m_file_p)
+        {
+cerr << "Throwing Base allocator!\n";
+            throw std::bad_alloc();
+        }
+        m_initialized = true;
+    }
+
+    opt_allocator(const std::string& file_name)
     {
         using namespace boost::interprocess;
+        using namespace std;
 
+cerr << "File name allocator!\n";
+        if (m_initialized && !m_file_p)
+        {
+            throw std::bad_alloc();
+        }
+        m_initialized = true;
         if (!m_file_p)
         {
             // Determine file size so that we don't over-allocate.
@@ -92,39 +114,54 @@ public:
     }
 
     template <typename U>
-    map_allocator(map_allocator<U> const &u)
-        {}
+    opt_allocator(opt_allocator<U> const &u)
+        { cerr << "Copy allocator!\n"; }
 
-    size_type max_size() const throw()
+    size_type max_size() const
     {
-        return (m_max_size / sizeof(T));
+        size_type s = m_file_p ? m_max_size : size_type(-1);
+        return s / sizeof(T);
     }
 
     pointer allocate(size_type num, void *hint = 0) throw()
     {
-        using namespace boost::interprocess;
+        pointer p;
 
-        (void)hint;
-        mapped_region *reg;
+cerr << "Allocating num = " << num << "!\n";
+        if (m_file_p)
+        {
+            using namespace boost::interprocess;
 
-        m_next_offset += num / sizeof(T);
-        if (m_next_offset > m_max_size)
-           throw std::bad_alloc();
-        reg = new mapped_region(*m_file_p, read_write, m_next_offset,
-            num / sizeof(T));
-        pointer p = static_cast<pointer>(reg->get_address());
-        m_regions[p] = reg;
+cerr << "In file_p allocate!\n";
+            (void)hint;
+            mapped_region *reg;
+
+            m_next_offset += num / sizeof(T);
+            if (m_next_offset > m_max_size)
+                throw std::bad_alloc();
+            reg = new mapped_region(*m_file_p, read_write, m_next_offset,
+                num / sizeof(T));
+            p = static_cast<pointer>(reg->get_address());
+            m_regions[p] = reg;
+        }
+        else
+            p = static_cast<pointer>(::operator new(num * sizeof(T))); 
         return p;
     }
 
     void deallocate(pointer p, size_type num)
     {
-        RegIterator ri;
-        if ((ri = m_regions.find(p)) != m_regions.end())
+        if (m_file_p)
         {
-            delete ri->second;
-            m_regions.erase(ri);
+            RegIterator ri;
+            if ((ri = m_regions.find(p)) != m_regions.end())
+            {
+                delete ri->second;
+                m_regions.erase(ri);
+            }
         }
+        else
+            ::operator delete(p);
     }
 
     void construct(pointer p, const_reference value)
@@ -139,21 +176,24 @@ public:
 
     template <typename U>
     struct rebind {
-        typedef map_allocator<U> other;
+        typedef opt_allocator<U> other;
     };
 };
 
 template <typename T>
-typename map_allocator<T>::RegVec map_allocator<T>::m_regions;
+bool opt_allocator<T>::m_initialized = false;
 
 template <typename T>
-typename map_allocator<T>::size_type map_allocator<T>::m_next_offset = 0;
+typename opt_allocator<T>::RegVec opt_allocator<T>::m_regions;
 
 template <typename T>
-typename map_allocator<T>::size_type map_allocator<T>::m_max_size = 0;
+typename opt_allocator<T>::size_type opt_allocator<T>::m_next_offset = 0;
 
 template <typename T>
-boost::interprocess::file_mapping *map_allocator<T>::m_file_p = NULL;
+typename opt_allocator<T>::size_type opt_allocator<T>::m_max_size = 0;
+
+template <typename T>
+boost::interprocess::file_mapping *opt_allocator<T>::m_file_p = NULL;
 
 /**
 } // namespace detail
