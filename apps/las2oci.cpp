@@ -387,7 +387,7 @@ long CreatePCEntry( OWConnection* connection,
                     std::string const& header_blob_column,
                     std::vector<boost::uint8_t> const& header_data,
                     std::string const& boundary_column,
-                    std::string const& bounary_wkt)
+                    std::string const& boundary_wkt)
 {
     ostringstream oss;
 
@@ -414,16 +414,21 @@ long CreatePCEntry( OWConnection* connection,
         columns << cloudColumnName_u;
         values << "pc";
     }
-    
+
+    int nPos = 2; // Bind column position    
     if (!header_blob_column_u.empty()){
         columns << "," << header_blob_column_u;
-        values <<", :2";
+        values <<", :" << nPos;
+        nPos++;
     }
 
     if (!boundary_column_u.empty()){
-        columns << "," << header_blob_column_u;
-        values <<", SDO_GEOMETRY(:3, :4)";
+        columns << "," << boundary_column_u;
+        values <<", SDO_GEOMETRY(:"<<nPos;
+        nPos++;
+        values <<", :"<<nPos<<")";
     }
+    
 
 
     ostringstream s_srid;
@@ -528,6 +533,18 @@ oss << "declare\n"
         statement->Bind((char*)&(header_data[0]),(long)header_data.size());
     
     }
+    
+
+    char* wkt = (char*) malloc(boundary_wkt.size() * sizeof(char));
+    strncpy(wkt, boundary_wkt.c_str(), boundary_wkt.size());    
+    if (!boundary_column_u.empty()){
+        OCILobLocator* locator ; 
+        statement->WriteCLob( &locator, wkt ); 
+        statement->Bind(&locator);
+        statement->Bind(&srid);        
+    }
+
+
     try {
         statement->Execute();
     } catch (std::runtime_error const& e) {
@@ -618,7 +635,7 @@ file_options.add_options()
     ("post-sql", po::value< string >(), "Quoted SQL or filename location of PL/SQL to run after inserting block data.")
     ("solid", po::value<bool>()->zero_tokens(), "Define the point cloud's PC_EXTENT geometry gtype as (1,1007,3) instead of the normal (1,1003,3), and use gtype 3008/2008 vs 3003/2003 for BLK_EXTENT geometry values.")
     ("3d", po::value<bool>()->zero_tokens(), "Use Z values for insertion of all extent (PC_EXTENT, BLK_EXTENT, USER_SDO_GEOM_METADATA) entries")
-    ("global-extent", po::value< std::string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated or quoted, space-separated list, for example, \n -e minx, miny, maxx, maxy\n or \n -e minx, miny, minz, maxx, maxy, maxz\n -e \"minx miny minz maxx maxy maxz\"")
+    ("global-extent", po::value< std::string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated or quoted, space-separated list, for example, \n -e xmin, ymin, maxx, maxy\n or \n -e xmin, ymin, zmin, maxx, maxy, maxz\n -e \"xmin ymin zmin maxx maxy maxz\"")
     ("cached", po::value<bool>()->zero_tokens(), "Cache the entire file on the first read")
 
 
@@ -631,9 +648,9 @@ po::options_description GetHiddenOptions()
 {
     po::options_description hidden_options("hidden options");
 hidden_options.add_options()
-    ("xmin", po::value< double >(), "global-extent minx value")
-    ("ymin", po::value< double >(), "global-extent miny value")
-    ("zmin", po::value< double >(), "global-extent minz value")
+    ("xmin", po::value< double >(), "global-extent xmin value")
+    ("ymin", po::value< double >(), "global-extent ymin value")
+    ("zmin", po::value< double >(), "global-extent zmin value")
     ("xmax", po::value< double >(), "global-extent maxx value")
     ("ymax", po::value< double >(), "global-extent maxy value")
     ("zmax", po::value< double >(), "global-extent maxz value")
@@ -802,19 +819,35 @@ int main(int argc, char* argv[])
                 std::cout << "Setting output point cloud column to: " << point_cloud_name << std::endl;
         }
 
-        if (vm.count("header-blob-column")) 
+        if (vm.count("base-table-boundary-column")) 
         {
             base_table_boundary_column = vm["base-table-boundary-column"].as< string >();
-            base_table_boundary_wkt = vm["base-table-boundary-wkt"].as< string >();
-            
-            if (base_table_boundary_wkt.size() == 0)
+            std::string wkt = vm["base-table-boundary-wkt"].as< string >();
+            // base_table_boundary_wkt
+            if (wkt.size() == 0)
             {
                 std::cerr << "base-table-boundary-column specified, but no wkt given with base-table-boundary-wkt!\n";
                 return 1;                
             }
 
+            bool used_file = false;
+            try {
+                base_table_boundary_wkt = ReadSQLData(wkt);
+                used_file = true;
+            } catch (std::runtime_error const& e) {
+                boost::ignore_unused_variable_warning(e);
+                base_table_boundary_wkt = std::string(wkt);
+                used_file = false;
+            }
             if (verbose)
-                std::cout << "Insertting boundary into column: " << base_table_boundary_column << std::endl;
+                if (!used_file)
+                    std::cout << "Setting output base-table-boundary-wkt to: " << base_table_boundary_wkt << std::endl;
+                else
+                    std::cout << "Setting output base-table-boundary-wkt to: " << wkt << std::endl; // Tell filename instead
+
+
+            if (verbose)
+                std::cout << "Inserting boundary into column: " << base_table_boundary_column << std::endl;
         }    
 
 
