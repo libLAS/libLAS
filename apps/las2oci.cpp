@@ -550,8 +550,9 @@ oss << "declare\n"
     OCILobLocator* boundary_locator ; 
     if (bHaveSchemaOverride)
     {
-        char* schema = (char*) malloc(point_schema_override.size() * sizeof(char));
+        char* schema = (char*) malloc(point_schema_override.size() * sizeof(char) + 1);
         strncpy(schema, point_schema_override.c_str(), point_schema_override.size());
+        schema[point_schema_override.size()] = '\0';
         statement->WriteCLob( &schema_locator, schema ); 
         statement->Bind(&schema_locator);
     }
