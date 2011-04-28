@@ -406,7 +406,7 @@ long CreatePCEntry( OWConnection* connection,
     
     ostringstream columns;
     ostringstream values;
-    bool bHaveSchemaOverride;
+    bool bHaveSchemaOverride(false);
     
     if (point_schema_override.size() > 0)
         bHaveSchemaOverride = true;
