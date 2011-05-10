@@ -49,6 +49,7 @@
 #include <liblas/detail/zippoint.hpp>
 // laszip
 #include <laszip/laszipper.hpp>
+#include <laszip/laszip.hpp>
 // std
 #include <vector>
 #include <fstream>
@@ -63,6 +64,7 @@ ZipWriterImpl::ZipWriterImpl(std::ostream& ofs) :
     //m_point_writer(PointWriterPtr( )), 
     m_header_writer(HeaderWriterPtr()), 
     m_pointCount(0),
+    m_zip(NULL),
     m_zipper(NULL),
     m_zipPoint(NULL)
 {
@@ -99,10 +101,35 @@ void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
 
 void ZipWriterImpl::WritePoint(liblas::Point const& point)
 {
-    //if (m_point_writer.get() == 0) {
-    //    m_point_writer = PointWriterPtr(new writer::Point(m_ofs, m_pointCount, m_header));
-    //} 
-    //m_point_writer->write(point);
+    if (m_zip==NULL)
+    {
+        try
+        {
+            m_zip = new LASzip();
+        }
+        catch(...)
+        {
+            throw liblas_error("Error opening compression core (1)");
+        }
+
+        PointFormatName format = m_header->GetDataFormatId();
+        delete m_zipPoint;
+        m_zipPoint = new ZipPoint(format, m_header->GetVLRs());
+
+        bool ok = false;
+        try
+        {
+            ok = m_zip->pack(m_zipPoint->vlr_data, m_zipPoint->vlr_num);
+        }
+        catch(...)
+        {
+            throw liblas_error("Error opening compression core (3)");
+        }
+        if (!ok)
+        {
+            throw liblas_error("Error opening compression core (2)");
+        }
+    }
 
     if (m_zipper==NULL)
     {
@@ -115,13 +142,24 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
             throw liblas_error("Error opening compression engine (1)");
         }
 
-        PointFormatName format = m_header->GetDataFormatId();
-        m_zipPoint = new ZipPoint(format);
-
         unsigned int stat = 1;
         try
         {
-            stat = m_zipper->open(m_ofs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::DEFAULT_COMPRESSION);
+            stat = m_zipper->setup(m_zip);
+        }
+        catch(...)
+        {
+            throw liblas_error("Error opening compression engine (4)");
+        }
+        if (stat != 0)
+        {
+            throw liblas_error("Error opening compression engine (5)");
+        }
+
+        stat = 1;
+        try
+        {
+            stat = m_zipper->open(m_ofs);
         }
         catch(...)
         {
@@ -190,6 +228,7 @@ ZipWriterImpl::~ZipWriterImpl()
         // ignore?
     }
 
+    delete m_zip;
     delete m_zipper;
     delete m_zipPoint;
 }

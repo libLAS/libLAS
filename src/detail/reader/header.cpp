@@ -404,6 +404,7 @@ void Header::ReadVLRs()
         boost::ignore_unused_variable_warning(e);
     }
 
+/***
 #ifdef HAVE_LASZIP
     if (m_header->Compressed())
     {
@@ -415,6 +416,7 @@ void Header::ReadVLRs()
          }
     }
 #endif
+***/
 }
 
 

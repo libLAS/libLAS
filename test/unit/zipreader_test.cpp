@@ -123,16 +123,16 @@ namespace tut
             test_file_12Color_point1(p1_las);
             test_file_12Color_point2(p2_las);
 
-            reader_laz.ReadPointAt(2);
+            reader_laz.ReadPointAt(1);
             liblas::Point p2_laz = reader_laz.GetPoint();
             reader_laz.ReadPointAt(1);
             liblas::Point p1_laz = reader_laz.GetPoint();
             reader_laz.ReadPointAt(0);
             liblas::Point p0_laz = reader_laz.GetPoint();
-    
-            ensure_equals(p0_las, p0_laz);
-            ensure_equals(p1_las, p1_laz);
-            ensure_equals(p2_las, p2_laz);
+
+            ensure_equals(p0_laz, p0_las);
+            ensure_equals(p1_laz, p1_las);
+            ensure_equals(p2_laz, p2_las);
 
             test_file_12Color_point0(p0_laz);
             test_file_12Color_point1(p1_laz);
