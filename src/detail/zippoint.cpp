@@ -214,8 +214,7 @@ void ZipPoint::ConstructVLR(VariableRecord& v, PointFormatName format) const
     laszip.setup(pointFormat, pointSize);
 
     LASzipper zipper;
-    zipper.setup(&laszip);
-
+    
     unsigned char* data;
     int num;
     laszip.pack(data, num);

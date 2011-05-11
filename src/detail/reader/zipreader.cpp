@@ -157,21 +157,7 @@ void ZipReaderImpl::Reset()
         unsigned int stat = 1;
         try
         {
-            stat = m_unzipper->setup(m_zip);
-        }
-        catch(...)
-        {
-            throw liblas_error("Failed to open laszip decompression engine (4)"); 
-        }
-        if (stat != 0)
-        {
-            throw liblas_error("Failed to open laszip decompression engine (5)"); 
-        }
-
-        stat = 1;
-        try
-        {
-            stat = m_unzipper->open(m_ifs);
+            stat = m_unzipper->open(m_ifs, m_zip);
         }
         catch(...)
         {
@@ -244,7 +230,7 @@ void ZipReaderImpl::SetHeader(liblas::Header const& header)
     m_header = HeaderPtr(new liblas::Header(header));
 }
     
-void ZipReaderImpl::ReadIdiom(bool recordPoint)
+void ZipReaderImpl::ReadIdiom()
 {
     bool ok = false;
     try
@@ -260,7 +246,6 @@ void ZipReaderImpl::ReadIdiom(bool recordPoint)
         throw liblas_error("Error reading compressed point data (2)");
     }
 
-    if (recordPoint)
     {
         std::vector<boost::uint8_t>& data = m_point->GetData();
 
@@ -294,7 +279,7 @@ void ZipReaderImpl::ReadNextPoint()
             m_point->SetHeaderPtr(m_header);
     }
     
-    ReadIdiom(true);
+    ReadIdiom();
 
     // Filter the points and continue reading until we either find 
     // one to keep or throw an exception.
@@ -302,11 +287,11 @@ void ZipReaderImpl::ReadNextPoint()
     bool bLastPoint = false;
     if (!FilterPoint(*m_point))
     {
-        ReadIdiom(true);
+        ReadIdiom();
 
         while (!FilterPoint(*m_point))
         {
-            ReadIdiom(true);
+            ReadIdiom();
             if (m_current == m_size) 
             {
                 bLastPoint = true;
@@ -327,80 +312,13 @@ void ZipReaderImpl::ReadNextPoint()
 }
 
 
-// laszip doesn't support seeking, or any want to do a reset, so we do it manually instead
-void ZipReaderImpl::ResetUnzipper()
-{
-    Reset();
-    return;
-    if (!m_unzipper)
-        throw liblas_error("Error resetting uncompression engine (1)");
- 
-    unsigned int stat = 1;
-    try
-    {
-        m_unzipper->close();
-        stat = m_unzipper->open(m_ifs);
-    }
-    catch(...)
-    {
-        throw liblas_error("Error resetting uncompression engine (2)");
-    }
-    if (stat != 0)
-    {
-        throw liblas_error("Error resetting uncompression engine (3)");
-    }
-
-    return;
-}
-
-
 liblas::Point const& ZipReaderImpl::ReadPointAt(std::size_t n)
 {
-    if (m_size == n) {
-        throw std::out_of_range("file has no more points to read, end of file reached");
-    } else if (m_size < n) {
-        std::ostringstream msg;
-        msg << "ReadPointAt:: Inputted value: " << n << " is greater than the number of points: " << m_size;
-        throw std::runtime_error(msg.str());
-    } 
+    Seek(n);
 
-    std::streamsize const pos = m_header->GetDataOffset();    
+    ReadNextPoint();
 
-    m_ifs.clear();
-    m_ifs.seekg(pos, std::ios::beg);
-/*
-    if (bNeedHeaderCheck) 
-    {
-        if (m_point->GetHeaderPtr().get() != m_header.get())
-            m_point->SetHeaderPtr(m_header);
-    }
-    */
-    /***
-    ResetUnzipper();
-
-    // skip over a whole bunch
-    if (n > 0)
-    {
-        for (std::size_t idx = 0; idx < n; idx++)
-        {
-            ReadIdiom(false);
-        }
-    }
-    ***/
-    m_unzipper->seek(n);
-
-
-    // read the one we want (and undo the counter update)
-    ReadIdiom(true);
-//    --m_current;
-
-    if (!m_transforms.empty())
-    {
-        std::cout << "Should be transforming point" << std::endl;
-        TransformPoint(*m_point);
-    }
-
-    return *m_point;
+    return this->GetPoint();
 }
 
 
@@ -419,16 +337,13 @@ void ZipReaderImpl::Seek(std::size_t n)
     m_ifs.clear();
     m_ifs.seekg(pos, std::ios::beg);
         
-    ResetUnzipper();
+    int t1 = m_ifs.tellg();
+    int t2 = m_unzipper->tell();
 
-    // skip over a whole bunch
-    if (n > 0)
-    {
-        for (std::size_t idx = 0; idx < n; idx++)
-        {
-            ReadIdiom(false);
-        }
-    }
+    m_unzipper->seek(n);
+
+    int t3 = m_ifs.tellg();
+    int t4 = m_unzipper->tell();
 
     m_current = n;
 }

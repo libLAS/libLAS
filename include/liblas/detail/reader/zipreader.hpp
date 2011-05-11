@@ -110,8 +110,7 @@ protected:
 
 
 private:
-    void ReadIdiom(bool recordPoint);
-    void ResetUnzipper();
+    void ReadIdiom();
 
     LASzip* m_zip;
     LASunzipper* m_unzipper;

@@ -123,7 +123,7 @@ namespace tut
             test_file_12Color_point1(p1_las);
             test_file_12Color_point2(p2_las);
 
-            reader_laz.ReadPointAt(1);
+            reader_laz.ReadPointAt(2);
             liblas::Point p2_laz = reader_laz.GetPoint();
             reader_laz.ReadPointAt(1);
             liblas::Point p1_laz = reader_laz.GetPoint();

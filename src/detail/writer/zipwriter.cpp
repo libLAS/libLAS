@@ -145,21 +145,7 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
         unsigned int stat = 1;
         try
         {
-            stat = m_zipper->setup(m_zip);
-        }
-        catch(...)
-        {
-            throw liblas_error("Error opening compression engine (4)");
-        }
-        if (stat != 0)
-        {
-            throw liblas_error("Error opening compression engine (5)");
-        }
-
-        stat = 1;
-        try
-        {
-            stat = m_zipper->open(m_ofs);
+            stat = m_zipper->open(m_ofs, m_zip);
         }
         catch(...)
         {
