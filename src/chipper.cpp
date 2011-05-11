@@ -287,8 +287,8 @@ void Chipper::RearrangeNarrow(RefList& wide, RefList& narrow, RefList& spare,
         // narrow array by copying them to the spare array in the correct
         // partition.  The spare array then becomes the active narrow array
         // for the [left,right] partition.
-        uint32_t lstart = left;
-        uint32_t rstart = center;
+        boost::uint32_t lstart = left;
+        boost::uint32_t rstart = center;
         for (boost::uint32_t i = left; i <= right; ++i)
         {
             if (narrow[i].m_oindex < center)
