@@ -119,6 +119,19 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
         bool ok = false;
         try
         {
+            //ok = m_zip->setup(m_zipPoint->m_num_items, m_zipPoint->m_items);
+            ok = m_zip->setup((int)format, m_header->GetDataRecordLength());
+        }
+        catch(...)
+        {
+            throw liblas_error("Error opening compression core (3)");
+        }
+        if (!ok)
+        {
+            throw liblas_error("Error opening compression core (2)");
+        }
+        try
+        {
             ok = m_zip->pack(m_zipPoint->vlr_data, m_zipPoint->vlr_num);
         }
         catch(...)
