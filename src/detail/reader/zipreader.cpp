@@ -130,8 +130,21 @@ void ZipReaderImpl::Reset()
         bool ok = false;
         try
         {
+            ok = m_zip->setup((unsigned char)format, m_header->GetDataRecordLength());
+        }
+        catch(...)
+        {
+            throw liblas_error("Error opening compression core (3)");
+        }
+        if (!ok)
+        {
+            throw liblas_error("Error opening compression core (2)");
+        }
 
-            ok = m_zip->unpack(m_zipPoint->vlr_data, m_zipPoint->vlr_num);
+        try
+        {
+
+            ok = m_zip->unpack(m_zipPoint->our_vlr_data, m_zipPoint->our_vlr_num);
         }
         catch(...)
         {

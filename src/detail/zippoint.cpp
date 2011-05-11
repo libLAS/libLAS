@@ -62,8 +62,10 @@ static std::string laszip_description = "encoded for sequential access";
 
 
 ZipPoint::ZipPoint(PointFormatName format, const std::vector<VariableRecord>& vlrs)
-    : vlr_num(0)
-    , vlr_data(0)
+    : his_vlr_num(0)
+    , his_vlr_data(0)
+    , our_vlr_num(0)
+    , our_vlr_data(0)
     , m_num_items(0)
     , m_items(NULL)
     , m_lz_point(NULL)
@@ -84,11 +86,11 @@ ZipPoint::ZipPoint(PointFormatName format, const std::vector<VariableRecord>& vl
     }
     if (vlr)
     {
-        vlr_num = vlr->GetData().size();
-        vlr_data = new unsigned char[vlr_num];
-        for (int i=0; i<vlr_num; i++)
+        our_vlr_num = vlr->GetData().size();
+        our_vlr_data = new unsigned char[our_vlr_num];
+        for (int i=0; i<our_vlr_num; i++)
         {
-            vlr_data[i] = vlr->GetData()[i];
+            our_vlr_data[i] = vlr->GetData()[i];
         }
     }
 
@@ -104,7 +106,7 @@ ZipPoint::~ZipPoint()
     delete[] m_lz_point;
     delete[] m_lz_point_data;
 
-//    delete[] vlr_data;
+    delete[] our_vlr_data;
 
     return;
 }

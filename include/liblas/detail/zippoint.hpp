@@ -71,13 +71,17 @@ public:
     
     bool IsZipVLR(const VariableRecord& vlr) const;
 
-    int vlr_num;
-    unsigned char* vlr_data;
-
 private:
     void ConstructItems(PointFormatName);
 
 public: // for now
+    // LASzip::pack() allocates/sets vlr_data and vlr_num for us, and deletes it for us  ["his"]
+    // LASzip::unpack() just reads from the vlr_data we give it (we allocate and delete)  ["our"]
+    int his_vlr_num;
+    unsigned char* his_vlr_data;
+    int our_vlr_num;
+    unsigned char* our_vlr_data;
+
     unsigned int m_num_items;
     LASitem* m_items;
     unsigned char** m_lz_point;

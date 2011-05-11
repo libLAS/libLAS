@@ -119,8 +119,7 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
         bool ok = false;
         try
         {
-            //ok = m_zip->setup(m_zipPoint->m_num_items, m_zipPoint->m_items);
-            ok = m_zip->setup((int)format, m_header->GetDataRecordLength());
+            ok = m_zip->setup((unsigned char)format, m_header->GetDataRecordLength());
         }
         catch(...)
         {
@@ -130,9 +129,10 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
         {
             throw liblas_error("Error opening compression core (2)");
         }
+
         try
         {
-            ok = m_zip->pack(m_zipPoint->vlr_data, m_zipPoint->vlr_num);
+            ok = m_zip->pack(m_zipPoint->his_vlr_data, m_zipPoint->his_vlr_num);
         }
         catch(...)
         {
@@ -173,35 +173,16 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
     bool ok = false;
     try
     {
-        const std::vector<boost::uint8_t>* data;
-    
-        data = &point.GetData();
+        const std::vector<boost::uint8_t>* data = &point.GetData();
+        assert(data->size() == m_zipPoint->m_lz_point_size);
 
-        if (data->size() != m_zipPoint->m_lz_point_size)
+        for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
         {
-            // We need to repack the data.  
-            liblas::Point p(point);
-            p.SetHeaderPtr(m_header);
-            data = &p.GetData();
-    //      m_zipPoint->m_lz_point_data = const_cast<unsigned char*>(&(data->front()));
-            for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
-            {
-                m_zipPoint->m_lz_point_data[i] = data->at(i);
-                //printf("%d %d\n", v[i], i);
-            }
-            ok = m_zipper->write(m_zipPoint->m_lz_point);
-        } else 
-        {
-//          m_zipPoint->m_lz_point_data = const_cast<unsigned char*>(&(data->front()));
-            for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
-            {
-                m_zipPoint->m_lz_point_data[i] = data->at(i);
-                //printf("%d %d\n", v[i], i);
-            }
-
-            ok = m_zipper->write(m_zipPoint->m_lz_point);
+            m_zipPoint->m_lz_point_data[i] = data->at(i);
+            //printf("%d %d\n", v[i], i);
         }
-       
+
+        ok = m_zipper->write(m_zipPoint->m_lz_point);
     }
     catch(...)
     {
