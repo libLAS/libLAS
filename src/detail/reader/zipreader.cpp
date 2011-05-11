@@ -157,6 +157,7 @@ void ZipReaderImpl::Reset()
         unsigned int stat = 1;
         try
         {
+            m_ifs.seekg(m_header->GetDataOffset(), std::ios::beg);
             stat = m_unzipper->open(m_ifs, m_zip);
         }
         catch(...)
@@ -332,18 +333,9 @@ void ZipReaderImpl::Seek(std::size_t n)
         throw std::runtime_error(msg.str());
     } 
 
-    std::streamsize pos = m_header->GetDataOffset();    
-
     m_ifs.clear();
-    m_ifs.seekg(pos, std::ios::beg);
-        
-    int t1 = m_ifs.tellg();
-    int t2 = m_unzipper->tell();
 
     m_unzipper->seek(n);
-
-    int t3 = m_ifs.tellg();
-    int t4 = m_unzipper->tell();
 
     m_current = n;
 }
