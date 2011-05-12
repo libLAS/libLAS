@@ -1,4 +1,9 @@
   >>> from liblas import file
+  >>> file.File('notafile.las')
+  Traceback (most recent call last):
+  ...
+  OSError: File junk.las can not be found
+  
   >>> f = file.File('../test/data/TO_core_last_clip.las')
   
   >>> f.header # doctest: +ELLIPSIS

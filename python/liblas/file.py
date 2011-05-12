@@ -130,6 +130,9 @@ class File(object):
         """Open the file for processing, called by __init__
         """
         
+        if not os.path.exists(self.filename):
+            raise OSError("No such file or directory: '%s'" % self.filename)
+        
         if self._mode == 'r' or self._mode == 'rb':
 
             if self._header == None:
