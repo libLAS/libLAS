@@ -1,8 +1,8 @@
   >>> from liblas import file
-  >>> file.File('notafile.las')
+  >>> file.File('notafile.las') #doctest: +IGNORE_EXCEPTION_DETAIL
   Traceback (most recent call last):
   ...
-  OSError: File junk.las can not be found
+  OSError: missing file
   
   >>> f = file.File('../test/data/TO_core_last_clip.las')
   
