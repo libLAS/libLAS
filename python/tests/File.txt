@@ -1,4 +1,9 @@
   >>> from liblas import file
+  >>> file.File('notafile.las') #doctest: +IGNORE_EXCEPTION_DETAIL
+  Traceback (most recent call last):
+  ...
+  OSError: missing file
+  
   >>> f = file.File('../test/data/TO_core_last_clip.las')
   
   >>> f.header # doctest: +ELLIPSIS

@@ -131,6 +131,9 @@ class File(object):
         """
         
         if self._mode == 'r' or self._mode == 'rb':
+            
+            if not os.path.exists(self.filename):
+                raise OSError("No such file or directory: '%s'" % self.filename)
 
             if self._header == None:
                 self.handle = core.las.LASReader_Create(self.filename)
