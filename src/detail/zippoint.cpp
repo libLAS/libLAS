@@ -127,7 +127,7 @@ void ZipPoint::ConstructItems(PointFormatName format)
         m_num_items = 2;
         m_items = new LASitem[2];
         m_items[0].type = LASitem::POINT10;
-        m_items[0].size = 8;
+        m_items[0].size = 20;
         m_items[1].type = LASitem::GPSTIME11;
         m_items[1].size = 8;
         break;
