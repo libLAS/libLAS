@@ -77,7 +77,7 @@ inline void WriteVLRData_n(IndexVLRData& dest, T& src, Q& pos)
     LIBLAS_SWAP_BYTES_N(src, sizeof(T));
     // error if writing past array end
     if (static_cast<size_t>(pos) + sizeof(T) > dest.size())
-        throw std::out_of_range("liblas::detail::WriteVLRData_n: array index out of range");
+        dest.resize(dest.size() + (std::numeric_limits<unsigned short>::max)());
     // copy sizeof(T) bytes to destination
     memcpy(&dest[pos], &src, sizeof(T));
     // increment the write position to end of written data
@@ -91,7 +91,7 @@ inline void WriteVLRDataNoInc_n(IndexVLRData& dest, T& src, Q const& pos)
     LIBLAS_SWAP_BYTES_N(src, sizeof(T));
     // error if writing past array end
     if (static_cast<size_t>(pos) + sizeof(T) > dest.size())
-        throw std::out_of_range("liblas::detail::WriteVLRDataNoInc_n: array index out of range");
+        dest.resize(dest.size() + (std::numeric_limits<unsigned short>::max)());
     // copy sizeof(T) bytes to destination
     memcpy(&dest[pos], &src, sizeof(T));
 }
@@ -103,7 +103,7 @@ inline void WriteVLRData_str(IndexVLRData& dest, char * const src, T const srcle
     std::memcpy(&dest[pos], src, srclen);
     // error if writing past array end
     if (static_cast<size_t>(pos) + static_cast<size_t>(srclen) > dest.size())
-        throw std::out_of_range("liblas::detail::WriteVLRData_str: array index out of range");
+        dest.resize(dest.size() + (std::numeric_limits<unsigned short>::max)());
     // increment the write position to end of written data
     pos += srclen;
 }
@@ -113,7 +113,7 @@ inline void WriteVLRDataNoInc_str(IndexVLRData& dest, char * const src, T const 
 {
     // error if writing past array end
     if (static_cast<size_t>(pos) + static_cast<size_t>(srclen) > dest.size())
-        throw std::out_of_range("liblas::detail::WriteVLRDataNoInc_str: array index out of range");
+        dest.resize(dest.size() + (std::numeric_limits<unsigned short>::max)());
     // copy srclen bytes to destination
     memcpy(&dest[pos], src, srclen);
 }

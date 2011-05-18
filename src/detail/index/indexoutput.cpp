@@ -295,7 +295,7 @@ bool IndexOutput::OutputCell(liblas::detail::IndexCell *CellBlock, boost::uint32
 				boost::uint32_t WritePos = m_DataRecordSize;
 				// m_TempWritePos is the size of the new data block
 				// m_DataRecordSize is amount of common data written already
-				boost::uint32_t UnwrittenBytes = m_TempWritePos + m_DataRecordSize;
+				boost::uint32_t UnwrittenBytes = m_TempWritePos;
 				// Make DataRecordSize equal to the total size of the data + common data 
 				m_DataRecordSize += m_TempWritePos;
 				// write the total size in the common data section
