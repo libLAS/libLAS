@@ -162,6 +162,17 @@ void ReaderImpl::ReadNextPoint()
     {
         if (m_point->GetHeaderPtr().get() != m_header.get())
             m_point->SetHeaderPtr(m_header);
+        
+        HeaderPtr h = m_header;
+        if (m_point->GetHeader())
+        {
+            liblas::Header const& h_old = m_point->GetHeader().get();
+            if (!(h_old == *h))
+            {
+                m_point->SetHeader(*h);
+            }            
+            
+        }
     }
     
     try
@@ -250,6 +261,17 @@ liblas::Point const& ReaderImpl::ReadPointAt(std::size_t n)
     {
         if (m_point->GetHeaderPtr().get() != m_header.get())
             m_point->SetHeaderPtr(m_header);
+        
+        HeaderPtr h = m_header;
+        if (m_point->GetHeader())
+        {
+            liblas::Header const& h_old = m_point->GetHeader().get();
+            if (!(h_old == *h))
+            {
+                m_point->SetHeader(*h);
+            }            
+            
+        }
     }
     
     detail::read_n(m_point->GetData().front(), m_ifs, m_record_size);

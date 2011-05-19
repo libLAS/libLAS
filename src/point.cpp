@@ -65,7 +65,9 @@ namespace liblas {
 
 Point::Point()
     : m_header(HeaderPtr())
+    , m_header_new(boost::optional< Header const& >())
     , m_default_header(DefaultHeader::get())
+    
 {
     m_data.resize(ePointSize3);
     m_data.assign(ePointSize3, 0);
@@ -73,6 +75,7 @@ Point::Point()
 
 Point::Point(HeaderPtr hdr)
     : m_header(hdr)
+    , m_header_new(boost::optional< Header const& >(*hdr))
     , m_default_header(DefaultHeader::get())
 {
     m_data.resize(ePointSize3);
@@ -82,6 +85,7 @@ Point::Point(HeaderPtr hdr)
 Point::Point(Point const& other)
     : m_data(other.m_data)
     , m_header(other.m_header)
+    , m_header_new(boost::optional< Header const& >(other.GetHeader()))
     , m_default_header(DefaultHeader::get())
 {
 }
@@ -92,6 +96,7 @@ Point& Point::operator=(Point const& rhs)
     {
         m_data = rhs.m_data;
         m_header = rhs.m_header;
+        m_header_new = rhs.m_header_new;
     }
     return *this;
 }

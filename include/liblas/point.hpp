@@ -106,6 +106,7 @@ public:
     };
 
     Point();
+    ~Point() {};
     Point(HeaderPtr header);
     Point(Point const& other);
     Point& operator=(Point const& rhs);
@@ -203,6 +204,10 @@ public:
     
     void SetHeaderPtr(HeaderPtr header);
     HeaderPtr GetHeaderPtr() const;
+        // 
+    inline void SetHeader(boost::optional<Header const&> header) { m_header_new = header; }
+    boost::optional<Header const&> GetHeader() const { return m_header_new; }
+    
     
     property_tree::ptree GetPTree() const;
     
@@ -214,6 +219,7 @@ private:
     
     std::vector<boost::uint8_t>::size_type GetDimensionBytePosition(std::size_t dim_pos) const;
     HeaderPtr m_header;
+    boost::optional< Header const& > m_header_new;
     Header const& m_default_header;
 
 };
