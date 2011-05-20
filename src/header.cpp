@@ -161,6 +161,9 @@ Header& Header::operator=(Header const& rhs)
 bool Header::operator==(Header const& other) const
 {
     if (&other == this) return true;
+
+    if (m_scales != other.m_scales) return false;
+    if (m_offsets != other.m_offsets) return false;
     
     if (m_signature != other.m_signature) return false;
     if (m_sourceId != other.m_sourceId) return false;
@@ -182,8 +185,6 @@ bool Header::operator==(Header const& other) const
     // if (m_dataRecordLen != other.m_dataRecordLen) return false;
     if (m_pointRecordsCount != other.m_pointRecordsCount) return false;
     if (m_pointRecordsByReturn != other.m_pointRecordsByReturn) return false;
-    if (m_scales != other.m_scales) return false;
-    if (m_offsets != other.m_offsets) return false;
     if (m_extent != other.m_extent) return false;
     if (m_isCompressed != other.m_isCompressed) return false;
     
