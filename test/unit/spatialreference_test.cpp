@@ -114,10 +114,11 @@ namespace tut
         out_ref.SetWKT(epsg4326_wkt);
         ensure_equals("Output WKT comparison", out_ref.GetWKT(), epsg4326_wkt);
         
-        liblas::HeaderPtr out_hdr = liblas::HeaderPtr(new liblas::Header(header));
-        out_hdr->SetScale(0.00000001, 0.00000001, 0.01);
-        out_hdr->SetOffset(0,0,0);
-        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, out_hdr));
+        liblas::Header out_hdr(header);
+        out_hdr.SetScale(0.00000001, 0.00000001, 0.01);
+        out_hdr.SetOffset(0,0,0);
+        liblas::HeaderOptionalConstRef out_hdr_ref(out_hdr);
+        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, out_hdr_ref));
         
         std::vector<liblas::TransformPtr> transforms;
         transforms.push_back(srs_transform);
@@ -149,10 +150,13 @@ namespace tut
             ensure(e.what(), true);
         }
         
+        liblas::Header out_hdr2(header);
+        
+        out_hdr2.SetScale(0.0000001, 0.0000001, 0.01);
+        out_hdr2.SetOffset(0,0,0);
+        liblas::HeaderOptionalConstRef out_hdr_ref2(out_hdr2);
 
-        out_hdr->SetScale(0.0000001, 0.0000001, 0.01);
-        out_hdr->SetOffset(0,0,0);
-        srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, out_hdr));
+        srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, out_hdr_ref2));
         
         transforms.clear();
         transforms.push_back(srs_transform);

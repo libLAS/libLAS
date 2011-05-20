@@ -202,8 +202,8 @@ public:
     std::vector<boost::uint8_t> & GetData() {return m_data; }
     void SetData(std::vector<boost::uint8_t> const& v) { m_data = v;}
     
-    void SetHeaderPtr(HeaderPtr header);
-    HeaderPtr GetHeaderPtr() const;
+    // void SetHeaderPtr(HeaderPtr header);
+    // HeaderPtr GetHeaderPtr() const;
         // 
     void SetHeader(HeaderOptionalConstRef header); 
     HeaderOptionalConstRef GetHeader() const;
@@ -218,7 +218,7 @@ private:
     std::vector<boost::uint8_t> m_data;
     
     std::vector<boost::uint8_t>::size_type GetDimensionBytePosition(std::size_t dim_pos) const;
-    HeaderPtr m_header;
+    // HeaderPtr m_header;
     HeaderOptionalConstRef m_header_new;
     Header const& m_default_header;
 

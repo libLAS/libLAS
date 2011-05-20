@@ -496,10 +496,9 @@ namespace tut
     {
         liblas::Header header;
         header.SetDataFormatId(liblas::ePointFormat2);
-        liblas::HeaderPtr hdr = liblas::HeaderPtr(new liblas::Header(header));
         
         liblas::Point p;
-        p.SetHeaderPtr(hdr);
+        p.SetHeader(liblas::HeaderOptionalConstRef(header));
         
         liblas::Color c;
         c.SetRed(123);

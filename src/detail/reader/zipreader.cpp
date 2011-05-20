@@ -234,8 +234,8 @@ void ZipReaderImpl::ReadHeader()
     if (!m_header->Compressed())
         throw liblas_error("Internal error: compressed reader encountered uncompressed header"); 
 
-    m_point->SetHeaderPtr(m_header);
-
+    // m_point->SetHeaderPtr(m_header);
+    m_point->SetHeader(HeaderOptionalConstRef(*m_header));
     Reset();
 }
 
@@ -289,8 +289,12 @@ void ZipReaderImpl::ReadNextPoint()
 
     if (bNeedHeaderCheck) 
     {
-        if (m_point->GetHeaderPtr().get() != m_header.get())
-            m_point->SetHeaderPtr(m_header);
+        // if (m_point->GetHeaderPtr().get() != m_header.get())
+        //     m_point->SetHeaderPtr(m_header);
+
+        if (!(m_point->GetHeader().get() == *m_header))
+            m_point->SetHeader(HeaderOptionalConstRef(*m_header));
+
     }
     
     ReadIdiom();

@@ -29,6 +29,7 @@ liblas::Summary check_points(   liblas::Reader& reader,
 {
 
     liblas::Summary summary;
+    summary.SetHeader(reader.GetHeader());
     
     reader.SetFilters(filters);
     reader.SetTransforms(transforms);
@@ -227,7 +228,7 @@ int main(int argc, char* argv[])
             }
 
         }
-
+        
         liblas::Summary summary;
         if (check)
             summary = check_points(  reader, 
@@ -236,11 +237,7 @@ int main(int argc, char* argv[])
                             verbose
                             );
 
-        header = reader.GetHeader();
 
-        // Add the header to the summary so we can get more detailed 
-        // info
-        summary.SetHeader(header);
         
         if (output_xml && output_json) {
             std::cerr << "both JSON and XML output cannot be chosen";
