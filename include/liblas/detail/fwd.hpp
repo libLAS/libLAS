@@ -43,6 +43,7 @@
 #define LIBLAS_DETAIL_FWD_HPP_INCLUDED
 
 #include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 
 // Forward declarations
 namespace liblas {
@@ -64,11 +65,14 @@ class VariableRecord;
 
 typedef boost::shared_ptr<Header> HeaderPtr;
 typedef boost::shared_ptr<const Header> ConstHeaderPtr;
+
 typedef boost::shared_ptr<Point> PointPtr;
 typedef boost::shared_ptr<TransformI> TransformPtr;
 typedef boost::shared_ptr<FilterI> FilterPtr;
 typedef boost::shared_ptr<ReaderI> ReaderIPtr;
 typedef boost::shared_ptr<WriterI> WriterIPtr;
+
+typedef boost::optional<Header const&> HeaderOptionalConstRef;
 
 namespace detail {
 

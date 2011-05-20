@@ -113,6 +113,7 @@ void Summary::AddPoint(liblas::Point const& p)
         count++;
 
         if (first) {
+            
             minimum = p;
             maximum = p;
             
@@ -308,6 +309,8 @@ void Summary::AddPoint(liblas::Point const& p)
 void Summary::SetHeader(liblas::Header const& h) 
 {
     m_header = h;
+    minimum.SetHeader(HeaderOptionalConstRef(h));
+    maximum.SetHeader(HeaderOptionalConstRef(h));
     bHaveHeader = true;
 }
 

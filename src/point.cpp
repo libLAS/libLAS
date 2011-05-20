@@ -65,7 +65,7 @@ namespace liblas {
 
 Point::Point()
     : m_header(HeaderPtr())
-    , m_header_new(boost::optional< Header const& >())
+    , m_header_new(HeaderOptionalConstRef())
     , m_default_header(DefaultHeader::get())
     
 {
@@ -75,7 +75,7 @@ Point::Point()
 
 Point::Point(HeaderPtr hdr)
     : m_header(hdr)
-    , m_header_new(boost::optional< Header const& >(*hdr))
+    , m_header_new(HeaderOptionalConstRef(*hdr))
     , m_default_header(DefaultHeader::get())
 {
     m_data.resize(ePointSize3);
@@ -85,7 +85,7 @@ Point::Point(HeaderPtr hdr)
 Point::Point(Point const& other)
     : m_data(other.m_data)
     , m_header(other.m_header)
-    , m_header_new(boost::optional< Header const& >(other.GetHeader()))
+    , m_header_new(HeaderOptionalConstRef(other.GetHeader()))
     , m_default_header(DefaultHeader::get())
 {
 }
@@ -309,6 +309,129 @@ void Point::SetHeaderPtr(HeaderPtr header)
 HeaderPtr Point::GetHeaderPtr() const
 {
     return m_header;
+}
+
+void Point::SetHeader(HeaderOptionalConstRef header)
+{
+
+    if (!header)
+    {
+        throw liblas_error("header reference for SetHeader is void");
+    }
+    
+    boost::uint16_t wanted_length;
+    
+    bool bSetCoordinates = true;
+    
+    const liblas::Schema* schema;
+    if (m_header_new) {
+        wanted_length = header.get().GetDataRecordLength();
+        schema = &header.get().GetSchema();
+
+        if (detail::compare_distance(header.get().GetScaleX(), m_header_new.get().GetScaleX()) ||
+            detail::compare_distance(header.get().GetScaleY(), m_header_new.get().GetScaleY()) ||
+            detail::compare_distance(header.get().GetScaleZ(), m_header_new.get().GetScaleZ()))
+            bSetCoordinates = false;
+        else
+            bSetCoordinates = true;
+        
+        if (detail::compare_distance(header.get().GetOffsetX(), m_header_new.get().GetOffsetX()) ||
+            detail::compare_distance(header.get().GetOffsetY(), m_header_new.get().GetOffsetY()) ||
+            detail::compare_distance(header.get().GetOffsetZ(), m_header_new.get().GetOffsetZ()))
+            bSetCoordinates = false;
+        else
+            bSetCoordinates = true;
+            
+            // if (!bSetCoordinates)
+            //     std::cout << "Scales and offsets are equal, not resetting coordinates" << std::endl;
+        }
+        
+    else
+    {
+        wanted_length = m_default_header.GetDataRecordLength();
+        schema = &m_default_header.GetSchema();
+    }
+    
+    // This is hopefully faster than copying everything if we don't have 
+    // any data set and nothing to worry about.
+    boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
+    
+    if (!sum) {
+        std::vector<boost::uint8_t> data;
+        data.resize(wanted_length);
+        data.assign(wanted_length, 0);
+        m_data = data;
+        m_header_new = header;
+        return;
+    }
+    
+    if (wanted_length != m_data.size())
+    {
+        // Manually copy everything but the header ptr
+        // We can't just copy the raw data because its 
+        // layout is likely changing as a result of the 
+        // schema change.
+        Point p(*this);
+
+        std::vector<boost::uint8_t> data;
+        data.resize(wanted_length);
+        data.assign(wanted_length, 0);
+        m_data = data;
+        m_header_new = header;
+    
+        SetX(p.GetX());
+        SetY(p.GetY());
+        SetZ(p.GetZ());
+        
+        SetIntensity(p.GetIntensity());
+        SetScanFlags(p.GetScanFlags());
+        SetClassification(p.GetClassification());
+        SetScanAngleRank(p.GetScanAngleRank());
+        SetUserData(p.GetUserData());
+        SetPointSourceID(p.GetPointSourceID());
+        
+        boost::optional< Dimension const& > t = schema->GetDimension("Time");
+        if (t)
+            SetTime(p.GetTime());
+
+        boost::optional< Dimension const& > c = schema->GetDimension("Red");
+        if (c)
+            SetColor(p.GetColor());
+
+        // FIXME: copy other custom dimensions here?  resetting the 
+        // headerptr can be catastrophic in a lot of cases.  
+    } else 
+    {
+        m_header_new = header;
+        return;
+    }
+
+    double x;
+    double y;
+    double z;
+    
+    if (bSetCoordinates)
+    {
+        x = GetX();
+        y = GetY();
+        z = GetZ();        
+    }
+    
+    // The header's scale/offset can change the raw storage of xyz.  
+    // SetHeaderPtr can result in a rescaling of the data.
+    m_header_new = header;
+
+    if (bSetCoordinates)
+    {
+        SetX(x);
+        SetY(y);
+        SetZ(z);
+    }
+    
+}
+HeaderOptionalConstRef Point::GetHeader() const
+{
+    if (m_header_new) return m_header_new; else return HeaderOptionalConstRef(m_default_header);
 }
 
 liblas::property_tree::ptree Point::GetPTree() const

@@ -205,8 +205,8 @@ public:
     void SetHeaderPtr(HeaderPtr header);
     HeaderPtr GetHeaderPtr() const;
         // 
-    inline void SetHeader(boost::optional<Header const&> header) { m_header_new = header; }
-    boost::optional<Header const&> GetHeader() const { return m_header_new; }
+    void SetHeader(HeaderOptionalConstRef header); 
+    HeaderOptionalConstRef GetHeader() const;
     
     
     property_tree::ptree GetPTree() const;
@@ -219,7 +219,7 @@ private:
     
     std::vector<boost::uint8_t>::size_type GetDimensionBytePosition(std::size_t dim_pos) const;
     HeaderPtr m_header;
-    boost::optional< Header const& > m_header_new;
+    HeaderOptionalConstRef m_header_new;
     Header const& m_default_header;
 
 };
