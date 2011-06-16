@@ -586,6 +586,7 @@ void Point::SetZ( double const& value )
     double offset;
 
     scale = GetHeader()->GetScaleZ();
+    offset = GetHeader()->GetOffsetZ();
 
     // descale the value given our scale/offset
     v = static_cast<boost::int32_t>(
