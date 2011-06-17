@@ -816,6 +816,7 @@ int main(int argc, char *argv[])
     while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
     {
         point = LASPoint_Create();
+        LASPoint_SetHeader(point, header);
         if (parse(parse_string, line, xyz, point, &gps_time))
         {
             /* init the bounding box */
@@ -867,6 +868,8 @@ int main(int argc, char *argv[])
     while (fgets(line, sizeof(char) * MAX_CHARACTERS_PER_LINE, file_in))
     {
         point = LASPoint_Create();
+        LASPoint_SetHeader(point, header);
+        
         if (parse(parse_string, line, xyz, point, &gps_time))
         {
             /* update bounding box */
