@@ -514,4 +514,73 @@ namespace tut
         
     }
 
+    template<>
+    template<>
+    void to::test<20>()
+    {
+
+        std::ifstream ifs;
+        ifs.open(file10_.c_str(), std::ios::in | std::ios::binary);
+        liblas::Reader reader(ifs);
+        liblas::Header const& header_input = reader.GetHeader();
+        
+        reader.ReadPointAt(0);
+        liblas::Point p = reader.GetPoint();
+        
+
+        liblas::Header header_output;
+        header_output.SetScale(0.001, 0.1, 0.0001);
+        header_output.SetOffset(1.0, 2.0, 3.0);
+        
+        liblas::HeaderOptionalConstRef header_ref(header_output);
+        
+        ensure("header scaleX's were not supposed to be equal", 
+                !liblas::detail::compare_distance(header_input.GetScaleX(), header_output.GetScaleX()));
+        ensure("header scaleY's were not supposed to be equal", 
+                !liblas::detail::compare_distance(header_input.GetScaleY(), header_output.GetScaleY()));
+        ensure("header scaleZ's were not supposed to be equal", 
+                !liblas::detail::compare_distance(header_input.GetScaleZ(), header_output.GetScaleZ()));
+
+        ensure("header offsetX's were not supposed to be equal", 
+                !liblas::detail::compare_distance(header_input.GetOffsetX(), header_output.GetOffsetX()));
+        ensure("header offsetY's were not supposed to be equal", 
+                !liblas::detail::compare_distance(header_input.GetOffsetY(), header_output.GetOffsetY()));
+        ensure("header offsetZ's were not supposed to be equal", 
+                !liblas::detail::compare_distance(header_input.GetOffsetZ(), header_output.GetOffsetZ()));
+
+        
+        boost::int32_t orig_raw_x = p.GetRawX();
+        boost::int32_t orig_raw_y = p.GetRawY();
+        boost::int32_t orig_raw_z = p.GetRawZ();
+        
+        double orig_double_x = p.GetX();
+        double orig_double_y = p.GetY();
+        double orig_double_z = p.GetZ();
+
+        p.SetHeader(header_ref);
+        
+        boost::int32_t new_raw_x = p.GetRawX();
+        boost::int32_t new_raw_y = p.GetRawY();
+        boost::int32_t new_raw_z = p.GetRawZ();
+        
+        double new_double_x = p.GetX();
+        double new_double_y = p.GetY();
+        double new_double_z = p.GetZ();
+        
+        // SetHeader should have forced rescaling of the data
+        ensure("Raw X values should be different", orig_raw_x != new_raw_x);
+        ensure("Raw Y values should be different", orig_raw_y != new_raw_y);
+        ensure("Raw Z values should be different", orig_raw_z != new_raw_z);
+
+        ensure("Scaled X values should be the same", 
+                liblas::detail::compare_distance(orig_double_x,new_double_x));
+
+        ensure("Scaled Y values should be the same", 
+                liblas::detail::compare_distance(orig_double_y,new_double_y));
+        ensure("Scaled Z values should be the same", 
+                liblas::detail::compare_distance(orig_double_z,new_double_z));
+
+        
+    }
+
 }
