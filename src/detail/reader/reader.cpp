@@ -145,11 +145,6 @@ void ReaderImpl::ReadHeader()
 
 void ReaderImpl::SetHeader(liblas::Header const& header) 
 {
-
-    std::cerr << "SetHeader:: x scale " << header.GetScaleX() << std::endl;
-    std::cerr << "SetHeader:: y scale " << header.GetScaleY() << std::endl;
-    std::cerr << "SetHeader:: z scale " << header.GetScaleZ() << std::endl;
-    
     m_header = HeaderPtr(new liblas::Header(header));
     m_point->SetHeader(HeaderOptionalConstRef(header));
 }
