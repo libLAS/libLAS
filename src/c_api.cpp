@@ -433,7 +433,7 @@ LAS_DLL LASErrorEnum LASReader_SetOutputSRS(LASReaderH hReader, const LASSRSH hS
 
     try {
         liblas::Reader* reader = ((liblas::Reader*) hReader);
-        liblas::Header h = reader->GetHeader();
+        liblas::Header const& h = reader->GetHeader();
         liblas::SpatialReference in_ref = h.GetSRS();
         liblas::SpatialReference* out_ref = ((liblas::SpatialReference*) hSRS);
         std::vector<liblas::TransformPtr> transforms = reader->GetTransforms();
