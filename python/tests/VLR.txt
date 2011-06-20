@@ -1,7 +1,7 @@
   >>> from liblas import vlr
   >>> v = vlr.VLR()
   >>> v.reserved
-  0
+  43707
   >>> v.recordid
   0
   >>> v.recordid = 2
