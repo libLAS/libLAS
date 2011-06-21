@@ -108,6 +108,7 @@ def check_value_free(result, func, cargs):
         raise LASException(msg)
 
     retval = ctypes.string_at(result)[:]
+    
     return retval
 
 
@@ -115,7 +116,8 @@ def free_returned_char_p(result, func, cargs):
 
     size = ctypes.c_int()
     retvalue = ctypes.string_at(result)
-    free(result)
+    pdata = ctypes.cast(result, ctypes.POINTER(ctypes.c_char_p))
+    las.LASString_Free(pdata)
     return retvalue
 
 
