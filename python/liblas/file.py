@@ -218,7 +218,7 @@ class File(object):
                 files['write'].remove(self.filename)
             core.las.LASWriter_Destroy(self.handle)
         
-        if self.ownheader:
+        if (self._header):
             core.las.LASHeader_Destroy(self._header)
             
         self._header = None
