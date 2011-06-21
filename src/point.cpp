@@ -193,126 +193,6 @@ bool Point::IsValid() const
     return true;
 }
 
-// void Point::SetHeaderPtr(HeaderPtr header) 
-// {
-//     boost::uint16_t wanted_length;
-//     
-//     bool bSetCoordinates = true;
-//     
-//     const liblas::Schema* schema;
-//     if (header.get()) {
-//         wanted_length = header->GetDataRecordLength();
-//         schema = &header->GetSchema();
-//         
-//         if (m_header.get())
-//         {
-//             if (detail::compare_distance(header->GetScaleX(), m_header->GetScaleX()) ||
-//                 detail::compare_distance(header->GetScaleY(), m_header->GetScaleY()) ||
-//                 detail::compare_distance(header->GetScaleZ(), m_header->GetScaleZ()))
-//                 bSetCoordinates = false;
-//             else
-//                 bSetCoordinates = true;
-//             
-//             if (detail::compare_distance(header->GetOffsetX(), m_header->GetOffsetX()) ||
-//                 detail::compare_distance(header->GetOffsetY(), m_header->GetOffsetY()) ||
-//                 detail::compare_distance(header->GetOffsetZ(), m_header->GetOffsetZ()))
-//                 bSetCoordinates = false;
-//             else
-//                 bSetCoordinates = true;
-//             
-//             // if (!bSetCoordinates)
-//             //     std::cout << "Scales and offsets are equal, not resetting coordinates" << std::endl;
-//         }
-//         
-//     }
-//     else
-//     {
-//         wanted_length = m_default_header.GetDataRecordLength();
-//         schema = &m_default_header.GetSchema();
-//     }
-//     
-//     // This is hopefully faster than copying everything if we don't have 
-//     // any data set and nothing to worry about.
-//     boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
-//     
-//     if (!sum) {
-//         std::vector<boost::uint8_t> data;
-//         data.resize(wanted_length);
-//         data.assign(wanted_length, 0);
-//         m_data = data;
-//         m_header = header;
-//         return;
-//     }
-//     
-//     if (wanted_length != m_data.size())
-//     {
-//         // Manually copy everything but the header ptr
-//         // We can't just copy the raw data because its 
-//         // layout is likely changing as a result of the 
-//         // schema change.
-//         Point p(*this);
-// 
-//         std::vector<boost::uint8_t> data;
-//         data.resize(wanted_length);
-//         data.assign(wanted_length, 0);
-//         m_data = data;
-//         m_header = header;
-//     
-//         SetX(p.GetX());
-//         SetY(p.GetY());
-//         SetZ(p.GetZ());
-//         
-//         SetIntensity(p.GetIntensity());
-//         SetScanFlags(p.GetScanFlags());
-//         SetClassification(p.GetClassification());
-//         SetScanAngleRank(p.GetScanAngleRank());
-//         SetUserData(p.GetUserData());
-//         SetPointSourceID(p.GetPointSourceID());
-//         
-//         boost::optional< Dimension const& > t = schema->GetDimension("Time");
-//         if (t)
-//             SetTime(p.GetTime());
-// 
-//         boost::optional< Dimension const& > c = schema->GetDimension("Red");
-//         if (c)
-//             SetColor(p.GetColor());
-// 
-//         // FIXME: copy other custom dimensions here?  resetting the 
-//         // headerptr can be catastrophic in a lot of cases.  
-//     } else 
-//     {
-//         m_header = header;
-//         return;
-//     }
-// 
-//     double x;
-//     double y;
-//     double z;
-//     
-//     if (bSetCoordinates)
-//     {
-//         x = GetX();
-//         y = GetY();
-//         z = GetZ();        
-//     }
-//     
-//     // The header's scale/offset can change the raw storage of xyz.  
-//     // SetHeaderPtr can result in a rescaling of the data.
-//     m_header = header;
-// 
-//     if (bSetCoordinates)
-//     {
-//         SetX(x);
-//         SetY(y);
-//         SetZ(z);
-//     }
-// }
-// 
-// HeaderPtr Point::GetHeaderPtr() const
-// {
-//     return m_header;
-// }
-
 void Point::SetHeader(HeaderOptionalConstRef header)
 {
 
@@ -321,31 +201,26 @@ void Point::SetHeader(HeaderOptionalConstRef header)
         throw liblas_error("header reference for SetHeader is void");
     }
     
+    // If we don't have a header initialized, set the point's to the 
+    // one we were given.
     if (!m_header) m_header = header;
     
-    boost::uint16_t wanted_length;
-    
-    bool bSetCoordinates = true;
+    bool bApplyNewScaling = true;
     
     const liblas::Schema* schema;
-    wanted_length = header.get().GetDataRecordLength();
+    boost::uint16_t wanted_length = header.get().GetDataRecordLength();
     schema = &header.get().GetSchema();
     
-    
-    //FIXME: check boost::optional returns
     if (detail::compare_distance(header->GetScaleX(), m_header->GetScaleX()) &&
         detail::compare_distance(header->GetScaleY(), m_header->GetScaleY()) &&
         detail::compare_distance(header->GetScaleZ(), m_header->GetScaleZ()) &&
         detail::compare_distance(header->GetOffsetX(), m_header->GetOffsetX()) &&
         detail::compare_distance(header->GetOffsetY(), m_header->GetOffsetY()) &&
         detail::compare_distance(header->GetOffsetZ(), m_header->GetOffsetZ()))
-        bSetCoordinates = false;
+        bApplyNewScaling = false;
     else
-        bSetCoordinates = true;
-        
-        // if (!bSetCoordinates)
-        //     std::cout << "Scales and offsets are equal, not resetting coordinates" << std::endl;
-        
+        bApplyNewScaling = true;
+
     // This is hopefully faster than copying everything if we don't have 
     // any data set and nothing to worry about.
     boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
@@ -397,22 +272,23 @@ void Point::SetHeader(HeaderOptionalConstRef header)
         // headerptr can be catastrophic in a lot of cases.  
     } 
 
+
+    // The header's scale/offset can change the raw storage of xyz.  
+    // SetHeader can result in a rescaling of the data.
     double x;
     double y;
     double z;
 
-    if (bSetCoordinates)
+    if (bApplyNewScaling)
     {
         x = GetX();
         y = GetY();
         z = GetZ();        
     }
 
-    // The header's scale/offset can change the raw storage of xyz.  
-    // SetHeaderPtr can result in a rescaling of the data.
     m_header = header;
 
-    if (bSetCoordinates)
+    if (bApplyNewScaling)
     {
         SetX(x);
         SetY(y);
