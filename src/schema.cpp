@@ -780,4 +780,21 @@ VariableRecord Schema::GetVLR() const
 
     return vlr;
 }
+
+bool Schema::operator==(const Schema& input) const
+{
+
+    index_by_index const& current = m_index.get<index>();
+    index_by_index const& other = input.m_index.get<index>();
+    
+    
+    for (boost::uint32_t i = 0; i!= current.size(); ++i)
+    {
+        if (other[i] != current[i]) return false;
+    }
+    
+    return true;
+
+}
+
 } // namespace liblas
