@@ -333,15 +333,11 @@ void Point::SetHeader(HeaderOptionalConstRef header)
     
     
     //FIXME: check boost::optional returns
-    if (detail::compare_distance(header->GetScaleX(), m_header_new->GetScaleX()) ||
-        detail::compare_distance(header->GetScaleY(), m_header_new->GetScaleY()) ||
-        detail::compare_distance(header->GetScaleZ(), m_header_new->GetScaleZ()))
-        bSetCoordinates = false;
-    else
-        bSetCoordinates = true;
-    
-    if (detail::compare_distance(header->GetOffsetX(), m_header_new->GetOffsetX()) ||
-        detail::compare_distance(header->GetOffsetY(), m_header_new->GetOffsetY()) ||
+    if (detail::compare_distance(header->GetScaleX(), m_header_new->GetScaleX()) &&
+        detail::compare_distance(header->GetScaleY(), m_header_new->GetScaleY()) &&
+        detail::compare_distance(header->GetScaleZ(), m_header_new->GetScaleZ()) &&
+        detail::compare_distance(header->GetOffsetX(), m_header_new->GetOffsetX()) &&
+        detail::compare_distance(header->GetOffsetY(), m_header_new->GetOffsetY()) &&
         detail::compare_distance(header->GetOffsetZ(), m_header_new->GetOffsetZ()))
         bSetCoordinates = false;
     else
