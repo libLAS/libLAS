@@ -125,8 +125,8 @@ bool SpatialReference::operator==(const SpatialReference& input) const
 {
 #ifdef HAVE_GDAL
 
-    OGRSpatialReferenceH current = OSRNewSpatialReference(getWKT(eCompoundOK, false).c_str());
-    OGRSpatialReferenceH other = OSRNewSpatialReference(input.getWKT(eCompoundOK, false).c_str());
+    OGRSpatialReferenceH current = OSRNewSpatialReference(GetWKT(eCompoundOK, false).c_str());
+    OGRSpatialReferenceH other = OSRNewSpatialReference(input.GetWKT(eCompoundOK, false).c_str());
 
     int output = OSRIsSame(current, other);
 
