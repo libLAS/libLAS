@@ -196,6 +196,8 @@ private:
 
 } // namespace liblas
 
+LAS_DLL std::ostream& operator<<(std::ostream& ostr, const liblas::SpatialReference& srs);
+
 LAS_C_START
 #if defined(__geotiff_h_)
 #if defined(GEO_NORMALIZE_H_INCLUDED)
