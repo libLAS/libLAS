@@ -66,7 +66,7 @@ namespace liblas {
 Point::Point()
     : 
     // m_header(HeaderPtr())
-     m_header_new(HeaderOptionalConstRef())
+     m_header(HeaderOptionalConstRef())
     , m_default_header(DefaultHeader::get())
     
 {
@@ -77,7 +77,7 @@ Point::Point()
 Point::Point(HeaderPtr hdr)
     : 
     // m_header(hdr)
-     m_header_new(HeaderOptionalConstRef(*hdr))
+     m_header(HeaderOptionalConstRef(*hdr))
     , m_default_header(DefaultHeader::get())
 {
     m_data.resize(ePointSize3);
@@ -87,7 +87,7 @@ Point::Point(HeaderPtr hdr)
 Point::Point(Point const& other)
     : m_data(other.m_data)
     // , m_header(other.m_header)
-    , m_header_new(HeaderOptionalConstRef(other.GetHeader()))
+    , m_header(HeaderOptionalConstRef(other.GetHeader()))
     , m_default_header(DefaultHeader::get())
 {
 }
@@ -98,7 +98,7 @@ Point& Point::operator=(Point const& rhs)
     {
         m_data = rhs.m_data;
         // m_header = rhs.m_header;
-        m_header_new = rhs.m_header_new;
+        m_header = rhs.m_header;
     }
     return *this;
 }
@@ -321,7 +321,7 @@ void Point::SetHeader(HeaderOptionalConstRef header)
         throw liblas_error("header reference for SetHeader is void");
     }
     
-    if (!m_header_new) m_header_new = header;
+    if (!m_header) m_header = header;
     
     boost::uint16_t wanted_length;
     
@@ -333,12 +333,12 @@ void Point::SetHeader(HeaderOptionalConstRef header)
     
     
     //FIXME: check boost::optional returns
-    if (detail::compare_distance(header->GetScaleX(), m_header_new->GetScaleX()) &&
-        detail::compare_distance(header->GetScaleY(), m_header_new->GetScaleY()) &&
-        detail::compare_distance(header->GetScaleZ(), m_header_new->GetScaleZ()) &&
-        detail::compare_distance(header->GetOffsetX(), m_header_new->GetOffsetX()) &&
-        detail::compare_distance(header->GetOffsetY(), m_header_new->GetOffsetY()) &&
-        detail::compare_distance(header->GetOffsetZ(), m_header_new->GetOffsetZ()))
+    if (detail::compare_distance(header->GetScaleX(), m_header->GetScaleX()) &&
+        detail::compare_distance(header->GetScaleY(), m_header->GetScaleY()) &&
+        detail::compare_distance(header->GetScaleZ(), m_header->GetScaleZ()) &&
+        detail::compare_distance(header->GetOffsetX(), m_header->GetOffsetX()) &&
+        detail::compare_distance(header->GetOffsetY(), m_header->GetOffsetY()) &&
+        detail::compare_distance(header->GetOffsetZ(), m_header->GetOffsetZ()))
         bSetCoordinates = false;
     else
         bSetCoordinates = true;
@@ -355,7 +355,7 @@ void Point::SetHeader(HeaderOptionalConstRef header)
         data.resize(wanted_length);
         data.assign(wanted_length, 0);
         m_data = data;
-        m_header_new = header;
+        m_header = header;
         return;
     }
     
@@ -366,13 +366,13 @@ void Point::SetHeader(HeaderOptionalConstRef header)
         // layout is likely changing as a result of the 
         // schema change.
         Point p(*this);
-        m_header_new = header;
+        m_header = header;
 
         std::vector<boost::uint8_t> data;
         data.resize(wanted_length);
         data.assign(wanted_length, 0);
         m_data = data;
-        m_header_new = header;
+        m_header = header;
     
         SetX(p.GetX());
         SetY(p.GetY());
@@ -410,7 +410,7 @@ void Point::SetHeader(HeaderOptionalConstRef header)
 
     // The header's scale/offset can change the raw storage of xyz.  
     // SetHeaderPtr can result in a rescaling of the data.
-    m_header_new = header;
+    m_header = header;
 
     if (bSetCoordinates)
     {
@@ -423,7 +423,7 @@ void Point::SetHeader(HeaderOptionalConstRef header)
 }
 HeaderOptionalConstRef Point::GetHeader() const
 {
-    if (m_header_new) return m_header_new; else return HeaderOptionalConstRef(m_default_header);
+    if (m_header) return m_header; else return HeaderOptionalConstRef(m_default_header);
 }
 
 liblas::property_tree::ptree Point::GetPTree() const
@@ -1074,7 +1074,7 @@ void Point::SetColor(Color const& value)
 std::vector<boost::uint8_t>::size_type Point::GetDimensionBytePosition(std::size_t dim_pos) const
 {
     boost::optional<Dimension const&> d;
-    d = m_header_new->GetSchema().GetDimension(dim_pos);
+    d = m_header->GetSchema().GetDimension(dim_pos);
     
     if (!d)
     {

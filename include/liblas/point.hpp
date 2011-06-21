@@ -219,7 +219,7 @@ private:
     
     std::vector<boost::uint8_t>::size_type GetDimensionBytePosition(std::size_t dim_pos) const;
     // HeaderPtr m_header;
-    HeaderOptionalConstRef m_header_new;
+    HeaderOptionalConstRef m_header;
     Header const& m_default_header;
 
 };
