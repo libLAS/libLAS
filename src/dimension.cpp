@@ -172,6 +172,28 @@ liblas::property_tree::ptree Dimension::GetPTree() const
     return dim;
 }
 
+bool Dimension::operator==(const Dimension& other) const
+{
+
+    if (&other == this) return true;
+    if (m_name != other.m_name) return false;
+    if (m_bit_size != other.m_bit_size) return false;
+    if (m_required != other.m_required) return false;
+    if (m_active != other.m_active) return false;
+    if (m_description != other.m_description) return false;
+    if (!detail::compare_distance(m_min, other.m_min)) return false;
+    if (!detail::compare_distance(m_max, other.m_max)) return false;
+    if (m_numeric != other.m_numeric) return false;
+    if (m_signed != other.m_signed) return false;
+    if (m_integer != other.m_integer) return false;
+    if (m_position != other.m_position) return false;
+    if (m_byte_offset != other.m_byte_offset) return false;
+    if (m_bit_offset != other.m_bit_offset) return false;
+    
+    return true;
+
+}
+
 std::ostream& operator<<(std::ostream& os, liblas::Dimension const& d)
 {
     using liblas::property_tree::ptree;

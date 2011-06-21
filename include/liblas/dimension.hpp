@@ -77,6 +77,9 @@ public:
     Dimension(std::string const& name, std::size_t size_in_bits);
     Dimension& operator=(Dimension const& rhs);
     Dimension(Dimension const& other);
+
+    bool operator==(const Dimension& other) const;
+    bool operator!=(const Dimension& other) const { return !(*this == other); }
         
     virtual ~Dimension() {}
         
