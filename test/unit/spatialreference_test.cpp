@@ -237,8 +237,8 @@ namespace tut
         liblas::SpatialReference ref2;
         ref2.SetWKT(wkt_c);
         
-        liblas::SpatialReference test_ref;
-        test_ref.SetWKT(ref2.GetWKT());
+        liblas::SpatialReference test_ref2;
+        test_ref2.SetWKT(ref2.GetWKT());
         ensure_equals("WKT comparison from geotiff", ref2, test_ref2 );
 
     }
