@@ -121,6 +121,26 @@ SpatialReference& SpatialReference::operator=(SpatialReference const& rhs)
     return *this;
 }
 
+bool SpatialReference::operator==(const SpatialReference& input) const
+{
+#ifdef HAVE_GDAL
+
+    OGRSpatialReferenceH current = OSRNewSpatialReference(getWKT(eCompoundOK, false).c_str());
+    OGRSpatialReferenceH other = OSRNewSpatialReference(input.getWKT(eCompoundOK, false).c_str());
+
+    int output = OSRIsSame(current, other);
+
+    OSRDestroySpatialReference( current );
+    OSRDestroySpatialReference( other );
+    
+    return bool(output);
+    
+#else
+    throw std::runtime_error ("SpatialReference equality testing not available without GDAL+libgeotiff support");
+#endif
+
+}
+
 SpatialReference::~SpatialReference() 
 {
 #ifdef HAVE_LIBGEOTIFF

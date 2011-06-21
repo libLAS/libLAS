@@ -72,8 +72,13 @@ namespace tut
         liblas::SpatialReference ref;
         const char* proj4_c = "+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs ";
         ref.SetProj4(proj4_c);
+
+        liblas::SpatialReference ref2;
+        ref2.SetProj4(ref.GetProj4());
         
-        ensure_equals("Proj.4 comparison", ref.GetProj4(), proj4_c);
+        ensure_equals("Proj.4 i/o", ref, ref2);
+        
+        // ensure_equals("Proj.4 comparison", ref.GetProj4(), proj4_c);
         
     }
 
@@ -112,7 +117,10 @@ namespace tut
         
         liblas::SpatialReference out_ref;
         out_ref.SetWKT(epsg4326_wkt);
-        ensure_equals("Output WKT comparison", out_ref.GetWKT(), epsg4326_wkt);
+        liblas::SpatialReference test_ref;
+        test_ref.SetWKT(out_ref.GetWKT());
+        
+        ensure_equals("Output WKT comparison", out_ref, test_ref);
         
         liblas::Header out_hdr(header);
         out_hdr.SetScale(0.00000001, 0.00000001, 0.01);
@@ -205,8 +213,10 @@ namespace tut
         const char* exp_gtiff = "Geotiff_Information:\n   Version: 1\n   Key_Revision: 1.0\n   Tagged_Information:\n      End_Of_Tags.\n   Keyed_Information:\n      GTRasterTypeGeoKey (Short,1): RasterPixelIsArea\n      GTModelTypeGeoKey (Short,1): ModelTypeGeographic\n      GeogAngularUnitsGeoKey (Short,1): Angular_Degree\n      GeogCitationGeoKey (Ascii,7): \"WGS 84\"\n      GeographicTypeGeoKey (Short,1): GCS_WGS_84\n      GeogInvFlatteningGeoKey (Double,1): 298.257223563    \n      GeogSemiMajorAxisGeoKey (Double,1): 6378137          \n      VerticalCitationGeoKey (Ascii,14): \"NAVD88 height\"\n      VerticalCSTypeGeoKey (Short,1): Unknown-5703\n      VerticalDatumGeoKey (Short,1): Unknown-5103\n      VerticalUnitsGeoKey (Short,1): Linear_Meter\n      End_Of_Keys.\n   End_Of_Geotiff.\n";
 
         ref.SetFromUserInput(wkt_c);
-
-        ensure_equals("WKT comparison", ref.GetWKT(liblas::SpatialReference::eCompoundOK), wkt_c );
+        
+        liblas::SpatialReference test_ref;
+        test_ref.SetWKT(ref.GetWKT());
+        ensure_equals("WKT comparison", ref, test_ref );
         
         std::vector<liblas::VariableRecord> const& vlrs = ref.GetVLRs();
         ensure_equals("VLR count", vlrs.size(), boost::uint32_t(4));
@@ -222,7 +232,15 @@ namespace tut
         ref.ClearVLRs( liblas::SpatialReference::eOGRWKT );
 
         wkt_c = "COMPD_CS[\"unknown\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],VERT_CS[\"NAVD88 height\",VERT_DATUM[\"North American Vertical Datum 1988\",2005,AUTHORITY[\"EPSG\",\"5103\"],EXTENSION[\"PROJ4_GRIDS\",\"g2003conus.gtx,g2003alaska.gtx,g2003h01.gtx,g2003p01.gtx\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"5703\"]]]";
-        ensure_equals("non OGR WKT comparison", ref.GetWKT(liblas::SpatialReference::eCompoundOK), wkt_c );
+        // ensure_equals("non OGR WKT comparison", ref.GetWKT(liblas::SpatialReference::eCompoundOK), wkt_c );
+        
+        liblas::SpatialReference ref2;
+        ref2.SetWKT(wkt_c);
+        
+        liblas::SpatialReference test_ref;
+        test_ref.SetWKT(ref2.GetWKT());
+        ensure_equals("WKT comparison from geotiff", ref2, test_ref2 );
+
     }
 
     // Try writing a compound coordinate system to file and ensure we get back
