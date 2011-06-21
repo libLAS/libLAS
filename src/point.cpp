@@ -395,23 +395,19 @@ void Point::SetHeader(HeaderOptionalConstRef header)
 
         // FIXME: copy other custom dimensions here?  resetting the 
         // headerptr can be catastrophic in a lot of cases.  
-    } else 
-    {
-        m_header_new = header;
-        return;
-    }
+    } 
 
     double x;
     double y;
     double z;
-    
+
     if (bSetCoordinates)
     {
         x = GetX();
         y = GetY();
         z = GetZ();        
     }
-    
+
     // The header's scale/offset can change the raw storage of xyz.  
     // SetHeaderPtr can result in a rescaling of the data.
     m_header_new = header;
@@ -421,7 +417,8 @@ void Point::SetHeader(HeaderOptionalConstRef header)
         SetX(x);
         SetY(y);
         SetZ(z);
-    }
+    }    
+
     
 }
 HeaderOptionalConstRef Point::GetHeader() const
