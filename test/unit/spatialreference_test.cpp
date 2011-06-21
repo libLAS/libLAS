@@ -215,7 +215,7 @@ namespace tut
         ref.SetFromUserInput(wkt_c);
         
         liblas::SpatialReference test_ref;
-        test_ref.SetWKT(ref.GetWKT());
+        test_ref.SetWKT(ref.GetWKT(liblas::SpatialReference::eCompoundOK));
         ensure_equals("WKT comparison", ref, test_ref );
         
         std::vector<liblas::VariableRecord> const& vlrs = ref.GetVLRs();
@@ -238,7 +238,7 @@ namespace tut
         ref2.SetWKT(wkt_c);
         
         liblas::SpatialReference test_ref2;
-        test_ref2.SetWKT(ref2.GetWKT());
+        test_ref2.SetWKT(ref2.GetWKT(liblas::SpatialReference::eCompoundOK));
         ensure_equals("WKT comparison from geotiff", ref2, test_ref2 );
 
     }
