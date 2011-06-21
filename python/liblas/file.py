@@ -164,6 +164,7 @@ class File(object):
             self.handle = core.las.LASWriter_Create(self.filename,
                                                     self._header,
                                                     1)
+            self._header = core.las.LASWriter_GetHeader(self.handle)
             self.mode = 1
             files['write'].append(self.filename)
 
@@ -181,6 +182,8 @@ class File(object):
             self.handle = core.las.LASWriter_Create(self.filename,
                                                     self._header,
                                                     2)
+            core.las.LASHeader_Destroy(self._header)
+            self._header = core.las.LASWriter_GetHeader(self.handle)
             self.mode = 2
             files['append'].append(self.filename)
 
@@ -296,10 +299,12 @@ class File(object):
     def read(self, index):
         """Reads the point at the given index"""
         if self.mode == 0:
-            return point.Point(
+            p = point.Point(
             handle=core.las.LASReader_GetPointAt(self.handle, index),
             copy=True)
-
+            p.set_header(lasheader.Header(handle=self._header, copy=False))
+            return p
+            
     def seek(self, index):
         """Seeks to the point at the given index.  Subsequent calls \
 	   to :meth:`next` will then start at that point."""
@@ -319,7 +324,9 @@ class File(object):
             self.at_end = False
             p = core.las.LASReader_GetNextPoint(self.handle)
             while p and not self.at_end:
-                yield point.Point(handle=p, copy=True)
+                p2 = point.Point(handle=p, copy=True)
+                p2.set_header(lasheader.Header(handle=self._header, copy=False))
+                yield p2
                 p = core.las.LASReader_GetNextPoint(self.handle)
                 if not p:
                     self.at_end = True
