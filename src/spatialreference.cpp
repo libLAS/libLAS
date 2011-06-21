@@ -924,6 +924,9 @@ std::string SpatialReference::GetGTIFFText() const
 #endif
 }
 
+
+} // namespace liblas
+
 std::ostream& operator<<(std::ostream& ostr, const liblas::SpatialReference& srs)
 {
 
@@ -938,6 +941,3 @@ std::ostream& operator<<(std::ostream& ostr, const liblas::SpatialReference& srs
     throw std::runtime_error("SpatialReference io operator<< is not available without GDAL+libgeotiff support");
 #endif
 }
-
-} // namespace liblas
-
