@@ -98,6 +98,7 @@ public:
     SpatialReference& operator=(SpatialReference const& rhs);
 
     bool operator==(const SpatialReference& other) const;
+    bool operator!=(const SpatialReference& other) const { return !(*this == other); }
     
     /// Returns a pointer to the internal GTIF*.  Only available if 
     /// you have libgeotiff linked in.
