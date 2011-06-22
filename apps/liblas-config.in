@@ -4,7 +4,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 
 INCLUDES="-I${prefix}/include "
-LIBS="-L$libdir -llas -llas_c -L@Boost_LIBRARY_DIRS@ @Boost_PROGRAM_OPTIONS_LIBRARY@"
+LIBS="-L$libdir -llas -llas_c -L@Boost_LIBRARY_DIRS@ @Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE@ @Boost_THREAD_LIBRARY_RELEASE@" 
 
 GDAL_INCLUDE="@GDAL_INCLUDE_DIR@"
 if test -n "$GDAL_INCLUDE" ; then 
