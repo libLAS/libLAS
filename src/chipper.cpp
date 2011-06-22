@@ -79,6 +79,8 @@ be stored.
 
 namespace liblas { namespace chipper {
 
+using namespace detail;
+
 class OIndexSorter
 {
 public:
@@ -106,8 +108,8 @@ void RefList::SortByOIndex(boost::uint32_t left, boost::uint32_t center,
     boost::uint32_t right)
 {
     OIndexSorter comparator(center);
-    vector<PtRef>::iterator li = m_vec.begin() + left;
-    vector<PtRef>::iterator ri = m_vec.begin() + right + 1;
+    PtRefVec::iterator li = m_vec_p->begin() + left;
+    PtRefVec::iterator ri = m_vec_p->begin() + right + 1;
     sort(li, ri, comparator);
 }
 
@@ -122,49 +124,77 @@ vector<boost::uint32_t> Block::GetIDs() const
 }
 
 Chipper::Chipper(Reader *reader, Options *options) :
-    m_reader(reader), m_xvec(DIR_X), m_yvec(DIR_Y), m_spare(DIR_NONE)
+    m_reader(reader), m_allocator_p(NULL), m_xvec(DIR_X), m_yvec(DIR_Y),
+    m_spare(DIR_NONE)
 {
     m_options = *options;
-    if (!m_options.m_map_dir.size())
+    if (!m_options.m_map_file.size())
     {
         if (m_options.m_use_maps)
-            std::cerr << "Can use memory mapped files without specifying "
-                "a directory - setting m_use_maps to false.";
-        m_options.m_use_maps = false;
-    }
-    if (m_options.m_use_maps)
-    {
-        std::cerr << "Memory mapped files not currently supported - "
-            "setting m_use_maps to false.";
+            std::cerr << "Cannot use memory mapped files without specifying "
+                "a file - setting m_use_maps to false.";
         m_options.m_use_maps = false;
     }
 }
 
 void Chipper::Chip()
 {
-    Load();
-    Partition(m_xvec.size());
-    DecideSplit(m_xvec, m_yvec, m_spare, 0, m_partitions.size() - 1);
+    if (Load() == 0) {
+        Partition(m_xvec.size());
+        DecideSplit(m_xvec, m_yvec, m_spare, 0, m_partitions.size() - 1);
+    }
 }
 
-void Chipper::Allocate()
+int Chipper::Allocate()
 {
     boost::uint32_t count = m_reader->GetHeader().GetPointRecordsCount();
 
+    if (m_options.m_use_maps)
+    {
+        bool err = false;
+
+        filebuf fbuf;
+        if (fbuf.open( m_options.m_map_file.c_str(), ios_base::in |
+            ios_base::out | ios_base::trunc | ios_base::binary ) == NULL)
+            err = true;
+        streampos filesize = count * sizeof(PtRef) *
+            (m_options.m_use_sort ? 2 : 3);
+        if (fbuf.pubseekoff(filesize, ios_base::beg) != filesize)
+            err = true;
+        if (fbuf.sputc(0) == EOF)
+            err = true;
+        fbuf.close();
+
+        if (err)
+        {
+            std::cerr << "Couldn't open/expand map file.";
+            return -1;
+        }
+        m_allocator_p = new opt_allocator<PtRef>(m_options.m_map_file);
+    }
+    else
+        m_allocator_p = new opt_allocator<PtRef>;
+
+    m_xvec.SetAllocator(m_allocator_p);
     m_xvec.reserve(count);
+    m_yvec.SetAllocator(m_allocator_p);
     m_yvec.reserve(count);
-    if ( !m_options.m_use_sort )
+    if (!m_options.m_use_sort) {
+        m_spare.SetAllocator(m_allocator_p);
         m_spare.resize(count);
+    }
+    return 0;
 }
 
-void Chipper::Load()
+int Chipper::Load()
 {
     PtRef ref;
     boost::uint32_t idx;
     boost::uint32_t count;
     vector<PtRef>::iterator it;
    
-    Allocate();
+    if (Allocate())
+        return -1;
     count = 0;
     while (m_reader->ReadNextPoint()) {
         const liblas::Point& pt = m_reader->GetPoint();
@@ -190,6 +220,7 @@ void Chipper::Load()
     //Iterate through the yvector, setting the xvector appropriately.
     for (boost::uint32_t i = 0; i < m_yvec.size(); ++i)
         m_xvec[m_yvec[i].m_oindex].m_oindex = i;
+    return 0;
 }
 
 void Chipper::Partition(boost::uint32_t size)

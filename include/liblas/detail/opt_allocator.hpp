@@ -38,17 +38,12 @@
 #ifndef LIBLAS_DETAIL_MAP_ALLOCATOR_HPP_INCLUDED
 #define LIBLAS_DETAIL_MAP_ALLOCATOR_HPP_INCLUDED
 
-#include <iostream>
-using namespace std;
-
 #include <map>
 #include <boost/interprocess/file_mapping.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 
-/**
 namespace liblas {
 namespace detail {
-**/
 
 template <typename T>
 class opt_allocator
@@ -81,10 +76,8 @@ public:
 
     opt_allocator() throw()
     {
-cerr << "Base allocator!\n";
         if (m_initialized && m_file_p)
         {
-cerr << "Throwing Base allocator!\n";
             throw std::bad_alloc();
         }
         m_initialized = true;
@@ -95,7 +88,6 @@ cerr << "Throwing Base allocator!\n";
         using namespace boost::interprocess;
         using namespace std;
 
-cerr << "File name allocator!\n";
         if (m_initialized && !m_file_p)
         {
             throw std::bad_alloc();
@@ -113,9 +105,18 @@ cerr << "File name allocator!\n";
         }
     }
 
+    opt_allocator(const opt_allocator<T>& other )
+    {
+    }
+
     template <typename U>
     opt_allocator(opt_allocator<U> const &u)
-        { cerr << "Copy allocator!\n"; }
+    {
+    }
+
+    ~opt_allocator()
+    {
+    }
 
     size_type max_size() const
     {
@@ -126,26 +127,24 @@ cerr << "File name allocator!\n";
     pointer allocate(size_type num, void *hint = 0) throw()
     {
         pointer p;
+        size_t size = num * sizeof(T);
 
-cerr << "Allocating num = " << num << "!\n";
         if (m_file_p)
         {
             using namespace boost::interprocess;
 
-cerr << "In file_p allocate!\n";
             (void)hint;
-            mapped_region *reg;
 
-            m_next_offset += num / sizeof(T);
-            if (m_next_offset > m_max_size)
+            if (m_next_offset + size > m_max_size)
                 throw std::bad_alloc();
-            reg = new mapped_region(*m_file_p, read_write, m_next_offset,
-                num / sizeof(T));
+            mapped_region *reg;
+            reg = new mapped_region(*m_file_p, read_write, m_next_offset, size);
+            m_next_offset += size;
             p = static_cast<pointer>(reg->get_address());
             m_regions[p] = reg;
         }
         else
-            p = static_cast<pointer>(::operator new(num * sizeof(T))); 
+            p = static_cast<pointer>(::operator new(size)); 
         return p;
     }
 
@@ -195,9 +194,7 @@ typename opt_allocator<T>::size_type opt_allocator<T>::m_max_size = 0;
 template <typename T>
 boost::interprocess::file_mapping *opt_allocator<T>::m_file_p = NULL;
 
-/**
 } // namespace detail
 } // namespace liblas
-**/
 
 #endif // LIBLAS_DETAIL_MAP_ALLOCATOR_HPP_INCLUDED

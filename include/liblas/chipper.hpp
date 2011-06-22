@@ -3,6 +3,7 @@
 
 #include <liblas/liblas.hpp>
 #include <liblas/export.hpp>
+#include <liblas/detail/opt_allocator.hpp>
 
 #include <vector>
 
@@ -29,29 +30,35 @@ public:
     bool operator < (const PtRef& pt) const
         { return m_pos < pt.m_pos; }
 };
+typedef std::vector<PtRef, detail::opt_allocator<PtRef> > PtRefVec;
 
 struct LAS_DLL RefList
 {
 public:
-    std::vector<PtRef> m_vec;
+    PtRefVec *m_vec_p;
     Direction m_dir;
 
-    RefList(Direction dir = DIR_NONE) : m_dir(dir)
+    RefList(Direction dir = DIR_NONE) : m_vec_p(NULL), m_dir(dir)
         {}
-    std::vector<PtRef>::size_type size() const
-        { return m_vec.size(); }
-    void reserve(std::vector<PtRef>::size_type n)
-        { m_vec.reserve(n); }
-    void resize(std::vector<PtRef>::size_type n)
-        { m_vec.resize(n); }
+    ~RefList()
+    {
+        delete m_vec_p;
+    }
+
+    PtRefVec::size_type size() const
+        { return m_vec_p->size(); }
+    void reserve(PtRefVec::size_type n)
+        { m_vec_p->reserve(n); }
+    void resize(PtRefVec::size_type n)
+        { m_vec_p->resize(n); }
     void push_back(const PtRef& ref)
-        { m_vec.push_back(ref); }
-    std::vector<PtRef>::iterator begin()
-        { return m_vec.begin(); }
-    std::vector<PtRef>::iterator end()
-        { return m_vec.end(); }
+        { m_vec_p->push_back(ref); }
+    PtRefVec::iterator begin()
+        { return m_vec_p->begin(); }
+    PtRefVec::iterator end()
+        { return m_vec_p->end(); }
     PtRef& operator[](boost::uint32_t pos)
-        { return m_vec[pos]; }
+        { return (*m_vec_p)[pos]; }
     std::string Dir()
     {
         if (m_dir == DIR_X)
@@ -63,6 +70,10 @@ public:
     }
     void SortByOIndex(boost::uint32_t left, boost::uint32_t center,
         boost::uint32_t right);
+    void SetAllocator(detail::opt_allocator<PtRef> *alloc_p )
+    {
+        m_vec_p = new PtRefVec( *alloc_p );
+    }
 };
 
 class LAS_DLL Chipper;
@@ -98,10 +109,9 @@ public:
     // If true, use sorting instead of copying to reduce memory.
     bool m_use_sort;
     // If true, use memory mapped files instead of main memory
-    // (not currently impelemented).
     bool m_use_maps;
-    // Directory to hold map files.
-    std::string m_map_dir;
+    // Map file to use if m_use_maps is true.
+    std::string m_map_file;
 };
 
 class LAS_DLL Chipper
@@ -109,7 +119,8 @@ class LAS_DLL Chipper
 public:
     Chipper(Reader *reader, Options *options );
     Chipper(Reader *reader, boost::uint32_t max_partition_size) :
-        m_reader(reader), m_xvec(DIR_X), m_yvec(DIR_Y), m_spare(DIR_NONE)
+        m_reader(reader), m_allocator_p(NULL), m_xvec(DIR_X),
+        m_yvec(DIR_Y), m_spare(DIR_NONE)
     {
         m_options.m_threshold = max_partition_size;
     }
@@ -121,8 +132,8 @@ public:
         { return m_blocks[i]; }
 
 private:
-    void Allocate();
-    void Load();
+    int Allocate();
+    int Load();
     void Partition(boost::uint32_t size);
     void Split(RefList& xvec, RefList& yvec, RefList& spare);
     void DecideSplit(RefList& v1, RefList& v2, RefList& spare,
@@ -139,6 +150,8 @@ private:
     Reader *m_reader;
     std::vector<Block> m_blocks;
     std::vector<boost::uint32_t> m_partitions;
+    //ABELL - Need to free.
+    detail::opt_allocator<PtRef> *m_allocator_p;
     RefList m_xvec;
     RefList m_yvec;
     RefList m_spare;
