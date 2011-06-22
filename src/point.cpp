@@ -204,12 +204,26 @@ void Point::SetHeader(HeaderOptionalConstRef header)
     // If we don't have a header initialized, set the point's to the 
     // one we were given.
     if (!m_header) m_header = header;
-    
-    bool bApplyNewScaling = true;
-    
+
+    // This is hopefully faster than copying everything if we don't have 
+    // any data set and nothing to worry about.
     const liblas::Schema* schema;
     boost::uint16_t wanted_length = header.get().GetDataRecordLength();
     schema = &header.get().GetSchema();
+    boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
+    
+    if (!sum) {
+        std::vector<boost::uint8_t> data;
+        data.resize(wanted_length);
+        data.assign(wanted_length, 0);
+        m_data = data;
+        m_header = header;
+        return;
+    }
+    
+    bool bApplyNewScaling = true;
+    
+
     
     if (detail::compare_distance(header->GetScaleX(), m_header->GetScaleX()) &&
         detail::compare_distance(header->GetScaleY(), m_header->GetScaleY()) &&
@@ -221,18 +235,7 @@ void Point::SetHeader(HeaderOptionalConstRef header)
     else
         bApplyNewScaling = true;
 
-    // This is hopefully faster than copying everything if we don't have 
-    // any data set and nothing to worry about.
-    boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
-    
-    if (!sum) {
-        std::vector<boost::uint8_t> data;
-        data.resize(wanted_length);
-        data.assign(wanted_length, 0);
-        m_data = data;
-        m_header = header;
-        return;
-    }
+
     
     if (wanted_length != m_data.size())
     {
