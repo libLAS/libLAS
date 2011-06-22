@@ -548,6 +548,13 @@ class Point(object):
     def set_header(self, value):
         return core.las.LASPoint_SetHeader(self.handle, value.handle)
     header = property(get_header, set_header, None, None)
+
+
+    def get_xml(self):
+        return core.las.LASPoint_GetXML(self.handle)
+        
+    xml = property(get_xml, None, None, None)
+    
     # def descale(self, header):
     #     """Descales the point with a given :obj:`liblas.header.Header` instance
     # 

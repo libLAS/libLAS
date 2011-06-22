@@ -55,6 +55,7 @@
 #include <liblas/detail/reader/reader.hpp>
 #include <liblas/detail/reader/zipreader.hpp>
 #include <liblas/detail/reader/cachedreader.hpp>
+#include <liblas/external/property_tree/xml_parser.hpp>
 
 typedef struct LASWriterHS *LASWriterH;
 typedef struct LASReaderHS *LASReaderH;
@@ -972,6 +973,19 @@ LAS_DLL boost::uint8_t LASPoint_GetUserData(const LASPointH hPoint) {
     
     boost::uint8_t value = ((liblas::Point*) hPoint)->GetUserData();
     return value;
+}
+
+LAS_DLL char* LASPoint_GetXML(const LASPointH hPoint) 
+{
+    VALIDATE_LAS_POINTER1(hPoint, "LASPoint_GetXML", NULL);
+    liblas::Point* p = (liblas::Point*)hPoint;
+    
+    std::ostringstream oss;
+    
+    liblas::property_tree::ptree tree= p->GetPTree();
+    liblas::property_tree::write_xml(oss, tree);
+    return LASCopyString(oss.str().c_str());
+    
 }
 
 LAS_DLL LASErrorEnum LASPoint_SetUserData(LASPointH hPoint, boost::uint8_t value) {

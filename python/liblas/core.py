@@ -241,7 +241,6 @@ las.LASPoint_SetRawY.restype = ctypes.c_int
 las.LASPoint_SetRawY.argtypes = [ctypes.c_void_p, ctypes.c_long]
 las.LASPoint_SetRawY.errcheck = check_return
 
-
 las.LASPoint_GetZ.restype = ctypes.c_double
 las.LASPoint_GetZ.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetZ.errcheck = check_value
@@ -333,6 +332,10 @@ las.LASPoint_SetPointSourceId.errcheck = check_value
 las.LASPoint_GetPointSourceId.restype = ctypes.c_short
 las.LASPoint_GetPointSourceId.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetPointSourceId.errcheck = check_value
+
+las.LASPoint_GetXML.restype = ctypes.POINTER(ctypes.c_char)
+las.LASPoint_GetXML.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetXML.errcheck = free_returned_char_p
 
 # las.LASPoint_GetExtraData.argtypes = [ctypes.c_void_p,
 #                             ctypes.POINTER(ctypes.POINTER(ctypes.c_ubyte)),
