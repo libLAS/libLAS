@@ -59,10 +59,10 @@ namespace liblas { namespace detail {
 class ZipPoint
 {
 public:
-    ZipPoint(PointFormatName);
+    ZipPoint(PointFormatName, const std::vector<VariableRecord>& vlrs);
     ~ZipPoint();
 
-    void ConstructVLR(VariableRecord&) const;
+    void ConstructVLR(VariableRecord&, PointFormatName format) const;
 
     // these will return false iff we find a laszip VLR and it doesn't match
     // the point format this object wasd constructed with
@@ -75,6 +75,13 @@ private:
     void ConstructItems(PointFormatName);
 
 public: // for now
+    // LASzip::pack() allocates/sets vlr_data and vlr_num for us, and deletes it for us  ["his"]
+    // LASzip::unpack() just reads from the vlr_data we give it (we allocate and delete)  ["our"]
+    int his_vlr_num;
+    unsigned char* his_vlr_data;
+    int our_vlr_num;
+    unsigned char* our_vlr_data;
+
     unsigned int m_num_items;
     LASitem* m_items;
     unsigned char** m_lz_point;

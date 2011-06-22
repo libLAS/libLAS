@@ -108,6 +108,7 @@ def check_value_free(result, func, cargs):
         raise LASException(msg)
 
     retval = ctypes.string_at(result)[:]
+    
     return retval
 
 
@@ -115,7 +116,8 @@ def free_returned_char_p(result, func, cargs):
 
     size = ctypes.c_int()
     retvalue = ctypes.string_at(result)
-    free(result)
+    pdata = ctypes.cast(result, ctypes.POINTER(ctypes.c_char_p))
+    las.LASString_Free(pdata)
     return retvalue
 
 
@@ -217,6 +219,14 @@ las.LASPoint_SetX.restype = ctypes.c_int
 las.LASPoint_SetX.argtypes = [ctypes.c_void_p, ctypes.c_double]
 las.LASPoint_SetX.errcheck = check_return
 
+las.LASPoint_GetRawX.restype = ctypes.c_long
+las.LASPoint_GetRawX.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetRawX.errcheck = check_value
+las.LASPoint_SetRawX.restype = ctypes.c_int
+las.LASPoint_SetRawX.argtypes = [ctypes.c_void_p, ctypes.c_long]
+las.LASPoint_SetRawX.errcheck = check_return
+
+
 las.LASPoint_GetY.restype = ctypes.c_double
 las.LASPoint_GetY.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetY.errcheck = check_value
@@ -224,12 +234,27 @@ las.LASPoint_SetY.restype = ctypes.c_int
 las.LASPoint_SetY.argtypes = [ctypes.c_void_p, ctypes.c_double]
 las.LASPoint_SetY.errcheck = check_return
 
+las.LASPoint_GetRawY.restype = ctypes.c_long
+las.LASPoint_GetRawY.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetRawY.errcheck = check_value
+las.LASPoint_SetRawY.restype = ctypes.c_int
+las.LASPoint_SetRawY.argtypes = [ctypes.c_void_p, ctypes.c_long]
+las.LASPoint_SetRawY.errcheck = check_return
+
 las.LASPoint_GetZ.restype = ctypes.c_double
 las.LASPoint_GetZ.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetZ.errcheck = check_value
 las.LASPoint_SetZ.restype = ctypes.c_int
 las.LASPoint_SetZ.argtypes = [ctypes.c_void_p, ctypes.c_double]
 las.LASPoint_SetZ.errcheck = check_return
+
+las.LASPoint_GetRawZ.restype = ctypes.c_long
+las.LASPoint_GetRawZ.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetRawZ.errcheck = check_value
+las.LASPoint_SetRawZ.restype = ctypes.c_int
+las.LASPoint_SetRawZ.argtypes = [ctypes.c_void_p, ctypes.c_long]
+las.LASPoint_SetRawZ.errcheck = check_return
+
 
 las.LASPoint_GetIntensity.restype = ctypes.c_short
 las.LASPoint_GetIntensity.argtypes = [ctypes.c_void_p]
@@ -307,6 +332,10 @@ las.LASPoint_SetPointSourceId.errcheck = check_value
 las.LASPoint_GetPointSourceId.restype = ctypes.c_short
 las.LASPoint_GetPointSourceId.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetPointSourceId.errcheck = check_value
+
+las.LASPoint_GetXML.restype = ctypes.POINTER(ctypes.c_char)
+las.LASPoint_GetXML.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetXML.errcheck = free_returned_char_p
 
 # las.LASPoint_GetExtraData.argtypes = [ctypes.c_void_p,
 #                             ctypes.POINTER(ctypes.POINTER(ctypes.c_ubyte)),
@@ -526,6 +555,10 @@ las.LASHeader_DeleteVLR.errcheck = check_return
 las.LASHeader_AddVLR.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASHeader_AddVLR.errcheck = check_return
 las.LASHeader_AddVLR.restype = ctypes.c_int
+
+las.LASHeader_GetXML.restype = ctypes.POINTER(ctypes.c_char)
+las.LASHeader_GetXML.argtypes = [ctypes.c_void_p]
+las.LASHeader_GetXML.errcheck = free_returned_char_p
 
 las.LASWriter_Create.restype = ctypes.c_void_p
 las.LASWriter_Create.argtypes = [ctypes.c_char_p,

@@ -49,6 +49,7 @@
 #include <liblas/detail/zippoint.hpp>
 // laszip
 #include <laszip/laszipper.hpp>
+#include <laszip/laszip.hpp>
 // std
 #include <vector>
 #include <fstream>
@@ -63,6 +64,7 @@ ZipWriterImpl::ZipWriterImpl(std::ostream& ofs) :
     //m_point_writer(PointWriterPtr( )), 
     m_header_writer(HeaderWriterPtr()), 
     m_pointCount(0),
+    m_zip(NULL),
     m_zipper(NULL),
     m_zipPoint(NULL)
 {
@@ -99,10 +101,48 @@ void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
 
 void ZipWriterImpl::WritePoint(liblas::Point const& point)
 {
-    //if (m_point_writer.get() == 0) {
-    //    m_point_writer = PointWriterPtr(new writer::Point(m_ofs, m_pointCount, m_header));
-    //} 
-    //m_point_writer->write(point);
+    if (m_zip==NULL)
+    {
+        try
+        {
+            m_zip = new LASzip();
+        }
+        catch(...)
+        {
+            throw liblas_error("Error opening compression core (1)");
+        }
+
+        PointFormatName format = m_header->GetDataFormatId();
+        delete m_zipPoint;
+        m_zipPoint = new ZipPoint(format, m_header->GetVLRs());
+
+        bool ok = false;
+        try
+        {
+            ok = m_zip->setup((unsigned char)format, m_header->GetDataRecordLength());
+        }
+        catch(...)
+        {
+            throw liblas_error("Error opening compression core (3)");
+        }
+        if (!ok)
+        {
+            throw liblas_error("Error opening compression core (2)");
+        }
+
+        try
+        {
+            ok = m_zip->pack(m_zipPoint->his_vlr_data, m_zipPoint->his_vlr_num);
+        }
+        catch(...)
+        {
+            throw liblas_error("Error opening compression core (3)");
+        }
+        if (!ok)
+        {
+            throw liblas_error("Error opening compression core (2)");
+        }
+    }
 
     if (m_zipper==NULL)
     {
@@ -115,19 +155,16 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
             throw liblas_error("Error opening compression engine (1)");
         }
 
-        PointFormatName format = m_header->GetDataFormatId();
-        m_zipPoint = new ZipPoint(format);
-
-        unsigned int stat = 1;
+        bool stat(false);
         try
         {
-            stat = m_zipper->open(m_ofs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::DEFAULT_COMPRESSION);
+            stat = m_zipper->open(m_ofs, m_zip);
         }
         catch(...)
         {
             throw liblas_error("Error opening compression engine (3)");
         }
-        if (stat != 0)
+        if (!stat)
         {
             throw liblas_error("Error opening compression engine (2)");
         }
@@ -136,35 +173,16 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
     bool ok = false;
     try
     {
-        const std::vector<boost::uint8_t>* data;
-    
-        data = &point.GetData();
+        const std::vector<boost::uint8_t>* data = &point.GetData();
+        assert(data->size() == m_zipPoint->m_lz_point_size);
 
-        if (data->size() != m_zipPoint->m_lz_point_size)
+        for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
         {
-            // We need to repack the data.  
-            liblas::Point p(point);
-            p.SetHeaderPtr(m_header);
-            data = &p.GetData();
-    //      m_zipPoint->m_lz_point_data = const_cast<unsigned char*>(&(data->front()));
-            for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
-            {
-                m_zipPoint->m_lz_point_data[i] = data->at(i);
-                //printf("%d %d\n", v[i], i);
-            }
-            ok = m_zipper->write(m_zipPoint->m_lz_point);
-        } else 
-        {
-//          m_zipPoint->m_lz_point_data = const_cast<unsigned char*>(&(data->front()));
-            for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
-            {
-                m_zipPoint->m_lz_point_data[i] = data->at(i);
-                //printf("%d %d\n", v[i], i);
-            }
-
-            ok = m_zipper->write(m_zipPoint->m_lz_point);
+            m_zipPoint->m_lz_point_data[i] = data->at(i);
+            //printf("%d %d\n", v[i], i);
         }
-       
+
+        ok = m_zipper->write(m_zipPoint->m_lz_point);
     }
     catch(...)
     {
@@ -190,6 +208,7 @@ ZipWriterImpl::~ZipWriterImpl()
         // ignore?
     }
 
+    delete m_zip;
     delete m_zipper;
     delete m_zipPoint;
 }

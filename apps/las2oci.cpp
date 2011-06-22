@@ -387,7 +387,8 @@ long CreatePCEntry( OWConnection* connection,
                     std::string const& header_blob_column,
                     std::vector<boost::uint8_t> const& header_data,
                     std::string const& boundary_column,
-                    std::string const& boundary_wkt)
+                    std::string const& boundary_wkt,
+                    std::string const& point_schema_override)
 {
     ostringstream oss;
 
@@ -405,7 +406,12 @@ long CreatePCEntry( OWConnection* connection,
     
     ostringstream columns;
     ostringstream values;
+    bool bHaveSchemaOverride(false);
     
+    if (point_schema_override.size() > 0)
+        bHaveSchemaOverride = true;
+
+
     if (!aux_columns_u.empty() ) {
         columns << cloudColumnName_u << "," << aux_columns_u;
     
@@ -414,8 +420,13 @@ long CreatePCEntry( OWConnection* connection,
         columns << cloudColumnName_u;
         values << "pc";
     }
-
-    int nPos = 2; // Bind column position    
+    
+    int nPCPos = 1;
+    int nSchemaPos = 1;
+    if (bHaveSchemaOverride)
+        nSchemaPos++; // PC ID is now bound second
+        
+    int nPos = nSchemaPos+1; // Bind column position    
     if (!header_blob_column_u.empty()){
         columns << "," << header_blob_column_u;
         values <<", :" << nPos;
@@ -435,7 +446,7 @@ long CreatePCEntry( OWConnection* connection,
     ostringstream s_gtype;
     ostringstream s_eleminfo;
     ostringstream s_geom;
-
+    ostringstream s_schema;
 
     IsGeographic(connection, srid);
 
@@ -472,6 +483,13 @@ long CreatePCEntry( OWConnection* connection,
         }
     }
     
+    if (bHaveSchemaOverride)
+    {
+        s_schema << "xmltype(:"<<nSchemaPos<<")";
+    } else
+    {
+        s_schema << "NULL";
+    }
 
     // extent* e = GetExtent(  *(query->bounds.get()), bUse3d );
     liblas::Bounds<double> e =  *(query->bounds.get());
@@ -497,22 +515,24 @@ long CreatePCEntry( OWConnection* connection,
     
     
 oss << "declare\n"
-"  pc_id NUMBER := :1;\n"
+"  pc_id NUMBER := :"<<nPCPos<<";\n"
 "  pc sdo_pc;\n"
 
 "begin\n"
 "  -- Initialize the Point Cloud object.\n"
 "  pc := sdo_pc_pkg.init( \n"
-"          '"<< pcTableName_u<<"', -- Table that has the SDO_POINT_CLOUD column defined\n"
-"          '"<< cloudColumnName_u<<"',   -- Column name of the SDO_POINT_CLOUD object\n"
-"          '"<<blkTableName_u<<"', -- Table to store blocks of the point cloud\n"
+"          '"<< pcTableName_u <<"', -- Table that has the SDO_POINT_CLOUD column defined\n"
+"          '"<< cloudColumnName_u <<"',   -- Column name of the SDO_POINT_CLOUD object\n"
+"          '"<< blkTableName_u <<"', -- Table to store blocks of the point cloud\n"
 "           'blk_capacity="<<blk_capacity<<"', -- max # of points per block\n"
 << s_geom.str() <<
 ",  -- Extent\n"
 "     0.5, -- Tolerance for point cloud\n"
 "           "<<nDimension<<", -- Total number of dimensions\n"
-"           null);\n"
-"  :1 := pc.pc_id;\n"
+"           NULL,"
+"            NULL,"
+"            "<< s_schema.str() <<");\n"
+"  :"<<nPCPos<<" := pc.pc_id;\n"
 
 "  -- Insert the Point Cloud object  into the \"base\" table.\n"
 "  insert into " << pcTableName_u << " ( ID, "<< columns.str() <<
@@ -526,6 +546,16 @@ oss << "declare\n"
     long output = 0;
     statement = connection->CreateStatement(oss.str().c_str());
     statement->Bind(&pc_id);
+    OCILobLocator* schema_locator ; 
+    OCILobLocator* boundary_locator ; 
+    if (bHaveSchemaOverride)
+    {
+        char* schema = (char*) malloc(point_schema_override.size() * sizeof(char) + 1);
+        strncpy(schema, point_schema_override.c_str(), point_schema_override.size());
+        schema[point_schema_override.size()] = '\0';
+        statement->WriteCLob( &schema_locator, schema ); 
+        statement->Bind(&schema_locator);
+    }
     if (bInsertHeaderBlob) {
         OCILobLocator** locator =(OCILobLocator**) VSIMalloc( sizeof(OCILobLocator*) * 1 );
         statement->Define( locator, 1 ); 
@@ -538,9 +568,8 @@ oss << "declare\n"
     char* wkt = (char*) malloc(boundary_wkt.size() * sizeof(char));
     strncpy(wkt, boundary_wkt.c_str(), boundary_wkt.size());    
     if (!boundary_column_u.empty()){
-        OCILobLocator* locator ; 
-        statement->WriteCLob( &locator, wkt ); 
-        statement->Bind(&locator);
+        statement->WriteCLob( &boundary_locator, wkt ); 
+        statement->Bind(&boundary_locator);
         statement->Bind(&srid);        
     }
 
@@ -626,6 +655,7 @@ file_options.add_options()
     ("block-table-name", po::value< string >(), "The table name in which to put the block data.  This table must be of type SDO_PC.BLK_TABLE.  This table will be created using the filename of the input LAS file if not specified.  Use -d to delete the table if it already exists.")
     ("block-table-partition-column", po::value< string >(), "The column name in which to put the partition id for the block as specified in --block-table-partition-value")
     ("block-table-partition-value", po::value< boost::int32_t >(), "The value for the partition id for the block to be placed in the column specified by --block-table-partition-column")
+    ("point-schema-override", po::value< string >(), "A schema document to set for the pc_other_attrs column")
     ("overwrite,d", po::value<bool>()->zero_tokens(), "Drop block table before inserting data.")
     ("block-capacity", po::value<boost::uint32_t>()->default_value(3000), "Maximum number of points to be inserted into each block")
     ("precision,p", po::value<boost::uint32_t>()->default_value(8), "Number of decimal points to write into SQL for point coordinate data.  Used in user_sdo_geom_metadata entry and defining the PC_EXTENT for the point cloud object.")
@@ -637,6 +667,7 @@ file_options.add_options()
     ("3d", po::value<bool>()->zero_tokens(), "Use Z values for insertion of all extent (PC_EXTENT, BLK_EXTENT, USER_SDO_GEOM_METADATA) entries")
     ("global-extent", po::value< std::string >(), "Extent window to define for the PC_EXTENT.\nUse a comma-separated or quoted, space-separated list, for example, \n -e xmin, ymin, maxx, maxy\n or \n -e xmin, ymin, zmin, maxx, maxy, maxz\n -e \"xmin ymin zmin maxx maxy maxz\"")
     ("cached", po::value<bool>()->zero_tokens(), "Cache the entire file on the first read")
+
 
 
 ;
@@ -683,6 +714,7 @@ int main(int argc, char* argv[])
     
     std::string aux_columns("");
     std::string aux_values("");
+    std::string point_schema_override("");
     
     bool bUseExistingBlockTable = false;
     bool bDropTable = false;
@@ -966,6 +998,15 @@ int main(int argc, char* argv[])
                     std::cout << "Setting output pre-block-sql to: " << sql << std::endl; // Tell filename instead
         }
 
+        if (vm.count("point-schema-override")) 
+        {
+            std::string point_schema_file = vm["point-schema-override"].as< string >();
+            point_schema_override = ReadSQLData(point_schema_file);
+
+            if (verbose)
+                std::cout << "Setting output point-schema-override to: " << point_schema_file << std::endl;
+        }
+
         if (vm.count("solid")) 
         {
             bUseSolidGeometry = vm["solid"].as< bool >();
@@ -1219,7 +1260,7 @@ int main(int argc, char* argv[])
                         point_cloud_name,
                         aux_columns,
                         aux_values,
-                        5, // we're assuming 5d for now (x, y, z, time, classification)
+                        8, // we're assuming 8d for now (x, y, z, time, classification, intensity, packed_struct, colors)
                         srid,
                         nCapacity,
                         precision,
@@ -1229,7 +1270,8 @@ int main(int argc, char* argv[])
                         header_blob_column,
                         header_data,
                         base_table_boundary_column,
-                        base_table_boundary_wkt);
+                        base_table_boundary_wkt,
+                        point_schema_override);
 
 
         if (!pre_block_sql.empty()) {

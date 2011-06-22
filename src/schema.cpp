@@ -189,9 +189,9 @@ void Schema::add_record0_dimensions()
             "angle (rounded to the nearest integer in the absolute "
             "value sense) at which the laser point was output from the "
             "laser system including the roll of the aircraft. The scan "
-            "angle is within 1 degree of accuracy from +90 to –90 degrees. "
+            "angle is within 1 degree of accuracy from +90 to -90 degrees. "
             "The scan angle is an angle based on 0 degrees being nadir, "
-            "and –90 degrees to the left side of the aircraft in the "
+            "and -90 degrees to the left side of the aircraft in the "
             "direction of flight.";
     scan_angle.SetDescription(text.str());
     scan_angle.IsSigned(true);
@@ -202,7 +202,7 @@ void Schema::add_record0_dimensions()
     text.str("");
     
     Dimension user_data("User Data", 8);
-    text << "This field may be used at the user’s discretion";
+    text << "This field may be used at the user's discretion";
     user_data.SetDescription(text.str());
 
     AddDimension(user_data);
@@ -780,4 +780,21 @@ VariableRecord Schema::GetVLR() const
 
     return vlr;
 }
+
+bool Schema::operator==(const Schema& input) const
+{
+
+    index_by_index const& current = m_index.get<index>();
+    index_by_index const& other = input.m_index.get<index>();
+    
+    
+    for (boost::uint32_t i = 0; i!= current.size(); ++i)
+    {
+        if (other[i] != current[i]) return false;
+    }
+    
+    return true;
+
+}
+
 } // namespace liblas

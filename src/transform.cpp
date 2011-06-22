@@ -106,7 +106,7 @@ namespace liblas {
 
 
 ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS)
-    : m_new_header(HeaderPtr())
+    : m_new_header(HeaderOptionalConstRef())
 {
     Initialize(inSRS, outSRS);
 }
@@ -114,7 +114,7 @@ ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, cons
 ReprojectionTransform::ReprojectionTransform(
     const SpatialReference& inSRS, 
     const SpatialReference& outSRS,
-    liblas::HeaderPtr new_header)
+    liblas::HeaderOptionalConstRef new_header)
     : m_new_header(new_header)
 {
     Initialize(inSRS, outSRS);
@@ -178,9 +178,9 @@ bool ReprojectionTransform::transform(Point& point)
         throw std::runtime_error(msg.str());
     }
     
-    if (m_new_header.get()) 
+    if (this->ModifiesHeader()) 
     {
-        point.SetHeaderPtr(m_new_header);
+        point.SetHeader(m_new_header);
     }
 
     point.SetX(x);
@@ -447,7 +447,7 @@ ColorFetchingTransform::ColorFetchingTransform(
     std::string const& datasource, 
     std::vector<boost::uint32_t> bands
 )
-    : m_new_header(HeaderPtr())
+    : m_new_header(HeaderOptionalConstRef())
     , m_ds(DataSourcePtr())
     , m_datasource(datasource)
     , m_bands(bands)
@@ -459,7 +459,7 @@ ColorFetchingTransform::ColorFetchingTransform(
 ColorFetchingTransform::ColorFetchingTransform(
     std::string const& datasource, 
     std::vector<boost::uint32_t> bands,
-    HeaderPtr header
+    HeaderOptionalConstRef header
 )
     : m_new_header(header)
     , m_ds(DataSourcePtr())
@@ -515,9 +515,9 @@ bool ColorFetchingTransform::transform(Point& point)
     double x = point.GetX();
     double y = point.GetY();
 
-    if (m_new_header.get()) 
+    if (m_new_header) 
     {
-        point.SetHeaderPtr(m_new_header);
+        point.SetHeader(m_new_header);
     }
     
     pixel = (boost::int32_t) std::floor(

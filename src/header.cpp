@@ -65,7 +65,7 @@ namespace liblas {
 
 char const* const Header::FileSignature = "LASF";
 char const* const Header::SystemIdentifier = "libLAS";
-char const* const Header::SoftwareIdentifier = "libLAS 1.6.0";
+char const* const Header::SoftwareIdentifier = "libLAS 1.7.0";
 
 
 Header::Header() : m_schema(ePointFormat3)
@@ -138,9 +138,6 @@ Header& Header::operator=(Header const& rhs)
         m_headerSize = rhs.m_headerSize;
         m_dataOffset = rhs.m_dataOffset;
         m_recordsCount = rhs.m_recordsCount;
-//        m_recordsCount = 0;
-        // m_dataFormatId = rhs.m_dataFormatId;
-        // m_dataRecordLen = rhs.m_dataRecordLen;
         m_pointRecordsCount = rhs.m_pointRecordsCount;
         
         std::vector<uint32_t>(rhs.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
@@ -161,6 +158,9 @@ Header& Header::operator=(Header const& rhs)
 bool Header::operator==(Header const& other) const
 {
     if (&other == this) return true;
+
+    if (m_scales != other.m_scales) return false;
+    if (m_offsets != other.m_offsets) return false;
     
     if (m_signature != other.m_signature) return false;
     if (m_sourceId != other.m_sourceId) return false;
@@ -178,15 +178,12 @@ bool Header::operator==(Header const& other) const
     if (m_headerSize != other.m_headerSize) return false;
     if (m_dataOffset != other.m_dataOffset) return false;
     if (m_recordsCount != other.m_recordsCount) return false;
-    // if (m_dataFormatId != other.m_dataFormatId) return false;
-    // if (m_dataRecordLen != other.m_dataRecordLen) return false;
     if (m_pointRecordsCount != other.m_pointRecordsCount) return false;
     if (m_pointRecordsByReturn != other.m_pointRecordsByReturn) return false;
-    if (m_scales != other.m_scales) return false;
-    if (m_offsets != other.m_offsets) return false;
     if (m_extent != other.m_extent) return false;
     if (m_isCompressed != other.m_isCompressed) return false;
     
+    if (m_schema != other.m_schema) return false;
     return true;
 }
 
@@ -551,8 +548,6 @@ void Header::Init()
 
     m_versionMajor = 1;
     m_versionMinor = 2;
-    // m_dataFormatId = ePointFormat0;
-    // m_dataRecordLen = ePointSize0;
     
     m_createDOY = m_createYear = 0;
     std::time_t now;
@@ -576,15 +571,12 @@ void Header::Init()
 
     std::memset(m_signature, 0, eFileSignatureSize);
     std::strncpy(m_signature, FileSignature, eFileSignatureSize);
-//    m_signature = Header::FileSignature;
 
     std::memset(m_systemId, 0, eSystemIdSize);
     std::strncpy(m_systemId, SystemIdentifier, eSystemIdSize);
-//    m_systemId = Header::SystemIdentifier;
 
     std::memset(m_softwareId, 0, eSoftwareIdSize);
     std::strncpy(m_softwareId, SoftwareIdentifier, eSoftwareIdSize);
-//    m_softwareId = Header::SoftwareIdentifier;
 
     m_pointRecordsByReturn.resize(ePointsByReturnSize);
 

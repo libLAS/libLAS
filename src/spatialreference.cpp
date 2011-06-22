@@ -69,6 +69,7 @@
 
 #include <liblas/spatialreference.hpp>
 #include <liblas/detail/private_utility.hpp>
+#include <liblas/external/property_tree/xml_parser.hpp>
 // boost
 #include <boost/concept_check.hpp>
 #include <boost/cstdint.hpp>
@@ -119,6 +120,26 @@ SpatialReference& SpatialReference::operator=(SpatialReference const& rhs)
         m_wkt = rhs.m_wkt;
     }
     return *this;
+}
+
+bool SpatialReference::operator==(const SpatialReference& input) const
+{
+#ifdef HAVE_GDAL
+
+    OGRSpatialReferenceH current = OSRNewSpatialReference(GetWKT(eCompoundOK, false).c_str());
+    OGRSpatialReferenceH other = OSRNewSpatialReference(input.GetWKT(eCompoundOK, false).c_str());
+
+    int output = OSRIsSame(current, other);
+
+    OSRDestroySpatialReference( current );
+    OSRDestroySpatialReference( other );
+    
+    return bool(output);
+    
+#else
+    throw std::runtime_error ("SpatialReference equality testing not available without GDAL+libgeotiff support");
+#endif
+
 }
 
 SpatialReference::~SpatialReference() 
@@ -903,5 +924,20 @@ std::string SpatialReference::GetGTIFFText() const
 #endif
 }
 
+
 } // namespace liblas
 
+std::ostream& operator<<(std::ostream& ostr, const liblas::SpatialReference& srs)
+{
+
+#ifdef HAVE_GDAL 
+    liblas::property_tree::ptree tree;
+    std::string name ("spatialreference");
+    tree.put_child(name, srs.GetPTree());
+    liblas::property_tree::write_xml(ostr, tree);
+    return ostr;
+
+#else
+    throw std::runtime_error("SpatialReference io operator<< is not available without GDAL+libgeotiff support");
+#endif
+}

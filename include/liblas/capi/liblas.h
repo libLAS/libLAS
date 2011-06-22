@@ -526,6 +526,12 @@ LAS_DLL LASError LASPoint_GetData(const LASPointH hPoint, unsigned char* data);
 */
 LAS_DLL LASError LASPoint_SetData(LASPointH hPoint, unsigned char* data);
 
+
+/** Returns an XMLized representation of the point
+ *  @param hPoint the LASPointH instance
+*/
+LAS_DLL char* LASPoint_GetXML(const LASPointH hPoint);
+
 /****************************************************************************/
 /* Header operations                                                        */
 /****************************************************************************/
@@ -899,6 +905,10 @@ LAS_DLL LASError LASHeader_DeleteVLR(LASHeaderH hHeader, unsigned int index);
 */
 LAS_DLL LASError LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR);
 
+/** Returns an XMLized representation of the header
+ *  @param hHeader the LASHeader instance
+*/
+LAS_DLL char* LASHeader_GetXML(const LASHeaderH hHeader);
 /****************************************************************************/
 /* Writer Operations                                                        */
 /****************************************************************************/

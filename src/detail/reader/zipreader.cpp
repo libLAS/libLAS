@@ -67,16 +67,15 @@ ZipReaderImpl::ZipReaderImpl(std::istream& ifs)
     : m_ifs(ifs)
     , m_size(0)
     , m_current(0)
-    //, m_point_reader(PointReaderPtr())
     , m_header_reader(new reader::Header(m_ifs))
     , m_header(HeaderPtr())
     , m_point(PointPtr(new liblas::Point()))
     , m_filters(0)
     , m_transforms(0)
+    , m_zip(0)
     , m_unzipper(0)
     , m_zipPoint(0)
     , bNeedHeaderCheck(false)
-    
 {
     return;
 }
@@ -88,6 +87,12 @@ ZipReaderImpl::~ZipReaderImpl()
         m_unzipper->close();
         delete m_unzipper;
         m_unzipper = 0;
+    }
+
+    if (m_zip)
+    {
+        delete m_zip;
+        m_zip = 0;
     }
 
     delete m_zipPoint;
@@ -104,8 +109,53 @@ void ZipReaderImpl::Reset()
     m_current = 0;
     m_size = m_header->GetPointRecordsCount();
     
+
     // If we reset the reader, we're ready to start reading points, so 
     // we'll create a point reader at this point.
+    if (!m_zip)
+    {
+        try
+        {
+            m_zip = new LASzip();
+        }
+        catch(...)
+        {
+            throw liblas_error("Failed to open laszip compression core (1)"); 
+        }
+
+        PointFormatName format = m_header->GetDataFormatId();
+        delete m_zipPoint;
+        m_zipPoint = new ZipPoint(format, m_header->GetVLRs());
+
+        bool ok = false;
+        try
+        {
+            ok = m_zip->setup((unsigned char)format, m_header->GetDataRecordLength());
+        }
+        catch(...)
+        {
+            throw liblas_error("Error opening compression core (3)");
+        }
+        if (!ok)
+        {
+            throw liblas_error("Error opening compression core (2)");
+        }
+
+        try
+        {
+
+            ok = m_zip->unpack(m_zipPoint->our_vlr_data, m_zipPoint->our_vlr_num);
+        }
+        catch(...)
+        {
+            throw liblas_error("Failed to open laszip compression core (2)"); 
+        }
+        if (!ok)
+        {
+            throw liblas_error("Failed to open laszip compression core (3)"); 
+        }
+    }
+
     if (!m_unzipper)
     {
         try
@@ -117,19 +167,17 @@ void ZipReaderImpl::Reset()
             throw liblas_error("Failed to open laszip decompression engine (1)"); 
         }
 
-        PointFormatName format = m_header->GetDataFormatId();
-        m_zipPoint = new ZipPoint(format);
-
-        unsigned int stat = 1;
+        bool stat(false);
         try
         {
-            stat = m_unzipper->open(m_ifs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::DEFAULT_COMPRESSION);
+            m_ifs.seekg(m_header->GetDataOffset(), std::ios::beg);
+            stat = m_unzipper->open(m_ifs, m_zip);
         }
         catch(...)
         {
             throw liblas_error("Failed to open laszip decompression engine (2)"); 
         }
-        if (stat != 0)
+        if (!stat)
         {
             throw liblas_error("Failed to open laszip decompression engine (3)"); 
         }
@@ -186,8 +234,8 @@ void ZipReaderImpl::ReadHeader()
     if (!m_header->Compressed())
         throw liblas_error("Internal error: compressed reader encountered uncompressed header"); 
 
-    m_point->SetHeaderPtr(m_header);
-
+    // m_point->SetHeaderPtr(m_header);
+    m_point->SetHeader(HeaderOptionalConstRef(*m_header));
     Reset();
 }
 
@@ -196,7 +244,7 @@ void ZipReaderImpl::SetHeader(liblas::Header const& header)
     m_header = HeaderPtr(new liblas::Header(header));
 }
     
-void ZipReaderImpl::ReadIdiom(bool recordPoint)
+void ZipReaderImpl::ReadIdiom()
 {
     bool ok = false;
     try
@@ -212,7 +260,6 @@ void ZipReaderImpl::ReadIdiom(bool recordPoint)
         throw liblas_error("Error reading compressed point data (2)");
     }
 
-    if (recordPoint)
     {
         std::vector<boost::uint8_t>& data = m_point->GetData();
 
@@ -242,11 +289,15 @@ void ZipReaderImpl::ReadNextPoint()
 
     if (bNeedHeaderCheck) 
     {
-        if (m_point->GetHeaderPtr().get() != m_header.get())
-            m_point->SetHeaderPtr(m_header);
+        // if (m_point->GetHeaderPtr().get() != m_header.get())
+        //     m_point->SetHeaderPtr(m_header);
+
+        if (!(m_point->GetHeader().get() == *m_header))
+            m_point->SetHeader(HeaderOptionalConstRef(*m_header));
+
     }
     
-    ReadIdiom(true);
+    ReadIdiom();
 
     // Filter the points and continue reading until we either find 
     // one to keep or throw an exception.
@@ -254,11 +305,11 @@ void ZipReaderImpl::ReadNextPoint()
     bool bLastPoint = false;
     if (!FilterPoint(*m_point))
     {
-        ReadIdiom(true);
+        ReadIdiom();
 
         while (!FilterPoint(*m_point))
         {
-            ReadIdiom(true);
+            ReadIdiom();
             if (m_current == m_size) 
             {
                 bLastPoint = true;
@@ -279,74 +330,13 @@ void ZipReaderImpl::ReadNextPoint()
 }
 
 
-// laszip doesn't support seeking, or any want to do a reset, so we do it manually instead
-void ZipReaderImpl::ResetUnzipper()
-{
-    if (!m_unzipper)
-        throw liblas_error("Error resetting uncompression engine (1)");
- 
-    unsigned int stat = 1;
-    try
-    {
-        m_unzipper->close();
-        stat = m_unzipper->open(m_ifs, m_zipPoint->m_num_items, m_zipPoint->m_items, LASzip::DEFAULT_COMPRESSION);
-    }
-    catch(...)
-    {
-        throw liblas_error("Error resetting uncompression engine (2)");
-    }
-    if (stat != 0)
-    {
-        throw liblas_error("Error resetting uncompression engine (3)");
-    }
-
-    return;
-}
-
-
 liblas::Point const& ZipReaderImpl::ReadPointAt(std::size_t n)
 {
-    if (m_size == n) {
-        throw std::out_of_range("file has no more points to read, end of file reached");
-    } else if (m_size < n) {
-        std::ostringstream msg;
-        msg << "ReadPointAt:: Inputted value: " << n << " is greater than the number of points: " << m_size;
-        throw std::runtime_error(msg.str());
-    } 
+    Seek(n);
 
-    std::streamsize const pos = m_header->GetDataOffset();    
+    ReadNextPoint();
 
-    m_ifs.clear();
-    m_ifs.seekg(pos, std::ios::beg);
-
-    if (bNeedHeaderCheck) 
-    {
-        if (m_point->GetHeaderPtr().get() != m_header.get())
-            m_point->SetHeaderPtr(m_header);
-    }
-
-    ResetUnzipper();
-
-    // skip over a whole bunch
-    if (n > 0)
-    {
-        for (std::size_t idx = 0; idx < n; idx++)
-        {
-            ReadIdiom(false);
-        }
-    }
-
-    // read the one we want (and undo the counter update)
-    ReadIdiom(true);
-    --m_current;
-
-    if (!m_transforms.empty())
-    {
-        std::cout << "Should be transforming point" << std::endl;
-        TransformPoint(*m_point);
-    }
-
-    return *m_point;
+    return this->GetPoint();
 }
 
 
@@ -360,21 +350,9 @@ void ZipReaderImpl::Seek(std::size_t n)
         throw std::runtime_error(msg.str());
     } 
 
-    std::streamsize pos = m_header->GetDataOffset();    
-
     m_ifs.clear();
-    m_ifs.seekg(pos, std::ios::beg);
-        
-    ResetUnzipper();
 
-    // skip over a whole bunch
-    if (n > 0)
-    {
-        for (std::size_t idx = 0; idx < n; idx++)
-        {
-            ReadIdiom(false);
-        }
-    }
+    m_unzipper->seek(n);
 
     m_current = n;
 }

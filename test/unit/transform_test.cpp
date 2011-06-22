@@ -58,7 +58,8 @@ namespace tut
             bands[0] = 1;
             bands[1] = 2;
             bands[2] = 3;
-            color_fetch = liblas::TransformPtr(new liblas::ColorFetchingTransform(gdal_datasource, bands, liblas::HeaderPtr(new liblas::Header(header))));
+            liblas::HeaderOptionalConstRef ref(header);
+            color_fetch = liblas::TransformPtr(new liblas::ColorFetchingTransform(gdal_datasource, bands, ref));
         }
         
             std::ifstream ifs;

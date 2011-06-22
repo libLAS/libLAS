@@ -68,7 +68,7 @@ public:
     T minimum;
     T maximum;
 
-	typedef T value_type;
+    typedef T value_type;
 
     Range(T mmin=(std::numeric_limits<T>::max)(), T mmax=(std::numeric_limits<T>::min)())
         : minimum(mmin), maximum(mmax) {}

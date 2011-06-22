@@ -64,15 +64,20 @@ using namespace boost;
 namespace liblas {
 
 Point::Point()
-    : m_header(HeaderPtr())
+    : 
+    // m_header(HeaderPtr())
+     m_header(HeaderOptionalConstRef())
     , m_default_header(DefaultHeader::get())
+    
 {
     m_data.resize(ePointSize3);
     m_data.assign(ePointSize3, 0);
 }
 
 Point::Point(HeaderPtr hdr)
-    : m_header(hdr)
+    : 
+    // m_header(hdr)
+     m_header(HeaderOptionalConstRef(*hdr))
     , m_default_header(DefaultHeader::get())
 {
     m_data.resize(ePointSize3);
@@ -81,7 +86,8 @@ Point::Point(HeaderPtr hdr)
 
 Point::Point(Point const& other)
     : m_data(other.m_data)
-    , m_header(other.m_header)
+    // , m_header(other.m_header)
+    , m_header(HeaderOptionalConstRef(other.GetHeader()))
     , m_default_header(DefaultHeader::get())
 {
 }
@@ -91,6 +97,7 @@ Point& Point::operator=(Point const& rhs)
     if (&rhs != this)
     {
         m_data = rhs.m_data;
+        // m_header = rhs.m_header;
         m_header = rhs.m_header;
     }
     return *this;
@@ -186,46 +193,23 @@ bool Point::IsValid() const
     return true;
 }
 
-void Point::SetHeaderPtr(HeaderPtr header) 
+void Point::SetHeader(HeaderOptionalConstRef header)
 {
-    boost::uint16_t wanted_length;
-    
-    bool bSetCoordinates = true;
-    
-    const liblas::Schema* schema;
-    if (header.get()) {
-        wanted_length = header->GetDataRecordLength();
-        schema = &header->GetSchema();
-        
-        if (m_header.get())
-        {
-            if (detail::compare_distance(header->GetScaleX(), m_header->GetScaleX()) ||
-                detail::compare_distance(header->GetScaleY(), m_header->GetScaleY()) ||
-                detail::compare_distance(header->GetScaleZ(), m_header->GetScaleZ()))
-                bSetCoordinates = false;
-            else
-                bSetCoordinates = true;
-            
-            if (detail::compare_distance(header->GetOffsetX(), m_header->GetOffsetX()) ||
-                detail::compare_distance(header->GetOffsetY(), m_header->GetOffsetY()) ||
-                detail::compare_distance(header->GetOffsetZ(), m_header->GetOffsetZ()))
-                bSetCoordinates = false;
-            else
-                bSetCoordinates = true;
-            
-            // if (!bSetCoordinates)
-            //     std::cout << "Scales and offsets are equal, not resetting coordinates" << std::endl;
-        }
-        
-    }
-    else
+
+    if (!header)
     {
-        wanted_length = m_default_header.GetDataRecordLength();
-        schema = &m_default_header.GetSchema();
+        throw liblas_error("header reference for SetHeader is void");
     }
     
+    // If we don't have a header initialized, set the point's to the 
+    // one we were given.
+    if (!m_header) m_header = header;
+
     // This is hopefully faster than copying everything if we don't have 
     // any data set and nothing to worry about.
+    const liblas::Schema* schema;
+    boost::uint16_t wanted_length = header.get().GetDataRecordLength();
+    schema = &header.get().GetSchema();
     boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
     
     if (!sum) {
@@ -237,6 +221,22 @@ void Point::SetHeaderPtr(HeaderPtr header)
         return;
     }
     
+    bool bApplyNewScaling = true;
+    
+
+    
+    if (detail::compare_distance(header->GetScaleX(), m_header->GetScaleX()) &&
+        detail::compare_distance(header->GetScaleY(), m_header->GetScaleY()) &&
+        detail::compare_distance(header->GetScaleZ(), m_header->GetScaleZ()) &&
+        detail::compare_distance(header->GetOffsetX(), m_header->GetOffsetX()) &&
+        detail::compare_distance(header->GetOffsetY(), m_header->GetOffsetY()) &&
+        detail::compare_distance(header->GetOffsetZ(), m_header->GetOffsetZ()))
+        bApplyNewScaling = false;
+    else
+        bApplyNewScaling = true;
+
+
+    
     if (wanted_length != m_data.size())
     {
         // Manually copy everything but the header ptr
@@ -244,6 +244,7 @@ void Point::SetHeaderPtr(HeaderPtr header)
         // layout is likely changing as a result of the 
         // schema change.
         Point p(*this);
+        m_header = header;
 
         std::vector<boost::uint8_t> data;
         data.resize(wanted_length);
@@ -272,38 +273,36 @@ void Point::SetHeaderPtr(HeaderPtr header)
 
         // FIXME: copy other custom dimensions here?  resetting the 
         // headerptr can be catastrophic in a lot of cases.  
-    } else 
-    {
-        m_header = header;
-        return;
-    }
+    } 
 
+
+    // The header's scale/offset can change the raw storage of xyz.  
+    // SetHeader can result in a rescaling of the data.
     double x;
     double y;
     double z;
-    
-    if (bSetCoordinates)
+
+    if (bApplyNewScaling)
     {
         x = GetX();
         y = GetY();
         z = GetZ();        
     }
-    
-    // The header's scale/offset can change the raw storage of xyz.  
-    // SetHeaderPtr can result in a rescaling of the data.
+
     m_header = header;
 
-    if (bSetCoordinates)
+    if (bApplyNewScaling)
     {
         SetX(x);
         SetY(y);
         SetZ(z);
-    }
-}
+    }    
 
-HeaderPtr Point::GetHeaderPtr() const
+    
+}
+HeaderOptionalConstRef Point::GetHeader() const
 {
-    return m_header;
+    if (m_header) return m_header; else return HeaderOptionalConstRef(m_default_header);
 }
 
 liblas::property_tree::ptree Point::GetPTree() const
@@ -315,6 +314,10 @@ liblas::property_tree::ptree Point::GetPTree() const
     pt.put("y", GetY());
     pt.put("z", GetZ());
 
+    pt.put("rawx", GetRawX());
+    pt.put("rawy", GetRawY());
+    pt.put("rawz", GetRawZ());
+    
     pt.put("time", GetTime());
     pt.put("intensity", GetIntensity());
     pt.put("returnnumber", GetReturnNumber());
@@ -397,15 +400,7 @@ double Point::GetX() const
 {
     boost::int32_t v = GetRawX();
     
-    double output = 0;
-    
-    if (m_header.get() != 0 ) 
-    { 
-        // Scale it
-        output  = (v * m_header->GetScaleX()) + m_header->GetOffsetX();
-    } else {
-        output  = (v * m_default_header.GetScaleX()) + m_default_header.GetOffsetX();
-    }
+    double output  = (v * GetHeader()->GetScaleX()) + GetHeader()->GetOffsetX();
     
     return output;
 }
@@ -414,16 +409,7 @@ double Point::GetY() const
 {
     boost::int32_t v = GetRawY();
     
-    double output = 0;
-    
-    if (m_header.get() != 0 ) 
-    { 
-        // Scale it
-        output  = (v * m_header->GetScaleY()) + m_header->GetOffsetY();
-    } else {
-        output  = (v * m_default_header.GetScaleY()) + m_default_header.GetOffsetY();
-    }
-    
+    double output = (v * GetHeader()->GetScaleY()) + GetHeader()->GetOffsetY();
     return output;
 }
 
@@ -433,13 +419,7 @@ double Point::GetZ() const
     
     double output = 0;
     
-    if (m_header.get() != 0 ) 
-    { 
-        // Scale it
-        output  = (v * m_header->GetScaleZ()) + m_header->GetOffsetZ();
-    } else {
-        output  = (v * m_default_header.GetScaleZ()) + m_default_header.GetOffsetZ();
-    }
+    output  = (v * GetHeader()->GetScaleZ()) + GetHeader()->GetOffsetZ();
     
     return output;
 }
@@ -450,16 +430,8 @@ void Point::SetX( double const& value )
     double scale;
     double offset;
 
-    if (m_header.get() != 0 ) 
-    {
-        scale = m_header->GetScaleX();
-        offset = m_header->GetOffsetX();
-    } 
-    else 
-    {
-        scale = m_default_header.GetScaleX();
-        offset = m_default_header.GetOffsetX();
-    }
+    scale = GetHeader()->GetScaleX();
+    offset = GetHeader()->GetOffsetX();
 
     // descale the value given our scale/offset
     v = static_cast<boost::int32_t>(
@@ -473,16 +445,9 @@ void Point::SetY( double const& value )
     double scale;
     double offset;
 
-    if (m_header.get() != 0 ) 
-    {
-        scale = m_header->GetScaleY();
-        offset = m_header->GetOffsetY();
-    } 
-    else 
-    {
-        scale = m_default_header.GetScaleY();
-        offset = m_default_header.GetOffsetY();
-    }
+    scale = GetHeader()->GetScaleY();
+    offset = GetHeader()->GetOffsetY();
+
 
     // descale the value given our scale/offset
     v = static_cast<boost::int32_t>(
@@ -496,16 +461,8 @@ void Point::SetZ( double const& value )
     double scale;
     double offset;
 
-    if (m_header.get() != 0 ) 
-    {
-        scale = m_header->GetScaleZ();
-        offset = m_header->GetOffsetZ();
-    } 
-    else 
-    {
-        scale = m_default_header.GetScaleZ();
-        offset = m_default_header.GetOffsetZ();
-    }
+    scale = GetHeader()->GetScaleZ();
+    offset = GetHeader()->GetOffsetZ();
 
     // descale the value given our scale/offset
     v = static_cast<boost::int32_t>(
@@ -844,12 +801,7 @@ void Point::SetTime(double const& t)
     // "Time" is the 13th dimension if it exists
     // std::size_t index_pos = 12;
 
-    PointFormatName f;
-    if (m_header) {
-        f = m_header->GetDataFormatId();
-    } else {
-        f = m_default_header.GetDataFormatId();
-    }   
+    PointFormatName f = GetHeader()->GetDataFormatId();
     
     if ( f == ePointFormat0 || f == ePointFormat2 ) {
         std::ostringstream msg;
@@ -866,16 +818,8 @@ void Point::SetTime(double const& t)
 
 double Point::GetTime() const
 {
-    PointFormatName f;
-    if (m_header)
-    {
-        f = m_header->GetDataFormatId();
-    }
-    else
-    {
-        f = m_default_header.GetDataFormatId();
-    }   
-    
+    PointFormatName f = GetHeader()->GetDataFormatId();
+
     if (f == ePointFormat0 || f == ePointFormat2)
     {
         // std::ostringstream msg;
@@ -910,13 +854,7 @@ Color Point::GetColor() const
     // std::size_t index_pos = 13;
 
     Color color;
-    PointFormatName f;
-    
-    if (m_header) {
-        f = m_header->GetDataFormatId();
-    } else {
-        f = m_default_header.GetDataFormatId();
-    }   
+    PointFormatName f = GetHeader()->GetDataFormatId();
     
     if ( f == ePointFormat0 || f == ePointFormat1 ) {
         return color;
@@ -977,12 +915,7 @@ void Point::SetColor(Color const& value)
     // "Color" starts at the 14th dimension if it exists
     // std::size_t index_pos = 13;
 
-    PointFormatName f;
-    if (m_header.get()) {
-        f = m_header->GetDataFormatId();
-    } else {
-        f = m_default_header.GetDataFormatId();
-    }   
+    PointFormatName f = GetHeader()->GetDataFormatId();
     
     if ( f == ePointFormat0 || f == ePointFormat1 ) {
         std::ostringstream msg;
@@ -1003,7 +936,10 @@ void Point::SetColor(Color const& value)
     std::size_t index_pos = 20;
 
     if (f == ePointFormat3) 
-        index_pos = index_pos + 8; // increment to include position of Time.
+        index_pos = 28; // increment to include position of Time.
+    if (f == ePointFormat2) 
+        index_pos = 20; // increment to include position of Time.
+
     
     std::vector<boost::uint8_t>::size_type red_pos = index_pos;
     std::vector<boost::uint8_t>::size_type green_pos = index_pos + 2;
@@ -1021,11 +957,7 @@ void Point::SetColor(Color const& value)
 std::vector<boost::uint8_t>::size_type Point::GetDimensionBytePosition(std::size_t dim_pos) const
 {
     boost::optional<Dimension const&> d;
-    if (m_header) {
-        d = m_header->GetSchema().GetDimension(dim_pos);
-    } else {
-        d= m_default_header.GetSchema().GetDimension(dim_pos);
-    }
+    d = m_header->GetSchema().GetDimension(dim_pos);
     
     if (!d)
     {

@@ -52,6 +52,7 @@
 #include <boost/shared_ptr.hpp>
 
 // liblaszip
+class LASzip;
 class LASzipper;
 class LASitem;
 
@@ -97,6 +98,7 @@ protected:
 private:
     boost::uint32_t m_pointCount;
 
+    LASzip* m_zip;
     LASzipper* m_zipper;
     ZipPoint* m_zipPoint;
 

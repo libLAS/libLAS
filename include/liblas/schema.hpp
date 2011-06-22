@@ -108,6 +108,10 @@ public:
     Schema(PointFormatName data_format_id);
     Schema(std::vector<VariableRecord> const& vlrs);
     Schema& operator=(Schema const& rhs);
+
+    bool operator==(const Schema& other) const;
+    bool operator!=(const Schema& other) const { return !(*this == other); }
+        
     Schema(Schema const& other);
     
     ~Schema() {}

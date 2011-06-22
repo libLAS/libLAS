@@ -54,6 +54,7 @@
 // liblaszip
 class LASitem;
 class LASunzipper;
+class LASzip;
 
 namespace liblas { namespace detail { 
 
@@ -109,9 +110,9 @@ protected:
 
 
 private:
-    void ReadIdiom(bool recordPoint);
-    void ResetUnzipper();
+    void ReadIdiom();
 
+    LASzip* m_zip;
     LASunzipper* m_unzipper;
     ZipPoint* m_zipPoint;
     bool bNeedHeaderCheck;

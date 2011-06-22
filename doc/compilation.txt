@@ -72,7 +72,7 @@ if it cannot find your libraries.
 
     If you are building on Windows, http://www.boostpro.com/download/ has an
     excellent installer. The boost installer defaults are not enough, however,
-    and you will need to scroll down and select "Boost ProgramOptions" and
+    and you will need to scroll down and select "Boost ProgramOptions", "Boost Thread", and
     "Boost Serialization" components, and select static + multithreaded as the
     types. If you want to link in a different way, you will have to change
     your CMake cache variables ``Boost_USE_STATIC_LIBS`` and ``Boost_USE_MULTITHREADED`` 
