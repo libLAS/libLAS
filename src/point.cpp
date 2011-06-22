@@ -314,6 +314,10 @@ liblas::property_tree::ptree Point::GetPTree() const
     pt.put("y", GetY());
     pt.put("z", GetZ());
 
+    pt.put("rawx", GetRawX());
+    pt.put("rawy", GetRawY());
+    pt.put("rawz", GetRawZ());
+    
     pt.put("time", GetTime());
     pt.put("intensity", GetIntensity());
     pt.put("returnnumber", GetReturnNumber());
