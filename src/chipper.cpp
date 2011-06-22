@@ -124,8 +124,7 @@ vector<boost::uint32_t> Block::GetIDs() const
 }
 
 Chipper::Chipper(Reader *reader, Options *options) :
-    m_reader(reader), m_allocator_p(NULL), m_xvec(DIR_X), m_yvec(DIR_Y),
-    m_spare(DIR_NONE)
+    m_reader(reader), m_xvec(DIR_X), m_yvec(DIR_Y), m_spare(DIR_NONE)
 {
     m_options = *options;
     if (!m_options.m_map_file.size())
@@ -170,17 +169,17 @@ int Chipper::Allocate()
             std::cerr << "Couldn't open/expand map file.";
             return -1;
         }
-        m_allocator_p = new opt_allocator<PtRef>(m_options.m_map_file);
+        m_allocator.reset(new opt_allocator<PtRef>(m_options.m_map_file));
     }
     else
-        m_allocator_p = new opt_allocator<PtRef>;
+        m_allocator.reset(new opt_allocator<PtRef>);
 
-    m_xvec.SetAllocator(m_allocator_p);
+    m_xvec.SetAllocator(m_allocator.get());
     m_xvec.reserve(count);
-    m_yvec.SetAllocator(m_allocator_p);
+    m_yvec.SetAllocator(m_allocator.get());
     m_yvec.reserve(count);
     if (!m_options.m_use_sort) {
-        m_spare.SetAllocator(m_allocator_p);
+        m_spare.SetAllocator(m_allocator.get());
         m_spare.resize(count);
     }
     return 0;

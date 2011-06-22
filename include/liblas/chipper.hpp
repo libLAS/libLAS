@@ -119,8 +119,7 @@ class LAS_DLL Chipper
 public:
     Chipper(Reader *reader, Options *options );
     Chipper(Reader *reader, boost::uint32_t max_partition_size) :
-        m_reader(reader), m_allocator_p(NULL), m_xvec(DIR_X),
-        m_yvec(DIR_Y), m_spare(DIR_NONE)
+        m_reader(reader), m_xvec(DIR_X), m_yvec(DIR_Y), m_spare(DIR_NONE)
     {
         m_options.m_threshold = max_partition_size;
     }
@@ -150,8 +149,9 @@ private:
     Reader *m_reader;
     std::vector<Block> m_blocks;
     std::vector<boost::uint32_t> m_partitions;
-    //ABELL - Need to free.
-    detail::opt_allocator<PtRef> *m_allocator_p;
+    // Note, order is important here, as the allocator must be destroyed
+    // after the RefLists.
+    boost::shared_ptr<detail::opt_allocator<PtRef> > m_allocator;
     RefList m_xvec;
     RefList m_yvec;
     RefList m_spare;
