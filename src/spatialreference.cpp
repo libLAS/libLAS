@@ -134,7 +134,7 @@ bool SpatialReference::operator==(const SpatialReference& input) const
     OSRDestroySpatialReference( current );
     OSRDestroySpatialReference( other );
     
-    return bool(output);
+    return bool(output == 1);
     
 #else
     throw std::runtime_error ("SpatialReference equality testing not available without GDAL+libgeotiff support");
