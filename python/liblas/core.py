@@ -219,6 +219,14 @@ las.LASPoint_SetX.restype = ctypes.c_int
 las.LASPoint_SetX.argtypes = [ctypes.c_void_p, ctypes.c_double]
 las.LASPoint_SetX.errcheck = check_return
 
+las.LASPoint_GetRawX.restype = ctypes.c_long
+las.LASPoint_GetRawX.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetRawX.errcheck = check_value
+las.LASPoint_SetRawX.restype = ctypes.c_int
+las.LASPoint_SetRawX.argtypes = [ctypes.c_void_p, ctypes.c_long]
+las.LASPoint_SetRawX.errcheck = check_return
+
+
 las.LASPoint_GetY.restype = ctypes.c_double
 las.LASPoint_GetY.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetY.errcheck = check_value
@@ -226,12 +234,28 @@ las.LASPoint_SetY.restype = ctypes.c_int
 las.LASPoint_SetY.argtypes = [ctypes.c_void_p, ctypes.c_double]
 las.LASPoint_SetY.errcheck = check_return
 
+las.LASPoint_GetRawY.restype = ctypes.c_long
+las.LASPoint_GetRawY.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetRawY.errcheck = check_value
+las.LASPoint_SetRawY.restype = ctypes.c_int
+las.LASPoint_SetRawY.argtypes = [ctypes.c_void_p, ctypes.c_long]
+las.LASPoint_SetRawY.errcheck = check_return
+
+
 las.LASPoint_GetZ.restype = ctypes.c_double
 las.LASPoint_GetZ.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetZ.errcheck = check_value
 las.LASPoint_SetZ.restype = ctypes.c_int
 las.LASPoint_SetZ.argtypes = [ctypes.c_void_p, ctypes.c_double]
 las.LASPoint_SetZ.errcheck = check_return
+
+las.LASPoint_GetRawZ.restype = ctypes.c_long
+las.LASPoint_GetRawZ.argtypes = [ctypes.c_void_p]
+las.LASPoint_GetRawZ.errcheck = check_value
+las.LASPoint_SetRawZ.restype = ctypes.c_int
+las.LASPoint_SetRawZ.argtypes = [ctypes.c_void_p, ctypes.c_long]
+las.LASPoint_SetRawZ.errcheck = check_return
+
 
 las.LASPoint_GetIntensity.restype = ctypes.c_short
 las.LASPoint_GetIntensity.argtypes = [ctypes.c_void_p]

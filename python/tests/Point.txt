@@ -7,18 +7,24 @@
   >>> p.x = 1.0
   >>> p.x
   1.0
+  >>> p.raw_x
+  100
 
   >>> p.y
   0.0
-  >>> p.y = 1.0
+  >>> p.y = 2.0
   >>> p.y
-  1.0
+  2.0
+  >>> p.raw_y
+  200
 
   >>> p.z
   0.0
-  >>> p.z = 1.0
+  >>> p.z = 3.0
   >>> p.z
-  1.0
+  3.0
+  >>> p.raw_z
+  300
 
   >>> p.return_number
   0
@@ -94,22 +100,24 @@
   >>> p.color = c
   >>> p.color.red
   124
-  
-  >>> import ctypes
-  >>> data = (ctypes.c_ubyte * 256)()
-  >>> data[10]
-  0
-  
-  >>> for i in range(256):
-  ...     data[i] = 2+i
-  
-  >>> data[10]
-  12
-  >>> p.data = data
-  
-# Ensure we can round trip the data
-  >>> [data[i] for i in range(10)]
-  [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-  >>> [p.data[i] for i in range(10)]
-  [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+
+#   
+#   >>> import ctypes
+#   >>> data = (ctypes.c_ubyte * 256)()
+#   >>> data[10]
+#   0
+#   
+#   >>> for i in range(256):
+#   ...     data[i] = 2+i
+#   
+#   >>> data[10]
+#   12
+#   >>> p.data = data
+#   
+# # Ensure we can round trip the data
+#   >>> [data[i] for i in range(10)]
+#   [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+#   >>> [p.data[i] for i in range(10)]
+#   [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 

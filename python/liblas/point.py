@@ -93,17 +93,42 @@ class Point(object):
         return core.las.LASPoint_GetX(self.handle)
 
     def set_x(self, value):
-        """Sets the X coordinate of the LAS point to a floating point value."""
+        """Sets the X coordinate of the LAS point to a floating point
+        value. 
+        
+        ..note:: 
+            The point will be descaled according to the :obj:`liblas.point.Point.header`'s  
+            scale value for the X dimension.
+        """
+
         return core.las.LASPoint_SetX(self.handle, value)
 
-    doc = """X coordinate of the LAS point.
+    doc = """X coordinate of the LAS point as a double (scale applied).
 
     .. note::
-        You are expected to properly de-scale the point according to the
-        offset and the X scale if it is a free-standing point. When points are
-        written to a LAS file, they will be scaled according to the header
-        parameters
+        Use obj:`liblas.point.Point.raw_x` if you want the unscaled ``x`` data.
     """
+
+    def get_raw_x(self):
+        return core.las.LASPoint_GetRawX(self.handle)
+
+    def set_raw_x(self, value):
+        """Sets the X coordinate of the LAS point to an integer value
+        value. 
+        
+        ..note:: 
+            The point will be scaled according to the obj:`liblas.point.Point.header`'s 
+            scale value for the X dimension when returned as a double obj:`liblas.point.Point.x`.
+        """
+        return core.las.LASPoint_SetRawX(self.handle, value)
+
+    doc = """The raw X coordinate of the point without its header's scaling
+            applied.
+
+    .. note::
+        Use obj:`liblas.point.Point.x` if you want the scaled ``x`` data.
+    """
+    raw_x = property(get_raw_x, set_raw_x, None, doc)
 
     x = property(get_x, set_x, None, doc)
 
@@ -112,36 +137,84 @@ class Point(object):
 
     def set_y(self, value):
         """Sets the Y coordinate of the LAS point to a floating point
-        value."""
+        value. 
+        
+        ..note:: 
+            The point will be descaled according to the :obj:`liblas.point.Point.header`'s 
+            scale value for the Y dimension.
+        """
         return core.las.LASPoint_SetY(self.handle, value)
 
-    doc = """Y coordinate of the LAS point.
+    doc = """Y coordinate of the LAS point as a double (scale applied).
 
     .. note::
-        You are expected to properly de-scale the point according to the
-        offset and the X scale if it is a free-standing point. When points are
-        written to a LAS file, they will be scaled according to the header
-        parameters
+        Use obj:`liblas.point.Point.raw_y` if you want the unscaled ``y`` data.
     """
+
     y = property(get_y, set_y, None, doc)
+
+    def get_raw_y(self):
+        return core.las.LASPoint_GetRawY(self.handle)
+
+    def set_raw_y(self, value):
+        """Sets the Y coordinate of the LAS point to an integer value
+        value. 
+        
+        ..note:: 
+            The point will be scaled according to the obj:`liblas.point.Point.header`'s 
+            scale value for the Y dimension when returned as a double obj:`liblas.point.Point.y`.
+        """
+        return core.las.LASPoint_SetRawY(self.handle, value)
+
+    doc = """The raw Y coordinate of the point without its header's scaling
+            applied.
+
+    .. note::
+        Use obj:`liblas.point.Point.y` if you want the scaled ``y`` data.
+    """
+    raw_y = property(get_raw_y, set_raw_y, None, doc)
 
     def get_z(self):
         return core.las.LASPoint_GetZ(self.handle)
 
     def set_z(self, value):
-        """Sets the Z coordinate of the LAS point to a floating point value."""
+        """Sets the Z coordinate of the LAS point to a floating point
+        value. 
+        
+        ..note:: 
+            The point will be descaled according to the obj:`liblas.point.Point.header`'s 
+            scale value for the Z dimension.
+        """
         return core.las.LASPoint_SetZ(self.handle, value)
 
-    doc = """Z coordinate of the LAS point.
+    doc = """Z coordinate of the LAS point as a double (scale applied).
 
     .. note::
-        You are expected to properly de-scale the point according to the
-        offset and the X scale if it is a free-standing point. When points are
-        written to a LAS file, they will be scaled according to the header
-        parameters
+        Use obj:`liblas.point.Point.raw_z` if you want the unscaled ``z`` data.
     """
     z = property(get_z, set_z, None, doc)
 
+    def get_raw_z(self):
+        return core.las.LASPoint_GetRawZ(self.handle)
+
+    def set_raw_z(self, value):
+        """Sets the Z coordinate of the LAS point to an integer value
+        value. 
+        
+        ..note:: 
+            The point will be scaled according to the obj:`liblas.point.Point.header`'s 
+            scale value for the Z dimension when returned as a double obj:`liblas.point.Point.y`.
+        """
+        return core.las.LASPoint_SetRawZ(self.handle, value)
+
+    doc = """The raw Z coordinate of the point without its header's scaling
+            applied.
+
+    .. note::
+        Use obj:`liblas.point.Point.z` if you want the scaled ``z`` data.
+    """
+    raw_z = property(get_raw_z, set_raw_z, None, doc)
+    
     def get_return_number(self):
         """Returns the return number of the point"""
         return core.las.LASPoint_GetReturnNumber(self.handle)
