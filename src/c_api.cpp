@@ -1463,6 +1463,20 @@ LAS_DLL LASErrorEnum LASHeader_SetMax(LASHeaderH hHeader, double x, double y, do
     return LE_None;
 }
 
+LAS_DLL char* LASHeader_GetXML(const LASHeaderH hHeader) 
+{
+    VALIDATE_LAS_POINTER1(hHeader, "LASHeader_GetXML", NULL);
+    liblas::Header* h = (liblas::Header*)hHeader->get();
+    
+    std::ostringstream oss;
+    
+    liblas::property_tree::ptree tree= h->GetPTree();
+    liblas::property_tree::write_xml(oss, tree);
+    return LASCopyString(oss.str().c_str());
+    
+}
+
+
 LAS_DLL void LASHeader_Destroy(LASHeaderH hHeader)
 {
     VALIDATE_LAS_POINTER0(hHeader, "LASHeader_Destroy");

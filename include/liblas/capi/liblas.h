@@ -905,6 +905,10 @@ LAS_DLL LASError LASHeader_DeleteVLR(LASHeaderH hHeader, unsigned int index);
 */
 LAS_DLL LASError LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR);
 
+/** Returns an XMLized representation of the header
+ *  @param hHeader the LASHeader instance
+*/
+LAS_DLL char* LASHeader_GetXML(const LASHeaderH hHeader);
 /****************************************************************************/
 /* Writer Operations                                                        */
 /****************************************************************************/

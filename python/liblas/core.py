@@ -556,6 +556,10 @@ las.LASHeader_AddVLR.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASHeader_AddVLR.errcheck = check_return
 las.LASHeader_AddVLR.restype = ctypes.c_int
 
+las.LASHeader_GetXML.restype = ctypes.POINTER(ctypes.c_char)
+las.LASHeader_GetXML.argtypes = [ctypes.c_void_p]
+las.LASHeader_GetXML.errcheck = free_returned_char_p
+
 las.LASWriter_Create.restype = ctypes.c_void_p
 las.LASWriter_Create.argtypes = [ctypes.c_char_p,
                                     ctypes.c_void_p,

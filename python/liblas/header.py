@@ -776,3 +776,8 @@ class Header(object):
     def set_srs(self, value):
         return core.las.LASHeader_SetSRS(self.handle, value.handle)
     srs = property(get_srs, set_srs)
+
+    def get_xml(self):
+        return core.las.LASHeader_GetXML(self.handle)
+        
+    xml = property(get_xml, None, None, None)
