@@ -300,7 +300,7 @@ set(WITH_STATIC_LASZIP FALSE CACHE BOOL "Choose of LASzip should be statically l
 mark_as_advanced(WITH_STATIC_LASZIP)
 
 if(WITH_LASZIP)
-  find_package(LASzip 1.0.0)
+  find_package(LASzip 2.0.0)
 
   if(LASZIP_FOUND)    
     set(CMAKE_REQUIRED_LIBRARIES ${LASZIP_LIBRARY})
