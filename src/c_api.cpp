@@ -550,7 +550,7 @@ LAS_DLL LASErrorEnum LASPoint_SetData(LASPointH hPoint, unsigned char* data) {
         if (d.size() != size)
         {
             d.resize(size);
-            d.assign(0, d.size());
+            d.assign(static_cast<boost::uint8_t>(0), d.size());
         }
                 
         for (boost::uint16_t i=0; i < size; i++) {
@@ -2418,7 +2418,10 @@ LAS_DLL LASErrorEnum LASHeader_SetCompressed( LASHeaderH hHeader, int value)
     VALIDATE_LAS_POINTER1(hHeader->get(), "LASHeader_SetCompressed", LE_Failure);
     
     try {
-      ((liblas::HeaderPtr*) hHeader)->get()->SetCompressed(value);
+        bool v(false);
+        if (value == 0) v = false;
+        else v = true;
+      ((liblas::HeaderPtr*) hHeader)->get()->SetCompressed(v);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASHeader_SetCompressed");
