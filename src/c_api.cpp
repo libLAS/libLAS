@@ -550,7 +550,7 @@ LAS_DLL LASErrorEnum LASPoint_SetData(LASPointH hPoint, unsigned char* data) {
         if (d.size() != size)
         {
             d.resize(size);
-            d.assign(static_cast<boost::uint8_t>(0), d.size());
+            d.assign(static_cast<boost::uint32_t>(0), d.size());
         }
                 
         for (boost::uint16_t i=0; i < size; i++) {
