@@ -50,6 +50,7 @@
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // liblaszip
 class LASzip;
@@ -98,10 +99,10 @@ protected:
 private:
     boost::uint32_t m_pointCount;
 
-    LASzip* m_zip;
-    LASzipper* m_zipper;
-    ZipPoint* m_zipPoint;
-
+    boost::scoped_ptr<LASzip> m_zip;
+    boost::scoped_ptr<LASzipper> m_zipper;
+    boost::scoped_ptr<ZipPoint> m_zipPoint;
+    
     // block copying operations
     ZipWriterImpl(ZipWriterImpl const& other);
     ZipWriterImpl& operator=(ZipWriterImpl const& other);

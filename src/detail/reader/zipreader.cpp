@@ -72,9 +72,6 @@ ZipReaderImpl::ZipReaderImpl(std::istream& ifs)
     , m_point(PointPtr(new liblas::Point()))
     , m_filters(0)
     , m_transforms(0)
-    , m_zip(0)
-    , m_unzipper(0)
-    , m_zipPoint(0)
     , bNeedHeaderCheck(false)
 {
     return;
@@ -85,17 +82,11 @@ ZipReaderImpl::~ZipReaderImpl()
     if (m_unzipper)
     {
         m_unzipper->close();
-        delete m_unzipper;
-        m_unzipper = 0;
     }
 
-    if (m_zip)
-    {
-        delete m_zip;
-        m_zip = 0;
-    }
-
-    delete m_zipPoint;
+    m_zipPoint.reset();
+    m_zip.reset();
+    m_unzipper.reset();
 
     return;
 }
@@ -114,72 +105,49 @@ void ZipReaderImpl::Reset()
     // we'll create a point reader at this point.
     if (!m_zip)
     {
-        try
-        {
-            m_zip = new LASzip();
-        }
-        catch(...)
-        {
-            throw liblas_error("Failed to open laszip compression core (1)"); 
-        }
+
+        // Initialize a scoped_ptr and swap it with our member variable 
+        // that will contain it.
+        boost::scoped_ptr<LASzip> s(new LASzip());
+        m_zip.swap(s);
 
         PointFormatName format = m_header->GetDataFormatId();
-        delete m_zipPoint;
-        m_zipPoint = new ZipPoint(format, m_header->GetVLRs());
+        boost::scoped_ptr<ZipPoint> z(new ZipPoint(format, m_header->GetVLRs()));
+        m_zipPoint.swap(z);
 
         bool ok = false;
-        try
-        {
-            ok = m_zip->setup((unsigned char)format, m_header->GetDataRecordLength());
-        }
-        catch(...)
-        {
-            throw liblas_error("Error opening compression core (3)");
-        }
+        ok = m_zip->setup((unsigned char)format, m_header->GetDataRecordLength());
+
         if (!ok)
         {
-            throw liblas_error("Error opening compression core (2)");
+            std::ostringstream oss;
+            oss << "Error setting up compression engine: " << std::string(m_zip->get_error());
+            throw liblas_error(oss.str());
         }
 
-        try
-        {
-
-            ok = m_zip->unpack(m_zipPoint->our_vlr_data, m_zipPoint->our_vlr_num);
-        }
-        catch(...)
-        {
-            throw liblas_error("Failed to open laszip compression core (2)"); 
-        }
+        ok = m_zip->unpack(m_zipPoint->our_vlr_data, m_zipPoint->our_vlr_num);
         if (!ok)
         {
-            throw liblas_error("Failed to open laszip compression core (3)"); 
+            std::ostringstream oss;
+            oss << "Error unpacking zip VLR data: " << std::string(m_zip->get_error());
+            throw liblas_error(oss.str());
         }
     }
 
     if (!m_unzipper)
     {
-        try
-        {
-            m_unzipper = new LASunzipper();
-        }
-        catch(...)
-        {
-            throw liblas_error("Failed to open laszip decompression engine (1)"); 
-        }
+        boost::scoped_ptr<LASunzipper> z(new LASunzipper());
+        m_unzipper.swap(z);
 
         bool stat(false);
-        try
-        {
-            m_ifs.seekg(m_header->GetDataOffset(), std::ios::beg);
-            stat = m_unzipper->open(m_ifs, m_zip);
-        }
-        catch(...)
-        {
-            throw liblas_error("Failed to open laszip decompression engine (2)"); 
-        }
+        m_ifs.seekg(m_header->GetDataOffset(), std::ios::beg);
+        stat = m_unzipper->open(m_ifs, m_zip.get());
+
         if (!stat)
         {
-            throw liblas_error("Failed to open laszip decompression engine (3)"); 
+            std::ostringstream oss;
+            oss << "Failed to open LASzip stream: " << std::string(m_zip->get_error());
+            throw liblas_error(oss.str());
         }
     }
 
@@ -247,17 +215,14 @@ void ZipReaderImpl::SetHeader(liblas::Header const& header)
 void ZipReaderImpl::ReadIdiom()
 {
     bool ok = false;
-    try
-    {
-        ok = m_unzipper->read(m_zipPoint->m_lz_point);
-    }
-    catch(...)
-    {
-        throw liblas_error("Error reading compressed point data (1)");
-    }
+
+    ok = m_unzipper->read(m_zipPoint->m_lz_point);
+
     if (!ok)
     {
-        throw liblas_error("Error reading compressed point data (2)");
+        std::ostringstream oss;
+        oss << "Error reading compressed point data: " << std::string(m_zip->get_error());
+        throw liblas_error(oss.str());
     }
 
     {
