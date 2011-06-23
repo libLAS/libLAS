@@ -554,60 +554,20 @@ class Point(object):
         return core.las.LASPoint_GetXML(self.handle)
         
     xml = property(get_xml, None, None, None)
-    
-    # def descale(self, header):
-    #     """Descales the point with a given :obj:`liblas.header.Header` instance
-    # 
-    #     :param header: A header with :obj:`liblas.header.Header.offset` and \
-    #                    :obj:`liblas.header.Header.scale` values set"""
-    #     self.x = (self.x - header.offset[0]) / header.scale[0]
-    #     self.y = (self.y - header.offset[1]) / header.scale[1]
-    #     self.z = (self.z - header.offset[2]) / header.scale[2]
-    # 
-    # def scale(self, header):
-    #     """Scales the point with a given :obj:`liblas.header.Header` instance
-    # 
-    #     :param header: A header with :obj:`liblas.header.Header.offset` and \
-    #                    :obj:`liblas.header.Header.scale` values set"""
-    #     self.x = (self.x * header.scale[0]) + header.offset[0]
-    #     self.y = (self.y * header.scale[1]) + header.offset[1]
-    #     self.z = (self.z * header.scale[2]) + header.offset[2]
 
-    # def get_data(self):
-    #     l = ctypes.pointer(ctypes.c_int())
-    #     d = ctypes.pointer(ctypes.c_ubyte())
-    #     core.las.LASPoint_GetExtraData(self.handle, ctypes.byref(d), l)
-    # 
-    #     d2 = ctypes.cast(d, ctypes.POINTER(ctypes.c_ubyte * l.contents.value))
-    #     s = (ctypes.c_ubyte * l.contents.value)()
-    #     for i in range(l.contents.value):
-    #         s[i] = d2.contents[i]
-    #     p_d = ctypes.cast(d, ctypes.POINTER(ctypes.c_char_p))
-    #     core.las.LASString_Free(p_d)
-    # 
-    #     return s
-    # 
-    # def set_data(self, data):
-    #     d = ctypes.cast(data, ctypes.POINTER(ctypes.c_ubyte))
-    # 
-    #     core.las.LASPoint_SetExtraData(self.handle, d, len(data))
-    # 
-    # doc = """Extra byte data for the point. You can attach a variable amount
-    # of extra data to each individual point by setting the
-    # :obj:`liblas.header.Header.dataformat_id` to a valid value, and then
-    # setting the :obj:`liblas.header.Header.data_record_length` to a value that
-    # is larger than the nominal length for that format as noted in the
-    # specification_.
-    # 
-    # Interpreting the data is up to the user, however. Because these are raw
-    # bytes, you can store any additional data that you wish.
-    # 
-    # .. note::
-    #     The data will be clipped to exactly the
-    #     :obj:`liblas.header.Header.data_record_length` when they are actually
-    #     written to the file. If you set data on the point that is larger than
-    #     the difference between the nominal point format data record length and
-    #     the data record length you set in the header, it will be thrown away.
-    # 
-    # """
-    # data = property(get_data, set_data, None, doc)
+
+    def get_data(self):
+        length = self.header.data_record_length
+        d = (ctypes.c_ubyte*length)()
+        d2 = ctypes.cast(d, ctypes.POINTER(ctypes.c_ubyte))
+        core.las.LASPoint_GetData(self.handle, d2)
+        return d
+    
+    def set_data(self, data):
+        d = ctypes.cast(data, ctypes.POINTER(ctypes.c_ubyte))
+    
+        core.las.LASPoint_SetData(self.handle, d, len(data))
+    
+    doc = """Raw data for the point. Shoot yourself in the foot if you must!
+    """
+    data = property(get_data, set_data, None, doc)
