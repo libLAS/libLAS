@@ -7,7 +7,7 @@
   >>> s.proj4
   ''
   >>> s.proj4 = '+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs'
-  >>> s.proj4 == '+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs '
+  >>> s.proj4 == '+proj=utm +zone=15 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs '
   True
   
   >>> s = srs.SRS()
