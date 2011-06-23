@@ -74,7 +74,7 @@ public:
     const_pointer address(const_reference r) const
         { return &r; }
 
-    opt_allocator() throw()
+    opt_allocator()
     {
         if (m_initialized && m_file_p)
         {
@@ -125,7 +125,7 @@ public:
         return s / sizeof(T);
     }
 
-    pointer allocate(size_type num, void *hint = 0) throw()
+    pointer allocate(size_type num, void *hint = 0)
     {
         pointer p;
         size_t size = num * sizeof(T);
