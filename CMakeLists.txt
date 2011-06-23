@@ -193,20 +193,6 @@ mark_as_advanced(CLEAR Boost_LIBRARY_DIRS)
 link_directories(${Boost_LIBRARY_DIRS}) 
 
 
-	
-# libxml2 support - optional, default=ON
-set(WITH_LIBXML2 FALSE CACHE BOOL "Choose if libxml2 support should be built ")
-
-if(WITH_LIBXML2)
-    find_package(LibXml2)
-    mark_as_advanced(CLEAR LIBXML2_INCLUDE_DIR)
-    mark_as_advanced(CLEAR LIBXML2_LIBRARIES)
-    if(LIBXML2_FOUND)
-        include_directories(${LIBXML2_INCLUDE_DIR})
-        add_definitions(-DHAVE_LIBXML2=1)
-    endif()
-endif()
-
 # GDAL/OGR support - optional, default=OFF
 set(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
 
