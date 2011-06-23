@@ -174,6 +174,7 @@ public:
     void destroy(pointer p)
     {
         p->~T();
+        boost::ignore_unused_variable_warning(p);
     }
 
     template <typename U>
