@@ -394,6 +394,37 @@ LAS_DLL LASErrorEnum LASReader_Seek(LASReaderH hReader, boost::uint32_t position
 
 }
 
+LAS_DLL char* LASReader_GetSummaryXML(const LASReaderH hReader)
+{
+
+    VALIDATE_LAS_POINTER1(hReader, "LASReader_GetSummaryXML", NULL);
+    liblas::Reader* r = (liblas::Reader*)hReader;
+    liblas::Summary s;
+
+    r->Reset();
+    bool read = r->ReadNextPoint();
+    if (!read)
+    {
+        LASError_PushError(LE_Failure, "Unable to read point", "LASReader_GetSummaryXML");
+        return NULL;
+    }
+        
+    while (read) 
+    {
+        liblas::Point const& p = r->GetPoint();
+        s.AddPoint(p);
+        read = r->ReadNextPoint();
+    }
+
+    r->Reset();
+    
+    std::ostringstream oss;
+    
+    liblas::property_tree::write_xml(oss, s.GetPTree());
+    return LASCopyString(oss.str().c_str());
+        
+}
+
 LAS_DLL LASErrorEnum LASReader_SetInputSRS(LASReaderH hReader, const LASSRSH hSRS) {
     
     VALIDATE_LAS_POINTER1(hReader, "LASReader_SetInputSRS", LE_Failure);

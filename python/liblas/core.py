@@ -208,6 +208,10 @@ las.LASReader_SetInputSRS.errcheck = check_return
 las.LASReader_SetOutputSRS.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 las.LASReader_SetOutputSRS.errcheck = check_return
 
+las.LASReader_GetSummaryXML.restype = ctypes.POINTER(ctypes.c_char)
+las.LASReader_GetSummaryXML.argtypes = [ctypes.c_void_p]
+las.LASReader_GetSummaryXML.errcheck = free_returned_char_p
+
 las.LASReader_Destroy.argtypes = [ctypes.c_void_p]
 las.LASReader_Destroy.errcheck = check_void_done
 las.LASReader_Destroy.restype = None

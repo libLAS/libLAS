@@ -380,3 +380,16 @@ class File(object):
                                     'be of type liblas.point.Point' % pt)
         if self.mode == 1 or self.mode == 2:
             core.las.LASWriter_WritePoint(self.handle, pt.handle)
+            
+    def get_xmlsummary(self):
+        """Returns an XML string summarizing all of the points in the reader
+        
+        .. note::
+            This method will reset the reader's read position to the 0th 
+            point to summarize the entire file, and it will again reset the 
+            read position to the 0th point upon completion."""
+        if self.mode != 0:
+            raise core.LASException("file must be in read mode, not append or write mode to provide xml summary")
+        return  core.las.LASReader_GetSummaryXML(self.handle)
+        
+    summary = property(get_xmlsummary, None, None, None)
