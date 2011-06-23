@@ -107,6 +107,7 @@ public:
 
     opt_allocator(const opt_allocator<T>& other )
     {
+        boost::ignore_unused_variable_warning(other);
     }
 
     template <typename U>
@@ -161,6 +162,8 @@ public:
         }
         else
             ::operator delete(p);
+
+        boost::ignore_unused_variable_warning(num);
     }
 
     void construct(pointer p, const_reference value)
