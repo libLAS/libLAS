@@ -18,7 +18,7 @@ install_requires = ['setuptools']
 
 import os
 
-version = '1.7.0'
+version = '1.7.0b1'
 
 import socket
 
