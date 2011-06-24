@@ -83,7 +83,7 @@ public: // for now
     int his_vlr_num;
     unsigned char* his_vlr_data;
     int our_vlr_num;
-    unsigned char* our_vlr_data;
+    boost::scoped_array<boost::uint8_t> our_vlr_data;
 
     boost::scoped_ptr<LASzip> m_zip;
 

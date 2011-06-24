@@ -125,7 +125,7 @@ void ZipReaderImpl::Reset()
             throw liblas_error(oss.str());
         }
 
-        ok = m_zip->unpack(m_zipPoint->our_vlr_data, m_zipPoint->our_vlr_num);
+        ok = m_zip->unpack(m_zipPoint->our_vlr_data.get(), m_zipPoint->our_vlr_num);
         if (!ok)
         {
             std::ostringstream oss;
