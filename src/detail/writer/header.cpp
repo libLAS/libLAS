@@ -168,12 +168,13 @@ void Header::write()
         if (difference <= 0) 
         {
             int32_t d = abs(difference);
+            int32_t padding_from_before = m_header.GetDataOffset() - m_header.GetHeaderSize();
             if (m_header.GetVersionMinor()  ==  0) 
             {
                 // Add the two extra bytes for the 1.0 pad
                 d = d + 2;
             }
-            m_header.SetDataOffset(m_header.GetDataOffset() + d );
+            m_header.SetDataOffset(m_header.GetDataOffset() + d + padding_from_before);
         }
 
     }
