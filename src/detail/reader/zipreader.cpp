@@ -147,7 +147,7 @@ void ZipReaderImpl::Reset()
         {
             std::ostringstream oss;
             const char* err = m_zip->get_error();
-            if (err==NULL) err="";
+            if (err==NULL) err="(unknown error)";
             oss << "Failed to open LASzip stream: " << std::string(err);
             throw liblas_error(oss.str());
         }
