@@ -83,7 +83,7 @@ set(CMAKE_MODULE_PATH ${libLAS_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 if(NOT MSVC_IDE)
   if(NOT CMAKE_BUILD_TYPE)
 
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING 
+  set(CMAKE_BUILD_TYPE Release CACHE STRING 
     "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
   endif()
     message(STATUS "Setting libLAS build type - ${CMAKE_BUILD_TYPE}")
