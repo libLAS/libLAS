@@ -134,9 +134,10 @@ bool SpatialReference::operator==(const SpatialReference& input) const
     OSRDestroySpatialReference( current );
     OSRDestroySpatialReference( other );
     
-    return bool(output);
+    return bool(output == 1);
     
 #else
+    boost::ignore_unused_variable_warning(input);
     throw std::runtime_error ("SpatialReference equality testing not available without GDAL+libgeotiff support");
 #endif
 
@@ -938,6 +939,8 @@ std::ostream& operator<<(std::ostream& ostr, const liblas::SpatialReference& srs
     return ostr;
 
 #else
+    boost::ignore_unused_variable_warning(ostr);
+    boost::ignore_unused_variable_warning(srs);
     throw std::runtime_error("SpatialReference io operator<< is not available without GDAL+libgeotiff support");
 #endif
 }

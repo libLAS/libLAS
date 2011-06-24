@@ -208,6 +208,7 @@ LAS_DLL LASError LASReader_SetOutputSRS(LASReaderH hReader, const LASSRSH hSRS);
 */
 LAS_DLL LASError LASReader_Seek(LASReaderH hReader, unsigned int position);
 
+LAS_DLL char* LASReader_GetSummaryXML(const LASReaderH hReader);
 
 /****************************************************************************/
 /* Point operations                                                         */
@@ -909,6 +910,7 @@ LAS_DLL LASError LASHeader_AddVLR(LASHeaderH hHeader, const LASVLRH hVLR);
  *  @param hHeader the LASHeader instance
 */
 LAS_DLL char* LASHeader_GetXML(const LASHeaderH hHeader);
+
 /****************************************************************************/
 /* Writer Operations                                                        */
 /****************************************************************************/

@@ -74,7 +74,7 @@ public:
     const_pointer address(const_reference r) const
         { return &r; }
 
-    opt_allocator() throw()
+    opt_allocator()
     {
         if (m_initialized && m_file_p)
         {
@@ -107,6 +107,7 @@ public:
 
     opt_allocator(const opt_allocator<T>& other )
     {
+        boost::ignore_unused_variable_warning(other);
     }
 
     template <typename U>
@@ -124,7 +125,7 @@ public:
         return s / sizeof(T);
     }
 
-    pointer allocate(size_type num, void *hint = 0) throw()
+    pointer allocate(size_type num, void *hint = 0)
     {
         pointer p;
         size_t size = num * sizeof(T);
@@ -161,6 +162,8 @@ public:
         }
         else
             ::operator delete(p);
+
+        boost::ignore_unused_variable_warning(num);
     }
 
     void construct(pointer p, const_reference value)
@@ -171,6 +174,7 @@ public:
     void destroy(pointer p)
     {
         p->~T();
+        boost::ignore_unused_variable_warning(p);
     }
 
     template <typename U>

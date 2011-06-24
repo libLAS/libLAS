@@ -11,7 +11,7 @@ project(libLAS)
 
 SET(LIBLAS_VERSION_MAJOR "1")
 SET(LIBLAS_VERSION_MINOR "7")
-SET(LIBLAS_VERSION_PATCH "0")
+SET(LIBLAS_VERSION_PATCH "0b1")
 set(VERSION "${LIBLAS_VERSION_MAJOR}.${LIBLAS_VERSION_MINOR}.${LIBLAS_VERSION_PATCH}")
 SET(LIBLAS_LIB_SOVERSION "2.0.0")
 SET(LIBLAS_C_LIB_SOVERSION "2.0.0")
@@ -83,7 +83,7 @@ set(CMAKE_MODULE_PATH ${libLAS_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 if(NOT MSVC_IDE)
   if(NOT CMAKE_BUILD_TYPE)
 
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING 
+  set(CMAKE_BUILD_TYPE Release CACHE STRING 
     "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
   endif()
     message(STATUS "Setting libLAS build type - ${CMAKE_BUILD_TYPE}")
@@ -192,44 +192,31 @@ mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
 mark_as_advanced(CLEAR Boost_LIBRARY_DIRS) 
 link_directories(${Boost_LIBRARY_DIRS}) 
 
+# LASZIP support - optional, default=ON
+set(WITH_LASZIP FALSE CACHE BOOL "Choose if LASzip support should be built")
+set(WITH_STATIC_LASZIP FALSE CACHE BOOL "Choose of LASzip should be statically linked")
+mark_as_advanced(WITH_STATIC_LASZIP)
 
-	
-# libxml2 support - optional, default=ON
-set(WITH_LIBXML2 FALSE CACHE BOOL "Choose if libxml2 support should be built ")
-
-if(WITH_LIBXML2)
-    find_package(LibXml2)
-    mark_as_advanced(CLEAR LIBXML2_INCLUDE_DIR)
-    mark_as_advanced(CLEAR LIBXML2_LIBRARIES)
-    if(LIBXML2_FOUND)
-        include_directories(${LIBXML2_INCLUDE_DIR})
-        add_definitions(-DHAVE_LIBXML2=1)
-    endif()
+find_package(LASzip 2.0.0)
+if(LASZIP_FOUND)    
+    set(CMAKE_REQUIRED_LIBRARIES ${LASZIP_LIBRARY})
+    include_directories(${LASZIP_INCLUDE_DIR})
+    add_definitions(-DHAVE_LASZIP=1)
+    mark_as_advanced(CLEAR LASZIP_INCLUDE_DIR) 
+    mark_as_advanced(CLEAR LASZIP_LIBRARY) 
+    mark_as_advanced(CLEAR LASZIP_VERSION) 
+    set(WITH_LASZIP TRUE CACHE BOOL "Choose if LASzip support should be built" FORCE)
 endif()
+
 
 # GDAL/OGR support - optional, default=OFF
 set(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
 
 if(WITH_GDAL)
 
-  find_package(GDAL 1.6.0)
-
-  # if(GDAL_FOUND)
-  #   # Confirm required API is available
-  #   include(CheckFunctionExists) 
-  #   set(CMAKE_REQUIRED_LIBRARIES ${GDAL_LIBRARY})
-  #   check_function_exists(OSRSetEquirectangular2 HAVE_OSRSETEQUIRECTANGULAR2)
-  #   
-  #   if(NOT HAVE_OSRSETEQUIRECTANGULAR2)
-  #     # Reset to NOT found for GDAL/OGR
-  #     set(GDAL_FOUND)
-  #     message(FATAL_ERROR
-  #       "Unable to find OSRSetEquirectangular2 within GDAL library at ${GDAL_INCLUDE_DIR} ${GDAL_LIBRARY}")
-  #   else()
-      include_directories(${GDAL_INCLUDE_DIR})
-      add_definitions(-DHAVE_GDAL=1)
-  #   endif()
-  # endif()
+  find_package(GDAL 1.7.0)
+  include_directories(${GDAL_INCLUDE_DIR})
+  add_definitions(-DHAVE_GDAL=1)
 
   mark_as_advanced(CLEAR GDAL_INCLUDE_DIR) 
   mark_as_advanced(CLEAR GDAL_LIBRARY) 
@@ -294,23 +281,7 @@ if(WITH_ORACLE)
   endif()
 endif()
 
-# LASZIP support - optional, default=OFF
-set(WITH_LASZIP FALSE CACHE BOOL "Choose if LASzip support should be built")
-set(WITH_STATIC_LASZIP FALSE CACHE BOOL "Choose of LASzip should be statically linked")
-mark_as_advanced(WITH_STATIC_LASZIP)
 
-if(WITH_LASZIP)
-  find_package(LASzip 1.0.0)
-
-  if(LASZIP_FOUND)    
-    set(CMAKE_REQUIRED_LIBRARIES ${LASZIP_LIBRARY})
-    include_directories(${LASZIP_INCLUDE_DIR})
-    add_definitions(-DHAVE_LASZIP=1)
-    mark_as_advanced(CLEAR LASZIP_INCLUDE_DIR) 
-    mark_as_advanced(CLEAR LASZIP_LIBRARY) 
-    mark_as_advanced(CLEAR LASZIP_VERSION) 
-  endif()
-endif()
 
 if(WITH_ENDIANAWARE)
     add_definitions(-DLIBLAS_ENDIAN_AWARE=1)

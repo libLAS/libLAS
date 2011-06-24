@@ -112,9 +112,10 @@ protected:
 private:
     void ReadIdiom();
 
-    LASzip* m_zip;
-    LASunzipper* m_unzipper;
-    ZipPoint* m_zipPoint;
+    boost::scoped_ptr<LASzip> m_zip;
+    boost::scoped_ptr<ZipPoint> m_zipPoint;
+    boost::scoped_ptr<LASunzipper> m_unzipper;
+
     bool bNeedHeaderCheck;
     
     // Blocked copying operations, declared but not defined.
