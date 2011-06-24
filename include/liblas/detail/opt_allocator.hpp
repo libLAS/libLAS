@@ -110,7 +110,7 @@ public:
     }
 
     template <typename U>
-    opt_allocator(opt_allocator<U> const &u)
+    opt_allocator(opt_allocator<U> const &)
     {
     }
 
