@@ -53,6 +53,7 @@
 // liblaszip
 class LASzipper;
 class LASitem;
+class LASzip;
 
 namespace liblas { namespace detail { 
 
@@ -72,7 +73,7 @@ public:
     bool IsZipVLR(const VariableRecord& vlr) const;
 
 private:
-    void ConstructItems(PointFormatName);
+    void ConstructItems(unsigned char, unsigned short);
 
 public: // for now
     // LASzip::pack() allocates/sets vlr_data and vlr_num for us, and deletes it for us  ["his"]
@@ -82,8 +83,8 @@ public: // for now
     int our_vlr_num;
     unsigned char* our_vlr_data;
 
-    unsigned int m_num_items;
-    LASitem* m_items;
+    boost::scoped_ptr<LASzip> m_zip;
+
     unsigned char** m_lz_point;
     unsigned char* m_lz_point_data;
     unsigned int m_lz_point_size;
