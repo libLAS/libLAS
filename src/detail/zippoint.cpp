@@ -130,8 +130,6 @@ ZipPoint::~ZipPoint()
 {
 
     delete[] m_lz_point;
-    delete[] m_lz_point_data;
-
     delete[] our_vlr_data;
 
     return;
@@ -157,7 +155,9 @@ void ZipPoint::ConstructItems(unsigned char pointFormat, unsigned short size)
     // create the point data
     unsigned int point_offset = 0;
     m_lz_point = new unsigned char*[m_zip->num_items];
-    m_lz_point_data = new unsigned char[m_lz_point_size];
+    
+    boost::scoped_array<boost::uint8_t> d( new boost::uint8_t[ m_lz_point_size ] );
+    m_lz_point_data.swap(d);
     for (unsigned i = 0; i < m_zip->num_items; i++)
     {
         m_lz_point[i] = &(m_lz_point_data[point_offset]);

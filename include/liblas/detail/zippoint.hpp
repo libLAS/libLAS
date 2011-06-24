@@ -49,6 +49,8 @@
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/scoped_array.hpp>
 
 // liblaszip
 class LASzipper;
@@ -86,7 +88,7 @@ public: // for now
     boost::scoped_ptr<LASzip> m_zip;
 
     unsigned char** m_lz_point;
-    unsigned char* m_lz_point_data;
+    boost::scoped_array<boost::uint8_t> m_lz_point_data;
     unsigned int m_lz_point_size;
 };
 

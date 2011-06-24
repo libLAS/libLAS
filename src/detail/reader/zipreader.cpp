@@ -231,7 +231,7 @@ void ZipReaderImpl::ReadIdiom()
         unsigned int size = m_zipPoint->m_lz_point_size;
         assert(size == data.size());
         
-        unsigned char* p = m_zipPoint->m_lz_point_data;
+        unsigned char* p = m_zipPoint->m_lz_point_data.get();
         data.assign(p, p+size);
 
         ++m_current;
