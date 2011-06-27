@@ -163,7 +163,7 @@ void ZipPoint::ConstructItems(unsigned char pointFormat, unsigned short size)
 }
 
 
-void ZipPoint::ConstructVLR(VariableRecord& v, PointFormatName format) const
+void ZipPoint::ConstructVLR(VariableRecord& v) const
 {
 
     unsigned char* data;
@@ -181,7 +181,7 @@ void ZipPoint::ConstructVLR(VariableRecord& v, PointFormatName format) const
     v.SetReserved(0xAABB);
     v.SetUserId(laszip_userid);
     v.SetRecordId(laszip_recordid);
-    v.SetRecordLength(num);
+    v.SetRecordLength(static_cast<boost::uint16_t>(num));
     v.SetDescription(laszip_description);
     v.SetData(vdata);
 

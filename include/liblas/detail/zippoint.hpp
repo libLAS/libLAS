@@ -65,7 +65,7 @@ public:
     ZipPoint(PointFormatName, const std::vector<VariableRecord>& vlrs);
     ~ZipPoint();
 
-    void ConstructVLR(VariableRecord&, PointFormatName format) const;
+    void ConstructVLR(VariableRecord&) const;
 
     // these will return false iff we find a laszip VLR and it doesn't match
     // the point format this object wasd constructed with

@@ -152,7 +152,7 @@ void Header::write()
             m_header.DeleteVLRs("laszip encoded", 22204);
             ZipPoint zpd(m_header.GetDataFormatId(), m_header.GetVLRs());
             VariableRecord v;
-            zpd.ConstructVLR(v, m_header.GetDataFormatId());
+            zpd.ConstructVLR(v);
             m_header.AddVLR(v);
 #else
             throw configuration_error("LASzip compression support not enabled in this libLAS configuration.");
