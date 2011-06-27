@@ -85,7 +85,6 @@ ZipReaderImpl::~ZipReaderImpl()
     }
 
     m_zipPoint.reset();
-    m_zip.reset();
     m_unzipper.reset();
 
     return;
@@ -103,33 +102,28 @@ void ZipReaderImpl::Reset()
 
     // If we reset the reader, we're ready to start reading points, so 
     // we'll create a point reader at this point.
-    if (!m_zip)
+    if (!m_zipPoint)
     {
-
-        // Initialize a scoped_ptr and swap it with our member variable 
-        // that will contain it.
-        boost::scoped_ptr<LASzip> s(new LASzip());
-        m_zip.swap(s);
 
         PointFormatName format = m_header->GetDataFormatId();
         boost::scoped_ptr<ZipPoint> z(new ZipPoint(format, m_header->GetVLRs()));
         m_zipPoint.swap(z);
 
         bool ok = false;
-        ok = m_zip->setup((unsigned char)format, m_header->GetDataRecordLength());
+        ok = m_zipPoint->GetZipper()->setup((unsigned char)format, m_header->GetDataRecordLength());
 
         if (!ok)
         {
             std::ostringstream oss;
-            oss << "Error setting up compression engine: " << std::string(m_zip->get_error());
+            oss << "Error setting up compression engine: " << std::string(m_zipPoint->GetZipper()->get_error());
             throw liblas_error(oss.str());
         }
 
-        ok = m_zip->unpack(m_zipPoint->our_vlr_data.get(), m_zipPoint->our_vlr_num);
+        ok = m_zipPoint->GetZipper()->unpack(m_zipPoint->our_vlr_data.get(), m_zipPoint->our_vlr_num);
         if (!ok)
         {
             std::ostringstream oss;
-            oss << "Error unpacking zip VLR data: " << std::string(m_zip->get_error());
+            oss << "Error unpacking zip VLR data: " << std::string(m_zipPoint->GetZipper()->get_error());
             throw liblas_error(oss.str());
         }
     }
@@ -141,7 +135,7 @@ void ZipReaderImpl::Reset()
 
         bool stat(false);
         m_ifs.seekg(m_header->GetDataOffset(), std::ios::beg);
-        stat = m_unzipper->open(m_ifs, m_zip.get());
+        stat = m_unzipper->open(m_ifs, m_zipPoint->GetZipper());
 
         if (!stat)
         {

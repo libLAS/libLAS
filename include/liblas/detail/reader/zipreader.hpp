@@ -112,7 +112,7 @@ protected:
 private:
     void ReadIdiom();
 
-    boost::scoped_ptr<LASzip> m_zip;
+    // boost::scoped_ptr<LASzip> m_zip;
     boost::scoped_ptr<ZipPoint> m_zipPoint;
     boost::scoped_ptr<LASunzipper> m_unzipper;
 
