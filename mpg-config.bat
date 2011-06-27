@@ -12,7 +12,7 @@ set DEV_DIR=d:\dev
 
 set LIBLAS=%DEV_DIR%\liblas
 set LASZIP=%DEV_DIR%\laszip
-set BOOST=%UTILS_DIR%\boost_1_46_1
+set BOOST=%UTILS_DIR%\boost_pro_1_46_1
 
 cmake -G %COMPILER% ^
     -DBOOST_INCLUDEDIR=%BOOST% ^
