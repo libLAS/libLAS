@@ -73,6 +73,8 @@ public:
     bool ValidateVLR(const VariableRecord& vlr) const;
     
     bool IsZipVLR(const VariableRecord& vlr) const;
+    
+    LASzip* GetZipper() const { return m_zip.get(); }
 
 private:
     void ConstructItems(unsigned char, unsigned short);

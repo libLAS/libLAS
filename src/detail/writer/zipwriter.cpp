@@ -64,7 +64,6 @@ ZipWriterImpl::ZipWriterImpl(std::ostream& ofs) :
     //m_point_writer(PointWriterPtr( )), 
     m_header_writer(HeaderWriterPtr()), 
     m_pointCount(0),
-    m_zip(NULL),
     m_zipper(NULL),
     m_zipPoint(NULL)
 {
@@ -101,12 +100,8 @@ void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
 
 void ZipWriterImpl::WritePoint(liblas::Point const& point)
 {
-    if (!m_zip)
+    if (!m_zipPoint)
     {
-        // Initialize a scoped_ptr and swap it with our member variable 
-        // that will contain it.
-        boost::scoped_ptr<LASzip> s(new LASzip());
-        m_zip.swap(s);
             
         PointFormatName format = m_header->GetDataFormatId();
 
@@ -114,19 +109,19 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
         m_zipPoint.swap(z);
         
         bool ok = false;
-        ok = m_zip->setup((unsigned char)format, m_header->GetDataRecordLength());
+        ok = m_zipPoint->GetZipper()->setup((unsigned char)format, m_header->GetDataRecordLength());
         if (!ok)
         {
             std::ostringstream oss;
-            oss << "Error opening compression core: " << std::string(m_zip->get_error());
+            oss << "Error opening compression core: " << std::string(m_zipPoint->GetZipper()->get_error());
             throw liblas_error(oss.str());
         }
 
-        ok = m_zip->pack(m_zipPoint->his_vlr_data, m_zipPoint->his_vlr_num);
+        ok = m_zipPoint->GetZipper()->pack(m_zipPoint->his_vlr_data, m_zipPoint->his_vlr_num);
         if (!ok)
         {
             std::ostringstream oss;
-            oss << "Error packing VLR data for compression: " << std::string(m_zip->get_error());
+            oss << "Error packing VLR data for compression: " << std::string(m_zipPoint->GetZipper()->get_error());
             throw liblas_error(oss.str());
         }
     }
@@ -138,11 +133,11 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
 
         bool stat(false);
 
-        stat = m_zipper->open(m_ofs, m_zip.get());
+        stat = m_zipper->open(m_ofs, m_zipPoint->GetZipper());
         if (!stat)
         {
             std::ostringstream oss;
-            oss << "Error opening LASzipper: " << std::string(m_zip->get_error());
+            oss << "Error opening LASzipper: " << std::string(m_zipPoint->GetZipper()->get_error());
             throw liblas_error(oss.str());
         }
     }
@@ -162,7 +157,7 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
     if (!ok)
     {
         std::ostringstream oss;
-        oss << "Error writing compressed point data: " << std::string(m_zip->get_error());
+        oss << "Error writing compressed point data: " << std::string(m_zipper->get_error());
         throw liblas_error(oss.str());
     }
     ++m_pointCount;
@@ -182,7 +177,6 @@ ZipWriterImpl::~ZipWriterImpl()
     }
 
     m_zipPoint.reset();
-    m_zip.reset();
     m_zipper.reset();
 
 }
