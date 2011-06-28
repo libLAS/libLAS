@@ -95,8 +95,6 @@ void ZipReaderImpl::Reset()
     m_ifs.clear();
     m_ifs.seekg(0);
 
-    m_zipPoint.reset();
-    m_unzipper.reset();
     
     // Reset sizes and set internal cursor to the beginning of file.
     m_current = 0;
@@ -237,12 +235,8 @@ void ZipReaderImpl::ReadNextPoint()
 
     if (bNeedHeaderCheck) 
     {
-        // if (m_point->GetHeaderPtr().get() != m_header.get())
-        //     m_point->SetHeaderPtr(m_header);
-
         if (!(m_point->GetHeader().get() == *m_header))
             m_point->SetHeader(HeaderOptionalConstRef(*m_header));
-
     }
     
     ReadIdiom();
