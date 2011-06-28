@@ -79,16 +79,6 @@ ZipPoint::ZipPoint(PointFormatName format, const std::vector<VariableRecord>& vl
             break;
         }
     }
-    if (vlr)
-    {
-        our_vlr_num = vlr->GetData().size();
-        boost::scoped_array<boost::uint8_t> d( new boost::uint8_t[ our_vlr_num ] );
-        our_vlr_data.swap(d);
-        for (int i=0; i<our_vlr_num; i++)
-        {
-            our_vlr_data[i] = vlr->GetData()[i];
-        }
-    }
 
     unsigned char pointFormat = 0;
     unsigned short pointSize = 0;
@@ -116,11 +106,22 @@ ZipPoint::ZipPoint(PointFormatName format, const std::vector<VariableRecord>& vl
 
     if (vlr)
     {
-        m_zip->unpack(our_vlr_data.get(), our_vlr_num);
-        m_zip->setup((const unsigned short int) m_zip->num_items, 
-                     (const LASitem*)m_zip->items, 
-                     LASZIP_COMPRESSOR_DEFAULT);
-        ConstructItems();
+        bool ok(false);
+        ok = m_zip->setup(pointFormat, pointSize);
+        if (!ok)
+        {
+            std::ostringstream oss;
+            oss << "Error setting up LASzip for format " << pointFormat <<": " << m_zip->get_error(); 
+            throw liblas_error(oss.str());
+        }        
+        ok = m_zip->unpack(&(vlr->GetData()[0]), vlr->GetData().size());
+        if (!ok)
+        {
+            std::ostringstream oss;
+            oss << "Error unpacking zip VLR data: " << std::string(m_zip->get_error());
+            throw liblas_error(oss.str());
+        }
+
     } else
     {
 
@@ -130,12 +131,9 @@ ZipPoint::ZipPoint(PointFormatName format, const std::vector<VariableRecord>& vl
             oss << "Error setting up LASzip for format " << pointFormat <<": " << m_zip->get_error(); 
             throw liblas_error(oss.str());
         }
-
-        ConstructItems();
-        
     }
 
-
+    ConstructItems();
     return;
 }
 

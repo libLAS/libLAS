@@ -84,8 +84,6 @@ public: // for now
     // LASzip::unpack() just reads from the vlr_data we give it (we allocate and delete)  ["our"]
     int his_vlr_num;
     unsigned char* his_vlr_data;
-    int our_vlr_num;
-    boost::scoped_array<boost::uint8_t> our_vlr_data;
 
     boost::scoped_ptr<LASzip> m_zip;
 
