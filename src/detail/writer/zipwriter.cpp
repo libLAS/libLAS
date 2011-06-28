@@ -107,23 +107,6 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
 
         boost::scoped_ptr<ZipPoint> z(new ZipPoint(format, m_header->GetVLRs()));
         m_zipPoint.swap(z);
-        
-        bool ok = false;
-        ok = m_zipPoint->GetZipper()->setup((unsigned char)format, m_header->GetDataRecordLength());
-        if (!ok)
-        {
-            std::ostringstream oss;
-            oss << "Error opening compression core: " << std::string(m_zipPoint->GetZipper()->get_error());
-            throw liblas_error(oss.str());
-        }
-
-        ok = m_zipPoint->GetZipper()->pack(m_zipPoint->his_vlr_data, m_zipPoint->his_vlr_num);
-        if (!ok)
-        {
-            std::ostringstream oss;
-            oss << "Error packing VLR data for compression: " << std::string(m_zipPoint->GetZipper()->get_error());
-            throw liblas_error(oss.str());
-        }
     }
 
     if (!m_zipper)

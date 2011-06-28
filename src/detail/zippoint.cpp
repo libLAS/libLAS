@@ -114,9 +114,26 @@ ZipPoint::ZipPoint(PointFormatName format, const std::vector<VariableRecord>& vl
         throw liblas_error("point format not supported by laszip");
     }
 
-    m_zip->setup(pointFormat, pointSize);
+    if (vlr)
+    {
+        m_zip->unpack(our_vlr_data.get(), our_vlr_num);
+        m_zip->setup((const unsigned short int) m_zip->num_items, 
+                     (const LASitem*)m_zip->items, 
+                     LASZIP_COMPRESSOR_DEFAULT);
+        ConstructItems();
+    } else
+    {
 
-    ConstructItems(pointFormat, pointSize);
+        if (!m_zip->setup(pointFormat, pointSize))
+        {
+            std::ostringstream oss;
+            oss << "Error setting up LASzip for format " << pointFormat <<": " << m_zip->get_error(); 
+            throw liblas_error(oss.str());
+        }
+
+        ConstructItems();
+        
+    }
 
 
     return;
@@ -131,14 +148,9 @@ ZipPoint::~ZipPoint()
 }
 
 
-void ZipPoint::ConstructItems(unsigned char pointFormat, unsigned short size)
+void ZipPoint::ConstructItems()
 {
-    if (!m_zip->setup(pointFormat, size))
-    {
-        std::ostringstream oss;
-        oss << "Error setting up LASzip for format " << pointFormat <<": " << m_zip->get_error(); 
-        throw liblas_error(oss.str());
-    }
+
 
     // construct the object that will hold a laszip point
 
@@ -159,6 +171,7 @@ void ZipPoint::ConstructItems(unsigned char pointFormat, unsigned short size)
         point_offset += m_zip->items[i].size;
     }
     
+    assert (point_offset == m_lz_point_size);
     return;
 }
 

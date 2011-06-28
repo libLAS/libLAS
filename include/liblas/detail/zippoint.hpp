@@ -77,7 +77,7 @@ public:
     LASzip* GetZipper() const { return m_zip.get(); }
 
 private:
-    void ConstructItems(unsigned char, unsigned short);
+    void ConstructItems();
 
 public: // for now
     // LASzip::pack() allocates/sets vlr_data and vlr_num for us, and deletes it for us  ["his"]

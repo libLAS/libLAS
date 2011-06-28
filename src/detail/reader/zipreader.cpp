@@ -95,6 +95,9 @@ void ZipReaderImpl::Reset()
     m_ifs.clear();
     m_ifs.seekg(0);
 
+    m_zipPoint.reset();
+    m_unzipper.reset();
+    
     // Reset sizes and set internal cursor to the beginning of file.
     m_current = 0;
     m_size = m_header->GetPointRecordsCount();
@@ -108,24 +111,6 @@ void ZipReaderImpl::Reset()
         PointFormatName format = m_header->GetDataFormatId();
         boost::scoped_ptr<ZipPoint> z(new ZipPoint(format, m_header->GetVLRs()));
         m_zipPoint.swap(z);
-
-        bool ok = false;
-        ok = m_zipPoint->GetZipper()->setup((unsigned char)format, m_header->GetDataRecordLength());
-
-        if (!ok)
-        {
-            std::ostringstream oss;
-            oss << "Error setting up compression engine: " << std::string(m_zipPoint->GetZipper()->get_error());
-            throw liblas_error(oss.str());
-        }
-
-        ok = m_zipPoint->GetZipper()->unpack(m_zipPoint->our_vlr_data.get(), m_zipPoint->our_vlr_num);
-        if (!ok)
-        {
-            std::ostringstream oss;
-            oss << "Error unpacking zip VLR data: " << std::string(m_zipPoint->GetZipper()->get_error());
-            throw liblas_error(oss.str());
-        }
     }
 
     if (!m_unzipper)
@@ -211,9 +196,11 @@ void ZipReaderImpl::SetHeader(liblas::Header const& header)
 void ZipReaderImpl::ReadIdiom()
 {
     bool ok = false;
+    std::cout << "ReadIdiom pos: " << m_ifs.tellg() << std::endl;
 
     ok = m_unzipper->read(m_zipPoint->m_lz_point);
-
+    
+    std::cout << "ReadIdiom pos: " << m_ifs.tellg() << std::endl;
     if (!ok)
     {
         std::ostringstream oss;
