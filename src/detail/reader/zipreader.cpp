@@ -109,6 +109,7 @@ void ZipReaderImpl::Reset()
         PointFormatName format = m_header->GetDataFormatId();
         boost::scoped_ptr<ZipPoint> z(new ZipPoint(format, m_header->GetVLRs()));
         m_zipPoint.swap(z);
+
     }
 
     if (!m_unzipper)
@@ -116,11 +117,11 @@ void ZipReaderImpl::Reset()
         boost::scoped_ptr<LASunzipper> z(new LASunzipper());
         m_unzipper.swap(z);
 
-        bool stat(false);
+        bool ok(false);
         m_ifs.seekg(m_header->GetDataOffset(), std::ios::beg);
-        stat = m_unzipper->open(m_ifs, m_zipPoint->GetZipper());
+        ok = m_unzipper->open(m_ifs, m_zipPoint->GetZipper());
 
-        if (!stat)
+        if (!ok)
         {
             std::ostringstream oss;
             const char* err = m_unzipper->get_error();
