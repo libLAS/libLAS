@@ -73,7 +73,7 @@ ZipPoint::ZipPoint(PointFormatName format, const std::vector<VariableRecord>& vl
     for (unsigned int i=0; i<vlrs.size(); i++)
     {
         const VariableRecord& p = vlrs[i];
-        if (p.GetRecordId() == 22204)
+        if (IsZipVLR(p))
         {
             vlr = &p;
             break;
