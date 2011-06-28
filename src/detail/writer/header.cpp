@@ -154,7 +154,6 @@ void Header::write()
             VariableRecord v;
             zpd.ConstructVLR(v);
             m_header.AddVLR(v);
-            m_header.SetDataOffset(m_header.GetDataOffset()+v.GetRecordLength());
 #else
             throw configuration_error("LASzip compression support not enabled in this libLAS configuration.");
 #endif
@@ -169,13 +168,13 @@ void Header::write()
         if (difference <= 0) 
         {
             int32_t d = abs(difference);
-            int32_t padding_from_before = m_header.GetDataOffset() - m_header.GetHeaderSize();
+            // int32_t padding_from_before = m_header.GetDataOffset() - m_header.GetHeaderSize();
             if (m_header.GetVersionMinor()  ==  0) 
             {
                 // Add the two extra bytes for the 1.0 pad
                 d = d + 2;
             }
-            m_header.SetDataOffset(m_header.GetDataOffset() + d + padding_from_before);
+            m_header.SetDataOffset(m_header.GetDataOffset() + d);
         }
 
     }
@@ -243,7 +242,7 @@ void Header::write()
     detail::write_n(m_ofs, n2, sizeof(n2));
 
     // 14. Offset to data
-    n4 = m_header.GetDataOffset();        
+    n4 = m_header.GetDataOffset();
     detail::write_n(m_ofs, n4, sizeof(n4));
 
     // 15. Number of variable length records
