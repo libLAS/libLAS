@@ -154,6 +154,7 @@ void Header::write()
             VariableRecord v;
             zpd.ConstructVLR(v);
             m_header.AddVLR(v);
+            m_header.SetDataOffset(m_header.GetDataOffset()+v.GetRecordLength());
 #else
             throw configuration_error("LASzip compression support not enabled in this libLAS configuration.");
 #endif
