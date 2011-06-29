@@ -78,6 +78,23 @@ void ZipWriterImpl::WriteHeader()
     m_header_writer->write();
     
     m_header = HeaderPtr(new liblas::Header(m_header_writer->GetHeader()));
+
+    if (!m_zipper)
+    {
+        boost::scoped_ptr<LASzipper> z(new LASzipper());
+        m_zipper.swap(z);
+
+        bool stat(false);
+
+        stat = m_zipper->open(m_ofs, m_zipPoint->GetZipper());
+        if (!stat)
+        {
+            std::ostringstream oss;
+            oss << "Error opening LASzipper: " << std::string(m_zipPoint->GetZipper()->get_error());
+            throw liblas_error(oss.str());
+        }
+    }
+    
 }
 
 void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
@@ -100,30 +117,6 @@ void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
 
 void ZipWriterImpl::WritePoint(liblas::Point const& point)
 {
-    if (!m_zipPoint)
-    {
-            
-        PointFormatName format = m_header->GetDataFormatId();
-
-        boost::scoped_ptr<ZipPoint> z(new ZipPoint(format, m_header->GetVLRs()));
-        m_zipPoint.swap(z);
-    }
-
-    if (!m_zipper)
-    {
-        boost::scoped_ptr<LASzipper> z(new LASzipper());
-        m_zipper.swap(z);
-
-        bool stat(false);
-
-        stat = m_zipper->open(m_ofs, m_zipPoint->GetZipper());
-        if (!stat)
-        {
-            std::ostringstream oss;
-            oss << "Error opening LASzipper: " << std::string(m_zipPoint->GetZipper()->get_error());
-            throw liblas_error(oss.str());
-        }
-    }
 
     bool ok = false;
     const std::vector<boost::uint8_t>* data = &point.GetData();
@@ -151,6 +144,7 @@ ZipWriterImpl::~ZipWriterImpl()
 {
     // Try to update the point count on our way out, but we don't really
     // care if we weren't able to write it.
+
     try
     {
         UpdatePointCount(0);
@@ -159,8 +153,9 @@ ZipWriterImpl::~ZipWriterImpl()
         // ignore?
     }
 
-    m_zipPoint.reset();
+
     m_zipper.reset();
+    m_zipPoint.reset();
 
 }
 
@@ -189,6 +184,17 @@ liblas::Header& ZipWriterImpl::GetHeader() const
 void ZipWriterImpl::SetHeader(liblas::Header const& header)
 {
     m_header = HeaderPtr(new liblas::Header(header));
+
+    if (!m_zipPoint)
+    {
+            
+        PointFormatName format = m_header->GetDataFormatId();
+
+        boost::scoped_ptr<ZipPoint> z(new ZipPoint(format, m_header->GetVLRs()));
+        m_zipPoint.swap(z);
+    }
+
+
 }
 
 
