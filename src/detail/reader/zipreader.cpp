@@ -95,6 +95,8 @@ void ZipReaderImpl::Reset()
     m_ifs.clear();
     m_ifs.seekg(0);
 
+    m_zipPoint.reset();
+    m_unzipper.reset();
     
     // Reset sizes and set internal cursor to the beginning of file.
     m_current = 0;
