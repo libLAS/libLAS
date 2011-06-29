@@ -180,7 +180,12 @@ bool ReprojectionTransform::transform(Point& point)
     
     if (this->ModifiesHeader()) 
     {
-        point.SetHeader(m_new_header);
+        if (m_new_header)
+            point.SetHeader(m_new_header);
+        else 
+        {
+            // FIXME? 
+        }
     }
 
     point.SetX(x);
