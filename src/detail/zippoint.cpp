@@ -107,13 +107,6 @@ ZipPoint::ZipPoint(PointFormatName format, const std::vector<VariableRecord>& vl
     if (vlr)
     {
         bool ok(false);
-        ok = m_zip->setup(pointFormat, pointSize);
-        if (!ok)
-        {
-            std::ostringstream oss;
-            oss << "Error setting up LASzip for format " << pointFormat <<": " << m_zip->get_error(); 
-            throw liblas_error(oss.str());
-        }        
         ok = m_zip->unpack(&(vlr->GetData()[0]), vlr->GetData().size());
         if (!ok)
         {
