@@ -73,6 +73,7 @@ ZipReaderImpl::ZipReaderImpl(std::istream& ifs)
     , m_filters(0)
     , m_transforms(0)
     , bNeedHeaderCheck(false)
+    , m_zipReadStartPosition(0)
 {
     return;
 }
@@ -99,8 +100,36 @@ void ZipReaderImpl::Reset()
     m_current = 0;
     m_size = m_header->GetPointRecordsCount();
 
-    m_zipPoint.reset();
-    m_unzipper.reset();    
+
+    if (!m_zipPoint)
+    {
+    
+        PointFormatName format = m_header->GetDataFormatId();
+        boost::scoped_ptr<ZipPoint> z(new ZipPoint(format, m_header->GetVLRs()));
+        m_zipPoint.swap(z);
+    
+    }
+
+    if (!m_unzipper)
+    {
+        boost::scoped_ptr<LASunzipper> z(new LASunzipper());
+        m_unzipper.swap(z);
+
+        bool ok(false);
+        m_ifs.seekg(m_header->GetDataOffset(), std::ios::beg);
+        ok = m_unzipper->open(m_ifs, m_zipPoint->GetZipper());
+
+        m_zipReadStartPosition = m_ifs.tellg();
+
+        if (!ok)
+        {
+            std::ostringstream oss;
+            const char* err = m_unzipper->get_error();
+            if (err==NULL) err="(unknown error)";
+            oss << "Failed to open LASzip stream: " << std::string(err);
+            throw liblas_error(oss.str());
+        }
+    }
     return;
 }
 
@@ -152,7 +181,6 @@ void ZipReaderImpl::ReadHeader()
     if (!m_header->Compressed())
         throw liblas_error("Internal error: compressed reader encountered uncompressed header"); 
 
-    // m_point->SetHeaderPtr(m_header);
     m_point->SetHeader(HeaderOptionalConstRef(*m_header));
     Reset();
 }
@@ -165,37 +193,6 @@ void ZipReaderImpl::SetHeader(liblas::Header const& header)
 void ZipReaderImpl::ReadIdiom()
 {
     bool ok = false;
-
-    // If we reset the reader, we're ready to start reading points, so 
-    // we'll create a point reader at this point.
-    if (!m_zipPoint)
-    {
-    
-        PointFormatName format = m_header->GetDataFormatId();
-        boost::scoped_ptr<ZipPoint> z(new ZipPoint(format, m_header->GetVLRs()));
-        m_zipPoint.swap(z);
-    
-    }
-
-    if (!m_unzipper)
-    {
-        boost::scoped_ptr<LASunzipper> z(new LASunzipper());
-        m_unzipper.swap(z);
-
-        bool ok(false);
-        m_ifs.seekg(m_header->GetDataOffset(), std::ios::beg);
-        ok = m_unzipper->open(m_ifs, m_zipPoint->GetZipper());
-
-        if (!ok)
-        {
-            std::ostringstream oss;
-            const char* err = m_unzipper->get_error();
-            if (err==NULL) err="(unknown error)";
-            oss << "Failed to open LASzip stream: " << std::string(err);
-            throw liblas_error(oss.str());
-        }
-    }
-
 
     ok = m_unzipper->read(m_zipPoint->m_lz_point);
 
@@ -226,7 +223,7 @@ void ZipReaderImpl::ReadNextPoint()
     if (0 == m_current)
     {
         m_ifs.clear();
-        m_ifs.seekg(m_header->GetDataOffset(), std::ios::beg);
+        m_ifs.seekg(m_zipReadStartPosition, std::ios::beg);
     }
 
     if (m_current >= m_size ){

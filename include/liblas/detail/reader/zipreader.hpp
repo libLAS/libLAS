@@ -117,6 +117,7 @@ private:
     boost::scoped_ptr<LASunzipper> m_unzipper;
 
     bool bNeedHeaderCheck;
+    std::streampos m_zipReadStartPosition;
     
     // Blocked copying operations, declared but not defined.
     ZipReaderImpl(ZipReaderImpl const& other);
