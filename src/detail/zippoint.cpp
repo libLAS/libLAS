@@ -58,7 +58,7 @@ namespace liblas { namespace detail {
 
 static std::string laszip_userid("laszip encoded");
 static boost::uint16_t laszip_recordid = 22204;
-static std::string laszip_description = "encoded for sequential access";
+static std::string laszip_description = "http://laszip.org";
 
 
 ZipPoint::ZipPoint(PointFormatName format, const std::vector<VariableRecord>& vlrs)
