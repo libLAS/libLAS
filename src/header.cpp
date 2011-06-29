@@ -46,6 +46,12 @@
 #include <liblas/schema.hpp>
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/utility.hpp>
+
+#ifdef HAVE_LASZIP
+#include <liblas/detail/zippoint.hpp>
+#include <laszip/laszip.hpp>
+#endif
+
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -721,6 +727,25 @@ liblas::property_tree::ptree Header::GetPTree( ) const
     pt.put("datarecordlength", GetDataRecordLength());
     pt.put("compressed", Compressed());
 
+#ifdef HAVE_LASZIP
+    liblas::detail::ZipPoint zp(GetDataFormatId(), GetVLRs());
+    LASzip* laszip = zp.GetZipper();
+    std::ostringstream zip_version;
+    zip_version <<"LASzip Version " 
+                << (int)laszip->version_major << "." 
+                << (int)laszip->version_minor << "r"
+                << (int)laszip->version_revision << " c" 
+                << (int)laszip->compressor;
+    if (laszip->compressor == LASZIP_COMPRESSOR_CHUNKED) 
+        zip_version << " "<< (int)laszip->chunk_size << ":";
+    else
+        zip_version << ":";
+    for (int i = 0; i < (int)laszip->num_items; i++) 
+        zip_version <<" "<< laszip->items[i].get_name()<<" "<<  (int)laszip->items[i].version;
+
+    pt.put("compression_info", zip_version.str());
+#endif
+
     ptree return_count;
     liblas::Header::RecordsByReturnArray returns = GetPointRecordsByReturnCount();
     for (boost::uint32_t i=0; i< 5; i++){
@@ -793,6 +818,12 @@ void Header::to_rst(std::ostream& os) const
     os << "  Point Data Format:           " << tree.get<boost::uint32_t>("dataformatid") << std::endl;
     os << "  Number of Point Records:     " << tree.get<boost::uint32_t>("count") << std::endl;
     os << "  Compressed:                  " << (tree.get<bool>("compressed")?"True":"False") << std::endl;
+    if (tree.get<bool>("compressed"))
+    {
+    os << "  Compression Info:            " << tree.get<std::string>("compression_info");
+    }
+    os << std::endl;
+    
     os << "  Number of Points by Return:  " ;
     BOOST_FOREACH(ptree::value_type &v,
           tree.get_child("returns"))
