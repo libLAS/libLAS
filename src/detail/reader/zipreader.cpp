@@ -195,11 +195,9 @@ void ZipReaderImpl::SetHeader(liblas::Header const& header)
 void ZipReaderImpl::ReadIdiom()
 {
     bool ok = false;
-    std::cout << "ReadIdiom pos: " << m_ifs.tellg() << std::endl;
 
     ok = m_unzipper->read(m_zipPoint->m_lz_point);
-    
-    std::cout << "ReadIdiom pos: " << m_ifs.tellg() << std::endl;
+
     if (!ok)
     {
         std::ostringstream oss;
