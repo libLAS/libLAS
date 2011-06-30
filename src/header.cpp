@@ -100,7 +100,8 @@ Header::Header(Header const& other) :
     m_extent(other.m_extent),
     m_srs(other.m_srs),
     m_schema(other.m_schema),
-    m_isCompressed(other.m_isCompressed)
+    m_isCompressed(other.m_isCompressed),
+    m_headerPadding(other.m_headerPadding)
 {
     void* p = 0;
 
@@ -156,6 +157,7 @@ Header& Header::operator=(Header const& rhs)
         m_srs = rhs.m_srs;
         m_schema = rhs.m_schema;
         m_isCompressed = rhs.m_isCompressed;
+        m_headerPadding = rhs.m_headerPadding;
 
     }
     return *this;
@@ -188,7 +190,7 @@ bool Header::operator==(Header const& other) const
     if (m_pointRecordsByReturn != other.m_pointRecordsByReturn) return false;
     if (m_extent != other.m_extent) return false;
     if (m_isCompressed != other.m_isCompressed) return false;
-    
+    if (m_headerPadding != other.m_headerPadding) return false;
     if (m_schema != other.m_schema) return false;
     return true;
 }
@@ -357,18 +359,30 @@ uint32_t Header::GetDataOffset() const
 
 void Header::SetDataOffset(uint32_t v)
 {
-    // uint32_t const dataSignatureSize = 2;
-    // uint16_t const hsize = GetHeaderSize();
-    // 
-    // if ( (m_versionMinor == 0 && v < hsize + dataSignatureSize) ||
-    //      (m_versionMinor == 1 && v < hsize) ||
-    //      (m_versionMinor == 2 && v < hsize) )
-    // {
-    //     throw std::out_of_range("data offset out of range");
-    // }
-    
     m_dataOffset = v;
-    
+}
+
+uint32_t Header::GetHeaderPadding() const
+{
+    return m_headerPadding;
+}
+
+uint32_t Header::GetVLRBlockSize() const
+{
+    uint32_t vlr_total_size = 0;
+
+    for (uint32_t i = 0; i < GetRecordsCount(); ++i)
+    {
+        VariableRecord const & vlr = GetVLR(i);
+        vlr_total_size += static_cast<uint32_t>(vlr.GetTotalSize());
+    }
+
+    return vlr_total_size;
+}
+
+void Header::SetHeaderPadding(uint32_t v)
+{
+    m_headerPadding = v;
 }
 
 uint32_t Header::GetRecordsCount() const
@@ -572,6 +586,7 @@ void Header::Init()
     std::memset(m_projectId4, 0, sizeof(m_projectId4)); 
 
     m_dataOffset = eHeaderSize; // excluding 2 bytes of Point Data Start Signature
+    m_headerPadding = 0;
     m_recordsCount = 0;
     m_pointRecordsCount = 0;
 
@@ -721,6 +736,7 @@ liblas::property_tree::ptree Header::GetPTree( ) const
     
     pt.put("size", GetHeaderSize());
     pt.put("dataoffset", GetDataOffset());
+    pt.put("header_padding", GetHeaderPadding());
 
     pt.put("count", GetPointRecordsCount());
     pt.put("dataformatid", GetDataFormatId());
@@ -804,6 +820,7 @@ void Header::to_rst(std::ostream& os) const
     os << "  File Creation Day/Year:      " << tree.get<std::string>("date") << std::endl;
     os << "  Header Byte Size             " << tree.get<boost::uint32_t>("size") << std::endl;
     os << "  Data Offset:                 " << tree.get<boost::uint32_t>("dataoffset") << std::endl;
+    os << "  Header Padding:              " << tree.get<boost::uint32_t>("header_padding") << std::endl;
 
     os << "  Number Var. Length Records:  ";
     try {

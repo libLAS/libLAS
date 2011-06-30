@@ -450,6 +450,14 @@ las.LASHeader_SetDataOffset.restype = ctypes.c_int
 las.LASHeader_SetDataOffset.argtypes = [ctypes.c_void_p, ctypes.c_int]
 las.LASHeader_SetDataOffset.errcheck = check_return
 
+las.LASHeader_GetHeaderPadding.restype = ctypes.c_ulong
+las.LASHeader_GetHeaderPadding.argtypes = [ctypes.c_void_p]
+las.LASHeader_GetHeaderPadding.errcheck = check_value
+
+las.LASHeader_SetHeaderPadding.restype = ctypes.c_int
+las.LASHeader_SetHeaderPadding.argtypes = [ctypes.c_void_p, ctypes.c_int]
+las.LASHeader_SetHeaderPadding.errcheck = check_return
+
 las.LASHeader_GetRecordsCount.restype = ctypes.c_ulong
 las.LASHeader_GetRecordsCount.argtypes = [ctypes.c_void_p]
 las.LASHeader_GetRecordsCount.errcheck = check_value

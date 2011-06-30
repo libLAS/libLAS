@@ -388,6 +388,21 @@ class Header(object):
     """
     data_offset = property(get_dataoffset, set_dataoffset, None, doc)
 
+    def get_padding(self):
+        """Returns number of bytes between the end of the VLRs and the 
+           beginning of the point data."""
+        return core.las.LASHeader_GetHeaderPadding(self.handle)
+
+    def set_padding(self, value):
+        """Sets the header's padding.
+
+        """
+        return core.las.LASHeader_SetHeaderPadding(self.handle, value)
+    doc = """The number of bytes between the end of the VLRs and the 
+    beginning of the point data.
+    """
+    padding = property(get_padding, set_padding, None, doc)
+
     def get_recordscount(self):
         return core.las.LASHeader_GetRecordsCount(self.handle)
     doc = """Returns the number of user-defined header records in the header.
