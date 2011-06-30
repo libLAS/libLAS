@@ -172,7 +172,8 @@ void Header::write()
             int32_t d = abs(existing_padding);
             m_header.SetHeaderPadding(d);
         } else {
-            if (existing_padding >= m_header.GetHeaderPadding())
+            // cast is safe, we've already checked for < 0
+            if (static_cast<uint32_t>(existing_padding) >= m_header.GetHeaderPadding())
             {
                 m_header.SetHeaderPadding(existing_padding);
             }
@@ -392,6 +393,7 @@ void Header::WriteLAS10PadSignature()
     if (diff < 2) {
         
         m_header.SetDataOffset(m_header.GetDataOffset() + 2);
+        // Seek to the location of the data offset in the header and write a new one.
         m_ofs.seekp(96, std::ios::beg);
         detail::write_n(m_ofs, m_header.GetDataOffset(), sizeof(m_header.GetDataOffset()));
     }    
