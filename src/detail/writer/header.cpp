@@ -162,21 +162,29 @@ void Header::write()
         {
             m_header.DeleteVLRs("laszip encoded", 22204);
         }
+        
+        int32_t existing_padding = m_header.GetDataOffset() - 
+                                  (m_header.GetVLRBlockSize() + 
+                                   m_header.GetHeaderSize());
 
-        int32_t difference = m_header.GetDataOffset() - GetRequiredHeaderSize();
-
-        if (difference <= 0) 
+        if (existing_padding < 0) 
         {
-            int32_t d = abs(difference);
-            // int32_t padding_from_before = m_header.GetDataOffset() - m_header.GetHeaderSize();
-            if (m_header.GetVersionMinor()  ==  0) 
+            int32_t d = abs(existing_padding);
+            m_header.SetHeaderPadding(d);
+        } else {
+            if (existing_padding >= m_header.GetHeaderPadding())
             {
-                // Add the two extra bytes for the 1.0 pad
-                d = d + 2;
+                m_header.SetHeaderPadding(existing_padding);
             }
-            m_header.SetDataOffset(m_header.GetDataOffset() + d);
+            else {
+                m_header.SetHeaderPadding(m_header.GetHeaderPadding() + existing_padding);
+            }
+
         }
 
+        m_header.SetDataOffset( m_header.GetHeaderSize() + 
+                                m_header.GetVLRBlockSize() + 
+                                m_header.GetHeaderPadding());
     }
 
     
@@ -306,10 +314,16 @@ void Header::write()
     {
         WriteVLRs();
 
+        // if we have padding, we should write it
+        if (m_header.GetHeaderPadding() > 0) {
+            m_ofs.seekp(m_header.GetHeaderSize() + m_header.GetVLRBlockSize(), std::ios::end);
+            detail::write_n(m_ofs, "\0", m_header.GetHeaderPadding());
+        }
+
         // Write the 1.0 pad signature if we need to.
         WriteLAS10PadSignature(); 
+    }
 
-    }           
     // If we already have points, we're going to put it at the end of the file.  
     // If we don't have any points,  we're going to leave it where it is.
     if (m_pointCount != 0)
@@ -354,32 +368,13 @@ void Header::WriteVLRs()
         detail::write_n(m_ofs, data.front(), size);
     }
 
-    // if we had more room than we need for the VLRs, we need to pad that with 
-    // 0's.  We must also not forget to add the 1.0 pad bytes to the end of this
-    // but the impl should be the one doing that, not us.
-    if (diff > 0) {
-        detail::write_n(m_ofs, "\0", diff);
-    }
+
 
 }
 
 boost::int32_t Header::GetRequiredHeaderSize() const
 {
-    // if the VLRs won't fit because the data offset is too 
-    // small, we need to throw an error.
-    std::size_t vlr_total_size = 0;
-        
-    // Calculate a new data offset size
-    for (uint32_t i = 0; i < m_header.GetRecordsCount(); ++i)
-    {
-        VariableRecord const & vlr = m_header.GetVLR(i);
-        vlr_total_size += vlr.GetTotalSize();
-    }
-    
-    // int32_t difference = m_header.GetDataOffset() - (vlr_total_size + m_header.GetHeaderSize());
-    int32_t size = vlr_total_size + m_header.GetHeaderSize();
-    return size;
-    
+    return m_header.GetVLRBlockSize() + m_header.GetHeaderSize();
 }
 
 void Header::WriteLAS10PadSignature()
@@ -395,11 +390,10 @@ void Header::WriteLAS10PadSignature()
     int32_t diff = m_header.GetDataOffset() - GetRequiredHeaderSize();
 
     if (diff < 2) {
-        std::ostringstream oss;
-        oss << "Header is not large enough to write extra 1.0 pad bytes.  Data offset is ";
-        oss << m_header.GetDataOffset() << " while the required total size ";
-        oss << "for the VLRs is " << GetRequiredHeaderSize();
-        throw std::runtime_error(oss.str());
+        
+        m_header.SetDataOffset(m_header.GetDataOffset() + 2);
+        m_ofs.seekp(96, std::ios::beg);
+        detail::write_n(m_ofs, m_header.GetDataOffset(), sizeof(m_header.GetDataOffset()));
     }    
     
     
