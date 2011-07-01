@@ -71,7 +71,7 @@ namespace liblas {
 
 char const* const Header::FileSignature = "LASF";
 char const* const Header::SystemIdentifier = "libLAS";
-char const* const Header::SoftwareIdentifier = "libLAS 1.7.0";
+char const* const Header::SoftwareIdentifier = "libLAS 1.7.0b2";
 
 
 Header::Header() : m_schema(ePointFormat3)
