@@ -171,9 +171,10 @@ void Header::write()
         {
             int32_t d = abs(existing_padding);
             
-            // overflowed here
-            boost::int32_t new_padding = d - m_header.GetVLRBlockSize();
-            if (m_header.GetVLRBlockSize() > d)
+            // If our required VLR space is larger than we have 
+            // room for, we have no padding.  AddVLRs will take care 
+            // of incrementing up the space it needs.
+            if (static_cast<boost::int32_t>(m_header.GetVLRBlockSize()) > d)
             {
                 m_header.SetHeaderPadding(0);
             } else {
