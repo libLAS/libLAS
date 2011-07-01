@@ -112,7 +112,7 @@ values are 0.01
   >>> del f_project
   >>> f3 = file.File('junk_srs_project.las')
   >>> f3.header.data_offset
-  1140L
+  789L
 
   >>> s_utm = srs.SRS()
   >>> s_utm.wkt = utm_wkt
