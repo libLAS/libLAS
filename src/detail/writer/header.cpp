@@ -170,7 +170,15 @@ void Header::write()
         if (existing_padding < 0) 
         {
             int32_t d = abs(existing_padding);
-            m_header.SetHeaderPadding(d);
+            
+            // overflowed here
+            boost::int32_t new_padding = d - m_header.GetVLRBlockSize();
+            if (m_header.GetVLRBlockSize() > d)
+            {
+                m_header.SetHeaderPadding(0);
+            } else {
+                m_header.SetHeaderPadding(d - m_header.GetVLRBlockSize());
+            }
         } else {
             // cast is safe, we've already checked for < 0
             if (static_cast<uint32_t>(existing_padding) >= m_header.GetHeaderPadding())
@@ -305,12 +313,6 @@ void Header::write()
     detail::write_n(m_ofs, m_header.GetMaxZ(), sizeof(double));
     detail::write_n(m_ofs, m_header.GetMinZ(), sizeof(double));
 
-    // If WriteVLR returns a value, it is because the header's 
-    // offset is not large enough to contain the VLRs.  The value 
-    // it returns is the number of bytes we must increase the header
-    // by in order for it to contain the VLRs.  We do not touch VLRs if we 
-    // are in append mode.
-
     if (!bAppendMode) 
     {
         WriteVLRs();
@@ -348,11 +350,18 @@ void Header::WriteVLRs()
     int32_t diff = m_header.GetDataOffset() - GetRequiredHeaderSize();
     
     if (diff < 0) {
-        std::ostringstream oss;
-        oss << "Header is not large enough to contain VLRs.  Data offset is ";
-        oss << m_header.GetDataOffset() << " while the required total size ";
-        oss << "for the VLRs is " << GetRequiredHeaderSize();
-        throw std::runtime_error(oss.str());
+
+        m_header.SetDataOffset(GetRequiredHeaderSize());
+        // Seek to the location of the data offset in the header and write a new one.
+        m_ofs.seekp(96, std::ios::beg);
+        detail::write_n(m_ofs, m_header.GetDataOffset(), sizeof(m_header.GetDataOffset()));
+        m_ofs.seekp(m_header.GetHeaderSize(), std::ios::beg);
+        
+        // std::ostringstream oss;
+        // oss << "Header is not large enough to contain VLRs.  Data offset is ";
+        // oss << m_header.GetDataOffset() << " while the required total size ";
+        // oss << "for the VLRs is " << GetRequiredHeaderSize();
+        // throw std::runtime_error(oss.str());
     }
 
     for (uint32_t i = 0; i < m_header.GetRecordsCount(); ++i)
