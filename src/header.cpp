@@ -837,10 +837,9 @@ void Header::to_rst(std::ostream& os) const
     os << "  Compressed:                  " << (tree.get<bool>("compressed")?"True":"False") << std::endl;
     if (tree.get<bool>("compressed"))
     {
-    os << "  Compression Info:            " << tree.get<std::string>("compression_info");
+    os << "  Compression Info:            " << tree.get<std::string>("compression_info") << std::endl;
     }
-    os << std::endl;
-    
+
     os << "  Number of Points by Return:  " ;
     BOOST_FOREACH(ptree::value_type &v,
           tree.get_child("returns"))
