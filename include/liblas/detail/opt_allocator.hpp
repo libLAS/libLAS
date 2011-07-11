@@ -113,6 +113,7 @@ public:
     template <typename U>
     opt_allocator(opt_allocator<U> const &u)
     {
+        boost::ignore_unused_variable_warning(u);
     }
 
     ~opt_allocator()
