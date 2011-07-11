@@ -127,7 +127,7 @@ namespace tut
             vdata.resize(256);
             for(int i=0; i < 256; i++)
             {
-                vdata[i] = i;
+                vdata[i] = (boost::uint8_t)i;
             }
             r.SetReserved(0xAABB);
             r.SetUserId("HOBU");
