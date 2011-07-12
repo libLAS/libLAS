@@ -454,10 +454,10 @@ double Header::GetScaleZ() const
 void Header::SetScale(double x, double y, double z)
 {
 
-    double const minscale = 0.01;
-    m_scales.x = (detail::compare_distance(0.0, x)) ? minscale : x;
-    m_scales.y = (detail::compare_distance(0.0, y)) ? minscale : y;
-    m_scales.z = (detail::compare_distance(0.0, z)) ? minscale : z;
+    // double const minscale = 0.01;
+    m_scales.x = x;
+    m_scales.y = y;
+    m_scales.z = z;
 }
 
 double Header::GetOffsetX() const
@@ -601,8 +601,7 @@ void Header::Init()
 
     m_pointRecordsByReturn.resize(ePointsByReturnSize);
 
-    // Zero scale value is useless, so we need to use a small value.
-    SetScale(0.01, 0.01, 0.01);
+    SetScale(1.0, 1.0, 1.0);
 
     m_isCompressed = false;
 }
