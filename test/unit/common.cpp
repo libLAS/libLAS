@@ -69,9 +69,9 @@ void test_default_header(liblas::Header const& h)
     ensure_equals("wrong default point records count",
         h.GetPointRecordsCount(), boost::uint32_t(0));
 
-    ensure_equals("wrong default X scale", h.GetScaleX(), double(0.01));
-    ensure_equals("wrong default Y scale", h.GetScaleY(), double(0.01));
-    ensure_equals("wrong default Z scale", h.GetScaleZ(), double(0.01));
+    ensure_equals("wrong default X scale", h.GetScaleX(), double(1.0));
+    ensure_equals("wrong default Y scale", h.GetScaleY(), double(1.0));
+    ensure_equals("wrong default Z scale", h.GetScaleZ(), double(1.0));
 
     ensure_equals("wrong default X offset", h.GetOffsetX(), double(0));
     ensure_equals("wrong default Y offset", h.GetOffsetY(), double(0));
@@ -176,6 +176,7 @@ void test_file10_point1(liblas::Point const& p)
 
 void test_file10_point2(liblas::Point const& p)
 {
+
     ensure_distance(p.GetX(), double(630282.45), 0.0001);
     ensure_distance(p.GetY(), double(4834500), 0.0001);
     ensure_distance(p.GetZ(), double(51.63), 0.0001);

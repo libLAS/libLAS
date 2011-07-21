@@ -712,6 +712,20 @@ LAS_DLL unsigned int LASHeader_GetDataOffset(const LASHeaderH hHeader);
 */
  LAS_DLL LASError LASHeader_SetDataOffset(const LASHeaderH hHeader, unsigned int value);
 
+/** Returns the number of bytes between the end of the VLRs on the header to the data offset
+ *  @param hHeader LASHeaderH instance
+ *  @return the number of bytes between the end of the VLRs on the header to the data offset
+*/
+LAS_DLL unsigned int LASHeader_GetHeaderPadding(const LASHeaderH hHeader);
+
+/** Sets the number of bytes between the end of the VLRs on the header to the data offset
+ *  @param hHeader LASHeaderH instance
+ *  @param value the long integer to set for the number of bytes between the end of the VLRs and the data offset
+ *  @return LASError enum
+*/
+ LAS_DLL LASError LASHeader_SetHeaderPadding(const LASHeaderH hHeader, unsigned int value);
+
+
 /** Returns the number of variable length records in the header
  *  @param hHeader LASHeaderH instance
  *  @return the number of variable length records in the header

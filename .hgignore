@@ -27,6 +27,7 @@ syntax: glob
 *.user
 *.vcproj
 *.sln
+*.sln.docstates
 .deps
 ./bin
 .DS_Store

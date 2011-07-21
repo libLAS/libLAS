@@ -13,6 +13,8 @@
   8L
   
   >>> h = f.header
+  >>> h.data_offset
+  229L
   >>> p = f.read(0)
   >>> p.x, p.y, p.z
   (630262.30000000005, 4834500.0, 51.530000000000001)
@@ -58,6 +60,8 @@
 Test Reading different locations and proper internal overwriting of the file
 
   >>> f2 = file.File('../test/data/TO_core_last_clip.las')
+  >>> f2.header.data_offset
+  229L  
   >>> p2 = f2.read(6)
   >>> p2.x, p2.y, p2.z
   (630320.95999999996, 4834500.0, 55.009999999999998)
@@ -129,6 +133,8 @@ Test Reading different locations and proper internal overwriting of the file
   >>> del f
   
   >>> f = file.File('junk.las', mode="w", header=h)
+  >>> f.header.data_offset
+  229L    
   >>> sum(h.offset)
   0.0
   >>> h.min
@@ -152,6 +158,8 @@ was written in mode='w' might not equal what was passed in as the header= parame
 
   >>> f2 = file.File('junk.las')
   >>> h = f2.header
+  >>> h.data_offset
+  229L    
   >>> f2.close()
   
   >>> f = file.File('junk.las', mode='w+', header=h)
@@ -172,11 +180,14 @@ was written in mode='w' might not equal what was passed in as the header= parame
   >>> buffered_header = f.header
   >>> del f 
 
-  >>> buffered_header.data_offset = 1024
-  >>> f3 = file.File('junk2.las',mode='w',header=buffered_header)
+  >>> buffered_header.padding = 1024 - buffered_header.data_offset
+  >>> buffered_header.padding
+  795L
 
-  >>> f3.header.data_offset
-  1024L
+  >>> buffered_header.data_offset
+  229L
+
+  >>> f3 = file.File('junk2.las',mode='w',header=buffered_header)
 
   >>> for i in points:
   ...    f3.write(i)
@@ -184,7 +195,12 @@ was written in mode='w' might not equal what was passed in as the header= parame
   >>> f3.close()
 
   >>> del f3
- 
+
+  >>> f4 = file.File('junk2.las')
+
+  >>> f4.header.data_offset
+  1024L
+  >>> del f4
 
   
   >>> f = file.File('junk2.las')

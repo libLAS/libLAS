@@ -265,28 +265,13 @@ void Header::ReadHeader()
 
     m_header->SetMax(x1, y1, z1);
     m_header->SetMin(x2, y2, z2);
-    
-    
 
-    // We're going to check the two bytes off the end of the header to 
-    // see if they're pad bytes anyway.  Some softwares, notably older QTModeler, 
-    // write 1.0-style pad bytes off the end of their header but state that the
-    // offset is actually 2 bytes back.  We need to set the dataoffset 
-    // appropriately in those cases anyway. 
-    m_ifs.seekg(m_header->GetDataOffset());
-    
-
-    if (HasLAS10PadSignature()) {
-        std::streamsize const current_pos = m_ifs.tellg();
-        m_ifs.seekg(current_pos + 2);
-        m_header->SetDataOffset(m_header->GetDataOffset() + 2);
-    }
-     
     // only go read VLRs if we have them.
     if (m_header->GetRecordsCount() > 0)
         ReadVLRs();
 
-
+    boost::uint32_t pad = m_header->GetDataOffset() - (m_header->GetHeaderSize() + m_header->GetVLRBlockSize());
+    m_header->SetHeaderPadding(pad);
 
     // If we're eof, we need to reset the state
     if (m_ifs.eof())

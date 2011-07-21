@@ -204,21 +204,21 @@ bool GetPointData(  liblas::Point const& p,
     point_data.push_back(edgeOfFlightLine_b[0]);
     point_data.push_back(scanAngleRank_b[0]);
     point_data.push_back(userData_b[0]);
-    for (int i = sizeof(uint16_t) - 1; i >= 0; i--) {
+    for (int i = sizeof(boost::uint16_t) - 1; i >= 0; i--) {
         point_data.push_back(pointSourceId_b[i]);
     }
 
     // Pack dimension with RGBA for a total of 8 bytes
-    for (int i = sizeof(uint16_t) - 1; i >= 0; i--) {
+    for (int i = sizeof(boost::uint16_t) - 1; i >= 0; i--) {
         point_data.push_back(red_b[i]);
     }    
-    for (int i = sizeof(uint16_t) - 1; i >= 0; i--) {
+    for (int i = sizeof(boost::uint16_t) - 1; i >= 0; i--) {
         point_data.push_back(green_b[i]);
     }    
-    for (int i = sizeof(uint16_t) - 1; i >= 0; i--) {
+    for (int i = sizeof(boost::uint16_t) - 1; i >= 0; i--) {
         point_data.push_back(blue_b[i]);
     }    
-    for (int i = sizeof(uint16_t) - 1; i >= 0; i--) {
+    for (int i = sizeof(boost::uint16_t) - 1; i >= 0; i--) {
         point_data.push_back(alpha_b[i]);
     }    
 

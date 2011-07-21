@@ -220,6 +220,7 @@ liblas::property_tree::ptree VariableRecord::GetPTree() const
     vlr.put("description", GetDescription(false));
     vlr.put("length", GetRecordLength());
     vlr.put("id", GetRecordId());
+    vlr.put("total_length", GetTotalSize());
     return vlr;
     
 }
@@ -238,6 +239,7 @@ std::ostream& operator<<(std::ostream& os, liblas::VariableRecord const& v)
              << std::endl;
     os << "    ID: " << tree.get<boost::uint32_t>("id")
              << " Length: " << tree.get<boost::uint32_t>("length")
+             << " Total Size: " << tree.get<boost::uint32_t>("total_length")
              << std::endl;
         
     return os;

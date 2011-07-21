@@ -70,15 +70,15 @@ namespace tut
     void to::test<3>()
     {
         liblas::SpatialReference ref;
-        const char* proj4_c = "+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs ";
+        const char* proj4_c = "+proj=utm +zone=15 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs ";
         ref.SetProj4(proj4_c);
 
         liblas::SpatialReference ref2;
         ref2.SetProj4(ref.GetProj4());
         
-        ensure_equals("Proj.4 i/o", ref, ref2);
+        // ensure_equals("Proj.4 i/o", ref, ref2);
         
-        // ensure_equals("Proj.4 comparison", ref.GetProj4(), proj4_c);
+        ensure_equals("Proj.4 comparison", ref.GetProj4(), proj4_c);
         
     }
 

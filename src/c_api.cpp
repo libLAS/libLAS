@@ -1268,6 +1268,26 @@ LAS_DLL LASErrorEnum LASHeader_SetDataOffset(const LASHeaderH hHeader, boost::ui
     return LE_None;    
 }
 
+LAS_DLL boost::uint32_t LASHeader_GetHeaderPadding(const LASHeaderH hHeader) {
+    VALIDATE_LAS_POINTER1(hHeader->get(), "LASHeader_GetHeaderPadding", 0);
+
+    unsigned long value = ((liblas::HeaderPtr*) hHeader)->get()->GetHeaderPadding();
+    return value;
+}
+
+LAS_DLL LASErrorEnum LASHeader_SetHeaderPadding(const LASHeaderH hHeader, boost::uint32_t value) {
+    VALIDATE_LAS_POINTER1(hHeader->get(), "LASHeader_SetHeaderPadding", LE_Failure);
+
+    try {
+        ((liblas::HeaderPtr*) hHeader)->get()->SetHeaderPadding(value);    
+    } catch (std::exception const& e)
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASHeader_SetHeaderPadding");
+        return LE_Failure;
+    }
+ 
+    return LE_None;    
+}
 
 LAS_DLL boost::uint32_t LASHeader_GetRecordsCount(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader->get(), "LASHeader_GetRecordsCount", 0);

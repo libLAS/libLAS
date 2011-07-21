@@ -191,6 +191,7 @@ bool ReportIteratorResults(FILE *debugger, uint32_t resultSize, uint32_t pointCo
 
 int main(int argc, char* argv[])
 {
+    boost::ignore_unused_variable_warning(argv);
     char *tmpfilenme = 0;
     char *lasinfilenme = 0;
     char *lasoutfilenme = 0;

@@ -223,6 +223,15 @@ public:
     /// for the LAS 1.0 format and 227 bytes for the LAS 1.1 format.
     void SetDataOffset(boost::uint32_t v);
 
+    /// Get number of bytes from the end of the VLRs to the GetDataOffset.
+    boost::uint32_t GetHeaderPadding() const;
+
+    /// Set the number of bytes from the end of the VLRs in the header to the 
+    /// beginning of point data.
+    /// \exception std::out_of_range - if given offset is bigger than 227+2 bytes
+    /// for the LAS 1.0 format and 227 bytes for the LAS 1.1 format.
+    void SetHeaderPadding(boost::uint32_t v);
+
     /// Get number of variable-length records.
     boost::uint32_t GetRecordsCount() const;
 
@@ -356,6 +365,8 @@ public:
 
     /// Sets whether or not the points are compressed.
     void SetCompressed(bool b);
+    
+    boost::uint32_t GetVLRBlockSize() const;
 
     void to_rst(std::ostream& os) const;
     void to_xml(std::ostream& os) const;
@@ -414,6 +425,7 @@ private:
     SpatialReference m_srs;
     Schema m_schema;
     bool m_isCompressed;
+    boost::uint32_t m_headerPadding;
 };
 
 LAS_DLL std::ostream& operator<<(std::ostream& os, liblas::Header const&);

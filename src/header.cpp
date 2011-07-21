@@ -46,6 +46,12 @@
 #include <liblas/schema.hpp>
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/utility.hpp>
+
+#ifdef HAVE_LASZIP
+#include <liblas/detail/zippoint.hpp>
+#include <laszip/laszip.hpp>
+#endif
+
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -65,7 +71,7 @@ namespace liblas {
 
 char const* const Header::FileSignature = "LASF";
 char const* const Header::SystemIdentifier = "libLAS";
-char const* const Header::SoftwareIdentifier = "libLAS 1.7.0";
+char const* const Header::SoftwareIdentifier = "libLAS 1.7.0b2";
 
 
 Header::Header() : m_schema(ePointFormat3)
@@ -94,7 +100,8 @@ Header::Header(Header const& other) :
     m_extent(other.m_extent),
     m_srs(other.m_srs),
     m_schema(other.m_schema),
-    m_isCompressed(other.m_isCompressed)
+    m_isCompressed(other.m_isCompressed),
+    m_headerPadding(other.m_headerPadding)
 {
     void* p = 0;
 
@@ -150,6 +157,7 @@ Header& Header::operator=(Header const& rhs)
         m_srs = rhs.m_srs;
         m_schema = rhs.m_schema;
         m_isCompressed = rhs.m_isCompressed;
+        m_headerPadding = rhs.m_headerPadding;
 
     }
     return *this;
@@ -182,7 +190,7 @@ bool Header::operator==(Header const& other) const
     if (m_pointRecordsByReturn != other.m_pointRecordsByReturn) return false;
     if (m_extent != other.m_extent) return false;
     if (m_isCompressed != other.m_isCompressed) return false;
-    
+    if (m_headerPadding != other.m_headerPadding) return false;
     if (m_schema != other.m_schema) return false;
     return true;
 }
@@ -351,18 +359,30 @@ uint32_t Header::GetDataOffset() const
 
 void Header::SetDataOffset(uint32_t v)
 {
-    // uint32_t const dataSignatureSize = 2;
-    // uint16_t const hsize = GetHeaderSize();
-    // 
-    // if ( (m_versionMinor == 0 && v < hsize + dataSignatureSize) ||
-    //      (m_versionMinor == 1 && v < hsize) ||
-    //      (m_versionMinor == 2 && v < hsize) )
-    // {
-    //     throw std::out_of_range("data offset out of range");
-    // }
-    
     m_dataOffset = v;
-    
+}
+
+uint32_t Header::GetHeaderPadding() const
+{
+    return m_headerPadding;
+}
+
+uint32_t Header::GetVLRBlockSize() const
+{
+    uint32_t vlr_total_size = 0;
+
+    for (uint32_t i = 0; i < GetRecordsCount(); ++i)
+    {
+        VariableRecord const & vlr = GetVLR(i);
+        vlr_total_size += static_cast<uint32_t>(vlr.GetTotalSize());
+    }
+
+    return vlr_total_size;
+}
+
+void Header::SetHeaderPadding(uint32_t v)
+{
+    m_headerPadding = v;
 }
 
 uint32_t Header::GetRecordsCount() const
@@ -434,10 +454,10 @@ double Header::GetScaleZ() const
 void Header::SetScale(double x, double y, double z)
 {
 
-    double const minscale = 0.01;
-    m_scales.x = (detail::compare_distance(0.0, x)) ? minscale : x;
-    m_scales.y = (detail::compare_distance(0.0, y)) ? minscale : y;
-    m_scales.z = (detail::compare_distance(0.0, z)) ? minscale : z;
+    // double const minscale = 0.01;
+    m_scales.x = x;
+    m_scales.y = y;
+    m_scales.z = z;
 }
 
 double Header::GetOffsetX() const
@@ -566,6 +586,7 @@ void Header::Init()
     std::memset(m_projectId4, 0, sizeof(m_projectId4)); 
 
     m_dataOffset = eHeaderSize; // excluding 2 bytes of Point Data Start Signature
+    m_headerPadding = 0;
     m_recordsCount = 0;
     m_pointRecordsCount = 0;
 
@@ -580,8 +601,7 @@ void Header::Init()
 
     m_pointRecordsByReturn.resize(ePointsByReturnSize);
 
-    // Zero scale value is useless, so we need to use a small value.
-    SetScale(0.01, 0.01, 0.01);
+    SetScale(1.0, 1.0, 1.0);
 
     m_isCompressed = false;
 }
@@ -715,11 +735,31 @@ liblas::property_tree::ptree Header::GetPTree( ) const
     
     pt.put("size", GetHeaderSize());
     pt.put("dataoffset", GetDataOffset());
+    pt.put("header_padding", GetHeaderPadding());
 
     pt.put("count", GetPointRecordsCount());
     pt.put("dataformatid", GetDataFormatId());
     pt.put("datarecordlength", GetDataRecordLength());
     pt.put("compressed", Compressed());
+
+#ifdef HAVE_LASZIP
+    liblas::detail::ZipPoint zp(GetDataFormatId(), GetVLRs());
+    LASzip* laszip = zp.GetZipper();
+    std::ostringstream zip_version;
+    zip_version <<"LASzip Version " 
+                << (int)laszip->version_major << "." 
+                << (int)laszip->version_minor << "r"
+                << (int)laszip->version_revision << " c" 
+                << (int)laszip->compressor;
+    if (laszip->compressor == LASZIP_COMPRESSOR_CHUNKED) 
+        zip_version << " "<< (int)laszip->chunk_size << ":";
+    else
+        zip_version << ":";
+    for (int i = 0; i < (int)laszip->num_items; i++) 
+        zip_version <<" "<< laszip->items[i].get_name()<<" "<<  (int)laszip->items[i].version;
+
+    pt.put("compression_info", zip_version.str());
+#endif
 
     ptree return_count;
     liblas::Header::RecordsByReturnArray returns = GetPointRecordsByReturnCount();
@@ -779,6 +819,7 @@ void Header::to_rst(std::ostream& os) const
     os << "  File Creation Day/Year:      " << tree.get<std::string>("date") << std::endl;
     os << "  Header Byte Size             " << tree.get<boost::uint32_t>("size") << std::endl;
     os << "  Data Offset:                 " << tree.get<boost::uint32_t>("dataoffset") << std::endl;
+    os << "  Header Padding:              " << tree.get<boost::uint32_t>("header_padding") << std::endl;
 
     os << "  Number Var. Length Records:  ";
     try {
@@ -793,6 +834,11 @@ void Header::to_rst(std::ostream& os) const
     os << "  Point Data Format:           " << tree.get<boost::uint32_t>("dataformatid") << std::endl;
     os << "  Number of Point Records:     " << tree.get<boost::uint32_t>("count") << std::endl;
     os << "  Compressed:                  " << (tree.get<bool>("compressed")?"True":"False") << std::endl;
+    if (tree.get<bool>("compressed"))
+    {
+    os << "  Compression Info:            " << tree.get<std::string>("compression_info") << std::endl;
+    }
+
     os << "  Number of Points by Return:  " ;
     BOOST_FOREACH(ptree::value_type &v,
           tree.get_child("returns"))

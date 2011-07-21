@@ -150,10 +150,6 @@ std::string GetPointString( std::string const& parse_string,
 {
     
     std::ostringstream output;
-    
-
-    output.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    
 
     boost::uint32_t i = 0;
     liblas::Color const& c = p.GetColor();
@@ -167,19 +163,24 @@ std::string GetPointString( std::string const& parse_string,
             output.setf(std::ios_base::fixed, std::ios_base::floatfield);
             output.precision(precisions[0]); //x precision
             output << p.GetX();
-            // lidardouble2string(printstring, LASPoint_GetX(p)); fprintf(file_out, "%s", printstring);
+            output.unsetf(std::ios_base::fixed);
+            output.unsetf(std::ios_base::floatfield);
             break;
         /* // the y coordinate */
         case 'y':
             output.setf(std::ios_base::fixed, std::ios_base::floatfield);
             output.precision(precisions[1]); //y precision
             output << p.GetY();
+            output.unsetf(std::ios_base::fixed);
+            output.unsetf(std::ios_base::floatfield);
             break;
         /* // the z coordinate */ 
         case 'z':
             output.setf(std::ios_base::fixed, std::ios_base::floatfield);
             output.precision(precisions[2]); //z precision
             output << p.GetZ();
+            output.unsetf(std::ios_base::fixed);
+            output.unsetf(std::ios_base::floatfield);
             break;
         /* // the raw x coordinate */      
         case 'X':
@@ -198,6 +199,8 @@ std::string GetPointString( std::string const& parse_string,
             output.setf(std::ios_base::fixed, std::ios_base::floatfield);
             output.precision(precisions[3]); //t precision
             output << p.GetTime();
+            output.unsetf(std::ios_base::fixed);
+            output.unsetf(std::ios_base::floatfield);
             break;
         /* // the intensity */
         case 'i':
@@ -205,7 +208,7 @@ std::string GetPointString( std::string const& parse_string,
             break;
         /* the scan angle */
         case 'a':
-            output << p.GetScanAngleRank();
+            output << (int)p.GetScanAngleRank();
             break;
         /* the number of the return */
         case 'r': 
@@ -221,7 +224,12 @@ std::string GetPointString( std::string const& parse_string,
             break;
         /* the user data */
         case 'u': 
-            output << p.GetUserData();
+            // output.setf( std::ios_base::hex, std::ios_base::basefield );
+            // output.setf( std::ios::showbase);
+            output << (int)p.GetUserData();
+            // output.unsetf(std::ios_base::hex);
+            // output.unsetf(std::ios_base::basefield);
+            // output.unsetf( std::ios::showbase);
             break;
         /* the number of returns of given pulse */
         case 'n':

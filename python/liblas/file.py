@@ -142,7 +142,8 @@ class File(object):
                 self.handle = \
                 core.las.LASReader_CreateWithHeader(self.filename,
                                                         self._header)
-
+            core.las.LASHeader_Destroy(self._header)
+            self._header = core.las.LASReader_GetHeader(self.handle)
             self.mode = 0
             try:
                 files['read'][self.filename] += 1
@@ -164,6 +165,7 @@ class File(object):
             self.handle = core.las.LASWriter_Create(self.filename,
                                                     self._header,
                                                     1)
+            core.las.LASHeader_Destroy(self._header)
             self._header = core.las.LASWriter_GetHeader(self.handle)
             self.mode = 1
             files['write'].append(self.filename)

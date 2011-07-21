@@ -112,11 +112,12 @@ protected:
 private:
     void ReadIdiom();
 
-    boost::scoped_ptr<LASzip> m_zip;
+    // boost::scoped_ptr<LASzip> m_zip;
     boost::scoped_ptr<ZipPoint> m_zipPoint;
     boost::scoped_ptr<LASunzipper> m_unzipper;
 
     bool bNeedHeaderCheck;
+    std::streampos m_zipReadStartPosition;
     
     // Blocked copying operations, declared but not defined.
     ZipReaderImpl(ZipReaderImpl const& other);

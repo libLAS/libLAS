@@ -58,135 +58,27 @@ namespace liblas { namespace detail {
 
 static std::string laszip_userid("laszip encoded");
 static boost::uint16_t laszip_recordid = 22204;
-static std::string laszip_description = "encoded for sequential access";
+static std::string laszip_description = "http://laszip.org";
 
 
 ZipPoint::ZipPoint(PointFormatName format, const std::vector<VariableRecord>& vlrs)
-    : his_vlr_num(0)
-    , his_vlr_data(0)
-    , our_vlr_num(0)
-    , our_vlr_data(0)
-    , m_num_items(0)
-    , m_items(NULL)
-    , m_lz_point(NULL)
-    , m_lz_point_data(NULL)
+    : m_lz_point(NULL)
     , m_lz_point_size(0)
 {
-    ConstructItems(format);
+
+    boost::scoped_ptr<LASzip> s(new LASzip());
+    m_zip.swap(s);
 
     const VariableRecord* vlr = NULL;
     for (unsigned int i=0; i<vlrs.size(); i++)
     {
         const VariableRecord& p = vlrs[i];
-        if (p.GetRecordId() == 22204)
+        if (IsZipVLR(p))
         {
             vlr = &p;
             break;
         }
     }
-    if (vlr)
-    {
-        our_vlr_num = vlr->GetData().size();
-        our_vlr_data = new unsigned char[our_vlr_num];
-        for (int i=0; i<our_vlr_num; i++)
-        {
-            our_vlr_data[i] = vlr->GetData()[i];
-        }
-    }
-
-    return;
-}
-
-ZipPoint::~ZipPoint()
-{
-    m_num_items = 0;
-    delete[] m_items;
-    m_items = NULL;
-
-    delete[] m_lz_point;
-    delete[] m_lz_point_data;
-
-    delete[] our_vlr_data;
-
-    return;
-}
-
-
-void ZipPoint::ConstructItems(PointFormatName format)
-{
-    switch (format)
-    {
-    case ePointFormat0:
-        m_num_items = 1;
-        m_items = new LASitem[1];
-        m_items[0].type = LASitem::POINT10;
-        m_items[0].size = 20;
-        break;
-
-    case ePointFormat1:
-        m_num_items = 2;
-        m_items = new LASitem[2];
-        m_items[0].type = LASitem::POINT10;
-        m_items[0].size = 20;
-        m_items[1].type = LASitem::GPSTIME11;
-        m_items[1].size = 8;
-        break;
-
-    case ePointFormat2:
-        m_num_items = 2;
-        m_items = new LASitem[2];
-        m_items[0].type = LASitem::POINT10;
-        m_items[0].size = 20;
-        m_items[1].type = LASitem::RGB12;
-        m_items[1].size = 6;
-        break;
-
-    case ePointFormat3:
-        m_num_items = 3;
-        m_items = new LASitem[3];
-        m_items[0].type = LASitem::POINT10;
-        m_items[0].size = 20;
-        m_items[1].type = LASitem::GPSTIME11;
-        m_items[1].size = 8;
-        m_items[2].type = LASitem::RGB12;
-        m_items[2].size = 6;
-        break;
-
-    default:
-        throw liblas_error("Bad point format in header");
-    }
-
-    // construct the object that will hold a laszip point
-
-    // compute the point size
-    m_lz_point_size = 0;
-    for (unsigned int i = 0; i < m_num_items; i++)
-        m_lz_point_size += m_items[i].size;
-
-    // create the point data
-    unsigned int point_offset = 0;
-    m_lz_point = new unsigned char*[m_num_items];
-    m_lz_point_data = new unsigned char[m_lz_point_size];
-    for (unsigned i = 0; i < m_num_items; i++)
-    {
-        m_lz_point[i] = &(m_lz_point_data[point_offset]);
-        point_offset += m_items[i].size;
-    }
-    
-    return;
-}
-
-
-void ZipPoint::ConstructVLR(VariableRecord& v, PointFormatName format) const
-{
-    boost::uint16_t record_length_after_header = (boost::uint16_t)(34+6*m_num_items);
-
-    // set the header
-    v.SetReserved(0xAABB);
-    v.SetUserId(laszip_userid);
-    v.SetRecordId(laszip_recordid);
-    v.SetRecordLength(record_length_after_header);
-    v.SetDescription(laszip_description);
 
     unsigned char pointFormat = 0;
     unsigned short pointSize = 0;
@@ -212,14 +104,75 @@ void ZipPoint::ConstructVLR(VariableRecord& v, PointFormatName format) const
         throw liblas_error("point format not supported by laszip");
     }
 
-    LASzip laszip;
-    laszip.setup(pointFormat, pointSize);
+    if (vlr)
+    {
+        bool ok(false);
+        ok = m_zip->unpack(&(vlr->GetData()[0]), vlr->GetData().size());
+        if (!ok)
+        {
+            std::ostringstream oss;
+            oss << "Error unpacking zip VLR data: " << std::string(m_zip->get_error());
+            throw liblas_error(oss.str());
+        }
 
-    LASzipper zipper;
+    } else
+    {
+
+        if (!m_zip->setup(pointFormat, pointSize))
+        {
+            std::ostringstream oss;
+            oss << "Error setting up LASzip for format " << pointFormat <<": " << m_zip->get_error(); 
+            throw liblas_error(oss.str());
+        }
+    }
+
+    ConstructItems();
+    return;
+}
+
+ZipPoint::~ZipPoint()
+{
+
+    delete[] m_lz_point;
+
+    return;
+}
+
+
+void ZipPoint::ConstructItems()
+{
+
+
+    // construct the object that will hold a laszip point
+
+    // compute the point size
+    m_lz_point_size = 0;
+    for (unsigned int i = 0; i < m_zip->num_items; i++)
+        m_lz_point_size += m_zip->items[i].size;
+
+    // create the point data
+    unsigned int point_offset = 0;
+    m_lz_point = new unsigned char*[m_zip->num_items];
     
+    boost::scoped_array<boost::uint8_t> d( new boost::uint8_t[ m_lz_point_size ] );
+    m_lz_point_data.swap(d);
+    for (unsigned i = 0; i < m_zip->num_items; i++)
+    {
+        m_lz_point[i] = &(m_lz_point_data[point_offset]);
+        point_offset += m_zip->items[i].size;
+    }
+    
+    assert (point_offset == m_lz_point_size);
+    return;
+}
+
+
+void ZipPoint::ConstructVLR(VariableRecord& v) const
+{
+
     unsigned char* data;
     int num;
-    laszip.pack(data, num);
+    m_zip->pack(data, num);
 
     // Ick.
     std::vector<boost::uint8_t> vdata;
@@ -227,7 +180,13 @@ void ZipPoint::ConstructVLR(VariableRecord& v, PointFormatName format) const
     {
         vdata.push_back(data[i]);
     }
-        
+
+    // set the header
+    v.SetReserved(0xAABB);
+    v.SetUserId(laszip_userid);
+    v.SetRecordId(laszip_recordid);
+    v.SetRecordLength(static_cast<boost::uint16_t>(num));
+    v.SetDescription(laszip_description);
     v.SetData(vdata);
 
     v.SetRecordLength((boost::uint16_t)num);
