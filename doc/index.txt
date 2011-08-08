@@ -12,6 +12,14 @@ interchange and archival.  See :ref:`features` for more details on what
 libLAS can provide a LiDAR software developer.  See :ref:`start` for how to 
 get started using the library.
 
+.. image:: http://svn.osgeo.org/osgeo/foss4g/2011/documents/logo/foss4g_web_block_150x.png
+   :height: 150px
+   :width: 150px
+   :alt: FOSS4G 2011 in Denver, U.S.A.
+   :align: right
+   :target: http://2011.foss4g.org/
+   
+
 libLAS' initial development was supported in 2007-2008 by the `IGSB`_ of the
 Iowa DNR for use in its state-wide `LIDAR`_ project.  Ongoing support for 
 libLAS is provided by a number of organizations including the 
@@ -22,11 +30,10 @@ Berkeley in their `LAStools`_ project to do a number of things. First, the
 libLAS focuses almost completely on providing an easy-to-program-with library
 for software developers wishing to implement the LAS specification in their
 own software. Second, libLAS exists to provide a truly open source library
-(see :ref:`license` for terms ) -- `LAStools`_ has no explicit licensing terms and 
-is merely `free-as-in-beer`_ with usage restrictions.
-libLAS a
-building block for developers looking to implement their own LiDAR data
-processing when working with ASPRS LAS data.
+(see :ref:`license` for terms ) -- `LAStools`_ has no explicit licensing terms
+and is merely `free-as-in-beer`_ with usage restrictions. libLAS a building
+block for developers looking to implement their own LiDAR data processing when
+working with ASPRS LAS data.
 
 For more information, :ref:`this document <lastools_liblas>` provides a
 comparison and description of the relationship of libLAS to LAStools.
