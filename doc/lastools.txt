@@ -7,17 +7,11 @@ libLAS' Relationship to `LAStools`_
 Licensing
 ..............................................................................
 
-libLAS is available under the terms of the `BSD License`_. `LAStools`_ open 
-source licensing status is unclear.  It is "freely available", and though the 
-authors probably intend for it to be widely used, licensing rights are not properly 
-affixed to the source code, and it must be assumed that the software is currently
-"All Rights Reserved" and individually licensable.  
+libLAS is available under the terms of the `BSD License`_. Many parts of `LAStools`_, 
+especially those that are similar to those provided by libLAS, are now 
+LGPL.  See http://www.cs.unc.edu/~isenburg/lastools/download/LICENSE.txt for 
+specific details on which utilities and libraries are licensed as free software.
 
-.. note::
-    2/11/2011: Martin has started to release the library that focusses on
-    reading and writing LAS data (not the tools or utilities) in the form of
-    an LGPL library. You can find out more information `here
-    <http://www.cs.unc.edu/~isenburg/lastools/download/laslib_README.txt>`__.
 
 Utilities
 ..............................................................................
