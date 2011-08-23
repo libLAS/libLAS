@@ -4,9 +4,9 @@
 libLAS Source Repository
 ******************************************************************************
 
+The main repository for libLAS is located on github at https://github.com/libLAS/libLAS
 
-The Mercurial repository for libLAS is located at http://hg.liblas.org/main
+You can obtain a copy of the active source code by issuing the following command::
 
-You can obtain a copy of the active source code by issuing the following::
-
-    hg clone http://hg.liblas.org/main liblas
+    git clone git://github.com/libLAS/libLAS.git liblas
+    
