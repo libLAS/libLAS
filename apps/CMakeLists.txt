@@ -43,13 +43,10 @@ if(GDAL_FOUND)
     set(LAS2OGR las2ogr)
 endif()
 
-if(ORACLE_FOUND AND GDAL_FOUND)
-    set(LAS2OCI las2oci)
-endif()
 
 set(LIBLAS_UTILITIES
     ${LASINFO_OLD} ${LASINFO} ${LASMERGE} ${LAS2LAS} ${LAS2TXT_OLD} ${TXT2LAS} 
-    ${LAS2OGR}  ${LAS2OCI} ${LAS2LAS} ${LAS2LAS_OLD} ${LASBLOCK} ${TS2LAS}  ${LAS2TXT} )
+    ${LAS2OGR} ${LAS2LAS} ${LAS2LAS_OLD} ${LASBLOCK} ${TS2LAS}  ${LAS2TXT} )
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -156,11 +153,6 @@ if(LAS2OGR)
     target_link_libraries(${LAS2OGR} ${APPS_CPP_DEPENDENCIES})
 endif()
 
-# Build las2oci
-if(LAS2OCI)
-    add_executable(${LAS2OCI} las2oci.cpp oci_wrapper.cpp kdx_util.cpp oci_util.cpp laskernel.cpp )
-    target_link_libraries(${LAS2OCI} ${APPS_CPP_DEPENDENCIES} ${ORACLE_LIBRARY} )
-endif()
 
 if(BIGFILE_TEST)
     add_executable(${BIGFILE_TEST} bigtest.c)

@@ -269,21 +269,6 @@ if(WITH_GDAL)
 endif()
 
 
-
-# Oracle support - optional, default=OFF
-set(WITH_ORACLE FALSE CACHE BOOL "Choose if Oracle support should be built")
-
-if(WITH_ORACLE)
-  find_package(Oracle)
-
-  if(ORACLE_FOUND)
-    include_directories(${ORACLE_INCLUDE_DIR})
-    add_definitions(-DHAVE_ORACLE=1)
-  endif()
-endif()
-
-
-
 if(WITH_ENDIANAWARE)
     add_definitions(-DLIBLAS_ENDIAN_AWARE=1)
 endif()
