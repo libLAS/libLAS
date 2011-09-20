@@ -75,7 +75,7 @@ public:
     ptree GetPTree() const;
     void SetHeader(liblas::Header const& h);
     
-    ~Summary() {};
+    ~Summary() {}
 private:
 
     classes_type classes;
@@ -107,7 +107,7 @@ public:
     ptree GetPTree() const;
     void SetHeader(liblas::Header const& h);
     
-    ~CoordinateSummary() {};
+    ~CoordinateSummary() {}
     
 private:
 

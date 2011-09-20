@@ -106,7 +106,7 @@ public:
     };
 
     Point();
-    ~Point() {};
+    ~Point() {}
     Point(HeaderPtr header);
     Point(Point const& other);
     Point& operator=(Point const& rhs);

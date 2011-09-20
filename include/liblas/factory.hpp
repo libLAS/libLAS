@@ -59,7 +59,7 @@ class LAS_DLL ReaderFactory
 public:
 
 
-    ReaderFactory() {};
+    ReaderFactory() {}
 
     ReaderFactory(ReaderFactory const& other);
     ReaderFactory& operator=(ReaderFactory const& rhs);    
@@ -76,7 +76,7 @@ public:
 
     /// Destructor.
     /// @exception nothrow
-    ~ReaderFactory() {};
+    ~ReaderFactory() {}
 
 
 private:
@@ -93,7 +93,7 @@ public:
         FileType_LAZ
     };
 
-    WriterFactory() {};
+    WriterFactory() {}
 
     WriterFactory(WriterFactory const& other);
     WriterFactory& operator=(WriterFactory const& rhs);    
@@ -105,7 +105,7 @@ public:
     
     /// Destructor.
     /// @exception nothrow
-    ~WriterFactory() {};
+    ~WriterFactory() {}
 
     // returns Unknown, unless we find a .laz or .las extension
     static FileType InferFileTypeFromExtension(const std::string&);

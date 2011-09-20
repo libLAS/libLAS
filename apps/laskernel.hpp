@@ -110,8 +110,8 @@ class OptechScanAngleFixer: public liblas::TransformI
 {
 public:
     
-    OptechScanAngleFixer() {};
-    ~OptechScanAngleFixer() {};
+    OptechScanAngleFixer() {}
+    ~OptechScanAngleFixer() {}
 
     bool transform(liblas::Point& point);
     bool ModifiesHeader() { return false; }    

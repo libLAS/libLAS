@@ -437,7 +437,7 @@ LAS_DLL std::ostream& operator<<(std::ostream& os, liblas::Header const&);
 class LAS_DLL DefaultHeader : public Singleton<Header>
 {
 public:
-    ~DefaultHeader() {};
+    ~DefaultHeader() {}
 
 
 protected:
