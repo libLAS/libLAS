@@ -126,6 +126,12 @@ public:
     
     liblas::property_tree::ptree GetPTree() const;    
 
+    enum
+    {
+        eUserIdSize = 16,
+        eDescriptionSize = 32
+    };
+
 private:
 
     std::vector<boost::uint8_t> m_data;

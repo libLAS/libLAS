@@ -359,8 +359,8 @@ void Header::ReadVLRs()
          
         VariableRecord vlr;
         vlr.SetReserved(vlrh.reserved);
-        vlr.SetUserId(std::string(vlrh.userId));
-        vlr.SetDescription(std::string(vlrh.description));
+        vlr.SetUserId(std::string(vlrh.userId, VariableRecord::eUserIdSize));
+        vlr.SetDescription(std::string(vlrh.description, VariableRecord::eDescriptionSize));
         vlr.SetRecordLength(vlrh.recordLengthAfterHeader);
         vlr.SetRecordId(vlrh.recordId);
         vlr.SetData(data);
