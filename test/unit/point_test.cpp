@@ -267,7 +267,7 @@ namespace tut
         ensure_not("synthetic bit", m_default.GetClassification().IsSynthetic());
         ensure("keypoint bit", m_default.GetClassification().IsKeyPoint());
         ensure_not("withheld bit", m_default.GetClassification().IsWithheld());
-        
+
         {
             // Not paranoid, just show how to manually inspect flags
             std::ostringstream oss;
