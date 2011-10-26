@@ -141,8 +141,13 @@ public:
 
     /// Conversion operator.
     /// Returns classification object as in form of std::bitset<8>.
-    /// bitset< object 
     operator bitset_type() const
+    {
+        return bitset_type(m_flags);
+    }
+    
+    /// Named accessor converting Classification to std::bitset<8>.
+    bitset_type GetFlags() const
     {
         return bitset_type(m_flags);
     }

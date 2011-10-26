@@ -715,24 +715,24 @@ void Point::SetClassification(Classification const& cls)
 {
     // "Classification" is always the 9th dimension    
     // std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(8);
-    std::vector<boost::uint8_t>::size_type pos = 15;
-    m_data[pos] = cls.GetClass();
+    std::vector<boost::uint8_t>::size_type const pos = 15;
+    m_data[pos] = static_cast<boost::uint8_t>(cls.GetFlags().to_ulong());
 }
 
 void Point::SetClassification(Classification::bitset_type const& flags)
 {
     // "Classification" is always the 9th dimension    
     // std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(8);
-    std::vector<boost::uint8_t>::size_type pos = 15;    
-    m_data[pos] = Classification(flags).GetClass();
+    std::vector<boost::uint8_t>::size_type const pos = 15;    
+    m_data[pos] = static_cast<boost::uint8_t>(flags.to_ulong());
 }
 
 void Point::SetClassification(boost::uint8_t const& flags)
 {
     // "Classification" is always the 9th dimension    
     // std::vector<boost::uint8_t>::size_type pos = GetDimensionBytePosition(8);
-    std::vector<boost::uint8_t>::size_type pos = 15;    
-    m_data[pos] = Classification(flags).GetClass();
+    std::vector<boost::uint8_t>::size_type const  pos = 15;
+    m_data[pos] = flags; 
 }
 
 void Point::SetScanAngleRank(int8_t const& rank)

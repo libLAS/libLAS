@@ -256,21 +256,43 @@ namespace tut
     {
         ensure_equals("invalid default classification",
             m_default.GetClassification(), liblas::Classification::bitset_type());
-
-        liblas::Classification c;
         
         boost::uint8_t const begclass = 0;
-        c.SetClass(begclass);
+        
+        liblas::Classification c(begclass, false, true, false);
         m_default.SetClassification(c);
         
         ensure_equals("invalid class index",
             m_default.GetClassification().GetClass(), begclass);
+        ensure_not("synthetic bit", m_default.GetClassification().IsSynthetic());
+        ensure("keypoint bit", m_default.GetClassification().IsKeyPoint());
+        ensure_not("withheld bit", m_default.GetClassification().IsWithheld());
+        
+        {
+            // Not paranoid, just show how to manually inspect flags
+            std::ostringstream oss;
+            oss << m_default.GetClassification().GetFlags();
+            ensure_equals(oss.str(), "01000000");
+        }
 
         boost::uint8_t const endclass = 31;
         c.SetClass(endclass);
+        c.SetSynthetic(true);
+        c.SetKeyPoint(true);
+        c.SetWithheld(false);
         m_default.SetClassification(c);
         ensure_equals("invalid class index",
             m_default.GetClassification().GetClass(), endclass);
+        ensure("synthetic bit", m_default.GetClassification().IsSynthetic());
+        ensure("keypoint bit", m_default.GetClassification().IsKeyPoint());
+        ensure_not("withheld bit", m_default.GetClassification().IsWithheld());
+        
+        {
+            // Not paranoid, just show how to manually inspect flags
+            std::ostringstream oss;
+            oss << m_default.GetClassification().GetFlags();
+            ensure_equals(oss.str(), "01111111");
+        }
     }
 
     // Test Get/SetScanAngleRank
