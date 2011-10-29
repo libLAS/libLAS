@@ -72,16 +72,16 @@ class LAS_DLL ReprojectionTransform: public TransformI
 public:
     
     ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS);    
-    ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS, liblas::HeaderOptionalConstRef new_header);    
+    ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS, Header const* new_header);    
     ~ReprojectionTransform();
 
     bool transform(Point& point);
-    void SetHeader(liblas::HeaderOptionalConstRef header) {m_new_header = header;}
+    void SetHeader(Header* header) {m_new_header = header;}
     bool ModifiesHeader() { return true; }
 
 private:
 
-    liblas::HeaderOptionalConstRef m_new_header;
+    Header const* m_new_header;
     
     typedef boost::shared_ptr<void> ReferencePtr;
     typedef boost::shared_ptr<void> TransformPtr;
@@ -150,7 +150,7 @@ public:
                             );
     ColorFetchingTransform( std::string const& datasource, 
                             std::vector<boost::uint32_t> bands,
-                            HeaderOptionalConstRef header);
+                            Header const* header);
     
     void SetScaleFactor(boost::uint32_t v) {m_scale = v; }
     ~ColorFetchingTransform();
@@ -161,7 +161,7 @@ public:
 
 private:
 
-    liblas::HeaderOptionalConstRef m_new_header;
+    Header const* m_new_header;
     
     typedef boost::shared_ptr<void> DataSourcePtr;
     

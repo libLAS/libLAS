@@ -520,7 +520,7 @@ namespace tut
         header.SetDataFormatId(liblas::ePointFormat2);
         
         liblas::Point p;
-        p.SetHeader(liblas::HeaderOptionalConstRef(header));
+        p.SetHeader(&header);
         
         liblas::Color c;
         c.SetRed(123);
@@ -553,9 +553,7 @@ namespace tut
         liblas::Header header_output;
         header_output.SetScale(0.001, 0.1, 0.0001);
         header_output.SetOffset(1.0, 2.0, 3.0);
-        
-        liblas::HeaderOptionalConstRef header_ref(header_output);
-        
+                
         ensure("header scaleX's were not supposed to be equal", 
                 !liblas::detail::compare_distance(header_input.GetScaleX(), header_output.GetScaleX()));
         ensure("header scaleY's were not supposed to be equal", 
@@ -579,7 +577,7 @@ namespace tut
         double orig_double_y = p.GetY();
         double orig_double_z = p.GetZ();
 
-        p.SetHeader(header_ref);
+        p.SetHeader(&header_output);
         
         boost::int32_t new_raw_x = p.GetRawX();
         boost::int32_t new_raw_y = p.GetRawY();

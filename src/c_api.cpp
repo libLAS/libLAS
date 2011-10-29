@@ -475,7 +475,7 @@ LAS_DLL LASErrorEnum LASReader_SetOutputSRS(LASReaderH hReader, const LASSRSH hS
                                   boost::bind( &IsReprojectionTransform, _1 ) ),
                   transforms.end());
         
-        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, *out_ref, liblas::HeaderOptionalConstRef(h)));
+        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, *out_ref, &h));
         if (transforms.size())
             transforms.insert(transforms.begin(), srs_transform);
         else
@@ -517,8 +517,8 @@ LAS_DLL LASHeaderH LASPoint_GetHeader(const LASPointH hPoint)
     VALIDATE_LAS_POINTER1(hPoint    , "LASPoint_GetHeader", new liblas::HeaderPtr());
 
     liblas::Point const& p= *((liblas::Point*) hPoint);
-    liblas::HeaderOptionalConstRef h = p.GetHeader();
-    return (LASHeaderH) new liblas::HeaderPtr(new liblas::Header(h.get()));
+    liblas::Header const* h = p.GetHeader();
+    return (LASHeaderH) new liblas::HeaderPtr(new liblas::Header(*h));
         
 }
 
@@ -531,7 +531,7 @@ LAS_DLL void LASPoint_SetHeader( LASPointH hPoint, const LASHeaderH hHeader)
     liblas::Point* point = (liblas::Point*)hPoint;
     liblas::HeaderPtr h = (liblas::HeaderPtr)*hHeader;
     liblas::Header const& header = *h;
-    point->SetHeader(HeaderOptionalConstRef(header));
+    point->SetHeader(&header);
 }
 
 LAS_DLL LASErrorEnum LASPoint_SetData(LASPointH hPoint, unsigned char* data) {
@@ -543,7 +543,7 @@ LAS_DLL LASErrorEnum LASPoint_SetData(LASPointH hPoint, unsigned char* data) {
         liblas::Point* p = ((liblas::Point*) hPoint);
         boost::uint16_t size = 0;
 
-        liblas::HeaderOptionalConstRef h = p->GetHeader();
+        liblas::Header const* h = p->GetHeader();
         size = h->GetDataRecordLength();
         
         std::vector<boost::uint8_t> & d = p->GetData();
@@ -576,7 +576,7 @@ LAS_DLL LASErrorEnum LASPoint_GetData( const LASPointH hPoint, boost::uint8_t* d
         boost::uint16_t size = 0;
         std::vector<boost::uint8_t> const& d = p->GetData();
 
-        liblas::HeaderOptionalConstRef h = p->GetHeader();
+        liblas::Header const* h = p->GetHeader();
         size = h->GetDataRecordLength();
 
         for (boost::uint16_t i=0; i < size; i++) {
@@ -1799,7 +1799,7 @@ LAS_DLL LASErrorEnum LASWriter_SetOutputSRS(LASWriterH hWriter, const LASSRSH hS
                                   boost::bind( &IsReprojectionTransform, _1 ) ),
                   transforms.end());
         
-        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, *out_ref, liblas::HeaderOptionalConstRef(h)));
+        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, *out_ref, &h));
         if (transforms.size())
             transforms.insert(transforms.begin(), srs_transform);
         else

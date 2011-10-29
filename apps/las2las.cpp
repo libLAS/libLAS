@@ -101,7 +101,7 @@ bool process(   std::istream& ifs,
             
             if (dynamic_cast<liblas::ReprojectionTransform*>(transform.get()))
             {
-                dynamic_cast<liblas::ReprojectionTransform*>(transform.get())->SetHeader(liblas::HeaderOptionalConstRef(header));
+                dynamic_cast<liblas::ReprojectionTransform*>(transform.get())->SetHeader(&header);
             }
             new_transforms.push_back(transform);
         }
@@ -137,7 +137,6 @@ bool process(   std::istream& ifs,
     boost::uint32_t split_points_count = 0;
     int fileno = 2;
     
-    liblas::HeaderOptionalConstRef ptr(header);
     
     while (reader.ReadNextPoint())
     {
@@ -145,7 +144,7 @@ bool process(   std::istream& ifs,
         {
             liblas::Point p = reader.GetPoint();
             summary->AddPoint(p);
-            p.SetHeader(ptr);
+            p.SetHeader(&header);
             writer->WritePoint(p);
         }
         else 

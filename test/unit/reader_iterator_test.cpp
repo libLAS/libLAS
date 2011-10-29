@@ -272,7 +272,7 @@ namespace tut
         Point pt;
         Header h;
         h.SetScale(0.01, 0.01, 0.01);
-        pt.SetHeader(HeaderOptionalConstRef(h));
+        pt.SetHeader(&h);
         pt.SetCoordinates(630282.45, 4834500, 51.63);
         pt.SetIntensity(350);
         pt.SetClassification(1);
@@ -337,7 +337,7 @@ namespace tut
         Point pt;
         Header h;
         h.SetScale(0.01, 0.01, 0.01);
-        pt.SetHeader(HeaderOptionalConstRef(h));        
+        pt.SetHeader(&h);        
         pt.SetCoordinates(630282.45, 4834500, 51.63);
         pt.SetIntensity(350);
         pt.SetClassification(1);

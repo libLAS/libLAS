@@ -125,8 +125,7 @@ namespace tut
         liblas::Header out_hdr(header);
         out_hdr.SetScale(0.00000001, 0.00000001, 0.01);
         out_hdr.SetOffset(0,0,0);
-        liblas::HeaderOptionalConstRef out_hdr_ref(out_hdr);
-        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, out_hdr_ref));
+        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, &out_hdr));
         
         std::vector<liblas::TransformPtr> transforms;
         transforms.push_back(srs_transform);
@@ -162,9 +161,8 @@ namespace tut
         
         out_hdr2.SetScale(0.0000001, 0.0000001, 0.01);
         out_hdr2.SetOffset(0,0,0);
-        liblas::HeaderOptionalConstRef out_hdr_ref2(out_hdr2);
 
-        srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, out_hdr_ref2));
+        srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, &out_hdr2));
         
         transforms.clear();
         transforms.push_back(srs_transform);

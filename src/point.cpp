@@ -65,8 +65,7 @@ namespace liblas {
 
 Point::Point()
     : 
-    // m_header(HeaderPtr())
-     m_header(HeaderOptionalConstRef())
+     m_header(0)
     , m_default_header(DefaultHeader::get())
     
 {
@@ -74,10 +73,9 @@ Point::Point()
     m_data.assign(ePointSize3, 0);
 }
 
-Point::Point(HeaderPtr hdr)
+Point::Point(Header const* hdr)
     : 
-    // m_header(hdr)
-     m_header(HeaderOptionalConstRef(*hdr))
+     m_header(hdr)
     , m_default_header(DefaultHeader::get())
 {
     m_data.resize(ePointSize3);
@@ -87,7 +85,7 @@ Point::Point(HeaderPtr hdr)
 Point::Point(Point const& other)
     : m_data(other.m_data)
     // , m_header(other.m_header)
-    , m_header(HeaderOptionalConstRef(other.GetHeader()))
+    , m_header(other.GetHeader())
     , m_default_header(DefaultHeader::get())
 {
 }
@@ -193,7 +191,7 @@ bool Point::IsValid() const
     return true;
 }
 
-void Point::SetHeader(HeaderOptionalConstRef header)
+void Point::SetHeader(Header const* header)
 {
 
     if (!header)
@@ -208,8 +206,8 @@ void Point::SetHeader(HeaderOptionalConstRef header)
     // This is hopefully faster than copying everything if we don't have 
     // any data set and nothing to worry about.
     const liblas::Schema* schema;
-    boost::uint16_t wanted_length = header.get().GetDataRecordLength();
-    schema = &header.get().GetSchema();
+    boost::uint16_t wanted_length = header->GetDataRecordLength();
+    schema = &(header->GetSchema());
     boost::uint32_t sum = std::accumulate(m_data.begin(), m_data.end(), 0);
     
     if (!sum) {
@@ -300,9 +298,9 @@ void Point::SetHeader(HeaderOptionalConstRef header)
 
     
 }
-HeaderOptionalConstRef Point::GetHeader() const
+Header const* Point::GetHeader() const
 {
-    if (m_header) return m_header; else return HeaderOptionalConstRef(m_default_header);
+    if (m_header) return m_header; else return &m_default_header;
 }
 
 liblas::property_tree::ptree Point::GetPTree() const

@@ -43,7 +43,6 @@
 #define LIBLAS_DETAIL_FWD_HPP_INCLUDED
 
 #include <boost/shared_ptr.hpp>
-#include <boost/optional.hpp>
 
 // Forward declarations
 namespace liblas {
@@ -72,7 +71,6 @@ typedef boost::shared_ptr<FilterI> FilterPtr;
 typedef boost::shared_ptr<ReaderI> ReaderIPtr;
 typedef boost::shared_ptr<WriterI> WriterIPtr;
 
-typedef boost::optional<Header const&> HeaderOptionalConstRef;
 
 namespace detail {
 

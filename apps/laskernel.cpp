@@ -1329,7 +1329,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         liblas::Bounds<double> b = header.GetExtent();
         b.project(in_ref, out_ref);
         header.SetExtent(b);
-        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, liblas::HeaderOptionalConstRef(header)));
+        liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, &header));
         transforms.push_back(srs_transform);
     }
 
@@ -1414,7 +1414,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             throw std::runtime_error("The header for this file does not allow storing green color information.  Alter the header's data format using the --point-format switch");
         }        
         
-        liblas::TransformPtr color_fetch = liblas::TransformPtr(new liblas::ColorFetchingTransform(datasource, bands, liblas::HeaderOptionalConstRef(header)));
+        liblas::TransformPtr color_fetch = liblas::TransformPtr(new liblas::ColorFetchingTransform(datasource, bands, &header));
         if (bSetScale) {
             liblas::ColorFetchingTransform* c = dynamic_cast<liblas::ColorFetchingTransform*>(color_fetch.get());
             c->SetScaleFactor(scale);

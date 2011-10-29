@@ -126,21 +126,20 @@ void Summary::AddPoint(liblas::Point const& p)
 
             if (bHaveHeader)
             {
-                HeaderOptionalConstRef h = m_header;
-                maximum.SetHeader(h);
-                minimum.SetHeader(h);
+                maximum.SetHeader(&m_header);
+                minimum.SetHeader(&m_header);
             }
 
-            liblas::Header const& h = p.GetHeader().get();
+            liblas::Header const* h = p.GetHeader();
 
-            m_header.SetScale(h.GetScaleX(), h.GetScaleY(), h.GetScaleZ());
-            m_header.SetOffset(h.GetOffsetX(), h.GetOffsetY(), h.GetOffsetZ());
+            m_header.SetScale(h->GetScaleX(), h->GetScaleY(), h->GetScaleZ());
+            m_header.SetOffset(h->GetOffsetX(), h->GetOffsetY(), h->GetOffsetZ());
 
 
-            if (m_header.GetDataFormatId() != h.GetDataFormatId())
-                m_header.SetDataFormatId(h.GetDataFormatId());
+            if (m_header.GetDataFormatId() != h->GetDataFormatId())
+                m_header.SetDataFormatId(h->GetDataFormatId());
 
-            liblas::Schema const& schema = h.GetSchema();
+            liblas::Schema const& schema = h->GetSchema();
             boost::optional<Dimension const&> red;
             boost::optional<Dimension const&> green;
             boost::optional<Dimension const&> blue;
@@ -308,8 +307,8 @@ void Summary::AddPoint(liblas::Point const& p)
 void Summary::SetHeader(liblas::Header const& h) 
 {
     m_header = h;
-    minimum.SetHeader(HeaderOptionalConstRef(h));
-    maximum.SetHeader(HeaderOptionalConstRef(h));
+    minimum.SetHeader(&m_header);
+    maximum.SetHeader(&m_header);
     bHaveHeader = true;
 }
 
@@ -620,9 +619,8 @@ void CoordinateSummary::AddPoint(liblas::Point const& p)
 
             if (bHaveHeader)
             {
-                HeaderOptionalConstRef h = m_header;
-                maximum.SetHeader(h);
-                minimum.SetHeader(h);
+                maximum.SetHeader(&m_header);
+                minimum.SetHeader(&m_header);
             }
             
             // We only summarize the base dimensions 
@@ -634,15 +632,15 @@ void CoordinateSummary::AddPoint(liblas::Point const& p)
             // If we do have scale/offset values, we do want to keep those, 
             // however. 
             
-            liblas::Header const& h = p.GetHeader().get();
+            liblas::Header const* h = p.GetHeader();
 
-            if (detail::compare_distance(h.GetScaleX(), m_header.GetScaleX()) ||
-                detail::compare_distance(h.GetScaleY(), m_header.GetScaleY()) ||
-                detail::compare_distance(h.GetScaleZ(), m_header.GetScaleZ()))
+            if (detail::compare_distance(h->GetScaleX(), m_header.GetScaleX()) ||
+                detail::compare_distance(h->GetScaleY(), m_header.GetScaleY()) ||
+                detail::compare_distance(h->GetScaleZ(), m_header.GetScaleZ()))
                             
             {
-                m_header.SetScale(h.GetScaleX(), h.GetScaleY(), h.GetScaleZ());
-                m_header.SetOffset(h.GetOffsetX(), h.GetOffsetY(), h.GetOffsetZ());
+                m_header.SetScale(h->GetScaleX(), h->GetScaleY(), h->GetScaleZ());
+                m_header.SetOffset(h->GetOffsetX(), h->GetOffsetY(), h->GetOffsetZ());
             }
             
             first = false;
@@ -670,8 +668,8 @@ void CoordinateSummary::AddPoint(liblas::Point const& p)
 void CoordinateSummary::SetHeader(liblas::Header const& h) 
 {
     m_header = h;
-    minimum.SetHeader(HeaderOptionalConstRef(h));
-    maximum.SetHeader(HeaderOptionalConstRef(h));
+    minimum.SetHeader(&m_header);
+    maximum.SetHeader(&m_header);
     bHaveHeader = true;
 }
 

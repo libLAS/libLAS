@@ -106,7 +106,7 @@ namespace liblas {
 
 
 ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, const SpatialReference& outSRS)
-    : m_new_header(HeaderOptionalConstRef())
+    : m_new_header(0)
 {
     Initialize(inSRS, outSRS);
 }
@@ -114,7 +114,7 @@ ReprojectionTransform::ReprojectionTransform(const SpatialReference& inSRS, cons
 ReprojectionTransform::ReprojectionTransform(
     const SpatialReference& inSRS, 
     const SpatialReference& outSRS,
-    liblas::HeaderOptionalConstRef new_header)
+    const Header* new_header)
     : m_new_header(new_header)
 {
     Initialize(inSRS, outSRS);
@@ -452,7 +452,7 @@ ColorFetchingTransform::ColorFetchingTransform(
     std::string const& datasource, 
     std::vector<boost::uint32_t> bands
 )
-    : m_new_header(HeaderOptionalConstRef())
+    : m_new_header(0)
     , m_ds(DataSourcePtr())
     , m_datasource(datasource)
     , m_bands(bands)
@@ -464,7 +464,7 @@ ColorFetchingTransform::ColorFetchingTransform(
 ColorFetchingTransform::ColorFetchingTransform(
     std::string const& datasource, 
     std::vector<boost::uint32_t> bands,
-    HeaderOptionalConstRef header
+    Header const* header
 )
     : m_new_header(header)
     , m_ds(DataSourcePtr())
