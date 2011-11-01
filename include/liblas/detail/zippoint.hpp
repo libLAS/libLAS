@@ -54,7 +54,6 @@
 
 // liblaszip
 class LASzipper;
-class LASitem;
 class LASzip;
 
 namespace liblas { namespace detail { 

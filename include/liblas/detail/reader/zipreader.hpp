@@ -52,7 +52,6 @@
 #include <boost/shared_ptr.hpp>
 
 // liblaszip
-class LASitem;
 class LASunzipper;
 class LASzip;
 
