@@ -8,7 +8,7 @@
   >>> p.x
   1.0
   >>> p.raw_x
-  100
+  1
 
   >>> p.y
   0.0
@@ -16,7 +16,7 @@
   >>> p.y
   2.0
   >>> p.raw_y
-  200
+  2
 
   >>> p.z
   0.0
@@ -24,7 +24,7 @@
   >>> p.z
   3.0
   >>> p.raw_z
-  300
+  3
 
   >>> p.return_number
   0
@@ -102,7 +102,7 @@
   124
 
   >>> p.xml
-  '<?xml version="1.0" encoding="utf-8"?>\n<x>1</x><y>2</y><z>3</z><rawx>100</rawx><rawy>200</rawy><rawz>300</rawz><time>1205988345.013434</time><intensity>120</intensity><returnnumber>3</returnnumber><numberofreturns>4</numberofreturns><scandirection>0</scandirection><scanangle>45</scanangle><flightlineedge>1</flightlineedge><userdata>163</userdata><pointsourceid>0</pointsourceid><classification><name>Low Vegetation</name><id>3</id><withheld>false</withheld><keypoint>false</keypoint><synthetic>false</synthetic></classification><color><red>124</red><green>0</green><blue>0</blue></color>'
+  '<?xml version="1.0" encoding="utf-8"?>\n<x>1</x><y>2</y><z>3</z><rawx>1</rawx><rawy>2</rawy><rawz>3</rawz><time>1205988345.013434</time><intensity>120</intensity><returnnumber>3</returnnumber><numberofreturns>4</numberofreturns><scandirection>0</scandirection><scanangle>45</scanangle><flightlineedge>1</flightlineedge><userdata>163</userdata><pointsourceid>0</pointsourceid><classification><name>Low Vegetation</name><id>3</id><withheld>false</withheld><keypoint>false</keypoint><synthetic>false</synthetic></classification><color><red>124</red><green>0</green><blue>0</blue></color>'
   
 
 

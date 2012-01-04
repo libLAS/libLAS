@@ -284,6 +284,7 @@ header after you subtract the VLRs
   >>> h2 = header.Header()
   >>> h2.data_offset = 227
   >>> h2.minor_version = 0
+  >>> h2.scale = [0.01, 0.01, 0.01]
   >>> f4 = file.File('junk4.las',mode='w',header=h2)
 
   >>> f4.header.data_offset
@@ -328,6 +329,7 @@ header after you subtract the VLRs
   >>> comp_header = header.Header()
   >>> comp_header.minor_version = 2
   >>> comp_header.compressed = True
+  >>> comp_header.scale = [0.01, 0.01, 0.01]  
   >>> compressed = file.File('output.laz', mode='w', header=comp_header)
 
   >>> comp_header.compressed
