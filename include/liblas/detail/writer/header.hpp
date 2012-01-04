@@ -68,7 +68,8 @@ private:
     void WriteLAS10PadSignature();
     boost::int32_t GetRequiredHeaderSize() const;
 
-    
+    Header& operator=(Header const& rhs);
+    Header(Header const& other);
     std::ostream& m_ofs;    
     liblas::Header m_header;
     boost::uint32_t& m_pointCount;
