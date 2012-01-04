@@ -227,19 +227,30 @@ LAS_DLL LASReaderH LASReader_Create(const char* filename)
 
 {
     VALIDATE_LAS_POINTER1(filename, "LASReader_Create", NULL);
+    
+    std::istream* istrm = NULL;
+    try {
+        istrm = liblas::Open(filename, std::ios::in | std::ios::binary);
+    } catch (std::exception const& e)
+    {
+        if (istrm)
+            delete istrm;
+        LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
+        return NULL;
+    }
 
     try {
-        std::istream* istrm = liblas::Open(filename, std::ios::in | std::ios::binary);
         liblas::ReaderFactory f;
         liblas::Reader* reader = new liblas::Reader(f.CreateWithStream(*istrm));
         readers.insert(std::pair<liblas::Reader*, std::istream*>(reader, istrm));
         return (LASReaderH) reader;
-    
     } catch (std::exception const& e)
-     {
-         LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
-         return NULL;
-     }
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
+        return NULL;
+    }
+
+
 
 }
 
@@ -249,11 +260,20 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
 {
     VALIDATE_LAS_POINTER1(filename, "LASReader_CreateWithHeader", NULL);
     VALIDATE_LAS_POINTER1(hHeader->get(), "LASReader_CreateWithHeader", NULL);
+    
+    std::istream* istrm = NULL;
+    liblas::ReaderFactory f;
+    try {
+        istrm = liblas::Open(filename, std::ios::in | std::ios::binary);
+    } catch (std::exception const& e)
+    {
+        if (istrm) delete istrm;
+        LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
+        return NULL;
+    }
 
     try {
-        
-        liblas::ReaderFactory f;
-        std::istream* istrm = liblas::Open(filename, std::ios::in | std::ios::binary);
+
         liblas::Reader* reader = new liblas::Reader(f.CreateWithStream(*istrm));
         
         liblas::Header const& current_header = reader->GetHeader();
@@ -268,12 +288,14 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
         reader->SetHeader(*header->get());
         readers.insert(std::pair<liblas::Reader*, std::istream*>(reader, istrm));
         return (LASReaderH) reader;
+
     
     } catch (std::exception const& e)
-     {
-         LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
-         return NULL;
-     }
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
+        return NULL;
+    }
+
 
 }
 
@@ -1624,13 +1646,15 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
         LASError_PushError(LE_Failure, "Input filename was null", "LASWriter_Create");
         return NULL;
     }
-    try {
+    std::ostream* ostrm = NULL;
+    try 
+    {
         std::ios::openmode m;
         if ( (mode > 2) || (mode < 1)) {
             throw std::runtime_error("File mode must be eWrite or eAppend");
         }
         
-        std::ostream* ostrm;
+        
 
         // append mode 
         if (mode == 2) {
@@ -1642,6 +1666,20 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
         }
 
         ostrm = liblas::Create(filename, m);
+
+        
+
+    } catch (std::exception const& e)
+    {
+        if (ostrm)
+            delete ostrm;
+        LASError_PushError(LE_Failure, e.what(), "LASWriter_Create");
+        return NULL;
+    }
+
+
+    try {
+
         liblas::HeaderPtr* header = ((liblas::HeaderPtr*) hHeader);
         liblas::Writer* writer = new liblas::Writer(*ostrm, *header->get());
 
@@ -1650,10 +1688,11 @@ LAS_DLL LASWriterH LASWriter_Create(const char* filename, const LASHeaderH hHead
         
 
     } catch (std::exception const& e)
-     {
-         LASError_PushError(LE_Failure, e.what(), "LASWriter_Create");
-         return NULL;
-     }
+    {
+        LASError_PushError(LE_Failure, e.what(), "LASWriter_Create");
+        return NULL;
+    }
+
     
 }
 
