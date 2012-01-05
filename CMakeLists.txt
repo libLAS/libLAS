@@ -383,9 +383,11 @@ list(APPEND CPACK_SOURCE_IGNORE_FILES "CMakeCache.txt")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "CPackConfig.cmake")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "schemas")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "hobu-config.bat")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "mpg-config.bat")
 
 list(APPEND CPACK_SOURCE_IGNORE_FILES "liblas-osgeo4w-init.bat")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "liblas-osgeo4w-start.bat.tmpl")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "liblas-osgeo4w-postinstall.bat")
 include(CPack)
 
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
