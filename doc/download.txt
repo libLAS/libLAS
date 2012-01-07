@@ -10,10 +10,10 @@ Current Release(s)
 
 * **2012-01-06** 
 
-  - `libLAS-1.7.0-src.tar.gz  <http://download2.osgeo.org/liblas/libLAS-1.7.0.tar.gz>`__ 
+  - `libLAS-1.7.0-src.tar.gz  <http://download.osgeo.org/liblas/libLAS-1.7.0.tar.gz>`__ 
     `(md5) <http://download2.osgeo.org/liblas/libLAS-1.7.0.tar.gz.md5>`__ 
 
-  - `libLAS-1.7.0-src.zip <http://download2.osgeo.org/liblas/libLAS-1.7.0.zip>`_ 
+  - `libLAS-1.7.0-src.zip <http://download.osgeo.org/liblas/libLAS-1.7.0.zip>`_ 
     `(md5) <http://download2.osgeo.org/liblas/libLAS-1.7.0.zip.md5>`__
 
   - See `OSGeo4W <http://trac.osgeo.org/osgeo4w>`__ for Windows release.
