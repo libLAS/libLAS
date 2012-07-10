@@ -17,10 +17,10 @@
 Description
 -----------
 
-:ref:`_las2las_old` reads and writes LiDAR data in the ASPRS LAS 1.0 and 1.1 formats while 
+`las2las_old` reads and writes LiDAR data in the ASPRS LAS 1.0 and 1.1 formats while 
 modifying its contents. While `lasinfo_old` can do a few simple operations like 
 updating header information, more drastic changes, like removing points or 
-altering values, will require :ref:`_las2las_old`.  :ref:`_las2las_old` is expected to be used for 
+altering values, will require `las2las_old`.  `las2las_old` is expected to be used for 
 modifying single files at a time, and all :ref:`las2las` operations require multiple 
 read passes through the points.   Some examples of operations `las2las` can be 
 used for include:
@@ -36,7 +36,7 @@ used for include:
 * changing the format from LAS 1.0 to 1.1 or vice versa
 * eliminating points of a given classification (--eliminate class 2)
 
-:ref:`_las2las_old` is a port of Martin Isenburg's :ref:`_las2las_old` utility from `LASTools`_ 
+`las2las_old` is a port of Martin Isenburg's `las2las_old` utility from `LASTools`_ 
 to the libLAS library.  For the most part, it is unchanged from Martin's 
 utility except for a few differences:
 

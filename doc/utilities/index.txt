@@ -18,3 +18,4 @@
    txt2las
    lasblock
    ts2las
+   las2tindex

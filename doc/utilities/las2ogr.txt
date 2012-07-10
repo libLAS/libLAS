@@ -12,9 +12,6 @@
 :Author: Mateusz Loskot
 :Contact: mateusz@loskot.net
 
-lasdiff compares two LAS files and reports whether they are identical 
-or whether they are different.
-
 las2ogr converts LAS file to data source using OGR drivers 
 available from GDAL/OGR package. This utility is useful to translate
 cloud of points collected by LiDAR sensors to vectors for easier 

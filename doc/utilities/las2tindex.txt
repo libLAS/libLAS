@@ -1,0 +1,50 @@
+
+.. raw:: pdf
+
+    PageBreak
+    
+.. _las2tindex:
+    
+****************************************************************
+  las2tindex
+****************************************************************
+
+:Author: Luca Delucchi
+:Contact: luca.delucchi@fmach.it
+
+las2tindex create a OGR vector file containg the tile index of several
+LAS/LAZ files.
+
+If `libLAS Python library <../tutorial/python>`_ is installed the script use it otherwise it launch and
+parse lasinfo command to obtain the bounding box of each LAS/LAZ file
+
+.. note::
+    Windows users can install GDAL binaries using friendly installer from OSGeo4W package.
+
+Usage
+-----
+
+::
+
+    $ las2tindex -h
+    Usage: las2tindex OPTIONS lasfiles
+    Options are:
+        -h print this message
+        -o [--output]   output file
+        -f [--format]   OGR format for output file
+        -e [--epsg]     EPSG code of input and output file
+
+Example
+-------
+
+Write tile index file in ESRI Shapefile format of all your LAS files into folder
+
+::
+
+    $ las2tindex -o points.shp *.las
+
+Write tile index file in KML format of three LAZ files
+
+::
+
+    $ las2tindex -o points.kml -f KML first.laz second.laz third.laz
