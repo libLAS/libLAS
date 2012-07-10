@@ -15,7 +15,7 @@
 las2tindex create a OGR vector file containg the tile index of several
 LAS/LAZ files.
 
-If :doc:`../tutorial/python` is installed the script use it otherwise it launch and
+If `libLAS Python library <../tutorial/python>`_ is installed the script use it otherwise it launch and
 parse lasinfo command to obtain the bounding box of each LAS/LAZ file
 
 .. note::
