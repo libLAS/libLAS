@@ -14,7 +14,7 @@ Mailing Lists
 Bugs
 ..............................................................................
 
-Visit http://trac.osgeo.org to file bugs or edit wiki pages with your own 
+Visit https://github.com/libLAS/libLAS/ to file bugs or edit wiki pages with your own 
 information about libLAS.  
 
 IRC
