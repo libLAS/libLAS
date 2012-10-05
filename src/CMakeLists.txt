@@ -254,9 +254,12 @@ if (APPLE)
 endif()
 
 ###############################################################################
-# Targets installation
+# Targets installation.  The EXPORT clause specifies a depends target
+# which packages up information about the libraries for
+# liblas-config.cmake.
 
 install(TARGETS ${LIBLAS_LIB_NAME} ${LIBLAS_C_LIB_NAME}
+  EXPORT depends
   RUNTIME DESTINATION ${LIBLAS_BIN_DIR}
   LIBRARY DESTINATION ${LIBLAS_LIB_DIR}
   ARCHIVE DESTINATION ${LIBLAS_LIB_DIR})
