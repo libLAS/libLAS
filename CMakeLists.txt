@@ -139,8 +139,12 @@ else()
 
   # Recommended C++ compilation flags
   # -Weffc++
+  #
+  # Remove -pedandic which causes errors from boost (comma at end of
+  # enum) 2012-09-05.  Remove -Wcast-qual -Wfloat-equal
+  # -Wredundant-decls to suppress the multitude of warning messages.
   set(LIBLAS_COMMON_CXX_FLAGS
-	"-pedantic -ansi -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Wfloat-equal -Wredundant-decls -Wno-long-long")
+	"-ansi -Wall -Wpointer-arith -Wcast-align -Wno-long-long")
 
   if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 
@@ -354,7 +358,8 @@ else()
   endif()
 endif()
 
-
+# Add find_package(libLAS) support
+add_subdirectory(cmake)
 
 # Version information
 SET(CPACK_PACKAGE_VERSION_MAJOR ${LIBLAS_VERSION_MAJOR})
