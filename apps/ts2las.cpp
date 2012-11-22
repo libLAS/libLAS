@@ -102,7 +102,7 @@ liblas::Header CreateHeader(ScanHdr* hdr, bool verbose)
 
     double scale = 1.0/(double)hdr->Units;
     header.SetScale(scale, scale, scale);
-    header.SetOffset(hdr->OrgX*scale, hdr->OrgY*scale, hdr->OrgZ*scale);
+    header.SetOffset(-hdr->OrgX*scale, -hdr->OrgY*scale, -hdr->OrgZ*scale);
     header.SetPointRecordsCount(hdr->PntCnt);
     
     if (verbose)
