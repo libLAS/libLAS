@@ -532,7 +532,7 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
     CPLFree( pszPMName );
     CPLFree( pszAngularUnits );
 
-#if LIBGEOTIFF_VERSION >= 1310
+#if LIBGEOTIFF_VERSION >= 1310 && !defined(GEO_NORMALIZE_DISABLE_TOWGS84)
     if( psDefn->TOWGS84Count > 0 )
         oSRS.SetTOWGS84( psDefn->TOWGS84[0],
                          psDefn->TOWGS84[1],
