@@ -401,10 +401,10 @@ function.
             exit(1);
         }
         
-        std::vector<liblas::uint8_t> classes;
-        classes.push_back(2); // ground
-        classes.push_back(9); // water
-        classes.push_back(6); // building
+        std::vector<liblas::Classification> classes;
+        classes.push_back(liblas::Classification(2)); // ground
+        classes.push_back(liblas::Classification(9)); // water
+        classes.push_back(liblas::Classification(6)); // building
     
         std::vector<liblas::FilterPtr> filters;
         liblas::FilterPtr class_filter = liblas::FilterPtr(new liblas::ClassificationFilter(classes));
