@@ -857,9 +857,9 @@ void Header::to_rst(std::ostream& os) const
     boost::uint32_t y_precision = 6;
     boost::uint32_t z_precision = 6;
     
-    x_precision = GetStreamPrecision(x_scale);
-    y_precision = GetStreamPrecision(y_scale);
-    z_precision = GetStreamPrecision(z_scale);
+    x_precision = 14;//GetStreamPrecision(x_scale);
+    y_precision = 14; //GetStreamPrecision(y_scale);
+    z_precision = 14; //GetStreamPrecision(z_scale);
 
     os << "  Scale Factor X Y Z:          ";
     os.precision(x_precision);
@@ -868,6 +868,10 @@ void Header::to_rst(std::ostream& os) const
     os << tree.get<double>("scale.y") << " "; 
     os.precision(z_precision);
     os << tree.get<double>("scale.z") << std::endl;
+
+    x_precision = GetStreamPrecision(x_scale);
+    y_precision = GetStreamPrecision(y_scale);
+    z_precision = GetStreamPrecision(z_scale);
 
     os << "  Offset X Y Z:                ";
     os.precision(x_precision);
