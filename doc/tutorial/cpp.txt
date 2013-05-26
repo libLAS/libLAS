@@ -311,7 +311,7 @@ that is an exact copy of the file except for it contains compressed data.
             liblas::Reader reader = f.CreateWithStream(ifs);
 
             liblas::Header header = reader.GetHeader();
-            header.Compressed(true);
+            header.SetCompressed(true);
             
             liblas::Writer writer(ofs, header);
 
