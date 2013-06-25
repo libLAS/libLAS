@@ -80,6 +80,7 @@ test/data/*.idx
 *.dir
 CMakeScripts
 libLAS.xcodeproj
+_build
 build/libLAS.build
 buildout/source
 buildout/share
