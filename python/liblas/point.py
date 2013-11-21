@@ -447,7 +447,7 @@ class Point(object):
         Source ID of the file containing this point at some time during
         processing.
         """
-    point_source_id = property(get_user_data, set_user_data, None, doc)
+    point_source_id = property(get_point_source_id, set_point_source_id, None, doc)
 
     def get_intensity(self):
         return core.las.LASPoint_GetIntensity(self.handle)
