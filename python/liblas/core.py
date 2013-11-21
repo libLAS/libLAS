@@ -330,10 +330,10 @@ las.LASPoint_SetUserData.restype = ctypes.c_int
 las.LASPoint_SetUserData.argtypes = [ctypes.c_void_p, ctypes.c_ubyte]
 las.LASPoint_SetUserData.errcheck = check_return
 
-las.LASPoint_SetPointSourceId.restype = ctypes.c_short
+las.LASPoint_SetPointSourceId.restype = ctypes.c_uint16
 las.LASPoint_SetPointSourceId.argtypes = [ctypes.c_void_p]
 las.LASPoint_SetPointSourceId.errcheck = check_value
-las.LASPoint_GetPointSourceId.restype = ctypes.c_short
+las.LASPoint_GetPointSourceId.restype = ctypes.c_uint16
 las.LASPoint_GetPointSourceId.argtypes = [ctypes.c_void_p]
 las.LASPoint_GetPointSourceId.errcheck = check_value
 
