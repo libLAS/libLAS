@@ -432,7 +432,7 @@ class Point(object):
         return core.las.LASPoint_GetPointSourceId(self.handle)
 
     def set_point_source_id(self, value):
-        core.las.LASPoint_SetUserData(self.handle, value)
+        core.las.LASPoint_SetPointSourceId(self.handle, value)
     doc = """Point Source ID for the point.
 
     From the specification_:
