@@ -86,7 +86,6 @@ set(LIBLAS_DETAIL_HPP
   ${LIBLAS_HEADERS_DIR}/detail/endian.hpp
   ${LIBLAS_HEADERS_DIR}/detail/fwd.hpp
   ${LIBLAS_HEADERS_DIR}/detail/pointrecord.hpp
-  ${LIBLAS_HEADERS_DIR}/detail/sha1.hpp
   ${LIBLAS_HEADERS_DIR}/detail/timer.hpp
   ${LIBLAS_HEADERS_DIR}/detail/private_utility.hpp
   ${LIBLAS_HEADERS_DIR}/detail/singleton.hpp
