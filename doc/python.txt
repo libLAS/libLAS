@@ -41,17 +41,6 @@ liblas.file.File
                 __getitem__,
                 __len__
                 
-=============================================
-liblas.format.Format
-=============================================
-
-.. autoclass:: liblas.format.Format
-    :members:   __init__,
-                major,
-                minor,
-                color,
-                time,
-                size
 
 =============================================
 liblas.guid.GUID
