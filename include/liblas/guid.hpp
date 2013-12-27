@@ -465,14 +465,12 @@ private:
         
         detail::SHA1 sha1;
 
-        sha1.Input(namespace_guid.data_);
-        sha1.Input(name, name_length);
-		boost::array<unsigned int, 5> digest;
-        digest.assign(0);
+        sha1.addBytes(name, name_length);
         
-        if (!sha1.Result(digest))
+        unsigned char* digest = sha1.getDigest();
+        if (!digest)
         {
-            throw std::runtime_error("create error");
+            throw std::runtime_error("create_name_based sha error");
         }
         
         guid result;

@@ -130,7 +130,9 @@ set(LIBLAS_CPP
 
 set(LIBLAS_DETAIL_CPP
   detail/utility.cpp
-  detail/zippoint.cpp)
+  detail/sha1.cpp
+  detail/zippoint.cpp
+)
   
 set(LIBLAS_DETAIL_INDEX_CPP
   detail/index/indexcell.cpp
