@@ -41,14 +41,14 @@
  ****************************************************************************/
  """
 
-import core
+from . import core
 import datetime
 import time
 import math
-import color
+from . import color
 import ctypes
 
-import header
+from . import header
 
 class Point(object):
     def __init__(self, owned=True, handle=None, copy=False):

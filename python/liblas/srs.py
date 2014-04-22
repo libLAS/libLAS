@@ -41,9 +41,9 @@
  ****************************************************************************/
  """
 
-import core
+from . import core
 import ctypes
-import vlr
+from . import vlr
 
 
 class SRS(object):

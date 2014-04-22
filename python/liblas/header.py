@@ -42,12 +42,12 @@
  ****************************************************************************/
  """
 
-import core
+from . import core
 import datetime
-import guid
-import vlr
-import srs
-import schema
+from . import guid
+from . import vlr
+from . import srs
+from . import schema
 
 
 def leap_year(year):
