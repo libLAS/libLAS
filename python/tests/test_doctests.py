@@ -13,10 +13,10 @@
  *
  * Copyright (c) 2007, Sean C. Gillies
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -25,7 +25,7 @@
  *     * Neither the name of Sean C. Gillies nor the names of
  *       its contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -51,13 +51,13 @@ optionflags = (doctest.REPORT_ONLY_FIRST_FAILURE |
                doctest.ELLIPSIS)
 
 def list_doctests():
-    
+
     files = glob.glob(os.path.join(os.path.dirname(__file__), '*.txt'))
     import liblas
-    
+
     for f in copy.copy(files):
         if liblas.HAVE_LIBGEOTIFF and liblas.HAVE_GDAL:
-            
+
             # run GDAL's tests only
             if 'GeoTIFF' in f:
                 files.remove(f)
@@ -68,7 +68,7 @@ def list_doctests():
                 files.remove(f)
             if 'SRS.txt' in f:
                 files.remove(f)
-        
+
         if not liblas.HAVE_LIBGEOTIFF and not liblas.HAVE_GDAL:
             if 'GDAL' in f:
                 files.remove(f)

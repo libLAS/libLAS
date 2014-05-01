@@ -41,9 +41,9 @@
  ****************************************************************************/
  """
 
-import core
-import header as lasheader
-import point
+from . import core
+from . import header as lasheader
+from . import point
 
 import os
 import types
@@ -93,16 +93,19 @@ class File(object):
         ...     f2.write(p)
         >>> f2.close()
         """
-        self.filename = os.path.abspath(filename)
+        if sys.version_info.major == 3:
+            self.filename = bytes(os.path.abspath(filename), "ascii")
+        else:
+            self.filename = filename
         self._header = None
         self.ownheader = True
 
         # import pdb;pdb.set_trace()
         if header != None:
-            
+
             self.ownheader = False
             self._header = header.handle
-        
+
         self.handle = None
         self._mode = mode.lower()
         self.in_srs = in_srs
@@ -119,7 +122,7 @@ class File(object):
         else:
             # we're in some kind of write mode, and if we already have the
             # file open, complain to the user.
-            for f in files['read'].keys() + files['append'] + files['write']:
+            for f in list(files['read'].keys()) + files['append'] + files['write']:
                 if f == self.filename:
                     raise core.LASException("File %s is already open. "
                                             "Close the file or delete the "

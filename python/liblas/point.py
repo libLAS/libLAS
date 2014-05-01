@@ -41,14 +41,14 @@
  ****************************************************************************/
  """
 
-import core
+from . import core
 import datetime
 import time
 import math
-import color
+from . import color
 import ctypes
 
-import header
+from . import header
 
 class Point(object):
     def __init__(self, owned=True, handle=None, copy=False):
@@ -94,10 +94,10 @@ class Point(object):
 
     def set_x(self, value):
         """Sets the X coordinate of the LAS point to a floating point
-        value. 
-        
-        ..note:: 
-            The point will be descaled according to the :obj:`liblas.point.Point.header`'s  
+        value.
+
+        ..note::
+            The point will be descaled according to the :obj:`liblas.point.Point.header`'s
             scale value for the X dimension.
         """
 
@@ -114,10 +114,10 @@ class Point(object):
 
     def set_raw_x(self, value):
         """Sets the X coordinate of the LAS point to an integer value
-        value. 
-        
-        ..note:: 
-            The point will be scaled according to the obj:`liblas.point.Point.header`'s 
+        value.
+
+        ..note::
+            The point will be scaled according to the obj:`liblas.point.Point.header`'s
             scale value for the X dimension when returned as a double obj:`liblas.point.Point.x`.
         """
         return core.las.LASPoint_SetRawX(self.handle, value)
@@ -137,10 +137,10 @@ class Point(object):
 
     def set_y(self, value):
         """Sets the Y coordinate of the LAS point to a floating point
-        value. 
-        
-        ..note:: 
-            The point will be descaled according to the :obj:`liblas.point.Point.header`'s 
+        value.
+
+        ..note::
+            The point will be descaled according to the :obj:`liblas.point.Point.header`'s
             scale value for the Y dimension.
         """
         return core.las.LASPoint_SetY(self.handle, value)
@@ -158,10 +158,10 @@ class Point(object):
 
     def set_raw_y(self, value):
         """Sets the Y coordinate of the LAS point to an integer value
-        value. 
-        
-        ..note:: 
-            The point will be scaled according to the obj:`liblas.point.Point.header`'s 
+        value.
+
+        ..note::
+            The point will be scaled according to the obj:`liblas.point.Point.header`'s
             scale value for the Y dimension when returned as a double obj:`liblas.point.Point.y`.
         """
         return core.las.LASPoint_SetRawY(self.handle, value)
@@ -179,10 +179,10 @@ class Point(object):
 
     def set_z(self, value):
         """Sets the Z coordinate of the LAS point to a floating point
-        value. 
-        
-        ..note:: 
-            The point will be descaled according to the obj:`liblas.point.Point.header`'s 
+        value.
+
+        ..note::
+            The point will be descaled according to the obj:`liblas.point.Point.header`'s
             scale value for the Z dimension.
         """
         return core.las.LASPoint_SetZ(self.handle, value)
@@ -199,10 +199,10 @@ class Point(object):
 
     def set_raw_z(self, value):
         """Sets the Z coordinate of the LAS point to an integer value
-        value. 
-        
-        ..note:: 
-            The point will be scaled according to the obj:`liblas.point.Point.header`'s 
+        value.
+
+        ..note::
+            The point will be scaled according to the obj:`liblas.point.Point.header`'s
             scale value for the Z dimension when returned as a double obj:`liblas.point.Point.y`.
         """
         return core.las.LASPoint_SetRawZ(self.handle, value)
@@ -214,7 +214,7 @@ class Point(object):
         Use obj:`liblas.point.Point.z` if you want the scaled ``z`` data.
     """
     raw_z = property(get_raw_z, set_raw_z, None, doc)
-    
+
     def get_return_number(self):
         """Returns the return number of the point"""
         return core.las.LASPoint_GetReturnNumber(self.handle)
@@ -544,15 +544,15 @@ class Point(object):
 
     def get_header(self):
         return header.Header(handle=core.las.LASPoint_GetHeader(self.handle))
-    
+
     def set_header(self, value):
         return core.las.LASPoint_SetHeader(self.handle, value.handle)
     header = property(get_header, set_header, None, None)
 
 
     def get_xml(self):
-        return core.las.LASPoint_GetXML(self.handle)
-        
+        return str(core.las.LASPoint_GetXML(self.handle).decode())
+
     xml = property(get_xml, None, None, None)
 
 
@@ -562,12 +562,12 @@ class Point(object):
         d2 = ctypes.cast(d, ctypes.POINTER(ctypes.c_ubyte))
         core.las.LASPoint_GetData(self.handle, d2)
         return d
-    
+
     def set_data(self, data):
         d = ctypes.cast(data, ctypes.POINTER(ctypes.c_ubyte))
-    
+
         core.las.LASPoint_SetData(self.handle, d, len(data))
-    
+
     doc = """Raw data for the point. Shoot yourself in the foot if you must!
     """
     data = property(get_data, set_data, None, doc)

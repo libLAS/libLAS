@@ -42,12 +42,12 @@
  ****************************************************************************/
  """
 
-import core
+from . import core
 import datetime
-import guid
-import vlr
-import srs
-import schema
+from . import guid
+from . import vlr
+from . import srs
+from . import schema
 
 
 def leap_year(year):
@@ -237,12 +237,12 @@ class Header(object):
 
     def get_systemid(self):
         """Returns the system identifier specified in the file"""
-        return core.las.LASHeader_GetSystemId(self.handle)
+        return str(core.las.LASHeader_GetSystemId(self.handle).decode())
 
     def set_systemid(self, value):
         """Sets the system identifier. The value is truncated to 31
         characters"""
-        return core.las.LASHeader_SetSystemId(self.handle, value[0:31])
+        return core.las.LASHeader_SetSystemId(self.handle, value[0:31].encode())
     doc = """The system identifier. The value is truncated to 31 characters and
             defaults to 'libLAS'
 
@@ -275,12 +275,12 @@ class Header(object):
 
     def get_softwareid(self):
         """Returns the software identifier specified in the file"""
-        return core.las.LASHeader_GetSoftwareId(self.handle)
+        return str(core.las.LASHeader_GetSoftwareId(self.handle).decode())
 
     def set_softwareid(self, value):
         """Sets the software identifier.
         """
-        return core.las.LASHeader_SetSoftwareId(self.handle, value[0:31])
+        return core.las.LASHeader_SetSoftwareId(self.handle, value[0:31].encode())
     doc = """The software identifier. The value is truncated to 31 characters
     and defaults to 'libLAS 1.LASVERSION' (ie, libLAS 1.6 for the 1.6
     release)
@@ -389,7 +389,7 @@ class Header(object):
     data_offset = property(get_dataoffset, set_dataoffset, None, doc)
 
     def get_padding(self):
-        """Returns number of bytes between the end of the VLRs and the 
+        """Returns number of bytes between the end of the VLRs and the
            beginning of the point data."""
         return core.las.LASHeader_GetHeaderPadding(self.handle)
 
@@ -398,7 +398,7 @@ class Header(object):
 
         """
         return core.las.LASHeader_SetHeaderPadding(self.handle, value)
-    doc = """The number of bytes between the end of the VLRs and the 
+    doc = """The number of bytes between the end of the VLRs and the
     beginning of the point data.
     """
     padding = property(get_padding, set_padding, None, doc)
@@ -794,5 +794,5 @@ class Header(object):
 
     def get_xml(self):
         return core.las.LASHeader_GetXML(self.handle)
-        
+
     xml = property(get_xml, None, None, None)

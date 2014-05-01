@@ -41,7 +41,7 @@
  ****************************************************************************/
  """
 
-import core
+from . import core
 
 
 class GUID(object):
@@ -89,7 +89,7 @@ class GUID(object):
 
     def __str__(self):
         """String representation of the GUID"""
-        return core.las.LASGuid_AsString(self.handle)
+        return core.las.LASGuid_AsString(self.handle).decode()
 
     def __eq__(self, other):
         """Test GUID for equality against another :obj:`liblas.guid.GUID`

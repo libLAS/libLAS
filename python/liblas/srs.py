@@ -41,9 +41,9 @@
  ****************************************************************************/
  """
 
-import core
+from . import core
 import ctypes
-import vlr
+from . import vlr
 
 
 class SRS(object):
@@ -115,7 +115,7 @@ class SRS(object):
 
     def get_proj4(self):
         """Returns a Proj.4_ string that describes the SRS"""
-        return core.las.LASSRS_GetProj4(self.handle)
+        return str(core.las.LASSRS_GetProj4(self.handle).decode())
 
     def set_proj4(self, value):
         """Sets the SRS description with a given Proj.4_ string"""

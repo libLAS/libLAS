@@ -40,7 +40,7 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
  """
-import core
+from . import core
 import ctypes
 
 
