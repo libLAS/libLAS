@@ -30,13 +30,16 @@
  * DEALINGS IN THE SOFTWARE.
  ****************************************************************************/
 
-#include "cpl_serv.h"
+#include "gdal.h"
+#define CPL_SERV_H_INCLUDED
+// #include "cpl_serv.h"
+#include "cpl_csv.h"
+
 #include "geo_tiffp.h"
-#define CPL_ERROR_H_INCLUDED
 
 #include "geovalues.h"
 #include "ogr_spatialref.h"
-#include "gdal.h"
+
 #include "xtiffio.h"
 #include "cpl_multiproc.h"
 #include "tifvsi.h"
