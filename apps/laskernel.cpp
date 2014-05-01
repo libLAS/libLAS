@@ -1,4 +1,3 @@
-
 #include "laskernel.hpp"
 
 bool OptechScanAngleFixer::transform(liblas::Point& p)
@@ -538,7 +537,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             std::cout << "Setting miny to: " << miny << std::endl;
     }
 
-    if (vm.count("maxx")) 
+    if (vm.count("maxy")) 
     {
         double maxy = vm["maxy"].as< double >();
         (extent.max)(1, maxy);
