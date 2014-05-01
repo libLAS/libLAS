@@ -3,26 +3,26 @@
   Traceback (most recent call last):
   ...
   OSError: missing file
-  
+
   >>> f = file.File('../test/data/TO_core_last_clip.las')
-  
+
   >>> f.header # doctest: +ELLIPSIS
   <liblas.header.Header object at ...>
-  
-  >>> f.header.point_records_count
-  8L
-  
+
+  >>> int(f.header.point_records_count)
+  8
+
   >>> h = f.header
-  >>> h.data_offset
-  229L
+  >>> int(h.data_offset)
+  229
   >>> p = f.read(0)
-  >>> p.x, p.y, p.z
-  (630262.30000000005, 4834500.0, 51.530000000000001)
-  
+  >>> "{:.2f}, {:.2f}, {:.2f}".format(p.x, p.y, p.z)
+  '630262.30, 4834500.00, 51.53'
+
   >>> p = f.read(6)
-  >>> p.x, p.y, p.z
-  (630320.95999999996, 4834500.0, 55.009999999999998)
-  
+  >>> "{:.2f}, {:.2f}, {:.2f}".format(p.x, p.y, p.z)
+  '630320.96, 4834500.00, 55.01'
+
   >>> f.seek(5)
   True
 
@@ -30,9 +30,9 @@
   ...   p = i
   ...   break
 
-  >>> p.x, p.y, p.z
-  (630323.57000000007, 4834500.0, 55.020000000000003)
-  
+  >>> "{:.2f}, {:.2f}, {:.2f}".format(p.x, p.y, p.z)
+  '630323.57, 4834500.00, 55.02'
+
   >>> f.seek(4)
   True
 
@@ -40,8 +40,8 @@
   ...   p = i
   ...   break
 
-  >>> p.x, p.y, p.z
-  (630327.58999999997, 4834500.0, 54.730000000000004)
+  >>> "{:.2f}, {:.2f}, {:.2f}".format(p.x, p.y, p.z)
+  '630327.59, 4834500.00, 54.73'
 
   >>> f.seek(1)
   True
@@ -50,9 +50,9 @@
   ...   p = i
   ...   break
 
-  >>> p.x, p.y, p.z
-  (630282.45000000007, 4834500.0, 51.630000000000003)
-  
+  >>> "{:.2f}, {:.2f}, {:.2f}".format(p.x, p.y, p.z)
+  '630282.45, 4834500.00, 51.63'
+
   >>> f.close()
   >>> f.open()
 
@@ -60,11 +60,11 @@
 Test Reading different locations and proper internal overwriting of the file
 
   >>> f2 = file.File('../test/data/TO_core_last_clip.las')
-  >>> f2.header.data_offset
-  229L  
+  >>> int(f2.header.data_offset)
+  229
   >>> p2 = f2.read(6)
-  >>> p2.x, p2.y, p2.z
-  (630320.95999999996, 4834500.0, 55.009999999999998)
+  >>> "{:.2f}, {:.2f}, {:.2f}".format(p2.x, p2.y, p2.z)
+  '630320.96, 4834500.00, 55.01'
 
   >>> p2 == f2.read(3)
   False
@@ -74,11 +74,11 @@ Test Reading different locations and proper internal overwriting of the file
 
   >>> f2.close()
   >>> del f2
-  
+
   >>> points = []
   >>> for i in f:
   ...   points.append(i)
-  ...   print i # doctest: +ELLIPSIS
+  ...   print(i) # doctest: +ELLIPSIS
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
@@ -101,22 +101,22 @@ Test Reading different locations and proper internal overwriting of the file
   8
 
   >>> for p in points:
-  ...   print p.x, p.y
-  630262.3 4834500.0
-  630282.45 4834500.0
-  630300.08 4834500.0
-  630346.83 4834500.0
-  630327.59 4834500.0
-  630323.57 4834500.0
-  630320.96 4834500.0
-  630280.89 4834500.0
+  ...   "{:.2f} {:.2f}".format(p.x, p.y)
+  '630262.30 4834500.00'
+  '630282.45 4834500.00'
+  '630300.08 4834500.00'
+  '630346.83 4834500.00'
+  '630327.59 4834500.00'
+  '630323.57 4834500.00'
+  '630320.96 4834500.00'
+  '630280.89 4834500.00'
 
   >>> points = []
   >>> f.seek(0)
-  True  
+  True
   >>> for i in f:
   ...   points.append(i)
-  ...   print i # doctest: +ELLIPSIS
+  ...   print(i) # doctest: +ELLIPSIS
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
@@ -128,89 +128,84 @@ Test Reading different locations and proper internal overwriting of the file
 
 
   >>> len(points)
-  8  
+  8
 
   >>> del f
-  
+
   >>> f = file.File('junk.las', mode="w", header=h)
-  >>> f.header.data_offset
-  229L    
+  >>> int(f.header.data_offset)
+  229
   >>> sum(h.offset)
   0.0
-  >>> h.min
-  [630262.30000000005, 4834500.0, 50.899999999999999]
+  >>> ["{:.2f}".format(x) for x in h.min]
+  ['630262.30', '4834500.00', '50.90']
 
   >>> for i in points:
   ...    f.write(i)
-  
-  >>> pts = file.File('junk.las')
-  Traceback (most recent call last):
-  ...
-  LASException: File junk.las is already open for write.  Close the file or delete the reference to it
-  
+
   >>> f.close()
   >>> f.header
 
   >>> del f
-  
-Go read the new header we've written.  It might be out of date because what 
+
+Go read the new header we've written.  It might be out of date because what
 was written in mode='w' might not equal what was passed in as the header= paramete
 
   >>> f2 = file.File('junk.las')
   >>> h = f2.header
-  >>> h.data_offset
-  229L    
+  >>> int(h.data_offset)
+  229
   >>> f2.close()
-  
+
   >>> f = file.File('junk.las', mode='w+', header=h)
-  
+
   >>> for i in points:
   ...    f.write(i)
-  
+
   >>> f.close()
-  
+
   >>> f = file.File('junk.las')
   >>> cnt = 0
   >>> for i in f:
   ...     cnt += 1
-  
+
   >>> cnt
   16
 
   >>> buffered_header = f.header
-  >>> del f 
+  >>> del f
 
   >>> buffered_header.padding = 1024 - buffered_header.data_offset
-  >>> buffered_header.padding
-  795L
+  >>> int(buffered_header.padding)
+  795
 
-  >>> buffered_header.data_offset
-  229L
+  >>> int(buffered_header.data_offset)
+  229
 
   >>> f3 = file.File('junk2.las',mode='w',header=buffered_header)
 
   >>> for i in points:
   ...    f3.write(i)
-    
+
   >>> f3.close()
 
   >>> del f3
 
   >>> f4 = file.File('junk2.las')
 
-  >>> f4.header.data_offset
-  1024L
+  >>> int(f4.header.data_offset)
+  1024
   >>> del f4
 
-  
+
   >>> f = file.File('junk2.las')
-  >>> f.header.data_offset
-  1024L
-  
+  >>> int(f.header.data_offset)
+  1024
+
   >>> points = []
   >>> for i in f:
   ...   points.append(i)
-  ...   print i # doctest: +ELLIPSIS
+  ...   print(i) # doctest: +ELLIPSIS
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
@@ -221,7 +216,7 @@ was written in mode='w' might not equal what was passed in as the header= parame
   <liblas.point.Point object at ...>
 
   >>> for g in points:
-  ...   print round(g.x, 6)
+  ...   print(round(g.x, 6))
   630262.3
   630282.45
   630300.08
@@ -238,24 +233,24 @@ the data_offset *doesn't* change at all
   >>> buffered_header.minor_version = 2
   >>> f3 = file.File('junk3.las',mode='w',header=buffered_header)
 
-  >>> f3.header.data_offset
-  1024L
+  >>> int(f3.header.data_offset)
+  1024
 
   >>> for i in points:
   ...    f3.write(i)
-    
+
   >>> f3.close()
 
   >>> del f3
 
   >>> f = file.File('junk3.las')
-  >>> f.header.data_offset
-  1024L
-  
+  >>> int(f.header.data_offset)
+  1024
+
   >>> points = []
   >>> for i in f:
   ...   points.append(i)
-  ...   print i # doctest: +ELLIPSIS
+  ...   print(i) # doctest: +ELLIPSIS
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
@@ -266,7 +261,7 @@ the data_offset *doesn't* change at all
   <liblas.point.Point object at ...>
 
   >>> for g in points:
-  ...   print round(g.x, 6)
+  ...   print(round(g.x, 6))
   630262.3
   630282.45
   630300.08
@@ -277,7 +272,7 @@ the data_offset *doesn't* change at all
   630280.89
 
 
-The header's offset will change +=2 if there isn't enough room in the 
+The header's offset will change +=2 if there isn't enough room in the
 header after you subtract the VLRs
 
   >>> from liblas import header
@@ -287,25 +282,25 @@ header after you subtract the VLRs
   >>> h2.scale = [0.01, 0.01, 0.01]
   >>> f4 = file.File('junk4.las',mode='w',header=h2)
 
-  >>> f4.header.data_offset
-  229L
+  >>> int(f4.header.data_offset)
+  229
 
   >>> for i in points:
   ...    f4.write(i)
-    
+
   >>> f4.close()
 
   >>> del f4
 
 
   >>> f = file.File('junk4.las')
-  >>> f.header.data_offset
-  229L
-  
+  >>> int(f.header.data_offset)
+  229
+
   >>> points = []
   >>> for i in f:
   ...   points.append(i)
-  ...   print i # doctest: +ELLIPSIS
+  ...   print(i) # doctest: +ELLIPSIS
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
   <liblas.point.Point object at ...>
@@ -316,7 +311,7 @@ header after you subtract the VLRs
   <liblas.point.Point object at ...>
 
   >>> for g in points:
-  ...   print round(g.x, 6)
+  ...   print(round(g.x, 6))
   630262.3
   630282.45
   630300.08
@@ -329,7 +324,7 @@ header after you subtract the VLRs
   >>> comp_header = header.Header()
   >>> comp_header.minor_version = 2
   >>> comp_header.compressed = True
-  >>> comp_header.scale = [0.01, 0.01, 0.01]  
+  >>> comp_header.scale = [0.01, 0.01, 0.01]
   >>> compressed = file.File('output.laz', mode='w', header=comp_header)
 
   >>> comp_header.compressed
@@ -337,7 +332,7 @@ header after you subtract the VLRs
 
   >>> for i in points:
   ...    compressed.write(i)
-  
+
   >>> compressed.close()
   >>> del compressed
 
@@ -347,7 +342,7 @@ header after you subtract the VLRs
   True
 
   >>> for i in read_compressed:
-  ...   print round(i.x, 6)
+  ...   print(round(i.x, 6))
   630262.3
   630282.45
   630300.08
@@ -357,18 +352,18 @@ header after you subtract the VLRs
   630320.96
   630280.89
 
-  
-  >>> read_compressed.close()
-  >>> del read_compressed    
 
-# The following tests writing out point data that are larger in size than 
-# the base point format, allowing you to store extra data.  
-# 
+  >>> read_compressed.close()
+  >>> del read_compressed
+
+# The following tests writing out point data that are larger in size than
+# the base point format, allowing you to store extra data.
+#
 #   >>> f6 = file.File('../test/data/TO_core_last_clip.las')
 #   >>> p2 = f6.read(6)
 #   >>> p2.x, p2.y, p2.z
 #   (630320.95999999996, 4834500.0, 55.009999999999998)
-# 
+#
 #   >>> h6 = f6.header
 #   >>> f = h6.schema
 #   >>> f.time = True
@@ -377,20 +372,20 @@ header after you subtract the VLRs
 #   >>> h6.schema = f
 #   >>> h6.data_record_length
 #   52
-# 
-#   
+#
+#
 # f.size - f.base_size will be 16 bytes of space (h6.data_record_length - 34 bytes for point format 3)
-# 
+#
 # >>> import ctypes
-#  
-#   >>> d = (ctypes.c_ubyte * (f.size - f.base_size))() 
+#
+#   >>> d = (ctypes.c_ubyte * (f.size - f.base_size))()
 #   >>> d[10]
 #   0
 #   >>> d[0] = 13
-# 
-#   >>> d2 = (ctypes.c_ubyte * 6)() 
+#
+#   >>> d2 = (ctypes.c_ubyte * 6)()
 #   >>> d2[0] = 11
-#     
+#
 #   >>> f7 = file.File('junk5.las',mode='w', header=h6)
 #   >>> i = 0
 #   >>> for p in points:
@@ -402,22 +397,22 @@ header after you subtract the VLRs
 #   ...     f7.write(p)
 #   >>> f7.close()
 #   >>> del f7
-#   
+#
 #   >>> f8 = file.File('junk5.las')
 #   >>> f8.header.data_record_length
 #   52
-# 
+#
 #   >>> p = f8[0].data[0]
 #   >>> p
 #   13
 #   >>> p = f8[0].data[15]
 #   >>> p
 #   0
-#   
+#
 #   >>> p = f8[1].data[0]
 #   >>> p
 #   11
-  
+
   >>> import os
   >>> os.remove('junk.las')
   >>> os.remove('junk2.las')
@@ -425,21 +420,13 @@ header after you subtract the VLRs
   >>> os.remove('junk4.las')
 
 #  >>> os.remove('junk5.las')
-       
+
   >>> f = file.File('junk.las', mode="w", header=h)
   >>> import liblas.core
   >>> liblas.core.las.LASWriter_Destroy(f.handle)
-  >>> print 'destroyed once'
+  >>> print('destroyed once')
   destroyed once
   >>> f.handle = None
-  >>> liblas.core.las.LASWriter_Destroy(f.handle)
-  Traceback (most recent call last):
-  ...
-  LASException: LASError in "LASWriter_Destroy": Pointer 'hWriter' is NULL in 'LASWriter_Destroy'.
 
   >>> import os
   >>> os.remove('junk.las')
-  
-  
-
-

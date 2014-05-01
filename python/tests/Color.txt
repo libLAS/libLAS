@@ -6,7 +6,7 @@
   0
   >>> c.blue
   0
-  
+
   >>> c = color.Color(red = 123, blue = 125, green = 124)
   >>> c.red
   123
@@ -17,10 +17,10 @@
 
 
   >>> for i in c:
-  ...     print i
+  ...     print(i)
   123
   124
   125
-  
+
   >>> list(c)
   [123, 124, 125]
