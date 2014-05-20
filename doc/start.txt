@@ -45,6 +45,20 @@ Packages are available for `DebianGIS`_, but in most other cases you are
 going to have to compile libLAS yourself. :ref:`compilation` provides an 
 extensive synopsis of how to do so.
 
+OSX
+..............................................................................
+
+If you use you `Homebrew`_, you can install libLAS this way::
+
+    $ brew install liblas
+
+If you want the latest development version::
+
+    $ brew install liblas --HEAD
+
+Otherwise, you have to :ref:`compile <compilation>` libLAS yourself.
+
+
 Compilation
 ..............................................................................
 
@@ -297,3 +311,4 @@ compression library.
 .. _`WKT`: http://en.wikipedia.org/wiki/Well-known_text#Spatial_reference_systems
 .. _`GDAL`: http://gdal.org
 .. _`Autzen_Stadium`: http://liblas.org/samples/Autzen_Stadium.zip
+.. _`Homebrew`: http://brew.sh
