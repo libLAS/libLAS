@@ -184,6 +184,7 @@ void Header::ReadHeader()
 
     // strip the high bits, to determine point type
     n1 &= 0x3f;
+    boost::uint8_t n1_copy( n1 );
     if (n1 == liblas::ePointFormat0)
     {
         m_header->SetDataFormatId(liblas::ePointFormat0);
@@ -267,9 +268,41 @@ void Header::ReadHeader()
     m_header->SetMin(x2, y2, z2);
 
     // only go read VLRs if we have them.
+    boost::uint16_t riegl_extra( 0 );
     if (m_header->GetRecordsCount() > 0)
-        ReadVLRs();
+        ReadVLRs( riegl_extra );
 
+    if(0 != riegl_extra) {
+        if (n1_copy == liblas::ePointFormat0)
+        {
+            m_header->SetDataFormatId(liblas::ePointFormat0,riegl_extra);
+        }
+        else if (n1_copy == liblas::ePointFormat1,riegl_extra)
+        {
+            m_header->SetDataFormatId(liblas::ePointFormat1,riegl_extra);
+        }
+        else if (n1_copy == liblas::ePointFormat2)
+        {
+            m_header->SetDataFormatId(liblas::ePointFormat2,riegl_extra);
+        }
+        else if (n1_copy == liblas::ePointFormat3)
+        {
+            m_header->SetDataFormatId(liblas::ePointFormat3,riegl_extra);
+        }
+        else if (n1_copy == liblas::ePointFormat4)
+        {
+            m_header->SetDataFormatId(liblas::ePointFormat4,riegl_extra);
+        }
+        else if (n1_copy == liblas::ePointFormat5)
+        {
+            m_header->SetDataFormatId(liblas::ePointFormat5,riegl_extra);
+        }
+        else
+        {
+            throw std::domain_error("invalid point data format");
+        }
+    }
+    
     boost::uint32_t pad = m_header->GetDataOffset() - (m_header->GetHeaderSize() + m_header->GetVLRBlockSize());
     m_header->SetHeaderPadding(pad);
 
@@ -327,7 +360,7 @@ bool Header::HasLAS10PadSignature()
     return found;
 }
 
-void Header::ReadVLRs()
+void Header::ReadVLRs(boost::uint16_t& riegl_extrabytes)
 {
     VLRHeader vlrh = { 0 };
 
@@ -366,6 +399,10 @@ void Header::ReadVLRs()
         vlr.SetData(data);
 
         m_header->AddVLR(vlr);
+        
+        if( 0 == strcmp("RIEGL Extra Bytes", vlrh.description) ) {
+          riegl_extrabytes = vlrh.recordLengthAfterHeader;
+        }        
     }
 
     liblas::SpatialReference srs(m_header->GetVLRs());    
