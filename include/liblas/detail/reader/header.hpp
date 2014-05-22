@@ -60,7 +60,7 @@ public:
 
     HeaderPtr GetHeader() const { return m_header; }
     void ReadHeader();
-    void ReadVLRs();
+    void ReadVLRs( boost::uint16_t& riegl_extrabytes );
 
 protected:
     
