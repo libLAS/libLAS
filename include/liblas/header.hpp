@@ -242,7 +242,7 @@ public:
     PointFormatName GetDataFormatId() const;
 
     /// Set identifier of point data (record) format.
-    void SetDataFormatId(PointFormatName v);
+    void SetDataFormatId(PointFormatName v, const boost::uint16_t riegl_extra = 0);
 
     /// The length in bytes of each point.  All points in the file are 
     /// considered to be fixed in size, and the PointFormatName is used 
