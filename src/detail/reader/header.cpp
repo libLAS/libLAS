@@ -215,13 +215,7 @@ void Header::ReadHeader()
     
     // 18. Point Data Record Length
     read_n(n2, m_ifs, sizeof(n2));
-    // FIXME: We currently only use the DataFormatId, this needs to 
-    // adjust the schema based on the difference between the DataRecordLength
-    // and the base size of the pointformat.  If we have an XML schema in the 
-    // form of a VLR in the file, we'll use that to apportion the liblas::Schema.
-    // Otherwise, all bytes after the liblas::Schema::GetBaseByteSize will be 
-    // a simple uninterpreted byte field. 
-    // m_header->SetDataRecordLength(n2);
+    boost::uint16_t record_length(n2);
 
     // 19. Number of point records
     read_n(n4, m_ifs, sizeof(n4));
@@ -279,6 +273,21 @@ void Header::ReadHeader()
 
     // Seek to the data offset so we can start reading points
     m_ifs.seekg(m_header->GetDataOffset());
+
+    if (m_header->GetDataRecordLength() != record_length) // we have extra_bytes
+    {
+        // FIXME: We only dump the bytes into an "extra" dimension for 
+        // now and there's now way to get to them. For LAS 1.4 files these 
+        // could be interpreted using the VLR, but it isn't done at this time.
+        
+        Dimension extra("extra", (record_length - m_header->GetDataRecordLength())*8);
+        extra.SetDescription("Extra bytes");
+        extra.IsRequired(false); extra.IsActive(true); extra.IsInteger(false); extra.IsNumeric(true);
+        
+        Schema schema = m_header->GetSchema();
+        schema.AddDimension(extra);
+        m_header->SetSchema(schema);
+    } 
 
 }
 
