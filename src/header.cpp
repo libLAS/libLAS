@@ -401,9 +401,13 @@ liblas::PointFormatName Header::GetDataFormatId() const
 
 }
 
-void Header::SetDataFormatId(liblas::PointFormatName v)
+void Header::SetDataFormatId(liblas::PointFormatName v, const boost::uint16_t riegl_extra)
 {
-    m_schema.SetDataFormatId(v);
+    m_schema.SetDataFormatId(v, riegl_extra);
+}
+
+void Header::SetBitSize(std::size_t s) {
+  m_schema.SetBitSize(s);
 }
 
 uint16_t Header::GetDataRecordLength() const

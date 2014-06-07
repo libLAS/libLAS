@@ -120,13 +120,17 @@ public:
     std::size_t GetByteSize() const;
 
     std::size_t GetBitSize() const;
+    
+    void SetBitSize(std::size_t s);
+    void AddRieglDimensions(boost::uint32_t riegl_bytes);
+    
     void CalculateSizes();
 
     /// Get the base size (only accounting for Time, Color, etc )
     std::size_t GetBaseByteSize() const;
 
     PointFormatName GetDataFormatId() const { return m_data_format_id; }
-    void SetDataFormatId(PointFormatName const& value);
+    void SetDataFormatId(PointFormatName const& value, const boost::uint16_t riegl_extra = 0);
     
     void AddDimension(Dimension const& dim);
     boost::optional< Dimension const& > GetDimension(std::string const& n) const;
@@ -162,7 +166,10 @@ private:
     void add_record0_dimensions();
     void add_time();
     void add_color();
-    void update_required_dimensions(PointFormatName data_format_id);
+    
+    void addRiegl(const boost::uint16_t riegl_extra);
+    
+    void update_required_dimensions(PointFormatName data_format_id, const boost::uint16_t riegl_extra = 0);
     bool IsSchemaVLR(VariableRecord const& vlr);
     liblas::property_tree::ptree LoadPTree(VariableRecord const& v);
     IndexMap LoadDimensions(liblas::property_tree::ptree tree);

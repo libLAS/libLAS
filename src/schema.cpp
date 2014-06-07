@@ -293,7 +293,64 @@ void Schema::add_time()
     
 }
 
-void Schema::update_required_dimensions(PointFormatName data_format_id)
+void Schema::addRiegl(const boost::uint16_t riegl_extra) {
+    // From the Riegl Whitepaper
+    std::ostringstream text;
+
+    Dimension amplitude("Amplitude", 16);
+    text << "Echo signal amplitude [dB]";
+    amplitude.SetDescription(text.str());
+    amplitude.IsRequired(true);
+    amplitude.IsActive(true);
+    amplitude.IsInteger(true);
+    amplitude.IsNumeric(true);
+
+    AddDimension(amplitude);
+    text.str("");
+
+    if( 576 == riegl_extra ) {
+        Dimension reflectance("Reflectance", 16);
+        text << " Echo signal reflectance [dB]";
+        reflectance.SetDescription(text.str());
+        reflectance.IsRequired(true);
+        reflectance.IsActive(true);
+        reflectance.IsInteger(true);
+        reflectance.IsNumeric(true);
+
+        AddDimension(reflectance);
+        text.str("");
+
+        Dimension deviation("Deviation", 16);
+        text << " Pulse shape deviation";
+        deviation.SetDescription(text.str());
+        deviation.IsRequired(true);
+        deviation.IsActive(true);
+        deviation.IsInteger(true);
+        deviation.IsNumeric(true);
+
+        AddDimension(deviation);
+        text.str("");
+
+    } else if( 384 == riegl_extra ) {
+        Dimension pulse("Pulse width", 16);
+        text << "Full width at half maximum [ns]";
+        pulse.SetDescription(text.str());
+        pulse.IsRequired(true);
+        pulse.IsActive(true);
+        pulse.IsInteger(true);
+        pulse.IsNumeric(true);
+
+        AddDimension(pulse);
+        text.str("");
+    } else {
+        std::stringstream err_msg;
+        err_msg << __FILE__ << ":" << __LINE__ << '\n';
+        err_msg << "WRONG RIEGL EXTRA BYTES COUNT: " << riegl_extra << '\n';
+        throw std::runtime_error(err_msg.str());
+    }
+}
+
+void Schema::update_required_dimensions(PointFormatName data_format_id, const boost::uint16_t riegl_extra)
 {
     DimensionArray user_dims;
 
@@ -342,6 +399,10 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
             throw std::runtime_error(oss.str());
     }
 
+    if(0!=riegl_extra) {
+        addRiegl(riegl_extra);
+    }
+    
     // Copy any user-created dimensions that are not 
     // required by the PointFormatName
     for (DimensionArray::const_iterator j = user_dims.begin(); j != user_dims.end(); ++j)
@@ -652,9 +713,13 @@ std::size_t Schema::GetBitSize() const
     return m_bit_size;
 }
 
-void Schema::SetDataFormatId(PointFormatName const& value)
+void Schema::SetBitSize(std::size_t s) {
+    m_bit_size = s;
+}
+
+void Schema::SetDataFormatId(PointFormatName const& value, const boost::uint16_t riegl_extra)
 {
-    update_required_dimensions(value);
+    update_required_dimensions(value, riegl_extra);
     m_data_format_id = value;
     CalculateSizes();
 }
