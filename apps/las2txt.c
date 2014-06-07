@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                fprintf(stderr, "ERROR: unknown seperator '%s'\n",argv[i]);
+                fprintf(stderr, "ERROR: unknown separator '%s'\n",argv[i]);
                 usage();
                 exit(1);
             }
