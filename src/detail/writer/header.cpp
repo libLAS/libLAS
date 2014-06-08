@@ -216,16 +216,21 @@ void Header::write()
     } 
 
     // 3-6. GUID data
-    uint32_t d1 = 0;
-    uint16_t d2 = 0;
-    uint16_t d3 = 0;
-    uint8_t d4[8] = { 0 };
-    liblas::guid g = m_header.GetProjectId();
-    g.output_data(d1, d2, d3, d4);
-    detail::write_n(m_ofs, d1, sizeof(d1));
-    detail::write_n(m_ofs, d2, sizeof(d2));
-    detail::write_n(m_ofs, d3, sizeof(d3));
-    detail::write_n(m_ofs, d4, sizeof(d4));
+    boost::uint8_t d[16];
+    boost::uuids::uuid u = m_header.GetProjectId();
+
+    d[0] = u.data[3];
+    d[1] = u.data[2];
+    d[2] = u.data[1];
+    d[3] = u.data[0];
+    d[4] = u.data[5];
+    d[5] = u.data[4];
+    d[6] = u.data[7];
+    d[7] = u.data[6];
+    for (int i=8; i<16; i++)
+        d[i] = u.data[i];
+    
+    detail::write_n(m_ofs, d, 16);
     
     // 7. Version major
     n1 = m_header.GetVersionMajor();

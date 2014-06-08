@@ -95,16 +95,23 @@ void Header::ReadHeader()
     m_header->SetReserved(n2);
 
     // 4-7. Project ID
-    uint32_t d1 = 0;
-    uint16_t d2 = 0;
-    uint16_t d3 = 0;
-    uint8_t d4[8] = { 0 };
-    read_n(d1, m_ifs, sizeof(d1));
-    read_n(d2, m_ifs, sizeof(d2));
-    read_n(d3, m_ifs, sizeof(d3));
-    read_n(d4, m_ifs, sizeof(d4));
-    liblas::guid g(d1, d2, d3, d4);
-    m_header->SetProjectId(g);
+    // uint32_t d1 = 0;
+    // uint16_t d2 = 0;
+    // uint16_t d3 = 0;
+    // uint8_t d4[8] = { 0 };
+    // read_n(d1, m_ifs, sizeof(d1));
+    // read_n(d2, m_ifs, sizeof(d2));
+    // read_n(d3, m_ifs, sizeof(d3));
+    // read_n(d4, m_ifs, sizeof(d4));
+    // liblas::guid g(d1, d2, d3, d4);
+
+    uint8_t d[16] = {0};
+    read_n(d, m_ifs, 16);
+    boost::uuids::uuid u;
+    for (int i=0; i<16; i++)
+        u.data[i] = d[i];
+    
+    m_header->SetProjectId(u);
 
     // 8. Version major
     read_n(n1, m_ifs, sizeof(n1));
