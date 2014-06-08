@@ -152,8 +152,8 @@ bool Index::IndexInit(void)
 		{
 			m_pointheader = m_reader->GetHeader();
 		} // else
-		boost::uint32_t initialVLRs = m_idxheader.GetRecordsCount();
-		for (boost::uint32_t i = 0; i < initialVLRs; ++i)
+		uint32_t initialVLRs = m_idxheader.GetRecordsCount();
+		for (uint32_t i = 0; i < initialVLRs; ++i)
 		{
 			VariableRecord const& vlr = m_idxheader.GetVLR(i);
 			// a combination of "liblas" and 42 denotes that this is a liblas spatial index id
@@ -190,7 +190,7 @@ bool Index::IndexInit(void)
 			if (! m_readOnly)
 			{
 				Success = BuildIndex();
-				boost::uint32_t test = m_idxheader.GetRecordsCount() - initialVLRs;
+				uint32_t test = m_idxheader.GetRecordsCount() - initialVLRs;
 				if (m_debugOutputLevel > 1)
 					fprintf(m_debugger, "VLRs created %d\n", test);
 			} // if
@@ -204,10 +204,10 @@ bool Index::IndexInit(void)
 
 void Index::ClearOldIndex(void)
 {
-	boost::uint32_t initialVLRs = m_idxheader.GetRecordsCount();
-	boost::uint32_t TempDataVLR_ID = GetDataVLR_ID();
+	uint32_t initialVLRs = m_idxheader.GetRecordsCount();
+	uint32_t TempDataVLR_ID = GetDataVLR_ID();
 
-	for (boost::uint32_t i = 0; i < initialVLRs; ++i)
+	for (uint32_t i = 0; i < initialVLRs; ++i)
 	{
 		VariableRecord const& vlr = m_idxheader.GetVLR(i);
 		// a combination of "liblas" and 42 denotes that this is a liblas spatial index id
@@ -250,12 +250,12 @@ bool Index::Validate(void)
 	
 } // Index::Validate
 
-boost::uint32_t Index::GetDefaultReserve(void)
+uint32_t Index::GetDefaultReserve(void)
 {
 	return (GetPointRecordsCount() < LIBLAS_INDEX_RESERVEFILTERDEFAULT ? GetPointRecordsCount(): LIBLAS_INDEX_RESERVEFILTERDEFAULT);
 } // Index::GetDefaultReserve
 
-const std::vector<boost::uint32_t>& Index::Filter(IndexData & ParamSrc)
+const std::vector<uint32_t>& Index::Filter(IndexData & ParamSrc)
 {
 
 	try {
@@ -269,7 +269,7 @@ const std::vector<boost::uint32_t>& Index::Filter(IndexData & ParamSrc)
 		m_filterResult.reserve(ParamSrc.m_iterator ? ParamSrc.m_iterator->m_chunkSize: GetDefaultReserve());
 		if (m_reader)
 		{
-			boost::uint32_t i;
+			uint32_t i;
 			i = ParamSrc.m_iterator ? ParamSrc.m_iterator->m_curVLR: 0;
 			for (; i < m_idxheader.GetRecordsCount(); ++i)
 			{
@@ -277,7 +277,7 @@ const std::vector<boost::uint32_t>& Index::Filter(IndexData & ParamSrc)
 				// a combination of "liblas" and 42 denotes that this is a liblas spatial index id
 				if (std::string(vlr.GetUserId(false)) == std::string("liblas"))
 				{
-					boost::uint16_t RecordID = vlr.GetRecordId();
+					uint16_t RecordID = vlr.GetRecordId();
 					if (RecordID == 42)
 					{
 						if (! LoadIndexVLR(vlr))
@@ -302,7 +302,7 @@ const std::vector<boost::uint32_t>& Index::Filter(IndexData & ParamSrc)
 					{
 						// some of our data is in this record
 						bool VLRDone = false;
-						const boost::uint32_t HeadVLR = i;
+						const uint32_t HeadVLR = i;
 						if (! FilterOneVLR(vlr, i, ParamSrc, VLRDone))
 							break;
 						if (ParamSrc.m_iterator)
@@ -335,7 +335,7 @@ const std::vector<boost::uint32_t>& Index::Filter(IndexData & ParamSrc)
 
 } // Index::Filter
 
-IndexIterator* Index::Filter(IndexData const& ParamSrc, boost::uint32_t ChunkSize)
+IndexIterator* Index::Filter(IndexData const& ParamSrc, uint32_t ChunkSize)
 {
 	IndexIterator* NewIter = NULL;
 
@@ -351,7 +351,7 @@ IndexIterator* Index::Filter(IndexData const& ParamSrc, boost::uint32_t ChunkSiz
 } // Index::Filter
 
 IndexIterator* Index::Filter(double LowFilterX, double HighFilterX, double LowFilterY, double HighFilterY, 
-	double LowFilterZ, double HighFilterZ, boost::uint32_t ChunkSize)
+	double LowFilterZ, double HighFilterZ, uint32_t ChunkSize)
 {
 	IndexIterator* NewIter = NULL;
 
@@ -367,7 +367,7 @@ IndexIterator* Index::Filter(double LowFilterX, double HighFilterX, double LowFi
 
 } // Index::Filter
 
-IndexIterator* Index::Filter(Bounds<double> const& BoundsSrc, boost::uint32_t ChunkSize)
+IndexIterator* Index::Filter(Bounds<double> const& BoundsSrc, uint32_t ChunkSize)
 {
 	IndexIterator* NewIter = NULL;
 
@@ -408,12 +408,12 @@ void Index::SetCellFilterBounds(IndexData & ParamSrc)
 	HighYCell = floor(filterMaxYCell) - 1.0;
 	LowZCell = ceil(filterMinZCell);
 	HighZCell = floor(filterMaxZCell) - 1.0;
-	ParamSrc.m_LowXCellCompletelyIn = (boost::int32_t)LowXCell;
-	ParamSrc.m_HighXCellCompletelyIn = (boost::int32_t)HighXCell;
-	ParamSrc.m_LowYCellCompletelyIn = (boost::int32_t)LowYCell;
-	ParamSrc.m_HighYCellCompletelyIn = (boost::int32_t)HighYCell;
-	ParamSrc.m_LowZCellCompletelyIn = (boost::int32_t)LowZCell;
-	ParamSrc.m_HighZCellCompletelyIn = (boost::int32_t)HighZCell;
+	ParamSrc.m_LowXCellCompletelyIn = (int32_t)LowXCell;
+	ParamSrc.m_HighXCellCompletelyIn = (int32_t)HighXCell;
+	ParamSrc.m_LowYCellCompletelyIn = (int32_t)LowYCell;
+	ParamSrc.m_HighYCellCompletelyIn = (int32_t)HighYCell;
+	ParamSrc.m_LowZCellCompletelyIn = (int32_t)LowZCell;
+	ParamSrc.m_HighZCellCompletelyIn = (int32_t)HighZCell;
 
     LowXCell = floor(filterMinXCell);
     HighXCell = ceil(filterMaxXCell) - 1.0;
@@ -421,12 +421,12 @@ void Index::SetCellFilterBounds(IndexData & ParamSrc)
     HighYCell = ceil(filterMaxYCell) - 1.0;
     LowZCell = floor(filterMinZCell);
     HighZCell = ceil(filterMaxZCell) - 1.0;
-    ParamSrc.m_LowXBorderCell = (boost::int32_t)LowXCell;
-    ParamSrc.m_HighXBorderCell = (boost::int32_t)HighXCell;
-    ParamSrc.m_LowYBorderCell = (boost::int32_t)LowYCell;
-    ParamSrc.m_HighYBorderCell = (boost::int32_t)HighYCell;
-    ParamSrc.m_LowZBorderCell = (boost::int32_t)LowZCell;
-    ParamSrc.m_HighZBorderCell = (boost::int32_t)HighZCell;
+    ParamSrc.m_LowXBorderCell = (int32_t)LowXCell;
+    ParamSrc.m_HighXBorderCell = (int32_t)HighXCell;
+    ParamSrc.m_LowYBorderCell = (int32_t)LowYCell;
+    ParamSrc.m_HighYBorderCell = (int32_t)HighYCell;
+    ParamSrc.m_LowZBorderCell = (int32_t)LowZCell;
+    ParamSrc.m_HighZBorderCell = (int32_t)HighZCell;
     
     ParamSrc.m_LowXBorderPartCell = filterMinXCell - LowXCell;
     ParamSrc.m_HighXBorderPartCell = filterMaxXCell - HighXCell;
@@ -438,12 +438,12 @@ void Index::SetCellFilterBounds(IndexData & ParamSrc)
 bool Index::LoadIndexVLR(VariableRecord const& vlr)
 {
 	char DestStr[512];
-	boost::uint16_t StringLen;
-	boost::uint16_t ReadPos = 0;
+	uint16_t StringLen;
+	uint16_t ReadPos = 0;
 
 	try {
-		//boost::uint16_t VLRIndexRecLen = vlr.GetRecordLength();
-		// GetData returns a vector of boost::uint8_t
+		//uint16_t VLRIndexRecLen = vlr.GetRecordLength();
+		// GetData returns a vector of uint8_t
 		// std::vector<uint8_t>
 		// read the first record of our index data
 		IndexVLRData const& VLRIndexData = vlr.GetData();
@@ -482,7 +482,7 @@ bool Index::LoadIndexVLR(VariableRecord const& vlr)
 		
 		// ID number of associated data VLR's - normally 43 but may use heigher numbers
 		// in order to store more than one index in a file
-		boost::uint32_t TempLong;
+		uint32_t TempLong;
 		ReadVLRData_n(TempLong, VLRIndexData, ReadPos);
 		SetDataVLR_ID(TempLong);
 		
@@ -510,17 +510,17 @@ bool Index::LoadIndexVLR(VariableRecord const& vlr)
 
 } // Index::LoadIndexVLR
 
-bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexData & ParamSrc, bool & VLRDone)
+bool Index::FilterOneVLR(VariableRecord const& vlr, uint32_t& i, IndexData & ParamSrc, bool & VLRDone)
 {
 
-	boost::uint32_t ReadPos = 0;
-	boost::uint32_t MinCellX, MinCellY, MaxCellX, MaxCellY, PointsThisRecord = 0, PointsThisCell = 0, DataRecordSize = 0,
+	uint32_t ReadPos = 0;
+	uint32_t MinCellX, MinCellY, MaxCellX, MaxCellY, PointsThisRecord = 0, PointsThisCell = 0, DataRecordSize = 0,
 		PointsScannedThisTime = 0, PointsScannedCurVLR = 0, PointsToIgnore = 0;
 	IndexVLRData CompositeData;
 	
 	try {
 		IndexVLRData const& VLRIndexRecordData = vlr.GetData();
-		boost::uint16_t VLRIndexRecLen = vlr.GetRecordLength();
+		uint16_t VLRIndexRecLen = vlr.GetRecordLength();
 		CompositeData.resize(VLRIndexRecLen);
 		ReadVLRDataNoInc_str((char *)&CompositeData[0], VLRIndexRecordData, VLRIndexRecLen, 0);
 			
@@ -539,14 +539,14 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 		{
 			CompositeData.resize(DataRecordSize);
 			// read more records and concatenate data
-			boost::uint32_t ReadData = VLRIndexRecLen;
-			boost::uint32_t UnreadData = DataRecordSize - ReadData;
+			uint32_t ReadData = VLRIndexRecLen;
+			uint32_t UnreadData = DataRecordSize - ReadData;
 			while (UnreadData)
 			{
 				++i;
 				VariableRecord const& vlr2 = m_idxheader.GetVLR(i);
 				IndexVLRData const& TempData = vlr2.GetData();
-				boost::uint16_t TempRecLen = vlr2.GetRecordLength();
+				uint16_t TempRecLen = vlr2.GetRecordLength();
 				ReadVLRDataNoInc_str((char *)&CompositeData[ReadData], TempData, TempRecLen, 0);
 				ReadData += TempRecLen;
 				if (UnreadData >= TempRecLen)
@@ -567,7 +567,7 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 				PointsScannedCurVLR = ParamSrc.m_iterator->m_ptsScannedCurVLR;
 			} // if
 			// translate the data for this VLR
-			while (ReadPos + sizeof (boost::uint32_t) < DataRecordSize)
+			while (ReadPos + sizeof (uint32_t) < DataRecordSize)
 			{
 				if (ParamSrc.m_iterator)
 				{
@@ -575,7 +575,7 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 					ParamSrc.m_iterator->m_ptsScannedCurCell = 0;
 				} // if
 				// current cell, x, y
-				boost::uint32_t x, y, PtRecords, SubCellsXY, SubCellsZ;
+				uint32_t x, y, PtRecords, SubCellsXY, SubCellsZ;
 				ReadVLRData_n(x, CompositeData, ReadPos);
 				ReadVLRData_n(y, CompositeData, ReadPos);
 				if (ParamSrc.m_iterator)
@@ -598,16 +598,16 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 				ReadVLRData_n(SubCellsZ, CompositeData, ReadPos);
 				
 				// read the data stored in Z cells, if any
-				for (boost::uint32_t SubCellZ = 0; SubCellZ < SubCellsZ; ++SubCellZ)
+				for (uint32_t SubCellZ = 0; SubCellZ < SubCellsZ; ++SubCellZ)
 				{
-					boost::uint32_t ZCellID;
+					uint32_t ZCellID;
 					ReadVLRData_n(ZCellID, CompositeData, ReadPos);
 					// number of point records in subcell
-					boost::uint32_t ZCellNumRecords;
+					uint32_t ZCellNumRecords;
 					ReadVLRData_n(ZCellNumRecords, CompositeData, ReadPos);
-					for (boost::uint32_t SubCellZPt = 0; SubCellZPt < ZCellNumRecords; ++SubCellZPt)
+					for (uint32_t SubCellZPt = 0; SubCellZPt < ZCellNumRecords; ++SubCellZPt)
 					{
-						boost::uint32_t PointID;
+						uint32_t PointID;
 						ReadVLRData_n(PointID, CompositeData, ReadPos);
 						assert(PointID < m_pointRecordsCount);
 						liblas::detail::ConsecPtAccumulator ConsecutivePts;
@@ -630,16 +630,16 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 						break;
 				} // for
 				// read the data stored in XY quadtree cells
-				for (boost::uint32_t SubCellXY = 0; SubCellXY < SubCellsXY; ++SubCellXY)
+				for (uint32_t SubCellXY = 0; SubCellXY < SubCellsXY; ++SubCellXY)
 				{
-					boost::uint32_t SubCellID;
+					uint32_t SubCellID;
 					ReadVLRData_n(SubCellID, CompositeData, ReadPos);
 					// number of point records in subcell
-					boost::uint32_t SubCellNumRecords;
+					uint32_t SubCellNumRecords;
 					ReadVLRData_n(SubCellNumRecords, CompositeData, ReadPos);
-					for (boost::uint32_t SubCellPt = 0; SubCellPt < SubCellNumRecords; ++SubCellPt)
+					for (uint32_t SubCellPt = 0; SubCellPt < SubCellNumRecords; ++SubCellPt)
 					{
-						boost::uint32_t PointID;
+						uint32_t PointID;
 						ReadVLRData_n(PointID, CompositeData, ReadPos);
 						assert(PointID < m_pointRecordsCount);
 						liblas::detail::ConsecPtAccumulator ConsecutivePts;
@@ -664,9 +664,9 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 				// read data in unsubdivided cells
 				if (! (SubCellsZ || SubCellsXY))
 				{
-					for (boost::uint32_t CurPt = 0; CurPt < PtRecords; ++CurPt)
+					for (uint32_t CurPt = 0; CurPt < PtRecords; ++CurPt)
 					{
-						boost::uint32_t PointID;
+						uint32_t PointID;
 						ReadVLRData_n(PointID, CompositeData, ReadPos);
 						assert(PointID < m_pointRecordsCount);
 						liblas::detail::ConsecPtAccumulator ConsecutivePts;
@@ -718,16 +718,16 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, boost::uint32_t& i, IndexDat
 	
 } // Index::FilterOneVLR
 
-bool Index::FilterPointSeries(boost::uint32_t & PointID, boost::uint32_t & PointsScanned, 
-	boost::uint32_t const PointsToIgnore, boost::uint32_t const x, boost::uint32_t const y, boost::uint32_t const z, 
+bool Index::FilterPointSeries(uint32_t & PointID, uint32_t & PointsScanned, 
+	uint32_t const PointsToIgnore, uint32_t const x, uint32_t const y, uint32_t const z, 
 	liblas::detail::ConsecPtAccumulator const ConsecutivePts, IndexIterator *Iterator, 
 	IndexData const& ParamSrc)
 {
 	bool LastPtRead = 0;
-	boost::uint32_t LastPointID = static_cast<boost::uint32_t>(~0);
+	uint32_t LastPointID = static_cast<uint32_t>(~0);
 	
 	try {	
-		for (boost::uint32_t PtCt = 0; PtCt < ConsecutivePts; ++PointID, ++PtCt)
+		for (uint32_t PtCt = 0; PtCt < ConsecutivePts; ++PointID, ++PtCt)
 		{
 			++PointsScanned;
 			if (Iterator)
@@ -765,7 +765,7 @@ bool Index::FilterPointSeries(boost::uint32_t & PointID, boost::uint32_t & Point
 
 } // Index::FilterPointSeries
 
-bool Index::VLRInteresting(boost::int32_t MinCellX, boost::int32_t MinCellY, boost::int32_t MaxCellX, boost::int32_t MaxCellY, IndexData const& ParamSrc)
+bool Index::VLRInteresting(int32_t MinCellX, int32_t MinCellY, int32_t MaxCellX, int32_t MaxCellY, IndexData const& ParamSrc)
 {
 
 	// cells are written in south to north cell order columns (x) and west to east rows (y)
@@ -781,7 +781,7 @@ bool Index::VLRInteresting(boost::int32_t MinCellX, boost::int32_t MinCellY, boo
 	
 } // Index::VLRInteresting
 
-bool Index::CellInteresting(boost::int32_t XCellID, boost::int32_t YCellID, IndexData const& ParamSrc)
+bool Index::CellInteresting(int32_t XCellID, int32_t YCellID, IndexData const& ParamSrc)
 {
 
 	if (ParamSrc.m_noFilterX || (XCellID >= ParamSrc.m_LowXBorderCell && XCellID <= ParamSrc.m_HighXBorderCell))
@@ -793,7 +793,7 @@ bool Index::CellInteresting(boost::int32_t XCellID, boost::int32_t YCellID, Inde
 
 } // Index::CellInteresting
 
-bool Index::ZCellInteresting(boost::int32_t ZCellID, IndexData const& ParamSrc)
+bool Index::ZCellInteresting(int32_t ZCellID, IndexData const& ParamSrc)
 {
 
 	if (ParamSrc.m_noFilterZ || (ZCellID >= ParamSrc.m_LowZBorderCell && ZCellID <= ParamSrc.m_HighZBorderCell))
@@ -804,7 +804,7 @@ bool Index::ZCellInteresting(boost::int32_t ZCellID, IndexData const& ParamSrc)
 
 } // Index::ZCellInteresting
 
-bool Index::SubCellInteresting(boost::int32_t SubCellID, boost::int32_t XCellID, boost::int32_t YCellID, IndexData const& ParamSrc)
+bool Index::SubCellInteresting(int32_t SubCellID, int32_t XCellID, int32_t YCellID, IndexData const& ParamSrc)
 {
 	bool XGood = false, YGood = false;
 
@@ -896,7 +896,7 @@ bool Index::SubCellInteresting(boost::int32_t SubCellID, boost::int32_t XCellID,
 
 } // Index::SubCellInteresting
 
-bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z, boost::int32_t PointID, boost::int32_t LastPointID, bool &LastPtRead, 
+bool Index::FilterOnePoint(int32_t x, int32_t y, int32_t z, int32_t PointID, int32_t LastPointID, bool &LastPtRead, 
 	IndexData const& ParamSrc)
 {
 	bool XGood = false, YGood = false, ZGood = false, PtRead = false;
@@ -922,7 +922,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 		if (! PtRead)
 		{
 			// seek and read
-			assert(static_cast<boost::uint32_t>(PointID) < m_pointRecordsCount);
+			assert(static_cast<uint32_t>(PointID) < m_pointRecordsCount);
 			PtRead = (m_reader->Seek(PointID) && m_reader->ReadNextPoint());
 		} // if
 		if (PtRead)
@@ -965,7 +965,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 				if (! PtRead)
 				{
 					// seek and read
-					assert(static_cast<boost::uint32_t>(PointID) < m_pointRecordsCount);
+					assert(static_cast<uint32_t>(PointID) < m_pointRecordsCount);
 					PtRead = (m_reader->Seek(PointID) && m_reader->ReadNextPoint());
 				} // if
 				if (PtRead)
@@ -1009,7 +1009,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 				if (! PtRead)
 				{
 					// seek and read
-					assert(static_cast<boost::uint32_t>(PointID) < m_pointRecordsCount);
+					assert(static_cast<uint32_t>(PointID) < m_pointRecordsCount);
 					PtRead = (m_reader->Seek(PointID) && m_reader->ReadNextPoint());
 				} // if
 				if (PtRead)
@@ -1030,7 +1030,7 @@ bool Index::FilterOnePoint(boost::int32_t x, boost::int32_t y, boost::int32_t z,
 bool Index::BuildIndex(void)
 {
 	// Build an array of two dimensions. Sort data points into
-	boost::uint32_t MaximumCells = LIBLAS_INDEX_MAXCELLS;
+	uint32_t MaximumCells = LIBLAS_INDEX_MAXCELLS;
 	m_versionMajor = LIBLAS_INDEX_VERSIONMAJOR;
 	m_versionMinor = LIBLAS_INDEX_VERSIONMINOR;
 	
@@ -1051,7 +1051,7 @@ bool Index::BuildIndex(void)
 	CalcRangeZ();
 
 	if (m_cellSizeZ > 0.0 && ! detail::compare_distance(m_cellSizeZ, 0.0))
-		m_cellsZ = static_cast<boost::uint32_t>(ceil(m_rangeZ / m_cellSizeZ));
+		m_cellsZ = static_cast<uint32_t>(ceil(m_rangeZ / m_cellSizeZ));
 	else
 		m_cellsZ = 1;
 		
@@ -1066,11 +1066,11 @@ bool Index::BuildIndex(void)
 	double YRatio = m_rangeY >= m_rangeX ? 1.0: m_rangeY / m_rangeX;
 	
 	m_totalCells = m_pointRecordsCount / LIBLAS_INDEX_OPTPTSPERCELL;
-	m_totalCells = static_cast<boost::uint32_t>(sqrt((double)m_totalCells));
+	m_totalCells = static_cast<uint32_t>(sqrt((double)m_totalCells));
 	if (m_totalCells < 10)
 		m_totalCells = 10;	// let's set a minimum number of cells to make the effort worthwhile
-	m_cellsX = static_cast<boost::uint32_t>(XRatio * m_totalCells);
-	m_cellsY = static_cast<boost::uint32_t>(YRatio * m_totalCells);
+	m_cellsX = static_cast<uint32_t>(XRatio * m_totalCells);
+	m_cellsY = static_cast<uint32_t>(YRatio * m_totalCells);
 	if (m_cellsX < 1)
 		m_cellsX = 1;
 	if (m_cellsY < 1)
@@ -1080,8 +1080,8 @@ bool Index::BuildIndex(void)
 	{
 		double CellReductionRatio = (double)MaximumCells / (double)m_totalCells;
 		CellReductionRatio = sqrt(CellReductionRatio);
-		m_cellsX = static_cast<boost::uint32_t>(m_cellsX * CellReductionRatio);
-		m_cellsY = static_cast<boost::uint32_t>(m_cellsY * CellReductionRatio);
+		m_cellsX = static_cast<uint32_t>(m_cellsX * CellReductionRatio);
+		m_cellsY = static_cast<uint32_t>(m_cellsY * CellReductionRatio);
 		m_totalCells = m_cellsX * m_cellsY;
 	} // if
 	m_cellSizeX = m_rangeX / m_cellsX;
@@ -1107,23 +1107,23 @@ bool Index::BuildIndex(void)
 		liblas::detail::IndexOutput IndexOut(this);
 		
 		// for Z bounds debugging
-		boost::uint32_t ZRangeSum = 0;
-		boost::uint32_t PointSum = 0;
+		uint32_t ZRangeSum = 0;
+		uint32_t PointSum = 0;
 		// read each point in the file
 		// figure out what cell in X and Y
 		// test to see if it is the same as the last cell
-		boost::uint32_t LastCellX = static_cast<boost::uint32_t>(~0), LastCellY = static_cast<boost::uint32_t>(~0);
+		uint32_t LastCellX = static_cast<uint32_t>(~0), LastCellY = static_cast<uint32_t>(~0);
 		liblas::detail::ElevRange ZRange;
-		boost::uint32_t PointID = 0;
-		boost::uint32_t LastPointID = 0;
-		boost::uint32_t PtsIndexed = 0;
-		boost::uint32_t PointsInMemory = 0, MaxPointsInMemory;
+		uint32_t PointID = 0;
+		uint32_t LastPointID = 0;
+		uint32_t PtsIndexed = 0;
+		uint32_t PointsInMemory = 0, MaxPointsInMemory;
 		MaxPointsInMemory = m_maxMemoryUsage / sizeof(liblas::detail::IndexCell);
 		// ReadNextPoint() throws a std::out_of_range error when it hits end of range so don't 
 		// get excited when you see it in the debug output
 		while (m_reader->ReadNextPoint())
 		{
-			boost::uint32_t CurCellX, CurCellY;
+			uint32_t CurCellX, CurCellY;
 			// analyze the point to determine its cell ID
 			Point const& CurPt = m_reader->GetPoint();
 			if (IdentifyCell(CurPt, CurCellX, CurCellY))
@@ -1176,9 +1176,9 @@ bool Index::BuildIndex(void)
 		
 		if (IndexOut.InitiateOutput())
 		{
-			for (boost::uint32_t x = 0; x < m_cellsX; ++x)
+			for (uint32_t x = 0; x < m_cellsX; ++x)
 			{
-				for (boost::uint32_t y = 0; y < m_cellsY; ++y)
+				for (uint32_t y = 0; y < m_cellsY; ++y)
 				{
 					if (m_debugOutputLevel > 3)
 						fprintf(m_debugger, "reloading %d %d\n", x, y);
@@ -1201,8 +1201,8 @@ bool Index::BuildIndex(void)
 								assert(MapIt->first < m_pointRecordsCount);
 								if (m_reader->Seek(MapIt->first) && m_reader->ReadNextPoint())
 								{
-									boost::uint32_t FirstPt = 0, LastCellZ = static_cast<boost::uint32_t>(~0);
-									boost::uint32_t LastSubCell = static_cast<boost::uint32_t>(~0);
+									uint32_t FirstPt = 0, LastCellZ = static_cast<uint32_t>(~0);
+									uint32_t LastSubCell = static_cast<uint32_t>(~0);
 									for (liblas::detail::ConsecPtAccumulator PtsTested = 0; PtsTested < MapIt->second; )
 									{
 										Point const& CurPt = m_reader->GetPoint();
@@ -1210,7 +1210,7 @@ bool Index::BuildIndex(void)
 										if (m_cellsZ > 1 && ZRange > m_cellSizeZ)
 										{
 											// for the number of consecutive points, identify the Z cell
-											boost::uint32_t CurCellZ;
+											uint32_t CurCellZ;
 											if (IdentifyCellZ(CurPt, CurCellZ))
 											{
 												// add a record to the z cell chain or increment existing record
@@ -1224,7 +1224,7 @@ bool Index::BuildIndex(void)
 										} // if
 										else
 										{
-											boost::uint32_t CurSubCell;
+											uint32_t CurSubCell;
 											// for the number of consecutive points, identify the sub cell in a 2x2 matrix
 											// 0 is lower left, 1 is lower right, 2 is upper left, 3 is upper right
 											if (IdentifySubCell(CurPt, x, y, CurSubCell))
@@ -1309,13 +1309,13 @@ bool Index::BuildIndex(void)
 
 } // Index::BuildIndex
 
-bool Index::IdentifyCell(Point const& CurPt, boost::uint32_t& CurCellX, boost::uint32_t& CurCellY) const
+bool Index::IdentifyCell(Point const& CurPt, uint32_t& CurCellX, uint32_t& CurCellY) const
 {
 	double OffsetX, OffsetY;
 
 	OffsetX = (CurPt.GetX() - (m_bounds.min)(0)) / m_rangeX;
 	if (OffsetX >= 0 && OffsetX < 1.0)
-		CurCellX = static_cast<boost::uint32_t>(OffsetX * m_cellsX);
+		CurCellX = static_cast<uint32_t>(OffsetX * m_cellsX);
 	else if (detail::compare_distance(OffsetX, 1.0))
 		CurCellX = m_cellsX - 1;
 	else
@@ -1325,7 +1325,7 @@ bool Index::IdentifyCell(Point const& CurPt, boost::uint32_t& CurCellX, boost::u
 	
 	OffsetY = (CurPt.GetY() - (m_bounds.min)(1)) / m_rangeY;
 	if (OffsetY >= 0 && OffsetY < 1.0)
-		CurCellY = static_cast<boost::uint32_t>(OffsetY * m_cellsY);
+		CurCellY = static_cast<uint32_t>(OffsetY * m_cellsY);
 	else if (detail::compare_distance(OffsetY, 1.0))
 		CurCellY = m_cellsY - 1;
 	else
@@ -1337,13 +1337,13 @@ bool Index::IdentifyCell(Point const& CurPt, boost::uint32_t& CurCellX, boost::u
 
 } // Index::IdentifyCell
 
-bool Index::IdentifyCellZ(Point const& CurPt, boost::uint32_t& CurCellZ) const
+bool Index::IdentifyCellZ(Point const& CurPt, uint32_t& CurCellZ) const
 {
 	double OffsetZ;
 
 	OffsetZ = (CurPt.GetZ() - (m_bounds.min)(2)) / m_rangeZ;
 	if (OffsetZ >= 0 && OffsetZ < 1.0)
-		CurCellZ = static_cast<boost::uint32_t>(OffsetZ * m_cellsZ);
+		CurCellZ = static_cast<uint32_t>(OffsetZ * m_cellsZ);
 	else if (detail::compare_distance(OffsetZ, 1.0))
 		CurCellZ = m_cellsZ - 1;
 	else
@@ -1355,7 +1355,7 @@ bool Index::IdentifyCellZ(Point const& CurPt, boost::uint32_t& CurCellZ) const
 
 } // Index::IdentifyCellZ
 
-bool Index::IdentifySubCell(Point const& CurPt, boost::uint32_t x, boost::uint32_t y, boost::uint32_t& CurSubCell) const
+bool Index::IdentifySubCell(Point const& CurPt, uint32_t x, uint32_t y, uint32_t& CurSubCell) const
 {
 	double Offset, CellMinX, CellMinY;
 
@@ -1397,7 +1397,7 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 		{
 			// there is some setup of the temp file to be done first
 			// write out a block of file offsets the size of the number of cells
-			for (boost::uint32_t i = 0; i < m_totalCells; ++i)
+			for (uint32_t i = 0; i < m_totalCells; ++i)
 			{
 				if (fwrite(&EmptyOffset, sizeof(liblas::detail::TempFileOffsetType), 1, m_tempFile) < 1)
 				{
@@ -1407,11 +1407,11 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 			m_tempFileWrittenBytes = m_totalCells * sizeof(liblas::detail::TempFileOffsetType);
 			m_tempFileStarted = true;
 		} // if
-		for (boost::uint32_t x = 0; x < m_cellsX; ++x)
+		for (uint32_t x = 0; x < m_cellsX; ++x)
 		{
-			for (boost::uint32_t y = 0; y < m_cellsY; ++y)
+			for (uint32_t y = 0; y < m_cellsY; ++y)
 			{
-				boost::uint32_t RecordsToWrite = CellBlock[x][y].GetNumRecords();
+				uint32_t RecordsToWrite = CellBlock[x][y].GetNumRecords();
 				if (RecordsToWrite)
 				{
 					// write the current file location in the cell block header
@@ -1442,22 +1442,22 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 						return (FileError("Index::PurgePointsToTempFile"));
 					m_tempFileWrittenBytes += sizeof(liblas::detail::TempFileOffsetType);
 					// write the number of records stored in this section
-					if (fwrite(&RecordsToWrite, sizeof(boost::uint32_t), 1, m_tempFile) < 1)
+					if (fwrite(&RecordsToWrite, sizeof(uint32_t), 1, m_tempFile) < 1)
 						return (FileError("Index::PurgePointsToTempFile"));
-					m_tempFileWrittenBytes += sizeof(boost::uint32_t);
+					m_tempFileWrittenBytes += sizeof(uint32_t);
 
 					liblas::detail::IndexCellData::iterator MapIt = CellBlock[x][y].GetFirstRecord();
-					for (boost::uint32_t RecordNum = 0; RecordNum < RecordsToWrite && MapIt != CellBlock[x][y].GetEnd(); ++RecordNum, ++MapIt)
+					for (uint32_t RecordNum = 0; RecordNum < RecordsToWrite && MapIt != CellBlock[x][y].GetEnd(); ++RecordNum, ++MapIt)
 					{
 						// write the point ID
-						boost::uint32_t PointID = MapIt->first;
+						uint32_t PointID = MapIt->first;
 						// write the number of consecutive points
 						liblas::detail::ConsecPtAccumulator ConsecutivePoints = MapIt->second;
-						if (fwrite(&PointID, sizeof(boost::uint32_t), 1, m_tempFile) < 1)
+						if (fwrite(&PointID, sizeof(uint32_t), 1, m_tempFile) < 1)
 							return (FileError("Index::PurgePointsToTempFile"));
 						if (fwrite(&ConsecutivePoints, sizeof(liblas::detail::ConsecPtAccumulator), 1, m_tempFile) < 1)
 							return (FileError("Index::PurgePointsToTempFile"));
-						m_tempFileWrittenBytes += sizeof(boost::uint32_t);
+						m_tempFileWrittenBytes += sizeof(uint32_t);
 						m_tempFileWrittenBytes += sizeof(liblas::detail::ConsecPtAccumulator);
 					} // for
 					// purge the records for this cell from active memory
@@ -1475,10 +1475,10 @@ bool Index::PurgePointsToTempFile(IndexCellDataBlock& CellBlock)
 } // Index::PurgePointsToTempFile
 
 bool Index::LoadCellFromTempFile(liblas::detail::IndexCell *CellBlock, 
-	boost::uint32_t CurCellX, boost::uint32_t CurCellY)
+	uint32_t CurCellX, uint32_t CurCellY)
 {
 
-	boost::uint32_t RecordsToRead, FormerNumPts, NewNumPts = 0;
+	uint32_t RecordsToRead, FormerNumPts, NewNumPts = 0;
 	liblas::detail::TempFileOffsetType FileOffset;
 	
 	FormerNumPts = CellBlock->GetNumPoints();
@@ -1510,14 +1510,14 @@ bool Index::LoadCellFromTempFile(liblas::detail::IndexCell *CellBlock,
 			return (FileError("Index::LoadCellFromTempFile"));
 		// read the data for the cell in this block
 		// first is the number of items to read now
-		if (fread(&RecordsToRead, sizeof (boost::uint32_t), 1, m_tempFile) < 1)
+		if (fread(&RecordsToRead, sizeof (uint32_t), 1, m_tempFile) < 1)
 			return (FileError("Index::LoadCellFromTempFile"));
-		for (boost::uint32_t RecordNum = 0; RecordNum < RecordsToRead; ++RecordNum)
+		for (uint32_t RecordNum = 0; RecordNum < RecordsToRead; ++RecordNum)
 		{
-			boost::uint32_t PointID;
+			uint32_t PointID;
 			liblas::detail::ConsecPtAccumulator ConsecutivePoints;
 			// read the point ID
-			if (fread(&PointID, sizeof(boost::uint32_t), 1, m_tempFile) < 1)
+			if (fread(&PointID, sizeof(uint32_t), 1, m_tempFile) < 1)
 				return (FileError("Index::LoadCellFromTempFile"));
 			// read the number of consecutive points
 			if (fread(&ConsecutivePoints, sizeof(liblas::detail::ConsecPtAccumulator), 1, m_tempFile) < 1)
@@ -1682,26 +1682,26 @@ bool Index::InputBoundsError(const char *Reporter) const
 
 bool Index::OutputCellStats(IndexCellDataBlock& CellBlock) const
 {
-	boost::uint32_t MaxPointsPerCell = 0;
+	uint32_t MaxPointsPerCell = 0;
 
-	for (boost::uint32_t x = 0; x < m_cellsX; ++x)
+	for (uint32_t x = 0; x < m_cellsX; ++x)
 	{
-		for (boost::uint32_t y = 0; y < m_cellsY; ++y)
+		for (uint32_t y = 0; y < m_cellsY; ++y)
 		{
-			boost::uint32_t PointsThisCell = CellBlock[x][y].GetNumPoints();
+			uint32_t PointsThisCell = CellBlock[x][y].GetNumPoints();
 			if (PointsThisCell > MaxPointsPerCell)
 				MaxPointsPerCell = PointsThisCell;
 		} // for
 	} // for
 	
-	std::vector<boost::uint32_t> CellPopulation(LIBLAS_INDEX_DEBUGCELLBINS);
+	std::vector<uint32_t> CellPopulation(LIBLAS_INDEX_DEBUGCELLBINS);
 
-	for (boost::uint32_t x = 0; x < m_cellsX; ++x)
+	for (uint32_t x = 0; x < m_cellsX; ++x)
 	{
-		for (boost::uint32_t y = 0; y < m_cellsY; ++y)
+		for (uint32_t y = 0; y < m_cellsY; ++y)
 		{
-			boost::uint32_t PointsThisCell = CellBlock[x][y].GetNumPoints();
-			boost::uint32_t BinThisCell = (boost::uint32_t )(LIBLAS_INDEX_DEBUGCELLBINS * (double)PointsThisCell / (double)MaxPointsPerCell);
+			uint32_t PointsThisCell = CellBlock[x][y].GetNumPoints();
+			uint32_t BinThisCell = (uint32_t )(LIBLAS_INDEX_DEBUGCELLBINS * (double)PointsThisCell / (double)MaxPointsPerCell);
 			if (BinThisCell >= LIBLAS_INDEX_DEBUGCELLBINS)
 				BinThisCell = LIBLAS_INDEX_DEBUGCELLBINS - 1;
 			++CellPopulation[BinThisCell];
@@ -1715,10 +1715,10 @@ bool Index::OutputCellStats(IndexCellDataBlock& CellBlock) const
 	
 } // Index::OutputCellStats
 
-bool Index::OutputCellGraph(std::vector<boost::uint32_t> CellPopulation, boost::uint32_t MaxPointsPerCell) const
+bool Index::OutputCellGraph(std::vector<uint32_t> CellPopulation, uint32_t MaxPointsPerCell) const
 {
 	
-	for (boost::uint32_t i = 0; i < CellPopulation.size(); ++i)
+	for (uint32_t i = 0; i < CellPopulation.size(); ++i)
 	{
 		fprintf(m_debugger,"Bin %2d (%4d-%4d)... Cells in point range bin %d\n", i, (i * MaxPointsPerCell / LIBLAS_INDEX_DEBUGCELLBINS),
 			((i + 1)* MaxPointsPerCell / LIBLAS_INDEX_DEBUGCELLBINS), CellPopulation[i]);
@@ -1857,7 +1857,7 @@ void IndexData::SetValues(void)
 bool IndexData::SetInitialValues(std::istream *ifs, Reader *reader, std::ostream *ofs, Reader *idxreader, 
 	const char *tmpfilenme, const char *indexauthor, 
 	const char *indexcomment, const char *indexdate, double zbinht, 
-	boost::uint32_t maxmem, int debugoutputlevel, bool readonly, bool writestandaloneindex, 
+	uint32_t maxmem, int debugoutputlevel, bool readonly, bool writestandaloneindex, 
 	bool forcenewindex, FILE *debugger)
 {
 
@@ -1889,7 +1889,7 @@ bool IndexData::SetInitialValues(std::istream *ifs, Reader *reader, std::ostream
 
 bool IndexData::SetBuildEmbedValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor, 
 	const char *indexcomment, const char *indexdate, double zbinht, 
-	boost::uint32_t maxmem, int debugoutputlevel, FILE *debugger)
+	uint32_t maxmem, int debugoutputlevel, FILE *debugger)
 {
 
 	m_ifs = 0;
@@ -1915,7 +1915,7 @@ bool IndexData::SetBuildEmbedValues(Reader *reader, std::ostream *ofs, const cha
 
 bool IndexData::SetBuildAloneValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor, 
 	const char *indexcomment, const char *indexdate, double zbinht, 
-	boost::uint32_t maxmem, int debugoutputlevel, FILE *debugger)
+	uint32_t maxmem, int debugoutputlevel, FILE *debugger)
 {
 
 	m_ifs = 0;
@@ -1989,7 +1989,7 @@ bool IndexData::SetReadAloneValues(Reader *reader, Reader *idxreader, int debugo
 
 bool IndexData::SetReadOrBuildEmbedValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor, 
 	const char *indexcomment, const char *indexdate, double zbinht, 
-	boost::uint32_t maxmem, int debugoutputlevel, FILE *debugger)
+	uint32_t maxmem, int debugoutputlevel, FILE *debugger)
 {
 
 	SetBuildEmbedValues(reader, ofs, tmpfilenme, indexauthor, indexcomment, indexdate, zbinht, 
@@ -2002,7 +2002,7 @@ bool IndexData::SetReadOrBuildEmbedValues(Reader *reader, std::ostream *ofs, con
 
 bool IndexData::SetReadOrBuildAloneValues(Reader *reader, std::ostream *ofs, const char *tmpfilenme, const char *indexauthor, 
 	const char *indexcomment, const char *indexdate, double zbinht, 
-	boost::uint32_t maxmem, int debugoutputlevel, FILE *debugger)
+	uint32_t maxmem, int debugoutputlevel, FILE *debugger)
 {
 
 	SetBuildAloneValues(reader, ofs, tmpfilenme, indexauthor, indexcomment, indexdate, zbinht, 
@@ -2059,7 +2059,7 @@ void IndexData::ClampFilterBounds(Bounds<double> const& m_bounds)
 } // IndexData::ClampFilterBounds
 
 IndexIterator::IndexIterator(Index *IndexSrc, double LowFilterX, double HighFilterX, double LowFilterY, double HighFilterY, 
-	double LowFilterZ, double HighFilterZ, boost::uint32_t ChunkSize)
+	double LowFilterZ, double HighFilterZ, uint32_t ChunkSize)
 	: m_indexData(*IndexSrc)
 {
 	m_index = IndexSrc;
@@ -2069,7 +2069,7 @@ IndexIterator::IndexIterator(Index *IndexSrc, double LowFilterX, double HighFilt
 	ResetPosition();
 } // IndexIterator::IndexIterator
 
-IndexIterator::IndexIterator(Index *IndexSrc, IndexData const& IndexDataSrc, boost::uint32_t ChunkSize)
+IndexIterator::IndexIterator(Index *IndexSrc, IndexData const& IndexDataSrc, uint32_t ChunkSize)
 	: m_indexData(IndexDataSrc)
 {
 	m_index = IndexSrc;
@@ -2078,7 +2078,7 @@ IndexIterator::IndexIterator(Index *IndexSrc, IndexData const& IndexDataSrc, boo
 	ResetPosition();
 } // IndexIterator::IndexIterator
 
-IndexIterator::IndexIterator(Index *IndexSrc, Bounds<double> const& BoundsSrc, boost::uint32_t ChunkSize)
+IndexIterator::IndexIterator(Index *IndexSrc, Bounds<double> const& BoundsSrc, uint32_t ChunkSize)
 {
 	m_index = IndexSrc;
 	m_indexData = IndexData(*IndexSrc);
@@ -2125,14 +2125,14 @@ void IndexIterator::ResetPosition(void)
 	m_conformingPtsFound = 0;
 } // IndexIterator::ResetPosition
 
-const std::vector<boost::uint32_t>& IndexIterator::operator()(boost::int32_t n)
+const std::vector<uint32_t>& IndexIterator::operator()(int32_t n)
 {
 	if (n <= 0)
 	{
 		ResetPosition();
 		m_advance = 1;
 	} // if
-	else if ((boost::uint32_t)n < m_conformingPtsFound)
+	else if ((uint32_t)n < m_conformingPtsFound)
 	{
 		ResetPosition();
 		m_advance = n + 1;
@@ -2145,7 +2145,7 @@ const std::vector<boost::uint32_t>& IndexIterator::operator()(boost::int32_t n)
 	return (m_index->Filter(m_indexData));
 } // IndexIterator::operator++
 
-const std::vector<boost::uint32_t>& IndexIterator::advance(boost::int32_t n)
+const std::vector<uint32_t>& IndexIterator::advance(int32_t n)
 {
 	if (n > 0)
 		--n;

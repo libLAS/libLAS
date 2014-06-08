@@ -338,7 +338,7 @@ void Schema::update_required_dimensions(PointFormatName data_format_id)
 
         default:
             std::ostringstream oss;
-            oss << "Unhandled PointFormatName id " << static_cast<boost::uint32_t>(data_format_id);
+            oss << "Unhandled PointFormatName id " << static_cast<uint32_t>(data_format_id);
             throw std::runtime_error(oss.str());
     }
 
@@ -384,9 +384,9 @@ Schema& Schema::operator=(Schema const& rhs)
 liblas::property_tree::ptree Schema::LoadPTree(VariableRecord const& v) 
 {
     std::ostringstream oss;
-    std::vector<boost::uint8_t> data = v.GetData();
+    std::vector<uint8_t> data = v.GetData();
 
-    std::vector<boost::uint8_t>::const_iterator i;
+    std::vector<uint8_t>::const_iterator i;
     for (i = data.begin(); i != data.end(); ++i)
     {
         oss << *i;
@@ -411,14 +411,14 @@ IndexMap Schema::LoadDimensions(liblas::property_tree::ptree tree)
     for (i = dims.begin(); i != dims.end(); ++i)
     {
         ptree v = (*i).second;
-        boost::uint32_t size = v.get<boost::uint32_t>("size");
+        uint32_t size = v.get<uint32_t>("size");
         std::string name = v.get<std::string>("name");
         std::string description = v.get<std::string>("description");
         bool issigned = v.get<bool>("signed");
         bool isinteger = v.get<bool>("integer");
         bool isactive = v.get<bool>("active");
         bool isrequired = v.get<bool>("required");
-        boost::uint32_t position = v.get<boost::uint32_t>("position");
+        uint32_t position = v.get<uint32_t>("position");
         double min=0;
         double max=0;
         try {
@@ -448,8 +448,8 @@ IndexMap Schema::LoadDimensions(liblas::property_tree::ptree tree)
 
     }
     
-    boost::uint32_t pf =tree.get<boost::uint32_t>("LASSchema.formatid");
-    boost::uint16_t version = tree.get<boost::uint16_t>("LASSchema.version");
+    uint32_t pf =tree.get<uint32_t>("LASSchema.formatid");
+    uint16_t version = tree.get<uint16_t>("LASSchema.version");
     
     SetSchemaVersion(version);
     SetDataFormatId(static_cast<liblas::PointFormatName>(pf));
@@ -501,12 +501,12 @@ std::ostream& operator<<(std::ostream& os, liblas::Schema const& s)
         }
     }   
     
-    boost::uint32_t byte_size = 0;
-    boost::uint32_t bit_size = 0;
+    uint32_t byte_size = 0;
+    uint32_t bit_size = 0;
     BOOST_FOREACH(ptree::value_type &v,
             tree.get_child("LASSchema.dimensions"))
     {
-        bit_size = bit_size + v.second.get<boost::uint32_t>("size");
+        bit_size = bit_size + v.second.get<uint32_t>("size");
     }  
     
     byte_size = bit_size / 8;
@@ -752,7 +752,7 @@ std::vector<std::string> Schema::GetDimensionNames() const
 VariableRecord Schema::GetVLR() const
 {
     VariableRecord vlr;
-    std::vector<boost::uint8_t> data;
+    std::vector<uint8_t> data;
     vlr.SetUserId("liblas");
     vlr.SetRecordId(7);
     
@@ -761,18 +761,18 @@ VariableRecord Schema::GetVLR() const
     liblas::property_tree::write_xml(oss, tree);
     
     std::string s(oss.str());
-    vlr.SetRecordLength(static_cast<boost::uint16_t>(s.size()));
+    vlr.SetRecordLength(static_cast<uint16_t>(s.size()));
 
     std::string::const_iterator i;
     for (i = s.begin(); i != s.end(); ++i)
     {
         data.push_back(*i);
     }
-    if (data.size() > (std::numeric_limits<boost::uint16_t>::max())) {
+    if (data.size() > (std::numeric_limits<uint16_t>::max())) {
         std::ostringstream oss;
         oss << "This schema with length " << data.size() << " does" 
             << " not fit within the maximum VLR size of " 
-            << (std::numeric_limits<boost::uint16_t>::max());
+            << (std::numeric_limits<uint16_t>::max());
         throw std::runtime_error(oss.str());
     }
     vlr.SetData(data);
@@ -788,7 +788,7 @@ bool Schema::operator==(const Schema& input) const
     index_by_index const& other = input.m_index.get<index>();
     
     
-    for (boost::uint32_t i = 0; i!= current.size(); ++i)
+    for (uint32_t i = 0; i!= current.size(); ++i)
     {
         if (other[i] != current[i]) return false;
     }

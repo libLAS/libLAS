@@ -204,7 +204,7 @@ void ZipReaderImpl::ReadIdiom()
     }
 
     {
-        std::vector<boost::uint8_t>& data = m_point->GetData();
+        std::vector<uint8_t>& data = m_point->GetData();
 
         unsigned int size = m_zipPoint->m_lz_point_size;
         assert(size == data.size());

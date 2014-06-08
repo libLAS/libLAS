@@ -45,7 +45,6 @@
 
 // boost
 #include <boost/array.hpp>
-#include <boost/cstdint.hpp>
 // std
 #include <cstdlib> // std::size_t
 
@@ -56,7 +55,7 @@ class LAS_DLL Color
 {
 public:
 
-    typedef boost::uint16_t value_type;
+    typedef uint16_t value_type;
 
     /// Default constructor.
     /// Initializes with black color using RGB {0, 0, 0}.
@@ -65,7 +64,7 @@ public:
     /// User-defined constructor.
     /// Initializes object with given RGB values.
     /// \exception std::invalid_argument if color component value is out of range of unsigned 8-bit integer.
-    Color(boost::uint32_t red, boost::uint32_t green, boost::uint32_t blue);
+    Color(uint32_t red, uint32_t green, uint32_t blue);
 
     /// User-defined constructor.
     /// Initializes colour components based on values of 3-element array.

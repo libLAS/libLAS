@@ -57,7 +57,7 @@
 namespace liblas { namespace detail { 
 
 static std::string laszip_userid("laszip encoded");
-static boost::uint16_t laszip_recordid = 22204;
+static uint16_t laszip_recordid = 22204;
 static std::string laszip_description = "http://laszip.org";
 
 
@@ -154,7 +154,7 @@ void ZipPoint::ConstructItems()
     unsigned int point_offset = 0;
     m_lz_point = new unsigned char*[m_zip->num_items];
     
-    boost::scoped_array<boost::uint8_t> d( new boost::uint8_t[ m_lz_point_size ] );
+    boost::scoped_array<uint8_t> d( new uint8_t[ m_lz_point_size ] );
     m_lz_point_data.swap(d);
     for (unsigned i = 0; i < m_zip->num_items; i++)
     {
@@ -175,7 +175,7 @@ void ZipPoint::ConstructVLR(VariableRecord& v) const
     m_zip->pack(data, num);
 
     // Ick.
-    std::vector<boost::uint8_t> vdata;
+    std::vector<uint8_t> vdata;
     for (int i=0; i<num; i++)
     {
         vdata.push_back(data[i]);
@@ -185,11 +185,11 @@ void ZipPoint::ConstructVLR(VariableRecord& v) const
     v.SetReserved(0xAABB);
     v.SetUserId(laszip_userid);
     v.SetRecordId(laszip_recordid);
-    v.SetRecordLength(static_cast<boost::uint16_t>(num));
+    v.SetRecordLength(static_cast<uint16_t>(num));
     v.SetDescription(laszip_description);
     v.SetData(vdata);
 
-    v.SetRecordLength((boost::uint16_t)num);
+    v.SetRecordLength((uint16_t)num);
     
     return;
 }

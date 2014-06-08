@@ -53,7 +53,6 @@
 
 // boost
 #include <boost/array.hpp>
-#include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/any.hpp>
 // std
@@ -115,9 +114,9 @@ public:
     double GetY() const;
     double GetZ() const;
     
-    boost::int32_t GetRawX() const;
-    boost::int32_t GetRawY() const;
-    boost::int32_t GetRawZ() const;
+    int32_t GetRawX() const;
+    int32_t GetRawY() const;
+    int32_t GetRawZ() const;
         
     void SetCoordinates(double const& x, double const& y, double const& z);
     
@@ -125,12 +124,12 @@ public:
     void SetY(double const& value);
     void SetZ(double const& value);
 
-    void SetRawX(boost::int32_t const& value);
-    void SetRawY(boost::int32_t const& value);
-    void SetRawZ(boost::int32_t const& value);
+    void SetRawX(int32_t const& value);
+    void SetRawY(int32_t const& value);
+    void SetRawZ(int32_t const& value);
     
-    boost::uint16_t GetIntensity() const;
-    void SetIntensity(boost::uint16_t const& intensity);
+    uint16_t GetIntensity() const;
+    void SetIntensity(uint16_t const& intensity);
 
     /// Gets all scanning flags encoded as single byte.
     /// The flags are (mandatory):
@@ -138,44 +137,44 @@ public:
     /// - Number of Returns - given pulse (bits 3, 4, 5);
     /// - Scan Direction Flag (bit 6);
     /// - Edge of Flight Line (bit 7).
-    boost::uint8_t GetScanFlags() const;
+    uint8_t GetScanFlags() const;
 
     /// Sets all scanning flags passed as a single byte.
     /// \sa Documentation of GetScanFlags method for flags details.
-    void SetScanFlags(boost::uint8_t const& flags);
+    void SetScanFlags(uint8_t const& flags);
     
-    boost::uint16_t GetReturnNumber() const;
-    void SetReturnNumber(boost::uint16_t const& num);
+    uint16_t GetReturnNumber() const;
+    void SetReturnNumber(uint16_t const& num);
 
-    boost::uint16_t GetNumberOfReturns() const;
-    void SetNumberOfReturns(boost::uint16_t const& num);
+    uint16_t GetNumberOfReturns() const;
+    void SetNumberOfReturns(uint16_t const& num);
 
-    boost::uint16_t GetScanDirection() const;
-    void SetScanDirection(boost::uint16_t const& dir);
+    uint16_t GetScanDirection() const;
+    void SetScanDirection(uint16_t const& dir);
     
-    boost::uint16_t GetFlightLineEdge() const;
-    void SetFlightLineEdge(boost::uint16_t const& edge);
+    uint16_t GetFlightLineEdge() const;
+    void SetFlightLineEdge(uint16_t const& edge);
 
     //Classification& GetClassification();
     Classification GetClassification() const;
     void SetClassification(Classification const& cls);
     void SetClassification(Classification::bitset_type const& flags);
-    void SetClassification(boost::uint8_t const& flags);
+    void SetClassification(uint8_t const& flags);
 
-    boost::int8_t GetScanAngleRank() const;
-    void SetScanAngleRank(boost::int8_t const& rank);
+    int8_t GetScanAngleRank() const;
+    void SetScanAngleRank(int8_t const& rank);
 
     /// Fetch value of File Marker (LAS 1.0) or User Data (LAS 1.1).
-    boost::uint8_t GetUserData() const;
+    uint8_t GetUserData() const;
 
     /// Set value of File Marker (LAS 1.0) or User Data (LAS 1.1).
-    void SetUserData(boost::uint8_t const& data);
+    void SetUserData(uint8_t const& data);
 
     /// Fetch value of User Bit Field (LAS 1.0) or Point Source ID (LAS 1.1).
-    boost::uint16_t GetPointSourceID() const;
+    uint16_t GetPointSourceID() const;
 
     /// Set value of User Bit Field (LAS 1.0) or Point Source ID (LAS 1.1).
-    void SetPointSourceID(boost::uint16_t const& id);
+    void SetPointSourceID(uint16_t const& id);
 
     /// Fetch color value associated with this point (LAS 1.2)
     Color GetColor() const;
@@ -198,9 +197,9 @@ public:
     bool IsValid() const;
 
 
-    std::vector<boost::uint8_t> const& GetData() const {return m_data; }
-    std::vector<boost::uint8_t> & GetData() {return m_data; }
-    void SetData(std::vector<boost::uint8_t> const& v) { m_data = v;}
+    std::vector<uint8_t> const& GetData() const {return m_data; }
+    std::vector<uint8_t> & GetData() {return m_data; }
+    void SetData(std::vector<uint8_t> const& v) { m_data = v;}
     
     void SetHeader(Header const* header); 
     Header const* GetHeader() const;
@@ -209,9 +208,9 @@ public:
 
 private:
 
-    std::vector<boost::uint8_t> m_data;
+    std::vector<uint8_t> m_data;
     
-    std::vector<boost::uint8_t>::size_type GetDimensionBytePosition(std::size_t dim_pos) const;
+    std::vector<uint8_t>::size_type GetDimensionBytePosition(std::size_t dim_pos) const;
     Header const* m_header;
     Header const& m_default_header;
 

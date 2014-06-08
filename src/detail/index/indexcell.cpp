@@ -62,7 +62,7 @@ void IndexCell::SetFileOffset(TempFileOffsetType fos)
 	m_FileOffset = fos;
 } // IndexCell::SetFileOffset
 
-void IndexCell::SetNumPoints(boost::uint32_t nmp)
+void IndexCell::SetNumPoints(uint32_t nmp)
 {
 	m_NumPoints = nmp;
 } // IndexCell::SetNumPoints
@@ -72,44 +72,44 @@ TempFileOffsetType IndexCell::GetFileOffset(void) const
 	return(m_FileOffset);
 } // IndexCell::GetFileOffset
 
-boost::uint32_t IndexCell::GetNumRecords(void) const
+uint32_t IndexCell::GetNumRecords(void) const
 {
-	return((boost::uint32_t)m_PtRecords.size());
+	return((uint32_t)m_PtRecords.size());
 } // IndexCell::GetNumRecords
 
-boost::uint32_t IndexCell::GetNumPoints(void) const
+uint32_t IndexCell::GetNumPoints(void) const
 {
 	return(m_NumPoints);
 } // IndexCell::GetNumPoints
 
-boost::uint32_t IndexCell::GetNumSubCellRecords(void) const
+uint32_t IndexCell::GetNumSubCellRecords(void) const
 {
-	return((boost::uint32_t)m_SubCellRecords.size());
+	return((uint32_t)m_SubCellRecords.size());
 } // IndexCell::GetNumSubCellRecords
 
-boost::uint32_t IndexCell::GetNumZCellRecords(void) const
+uint32_t IndexCell::GetNumZCellRecords(void) const
 {
-	return((boost::uint32_t)m_ZCellRecords.size());
+	return((uint32_t)m_ZCellRecords.size());
 } // IndexCell::GetNumZCellRecords
 
-bool IndexCell::RoomToAdd(boost::uint32_t a)
+bool IndexCell::RoomToAdd(uint32_t a)
 {
 	return (m_PtRecords[a] < (std::numeric_limits<ConsecPtAccumulator>::max()));
 } // IndexCell::RoomToAdd
 
-void IndexCell::AddPointRecord(boost::uint32_t a)
+void IndexCell::AddPointRecord(uint32_t a)
 {
 	m_PtRecords[a] = 1;
 	++m_NumPoints;
 } // IndexCell::AddPointRecord
 
-void IndexCell::AddPointRecord(boost::uint32_t a, boost::uint8_t b)
+void IndexCell::AddPointRecord(uint32_t a, uint8_t b)
 {
 	m_PtRecords[a] = b;
 	m_NumPoints += b;
 } // IndexCell::AddPointRecord
 
-bool IndexCell::IncrementPointRecord(boost::uint32_t a)
+bool IndexCell::IncrementPointRecord(uint32_t a)
 {
 	IndexCellData::iterator MyIT;
 
@@ -166,7 +166,7 @@ ElevRange IndexCell::GetZRange(void) const
 return (m_MaxZ > m_MinZ ? static_cast<ElevRange>(m_MaxZ - m_MinZ): 0);
 } // IndexCell::GetZRange
 
-void IndexCell::AddZCell(boost::uint32_t a, boost::uint32_t b)
+void IndexCell::AddZCell(uint32_t a, uint32_t b)
 {
 	IndexSubCellData::iterator MyIT;
 
@@ -182,7 +182,7 @@ void IndexCell::AddZCell(boost::uint32_t a, boost::uint32_t b)
 	} // else
 } // IndexCell::AddZCell
 
-bool IndexCell::IncrementZCell(boost::uint32_t a, boost::uint32_t b)
+bool IndexCell::IncrementZCell(uint32_t a, uint32_t b)
 {
 	IndexSubCellData::iterator MyIT;
 	IndexCellData::iterator YourIT;
@@ -201,7 +201,7 @@ bool IndexCell::IncrementZCell(boost::uint32_t a, boost::uint32_t b)
 	return false;
 } // IndexCell::IncrementZCell
 
-void IndexCell::AddSubCell(boost::uint32_t a, boost::uint32_t b)
+void IndexCell::AddSubCell(uint32_t a, uint32_t b)
 {
 	IndexSubCellData::iterator MyIT;
 
@@ -218,7 +218,7 @@ void IndexCell::AddSubCell(boost::uint32_t a, boost::uint32_t b)
 	} // else
 } // IndexCell::AddSubCell
 
-bool IndexCell::IncrementSubCell(boost::uint32_t a, boost::uint32_t b)
+bool IndexCell::IncrementSubCell(uint32_t a, uint32_t b)
 {
 	IndexSubCellData::iterator MyIT;
 	IndexCellData::iterator YourIT;
@@ -237,7 +237,7 @@ bool IndexCell::IncrementSubCell(boost::uint32_t a, boost::uint32_t b)
 	return false;
 } // IndexCell::IncrementSubCell
 
-boost::uint8_t IndexCell::GetPointRecordCount(boost::uint32_t a)
+uint8_t IndexCell::GetPointRecordCount(uint32_t a)
 {
 	return m_PtRecords[a];
 } // IndexCell::GetPointRecordCount

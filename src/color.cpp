@@ -53,14 +53,12 @@ Color::Color()
     m_color.assign(0);
 }
 
-Color::Color(boost::uint32_t red, boost::uint32_t green, boost::uint32_t blue)
+Color::Color(uint32_t red, uint32_t green, uint32_t blue)
 {
-    if (red > (std::numeric_limits<boost::uint16_t>::max()) || 
-        green > (std::numeric_limits<boost::uint16_t>::max()) || 
-        blue > (std::numeric_limits<boost::uint16_t>::max()))
+    if (red > (std::numeric_limits<uint16_t>::max()) || 
+        green > (std::numeric_limits<uint16_t>::max()) || 
+        blue > (std::numeric_limits<uint16_t>::max()))
         throw_invalid_color_component();
-
-    using boost::uint16_t;
 
     m_color[0] = static_cast<uint16_t>(red);
     m_color[1] = static_cast<uint16_t>(green);

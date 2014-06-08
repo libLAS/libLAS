@@ -46,9 +46,6 @@
 #include <liblas/reader.hpp>
 #include <liblas/writer.hpp>
 #include <liblas/export.hpp>
-// boost
-#include <boost/cstdint.hpp>
-// std
 
 
 namespace liblas {
@@ -66,7 +63,7 @@ public:
 
     Reader CreateWithImpl(ReaderIPtr r);
     
-    Reader CreateCached(std::istream& stream, boost::uint32_t cache_size);
+    Reader CreateCached(std::istream& stream, uint32_t cache_size);
     Reader CreateWithStream(std::istream& stream);
     
     // help function to create an input stream

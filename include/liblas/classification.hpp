@@ -42,8 +42,6 @@
 #ifndef LIBLAS_LASCLASSIFICATION_HPP_INCLUDED
 #define LIBLAS_LASCLASSIFICATION_HPP_INCLUDED
 
-// boost
-#include <boost/cstdint.hpp>
 #include <liblas/export.hpp>
 // std
 #include <cassert>
@@ -79,7 +77,7 @@ public:
     /// @note Currently, libLAS does not support classification based on table
     /// stored in variable-length record. Only Standard ASPRS classification
     /// table is supported.
-    static boost::uint32_t const class_table_size;
+    static uint32_t const class_table_size;
 
     /// Values of indexes in the set of bit flags.
     enum BitPosition
@@ -103,7 +101,7 @@ public:
 
     /// Initializes classification flags using 8 bits of integral type.
     /// @param flags [in] - contains 8 bits representing classification flags.
-    explicit Classification(boost::uint8_t const& flags)
+    explicit Classification(uint8_t const& flags)
         : m_flags(flags)
     {}
 
@@ -115,7 +113,7 @@ public:
     /// @param k [in] - If set, this point is considered to be a model keypoint and
     /// thus generally should not be withheld in a thinning algorithm.
     /// @param w [in] - If set, this point should not be included in processing.
-    Classification(boost::uint32_t cls, bool s, bool k, bool w)
+    Classification(uint32_t cls, bool s, bool k, bool w)
     {
         SetClass(cls);
         SetSynthetic(s);
@@ -158,7 +156,7 @@ public:
     std::string GetClassName() const;
 
     /// Returns index of ASPRS classification as defined in the lookup table.
-    boost::uint8_t GetClass() const;
+    uint8_t GetClass() const;
 
     /// Updates index of ASPRS classification as defined in the lookup table.
     /// Valid index is in range from 0 to class_table_size - 1.
@@ -169,7 +167,7 @@ public:
     /// table is supported.
     /// @exception Theoretically, may throw std::out_of_range in case index 
     /// value is not in range between 0 and class_table_size - 1.
-    void SetClass(boost::uint32_t index);
+    void SetClass(uint32_t index);
 
     /// Sets if this point was created by a technique other than LIDAR
     /// collection such as digitized from a photogrammetric stereo model.
@@ -221,7 +219,7 @@ private:
 
     bitset_type m_flags;
 
-    void check_class_index(boost::uint32_t index) const;
+    void check_class_index(uint32_t index) const;
 };
 
 /// Equal-to operator implemented in terms of Classification::equal.

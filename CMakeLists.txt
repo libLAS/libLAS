@@ -146,7 +146,7 @@ else()
   # enum) 2012-09-05.  Remove -Wcast-qual -Wfloat-equal
   # -Wredundant-decls to suppress the multitude of warning messages.
   set(LIBLAS_COMMON_CXX_FLAGS
-	" -Wall -Wpointer-arith -Wcast-align -Wno-long-long")
+	" -Wextra -Wall -Wno-unused-parameter -Wno-unused-variable -Wpointer-arith -Wcast-align -Wcast-qual -Wfloat-equal -Wredundant-decls -Wno-long-long")
 
   if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 

@@ -43,19 +43,16 @@
 #ifndef LIBLAS_DETAIL_INDEXCELL_HPP_INCLUDED
 #define LIBLAS_DETAIL_INDEXCELL_HPP_INCLUDED
 
-// boost
-#include <boost/cstdint.hpp>
-
 #include <map>
 
 namespace liblas { namespace detail {
 
-typedef boost::int16_t ElevExtrema;
-typedef boost::uint32_t ElevRange;
-typedef boost::uint8_t	ConsecPtAccumulator;
-typedef std::map<boost::uint32_t, ConsecPtAccumulator> IndexCellData;
-typedef std::map<boost::uint32_t, IndexCellData> IndexSubCellData;
-typedef boost::uint64_t	TempFileOffsetType;
+typedef int16_t ElevExtrema;
+typedef uint32_t ElevRange;
+typedef uint8_t	ConsecPtAccumulator;
+typedef std::map<uint32_t, ConsecPtAccumulator> IndexCellData;
+typedef std::map<uint32_t, IndexCellData> IndexSubCellData;
+typedef uint64_t	TempFileOffsetType;
 
 class IndexCell
 {
@@ -64,7 +61,7 @@ public:
 	
 private:
 	TempFileOffsetType m_FileOffset;
-	boost::uint32_t m_NumPoints;
+	uint32_t m_NumPoints;
 	ElevExtrema m_MinZ, m_MaxZ;
 	IndexCellData m_PtRecords;
 	IndexSubCellData m_ZCellRecords;
@@ -72,27 +69,27 @@ private:
 
 public:
 	void SetFileOffset(TempFileOffsetType fos);
-	void SetNumPoints(boost::uint32_t nmp);
+	void SetNumPoints(uint32_t nmp);
 	TempFileOffsetType GetFileOffset(void) const;
-	boost::uint32_t GetNumRecords(void) const;
-	boost::uint32_t GetNumPoints(void) const;
-	boost::uint32_t GetNumSubCellRecords(void) const;
-	boost::uint32_t GetNumZCellRecords(void) const;
+	uint32_t GetNumRecords(void) const;
+	uint32_t GetNumPoints(void) const;
+	uint32_t GetNumSubCellRecords(void) const;
+	uint32_t GetNumZCellRecords(void) const;
 	ElevExtrema GetMinZ(void) const {return m_MinZ;}
 	ElevExtrema GetMaxZ(void) const {return m_MaxZ;}
-	bool RoomToAdd(boost::uint32_t a);
-	void AddPointRecord(boost::uint32_t a);
-	void AddPointRecord(boost::uint32_t a, boost::uint8_t b);
-	bool IncrementPointRecord(boost::uint32_t a);
+	bool RoomToAdd(uint32_t a);
+	void AddPointRecord(uint32_t a);
+	void AddPointRecord(uint32_t a, uint8_t b);
+	bool IncrementPointRecord(uint32_t a);
 	void RemoveMainRecords(void);
 	void RemoveAllRecords(void);
 	void UpdateZBounds(double TestZ);
 	ElevRange GetZRange(void) const;
-	void AddZCell(boost::uint32_t a, boost::uint32_t b);
-	bool IncrementZCell(boost::uint32_t a, boost::uint32_t b);
-	void AddSubCell(boost::uint32_t a, boost::uint32_t b);
-	bool IncrementSubCell(boost::uint32_t a, boost::uint32_t b);
-	boost::uint8_t GetPointRecordCount(boost::uint32_t a);
+	void AddZCell(uint32_t a, uint32_t b);
+	bool IncrementZCell(uint32_t a, uint32_t b);
+	void AddSubCell(uint32_t a, uint32_t b);
+	bool IncrementSubCell(uint32_t a, uint32_t b);
+	uint8_t GetPointRecordCount(uint32_t a);
 	const IndexCellData::iterator GetFirstRecord(void);
 	const IndexCellData::iterator GetEnd(void);
 	const IndexSubCellData::iterator GetFirstSubCellRecord(void);

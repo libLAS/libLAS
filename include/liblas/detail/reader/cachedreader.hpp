@@ -45,8 +45,7 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/reader/header.hpp>
 #include <liblas/liblas.hpp>
-// boost
-#include <boost/cstdint.hpp>
+
 // std
 #include <iosfwd>
 #include <boost/shared_ptr.hpp>
@@ -79,12 +78,12 @@ private:
     // Blocked copying operations, declared but not defined.
     CachedReaderImpl(CachedReaderImpl const& other);
     CachedReaderImpl& operator=(CachedReaderImpl const& rhs);
-    void ReadCachedPoint(boost::uint32_t position);
+    void ReadCachedPoint(uint32_t position);
     
-    void CacheData(boost::uint32_t position);
+    void CacheData(uint32_t position);
     void ReadNextUncachedPoint();
     
-    typedef std::vector<boost::uint8_t> cache_mask_type;
+    typedef std::vector<uint8_t> cache_mask_type;
 
     cache_mask_type m_mask;
     cache_mask_type::size_type m_cache_size;    

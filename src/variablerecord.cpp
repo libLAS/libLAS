@@ -237,9 +237,9 @@ std::ostream& operator<<(std::ostream& os, liblas::VariableRecord const& v)
              << tree.get<std::string>("description") 
              <<"'" 
              << std::endl;
-    os << "    ID: " << tree.get<boost::uint32_t>("id")
-             << " Length: " << tree.get<boost::uint32_t>("length")
-             << " Total Size: " << tree.get<boost::uint32_t>("total_length")
+    os << "    ID: " << tree.get<uint32_t>("id")
+             << " Length: " << tree.get<uint32_t>("length")
+             << " Total Size: " << tree.get<uint32_t>("total_length")
              << std::endl;
         
     return os;

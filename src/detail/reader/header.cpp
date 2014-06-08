@@ -215,7 +215,7 @@ void Header::ReadHeader()
     
     // 18. Point Data Record Length
     read_n(n2, m_ifs, sizeof(n2));
-    boost::uint16_t record_length(n2);
+    uint16_t record_length(n2);
 
     // 19. Number of point records
     read_n(n4, m_ifs, sizeof(n4));
@@ -264,7 +264,7 @@ void Header::ReadHeader()
     if (m_header->GetRecordsCount() > 0)
         ReadVLRs();
 
-    boost::uint32_t pad = m_header->GetDataOffset() - (m_header->GetHeaderSize() + m_header->GetVLRBlockSize());
+    uint32_t pad = m_header->GetDataOffset() - (m_header->GetHeaderSize() + m_header->GetVLRBlockSize());
     m_header->SetHeaderPadding(pad);
 
     // If we're eof, we need to reset the state
@@ -338,7 +338,7 @@ bool Header::HasLAS10PadSignature()
 
 void Header::ReadVLRs()
 {
-    VLRHeader vlrh = { 0 };
+    VLRHeader vlrh;
 
     if (m_ifs.eof()) {
         // if we hit the end of the file already, it's because 

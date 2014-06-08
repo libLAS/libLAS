@@ -48,7 +48,6 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/export.hpp>
 // boost
-#include <boost/cstdint.hpp>
 #include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
@@ -142,7 +141,7 @@ class LAS_DLL ThinFilter: public liblas::FilterI
 public:
     
     /// Default constructor.  Keep every thin'th point.
-    ThinFilter(boost::uint32_t thin);
+    ThinFilter(uint32_t thin);
     bool filter(const liblas::Point& point);
 
 
@@ -151,8 +150,8 @@ private:
     ThinFilter(ThinFilter const& other);
     ThinFilter& operator=(ThinFilter const& rhs);
     
-    boost::uint32_t thin_amount;
-    boost::uint32_t thin_count;
+    uint32_t thin_amount;
+    uint32_t thin_count;
 };
 
 
@@ -161,7 +160,7 @@ class LAS_DLL ReturnFilter: public FilterI
 {
 public:
     
-    typedef std::vector<boost::uint16_t> return_list_type;
+    typedef std::vector<uint16_t> return_list_type;
 
     ReturnFilter(return_list_type returns, bool last_only);
     bool filter(const Point& point);

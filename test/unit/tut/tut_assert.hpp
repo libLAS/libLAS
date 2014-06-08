@@ -15,6 +15,9 @@
 
 #include "tut_exception.hpp"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+
 namespace tut
 {
 
@@ -301,6 +304,9 @@ void skip(const M& msg)
 } // end of namespace
 
 }
+
+#pragma clang diagnostic pop
+
 
 #endif
 

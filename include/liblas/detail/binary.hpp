@@ -24,7 +24,6 @@
 #include <iterator>
 
 #include <boost/config.hpp>
-#include <boost/cstdint.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/detail/endian.hpp>
 #include <boost/type_traits/is_signed.hpp>
@@ -227,7 +226,7 @@ struct endian_value<double, 8> : public endian_value_base<double>
     template <typename E, typename Iterator>
     void load(Iterator bytes)
     {
-        endian_value<boost::uint64_t, 8> raw;
+        endian_value<uint64_t, 8> raw;
         raw.load<E>(bytes);
 
         double& target_value = base::value;
@@ -237,14 +236,14 @@ struct endian_value<double, 8> : public endian_value_base<double>
     template <typename E, typename Iterator>
     void store(Iterator bytes)
     {
-        boost::uint64_t raw;
+        uint64_t raw;
         double const& source_value = base::value;
-        std::memcpy(&raw, &source_value, sizeof(boost::uint64_t));
+        std::memcpy(&raw, &source_value, sizeof(uint64_t));
 
         store_dispatch
             <
-            boost::uint64_t,
-            sizeof(boost::uint64_t)
+            uint64_t,
+            sizeof(uint64_t)
             >(bytes, raw, typename base::endian_type(), E());
     }
 };

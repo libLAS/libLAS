@@ -192,18 +192,18 @@ bool ReprojectionTransform::transform(Point& point)
     point.SetY(y);
     point.SetZ(z);
     
-    if (detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::max)()) ||
-        detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::min)())) {
+    if (detail::compare_distance(point.GetRawX(), (std::numeric_limits<int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawX(), (std::numeric_limits<int32_t>::min)())) {
         throw std::domain_error("X scale and offset combination is insufficient to represent the data");
     }
 
-    if (detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::max)()) ||
-        detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::min)())) {
+    if (detail::compare_distance(point.GetRawY(), (std::numeric_limits<int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawY(), (std::numeric_limits<int32_t>::min)())) {
         throw std::domain_error("Y scale and offset combination is insufficient to represent the data");
     }    
 
-    if (detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::max)()) ||
-        detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::min)())) {
+    if (detail::compare_distance(point.GetRawZ(), (std::numeric_limits<int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawZ(), (std::numeric_limits<int32_t>::min)())) {
         throw std::domain_error("Z scale and offset combination is insufficient to represent the data");
     }        
 
@@ -406,22 +406,22 @@ bool TranslationTransform::transform(Point& point)
 
                 default:
                     std::ostringstream oss;
-                    oss << "Unhandled expression operation id " << static_cast<boost::int32_t>(op->oper);
+                    oss << "Unhandled expression operation id " << static_cast<int32_t>(op->oper);
                     throw std::runtime_error(oss.str());
             }
 
-    if (detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::max)()) ||
-        detail::compare_distance(point.GetRawX(), (std::numeric_limits<boost::int32_t>::min)())) {
+    if (detail::compare_distance(point.GetRawX(), (std::numeric_limits<int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawX(), (std::numeric_limits<int32_t>::min)())) {
         throw std::domain_error("X scale and offset combination of this file is insufficient to represent the data given the expression ");
     }
 
-    if (detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::max)()) ||
-        detail::compare_distance(point.GetRawY(), (std::numeric_limits<boost::int32_t>::min)())) {
+    if (detail::compare_distance(point.GetRawY(), (std::numeric_limits<int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawY(), (std::numeric_limits<int32_t>::min)())) {
         throw std::domain_error("Y scale and offset combination of this file is insufficient to represent the data given the expression");
     }    
 
-    if (detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::max)()) ||
-        detail::compare_distance(point.GetRawZ(), (std::numeric_limits<boost::int32_t>::min)())) {
+    if (detail::compare_distance(point.GetRawZ(), (std::numeric_limits<int32_t>::max)()) ||
+        detail::compare_distance(point.GetRawZ(), (std::numeric_limits<int32_t>::min)())) {
         throw std::domain_error("Z scale and offset combination of this file is insufficient to represent the data given the expression");
     }   
 
@@ -450,7 +450,7 @@ void CPL_STDCALL ColorFetchingTransformGDALErrorHandler(CPLErr eErrClass, int er
 
 ColorFetchingTransform::ColorFetchingTransform(
     std::string const& datasource, 
-    std::vector<boost::uint32_t> bands
+    std::vector<uint32_t> bands
 )
     : m_new_header(0)
     , m_ds(DataSourcePtr())
@@ -463,7 +463,7 @@ ColorFetchingTransform::ColorFetchingTransform(
 
 ColorFetchingTransform::ColorFetchingTransform(
     std::string const& datasource, 
-    std::vector<boost::uint32_t> bands,
+    std::vector<uint32_t> bands,
     Header const* header
 )
     : m_new_header(header)
@@ -490,7 +490,7 @@ void ColorFetchingTransform::Initialize()
     // user did not supply any bands 
     if( m_bands.size() == 0 )
     {
-        for( boost::int32_t i = 0; i < GDALGetRasterCount( m_ds.get() ); i++ )
+        for( int32_t i = 0; i < GDALGetRasterCount( m_ds.get() ); i++ )
         {
             if (i > 3) break;  
             m_bands.push_back( i+1 );
@@ -505,8 +505,11 @@ void ColorFetchingTransform::Initialize()
         throw std::runtime_error("unable to fetch forward geotransform for raster!");
     }
 
-    GDALInvGeoTransform( &(m_forward_transform.front()), &(m_inverse_transform.front()) );
-
+    if (!GDALInvGeoTransform( &(m_forward_transform.front()), &(m_inverse_transform.front())))
+    {
+        throw std::runtime_error("unable to fetch inverse geotransform for raster!");
+    }
+    
 #endif  
 }
 
@@ -514,8 +517,8 @@ bool ColorFetchingTransform::transform(Point& point)
 {
 #ifdef HAVE_GDAL
     
-    boost::int32_t pixel = 0;
-    boost::int32_t line = 0;
+    int32_t pixel = 0;
+    int32_t line = 0;
     
     double x = point.GetX();
     double y = point.GetY();
@@ -525,11 +528,11 @@ bool ColorFetchingTransform::transform(Point& point)
         point.SetHeader(m_new_header);
     }
     
-    pixel = (boost::int32_t) std::floor(
+    pixel = (int32_t) std::floor(
         m_inverse_transform[0] 
         + m_inverse_transform[1] * x
         + m_inverse_transform[2] * y );
-    line = (boost::int32_t) std::floor(
+    line = (int32_t) std::floor(
         m_inverse_transform[3] 
         + m_inverse_transform[4] * x
         + m_inverse_transform[5] * y );
@@ -548,7 +551,7 @@ bool ColorFetchingTransform::transform(Point& point)
     boost::array<liblas::Color::value_type, 3> color;
     color.assign(0);
     
-    for( std::vector<boost::int32_t>::size_type i = 0; 
+    for( std::vector<int32_t>::size_type i = 0; 
          i < m_bands.size(); i++ )
          {
              GDALRasterBandH hBand = GDALGetRasterBand( m_ds.get(), m_bands[i] );

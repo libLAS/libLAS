@@ -48,7 +48,6 @@
 #include <liblas/version.hpp>
 #include <liblas/export.hpp>
 // boost
-#include <boost/cstdint.hpp>
 #include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
@@ -163,8 +162,8 @@ public:
     /// The index position of the index.  In a standard ePointFormat0 
     /// data record, the X dimension would have a position of 0, while 
     /// the Y dimension would have a position of 1, for example.
-    inline boost::uint32_t GetPosition() const { return m_position; }
-    inline void SetPosition(boost::uint32_t v) { m_position = v; }
+    inline uint32_t GetPosition() const { return m_position; }
+    inline void SetPosition(uint32_t v) { m_position = v; }
     
     /// The scaling value for this dimension as a double.  This should 
     /// be positive or negative powers of ten.
@@ -203,7 +202,7 @@ private:
     bool m_numeric;
     bool m_signed;
     bool m_integer;
-    boost::uint32_t m_position;
+    uint32_t m_position;
     double m_scale;
     bool m_precise;
     double m_offset;

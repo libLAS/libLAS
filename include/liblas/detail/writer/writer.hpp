@@ -46,8 +46,7 @@
 #include <liblas/liblas.hpp>
 #include <liblas/detail/writer/point.hpp>
 #include <liblas/detail/writer/header.hpp>
-// boost
-#include <boost/cstdint.hpp>
+
 #include <boost/shared_ptr.hpp>
 
 namespace liblas { namespace detail { 
@@ -67,7 +66,7 @@ public:
     liblas::Header& GetHeader() const;
     void WriteHeader();
 
-    void UpdatePointCount(boost::uint32_t count);
+    void UpdatePointCount(uint32_t count);
     void SetHeader(liblas::Header const& header);
     
     void SetFilters(std::vector<liblas::FilterPtr> const& filters);
@@ -90,7 +89,7 @@ protected:
 
 private:
 
-    boost::uint32_t m_pointCount;
+    uint32_t m_pointCount;
 
     // block copying operations
     WriterImpl(WriterImpl const& other);

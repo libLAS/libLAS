@@ -47,8 +47,7 @@
 #include <liblas/liblas.hpp>
 #include <liblas/detail/writer/point.hpp>
 #include <liblas/detail/writer/header.hpp>
-// boost
-#include <boost/cstdint.hpp>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 
@@ -74,7 +73,7 @@ public:
     liblas::Header& GetHeader() const;
     void WriteHeader();
 
-    void UpdatePointCount(boost::uint32_t count);
+    void UpdatePointCount(uint32_t count);
     void SetHeader(liblas::Header const& header);
     
     void SetFilters(std::vector<liblas::FilterPtr> const& filters);
@@ -96,7 +95,7 @@ protected:
     HeaderPtr m_header;
 
 private:
-    boost::uint32_t m_pointCount;
+    uint32_t m_pointCount;
 
     boost::scoped_ptr<LASzipper> m_zipper;
     boost::scoped_ptr<ZipPoint> m_zipPoint;
