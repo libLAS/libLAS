@@ -24,7 +24,6 @@ set(LIBLAS_HPP
   ${LIBLAS_HEADERS_DIR}/exception.hpp
   ${LIBLAS_HEADERS_DIR}/export.hpp
   ${LIBLAS_HEADERS_DIR}/factory.hpp 
-  ${LIBLAS_HEADERS_DIR}/guid.hpp
   ${LIBLAS_HEADERS_DIR}/iterator.hpp
   ${LIBLAS_HEADERS_DIR}/bounds.hpp
   ${LIBLAS_HEADERS_DIR}/classification.hpp

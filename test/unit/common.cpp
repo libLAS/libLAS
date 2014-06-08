@@ -6,7 +6,6 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/header.hpp>
-#include <liblas/guid.hpp>
 #include <tut/tut.hpp>
 #include "common.hpp"
 // boost
@@ -30,7 +29,7 @@ void test_default_header(liblas::Header const& h)
     ensure_equals("wrong default reserved value",
         h.GetReserved(), 0);
 
-    liblas::guid g;
+    boost::uuids::uuid g = boost::uuids::nil_uuid();
     ensure_equals("wrong default project guid",
         h.GetProjectId(), g);
 
@@ -130,8 +129,8 @@ void test_file10_header(liblas::Header const& h)
     ensure_equals(h.GetFileSourceId(), 0);
     ensure_equals(h.GetReserved(), 0);
 
-    liblas::guid g;
-    ensure(g.is_null());
+    boost::uuids::uuid g = boost::uuids::nil_uuid();
+    ensure_equals(g, boost::uuids::nil_uuid());
     ensure_equals("wrong ProjectId", h.GetProjectId(), g);
 
     ensure_equals("wrong VersionMajor", h.GetVersionMajor(), 1);

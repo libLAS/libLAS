@@ -40,7 +40,6 @@
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
-#include <liblas/guid.hpp>
 #include <liblas/header.hpp>
 #include <liblas/spatialreference.hpp>
 #include <liblas/schema.hpp>
@@ -55,6 +54,7 @@
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/lambda/lambda.hpp>
+
 //std
 #include <algorithm>
 #include <fstream>
@@ -82,9 +82,7 @@ Header::Header() : m_schema(ePointFormat3)
 Header::Header(Header const& other) :
     m_sourceId(other.m_sourceId),
     m_reserved(other.m_reserved),
-    m_projectId1(other.m_projectId1),
-    m_projectId2(other.m_projectId2),
-    m_projectId3(other.m_projectId3),
+    m_projectGuid(other.m_projectGuid),
     m_versionMajor(other.m_versionMajor),
     m_versionMinor(other.m_versionMinor),
     m_createDOY(other.m_createDOY),
@@ -107,8 +105,6 @@ Header::Header(Header const& other) :
 
     p = std::memcpy(m_signature, other.m_signature, eFileSignatureSize);
     assert(p == m_signature);
-    p = std::memcpy(m_projectId4, other.m_projectId4, eProjectId4Size); 
-    assert(p == m_projectId4);
     p = std::memcpy(m_systemId, other.m_systemId, eSystemIdSize);
     assert(p == m_systemId);
     p = std::memcpy(m_softwareId, other.m_softwareId, eSoftwareIdSize);
@@ -129,11 +125,7 @@ Header& Header::operator=(Header const& rhs)
         assert(p == m_signature);
         m_sourceId = rhs.m_sourceId;
         m_reserved = rhs.m_reserved;
-        m_projectId1 = rhs.m_projectId1;
-        m_projectId2 = rhs.m_projectId2;
-        m_projectId3 = rhs.m_projectId3;
-        p = std::memcpy(m_projectId4, rhs.m_projectId4, eProjectId4Size); 
-        assert(p == m_projectId4);
+        m_projectGuid = rhs.m_projectGuid;
         m_versionMajor = rhs.m_versionMajor;
         m_versionMinor = rhs.m_versionMinor;
         p = std::memcpy(m_systemId, rhs.m_systemId, eSystemIdSize);
@@ -173,10 +165,7 @@ bool Header::operator==(Header const& other) const
     if (m_signature != other.m_signature) return false;
     if (m_sourceId != other.m_sourceId) return false;
     if (m_reserved != other.m_reserved) return false;
-    if (m_projectId1 != other.m_projectId1) return false;
-    if (m_projectId2 != other.m_projectId2) return false;
-    if (m_projectId3 != other.m_projectId3) return false;
-    if (m_projectId4 != other.m_projectId4) return false;
+    if (m_projectGuid != other.m_projectGuid) return false;
     if (m_versionMajor != other.m_versionMajor) return false;
     if (m_versionMinor != other.m_versionMinor) return false;
     if (m_systemId != other.m_systemId) return false;
@@ -233,14 +222,14 @@ void Header::SetReserved(uint16_t v)
     m_reserved = v;
 }
 
-liblas::guid Header::GetProjectId() const
+boost::uuids::uuid Header::GetProjectId() const
 {
-    return liblas::guid(m_projectId1, m_projectId2, m_projectId3, m_projectId4);
+    return m_projectGuid;
 }
 
-void Header::SetProjectId(guid const& v)
+void Header::SetProjectId(boost::uuids::uuid const& v)
 {
-    v.output_data(m_projectId1, m_projectId2, m_projectId3, m_projectId4);
+    m_projectGuid = v;
 }
 
 uint8_t Header::GetVersionMajor() const
@@ -580,10 +569,9 @@ void Header::Init()
     }
 
     m_headerSize = eHeaderSize;
-
-    m_sourceId = m_reserved = m_projectId2 = m_projectId3 = uint16_t();
-    m_projectId1 = uint32_t();
-    std::memset(m_projectId4, 0, sizeof(m_projectId4)); 
+    
+    m_projectGuid = boost::uuids::nil_uuid();
+    m_sourceId = m_reserved = uint16_t();
 
     m_dataOffset = eHeaderSize; // excluding 2 bytes of Point Data Start Signature
     m_headerPadding = 0;
@@ -713,6 +701,7 @@ liblas::property_tree::ptree Header::GetPTree( ) const
     
     pt.put("filesignature", GetFileSignature());
     pt.put("projectdid", GetProjectId());
+
     pt.put("systemid", GetSystemId());
     pt.put("softwareid", GetSoftwareId());
     

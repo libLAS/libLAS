@@ -11,7 +11,6 @@ SET(LIBLAS_UNIT_TEST_SRC
     bounds_test.cpp
     common.cpp
     error_test.cpp
-    guid_test.cpp
     header_test.cpp
     point_test.cpp
     reader_iterator_test.cpp

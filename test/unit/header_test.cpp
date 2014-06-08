@@ -145,12 +145,12 @@ namespace tut
     void to::test<7>()
     {
         std::string strid("030B4A82-1B7C-11CF-9D53-00AA003C9CB6");
-        liblas::guid id(strid.c_str());
+        boost::uuids::uuid id = boost::uuids::string_generator()(strid);        
 
         liblas::Header h;
         h.SetProjectId(id);
         
-        ensure_not(h.GetProjectId().is_null());
+        ensure_not(h.GetProjectId() == boost::uuids::nil_uuid());
         ensure_equals(h.GetProjectId(), id);
     }
 

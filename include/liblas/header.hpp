@@ -43,7 +43,7 @@
 #ifndef LIBLAS_LASHEADER_HPP_INCLUDED
 #define LIBLAS_LASHEADER_HPP_INCLUDED
 
-#include <liblas/guid.hpp>
+#include <boost/uuid/uuid.hpp>
 #include <liblas/bounds.hpp>
 #include <liblas/schema.hpp>
 #include <liblas/spatialreference.hpp>
@@ -55,6 +55,9 @@
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 //std
 #include <cstddef>
@@ -140,11 +143,11 @@ public:
     void SetReserved(boost::uint16_t v);
 
     /// Get project identifier.
-    /// \return Global Unique Identifier as an instance of liblas::guid class.
-    guid GetProjectId() const;
+    /// \return Global Unique Identifier as an instance of boost::uuid::uuid class.
+    boost::uuids::uuid GetProjectId() const;
 
     /// Set project identifier.
-    void SetProjectId(guid const& v);
+    void SetProjectId(boost::uuids::uuid const& v);
 
     /// Get major component of version of LAS format.
     /// \return Always 1 is returned as the only valid value.
@@ -403,10 +406,11 @@ private:
     char m_signature[eFileSignatureSize]; // TODO: replace with boost::array --mloskot
     boost::uint16_t m_sourceId;
     boost::uint16_t m_reserved;
-    boost::uint32_t m_projectId1;
-    boost::uint16_t m_projectId2;
-    boost::uint16_t m_projectId3;
-    boost::uint8_t m_projectId4[eProjectId4Size];
+    boost::uuids::uuid m_projectGuid;
+    // boost::uint32_t m_projectId1;
+    // boost::uint16_t m_projectId2;
+    // boost::uint16_t m_projectId3;
+    // boost::uint8_t m_projectId4[eProjectId4Size];
     boost::uint8_t m_versionMajor;
     boost::uint8_t m_versionMinor;
     char m_systemId[eSystemIdSize]; // TODO: replace with boost::array --mloskot

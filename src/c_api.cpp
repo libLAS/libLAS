@@ -57,6 +57,10 @@
 #include <liblas/detail/reader/cachedreader.hpp>
 #include <liblas/external/property_tree/xml_parser.hpp>
 
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+
 typedef struct LASWriterHS *LASWriterH;
 typedef struct LASReaderHS *LASReaderH;
 typedef struct LASPointHS *LASPointH;
@@ -1129,16 +1133,17 @@ LAS_DLL LASErrorEnum LASHeader_SetReserved(LASHeaderH hHeader, boost::uint16_t v
 LAS_DLL char* LASHeader_GetProjectId(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader->get(), "LASHeader_GetProjectId", 0);
     
-    liblas::guid id = ((liblas::HeaderPtr*) hHeader)->get()->GetProjectId();
-    return LASCopyString(id.to_string().c_str());
+    boost::uuids::uuid id = ((liblas::HeaderPtr*) hHeader)->get()->GetProjectId();
+    std::ostringstream oss;
+    oss << id;
+    return LASCopyString(oss.str().c_str());
 }
 
 LAS_DLL LASErrorEnum LASHeader_SetProjectId(LASHeaderH hHeader, const char* value) {
     VALIDATE_LAS_POINTER1(hHeader->get(), "LASHeader_SetProjectId", LE_Failure);
 
     try {
-        liblas::guid id;
-        id = liblas::guid(value);
+        boost::uuids::uuid id = boost::uuids::string_generator()(value);
         ((liblas::HeaderPtr*) hHeader)->get()->SetProjectId(id);    
     } catch (std::exception const& e)
     {
@@ -1574,9 +1579,9 @@ LAS_DLL int LASHeader_Equal(const LASHeaderH hHeader1, const LASHeaderH hHeader2
 
 LAS_DLL LASGuidH LASHeader_GetGUID(const LASHeaderH hHeader) {
     VALIDATE_LAS_POINTER1(hHeader->get(), "LASHeader_GetGUID", 0);
-    
-    liblas::guid id = ((liblas::HeaderPtr*) hHeader)->get()->GetProjectId();
-    return (LASGuidH) new liblas::guid(id);
+
+    boost::uuids::uuid id = ((liblas::HeaderPtr*) hHeader)->get()->GetProjectId();    
+    return (LASGuidH) new boost::uuids::uuid(id);
 }
 
 
@@ -1584,7 +1589,7 @@ LAS_DLL LASErrorEnum LASHeader_SetGUID(LASHeaderH hHeader, LASGuidH hId) {
     VALIDATE_LAS_POINTER1(hHeader->get(), "LASHeader_SetGUID", LE_Failure);
 
     try {
-        liblas::guid* id = (liblas::guid*) hId;
+        boost::uuids::uuid* id = (boost::uuids::uuid*) hId;
         
         ((liblas::HeaderPtr*) hHeader)->get()->SetProjectId(*id);    
     } catch (std::exception const& e)
