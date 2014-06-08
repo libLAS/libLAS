@@ -150,11 +150,11 @@ liblas::property_tree::ptree Dimension::GetPTree() const
     dim.put("name", GetName());
     dim.put("description", GetDescription());
     dim.put("position", GetPosition());
-    dim.put("active", static_cast<boost::uint32_t>(IsActive()));
+    dim.put("active", static_cast<uint32_t>(IsActive()));
     dim.put("size", GetBitSize());
-    dim.put("integer", static_cast<boost::uint32_t>(IsInteger()));
-    dim.put("signed", static_cast<boost::uint32_t>(IsSigned()));
-    dim.put("required", static_cast<boost::uint32_t>(IsRequired()));
+    dim.put("integer", static_cast<uint32_t>(IsInteger()));
+    dim.put("signed", static_cast<uint32_t>(IsSigned()));
+    dim.put("required", static_cast<uint32_t>(IsRequired()));
     dim.put("byteoffset", GetByteOffset());
     dim.put("bitoffset" , GetBitOffset());
     dim.put("bytesize", GetByteSize());
@@ -211,8 +211,8 @@ std::ostream& operator<<(std::ostream& os, liblas::Dimension const& d)
     for (std::string::size_type i=0; i != pad_size; i++ ) {
         pad << " ";
     }
-    os << quoted_name.str() << pad.str() <<" -- "<< " size: " << tree.get<boost::uint32_t>("size");
-    os << " offset: " << tree.get<boost::uint32_t>("byteoffset");
+    os << quoted_name.str() << pad.str() <<" -- "<< " size: " << tree.get<uint32_t>("size");
+    os << " offset: " << tree.get<uint32_t>("byteoffset");
     os << std::endl;
     
     return os;

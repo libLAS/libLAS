@@ -49,7 +49,6 @@
 #include <liblas/export.hpp>
 
 // boost
-#include <boost/cstdint.hpp>
 #include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
@@ -141,8 +140,8 @@ public:
     IndexMap const& GetDimensions() const { return m_index; }
     liblas::property_tree::ptree GetPTree() const;
     
-    boost::uint16_t GetSchemaVersion() const { return m_schemaversion; }
-    void SetSchemaVersion(boost::uint16_t v) { m_schemaversion = v; }
+    uint16_t GetSchemaVersion() const { return m_schemaversion; }
+    void SetSchemaVersion(uint16_t v) { m_schemaversion = v; }
     
     bool IsCustom() const;
     VariableRecord GetVLR() const;
@@ -150,10 +149,10 @@ public:
 protected:
     
     PointFormatName m_data_format_id;
-    boost::uint32_t m_nextpos;
+    uint32_t m_nextpos;
     std::size_t m_bit_size;
     std::size_t m_base_bit_size;
-    boost::uint16_t m_schemaversion;
+    uint16_t m_schemaversion;
     
 private:
 

@@ -73,7 +73,7 @@
 // booost
 #include <boost/array.hpp>
 #include <boost/concept_check.hpp>
-#include <boost/cstdint.hpp>
+
 #include <boost/shared_ptr.hpp>
 
 //#define USE_BOOST_IO
@@ -90,6 +90,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <stdint.h>
 
 /// Namespace grouping all elements of libLAS public interface.
 /// \note
@@ -244,7 +245,7 @@ public:
     virtual void WriteHeader() = 0;
     virtual void SetHeader(liblas::Header const& header) = 0;
     
-    virtual void UpdatePointCount(boost::uint32_t count) = 0;
+    virtual void UpdatePointCount(uint32_t count) = 0;
     virtual void WritePoint(const Point& point) = 0;
 
     virtual void SetFilters(std::vector<liblas::FilterPtr> const& filters) = 0;

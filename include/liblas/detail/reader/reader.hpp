@@ -45,8 +45,6 @@
 #include <liblas/detail/fwd.hpp>
 #include <liblas/detail/reader/header.hpp>
 #include <liblas/liblas.hpp>
-// boost
-#include <boost/cstdint.hpp>
 // std
 #include <iosfwd>
 #include <boost/shared_ptr.hpp>
@@ -89,8 +87,8 @@ protected:
     typedef std::istream::pos_type pos_type;
     
     std::istream& m_ifs;
-    boost::uint32_t m_size;
-    boost::uint32_t m_current;
+    uint32_t m_size;
+    uint32_t m_current;
     
     // PointReaderPtr m_point_reader;
     HeaderReaderPtr m_header_reader;
@@ -101,7 +99,7 @@ protected:
 
     std::vector<liblas::FilterPtr> m_filters;
     std::vector<liblas::TransformPtr> m_transforms;
-    std::vector<boost::uint8_t>::size_type m_record_size;
+    std::vector<uint8_t>::size_type m_record_size;
     bool bNeedHeaderCheck;
     
 private:

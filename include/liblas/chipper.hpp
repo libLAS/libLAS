@@ -24,8 +24,8 @@ class LAS_DLL PtRef
 {
 public:
     double m_pos;
-    boost::uint32_t m_ptindex;
-    boost::uint32_t m_oindex;
+    uint32_t m_ptindex;
+    uint32_t m_oindex;
 
     bool operator < (const PtRef& pt) const
         { return m_pos < pt.m_pos; }
@@ -57,7 +57,7 @@ public:
         { return m_vec_p->begin(); }
     PtRefVec::iterator end()
         { return m_vec_p->end(); }
-    PtRef& operator[](boost::uint32_t pos)
+    PtRef& operator[](uint32_t pos)
         { return (*m_vec_p)[pos]; }
     std::string Dir()
     {
@@ -68,8 +68,8 @@ public:
         else
             return "NONE";
     }
-    void SortByOIndex(boost::uint32_t left, boost::uint32_t center,
-        boost::uint32_t right);
+    void SortByOIndex(uint32_t left, uint32_t center,
+        uint32_t right);
     void SetAllocator(detail::opt_allocator<PtRef> *alloc_p )
     {
         m_vec_p = new PtRefVec( *alloc_p );
@@ -84,12 +84,12 @@ class LAS_DLL Block
 
 private:
     RefList *m_list_p;
-    boost::uint32_t m_left;
-    boost::uint32_t m_right;
+    uint32_t m_left;
+    uint32_t m_right;
     liblas::Bounds<double> m_bounds;
 
 public:
-    std::vector<boost::uint32_t> GetIDs() const; 
+    std::vector<uint32_t> GetIDs() const; 
     Bounds<double> const& GetBounds() const
         {return m_bounds;} 
     void SetBounds(liblas::Bounds<double> const& bounds)
@@ -105,7 +105,7 @@ public:
     {}
 
     // Maximum number of pointer per output block.
-    boost::uint32_t m_threshold;
+    uint32_t m_threshold;
     // If true, use sorting instead of copying to reduce memory.
     bool m_use_sort;
     // If true, use memory mapped files instead of main memory
@@ -118,7 +118,7 @@ class LAS_DLL Chipper
 {
 public:
     Chipper(Reader *reader, Options *options );
-    Chipper(Reader *reader, boost::uint32_t max_partition_size) :
+    Chipper(Reader *reader, uint32_t max_partition_size) :
         m_reader(reader), m_xvec(DIR_X), m_yvec(DIR_Y), m_spare(DIR_NONE)
     {
         m_options.m_threshold = max_partition_size;
@@ -133,22 +133,22 @@ public:
 private:
     int Allocate();
     int Load();
-    void Partition(boost::uint32_t size);
+    void Partition(uint32_t size);
     void Split(RefList& xvec, RefList& yvec, RefList& spare);
     void DecideSplit(RefList& v1, RefList& v2, RefList& spare,
-        boost::uint32_t left, boost::uint32_t right);
+        uint32_t left, uint32_t right);
     void RearrangeNarrow(RefList& wide, RefList& narrow, RefList& spare,
-        boost::uint32_t left, boost::uint32_t center, boost::uint32_t right);
+        uint32_t left, uint32_t center, uint32_t right);
     void Split(RefList& wide, RefList& narrow, RefList& spare,
-        boost::uint32_t left, boost::uint32_t right);
+        uint32_t left, uint32_t right);
     void FinalSplit(RefList& wide, RefList& narrow,
-        boost::uint32_t pleft, boost::uint32_t pcenter);
-    void Emit(RefList& wide, boost::uint32_t widemin, boost::uint32_t widemax,
-        RefList& narrow, boost::uint32_t narrowmin, boost::uint32_t narrowmax);
+        uint32_t pleft, uint32_t pcenter);
+    void Emit(RefList& wide, uint32_t widemin, uint32_t widemax,
+        RefList& narrow, uint32_t narrowmin, uint32_t narrowmax);
 
     Reader *m_reader;
     std::vector<Block> m_blocks;
-    std::vector<boost::uint32_t> m_partitions;
+    std::vector<uint32_t> m_partitions;
     // Note, order is important here, as the allocator must be destroyed
     // after the RefLists.
     boost::shared_ptr<detail::opt_allocator<PtRef> > m_allocator;

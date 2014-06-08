@@ -47,8 +47,6 @@
 #include <liblas/transform.hpp>
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/export.hpp>
-// boost
-#include <boost/cstdint.hpp>
 
 #include <boost/concept_check.hpp>
 // std
@@ -331,9 +329,8 @@ liblas::Point (min)() {
     {
         p.SetCoordinates(ranges[0].minimum, ranges[1].minimum, ranges[2].minimum);
     } 
-    catch (std::runtime_error const& e)
+    catch (std::runtime_error const& )
     {
-        ::boost::ignore_unused_variable_warning(e);
         p.SetCoordinates(ranges[0].minimum, ranges[1].minimum, 0);
         
     }
@@ -347,9 +344,8 @@ liblas::Point (max)() {
     {
         p.SetCoordinates(ranges[0].maximum, ranges[1].maximum, ranges[2].maximum);
     } 
-    catch (std::runtime_error const& e)
+    catch (std::runtime_error const& )
     {
-        ::boost::ignore_unused_variable_warning(e);
         p.SetCoordinates(ranges[0].maximum, ranges[1].maximum, 0);
         
     }

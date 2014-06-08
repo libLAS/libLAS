@@ -64,7 +64,6 @@
 #include <liblas/export.hpp>
 // boost
 #include <boost/array.hpp>
-#include <boost/cstdint.hpp>
 #include <boost/random.hpp>
 // std
 #include <iosfwd>
@@ -83,7 +82,7 @@ namespace liblas {
 
 namespace detail {
 
-	inline boost::uint8_t random_byte()
+	inline uint8_t random_byte()
     {
         // Change seed to something better?
 
@@ -98,7 +97,7 @@ namespace detail {
             //distribution_t((std::numeric_limits<uint8_t>::min)(), (std::numeric_limits<uint8_t>::max)()));
             distribution_t((std::numeric_limits<unsigned long>::min)(), (std::numeric_limits<unsigned long>::max)()));
 
-		return static_cast<boost::uint8_t>(generator() & 0xFF);
+		return static_cast<uint8_t>(generator() & 0xFF);
     }
 
 } // namespace detail
@@ -152,7 +151,7 @@ public:
     /// \param d4 - last 64 bits of GUID number.
     /// \exception std::invalid_argument if construction failed.
     /// \post guid::is_null() == false.
-    guid(boost::uint32_t const& d1, boost::uint16_t const& d2, boost::uint16_t const& d3, boost::uint8_t const (&d4)[8])
+    guid(uint32_t const& d1, uint16_t const& d2, uint16_t const& d3, uint8_t const (&d4)[8])
     {
         construct(d1, d2, d3, d4);
     }
@@ -295,11 +294,11 @@ public:
     /// \param d3 - buffer for 16 bits of third chunk of GUID number.
     /// \param d4 - buffer for last 64 bits of GUID number.
     /// \exception nothrow
-    void output_data(boost::uint32_t& d1, boost::uint16_t& d2, boost::uint16_t& d3, boost::uint8_t (&d4)[8]) const
+    void output_data(uint32_t& d1, uint16_t& d2, uint16_t& d3, uint8_t (&d4)[8]) const
     {
         d1 = d2 = d3 = 0;
         std::size_t pos = 0;
-        int const charbit = std::numeric_limits<boost::uint8_t>::digits;
+        int const charbit = std::numeric_limits<uint8_t>::digits;
         
         for (; pos < 4; ++pos)
         {
@@ -400,7 +399,7 @@ private:
         }
     }
 
-    void construct(boost::uint32_t const& d1, boost::uint16_t const& d2, boost::uint16_t const& d3, boost::uint8_t const (&d4)[8])
+    void construct(uint32_t const& d1, uint16_t const& d2, uint16_t const& d3, uint8_t const (&d4)[8])
     {
         std::ostringstream ss;
         ss.flags(std::ios::hex);        
@@ -421,7 +420,7 @@ private:
         for (std::size_t i = 0; i < sizeof(d4); ++i)
         {
             ss.width(2);
-            ss << static_cast<boost::uint32_t>(d4[i]);
+            ss << static_cast<uint32_t>(d4[i]);
             if (1 == i)
                 ss << '-';
         }
@@ -461,7 +460,6 @@ private:
     // name based
     static guid create_name_based(guid const& namespace_guid, char const* name, int name_length)
     {
-        using boost::uint8_t;
         
         detail::SHA1 sha1;
 
@@ -504,7 +502,7 @@ private:
     
 private:
 
-    ::boost::array<boost::uint8_t, 16> data_;
+    ::boost::array<uint8_t, 16> data_;
 };
 
 inline std::ostream& operator<<(std::ostream& os, guid const& g)
@@ -589,7 +587,7 @@ inline std::istream& operator>>(std::istream& is, guid &g)
                 is.setstate(ios_base::badbit);
             }
 
-            temp_guid.data_[i] = static_cast<boost::uint8_t>(val);
+            temp_guid.data_[i] = static_cast<uint8_t>(val);
 
             if (is)
             {

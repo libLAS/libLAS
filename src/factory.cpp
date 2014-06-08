@@ -71,7 +71,7 @@ Reader ReaderFactory::CreateWithImpl(ReaderIPtr r)
     return reader;
 }
 
-Reader ReaderFactory::CreateCached(std::istream& stream, boost::uint32_t cache_size)
+Reader ReaderFactory::CreateCached(std::istream& stream, uint32_t cache_size)
 {
     detail::HeaderReaderPtr h(new detail::reader::Header(stream));
     h->ReadHeader();

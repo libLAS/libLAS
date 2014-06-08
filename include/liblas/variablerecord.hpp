@@ -48,7 +48,6 @@
 #include <liblas/export.hpp>
 // boost
 #include <boost/array.hpp>
-#include <boost/cstdint.hpp>
 // std
 #include <string>
 #include <vector>
@@ -81,9 +80,9 @@ public:
 
     /// Get record signature (LAS 1.0) or reserved bytes (LAS 1.1).
     /// \exception No throw
-    boost::uint16_t GetReserved() const;
+    uint16_t GetReserved() const;
     
-    void SetReserved(boost::uint16_t data);
+    void SetReserved(uint16_t data);
 
     /// Get identifier of user which created the record.
     /// The character data is up to 16 bytes long.
@@ -95,15 +94,15 @@ public:
     /// Get identifier of record.
     /// The record ID is closely related to the user ID.
     /// \exception No throw
-    boost::uint16_t GetRecordId() const;
+    uint16_t GetRecordId() const;
     
-    void SetRecordId(boost::uint16_t id);
+    void SetRecordId(uint16_t id);
 
     /// Get record length after the header.
     /// \exception No throw
-    boost::uint16_t GetRecordLength() const;
+    uint16_t GetRecordLength() const;
     
-    void SetRecordLength(boost::uint16_t length);
+    void SetRecordLength(uint16_t length);
 
     /// Get text description of data in the record.
     /// The character data is up to 32 bytes long.
@@ -113,9 +112,9 @@ public:
     void SetDescription(std::string const& text);
 
     /// Get the data for this VLR
-    std::vector<boost::uint8_t> const& GetData() const;
+    std::vector<uint8_t> const& GetData() const;
     
-    void SetData(std::vector<boost::uint8_t> const& data);
+    void SetData(std::vector<uint8_t> const& data);
 
     /// Compare actual header object against the other.
     /// \exception No throw
@@ -134,12 +133,12 @@ public:
 
 private:
 
-    std::vector<boost::uint8_t> m_data;
+    std::vector<uint8_t> m_data;
     boost::array<char, 32> m_description;
     boost::array<char, 16> m_user_id;    
-    boost::uint16_t m_reserved;
-    boost::uint16_t m_record_id;
-    boost::uint16_t m_record_size; // length after header
+    uint16_t m_reserved;
+    uint16_t m_record_id;
+    uint16_t m_record_size; // length after header
 };
 
 /// Equality operator.

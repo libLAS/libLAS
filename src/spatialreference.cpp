@@ -402,13 +402,13 @@ void SpatialReference::ResetVLRs()
          }
          record.SetData(data);
 
-        if (data.size() > (std::numeric_limits<boost::uint16_t>::max()))
+        if (data.size() > (std::numeric_limits<uint16_t>::max()))
         {
             std::ostringstream oss;
-            std::vector<uint8_t>::size_type overrun = data.size() - static_cast<std::vector<uint8_t>::size_type>(std::numeric_limits<boost::uint16_t>::max());
+            std::vector<uint8_t>::size_type overrun = data.size() - static_cast<std::vector<uint8_t>::size_type>(std::numeric_limits<uint16_t>::max());
             oss << "The size of the GeoTIFF GeoAsciiParamsTag, " << data.size() << ", is " << overrun 
                 << " bytes too large to fit inside the maximum size of a VLR which is " 
-                << (std::numeric_limits<boost::uint16_t>::max()) << " bytes.";
+                << (std::numeric_limits<uint16_t>::max()) << " bytes.";
             throw std::runtime_error(oss.str());
 
         }
@@ -439,19 +439,19 @@ void SpatialReference::ResetVLRs()
 
         data.push_back( '\0' );
 
-        if (data.size() > std::numeric_limits<boost::uint16_t>::max())
+        if (data.size() > std::numeric_limits<uint16_t>::max())
         {
             std::ostringstream oss;
-            std::vector<uint8_t>::size_type overrun = data.size() - static_cast<std::vector<uint8_t>::size_type>(std::numeric_limits<boost::uint16_t>::max());
+            std::vector<uint8_t>::size_type overrun = data.size() - static_cast<std::vector<uint8_t>::size_type>(std::numeric_limits<uint16_t>::max());
             oss << "The size of the wkt, " << data.size() << ", is " << overrun 
                 << " bytes too large to fit inside the maximum size of a VLR which is " 
-                << std::numeric_limits<boost::uint16_t>::max() << " bytes.";
+                << std::numeric_limits<uint16_t>::max() << " bytes.";
             throw std::runtime_error(oss.str());
 
         }
 
 
-        wkt_record.SetRecordLength( static_cast<boost::uint16_t>(data.size()) );
+        wkt_record.SetRecordLength( static_cast<uint16_t>(data.size()) );
         wkt_record.SetData(data);
 
         // not to speak of this additional copy!
@@ -500,7 +500,7 @@ const GTIF* SpatialReference::GetGTIF()
         if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
         {
             int count = data.size()/sizeof(int16_t);
-            short *data_s = (short *) &(data[0]);
+            short *data_s = reinterpret_cast<short *>( &(data[0]));
 
             // discard invalid "zero" geotags some software emits.
             while( count > 4 

@@ -58,14 +58,14 @@ private:
     liblas::Index *m_index;
     liblas::VariableRecord m_indexVLRHeaderRecord, m_indexVLRCellRecord;
     IndexVLRData m_indexVLRHeaderData, m_indexVLRCellPointData, m_indexVLRTempData;
-    boost::uint32_t m_VLRCommonDataSize, m_VLRDataSizeLocation, m_FirstCellLocation, m_LastCellLocation, m_VLRPointCountLocation;
-    boost::uint32_t  m_DataRecordSize, m_TempWritePos, m_DataPointsThisVLR;
+    uint32_t m_VLRCommonDataSize, m_VLRDataSizeLocation, m_FirstCellLocation, m_LastCellLocation, m_VLRPointCountLocation;
+    uint32_t  m_DataRecordSize, m_TempWritePos, m_DataPointsThisVLR;
     bool m_FirstCellInVLR, m_SomeDataReadyToWrite;
     
 protected:
     bool InitiateOutput(void);
-    bool OutputCell(liblas::detail::IndexCell *CellBlock, boost::uint32_t CurCellX, boost::uint32_t CurCellY);
-    bool InitializeVLRData(boost::uint32_t CurCellX, boost::uint32_t CurCellY);
+    bool OutputCell(liblas::detail::IndexCell *CellBlock, uint32_t CurCellX, uint32_t CurCellY);
+    bool InitializeVLRData(uint32_t CurCellX, uint32_t CurCellY);
     bool FinalizeOutput(void);
     
 };

@@ -84,7 +84,7 @@ using namespace detail;
 class OIndexSorter
 {
 public:
-    OIndexSorter(boost::uint32_t center) : m_center(center)
+    OIndexSorter(uint32_t center) : m_center(center)
     {}
     
     bool operator()(const PtRef& p1, const PtRef& p2)
@@ -101,11 +101,11 @@ public:
     }
 
 private:
-    boost::uint32_t m_center;
+    uint32_t m_center;
 };
 
-void RefList::SortByOIndex(boost::uint32_t left, boost::uint32_t center,
-    boost::uint32_t right)
+void RefList::SortByOIndex(uint32_t left, uint32_t center,
+    uint32_t right)
 {
     OIndexSorter comparator(center);
     PtRefVec::iterator li = m_vec_p->begin() + left;
@@ -114,11 +114,11 @@ void RefList::SortByOIndex(boost::uint32_t left, boost::uint32_t center,
 }
 
 
-vector<boost::uint32_t> Block::GetIDs() const
+vector<uint32_t> Block::GetIDs() const
 {
-    vector<boost::uint32_t> ids;
+    vector<uint32_t> ids;
 
-    for (boost::uint32_t i = m_left; i <= m_right; ++i)
+    for (uint32_t i = m_left; i <= m_right; ++i)
         ids.push_back((*m_list_p)[i].m_ptindex);
     return ids;
 }
@@ -146,7 +146,7 @@ void Chipper::Chip()
 
 int Chipper::Allocate()
 {
-    boost::uint32_t count = m_reader->GetHeader().GetPointRecordsCount();
+    uint32_t count = m_reader->GetHeader().GetPointRecordsCount();
 
     if (m_options.m_use_maps)
     {
@@ -188,8 +188,8 @@ int Chipper::Allocate()
 int Chipper::Load()
 {
     PtRef ref;
-    boost::uint32_t idx;
-    boost::uint32_t count;
+    uint32_t idx;
+    uint32_t count;
     vector<PtRef>::iterator it;
    
     if (Allocate())
@@ -208,7 +208,7 @@ int Chipper::Load()
     }
     // Sort xvec and assign other index in yvec to sorted indices in xvec.
     sort(m_xvec.begin(), m_xvec.end());
-    for (boost::uint32_t i = 0; i < m_xvec.size(); ++i) {
+    for (uint32_t i = 0; i < m_xvec.size(); ++i) {
         idx = m_xvec[i].m_ptindex;
         m_yvec[idx].m_oindex = i;
     }
@@ -217,14 +217,14 @@ int Chipper::Load()
     sort(m_yvec.begin(), m_yvec.end());
 
     //Iterate through the yvector, setting the xvector appropriately.
-    for (boost::uint32_t i = 0; i < m_yvec.size(); ++i)
+    for (uint32_t i = 0; i < m_yvec.size(); ++i)
         m_xvec[m_yvec[i].m_oindex].m_oindex = i;
     return 0;
 }
 
-void Chipper::Partition(boost::uint32_t size)
+void Chipper::Partition(uint32_t size)
 {
-    boost::uint32_t num_partitions;
+    uint32_t num_partitions;
 
     num_partitions = size / m_options.m_threshold;
     if ( size % m_options.m_threshold )
@@ -232,20 +232,20 @@ void Chipper::Partition(boost::uint32_t size)
     double total = 0;
     double partition_size = static_cast<double>(size) / num_partitions;
     m_partitions.push_back(0);
-    for (boost::uint32_t i = 0; i < num_partitions; ++i) {
+    for (uint32_t i = 0; i < num_partitions; ++i) {
         total += partition_size;
         double rtotal = detail::sround(total);
-        m_partitions.push_back(static_cast<boost::uint32_t>(rtotal));
+        m_partitions.push_back(static_cast<uint32_t>(rtotal));
     }
 }
 
 void Chipper::DecideSplit(RefList& v1, RefList& v2, RefList& spare,
-    boost::uint32_t pleft, boost::uint32_t pright)
+    uint32_t pleft, uint32_t pright)
 {
     double v1range;
     double v2range;
-    boost::uint32_t left = m_partitions[pleft];
-    boost::uint32_t right = m_partitions[pright] - 1;
+    uint32_t left = m_partitions[pleft];
+    uint32_t right = m_partitions[pright] - 1;
 
     // Decide the wider direction of the block, and split in that direction
     // to maintain squareness.
@@ -258,12 +258,12 @@ void Chipper::DecideSplit(RefList& v1, RefList& v2, RefList& spare,
 }
 
 void Chipper::Split(RefList& wide, RefList& narrow, RefList& spare,
-    boost::uint32_t pleft, boost::uint32_t pright)
+    uint32_t pleft, uint32_t pright)
 {
-    boost::uint32_t pcenter;
-    boost::uint32_t left;
-    boost::uint32_t right;
-    boost::uint32_t center;
+    uint32_t pcenter;
+    uint32_t left;
+    uint32_t right;
+    uint32_t center;
 
     left = m_partitions[pleft];
     right = m_partitions[pright] - 1;
@@ -301,12 +301,12 @@ void Chipper::Split(RefList& wide, RefList& narrow, RefList& spare,
 }
 
 void Chipper::RearrangeNarrow(RefList& wide, RefList& narrow, RefList& spare,
-    boost::uint32_t left, boost::uint32_t center, boost::uint32_t right)
+    uint32_t left, uint32_t center, uint32_t right)
 {
     if (m_options.m_use_sort)
     {
         narrow.SortByOIndex(left, center, right);
-        for (boost::uint32_t i = left; i <= right; ++i)
+        for (uint32_t i = left; i <= right; ++i)
         {
             wide[narrow[i].m_oindex].m_oindex = i;
         }
@@ -317,9 +317,9 @@ void Chipper::RearrangeNarrow(RefList& wide, RefList& narrow, RefList& spare,
         // narrow array by copying them to the spare array in the correct
         // partition.  The spare array then becomes the active narrow array
         // for the [left,right] partition.
-        boost::uint32_t lstart = left;
-        boost::uint32_t rstart = center;
-        for (boost::uint32_t i = left; i <= right; ++i)
+        uint32_t lstart = left;
+        uint32_t rstart = center;
+        for (uint32_t i = left; i <= right; ++i)
         {
             if (narrow[i].m_oindex < center)
             {
@@ -341,33 +341,33 @@ void Chipper::RearrangeNarrow(RefList& wide, RefList& narrow, RefList& spare,
 // ordered, but not for our split, so we have to find the max/min entries
 // for each partition in the final split.
 void Chipper::FinalSplit(RefList& wide, RefList& narrow,
-    boost::uint32_t pleft, boost::uint32_t pright)  
+    uint32_t pleft, uint32_t pright)  
 {
     
-    boost::int64_t left1 = -1;
-    boost::int64_t left2 = -1;
-    boost::int64_t right1 = -1;
-    boost::int64_t right2 = -1;
+    int64_t left1 = -1;
+    int64_t left2 = -1;
+    int64_t right1 = -1;
+    int64_t right2 = -1;
 
     // It appears we're using int64_t here because we're using -1 as 
     // an indicator.  I'm not 100% sure that i ends up <0, but I don't 
     // think so.  These casts will at least shut up the compiler, but 
     // I think this code should be revisited to use
-    // std::vector<boost::uint32_t>::const_iterator or
-    // std::vector<boost::uint32_t>::size_type instead of this int64_t
+    // std::vector<uint32_t>::const_iterator or
+    // std::vector<uint32_t>::size_type instead of this int64_t
     // stuff -- hobu 11/15/10
     //
     // I'm not sure if there would be any advantage in using an iterator.
     // I'm also not sure if size_t will be bigger than 32 bits on a 32 bit
     // machine, thus the int64_t, which should be guaranteed.  abell 2/15/11
-    boost::int64_t left = m_partitions[pleft];
-    boost::int64_t right = m_partitions[pright] - 1;
-    boost::int64_t center = m_partitions[pright - 1];
+    int64_t left = m_partitions[pleft];
+    int64_t right = m_partitions[pright] - 1;
+    int64_t center = m_partitions[pright - 1];
 
     // Find left values for the partitions.
-    for (boost::int64_t i = left; i <= right; ++i)
+    for (int64_t i = left; i <= right; ++i)
     {        
-        boost::int64_t idx = narrow[static_cast<boost::uint32_t>(i)].m_oindex;
+        int64_t idx = narrow[static_cast<uint32_t>(i)].m_oindex;
         if (left1 < 0 && (idx < center))
         {
             left1 = i;
@@ -382,9 +382,9 @@ void Chipper::FinalSplit(RefList& wide, RefList& narrow,
         }
     }
     // Find right values for the partitions.
-    for (boost::int64_t i = right; i >= left; --i)
+    for (int64_t i = right; i >= left; --i)
     {
-        boost::int64_t idx = narrow[static_cast<boost::uint32_t>(i)].m_oindex;        
+        int64_t idx = narrow[static_cast<uint32_t>(i)].m_oindex;        
         if (right1 < 0 && (idx < center))
         {
             right1 = i;
@@ -401,22 +401,22 @@ void Chipper::FinalSplit(RefList& wide, RefList& narrow,
 
     // Emit results.
     Emit(wide, 
-         static_cast<boost::uint32_t>(left), 
-         static_cast<boost::uint32_t>(center - 1), 
+         static_cast<uint32_t>(left), 
+         static_cast<uint32_t>(center - 1), 
          narrow, 
-         static_cast<boost::uint32_t>(left1), 
-         static_cast<boost::uint32_t>(right1) );
+         static_cast<uint32_t>(left1), 
+         static_cast<uint32_t>(right1) );
     Emit(wide, 
-         static_cast<boost::uint32_t>(center), 
-         static_cast<boost::uint32_t>(right), 
+         static_cast<uint32_t>(center), 
+         static_cast<uint32_t>(right), 
          narrow, 
-         static_cast<boost::uint32_t>(left2), 
-         static_cast<boost::uint32_t>(right2) );
+         static_cast<uint32_t>(left2), 
+         static_cast<uint32_t>(right2) );
 }
 
-void Chipper::Emit(RefList& wide, boost::uint32_t widemin,
-    boost::uint32_t widemax, RefList& narrow, boost::uint32_t narrowmin,
-    boost::uint32_t narrowmax )
+void Chipper::Emit(RefList& wide, uint32_t widemin,
+    uint32_t widemax, RefList& narrow, uint32_t narrowmin,
+    uint32_t narrowmax )
 {
     Block b;
 

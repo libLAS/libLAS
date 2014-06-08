@@ -47,7 +47,6 @@
 #include <liblas/detail/binary.hpp>
 // boost
 #include <boost/concept_check.hpp>
-#include <boost/cstdint.hpp>
 // std
 #include <cassert>
 #include <cstddef>
@@ -149,10 +148,10 @@ private:
 /// Definition of variable-length record header.
 struct VLRHeader
 {
-  boost::uint16_t reserved;
+  uint16_t reserved;
   char userId[16]; // TODO: replace wtih boost::array --mloskot
-  boost::uint16_t recordId;
-  boost::uint16_t recordLengthAfterHeader;
+  uint16_t recordId;
+  uint16_t recordLengthAfterHeader;
   char description[32]; // TODO: replace wtih boost::array --mloskot
 };
 
@@ -360,7 +359,7 @@ inline void read_n<std::string>(std::string& dest, std::istream& src, std::strea
 // adapted from http://www.cplusplus.com/forum/beginner/3076/
 template <typename IntegerType>
 inline IntegerType bitsToInt(IntegerType& output,
-                             std::vector<boost::uint8_t> const& data, 
+                             std::vector<uint8_t> const& data, 
                              std::size_t index)
 {
     binary::endian_value<IntegerType> value;
@@ -371,7 +370,7 @@ inline IntegerType bitsToInt(IntegerType& output,
 
 template <typename IntegerType>
 inline void intToBits(IntegerType input, 
-                      std::vector<boost::uint8_t>& data, 
+                      std::vector<uint8_t>& data, 
                       std::size_t index)
 {
     binary::endian_value<IntegerType> value(input);

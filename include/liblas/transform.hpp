@@ -146,13 +146,13 @@ class LAS_DLL ColorFetchingTransform: public TransformI
 public:
     
     ColorFetchingTransform( std::string const& datasource, 
-                            std::vector<boost::uint32_t> bands
+                            std::vector<uint32_t> bands
                             );
     ColorFetchingTransform( std::string const& datasource, 
-                            std::vector<boost::uint32_t> bands,
+                            std::vector<uint32_t> bands,
                             Header const* header);
     
-    void SetScaleFactor(boost::uint32_t v) {m_scale = v; }
+    void SetScaleFactor(uint32_t v) {m_scale = v; }
     ~ColorFetchingTransform();
 
     bool transform(Point& point);
@@ -167,7 +167,7 @@ private:
     
     DataSourcePtr m_ds;
     std::string m_datasource;
-    std::vector<boost::uint32_t> m_bands;
+    std::vector<uint32_t> m_bands;
     boost::array<double, 6> m_forward_transform;
     boost::array<double, 6> m_inverse_transform;
     boost::uint32_t m_scale;
