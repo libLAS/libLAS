@@ -12,7 +12,6 @@
 #include <liblas/laserror.hpp>
 #include <liblas/laswriter.hpp>
 #include <liblas/lasfile.hpp>
-#include <liblas/guid.hpp>
 
 #include <string>
 #include <stack>

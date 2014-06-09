@@ -13,7 +13,6 @@
 #include <liblas/lasheader.hpp>
 #include <liblas/laspoint.hpp>
 #include <liblas/laswriter.hpp>
-#include <liblas/guid.hpp>
 // std
 #include <algorithm>
 #include <exception>

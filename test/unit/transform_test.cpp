@@ -4,7 +4,6 @@
 // http://www.opensource.org/licenses/bsd-license.php)
 //
 #include <liblas/bounds.hpp>
-#include <liblas/guid.hpp>
 #include <tut/tut.hpp>
 #include <string>
 #include <vector>
