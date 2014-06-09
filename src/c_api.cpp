@@ -2044,10 +2044,9 @@ LAS_DLL LASErrorEnum LASVLR_SetData(const LASVLRH hVLR, uint8_t* data, uint16_t 
 }
 
 LAS_DLL LASGuidH LASGuid_Create() {
-    liblas::guid random;
     try {
-        random = liblas::guid::create();
-        return (LASGuidH) new liblas::guid(random);
+        boost::uuids::uuid id;
+        return (LASGuidH) new boost::uuids::uuid(id);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASGuid_Create");
@@ -2057,10 +2056,10 @@ LAS_DLL LASGuidH LASGuid_Create() {
 
 LAS_DLL LASGuidH LASGuid_CreateFromString(const char* string) {
     VALIDATE_LAS_POINTER1(string, "LASGuid_CreateFromString", NULL);    
-    liblas::guid id;
     try {
-        id = liblas::guid(string);
-        return (LASGuidH) new liblas::guid(id);
+        boost::uuids::uuid id = boost::uuids::string_generator()(string);
+
+        return (LASGuidH) new boost::uuids::uuid(id);
     }
     catch (std::exception const& e) {
         LASError_PushError(LE_Failure, e.what(), "LASGuid_CreateFromString");
@@ -2070,7 +2069,7 @@ LAS_DLL LASGuidH LASGuid_CreateFromString(const char* string) {
 
 LAS_DLL void LASGuid_Destroy(LASGuidH hId) {
     VALIDATE_LAS_POINTER0(hId, "LASGuid_Destroy");
-    delete (liblas::guid*) hId;
+    delete (boost::uuids::uuid*) hId;
     hId = NULL;
 }
 
@@ -2078,8 +2077,8 @@ LAS_DLL int LASGuid_Equals(LASGuidH hId1, LASGuidH hId2) {
     VALIDATE_LAS_POINTER1(hId1, "LASGuid_Equals", LE_Failure);
     VALIDATE_LAS_POINTER1(hId2, "LASGuid_Equals", LE_Failure);
 
-    liblas::guid* id1 = (liblas::guid*)hId1;
-    liblas::guid* id2 = (liblas::guid*)hId2;
+    boost::uuids::uuid* id1 = (boost::uuids::uuid*)hId1;
+    boost::uuids::uuid* id2 = (boost::uuids::uuid*)hId2;
     try {
 
         return( *id1 == *id2);
@@ -2092,8 +2091,10 @@ LAS_DLL int LASGuid_Equals(LASGuidH hId1, LASGuidH hId2) {
 
 LAS_DLL char* LASGuid_AsString(LASGuidH hId) {
     VALIDATE_LAS_POINTER1(hId, "LASGuid_AsString", 0);
-    liblas::guid* id= (liblas::guid*)hId;
-    return LASCopyString(id->to_string().c_str());
+    boost::uuids::uuid* id= (boost::uuids::uuid*)hId;
+    std::ostringstream oss;
+    oss << id;
+    return LASCopyString(oss.str().c_str());
 }
 
 

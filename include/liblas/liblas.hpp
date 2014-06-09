@@ -47,7 +47,6 @@
 // liblas
 #include <liblas/version.hpp>
 #include <liblas/exception.hpp>
-#include <liblas/guid.hpp>
 #include <liblas/iterator.hpp>
 #include <liblas/bounds.hpp>
 #include <liblas/classification.hpp>
