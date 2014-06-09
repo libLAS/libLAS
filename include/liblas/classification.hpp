@@ -50,7 +50,7 @@
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
-
+#include <stdint.h>
 
 // I hate you windows
 #ifdef _MSC_VER

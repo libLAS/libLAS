@@ -44,6 +44,7 @@
 #define LIBLAS_DETAIL_INDEXCELL_HPP_INCLUDED
 
 #include <map>
+#include <stdint.h>
 
 namespace liblas { namespace detail {
 

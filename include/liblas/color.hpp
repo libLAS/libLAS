@@ -42,6 +42,7 @@
 #define LIBLAS_LASCOLOR_HPP_INCLUDED
 
 #include <liblas/export.hpp>
+#include <stdint.h>
 
 // boost
 #include <boost/array.hpp>
