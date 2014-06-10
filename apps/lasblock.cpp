@@ -69,7 +69,7 @@ void OutputHelp( std::ostream & oss, po::options_description const& options)
 
     oss <<"\nFor more information, see the full documentation for lasblock at:\n";
     
-    oss << " http://liblas.org/utilities/block.html\n";
+    oss << " http://liblas.org/utilities/lasblock.html\n";
     oss << "----------------------------------------------------------\n";
 
 }
