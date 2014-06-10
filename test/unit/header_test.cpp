@@ -119,15 +119,17 @@ namespace tut
 # pragma warning(disable: 4309) // conditional expression is constant.
 #endif
 
+#ifndef _MSC_VER
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wconstant-conversion"
-
+#endif
         // Unsigned overflow
         // Likely compiler warning: truncation from int to boost::uint16_t
         h1.SetFileSourceId(id2 + 1);
         ensure_equals(h1.GetFileSourceId(), overflowed);
-
+#ifndef _MSC_VER
 #pragma clang diagnostic pop
+#endif
 
 #ifdef _MSC_VER
 # pragma warning(push)
