@@ -104,7 +104,7 @@ void LibgeotiffOneTimeInit()
 
     // If linking with an external libgeotiff we hope this will call the
     // SetCSVFilenameHook() in libgeotiff, not the one in gdal/port!
-    SetCSVFilenameHook( GDALDefaultCSVFilename );
+    // SetCSVFilenameHook( GDALDefaultCSVFilename );
 }
 
 /************************************************************************/
