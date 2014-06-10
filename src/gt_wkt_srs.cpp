@@ -102,9 +102,9 @@ void LibgeotiffOneTimeInit()
 
     bOneTimeInitDone = TRUE;
 
+//    SetCSVFilenameHook( GDALDefaultCSVFilename );
     // If linking with an external libgeotiff we hope this will call the
     // SetCSVFilenameHook() in libgeotiff, not the one in gdal/port!
-    SetCSVFilenameHook( GDALDefaultCSVFilename );
 }
 
 /************************************************************************/
@@ -1181,7 +1181,8 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 /*      Create an OGRSpatialReference object corresponding to the       */
 /*      string.                                                         */
 /* -------------------------------------------------------------------- */
-    poSRS = new OGRSpatialReference();
+//    poSRS = new OGRSpatialReference();
+    poSRS = (OGRSpatialReference*)OSRNewSpatialReference(NULL);
     if( poSRS->importFromWkt((char **) &pszOGCWKT) != OGRERR_NONE )
     {
         OGRSpatialReference::DestroySpatialReference(poSRS);
