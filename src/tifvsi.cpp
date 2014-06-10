@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: tifvsi.cpp 27044 2014-03-16 23:41:27Z rouault $
  *
  * Project:  GeoTIFF Driver
  * Purpose:  Implement system hook functions for libtiff on top of CPL/VSI,
@@ -86,7 +86,7 @@ _tiffSeekProc(thandle_t fd, toff_t off, int whence)
 static int
 _tiffCloseProc(thandle_t fd)
 {
-    return 0;
+    return VSIFCloseL( (VSILFILE *) fd );
 }
 
 static toff_t
@@ -120,11 +120,12 @@ _tiffUnmapProc(thandle_t fd, tdata_t base, toff_t size)
 /*
  * Open a TIFF file for read/writing.
  */
-TIFF* VSI_TIFFOpen(const char* name, const char* mode,
-                   VSILFILE* fp)
+TIFF* VSI_TIFFOpen(const char* name, const char* mode)
 {
+    static const char module[] = "TIFFOpen";
     int           i, a_out;
     char          access[32];
+    VSILFILE      *fp;
     TIFF          *tif;
 
     a_out = 0;
@@ -142,13 +143,24 @@ TIFF* VSI_TIFFOpen(const char* name, const char* mode,
     }
 
     strcat( access, "b" );
+                    
+    fp = VSIFOpenL( name, access );
+    if (fp == NULL) {
+        if( errno >= 0 )
+            TIFFError(module,"%s: %s", name, VSIStrerror( errno ) );
+        else
+            TIFFError(module, "%s: Cannot open", name);
+        return ((TIFF *)0);
+    }
 
-    VSIFSeekL(fp, 0, SEEK_SET);
     tif = XTIFFClientOpen(name, mode,
                           (thandle_t) fp,
                           _tiffReadProc, _tiffWriteProc,
                           _tiffSeekProc, _tiffCloseProc, _tiffSizeProc,
                           _tiffMapProc, _tiffUnmapProc);
 
+    if( tif == NULL )
+        VSIFCloseL( fp );
+        
     return tif;
 }

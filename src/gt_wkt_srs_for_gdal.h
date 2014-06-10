@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: gt_wkt_srs_for_gdal.h 27182 2014-04-14 20:03:08Z rouault $
  *
  * Project:  GeoTIFF Driver
  * Purpose:  Read/Write in-memory GeoTIFF file

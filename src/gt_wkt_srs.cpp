@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: gt_wkt_srs.cpp 27182 2014-04-14 20:03:08Z rouault $
  *
  * Project:  GeoTIFF Driver
  * Purpose:  Implements translation between GeoTIFF normalized projection
@@ -45,7 +45,7 @@
 #include "gt_wkt_srs_for_gdal.h"
 #include "gt_citation.h"
 
-CPL_CVSID("$Id$")
+CPL_CVSID("$Id: gt_wkt_srs.cpp 27182 2014-04-14 20:03:08Z rouault $")
 
 #define ProjLinearUnitsInterpCorrectGeoKey   3059
 
@@ -209,11 +209,11 @@ static void WKTMassageDatum( char ** ppszDatum )
 /************************************************************************/
 
 /* For example:
-   GTCitationGeoKey (Ascii,215): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision$ $Date$\nProjection Name = UTM\nUnits = meters\nGeoTIFF Units = meters"
+   GTCitationGeoKey (Ascii,215): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 27182 $ $Date: 2014-04-14 15:03:08 -0500 (Mon, 14 Apr 2014) $\nProjection Name = UTM\nUnits = meters\nGeoTIFF Units = meters"
 
-   GeogCitationGeoKey (Ascii,267): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision$ $Date$\nUnable to match Ellipsoid (Datum) to a GeographicTypeGeoKey value\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
+   GeogCitationGeoKey (Ascii,267): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 27182 $ $Date: 2014-04-14 15:03:08 -0500 (Mon, 14 Apr 2014) $\nUnable to match Ellipsoid (Datum) to a GeographicTypeGeoKey value\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
 
-   PCSCitationGeoKey (Ascii,214): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision$ $Date$\nUTM Zone 10N\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
+   PCSCitationGeoKey (Ascii,214): "IMAGINE GeoTIFF Support\nCopyright 1991 - 2001 by ERDAS, Inc. All Rights Reserved\n@(#)$RCSfile$ $Revision: 27182 $ $Date: 2014-04-14 15:03:08 -0500 (Mon, 14 Apr 2014) $\nUTM Zone 10N\nEllipsoid = Clarke 1866\nDatum = NAD27 (CONUS)"
  
 */
 
@@ -2361,20 +2361,19 @@ CPLErr GTIFWktFromMemBufEx( int nSize, unsigned char *pabyBuffer,
     VSILFILE *fp = VSIFileFromMemBuffer( szFilename, pabyBuffer, nSize, FALSE );
     if( fp == NULL )
         return CE_Failure;
+    VSIFCloseL( fp );
 
 /* -------------------------------------------------------------------- */
 /*      Initialize access to the memory geotiff structure.              */
 /* -------------------------------------------------------------------- */
     TIFF        *hTIFF;
-
-    hTIFF = VSI_TIFFOpen( szFilename, "rc", fp );
+    hTIFF = VSI_TIFFOpen( szFilename, "rc" );
 
     if( hTIFF == NULL )
     {
         CPLError( CE_Failure, CPLE_AppDefined,
                   "TIFF/GeoTIFF structure is corrupt." );
         VSIUnlink( szFilename );
-        VSIFCloseL( fp );
         return CE_Failure;
     }
     
@@ -2495,7 +2494,6 @@ CPLErr GTIFWktFromMemBufEx( int nSize, unsigned char *pabyBuffer,
 /*      Cleanup.                                                        */
 /* -------------------------------------------------------------------- */
     XTIFFClose( hTIFF );
-    VSIFCloseL( fp );
 
     VSIUnlink( szFilename );
 
@@ -2539,17 +2537,12 @@ CPLErr GTIFMemBufFromWktEx( const char *pszWKT, const double *padfGeoTransform,
 /* -------------------------------------------------------------------- */
 /*      Initialize access to the memory geotiff structure.              */
 /* -------------------------------------------------------------------- */
-    VSILFILE* fpL = VSIFOpenL( szFilename, "w" );
-    if( fpL == NULL )
-        return CE_Failure;
-
-    hTIFF = VSI_TIFFOpen( szFilename, "w", fpL );
+    hTIFF = VSI_TIFFOpen( szFilename, "w" );
 
     if( hTIFF == NULL )
     {
         CPLError( CE_Failure, CPLE_AppDefined,
                   "TIFF/GeoTIFF structure is corrupt." );
-        VSIFCloseL(fpL);
         return CE_Failure;
     }
 
@@ -2684,7 +2677,6 @@ CPLErr GTIFMemBufFromWktEx( const char *pszWKT, const double *padfGeoTransform,
     TIFFWriteDirectory( hTIFF );
 
     XTIFFClose( hTIFF );
-    VSIFCloseL(fpL);
 
 /* -------------------------------------------------------------------- */
 /*      Read back from the memory buffer.  It would be preferrable      */
