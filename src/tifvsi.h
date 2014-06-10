@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tifvsi.h 21102 2010-11-08 20:47:38Z rouault $
+ * $Id$
  *
  * Project:  GeoTIFF Driver
  * Purpose:  Implement system hook functions for libtiff on top of CPL/VSI,
@@ -9,6 +9,7 @@
  *
  ******************************************************************************
  * Copyright (c) 2005, Frank Warmerdam, warmerdam@pobox.com
+ * Copyright (c) 2010, Even Rouault <even dot rouault at mines-paris dot org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -34,6 +35,6 @@
 
 #include "tiffio.h"
 
-TIFF* VSI_TIFFOpen(const char* name, const char* mode);
+TIFF* VSI_TIFFOpen(const char* name, const char* mode, VSILFILE* fp);
 
 #endif // TIFVSI_H_INCLUDED
