@@ -69,8 +69,8 @@ Point::Point()
     , m_default_header(DefaultHeader::get())
     
 {
-    m_data.resize(ePointSize3);
-    m_data.assign(ePointSize3, 0);
+    m_data.resize(DefaultHeader::get().GetDataRecordLength());
+    m_data.assign(DefaultHeader::get().GetDataRecordLength(), 0);
 }
 
 Point::Point(Header const* hdr)
@@ -78,8 +78,8 @@ Point::Point(Header const* hdr)
      m_header(hdr)
     , m_default_header(DefaultHeader::get())
 {
-    m_data.resize(ePointSize3);
-    m_data.assign(ePointSize3, 0);
+    m_data.resize(hdr->GetDataRecordLength());
+    m_data.assign(hdr->GetDataRecordLength(), 0);
 }
 
 Point::Point(Point const& other)
