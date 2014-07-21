@@ -531,7 +531,8 @@ LAS_DLL LASHeaderH LASHeader_Create(void) {
 }
 
 LAS_DLL LASPointH LASPoint_Create(void) {
-        return (LASPointH) new liblas::Point();
+        // return (LASPointH) new liblas::Point();
+        return 0;
 }
 
 LAS_DLL LASPointH LASPoint_Copy(const LASPointH hPoint) {

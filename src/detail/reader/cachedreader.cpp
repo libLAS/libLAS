@@ -120,7 +120,7 @@ void CachedReaderImpl::CacheData(uint32_t position)
         try {
             m_mask[m_current] = 1;
             ReadNextUncachedPoint();
-            m_cache[i] = ReaderImpl::GetPoint();
+            m_cache[i] = new liblas::Point(ReaderImpl::GetPoint());
         } catch (std::out_of_range&) {
             // cached to the end
             break;
@@ -181,7 +181,7 @@ void CachedReaderImpl::ReadCachedPoint(uint32_t position) {
     }
     if (m_mask[position] == 1) {
         m_cache_read_position = position;
-        *m_point =  m_cache[cache_position];
+        *m_point =  *m_cache[cache_position];
         return;
     } else {
 
@@ -208,7 +208,7 @@ void CachedReaderImpl::ReadCachedPoint(uint32_t position) {
                     << " greater than cache size: " << m_cache.size() ;
                 throw std::runtime_error(msg.str());
             }
-            *m_point = m_cache[cache_position];
+            *m_point = *m_cache[cache_position];
             return;
         } else {
             std::ostringstream msg;

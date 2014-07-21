@@ -1319,7 +1319,14 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         header.SetSRS(out_ref);
         
         liblas::Bounds<double> b = header.GetExtent();
-        b.project(in_ref, out_ref);
+    
+        liblas::ReprojectionTransform trans(in_ref, out_ref);
+    
+        liblas::Point minimum(&header);
+        liblas::Point maximum(&header);
+        trans.transform(minimum);
+        trans.transform(maximum);
+        b = liblas::Bounds<double>(minimum, maximum);
         header.SetExtent(b);
         liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, &header));
         transforms.push_back(srs_transform);

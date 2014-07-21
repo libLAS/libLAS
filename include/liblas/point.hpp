@@ -104,7 +104,7 @@ public:
         eScanAngleRankMax = 90
     };
 
-    Point();
+    // Point();
     ~Point() {}
     Point(Header const* header);
     Point(Point const& other);

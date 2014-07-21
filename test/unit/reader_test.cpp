@@ -67,7 +67,8 @@ namespace tut
 
         // uninitialized point object, a null-point
         liblas::Point const& p = reader.GetPoint();
-        ensure(p == liblas::Point());
+        liblas::Point t(&liblas::DefaultHeader::get());
+        ensure(p == t);
     }
 
     // Test ReadPoint and GetPoint pair
