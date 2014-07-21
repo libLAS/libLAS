@@ -197,14 +197,7 @@ void RewriteHeader(liblas::Header const& header, std::string const& filename)
         liblas::Writer writer(ofs, header);
     }
     ofs.close();
-    
-    // Write our updated header with summary info
-    std::ofstream ofs2(filename.c_str(), m);
-    {
-        // scope this, so the dtor can write to the stream before we close it
-        liblas::Writer writer2(ofs2, header);
-    }
-    ofs2.close();
+
 }  
   
 void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& header)
