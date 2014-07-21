@@ -219,12 +219,11 @@ endif()
 # GDAL/OGR support - optional, default=OFF
 set(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
 
-if(WITH_GDAL)
-
-  find_package(GDAL 1.7.0)
+find_package(GDAL 1.7.0)
+if (GDAL_FOUND)
   include_directories(${GDAL_INCLUDE_DIR})
   add_definitions(-DHAVE_GDAL=1)
-
+  set(WITH_GDAL TRUE)
   mark_as_advanced(CLEAR GDAL_INCLUDE_DIR) 
   mark_as_advanced(CLEAR GDAL_LIBRARY) 
 
@@ -233,27 +232,19 @@ endif()
 # GeoTIFF support - optional, default=OFF
 set(WITH_GEOTIFF FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
 
-if(WITH_GEOTIFF)
-  find_package(GeoTIFF 1.2.5)
+find_package(GeoTIFF 1.2.5)
+if(GEOTIFF_FOUND)
 
-  if(GEOTIFF_FOUND)
-    
+    set(WITH_GEOTIFF TRUE)
     # Confirm required API is available
     include(CheckFunctionExists) 
     set(CMAKE_REQUIRED_LIBRARIES ${GEOTIFF_LIBRARY})
-    #       check_function_exists(ST_Create HAVE_ST_CREATE)
-    
-    #        if(NOT HAVE_ST_CREATE)
-    #            set(GEOTIFF_FOUND) # Reset to NOT found for GeoTIFF
-    #            message(FATAL_ERROR "GeoTIFF support requires libgeotiff 1.2.5 or newer.")
-    #        else()
     include_directories(${GEOTIFF_INCLUDE_DIR})
     add_definitions(-DHAVE_LIBGEOTIFF=1)
-    #        endif()
-  endif()
+endif()
 
-  # Determine libTIFF availability, required
-  if (GEOTIFF_FOUND)
+# Determine libTIFF availability, required
+if (GEOTIFF_FOUND)
 
     mark_as_advanced(CLEAR TIFF_INCLUDE_DIR) 
     mark_as_advanced(CLEAR TIFF_LIBRARY) 
@@ -264,13 +255,13 @@ if(WITH_GEOTIFF)
     if (TIFF_FOUND)
       include_directories(${TIFF_INCLUDE_DIR})
     endif()
-  endif()
 endif()
+
 
 if(WITH_GDAL)
   if (NOT GEOTIFF_FOUND)
     message(FATAL_ERROR
-      "GDAL support requires GeoTIFF library which was not selected")
+      "GDAL support requires GeoTIFF library which was not found")
   endif()
 endif()
 
