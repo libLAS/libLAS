@@ -77,7 +77,7 @@ void WriterImpl::UpdatePointCount(boost::uint32_t count)
     boost::uint32_t out = m_pointCount;
 
     if ( count != 0 ) { out = count; }
-    
+
     m_header->SetPointRecordsCount(out);
     
     if (!m_ofs.good() ) return;
@@ -102,7 +102,7 @@ WriterImpl::~WriterImpl()
     // care if we weren't able to write it.
     try
     {
-        UpdatePointCount(0);
+        UpdatePointCount(m_pointCount);
         
     } catch (std::runtime_error const&)
     {
