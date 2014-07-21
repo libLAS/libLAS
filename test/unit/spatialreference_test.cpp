@@ -263,7 +263,7 @@ namespace tut
 
             liblas::Writer writer(ofs, header);
             
-            liblas::Point point;
+            liblas::Point point(&writer.GetHeader());
             point.SetCoordinates( -117, 33, 100 );
             writer.WritePoint( point );
         }
@@ -308,7 +308,7 @@ namespace tut
 
             liblas::Writer writer(ofs, header);
             
-            liblas::Point point;
+            liblas::Point point(&writer.GetHeader());
             point.SetCoordinates( -117, 33, 100 );
             writer.WritePoint( point );
         }
