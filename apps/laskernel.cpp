@@ -312,7 +312,7 @@ liblas::FilterPtr MakeTimeFilter(std::string times,
 liblas::FilterPtr MakeScanAngleFilter(std::string intensities, 
                                       liblas::FilterI::FilterType ftype) 
 {
-    typedef liblas::ContinuousValueFilter<boost::int8_t> filter;
+    typedef liblas::ContinuousValueFilter<boost::int32_t> filter;
     filter::filter_func f = &liblas::Point::GetScanAngleRank;
     filter* intensity_filter = new filter(f, intensities);
     intensity_filter->SetType(ftype);
