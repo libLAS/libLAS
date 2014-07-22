@@ -68,14 +68,9 @@ endif()
 
 set(APPS_CPP_DEPENDENCIES
     ${LIBLAS_LIB_NAME}
-    ${TIFF_LIBRARY}
-    ${GEOTIFF_LIBRARY}
-    ${GDAL_LIBRARY}
-    ${SPATIALINDEX_LIBRARY}
-	${LASZIP_LIBRARY}
-    ${Boost_LIBRARIES})
+)
 
-link_directories(${Boost_LIBRARY_DIRS})
+# link_directories(${Boost_LIBRARY_DIRS})
 
 #    add_executable(lasschematest lasschematest.cpp laskernel.cpp)
 #    target_link_libraries(lasschematest ${APPS_CPP_DEPENDENCIES} ${LIBXML2_LIBRARIES})
