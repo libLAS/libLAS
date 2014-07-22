@@ -18,24 +18,19 @@ Iowa DNR for use in its state-wide `LIDAR`_ project.  Ongoing support for
 libLAS is provided by a number of organizations including the 
 `U.S. Army Cold Regions Research and Engineering Laboratory`_.
 
-libLAS builds upon by `Martin Isenburg and Jonathan Shewchuk`_ of LLNL/UC
-Berkeley in their `LAStools`_ project to do a number of things. First, the
-libLAS focuses almost completely on providing an easy-to-program-with library
-for software developers wishing to implement the LAS specification in their
-own software. libLAS is a building block for developers looking to implement
-their own LiDAR data processing when working with ASPRS LAS data.
+As of 2014, libLAS has been almost entirely superceded by `Martin Isenburg`_'s `LASlib`_ library. The only functionality that libLAS provides over LASlib is the 
+ability to work with `GDAL`_-derived coordinate system information and 
+reproject into infrequently-used coordinate systems. Additionally, libLAS' 
+Python capabilities are much better expressed by the pure-Python laspy 
+http://laspy.org library, and if manipulating LAS data in Python is your 
+ultimate desire, use that instead of libLAS.
 
-For more information, :ref:`this document <lastools_liblas>` provides a
-comparison and description of the relationship of libLAS to LAStools.
 
-.. seealso::
-    http://trac.liblas.org contains the previous incarnation of the libLAS 
-    website.  If you can't find something here, it should still be there.
 
 
 .. _`U.S. Army Cold Regions Research and Engineering Laboratory` : http://www.crrel.usace.army.mil/
 
-
+.. _`LASlib`: http://www.cs.unc.edu/~isenburg/lastools/download/laslib.zip
 
 
 
