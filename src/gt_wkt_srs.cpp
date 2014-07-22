@@ -714,12 +714,13 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
             break;
         
           case CT_HotineObliqueMercatorAzimuthCenter:
+#if GDAL_VERSION_MINOR >= 11
             oSRS.SetHOMAC( adfParm[0], adfParm[1],
                            adfParm[2], adfParm[3],
                            adfParm[4],
                            adfParm[5], adfParm[6] );
             break;
-        
+#endif        
           case CT_EquidistantConic: 
             oSRS.SetEC( adfParm[0], adfParm[1],
                         adfParm[2], adfParm[3],
