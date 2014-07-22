@@ -307,8 +307,10 @@ void Summary::AddPoint(liblas::Point const& p)
 void Summary::SetHeader(liblas::Header const& h) 
 {
     m_header = h;
-    minimum.get()->SetHeader(&m_header);
-    maximum.get()->SetHeader(&m_header);
+
+    minimum = boost::shared_ptr<liblas::Point>(new liblas::Point(&m_header));
+    maximum = boost::shared_ptr<liblas::Point>(new liblas::Point(&m_header));
+
     bHaveHeader = true;
 }
 
@@ -668,8 +670,8 @@ void CoordinateSummary::AddPoint(liblas::Point const& p)
 void CoordinateSummary::SetHeader(liblas::Header const& h) 
 {
     m_header = h;
-    minimum.get()->SetHeader(&m_header);
-    maximum.get()->SetHeader(&m_header);
+    minimum = boost::shared_ptr<liblas::Point>(new liblas::Point(&m_header));
+    maximum = boost::shared_ptr<liblas::Point>(new liblas::Point(&m_header));
     bHaveHeader = true;
 }
 
