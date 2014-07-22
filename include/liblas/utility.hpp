@@ -86,8 +86,8 @@ private:
     boost::array<uint32_t, 8> points_by_return; 
     boost::array<uint32_t, 8> returns_of_given_pulse;
     bool first;
-    std::unique_ptr<liblas::Point> minimum;
-    std::unique_ptr<liblas::Point> maximum;
+    boost::shared_ptr<liblas::Point> minimum;
+    boost::shared_ptr<liblas::Point> maximum;
     liblas::Header m_header;
     bool bHaveHeader; 
     bool bHaveColor;
@@ -115,8 +115,8 @@ private:
     boost::array<uint32_t, 8> points_by_return; 
     boost::array<uint32_t, 8> returns_of_given_pulse;
     bool first;
-    std::unique_ptr<liblas::Point> minimum;
-    std::unique_ptr<liblas::Point> maximum;
+    boost::shared_ptr<liblas::Point> minimum;
+    boost::shared_ptr<liblas::Point> maximum;
     liblas::Header m_header;
     bool bHaveHeader; 
     bool bHaveColor;

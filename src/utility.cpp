@@ -77,8 +77,8 @@ Summary::Summary(Summary const& other)
     , points_by_return(other.points_by_return)
     , returns_of_given_pulse(other.returns_of_given_pulse)
     , first(other.first)
-    , minimum(std::unique_ptr<liblas::Point>(new liblas::Point(*other.minimum)))
-    , maximum(std::unique_ptr<liblas::Point>(new liblas::Point(*other.maximum)))
+    , minimum(boost::shared_ptr<liblas::Point>(new liblas::Point(*other.minimum)))
+    , maximum(boost::shared_ptr<liblas::Point>(new liblas::Point(*other.maximum)))
     , m_header(other.m_header)
     , bHaveHeader(other.bHaveHeader)
     , bHaveColor(other.bHaveColor)
@@ -98,8 +98,8 @@ Summary& Summary::operator=(Summary const& rhs)
         first = rhs.first;
         points_by_return = rhs.points_by_return;
         returns_of_given_pulse = rhs.returns_of_given_pulse;
-        minimum = std::unique_ptr<liblas::Point>(new liblas::Point(*rhs.minimum));
-        maximum =  std::unique_ptr<liblas::Point>(new liblas::Point(*rhs.maximum));
+        minimum = boost::shared_ptr<liblas::Point>(new liblas::Point(*rhs.minimum));
+        maximum =  boost::shared_ptr<liblas::Point>(new liblas::Point(*rhs.maximum));
         m_header = rhs.m_header;
         bHaveHeader = rhs.bHaveHeader;
         bHaveColor = rhs.bHaveColor;
@@ -114,8 +114,8 @@ void Summary::AddPoint(liblas::Point const& p)
 
         if (first) {
             
-            minimum = std::unique_ptr<liblas::Point>(new liblas::Point(p));
-            maximum = std::unique_ptr<liblas::Point>(new liblas::Point(p));
+            minimum = boost::shared_ptr<liblas::Point>(new liblas::Point(p));
+            maximum = boost::shared_ptr<liblas::Point>(new liblas::Point(p));
             
             // We only summarize the base dimensions 
             // but we want to be able to read/set them all.  The 
@@ -581,8 +581,8 @@ CoordinateSummary::CoordinateSummary(CoordinateSummary const& other)
     , points_by_return(other.points_by_return)
     , returns_of_given_pulse(other.returns_of_given_pulse)
     , first(other.first)
-    , minimum(std::unique_ptr<liblas::Point>(new liblas::Point(*other.minimum)))
-    , maximum(std::unique_ptr<liblas::Point>(new liblas::Point(*other.maximum)))
+    , minimum(boost::shared_ptr<liblas::Point>(new liblas::Point(*other.minimum)))
+    , maximum(boost::shared_ptr<liblas::Point>(new liblas::Point(*other.maximum)))
     , m_header(other.m_header)
     , bHaveHeader(other.bHaveHeader)
     , bHaveColor(other.bHaveColor)
@@ -599,8 +599,8 @@ CoordinateSummary& CoordinateSummary::operator=(CoordinateSummary const& rhs)
         first = rhs.first;
         points_by_return = rhs.points_by_return;
         returns_of_given_pulse = rhs.returns_of_given_pulse;
-        minimum = std::unique_ptr<liblas::Point>(new liblas::Point(*rhs.minimum));
-        maximum = std::unique_ptr<liblas::Point>(new liblas::Point(*rhs.maximum));
+        minimum = boost::shared_ptr<liblas::Point>(new liblas::Point(*rhs.minimum));
+        maximum = boost::shared_ptr<liblas::Point>(new liblas::Point(*rhs.maximum));
         m_header = rhs.m_header;
         bHaveHeader = rhs.bHaveHeader;
         bHaveColor = rhs.bHaveColor;
@@ -614,8 +614,8 @@ void CoordinateSummary::AddPoint(liblas::Point const& p)
         count++;
 
         if (first) {
-            minimum = std::unique_ptr<liblas::Point>(new liblas::Point(p));
-            maximum = std::unique_ptr<liblas::Point>(new liblas::Point(p));
+            minimum = boost::shared_ptr<liblas::Point>(new liblas::Point(p));
+            maximum = boost::shared_ptr<liblas::Point>(new liblas::Point(p));
             
             if (bHaveHeader)
             {
