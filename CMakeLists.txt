@@ -208,7 +208,6 @@ mark_as_advanced(WITH_STATIC_LASZIP)
 
 find_package(LASzip 2.0.1)
 if(LASZIP_FOUND)    
-    set(CMAKE_REQUIRED_LIBRARIES ${LASZIP_LIBRARY})
     include_directories(${LASZIP_INCLUDE_DIR})
     add_definitions(-DHAVE_LASZIP=1)
     mark_as_advanced(CLEAR LASZIP_INCLUDE_DIR) 
@@ -227,7 +226,6 @@ if (GDAL_FOUND)
   set(WITH_GDAL TRUE)
   mark_as_advanced(CLEAR GDAL_INCLUDE_DIR) 
   mark_as_advanced(CLEAR GDAL_LIBRARY) 
-
 endif()
 
 # GeoTIFF support - optional, default=OFF
@@ -235,17 +233,12 @@ set(WITH_GEOTIFF FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
 
 find_package(GeoTIFF 1.2.5)
 if(GEOTIFF_FOUND)
-
     set(WITH_GEOTIFF TRUE)
     # Confirm required API is available
     include(CheckFunctionExists) 
     set(CMAKE_REQUIRED_LIBRARIES ${GEOTIFF_LIBRARY})
     include_directories(${GEOTIFF_INCLUDE_DIR})
     add_definitions(-DHAVE_LIBGEOTIFF=1)
-endif()
-
-# Determine libTIFF availability, required
-if (GEOTIFF_FOUND)
 
     mark_as_advanced(CLEAR TIFF_INCLUDE_DIR) 
     mark_as_advanced(CLEAR TIFF_LIBRARY) 

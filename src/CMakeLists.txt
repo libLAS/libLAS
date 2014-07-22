@@ -229,12 +229,7 @@ target_link_libraries(${LIBLAS_LIB_NAME}
   ${Boost_LIBRARIES})
 
 target_link_libraries(${LIBLAS_C_LIB_NAME}
-  ${LIBLAS_LIB_NAME}    
-  ${TIFF_LIBRARY}
-  ${GEOTIFF_LIBRARY}
-  ${GDAL_LIBRARY}
-  ${LASZIP_LIBRARY}
-  ${Boost_LIBRARIES})
+  ${LIBLAS_LIB_NAME} )
 
 set_target_properties(${LIBLAS_LIB_NAME}
   PROPERTIES
