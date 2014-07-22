@@ -214,6 +214,9 @@ if(LASZIP_FOUND)
     mark_as_advanced(CLEAR LASZIP_LIBRARY) 
     mark_as_advanced(CLEAR LASZIP_VERSION) 
     set(WITH_LASZIP TRUE)
+else()
+    set(LASZIP_LIBRARY "")
+    set(LASZIP_INCLUDE_DIR "")
 endif()
 
 # GDAL/OGR support - optional, default=OFF
@@ -236,7 +239,6 @@ if(GEOTIFF_FOUND)
     set(WITH_GEOTIFF TRUE)
     # Confirm required API is available
     include(CheckFunctionExists) 
-    set(CMAKE_REQUIRED_LIBRARIES ${GEOTIFF_LIBRARY})
     include_directories(${GEOTIFF_INCLUDE_DIR})
     add_definitions(-DHAVE_LIBGEOTIFF=1)
 
@@ -249,6 +251,9 @@ if(GEOTIFF_FOUND)
     if (TIFF_FOUND)
       include_directories(${TIFF_INCLUDE_DIR})
     endif()
+else()
+    set(GEOTIFF_LIBRARY "")
+    set(GEOTIFF_INCLUDE_DIR "")
 endif()
 
 
