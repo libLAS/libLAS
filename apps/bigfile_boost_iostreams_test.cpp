@@ -38,9 +38,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  ****************************************************************************/
-#include <liblas/laspoint.hpp>
-#include <liblas/lasreader.hpp>
-#include <liblas/laswriter.hpp>
+#include <liblas/point.hpp>
+#include <liblas/reader.hpp>
+#include <liblas/writer.hpp>
 #ifdef _MSC_VER
 #  pragma warning(push)
 #  pragma warning(disable: 4702)
@@ -50,7 +50,7 @@
 #include <boost/iostreams/stream.hpp>
 #ifdef _MSC_VER
 #  pragma warning(pop)
-#endif()
+#endif
 #include <cassert>
 #include <exception>
 #include <iostream>
@@ -82,7 +82,7 @@ int main()
             las::Header header;
             las::Writer writer(bigofs, header);
 
-            las::Point empty_point;
+            las::Point empty_point(&las::DefaultHeader::get());
             bio::stream_offset i = 0;
             for (i = 0; i < point_count; ++i)
             {
