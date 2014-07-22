@@ -2093,7 +2093,7 @@ LAS_DLL char* LASGuid_AsString(LASGuidH hId) {
     VALIDATE_LAS_POINTER1(hId, "LASGuid_AsString", 0);
     boost::uuids::uuid* id= (boost::uuids::uuid*)hId;
     std::ostringstream oss;
-    oss << id;
+    oss << *id;
     return LASCopyString(oss.str().c_str());
 }
 
