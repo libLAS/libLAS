@@ -138,8 +138,8 @@ if(WIN32)
 
   endif()
   
-  set(CMAKE_INCLUDE_PATH c:/osgeo4w/include;$ENV{CMAKE_INCLUDE_PATH})
-  set(CMAKE_LIBRARY_PATH c:/osgeo4w/lib;$ENV{CMAKE_LIBRARY_PATH})
+  set(CMAKE_INCLUDE_PATH c:/osgeo4w64/include;$ENV{CMAKE_INCLUDE_PATH})
+  set(CMAKE_LIBRARY_PATH c:/osgeo4w64/lib;$ENV{CMAKE_LIBRARY_PATH})
 else()
 
   # Recommended C++ compilation flags
@@ -389,6 +389,6 @@ include(CPack)
 
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
-#if (WIN32)
-#    include(BuildOSGeo4W)
-#endif(WIN32)
+if (WIN32)
+    include(BuildOSGeo4W)
+endif(WIN32)
