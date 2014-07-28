@@ -38,27 +38,12 @@ written to stderr.  Be careful to write it in the right directory or some
 tests will fail for reasons that are not clear. 
 
 
-Continuous Integration - buildbot
+Continuous Integration - TravisCI
 ..............................................................................
 
 
-The libLAS project uses `Buildbot <http://buildbot.net/trac>`__ to perform
-automated builds and continuous integration. Thanks to the
-`OSGeo Foundation`_, a dedicated Buildbot instance is hosted on the `OSGeo Buildbot`_.
-
-
-The libLAS Buildbot status is rendered on the `libLAS buildbot waterfall`_
-which can be used to trigger new builds on request.
-
-There is also #bbliblas bot present on `IRC`_ #liblas] IRC channel:
-
-::
-
-<mloskot> bbliblas: force build telascience-full "Routine check"
-
-.. warning::
-    Currently the buildbot instance is not operational.  This section will
-    be updated when an analygous service is available again.
+The libLAS project uses `Travis <https://travis-ci.org/libLAS/libLAS>`__ to perform
+automated builds and continuous integration. 
 
 
 Building libLAS and running unit tests using CMake on Unix

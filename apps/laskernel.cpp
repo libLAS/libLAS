@@ -197,14 +197,7 @@ void RewriteHeader(liblas::Header const& header, std::string const& filename)
         liblas::Writer writer(ofs, header);
     }
     ofs.close();
-    
-    // Write our updated header with summary info
-    std::ofstream ofs2(filename.c_str(), m);
-    {
-        // scope this, so the dtor can write to the stream before we close it
-        liblas::Writer writer2(ofs2, header);
-    }
-    ofs2.close();
+
 }  
   
 void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& header)
@@ -319,7 +312,7 @@ liblas::FilterPtr MakeTimeFilter(std::string times,
 liblas::FilterPtr MakeScanAngleFilter(std::string intensities, 
                                       liblas::FilterI::FilterType ftype) 
 {
-    typedef liblas::ContinuousValueFilter<boost::int8_t> filter;
+    typedef liblas::ContinuousValueFilter<boost::int32_t> filter;
     filter::filter_func f = &liblas::Point::GetScanAngleRank;
     filter* intensity_filter = new filter(f, intensities);
     intensity_filter->SetType(ftype);
@@ -1326,7 +1319,14 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         header.SetSRS(out_ref);
         
         liblas::Bounds<double> b = header.GetExtent();
-        b.project(in_ref, out_ref);
+    
+        liblas::ReprojectionTransform trans(in_ref, out_ref);
+    
+        liblas::Point minimum(&header);
+        liblas::Point maximum(&header);
+        trans.transform(minimum);
+        trans.transform(maximum);
+        b = liblas::Bounds<double>(minimum, maximum);
         header.SetExtent(b);
         liblas::TransformPtr srs_transform = liblas::TransformPtr(new liblas::ReprojectionTransform(in_ref, out_ref, &header));
         transforms.push_back(srs_transform);

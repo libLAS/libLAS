@@ -77,7 +77,7 @@ void usage()
     fprintf(stderr," or '-generating_software \"TerraScan\"' are available too.\n");
 
     fprintf(stderr, "For more information, see the full documentation for txt2las at:\n"
-                    " http://liblas.org/browser/trunk/doc/txt2las.txt\n");
+                    " http://liblas.org/utilities/txt2las.html\n");
     fprintf(stderr,"----------------------------------------------------------\n");
 
 }

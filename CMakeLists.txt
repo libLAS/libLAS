@@ -77,6 +77,9 @@ mark_as_advanced(CMAKE_VERBOSE_MAKEFILE)
 
 # Path to additional CMake modules
 set(CMAKE_MODULE_PATH "${libLAS_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
+if (CMAKE_MAJOR_VERSION GREATER 2)
+    cmake_policy(SET CMP0042 OLD)
+endif()
 
 ###############################################################################
 # General build settings
@@ -186,8 +189,8 @@ if(WIN32)
   endif(MSVC)
 endif(WIN32)
 
-# NOTE: Add iostreams to COMPONENTS list to enable bigfile_boost_iostreams_test
-find_package(Boost 1.38 COMPONENTS program_options thread system REQUIRED)
+find_package(Threads)
+find_package(Boost 1.38 COMPONENTS program_options thread system iostreams filesystem REQUIRED)
 
 if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
@@ -203,57 +206,41 @@ set(WITH_LASZIP FALSE CACHE BOOL "Choose if LASzip support should be built")
 set(WITH_STATIC_LASZIP FALSE CACHE BOOL "Choose of LASzip should be statically linked")
 mark_as_advanced(WITH_STATIC_LASZIP)
 
-if (WITH_LASZIP)
-    find_package(LASzip 2.0.1)
-
-    if(LASZIP_FOUND)    
-        set(CMAKE_REQUIRED_LIBRARIES ${LASZIP_LIBRARY})
-        include_directories(${LASZIP_INCLUDE_DIR})
-        add_definitions(-DHAVE_LASZIP=1)
-        mark_as_advanced(CLEAR LASZIP_INCLUDE_DIR) 
-        mark_as_advanced(CLEAR LASZIP_LIBRARY) 
-        mark_as_advanced(CLEAR LASZIP_VERSION) 
-    endif()
+find_package(LASzip 2.0.1)
+if(LASZIP_FOUND)    
+    include_directories(${LASZIP_INCLUDE_DIR})
+    add_definitions(-DHAVE_LASZIP=1)
+    mark_as_advanced(CLEAR LASZIP_INCLUDE_DIR) 
+    mark_as_advanced(CLEAR LASZIP_LIBRARY) 
+    mark_as_advanced(CLEAR LASZIP_VERSION) 
+    set(WITH_LASZIP TRUE)
+else()
+    set(LASZIP_LIBRARY "")
+    set(LASZIP_INCLUDE_DIR "")
 endif()
 
 # GDAL/OGR support - optional, default=OFF
 set(WITH_GDAL FALSE CACHE BOOL "Choose if GDAL support should be built")
 
-if(WITH_GDAL)
-
-  find_package(GDAL 1.7.0)
+find_package(GDAL 1.7.0)
+if (GDAL_FOUND)
   include_directories(${GDAL_INCLUDE_DIR})
   add_definitions(-DHAVE_GDAL=1)
-
+  set(WITH_GDAL TRUE)
   mark_as_advanced(CLEAR GDAL_INCLUDE_DIR) 
   mark_as_advanced(CLEAR GDAL_LIBRARY) 
-
 endif()
 
 # GeoTIFF support - optional, default=OFF
 set(WITH_GEOTIFF FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
 
-if(WITH_GEOTIFF)
-  find_package(GeoTIFF 1.2.5)
-
-  if(GEOTIFF_FOUND)
-    
+find_package(GeoTIFF 1.2.5)
+if(GEOTIFF_FOUND)
+    set(WITH_GEOTIFF TRUE)
     # Confirm required API is available
     include(CheckFunctionExists) 
-    set(CMAKE_REQUIRED_LIBRARIES ${GEOTIFF_LIBRARY})
-    #       check_function_exists(ST_Create HAVE_ST_CREATE)
-    
-    #        if(NOT HAVE_ST_CREATE)
-    #            set(GEOTIFF_FOUND) # Reset to NOT found for GeoTIFF
-    #            message(FATAL_ERROR "GeoTIFF support requires libgeotiff 1.2.5 or newer.")
-    #        else()
     include_directories(${GEOTIFF_INCLUDE_DIR})
     add_definitions(-DHAVE_LIBGEOTIFF=1)
-    #        endif()
-  endif()
-
-  # Determine libTIFF availability, required
-  if (GEOTIFF_FOUND)
 
     mark_as_advanced(CLEAR TIFF_INCLUDE_DIR) 
     mark_as_advanced(CLEAR TIFF_LIBRARY) 
@@ -264,13 +251,16 @@ if(WITH_GEOTIFF)
     if (TIFF_FOUND)
       include_directories(${TIFF_INCLUDE_DIR})
     endif()
-  endif()
+else()
+    set(GEOTIFF_LIBRARY "")
+    set(GEOTIFF_INCLUDE_DIR "")
 endif()
+
 
 if(WITH_GDAL)
   if (NOT GEOTIFF_FOUND)
     message(FATAL_ERROR
-      "GDAL support requires GeoTIFF library which was not selected")
+      "GDAL support requires GeoTIFF library which was not found")
   endif()
 endif()
 

@@ -91,7 +91,7 @@ namespace tut
             liblas::Header header;
             liblas::Writer writer(ofs, header);
 
-            liblas::Point point;
+            liblas::Point point(&header);
 
             // Write 1st point
             point.SetCoordinates(10, 20, 30);
@@ -125,11 +125,9 @@ namespace tut
             ensure(ifs.is_open());
             liblas::Reader reader(ifs);
 
-            liblas::Point point; // reusable cache
-
             // read 1st point
             reader.ReadNextPoint();
-            point = reader.GetPoint();
+            liblas::Point point = reader.GetPoint();
             ensure_distance(point.GetX(), 10.0, 0.1);
             ensure_distance(point.GetY(), 20.0, 0.1);
             ensure_distance(point.GetZ(), 30.0, 0.1);
@@ -266,7 +264,7 @@ namespace tut
             size_t count = 500;
             for ( size_t i = 0; i < count ; i++ )
             {
-                liblas::Point point;
+                liblas::Point point(&test2Writer.GetHeader());
                 point.SetCoordinates( 10.0 + i, 20.0 + i, 30.0 + i );
                 test2Writer.WritePoint( point );
             }
@@ -332,7 +330,7 @@ namespace tut
             
             for ( size_t i = 0; i < count ; i++ )
             {
-                liblas::Point point;
+                liblas::Point point(&writer.GetHeader());
                 point.SetCoordinates( 10.0 + i, 20.0 + i, 30.0 + i );
                 writer.WritePoint( point );
             }

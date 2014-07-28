@@ -192,7 +192,7 @@ bool WritePoints(liblas::Writer& writer, std::istream& strm, ScanHdr* hdr, bool 
             point->Intensity = row->EchoInt & 0x3FFF;
             point->Echo = (row->EchoInt >> 14);
         }
-        Point p;
+        Point p(&writer.GetHeader());
         
         p.SetRawX(point->Pnt.x);
         p.SetRawY(point->Pnt.y);

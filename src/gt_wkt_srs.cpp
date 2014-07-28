@@ -102,9 +102,9 @@ void LibgeotiffOneTimeInit()
 
     bOneTimeInitDone = TRUE;
 
-//    SetCSVFilenameHook( GDALDefaultCSVFilename );
     // If linking with an external libgeotiff we hope this will call the
     // SetCSVFilenameHook() in libgeotiff, not the one in gdal/port!
+    // SetCSVFilenameHook( GDALDefaultCSVFilename );
 }
 
 /************************************************************************/
@@ -714,12 +714,13 @@ char *GTIFGetOGISDefn( GTIF *hGTIF, GTIFDefn * psDefn )
             break;
         
           case CT_HotineObliqueMercatorAzimuthCenter:
+#if GDAL_VERSION_MINOR >= 11
             oSRS.SetHOMAC( adfParm[0], adfParm[1],
                            adfParm[2], adfParm[3],
                            adfParm[4],
                            adfParm[5], adfParm[6] );
             break;
-        
+#endif        
           case CT_EquidistantConic: 
             oSRS.SetEC( adfParm[0], adfParm[1],
                         adfParm[2], adfParm[3],
@@ -1584,7 +1585,8 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
         GTIFKeySet(psGTIF, ProjFalseNorthingGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetProjParm( SRS_PP_FALSE_NORTHING, 0.0 ) );
     }
-    
+
+#ifdef SRS_PT_HOTINE_OBLIQUE_MERCATOR_AZIMUTH_CENTER    
     else if( EQUAL(pszProjection,SRS_PT_HOTINE_OBLIQUE_MERCATOR_AZIMUTH_CENTER) )
     {
         GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,
@@ -1618,7 +1620,8 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
         GTIFKeySet(psGTIF, ProjFalseNorthingGeoKey, TYPE_DOUBLE, 1,
                    poSRS->GetProjParm( SRS_PP_FALSE_NORTHING, 0.0 ) );
     }
-    
+#endif
+        
     else if( EQUAL(pszProjection,SRS_PT_CASSINI_SOLDNER) )
     {
         GTIFKeySet(psGTIF, GTModelTypeGeoKey, TYPE_SHORT, 1,

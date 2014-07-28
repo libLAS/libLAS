@@ -102,7 +102,7 @@
   124
 
   >>> p.xml
-  '<?xml version="1.0" encoding="utf-8"?>\n<x>1</x><y>2</y><z>3</z><rawx>1</rawx><rawy>2</rawy><rawz>3</rawz><time>1205995545.013434</time><intensity>120</intensity><returnnumber>3</returnnumber><numberofreturns>4</numberofreturns><scandirection>0</scandirection><scanangle>45</scanangle><flightlineedge>1</flightlineedge><userdata>163</userdata><pointsourceid>0</pointsourceid><classification><name>Low Vegetation</name><id>3</id><withheld>false</withheld><keypoint>false</keypoint><synthetic>false</synthetic></classification><color><red>124</red><green>0</green><blue>0</blue></color>'
+  '<?xml version="1.0" encoding="utf-8"?>\n<x>1</x><y>2</y><z>3</z><rawx>1</rawx><rawy>2</rawy><rawz>3</rawz><time>1205988345.013434</time><intensity>120</intensity><returnnumber>3</returnnumber><numberofreturns>4</numberofreturns><scandirection>0</scandirection><scanangle>45</scanangle><flightlineedge>1</flightlineedge><userdata>163</userdata><pointsourceid>0</pointsourceid><classification><name>Low Vegetation</name><id>3</id><withheld>false</withheld><keypoint>false</keypoint><synthetic>false</synthetic></classification><color><red>124</red><green>0</green><blue>0</blue></color>'
 
 
 

@@ -24,7 +24,8 @@ namespace tut
         std::string file10_;
 
         laspoint_data()
-            : file10_(g_test_data_path + "//TO_core_last_clip.las")
+            : m_default(&liblas::DefaultHeader::get())
+            , file10_(g_test_data_path + "//TO_core_last_clip.las")
         {}
     };
 
@@ -56,7 +57,7 @@ namespace tut
     template<>
     void to::test<3>()
     {
-        liblas::Point p;
+        liblas::Point p(&liblas::DefaultHeader::get());
         p = m_default;
 
         test_default_point(p);
@@ -67,7 +68,7 @@ namespace tut
     template<>
     void to::test<4>()
     {
-        liblas::Point p;
+        liblas::Point p(&liblas::DefaultHeader::get());
         
         ensure("points are not equal", m_default == p);
     }
@@ -77,7 +78,7 @@ namespace tut
     template<>
     void to::test<5>()
     {
-        liblas::Point p;
+        liblas::Point p(&liblas::DefaultHeader::get());
         p.SetCoordinates(1.123, 2.456, 3.789);
         
         ensure("points are equal", m_default != p);
@@ -364,7 +365,7 @@ namespace tut
     void to::test<15>()
     {
         {
-            liblas::Point p;
+            liblas::Point p(&liblas::DefaultHeader::get());
             boost::uint16_t const outofrange = 8;
             p.SetReturnNumber(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
@@ -372,7 +373,7 @@ namespace tut
         }
 
         {
-            liblas::Point p;
+            liblas::Point p(&liblas::DefaultHeader::get());
             boost::uint16_t const outofrange = 8;
             p.SetNumberOfReturns(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
@@ -380,7 +381,7 @@ namespace tut
         }
 
         {
-            liblas::Point p;
+            liblas::Point p(&liblas::DefaultHeader::get());
             boost::uint16_t const outofrange = 2;
             p.SetScanDirection(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
@@ -388,7 +389,7 @@ namespace tut
         }
 
         {
-            liblas::Point p;
+            liblas::Point p(&liblas::DefaultHeader::get());
             boost::uint16_t const outofrange = 2;
             p.SetFlightLineEdge(outofrange);
             // XXX: Bit flag overflowed, so point data recognized as valid
@@ -396,7 +397,7 @@ namespace tut
         }
 
         {
-            liblas::Point p;
+            liblas::Point p(&liblas::DefaultHeader::get());
             boost::int8_t const outofrange = 91;
             p.SetScanAngleRank(outofrange);
             ensure_not(p.IsValid());
@@ -519,8 +520,7 @@ namespace tut
         liblas::Header header;
         header.SetDataFormatId(liblas::ePointFormat2);
         
-        liblas::Point p;
-        p.SetHeader(&header);
+        liblas::Point p(&header);
         
         liblas::Color c;
         c.SetRed(123);

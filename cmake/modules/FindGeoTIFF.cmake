@@ -29,16 +29,16 @@ IF(WIN32)
   SET(OSGEO4W_IMPORT_LIBRARY geotiff_i)
   IF(DEFINED ENV{OSGEO4W_ROOT})
     SET(OSGEO4W_ROOT_DIR $ENV{OSGEO4W_ROOT})
-    MESSAGE(STATUS "Trying OSGeo4W using environment variable OSGEO4W_ROOT=$ENV{OSGEO4W_ROOT}")
+    #MESSAGE(STATUS " FindGeoTIFF: trying OSGeo4W using environment variable OSGEO4W_ROOT=$ENV{OSGEO4W_ROOT}")
   ELSE()
     SET(OSGEO4W_ROOT_DIR c:/OSGeo4W)
-    MESSAGE(STATUS "Trying OSGeo4W using default location OSGEO4W_ROOT=${OSGEO4W_ROOT_DIR}")
+    #MESSAGE(STATUS " FindGeoTIFF: trying OSGeo4W using default location OSGEO4W_ROOT=${OSGEO4W_ROOT_DIR}")
   ENDIF()
 ENDIF()
      
 FIND_PATH(GEOTIFF_INCLUDE_DIR
   geotiff.h
-  PATH_SUFFIXES geotiff libgeotiff
+  PATH_SUFFIXES geotiff
   PATHS
   ${OSGEO4W_ROOT_DIR}/include)
 

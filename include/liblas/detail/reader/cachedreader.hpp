@@ -90,7 +90,7 @@ private:
     cache_mask_type::size_type m_cache_start_position;
     cache_mask_type::size_type m_cache_read_position;
 
-    typedef std::vector<liblas::Point> cache_type;
+    typedef std::vector<liblas::Point*> cache_type;
     cache_type m_cache;
     bool m_cache_initialized;
 };

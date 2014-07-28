@@ -222,7 +222,6 @@ add_library(${LIBLAS_LIB_NAME} SHARED ${LIBLAS_SOURCES})
 add_library(${LIBLAS_C_LIB_NAME} SHARED ${LIBLAS_C_SOURCES})
 
 target_link_libraries(${LIBLAS_LIB_NAME}
-  ${LIBLAS_LIB_NAME}
   ${TIFF_LIBRARY}
   ${GEOTIFF_LIBRARY}
   ${GDAL_LIBRARY}
@@ -230,12 +229,7 @@ target_link_libraries(${LIBLAS_LIB_NAME}
   ${Boost_LIBRARIES})
 
 target_link_libraries(${LIBLAS_C_LIB_NAME}
-  ${LIBLAS_LIB_NAME}
-  ${TIFF_LIBRARY}
-  ${GEOTIFF_LIBRARY}
-  ${GDAL_LIBRARY}
-  ${LASZIP_LIBRARY}
-  ${Boost_LIBRARIES})
+  ${LIBLAS_LIB_NAME} )
 
 set_target_properties(${LIBLAS_LIB_NAME}
   PROPERTIES
@@ -250,11 +244,11 @@ if (APPLE)
   set_target_properties(
     ${LIBLAS_C_LIB_NAME}
     PROPERTIES
-    INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+    INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib" BUILD_WITH_INSTALL_RPATH OFF)
   set_target_properties(
     ${LIBLAS_LIB_NAME}
     PROPERTIES
-    INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+    INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib" BUILD_WITH_INSTALL_RPATH OFF)
 endif()
 
 ###############################################################################

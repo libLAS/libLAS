@@ -80,7 +80,7 @@ namespace tut
 
             liblas::Writer writer(ofs, header);
 
-            liblas::Point point;
+            liblas::Point point(&writer.GetHeader());
 
             // Write 1st point
             point.SetCoordinates(10, 20, 30);
@@ -196,7 +196,7 @@ namespace tut
 
             liblas::Writer writer(ofs, header);
 
-            liblas::Point point;
+            liblas::Point point(&writer.GetHeader());
 
             // Write 1st point
             point.SetCoordinates(10, 20, 30);
@@ -234,7 +234,7 @@ namespace tut
             
             ensure_equals(reader.GetHeader().Compressed(), true);
 
-            liblas::Point point; // reusable cache
+            liblas::Point point(&reader.GetHeader()); // reusable cache
 
             // read 1st point
             bool ok = reader.ReadNextPoint();

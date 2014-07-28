@@ -63,28 +63,17 @@ using namespace boost;
 
 namespace liblas {
 
-Point::Point()
-    : 
-     m_header(0)
-    , m_default_header(DefaultHeader::get())
-    
-{
-    m_data.resize(ePointSize3);
-    m_data.assign(ePointSize3, 0);
-}
-
 Point::Point(Header const* hdr)
     : 
      m_header(hdr)
     , m_default_header(DefaultHeader::get())
 {
-    m_data.resize(ePointSize3);
-    m_data.assign(ePointSize3, 0);
+    m_data.resize(hdr->GetDataRecordLength());
+    m_data.assign(hdr->GetDataRecordLength(), 0);
 }
 
 Point::Point(Point const& other)
     : m_data(other.m_data)
-    // , m_header(other.m_header)
     , m_header(other.GetHeader())
     , m_default_header(DefaultHeader::get())
 {
@@ -95,7 +84,6 @@ Point& Point::operator=(Point const& rhs)
     if (&rhs != this)
     {
         m_data = rhs.m_data;
-        // m_header = rhs.m_header;
         m_header = rhs.m_header;
     }
     return *this;
