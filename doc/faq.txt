@@ -36,9 +36,10 @@ Where did libLAS' Python support go?
 --------------------------------------------------------------------------------
 
 http://www.laspy.org 
-suppors LAS 1.0-LAS 1.4, and it is suggested you use that if you want 
+supports LAS 1.0-LAS 1.4, and it is suggested you use that if you want 
 full Python support. libLAS' Python support was poorly implemented and not 
-as featureful as laspy. laspy is a new, more complete effort.
+as featureful as laspy. laspy is a new, more complete effort. Don't use libLAS' 
+Python library for any new development. It is slated to be removed in the future.
 
 How does ASPRS LAS Format handle endianness?
 --------------------------------------------------------------------------------
