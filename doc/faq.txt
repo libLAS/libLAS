@@ -16,6 +16,15 @@ reading and writing support. Additionally, a number of organizations also use
 libLAS for a variety of tasks. See `here
 <http://trac.liblas.org/wiki/WhoUsesLibLAS>`__ for more details.
 
+What is libLAS's development status?
+--------------------------------------------------------------------------------
+
+libLAS is in a rather dormant period and is essentially in maintenance-only 
+mode at this time. It is suggested you build atop `LASlib`_ if you are starting 
+new development.
+
+.. _`LASlib`: http://www.cs.unc.edu/~isenburg/lastools/
+
 What software supports ASPRS LAS Format?
 --------------------------------------------------------------------------------
 
@@ -23,6 +32,13 @@ There is a number of geospatial software packages that support read/write of
 ASPRS LAS Format. Popular software is listed on the `Software
 <http://trac.liblas.org/wiki/Software>`__ Wiki page.
 
+Where did libLAS' Python support go?
+--------------------------------------------------------------------------------
+
+http://www.laspy.org 
+suppors LAS 1.0-LAS 1.4, and it is suggested you use that if you want 
+full Python support. libLAS' Python support was poorly implemented and not 
+as featureful as laspy. laspy is a new, more complete effort.
 
 How does ASPRS LAS Format handle endianness?
 --------------------------------------------------------------------------------
@@ -42,11 +58,11 @@ stabilizes and there are enough softwares and implementations out there to
 base the work on. The LAS 2.0 specification is a whole-scale rewrite of the
 LAS specification, and its implementation will be challenging within libLAS.
 
-Does libLAS support LAS 1.3?
+Does libLAS support LAS 1.3 or LAS 1.4?
 --------------------------------------------------------------------------------
 
 Not at this time. Waveform data and software models to support waveform models
-within libLAS have not yet been developed. libLAS 1.6 supports reading point
+within libLAS have not yet been developed. libLAS 1.6+ supports reading point
 data from LAS 1.3 files, but waveform data is not supported.
 
 How can I remove points classified as ground from LAS files?
@@ -58,21 +74,3 @@ points removed::
    
     las2las input.las output.las --drop-classes 2
 
-How can I get past the linking error when building svn trunk on OS X 10.4?
---------------------------------------------------------------------------------
-
-::
-
-    ld: multiple definitions of symbol ___divdi3
-    /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/libgcc.a(_divdi3.o) private external definition of ___divdi3 in section (__TEXT,__text)
-    /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../libgcc_s.10.4.dylib(_divdi3_s.o) definition of ___divdi3
-    ld: multiple definitions of symbol ___udivdi3
-    /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/libgcc.a(_udivdi3.o) private external definition of ___udivdi3 in section (__TEXT,__text)
-    /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../libgcc_s.10.4.dylib(_udivdi3_s.o) definition of ___udivdi3
-    ld: multiple definitions of symbol ___umoddi3
-    /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/libgcc.a(_umoddi3.o) private external definition of ___umoddi3 in section (__TEXT,__text)
-    /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../libgcc_s.10.4.dylib(_umoddi3_s.o) definition of ___umoddi3
-    /usr/bin/libtool: internal link edit command failed
-    
-OS X 10.4's XCode has an extremely old automake/autoconf/libtool stack, and without upgrading those, 
-you'll have to stick to building libLAS from releases.
