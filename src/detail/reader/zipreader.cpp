@@ -199,7 +199,12 @@ void ZipReaderImpl::ReadIdiom()
     if (!ok)
     {
         std::ostringstream oss;
-        oss << "Error reading compressed point data: " << std::string(m_unzipper->get_error());
+        const char* errMsg = m_unzipper->get_error();
+        oss << "Error reading compressed point data: " ;
+        if (errMsg)
+            oss << "'" << m_unzipper->get_error() <<"'";
+        else
+            oss << "no message from LASzip library";
         throw liblas_error(oss.str());
     }
 
