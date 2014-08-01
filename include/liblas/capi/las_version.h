@@ -54,7 +54,7 @@
 #endif
 
 #ifndef LIBLAS_RELEASE_DATE
-#define LIBLAS_RELEASE_DATE     20140608
+#define LIBLAS_RELEASE_DATE     20140801
 #endif
 
 #ifndef LIBLAS_RELEASE_NAME
