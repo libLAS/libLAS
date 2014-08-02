@@ -8,13 +8,10 @@ Download
 Current Release(s)
 ------------------------------------------------------------------------------
 
-* **2012-01-06** 
+* **2014-08-01** 
 
-  - `libLAS-1.7.0-src.tar.gz  <http://download.osgeo.org/liblas/libLAS-1.7.0.tar.gz>`__ 
-    `(md5) <http://download2.osgeo.org/liblas/libLAS-1.7.0.tar.gz.md5>`__ 
-
-  - `libLAS-1.7.0-src.zip <http://download.osgeo.org/liblas/libLAS-1.7.0.zip>`_ 
-    `(md5) <http://download2.osgeo.org/liblas/libLAS-1.7.0.zip.md5>`__
+  - `libLAS-1.8.0-src.tar.gz  <http://download.osgeo.org/liblas/libLAS-1.8.0.tar.gz>`__ 
+    `(md5) <http://download2.osgeo.org/liblas/libLAS-1.8.0.tar.gz.md5>`__ 
 
   - See `OSGeo4W <http://trac.osgeo.org/osgeo4w>`__ for Windows release.
   
@@ -68,14 +65,8 @@ Windows
 `OSGeo4W`_
     OSGeo4W is a binary distribution of a broad set of Open Source geospatial
     software for Win32 environments (Windows XP, Vista, etc). OSGeo4W includes
-    GDAL/OGR, GRASS, MapServer, OpenEV, uDig, as well as many other packages
-    (about 70 as of summer 2008).
-    
-    .. note::
-        OSGeo4W is the preferred and only supported way to get a binary 
-        of libLAS as of the 1.6 release.  The OSGeo4W libLAS build contains 
-        a fully-featured set of utilities including support for GDAL, 
-        :ref:`las2oci <las2oci>`, and reprojection.  
+    GDAL/OGR, GRASS, MapServer, and QGIS. Choose the OSGeo4W64 platform, and 
+    libLAS 1.8.0+ is only available on OSGeo4W64.
     
     .. seealso::
         :ref:`osgeo4w_install` contains information how to install and configure 
