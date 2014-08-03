@@ -8,7 +8,7 @@ sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable -y
 sudo apt-get update -qq
 sudo apt-get install -qq cmake libboost-all-dev
 sudo apt-get install \
-    libgdal-dev \
+    libgdal1h-dev \
     libgeos-dev \
     libgeos++-dev \
     libproj-dev \
