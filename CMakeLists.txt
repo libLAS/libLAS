@@ -81,7 +81,9 @@ if (CMAKE_MAJOR_VERSION GREATER 2)
     cmake_policy(SET CMP0042 OLD)
 endif()
 
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 set(CMAKE_SKIP_RPATH ON)
+endif()
 
 ###############################################################################
 # General build settings
