@@ -81,6 +81,8 @@ if (CMAKE_MAJOR_VERSION GREATER 2)
     cmake_policy(SET CMP0042 OLD)
 endif()
 
+set(CMAKE_SKIP_RPATH ON)
+
 ###############################################################################
 # General build settings
 
