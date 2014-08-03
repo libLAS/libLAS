@@ -377,7 +377,7 @@ namespace liblas { namespace property_tree { namespace detail {namespace rapidxm
         }
 
         //! Allocates a new node from the pool, and optionally assigns name and value to it. 
-        //! If the allocation request cannot be accomodated, this function will throw <code>std::bad_alloc</code>.
+        //! If the allocation request cannot be accommodated, this function will throw <code>std::bad_alloc</code>.
         //! If exceptions are disabled by defining RAPIDXML_NO_EXCEPTIONS, this function
         //! will call rapidxml::parse_error_handler() function.
         //! \param type Type of node to create.
@@ -410,7 +410,7 @@ namespace liblas { namespace property_tree { namespace detail {namespace rapidxm
         }
 
         //! Allocates a new attribute from the pool, and optionally assigns name and value to it.
-        //! If the allocation request cannot be accomodated, this function will throw <code>std::bad_alloc</code>.
+        //! If the allocation request cannot be accommodated, this function will throw <code>std::bad_alloc</code>.
         //! If exceptions are disabled by defining RAPIDXML_NO_EXCEPTIONS, this function
         //! will call rapidxml::parse_error_handler() function.
         //! \param name Name to assign to the attribute, or 0 to assign no name.
@@ -441,7 +441,7 @@ namespace liblas { namespace property_tree { namespace detail {namespace rapidxm
         }
 
         //! Allocates a char array of given size from the pool, and optionally copies a given string to it.
-        //! If the allocation request cannot be accomodated, this function will throw <code>std::bad_alloc</code>.
+        //! If the allocation request cannot be accommodated, this function will throw <code>std::bad_alloc</code>.
         //! If exceptions are disabled by defining RAPIDXML_NO_EXCEPTIONS, this function
         //! will call rapidxml::parse_error_handler() function.
         //! \param source String to initialize the allocated memory with, or 0 to not initialize it.
