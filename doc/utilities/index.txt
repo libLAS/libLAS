@@ -8,14 +8,9 @@
    :maxdepth: 1
 
    lasinfo
-   lasinfo-old
    las2las
-   las2las-old
    las2txt
-   lasmerge
-   lasdiff
    las2ogr
    txt2las
    lasblock
    ts2las
-   las2tindex
