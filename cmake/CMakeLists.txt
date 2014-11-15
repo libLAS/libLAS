@@ -6,7 +6,7 @@
 # ${CMAKE_INSTALL_PREFIX}/${INSTALL_CMAKE_DIR} and ${PROJECT_ROOT_DIR}
 # is the relative path to the root from there.
 if (NOT WIN32)
-  set(INSTALL_CMAKE_DIR "share/cmake/${PROJECT_NAME}-${VERSION}")
+  set(INSTALL_CMAKE_DIR "share/cmake/${PROJECT_NAME}")
   set (PROJECT_ROOT_DIR "../../..")
 else ()
   set(INSTALL_CMAKE_DIR "cmake")

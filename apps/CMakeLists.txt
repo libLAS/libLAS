@@ -201,10 +201,8 @@ if(UNIX)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liblas-config.in
       ${CMAKE_CURRENT_BINARY_DIR}/liblas-config @ONLY)
       
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/liblas-config
-      DESTINATION bin/
-      PERMISSIONS
-      OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/liblas-config
+      DESTINATION bin)
 
   endif()
 
