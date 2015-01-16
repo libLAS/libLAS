@@ -48,7 +48,8 @@ import sys
 import ctypes
 from ctypes.util import find_library
 
-from ctypes import PyDLL
+if not 'pypy' in sys.executable:
+    from ctypes import PyDLL
 
 
 class LASException(Exception):
@@ -108,7 +109,7 @@ def check_value_free(result, func, cargs):
         raise LASException(msg)
 
     retval = ctypes.string_at(result)[:]
-    
+
     return retval
 
 
@@ -798,7 +799,7 @@ las.LASHeader_SetCompressed.errcheck = check_return
 las.LASHeader_SetCompressed.restype = ctypes.c_int
 
 las.LASSchema_Create.argtypes = [ctypes.c_uint32]
-                                        
+
 las.LASSchema_Create.errcheck = check_void
 las.LASSchema_Create.restype = ctypes.c_void_p
 
