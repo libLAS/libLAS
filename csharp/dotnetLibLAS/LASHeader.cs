@@ -582,7 +582,7 @@ namespace LibLAS
         /// Get maximum value of extent of X coordinate.
         /// </summary>
         /// <returns>maximum value of extent of X coordinate.</returns>
-        public double MaxX()
+        public double GetMaxX()
         {
             return CAPI.LASHeader_GetMaxX(hHeader);
         }
