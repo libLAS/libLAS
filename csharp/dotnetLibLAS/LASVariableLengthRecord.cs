@@ -64,7 +64,7 @@ namespace LibLAS
         /// </summary>
         public void Dispose()
         {
-            CAPI.LASVLR_Destroy(hvlrh);
+            NativeMethods.LASVLR_Destroy(hvlrh);
             // Clean up unmanaged resources here.
             // Dispose other contained disposable objects.
         }
@@ -74,7 +74,7 @@ namespace LibLAS
         /// </summary>
         public LASVariableLengthRecord()
         {
-            hvlrh = CAPI.LASVLR_Create();
+            hvlrh = NativeMethods.LASVLR_Create();
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace LibLAS
 
         //public override string ToString()
         //{
-        //    return CAPI.LASGuid_AsString(hguid);
+        //    return NativeMethods.LASGuid_AsString(hguid);
         //}
 
         /// <summary>
@@ -108,12 +108,12 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASVLR_GetUserId(hvlrh);
+                return NativeMethods.LASVLR_GetUserId(hvlrh);
             }
 
             set
             {
-                LASError error = CAPI.LASVLR_SetUserId(hvlrh, value);
+                LASError error = NativeMethods.LASVLR_SetUserId(hvlrh, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set VLR UserId.");
@@ -130,12 +130,12 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASVLR_GetDescription(hvlrh);
+                return NativeMethods.LASVLR_GetDescription(hvlrh);
             }
 
             set
             {
-                LASError error = CAPI.LASVLR_SetDescription(hvlrh, value);
+                LASError error = NativeMethods.LASVLR_SetDescription(hvlrh, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set VLR Description.");
@@ -151,12 +151,12 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASVLR_GetRecordLength(hvlrh);
+                return NativeMethods.LASVLR_GetRecordLength(hvlrh);
             }
 
             set
             {
-                LASError error = CAPI.LASVLR_SetRecordLength(hvlrh, value);
+                LASError error = NativeMethods.LASVLR_SetRecordLength(hvlrh, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set VLR RecordLength.");
@@ -172,12 +172,12 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASVLR_GetRecordId(hvlrh);
+                return NativeMethods.LASVLR_GetRecordId(hvlrh);
             }
 
             set
             {
-                LASError error = CAPI.LASVLR_SetRecordId(hvlrh, value);
+                LASError error = NativeMethods.LASVLR_SetRecordId(hvlrh, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set VLR RecordId.");
@@ -194,12 +194,12 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASVLR_GetReserved(hvlrh);
+                return NativeMethods.LASVLR_GetReserved(hvlrh);
             }
 
             set
             {
-                LASError error = CAPI.LASVLR_SetReserved(hvlrh, value);
+                LASError error = NativeMethods.LASVLR_SetReserved(hvlrh, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set VLR Reserved.");
@@ -214,7 +214,7 @@ namespace LibLAS
         /// <param name="data">a empty array of bytes where place the array</param>
         public void GetData(out byte[] data)
         {
-            LASError error = CAPI.LASVLR_GetData(hvlrh, out data);
+            LASError error = NativeMethods.LASVLR_GetData(hvlrh, out data);
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in VLR GetData.");
@@ -229,7 +229,7 @@ namespace LibLAS
         public void SetData(ref byte[] data)
         {
             UInt16 lenght = (UInt16)data.Length;
-            LASError error = CAPI.LASVLR_SetData(hvlrh, ref data, lenght);
+            LASError error = NativeMethods.LASVLR_SetData(hvlrh, ref data, lenght);
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in VLR SetData.");

@@ -77,7 +77,7 @@ namespace LibLAS
                 throw new FileNotFoundException("LASReader could not find the specified file", filename);
             }
 
-            hReader = CAPI.LASReader_Create(filename);
+            hReader = NativeMethods.LASReader_Create(filename);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace LibLAS
         /// <returns>true if we have next point</returns>
         public bool GetNextPoint()
         {
-            IntPtr pointer = CAPI.LASReader_GetNextPoint(hReader);
+            IntPtr pointer = NativeMethods.LASReader_GetNextPoint(hReader);
 
             if (IntPtr.Zero != pointer)
             {
@@ -105,7 +105,7 @@ namespace LibLAS
         /// <returns></returns>
         public string GetVersion()
         {
-            return CAPI.LAS_GetVersion();
+            return NativeMethods.LAS_GetVersion();
         }
        
         /// <summary>
@@ -125,7 +125,7 @@ namespace LibLAS
         /// <returns>LASPoint object</returns>
         public LASPoint GetPointAt(UInt32 position)
         {
-            return new LASPoint(CAPI.LASReader_GetPointAt(hReader, position));
+            return new LASPoint(NativeMethods.LASReader_GetPointAt(hReader, position));
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace LibLAS
         /// <returns>LASHeader representing the header for the file.</returns>
         public LASHeader GetHeader()
         {
-            return new LASHeader(CAPI.LASReader_GetHeader(hReader));
+            return new LASHeader(NativeMethods.LASReader_GetHeader(hReader));
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace LibLAS
         /// </summary>
         public void Dispose()
         {
-            CAPI.LASReader_Destroy(hReader);
+            NativeMethods.LASReader_Destroy(hReader);
             // Clean up unmanaged resources here.
             // Dispose other contained disposable objects.
         }

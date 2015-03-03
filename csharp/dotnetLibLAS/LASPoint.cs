@@ -108,7 +108,7 @@ namespace LibLAS
         /// </summary>
         public LASPoint()
         {
-            hPoint = CAPI.LASPoint_Create();
+            hPoint = NativeMethods.LASPoint_Create();
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace LibLAS
         /// <returns>true is is valid</returns>
         public bool IsValid()
         {
-            if (CAPI.LASPoint_IsValid(hPoint) == 1)
+            if (NativeMethods.LASPoint_IsValid(hPoint) == 1)
             {
                 return true;
             }
@@ -149,7 +149,7 @@ namespace LibLAS
         /// </summary>
         public void Dispose()
         {
-            CAPI.LASPoint_Destroy(hPoint);
+            NativeMethods.LASPoint_Destroy(hPoint);
             // Clean up unmanaged resources here.
             // Dispose other contained disposable objects.
         }
@@ -193,7 +193,7 @@ namespace LibLAS
         /// <returns>a new LASPoint instance copied.</returns>
         public LASPoint Copy()
         {
-            LASPointH laspointhTemp = CAPI.LASPoint_Copy(hPoint);
+            LASPointH laspointhTemp = NativeMethods.LASPoint_Copy(hPoint);
             return new LASPoint(laspointhTemp);
         }
 
@@ -203,7 +203,7 @@ namespace LibLAS
         /// <returns></returns>
         public bool Validate()
         {
-            int error = CAPI.LASPoint_Validate(hPoint);
+            int error = NativeMethods.LASPoint_Validate(hPoint);
 
             if (error != 0)
             {
@@ -223,11 +223,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetX(hPoint);
+                return NativeMethods.LASPoint_GetX(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetX(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetX(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point X.");
@@ -244,11 +244,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetY(hPoint);
+                return NativeMethods.LASPoint_GetY(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetY(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetY(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point Y.");
@@ -266,11 +266,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetZ(hPoint);
+                return NativeMethods.LASPoint_GetZ(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetZ(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetZ(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point Z.");
@@ -288,11 +288,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetIntensity(hPoint);
+                return NativeMethods.LASPoint_GetIntensity(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetIntensity(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetIntensity(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point Intensity.");
@@ -309,11 +309,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetScanFlags(hPoint);
+                return NativeMethods.LASPoint_GetScanFlags(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetScanFlags(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetScanFlags(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point ScanFlags.");
@@ -331,11 +331,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetReturnNumber(hPoint);
+                return NativeMethods.LASPoint_GetReturnNumber(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetReturnNumber(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetReturnNumber(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point ReturnNumber.");
@@ -352,11 +352,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetNumberOfReturns(hPoint);
+                return NativeMethods.LASPoint_GetNumberOfReturns(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetNumberOfReturns(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetNumberOfReturns(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point NumberOfReturns.");
@@ -373,11 +373,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetScanDirection(hPoint);
+                return NativeMethods.LASPoint_GetScanDirection(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetScanDirection(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetScanDirection(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point ScanDirection.");
@@ -394,11 +394,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetFlightLineEdge(hPoint);
+                return NativeMethods.LASPoint_GetFlightLineEdge(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetFlightLineEdge(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetFlightLineEdge(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point FlightLineEdge.");
@@ -414,11 +414,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetClassification(hPoint);
+                return NativeMethods.LASPoint_GetClassification(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetClassification(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetClassification(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point Classification.");
@@ -434,12 +434,12 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetScanAngleRank(hPoint);
+                return NativeMethods.LASPoint_GetScanAngleRank(hPoint);
             }
             set
             {
 
-                LASError error = CAPI.LASPoint_SetScanAngleRank(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetScanAngleRank(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point ScanAngleRank.");
@@ -455,11 +455,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetUserData(hPoint);
+                return NativeMethods.LASPoint_GetUserData(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetUserData(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetUserData(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point UserData.");
@@ -475,11 +475,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASPoint_GetTime(hPoint);
+                return NativeMethods.LASPoint_GetTime(hPoint);
             }
             set
             {
-                LASError error = CAPI.LASPoint_SetTime(hPoint, value);
+                LASError error = NativeMethods.LASPoint_SetTime(hPoint, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Point Time.");
