@@ -78,14 +78,30 @@ namespace LibLAS
     {
         private LASWriterH hwriter;
 
+        protected virtual void Dispose(bool disposing)
+        {
+            // free native resources if there are any.
+            if (hwriter != IntPtr.Zero)
+            {
+                NativeMethods.LASWriter_Destroy(hwriter);
+                hwriter = IntPtr.Zero;
+            }
+        }
+
         /// <summary>
         /// The object user should call this method when they finished with the object.
         /// </summary>
+        /// 
         public void Dispose()
         {
-            NativeMethods.LASWriter_Destroy(hwriter);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~LASWriter()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         /// <summary>

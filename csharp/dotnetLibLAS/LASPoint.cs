@@ -144,14 +144,30 @@ namespace LibLAS
             }
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            // free native resources if there are any.
+            if (hPoint != IntPtr.Zero)
+            {
+                NativeMethods.LASPoint_Destroy(hPoint);
+                hPoint = IntPtr.Zero;
+            }
+        }
+
         /// <summary>
-        /// The object user should call this method when they finished with the object. In .NET is magaged by the GC.
+        /// The object user should call this method when they finished with the object.
         /// </summary>
+        /// 
         public void Dispose()
         {
-            NativeMethods.LASPoint_Destroy(hPoint);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~LASPoint()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         enum ClassificationType

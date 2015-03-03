@@ -59,14 +59,30 @@ namespace LibLAS
     {
         private LASVLRH hvlrh;
 
+        protected virtual void Dispose(bool disposing)
+        {
+            // free native resources if there are any.
+            if (hvlrh != IntPtr.Zero)
+            {
+                NativeMethods.LASVLR_Destroy(hvlrh);
+                hvlrh = IntPtr.Zero;
+            }
+        }
+
         /// <summary>
         /// The object user should call this method when they finished with the object.
         /// </summary>
+        /// 
         public void Dispose()
         {
-            NativeMethods.LASVLR_Destroy(hvlrh);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~LASVariableLengthRecord()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         /// <summary>

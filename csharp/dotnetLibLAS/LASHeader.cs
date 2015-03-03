@@ -58,16 +58,30 @@ namespace LibLAS
     public class LASHeader : IDisposable
     {
 
+        protected virtual void Dispose(bool disposing)
+        {
+            // free native resources if there are any.
+            if (hHeader != IntPtr.Zero)
+            {
+                NativeMethods.LASHeader_Destroy(hHeader);
+                hHeader = IntPtr.Zero;
+            }
+        }
+
         /// <summary>
         /// The object user should call this method when they finished with the object.
-        /// In .NET is magaged by the GC.
         /// </summary>
+        /// 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            NativeMethods.LASHeader_Destroy(hHeader);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
+        ~LASHeader()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         enum FormatVersion

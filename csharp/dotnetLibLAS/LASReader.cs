@@ -137,14 +137,40 @@ namespace LibLAS
             return new LASHeader(NativeMethods.LASReader_GetHeader(hReader));
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // free managed resources
+                if (laspoint != null)
+                {
+                    laspoint.Dispose();
+                    laspoint = null;
+                }
+            }
+
+            // free native resources if there are any.
+            if (hReader != IntPtr.Zero)
+            {
+                NativeMethods.LASReader_Destroy(hReader);
+                hReader = IntPtr.Zero;
+            }
+        }
+
         /// <summary>
-        /// The object user should call this method when they finished with the object. In .NET is magaged by the GC.
+        /// The object user should call this method when they finished with the object.
         /// </summary>
+        /// 
         public void Dispose()
         {
-            NativeMethods.LASReader_Destroy(hReader);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~LASReader()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
     }
 }

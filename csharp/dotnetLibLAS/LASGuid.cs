@@ -59,15 +59,30 @@ namespace LibLAS
     {
         private LASGuidH hguid;
 
+        protected virtual void Dispose(bool disposing)
+        {
+            // free native resources if there are any.
+            if (hguid != IntPtr.Zero)
+            {
+                NativeMethods.LASGuid_Destroy(hguid);
+                hguid = IntPtr.Zero;
+            }
+        }
+
         /// <summary>
         /// The object user should call this method when they finished with the object.
         /// </summary>
         /// 
         public void Dispose()
         {
-            NativeMethods.LASGuid_Destroy(hguid);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~LASGuid()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         /// <summary>
