@@ -64,6 +64,7 @@ namespace LibLAS
     /// <summary>
     /// LASException class
     /// </summary>
+    [SerializableAttribute] 
     public class LASException :
         System.ApplicationException
     {
