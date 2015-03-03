@@ -49,6 +49,7 @@ using LASPointH = System.IntPtr;
 using LASGuidH = System.IntPtr;
 using LASVLRH = System.IntPtr;
 using LASHeaderH = System.IntPtr;
+using System.IO;
 
 namespace LibLAS
 {
@@ -67,6 +68,15 @@ namespace LibLAS
         /// <param name="filename">filename to open for read</param>
         public LASReader(String filename)
         {
+            // If file does not exist LASReader_Create(filename) throws a 
+            // "System.AccessViolationException: Attempted to read or write protected memory".
+            // This type of exception cannot be caught because it indicates a corrupted program state.
+            // So, check file existence up front.
+            if (!File.Exists(filename))
+            {
+                throw new FileNotFoundException("LASReader could not find the specified file", filename);
+            }
+
             hReader = CAPI.LASReader_Create(filename);
         }
 
