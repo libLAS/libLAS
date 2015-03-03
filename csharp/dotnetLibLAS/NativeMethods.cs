@@ -63,6 +63,8 @@ namespace LibLAS
          * called liblas1.dll. The same name is used by Visual Studio solution liblas.sln.
          */
         public const string DLL_LAS_VERSION = "liblas1.dll";
+        public const CharSet CHARSET = CharSet.Ansi;
+        public const bool BESTFITMAPPING = false;
 
         [DllImport(DLL_LAS_VERSION)]
         public static extern String LAS_GetVersion();
@@ -110,7 +112,7 @@ namespace LibLAS
         *  The function does not alter the error stack in any way.
         *  @param message Message to include in the stderr output
         */
-        [DllImport(DLL_LAS_VERSION)]
+        [DllImport(DLL_LAS_VERSION, CharSet = CHARSET, BestFitMapping = BESTFITMAPPING)]
         public static extern void LASError_Print(String message);
 
         /****************************************************************************/
@@ -123,7 +125,7 @@ namespace LibLAS
         *  @return opaque pointer to a LASReaderH instance.
         *  @param filename Filename to open for read 
         */
-        [DllImport(DLL_LAS_VERSION)]
+        [DllImport(DLL_LAS_VERSION, CharSet = CHARSET, BestFitMapping = BESTFITMAPPING)]
         public static extern LASReaderH LASReader_Create(String filename);
 
         /** Reads the next available point on the LASReaderH instance.  If no point 
@@ -531,7 +533,7 @@ namespace LibLAS
         *  @param value the value to set as the System ID for the header
         *  @return LASError enum
         */
-        [DllImport(DLL_LAS_VERSION)]
+        [DllImport(DLL_LAS_VERSION, CharSet = CHARSET, BestFitMapping = BESTFITMAPPING)]
         public static extern LASError LASHeader_SetSystemId(LASHeaderH hHeader, String value);
 
         /** Returns the Software ID for the header.  The caller assumes ownership of the returned string
@@ -547,7 +549,7 @@ namespace LibLAS
         *  @param value the value to set as the Software ID for the header
         *  @return LASError enum
         */
-        [DllImport(DLL_LAS_VERSION)]
+        [DllImport(DLL_LAS_VERSION, CharSet = CHARSET, BestFitMapping = BESTFITMAPPING)]
         public static extern LASError LASHeader_SetSoftwareId(LASHeaderH hHeader, String value);
 
         /** Returns the reserved value for the header.  This should aways be 0.
@@ -803,7 +805,7 @@ namespace LibLAS
         *  @param value the proj4 string to set for the header
         *  @return LASError enum
         */
-        [DllImport(DLL_LAS_VERSION)]
+        [DllImport(DLL_LAS_VERSION, CharSet = CHARSET, BestFitMapping = BESTFITMAPPING)]
         public static extern LASError LASHeader_SetProj4(LASHeaderH hHeader, String value);
 
         /** Returns the VLR record for the given index.  Use LASHeader_GetRecordsCount to 
@@ -845,7 +847,7 @@ namespace LibLAS
         *  operations.  Valid values are LAS_MODE_APPEND and LAS_MODE_WRITE.
         */
 
-        [DllImport(DLL_LAS_VERSION)]
+        [DllImport(DLL_LAS_VERSION, CharSet = CHARSET, BestFitMapping = BESTFITMAPPING)]
         public static extern LASWriterH LASWriter_Create(String filename, LASHeaderH hHeader, int mode);
 
         /** Writes a point to the file.  The location of where the point is writen is 
@@ -899,7 +901,7 @@ namespace LibLAS
         *  An example GUID might be something like '8388F1B8-AA1B-4108-BCA3-6BC68E7B062E'
         *  @return the GUID value as an opaque LASGuidH pointer.
         */
-        [DllImport(DLL_LAS_VERSION)]
+        [DllImport(DLL_LAS_VERSION, CharSet = CHARSET, BestFitMapping = BESTFITMAPPING)]
         public static extern LASGuidH LASGuid_CreateFromString(String string_);
 
         /** Destroys a GUID opaque pointer and removes it from the heap
@@ -953,7 +955,7 @@ namespace LibLAS
         *  within 16 characters
         *  @return LASErrorEnum
         */
-        [DllImport(DLL_LAS_VERSION)]
+        [DllImport(DLL_LAS_VERSION, CharSet = CHARSET, BestFitMapping = BESTFITMAPPING)]
         public static extern LASError LASVLR_SetUserId(LASVLRH hVLR, String value);
 
         /** Gets the description for the VLR
@@ -969,7 +971,7 @@ namespace LibLAS
         *  within 32 characters
         *  @return LASErrorEnum
         */
-        [DllImport(DLL_LAS_VERSION)]
+        [DllImport(DLL_LAS_VERSION, CharSet = CHARSET, BestFitMapping = BESTFITMAPPING)]
         public static extern LASError LASVLR_SetDescription(LASVLRH hVLR, String value);
 
         /** Returns the record length of the data stored in the VLR
