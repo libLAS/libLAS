@@ -62,7 +62,7 @@ namespace LibLAS
          * When building libLAS on Windows using NMAKE and makefile.vc, C API DLL is
          * called liblas1.dll. The same name is used by Visual Studio solution liblas.sln.
          */
-        public const string DLL_LAS_VERSION = "liblas1.dll";
+        public const string DLL_LAS_VERSION = "liblas_c.dll";
         public const CharSet CHARSET = CharSet.Ansi;
         public const bool BESTFITMAPPING = false;
 
