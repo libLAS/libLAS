@@ -164,15 +164,6 @@ namespace LibLAS
         }
 
         /// <summary>
-        /// Destroy the unmanaged resources to the instance.
-        /// </summary>
-        /// <remarks>The user could call this method when they finished with the object.</remarks>
-        public void Destroy()
-        {
-            NativeMethods.LASHeader_Destroy(hHeader);
-        }
-
-        /// <summary>
         /// Get ASPRS LAS file signature.
         /// </summary>
         /// <remarks>The only value allowed as file signature is "LASF",</remarks>
