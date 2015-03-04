@@ -59,7 +59,8 @@ namespace LibLAS
     public class LASReader : IDisposable
     {
         private LASReaderH hReader;
-        private LASPoint laspoint;
+        private LASPointH hPoint;
+        private LASPoint point;
 
         /// <summary>
         /// Creates a LASReaderH object that can be used to read LASHeaderH and LASPointH objects with.
@@ -86,11 +87,11 @@ namespace LibLAS
         /// <returns>true if we have next point</returns>
         public bool GetNextPoint()
         {
-            IntPtr pointer = NativeMethods.LASReader_GetNextPoint(hReader);
+            hPoint = NativeMethods.LASReader_GetNextPoint(hReader);
 
-            if (IntPtr.Zero != pointer)
+            if (IntPtr.Zero != hPoint)
             {
-                laspoint = new LASPoint(pointer);
+                point = new LASPoint(hPoint, false);
                 return true;
             }
             else
@@ -114,7 +115,7 @@ namespace LibLAS
         /// <returns>current LASPoint object</returns>
         public LASPoint GetPoint()
         {
-            return laspoint;
+            return point;
         }
 
         /// <summary>
@@ -125,7 +126,8 @@ namespace LibLAS
         /// <returns>LASPoint object</returns>
         public LASPoint GetPointAt(UInt32 position)
         {
-            return new LASPoint(NativeMethods.LASReader_GetPointAt(hReader, position));
+            hPoint = NativeMethods.LASReader_GetPointAt(hReader, position);
+            return new LASPoint(hPoint, false);
         }
 
         /// <summary>
@@ -142,10 +144,10 @@ namespace LibLAS
             if (disposing)
             {
                 // free managed resources
-                if (laspoint != null)
+                if (point != null)
                 {
-                    laspoint.Dispose();
-                    laspoint = null;
+                    point.Dispose();
+                    point = null;
                 }
             }
 
@@ -154,6 +156,11 @@ namespace LibLAS
             {
                 NativeMethods.LASReader_Destroy(hReader);
                 hReader = IntPtr.Zero;
+            }
+            if(hPoint != IntPtr.Zero)
+            {
+                NativeMethods.LASPoint_Destroy(hPoint);
+                hPoint = IntPtr.Zero;
             }
         }
 

@@ -95,12 +95,22 @@ namespace LibLAS
         private LASPointH hPoint;
 
         /// <summary>
+        /// A flag to denote whether or not the point owns itself and can Dispose
+        /// itself upon going out of scope. There are instances where LASReader 
+        /// may actually own the point as it is read from or written to files.
+        /// </summary>
+        private bool mustDestroy;
+
+        /// <summary>
         /// Create a new LASPoint from the LASPointH opaque structure
         /// </summary>
         /// <param name="hLASPoint">LASPointH opaque structure</param>
-        public LASPoint(LASPointH hLASPoint)
+        /// <param name="ownsCStructure">Indicates whether this instance is allowed 
+        /// to ownsCStructure the underlying C structure</param>
+        internal LASPoint(LASPointH hLASPoint, bool ownsCStructure)
         {
             hPoint = hLASPoint;
+            mustDestroy = ownsCStructure;
         }
 
         /// <summary>
@@ -109,6 +119,7 @@ namespace LibLAS
         public LASPoint()
         {
             hPoint = NativeMethods.LASPoint_Create();
+            mustDestroy = true;
         }
 
         /// <summary>
@@ -147,7 +158,7 @@ namespace LibLAS
         protected virtual void Dispose(bool disposing)
         {
             // free native resources if there are any.
-            if (hPoint != IntPtr.Zero)
+            if (hPoint != IntPtr.Zero && mustDestroy)
             {
                 NativeMethods.LASPoint_Destroy(hPoint);
                 hPoint = IntPtr.Zero;
@@ -210,7 +221,7 @@ namespace LibLAS
         public LASPoint Copy()
         {
             LASPointH laspointhTemp = NativeMethods.LASPoint_Copy(hPoint);
-            return new LASPoint(laspointhTemp);
+            return new LASPoint(laspointhTemp, true);
         }
 
         /// <summary>
