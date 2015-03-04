@@ -173,28 +173,6 @@ namespace LibLAS
         }
 
         /// <summary>
-        /// Comparison overload to the LASHeader
-        /// </summary>
-        /// <param name="lasHeader1">LASHeader instance to be compared</param>
-        /// <param name="lasHeader2">LASHeader instance to be compared</param>
-        /// <returns>true if lasHeader1==lasHeader2</returns>
-        public static bool operator ==(LASHeader lasHeader1, LASHeader lasHeader2)
-        {
-            return lasHeader1.Equals(lasHeader2);
-        }
-
-        /// <summary>
-        /// Comparison overload to the LASHeader
-        /// </summary>
-        /// <param name="lasHeader1">LASHeader instance to be compared</param>
-        /// <param name="lasHeader2">LASHeader instance to be compared</param>
-        /// <returns></returns>
-        public static bool operator !=(LASHeader lasHeader1, LASHeader lasHeader2)
-        {
-            return !(lasHeader1 == lasHeader2);
-        }
-
-        /// <summary>
         /// Get ASPRS LAS file signature.
         /// </summary>
         /// <remarks>The only value allowed as file signature is "LASF",</remarks>
