@@ -87,10 +87,11 @@ namespace LibLAS
         /// <returns>true if we have next point</returns>
         public bool GetNextPoint()
         {
-            hPoint = NativeMethods.LASReader_GetNextPoint(hReader);
+            IntPtr tmphPoint = NativeMethods.LASReader_GetNextPoint(hReader);
 
-            if (IntPtr.Zero != hPoint)
+            if (IntPtr.Zero != tmphPoint)
             {
+                hPoint = tmphPoint;
                 point = new LASPoint(hPoint, false);
                 return true;
             }
@@ -126,8 +127,13 @@ namespace LibLAS
         /// <returns>LASPoint object</returns>
         public LASPoint GetPointAt(UInt32 position)
         {
-            hPoint = NativeMethods.LASReader_GetPointAt(hReader, position);
-            return new LASPoint(hPoint, false);
+            IntPtr tmphPoint = NativeMethods.LASReader_GetPointAt(hReader, position);
+            if (IntPtr.Zero != tmphPoint)
+            {
+                hPoint = tmphPoint;
+                return new LASPoint(hPoint, false);
+            }
+            return null;
         }
 
         /// <summary>
