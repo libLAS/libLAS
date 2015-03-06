@@ -58,16 +58,30 @@ namespace LibLAS
     public class LASHeader : IDisposable
     {
 
+        protected virtual void Dispose(bool disposing)
+        {
+            // free native resources if there are any.
+            if (hHeader != IntPtr.Zero)
+            {
+                NativeMethods.LASHeader_Destroy(hHeader);
+                hHeader = IntPtr.Zero;
+            }
+        }
+
         /// <summary>
         /// The object user should call this method when they finished with the object.
-        /// In .NET is magaged by the GC.
         /// </summary>
+        /// 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            CAPI.LASHeader_Destroy(hHeader);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
+        ~LASHeader()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         enum FormatVersion
@@ -137,7 +151,7 @@ namespace LibLAS
         /// Other fields filled with 0.</remarks>
         public LASHeader()
         {
-            hHeader = CAPI.LASHeader_Create();
+            hHeader = NativeMethods.LASHeader_Create();
         }
 
         /// <summary>
@@ -146,38 +160,7 @@ namespace LibLAS
         /// <returns>new LASHeader instance.</returns>
         public LASHeader Copy()
         {
-            return new LASHeader(CAPI.LASHeader_Copy(hHeader));
-        }
-
-        /// <summary>
-        /// Destroy the unmanaged resources to the instance.
-        /// </summary>
-        /// <remarks>The user could call this method when they finished with the object.</remarks>
-        public void Destroy()
-        {
-            CAPI.LASHeader_Destroy(hHeader);
-        }
-
-        /// <summary>
-        /// Comparison overload to the LASHeader
-        /// </summary>
-        /// <param name="lasHeader1">LASHeader instance to be compared</param>
-        /// <param name="lasHeader2">LASHeader instance to be compared</param>
-        /// <returns>true if lasHeader1==lasHeader2</returns>
-        public static bool operator ==(LASHeader lasHeader1, LASHeader lasHeader2)
-        {
-            return lasHeader1.Equals(lasHeader2);
-        }
-
-        /// <summary>
-        /// Comparison overload to the LASHeader
-        /// </summary>
-        /// <param name="lasHeader1">LASHeader instance to be compared</param>
-        /// <param name="lasHeader2">LASHeader instance to be compared</param>
-        /// <returns></returns>
-        public static bool operator !=(LASHeader lasHeader1, LASHeader lasHeader2)
-        {
-            return !(lasHeader1 == lasHeader2);
+            return new LASHeader(NativeMethods.LASHeader_Copy(hHeader));
         }
 
         /// <summary>
@@ -188,7 +171,7 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetFileSignature(hHeader);
+                return NativeMethods.LASHeader_GetFileSignature(hHeader);
             }
         }
 
@@ -200,11 +183,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetFileSourceId(hHeader);
+                return NativeMethods.LASHeader_GetFileSourceId(hHeader);
             }
             set
             {
-                LASError error = CAPI.LASHeader_SetFileSourceId(hHeader, value);
+                LASError error = NativeMethods.LASHeader_SetFileSourceId(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header SetFileSourceId.");
@@ -221,7 +204,7 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetReserved(hHeader);
+                return NativeMethods.LASHeader_GetReserved(hHeader);
             }
         }
 
@@ -233,7 +216,7 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetProjectId(hHeader);
+                return NativeMethods.LASHeader_GetProjectId(hHeader);
             }
         }
 
@@ -246,11 +229,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetVersionMajor(hHeader);
+                return NativeMethods.LASHeader_GetVersionMajor(hHeader);
             }
             set
             {
-                LASError error = CAPI.LASHeader_SetVersionMajor(hHeader, value);
+                LASError error = NativeMethods.LASHeader_SetVersionMajor(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header VersionMajor.");
@@ -269,11 +252,11 @@ namespace LibLAS
             get
             {
 
-                return CAPI.LASHeader_GetVersionMinor(hHeader);
+                return NativeMethods.LASHeader_GetVersionMinor(hHeader);
             }
             set
             {
-                LASError error = CAPI.LASHeader_SetVersionMinor(hHeader, value);
+                LASError error = NativeMethods.LASHeader_SetVersionMinor(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header VersionMinor.");
@@ -291,11 +274,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetSystemId(hHeader);
+                return NativeMethods.LASHeader_GetSystemId(hHeader);
             }
             set
             {
-                LASError error = CAPI.LASHeader_SetSystemId(hHeader, value);
+                LASError error = NativeMethods.LASHeader_SetSystemId(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header SystemId.");
@@ -314,11 +297,11 @@ namespace LibLAS
             get
             {
 
-                return CAPI.LASHeader_GetSoftwareId(hHeader);
+                return NativeMethods.LASHeader_GetSoftwareId(hHeader);
             }
             set
             {
-                LASError error = CAPI.LASHeader_SetSoftwareId(hHeader, value);
+                LASError error = NativeMethods.LASHeader_SetSoftwareId(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header SoftwareId.");
@@ -336,11 +319,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetCreationDOY(hHeader);
+                return NativeMethods.LASHeader_GetCreationDOY(hHeader);
             }
             set
             {
-                LASError error = CAPI.LASHeader_SetCreationDOY(hHeader, value);
+                LASError error = NativeMethods.LASHeader_SetCreationDOY(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header CreationDOY.");
@@ -357,11 +340,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetCreationYear(hHeader);
+                return NativeMethods.LASHeader_GetCreationYear(hHeader);
             }
             set
             {
-                LASError error = CAPI.LASHeader_SetCreationYear(hHeader, value);
+                LASError error = NativeMethods.LASHeader_SetCreationYear(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header CreationYear.");
@@ -378,7 +361,7 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetHeaderSize(hHeader);
+                return NativeMethods.LASHeader_GetHeaderSize(hHeader);
             }
         }
 
@@ -389,7 +372,7 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetDataOffset(hHeader);
+                return NativeMethods.LASHeader_GetDataOffset(hHeader);
             }
         }
 
@@ -400,7 +383,7 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetRecordsCount(hHeader);
+                return NativeMethods.LASHeader_GetRecordsCount(hHeader);
             }
         }
 
@@ -413,11 +396,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetDataFormatId(hHeader);
+                return NativeMethods.LASHeader_GetDataFormatId(hHeader);
             }
             set
             {
-                LASError error = CAPI.LASHeader_SetDataFormatId(hHeader, value);
+                LASError error = NativeMethods.LASHeader_SetDataFormatId(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header DataFormatId.");
@@ -433,7 +416,7 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetDataRecordLength(hHeader);
+                return NativeMethods.LASHeader_GetDataRecordLength(hHeader);
             }
         }
 
@@ -447,12 +430,12 @@ namespace LibLAS
             get
             {
                 //Get total number of point records stored in the LAS file.
-                return CAPI.LASHeader_GetPointRecordsCount(hHeader);
+                return NativeMethods.LASHeader_GetPointRecordsCount(hHeader);
             }
             set
             {
                 //Set number of point records that will be stored in a new LAS file.
-                LASError error = CAPI.LASHeader_SetPointRecordsCount(hHeader, value);
+                LASError error = NativeMethods.LASHeader_SetPointRecordsCount(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header PointRecordsCount.");
@@ -469,7 +452,7 @@ namespace LibLAS
         public UInt32 GetPointRecordsByReturnCount(int index)
         {
             // Get array of the total point records per return.
-            return CAPI.LASHeader_GetPointRecordsByReturnCount(hHeader, index);
+            return NativeMethods.LASHeader_GetPointRecordsByReturnCount(hHeader, index);
         }
 
         //    /// Set values of 5-elements array of total point records per return.
@@ -483,7 +466,7 @@ namespace LibLAS
         /// <param name="value">the number of point records for the return </param>
         public void SetPointRecordsByReturnCount(int index, UInt32 value)
         {
-            LASError error = CAPI.LASHeader_SetPointRecordsByReturnCount(hHeader, index, value);
+            LASError error = NativeMethods.LASHeader_SetPointRecordsByReturnCount(hHeader, index, value);
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in Set Header SetPointRecordsByReturnCount.");
@@ -497,7 +480,7 @@ namespace LibLAS
         /// <returns>scale factor for X coordinate.</returns>
         public double GetScaleX()
         {
-            return CAPI.LASHeader_GetScaleX(hHeader);
+            return NativeMethods.LASHeader_GetScaleX(hHeader);
         }
 
         /// <summary>
@@ -506,7 +489,7 @@ namespace LibLAS
         /// <returns>scale factor for Y coordinate.</returns>
         public double GetScaleY()
         {
-            return CAPI.LASHeader_GetScaleY(hHeader);
+            return NativeMethods.LASHeader_GetScaleY(hHeader);
         }
 
         /// <summary>
@@ -515,7 +498,7 @@ namespace LibLAS
         /// <returns>scale factor for Z coordinate.</returns>
         public double GetScaleZ()
         {
-            return CAPI.LASHeader_GetScaleZ(hHeader);
+            return NativeMethods.LASHeader_GetScaleZ(hHeader);
         }
 
         /// <summary>
@@ -526,7 +509,7 @@ namespace LibLAS
         /// <param name="z">Z scale factor of the coordinate</param>
         public void SetScale(double x, double y, double z)
         {
-            LASError error = CAPI.LASHeader_SetScale(hHeader, x, y, z);
+            LASError error = NativeMethods.LASHeader_SetScale(hHeader, x, y, z);
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in Set Header SetScale.");
@@ -540,7 +523,7 @@ namespace LibLAS
         /// <returns>X coordinate offset.</returns>
         public double GetOffsetX()
         {
-            return CAPI.LASHeader_GetOffsetX(hHeader);
+            return NativeMethods.LASHeader_GetOffsetX(hHeader);
         }
 
         /// <summary>
@@ -549,7 +532,7 @@ namespace LibLAS
         /// <returns>Y coordinate offset.</returns>
         public double GetOffsetY()
         {
-            return CAPI.LASHeader_GetOffsetY(hHeader);
+            return NativeMethods.LASHeader_GetOffsetY(hHeader);
         }
 
         /// <summary>
@@ -558,7 +541,7 @@ namespace LibLAS
         /// <returns>Z coordinate offset.</returns>
         public double GetOffsetZ()
         {
-            return CAPI.LASHeader_GetOffsetZ(hHeader);
+            return NativeMethods.LASHeader_GetOffsetZ(hHeader);
         }
 
         //Set values of X, Y and Z coordinates offset.
@@ -570,7 +553,7 @@ namespace LibLAS
         /// <param name="z">Z coordinate offset.</param>
         public void SetOffset(double x, double y, double z)
         {
-            LASError error = CAPI.LASHeader_SetOffset(hHeader, x, y, z);
+            LASError error = NativeMethods.LASHeader_SetOffset(hHeader, x, y, z);
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in Set Header SetOffset.");
@@ -582,9 +565,9 @@ namespace LibLAS
         /// Get maximum value of extent of X coordinate.
         /// </summary>
         /// <returns>maximum value of extent of X coordinate.</returns>
-        public double MaxX()
+        public double GetMaxX()
         {
-            return CAPI.LASHeader_GetMaxX(hHeader);
+            return NativeMethods.LASHeader_GetMaxX(hHeader);
         }
 
         /// <summary>
@@ -593,7 +576,7 @@ namespace LibLAS
         /// <returns>maximum value of extent of Y coordinate.</returns>
         public double GetMaxY()
         {
-            return CAPI.LASHeader_GetMaxY(hHeader);
+            return NativeMethods.LASHeader_GetMaxY(hHeader);
         }
 
         /// <summary>
@@ -602,7 +585,7 @@ namespace LibLAS
         /// <returns>maximum value of extent of Z coordinate.</returns>
         public double GetMaxZ()
         {
-            return CAPI.LASHeader_GetMaxZ(hHeader);
+            return NativeMethods.LASHeader_GetMaxZ(hHeader);
         }
 
         /// <summary>
@@ -611,7 +594,7 @@ namespace LibLAS
         /// <returns>minimum value of extent of X coordinate.</returns>
         public double GetMinX()
         {
-            return CAPI.LASHeader_GetMinX(hHeader);
+            return NativeMethods.LASHeader_GetMinX(hHeader);
         }
 
         /// <summary>
@@ -620,7 +603,7 @@ namespace LibLAS
         /// <returns>minimum value of extent of Y coordinate.</returns>
         public double GetMinY()
         {
-            return CAPI.LASHeader_GetMinY(hHeader);
+            return NativeMethods.LASHeader_GetMinY(hHeader);
         }
 
         /// <summary>
@@ -629,7 +612,7 @@ namespace LibLAS
         /// <returns>minimum value of extent of Z coordinate.</returns>
         public double GetMinZ()
         {
-            return CAPI.LASHeader_GetMinZ(hHeader);
+            return NativeMethods.LASHeader_GetMinZ(hHeader);
         }
 
         /// <summary>
@@ -640,7 +623,7 @@ namespace LibLAS
         /// <param name="z">maximum value of extent of Z coordinate.</param>
         public void SetMax(double x, double y, double z)
         {
-            LASError error = CAPI.LASHeader_SetMax(hHeader, x, y, z);
+            LASError error = NativeMethods.LASHeader_SetMax(hHeader, x, y, z);
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in Set Header SetMax.");
@@ -656,7 +639,7 @@ namespace LibLAS
         /// <param name="z">Set minimum value of extent of Z coordinate.</param>
         public void SetMin(double x, double y, double z)
         {
-            LASError error = CAPI.LASHeader_SetMin(hHeader, x, y, z);
+            LASError error = NativeMethods.LASHeader_SetMin(hHeader, x, y, z);
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in Set Header SetMin.");
@@ -670,7 +653,7 @@ namespace LibLAS
         /// <param name="variableLengthRecord">variable Length record instance to add</param>
         public void AddVariableLengthRecord(LASVariableLengthRecord variableLengthRecord)
         {
-            LASError error = CAPI.LASHeader_AddVLR(hHeader, variableLengthRecord.GetPointer());
+            LASError error = NativeMethods.LASHeader_AddVLR(hHeader, variableLengthRecord.GetPointer());
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in Header AddVariableLengthRecord.");
@@ -687,7 +670,7 @@ namespace LibLAS
         /// variable length records available on the header.</remarks>
         public LASVariableLengthRecord GetVariableLengthRecord(UInt32 i)
         {
-            LASVLRH vlrh = CAPI.LASHeader_GetVLR(hHeader, i);
+            LASVLRH vlrh = NativeMethods.LASHeader_GetVLR(hHeader, i);
             return new LASVariableLengthRecord(vlrh);
         }
 
@@ -697,7 +680,7 @@ namespace LibLAS
         /// <param name="index">the index starting from 0 of the variable length record to delete</param>
         public void DeleteVariableLengthRecord(UInt32 index)
         {
-            LASError error = CAPI.LASHeader_DeleteVLR(hHeader, index);
+            LASError error = NativeMethods.LASHeader_DeleteVLR(hHeader, index);
             if ((Int32)error != 0)
             {
                 LASException e = new LASException("Exception in Header DeleteVariableLengthRecord.");
@@ -713,13 +696,13 @@ namespace LibLAS
         {
             get
             {
-                LASGuidH guidh = CAPI.LASHeader_GetGUID(hHeader);
+                LASGuidH guidh = NativeMethods.LASHeader_GetGUID(hHeader);
                 return new LASGuid(guidh);
             }
             set
             {
 
-                LASError error = CAPI.LASHeader_SetGUID(hHeader, value.GetPointer());
+                LASError error = NativeMethods.LASHeader_SetGUID(hHeader, value.GetPointer());
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header GUID.");
@@ -735,11 +718,11 @@ namespace LibLAS
         {
             get
             {
-                return CAPI.LASHeader_GetProj4(hHeader);
+                return NativeMethods.LASHeader_GetProj4(hHeader);
             }
             set
             {
-                LASError error = CAPI.LASHeader_SetProj4(hHeader, value);
+                LASError error = NativeMethods.LASHeader_SetProj4(hHeader, value);
                 if ((Int32)error != 0)
                 {
                     LASException e = new LASException("Exception in Set Header Proj4.");

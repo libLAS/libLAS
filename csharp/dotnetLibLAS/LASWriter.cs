@@ -78,14 +78,30 @@ namespace LibLAS
     {
         private LASWriterH hwriter;
 
+        protected virtual void Dispose(bool disposing)
+        {
+            // free native resources if there are any.
+            if (hwriter != IntPtr.Zero)
+            {
+                NativeMethods.LASWriter_Destroy(hwriter);
+                hwriter = IntPtr.Zero;
+            }
+        }
+
         /// <summary>
         /// The object user should call this method when they finished with the object.
         /// </summary>
+        /// 
         public void Dispose()
         {
-            CAPI.LASWriter_Destroy(hwriter);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~LASWriter()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         /// <summary>
@@ -96,7 +112,7 @@ namespace LibLAS
         /// <param name="mode">mode to use the file by LASReadWriteMode enumeration</param>
         public LASWriter(String filename, LASHeader hHeader, LASReadWriteMode mode)
         {
-            hwriter = CAPI.LASWriter_Create(filename, hHeader.GetPointer(), (int)mode);
+            hwriter = NativeMethods.LASWriter_Create(filename, hHeader.GetPointer(), (int)mode);
         }
 
         /// <summary>
@@ -105,7 +121,7 @@ namespace LibLAS
         /// <param name="point">LASPoint to write in the file</param>
         public void WritePoint(LASPoint point)
         {
-            LASError error = CAPI.LASWriter_WritePoint(hwriter, point.GetPointer());
+            LASError error = NativeMethods.LASWriter_WritePoint(hwriter, point.GetPointer());
 
             if ((Int32)error != 0)
             {

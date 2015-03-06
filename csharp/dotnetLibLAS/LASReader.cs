@@ -49,6 +49,7 @@ using LASPointH = System.IntPtr;
 using LASGuidH = System.IntPtr;
 using LASVLRH = System.IntPtr;
 using LASHeaderH = System.IntPtr;
+using System.IO;
 
 namespace LibLAS
 {
@@ -58,7 +59,8 @@ namespace LibLAS
     public class LASReader : IDisposable
     {
         private LASReaderH hReader;
-        private LASPoint laspoint;
+        private LASPointH hPoint;
+        private LASPoint point;
 
         /// <summary>
         /// Creates a LASReaderH object that can be used to read LASHeaderH and LASPointH objects with.
@@ -67,7 +69,16 @@ namespace LibLAS
         /// <param name="filename">filename to open for read</param>
         public LASReader(String filename)
         {
-            hReader = CAPI.LASReader_Create(filename);
+            // If file does not exist LASReader_Create(filename) throws a 
+            // "System.AccessViolationException: Attempted to read or write protected memory".
+            // This type of exception cannot be caught because it indicates a corrupted program state.
+            // So, check file existence up front.
+            if (!File.Exists(filename))
+            {
+                throw new FileNotFoundException("LASReader could not find the specified file", filename);
+            }
+
+            hReader = NativeMethods.LASReader_Create(filename);
         }
 
         /// <summary>
@@ -76,11 +87,12 @@ namespace LibLAS
         /// <returns>true if we have next point</returns>
         public bool GetNextPoint()
         {
-            IntPtr pointer = CAPI.LASReader_GetNextPoint(hReader);
+            IntPtr tmphPoint = NativeMethods.LASReader_GetNextPoint(hReader);
 
-            if (IntPtr.Zero != pointer)
+            if (IntPtr.Zero != tmphPoint)
             {
-                laspoint = new LASPoint(pointer);
+                hPoint = tmphPoint;
+                point = new LASPoint(hPoint, false);
                 return true;
             }
             else
@@ -95,7 +107,7 @@ namespace LibLAS
         /// <returns></returns>
         public string GetVersion()
         {
-            return CAPI.LAS_GetVersion();
+            return NativeMethods.LAS_GetVersion();
         }
        
         /// <summary>
@@ -104,7 +116,7 @@ namespace LibLAS
         /// <returns>current LASPoint object</returns>
         public LASPoint GetPoint()
         {
-            return laspoint;
+            return point;
         }
 
         /// <summary>
@@ -115,7 +127,13 @@ namespace LibLAS
         /// <returns>LASPoint object</returns>
         public LASPoint GetPointAt(UInt32 position)
         {
-            return new LASPoint(CAPI.LASReader_GetPointAt(hReader, position));
+            IntPtr tmphPoint = NativeMethods.LASReader_GetPointAt(hReader, position);
+            if (IntPtr.Zero != tmphPoint)
+            {
+                hPoint = tmphPoint;
+                return new LASPoint(hPoint, false);
+            }
+            return null;
         }
 
         /// <summary>
@@ -124,17 +142,48 @@ namespace LibLAS
         /// <returns>LASHeader representing the header for the file.</returns>
         public LASHeader GetHeader()
         {
-            return new LASHeader(CAPI.LASReader_GetHeader(hReader));
+            return new LASHeader(NativeMethods.LASReader_GetHeader(hReader));
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // free managed resources
+                if (point != null)
+                {
+                    point.Dispose();
+                    point = null;
+                }
+            }
+
+            // free native resources if there are any.
+            if (hReader != IntPtr.Zero)
+            {
+                NativeMethods.LASReader_Destroy(hReader);
+                hReader = IntPtr.Zero;
+            }
+            if(hPoint != IntPtr.Zero)
+            {
+                NativeMethods.LASPoint_Destroy(hPoint);
+                hPoint = IntPtr.Zero;
+            }
         }
 
         /// <summary>
-        /// The object user should call this method when they finished with the object. In .NET is magaged by the GC.
+        /// The object user should call this method when they finished with the object.
         /// </summary>
+        /// 
         public void Dispose()
         {
-            CAPI.LASReader_Destroy(hReader);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~LASReader()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
     }
 }

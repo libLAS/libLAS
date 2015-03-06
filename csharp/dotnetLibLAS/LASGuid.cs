@@ -59,15 +59,30 @@ namespace LibLAS
     {
         private LASGuidH hguid;
 
+        protected virtual void Dispose(bool disposing)
+        {
+            // free native resources if there are any.
+            if (hguid != IntPtr.Zero)
+            {
+                NativeMethods.LASGuid_Destroy(hguid);
+                hguid = IntPtr.Zero;
+            }
+        }
+
         /// <summary>
         /// The object user should call this method when they finished with the object.
         /// </summary>
         /// 
         public void Dispose()
         {
-            CAPI.LASGuid_Destroy(hguid);
-            // Clean up unmanaged resources here.
-            // Dispose other contained disposable objects.
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~LASGuid()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         /// <summary>
@@ -75,7 +90,7 @@ namespace LibLAS
         /// </summary>
         public LASGuid()
         {
-            hguid = CAPI.LASGuid_Create();
+            hguid = NativeMethods.LASGuid_Create();
         }
 
         /// <summary>
@@ -94,7 +109,7 @@ namespace LibLAS
         /// <param name="guidString">string A GUID string in the form "00000000-0000-0000-0000-000000000000"</param>
         public LASGuid(String guidString)
         {
-            hguid = CAPI.LASGuid_CreateFromString(guidString);
+            hguid = NativeMethods.LASGuid_CreateFromString(guidString);
         }
 
         /// <summary>
@@ -103,7 +118,7 @@ namespace LibLAS
         /// <returns>the String value of the Guid</returns>
         public override string ToString()
         {
-            return CAPI.LASGuid_AsString(hguid);
+            return NativeMethods.LASGuid_AsString(hguid);
         }
 
         /// <summary>
@@ -135,7 +150,7 @@ namespace LibLAS
                 return false;
             }
 
-            if (CAPI.LASGuid_Equals(hguid, guidd.GetPointer()) == 1)
+            if (NativeMethods.LASGuid_Equals(hguid, guidd.GetPointer()) == 1)
             {
                 return true;
             }
@@ -168,7 +183,7 @@ namespace LibLAS
                 return false;
             }
 
-            if (CAPI.LASGuid_Equals(hguid, obj.GetPointer()) == 1)
+            if (NativeMethods.LASGuid_Equals(hguid, obj.GetPointer()) == 1)
             {
                 return true;
             }
