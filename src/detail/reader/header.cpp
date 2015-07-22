@@ -370,9 +370,11 @@ void Header::ReadVLRs()
         uint16_t length = vlrh.recordLengthAfterHeader;
 
         std::vector<uint8_t> data(length);
-
-        read_n(data.front(), m_ifs, length);
-         
+        if (length > 0)
+        {
+            read_n(data.front(), m_ifs, length);
+        }
+        
         VariableRecord vlr;
         vlr.SetReserved(vlrh.reserved);
         vlr.SetUserId(std::string(vlrh.userId, VariableRecord::eUserIdSize));
