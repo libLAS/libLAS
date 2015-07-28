@@ -360,7 +360,10 @@ void Header::WriteVLRs()
         detail::write_n(m_ofs, vlr.GetDescription(true).c_str(), 32);
         std::vector<uint8_t> const& data = vlr.GetData();
         std::streamsize const size = static_cast<std::streamsize>(data.size());
-        detail::write_n(m_ofs, data.front(), size);
+        if(size > 0)
+        {
+            detail::write_n(m_ofs, data.front(), size);
+        }
     }
 
 
