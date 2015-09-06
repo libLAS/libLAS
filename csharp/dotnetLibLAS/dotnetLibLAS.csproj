@@ -45,7 +45,7 @@
     <Compile Include="LASPoint.cs" />
     <Compile Include="LASReader.cs" />
     <Compile Include="LASWriter.cs" />
-    <Compile Include="LibLASCAPI.cs" />
+    <Compile Include="NativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="liblas.snk" />
