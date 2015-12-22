@@ -1323,7 +1323,11 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         liblas::ReprojectionTransform trans(in_ref, out_ref);
     
         liblas::Point minimum(&header);
+        minimum.SetCoordinates(b.minx(), b.miny(), b.minz());
+
         liblas::Point maximum(&header);
+        maximum.SetCoordinates(b.maxx(), b.maxy(), b.maxz());
+        
         trans.transform(minimum);
         trans.transform(maximum);
         b = liblas::Bounds<double>(minimum, maximum);
