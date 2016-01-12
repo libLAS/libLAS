@@ -497,32 +497,39 @@ const GTIF* SpatialReference::GetGTIF()
     {
         VariableRecord record = m_vlrs[i];
         std::vector<uint8_t> data = record.GetData();
-        if (uid == record.GetUserId(true).c_str() && 34735 == record.GetRecordId())
-        {
-            int count = data.size()/sizeof(int16_t);
-            short *data_s = reinterpret_cast<short *>( &(data[0]));
 
-            // discard invalid "zero" geotags some software emits.
-            while( count > 4 
-                   && data_s[count-1] == 0
-                   && data_s[count-2] == 0
-                   && data_s[count-3] == 0
-                   && data_s[count-4] == 0 )
+        if (uid == record.GetUserId(true).c_str() &&
+            34735 == record.GetRecordId())
+        {
+#pragma pack(push)
+#pragma pack(1)
+            struct ShortKeyHeader
             {
-                count -= 4;
-                data_s[3] -= 1;
-            }
+                uint16_t dirVersion;
+                uint16_t keyRev;
+                uint16_t minorRev;
+                uint16_t numKeys;
+            };
+#pragma pack(pop)
+
+            ShortKeyHeader *header = (ShortKeyHeader *)data.get();
+            // Calculate the number of shorts in the VLR data.
+            // The '+ 1' accounts for the header itself.
+            int count = (header->numKeys + 1) * 4;
+            short *data_s = reinterpret_cast<short *>( &(data[0]));
 
             ST_SetKey(m_tiff, record.GetRecordId(), count, STT_SHORT, data_s);
         }
 
-        if (uid == record.GetUserId(true).c_str() && 34736 == record.GetRecordId())
+        if (uid == record.GetUserId(true).c_str() &&
+            34736 == record.GetRecordId())
         {
             int count = data.size() / sizeof(double);
             ST_SetKey(m_tiff, record.GetRecordId(), count, STT_DOUBLE, &(data[0]));
         }        
 
-        if (uid == record.GetUserId(true).c_str() && 34737 == record.GetRecordId())
+        if (uid == record.GetUserId(true).c_str() &&
+            34737 == record.GetRecordId())
         {
             int count = data.size()/sizeof(uint8_t);
             ST_SetKey(m_tiff, record.GetRecordId(), count, STT_ASCII, &(data[0]));
