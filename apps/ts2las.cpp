@@ -325,7 +325,7 @@ int main(int argc, char* argv[])
     
     if (input.empty())
     {
-        std::cerr << "No input TerraSolid .bin file was specfied!" << std::endl;
+        std::cerr << "No input TerraSolid .bin file was specified!" << std::endl;
         OutputHelp(std::cout, options);
         return 1;
     }
