@@ -279,7 +279,7 @@ int main(int argc, char* argv[])
 
             if (in_file.empty() || out_file.empty() || out_frmt.empty())
             {
-                throw std::runtime_error("missing input paremeters");
+                throw std::runtime_error("missing input parameters");
             }
         }
 
