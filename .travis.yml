@@ -18,11 +18,13 @@ compiler:
   - clang
 
 before_install: ./scripts/ci/before_install.sh
-script: ./scripts/ci/script.sh
+
+script:
+    docker run -v $TRAVIS_BUILD_DIR:/liblas -e CXX="$CXX" -e CC="$CC" -e PDAL_OPTIONAL_COMPONENTS="$PDAL_OPTIONAL_COMPONENTS" -t pdal/dependencies:latest /bin/sh -c "/liblas/scripts/ci/script.sh"
 
 after_success:
   - echo "secure travis:" "$TRAVIS_SECURE_ENV_VARS"
-  - sh -c 'if test "$TRAVIS_SECURE_ENV_VARS" = "true" -a "$TRAVIS_BRANCH" = "master" -a "$CXX" = "g++"; then echo "publish website"; ./scripts/ci/build_docs.sh; ./scripts/ci/deploy_website.sh $TRAVIS_BUILD_DIR/doc/build; fi'
+  - sh -c 'if test "$TRAVIS_SECURE_ENV_VARS" = "true" -a "$TRAVIS_BRANCH" = "travis-docbuild" -a "$CXX" = "g++"; then echo "publish website"; ./scripts/ci/build_docs.sh; ./scripts/ci/deploy_website.sh $TRAVIS_BUILD_DIR/doc/build; fi'
 
 before_install: ./scripts/ci/docker.sh
 
