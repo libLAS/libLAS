@@ -3,12 +3,29 @@
 # http://github.com/libLAS
 language: cpp
 
+sudo: required
+services: docker
+dist: trusty
+
+env:
+    global:
+        - secure: "GD778Q2N4Uw5/AYSQo42wmHLFwPEKTI3PwKXPd8nRwUKHLdzhug7gyQf7IJ6AE+XMbZO1ihozZ6+KVpCRRflgIcoRMiNJWNEcjgELuCOzYO8EdktW4YHX6QcRXmo6OVy2W0mc+f3iHA11vNkj8sGKj/ae4XNIr16vivRhdYgamw="
+
+        - secure: "mSy+IRWO17ZSKUGOg6TcerAJDYduUnhMbn11wjXX1cFP0gjfdFEKR115JieIG70pElXBVrfAZ4GM3POCmSKsqvwMDRtSs0OzQifNNkDM4l73wTXt73TQl/K9A8KYfLMV9XzPDdkXqM7K3Frc3VDamF7+Y/JLbdXcSMLMbfxJHFo="
+
 compiler:
   - g++
   - clang
 
-before_install: ./bin/ci/before_install.sh
-script: ./bin/ci/script.sh
+before_install: ./scripts/ci/before_install.sh
+script: ./scripts/ci/script.sh
+
+after_success:
+  - echo "secure travis:" "$TRAVIS_SECURE_ENV_VARS"
+  - sh -c 'if test "$TRAVIS_SECURE_ENV_VARS" = "true" -a "$TRAVIS_BRANCH" = "master" -a "$CXX" = "g++"; then echo "publish website"; ./scripts/ci/build_docs.sh; ./scripts/ci/deploy_website.sh $TRAVIS_BUILD_DIR/doc/build; fi'
+
+before_install: ./scripts/ci/docker.sh
+
 
 notifications:
   email:
