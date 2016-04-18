@@ -1,6 +1,7 @@
 #!/bin/bash
 # Builds and tests libLAS
-source ./bin/ci/common.sh
+cd /liblas
+source ./scripts/ci/common.sh
 mkdir -p _build
 cd _build
 
