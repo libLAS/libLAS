@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# apps/CMakeLists.txt controls building of libLAS utilities 
+# apps/CMakeLists.txt controls building of libLAS utilities
 #
 # Copyright (c) 2009 Mateusz Loskot <mateusz@loskot.net>
 #
@@ -20,6 +20,8 @@ set(LAS2TXT las2txt)
 set(TXT2LAS txt2las)
 set(TS2LAS ts2las)
 set(LASBLOCK lasblock )
+set(LAS2COL las2col )
+set(LAS2PG las2pg )
 
 set(BIGFILE_TEST bigfile_test)
 set(LASINDEX_TEST lasindex_test)
@@ -28,7 +30,7 @@ if(Boost_IOSTREAMS_FOUND)
   set(BIGFILE_BIO_TEST bigfile_boost_iostreams_test)
 endif()
 
-# Set the build type to release if it is not explicitly set by the user and 
+# Set the build type to release if it is not explicitly set by the user and
 # isn't in the cache yet
 if (NOT CMAKE_BUILD_TYPE )
   set(CMAKE_BUILD_TYPE "Release")
@@ -41,8 +43,8 @@ endif()
 
 
 set(LIBLAS_UTILITIES
-    ${LASINFO} ${LAS2LAS} ${TXT2LAS} 
-    ${LAS2OGR} ${LAS2LAS} ${LASBLOCK} ${TS2LAS}  ${LAS2TXT} )
+    ${LASINFO} ${LAS2LAS} ${TXT2LAS}  ${LAS2COL}  ${LAS2PG}
+    ${LAS2OGR} ${LAS2LAS} ${LASBLOCK} ${TS2LAS}  ${LAS2TXT})
 
 # TODO: Experimental and requires testing --mloskot
 # Generate user-specific settings for Visual Studio project
@@ -90,12 +92,26 @@ if(LAS2TXT)
     add_executable( ${LAS2TXT}  las2txt.cpp laskernel.cpp )
     target_link_libraries(${LAS2TXT} ${APPS_CPP_DEPENDENCIES}  )
 endif()
- 
+
 # Build txt2las
 if(TXT2LAS)
     set(TXT2LAS_SRC lascommon.c ${TXT2LAS}.c)
     add_executable(${TXT2LAS} ${TXT2LAS_SRC})
     target_link_libraries(${TXT2LAS} ${LIBLAS_C_LIB_NAME})
+endif()
+
+# Build las2col
+if(LAS2COL)
+    set(LAS2COL_SRC lascommon.c ${LAS2COL}.c)
+    add_executable(${LAS2COL} ${LAS2COL_SRC})
+    target_link_libraries(${LAS2COL} ${LIBLAS_C_LIB_NAME})
+endif()
+
+# Build las2pg
+if(LAS2PG)
+    set(LAS2PG_SRC lascommon.c ${LAS2PG}.c)
+    add_executable(${LAS2PG} ${LAS2PG_SRC})
+    target_link_libraries(${LAS2PG} ${LIBLAS_C_LIB_NAME})
 endif()
 
 if(TS2LAS)
@@ -124,12 +140,12 @@ endif()
 
 if (LASINDEX_TEST)
     add_executable(${LASINDEX_TEST} lasindex_test.cpp)
-    target_link_libraries(${LASINDEX_TEST} ${APPS_CPP_DEPENDENCIES})    
+    target_link_libraries(${LASINDEX_TEST} ${APPS_CPP_DEPENDENCIES})
 endif()
 
 if(BIGFILE_BIO_TEST)
     add_executable(${BIGFILE_BIO_TEST} bigfile_boost_iostreams_test.cpp)
-    target_link_libraries(${BIGFILE_BIO_TEST} ${APPS_CPP_DEPENDENCIES} )    
+    target_link_libraries(${BIGFILE_BIO_TEST} ${APPS_CPP_DEPENDENCIES} )
 endif()
 
 ###############################################################################
@@ -160,7 +176,7 @@ if(UNIX)
     INSTALL_RPATH "${LIBLAS_UTILS_RPATH}")
 
   if(WITH_PKGCONFIG)
-    
+
     set(PKGCFG_PREFIX "${CMAKE_INSTALL_PREFIX}")
     set(PKGCFG_INC_DIR "${LIBLAS_INCLUDE_SUBDIR}")
     set(PKGCFG_LIB_DIR "${LIBLAS_LIB_SUBDIR}")
@@ -182,7 +198,7 @@ if(UNIX)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/liblas.pc
       DESTINATION ${LIBLAS_LIB_DIR}/pkgconfig
       PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
-    
+
   else()
 
     # Autoconf compatibility variables to use the same script source.
@@ -190,17 +206,17 @@ if(UNIX)
     set(exec_prefix ${CMAKE_INSTALL_PREFIX}/bin)
     set(libdir ${CMAKE_INSTALL_PREFIX}/lib)
 
-    GET_DIRECTORY_PROPERTY(LIBLAS_DEFINITIONS DIRECTORY ${libLAS_SOURCE_DIR}/ COMPILE_DEFINITIONS)   
+    GET_DIRECTORY_PROPERTY(LIBLAS_DEFINITIONS DIRECTORY ${libLAS_SOURCE_DIR}/ COMPILE_DEFINITIONS)
 
     set(LIBLAS_CONFIG_DEFINITIONS "")
     foreach(definition ${LIBLAS_DEFINITIONS})
         set(LIBLAS_CONFIG_DEFINITIONS "${LIBLAS_CONFIG_DEFINITIONS} -D${definition}")
     endforeach()
 
-     
+
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liblas-config.in
       ${CMAKE_CURRENT_BINARY_DIR}/liblas-config @ONLY)
-      
+
     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/liblas-config
       DESTINATION bin)
 
