@@ -250,15 +250,10 @@ if (GDAL_FOUND)
   endif ()
 endif()
 
-# GeoTIFF support - optional, default=OFF
-set(WITH_GEOTIFF FALSE CACHE BOOL "Choose if GeoTIFF support should be built")
+# GeoTIFF support - required, default=ON
+set(WITH_GEOTIFF TRUE CACHE BOOL "Choose if GeoTIFF support should be built")
 
-if (WITH_GEOTIFF)
-  find_package (GeoTIFF 1.3.0 QUIET NO_MODULE)
-  if (NOT GEOTIFF_FOUND)
-    find_package (GeoTIFF 1.3.0)
-  endif ()
-endif ()
+find_package (GeoTIFF 1.3.0 )
 if(GEOTIFF_FOUND)
     set(WITH_GEOTIFF TRUE)
     # Confirm required API is available
@@ -287,8 +282,7 @@ if(GEOTIFF_FOUND)
     find_package (ZLIB)
   endif ()
 else()
-    set(GEOTIFF_LIBRARY "")
-    set(GEOTIFF_INCLUDE_DIR "")
+    message(FATAL_ERROR "Unable to find sufficient GeoTIFF")
 endif()
 
 
