@@ -56,10 +56,10 @@
 #include <string>
 
 // Fake out the compiler if we don't have libgeotiff includes already
-#if !defined(__geotiff_h_)
+#if !defined(__geotiff_h_) && !defined(LIBGEOTIFF_GEOTIFF_H_)
 typedef struct GTIFS *GTIF;
 #endif
-#if !defined(__geo_simpletags_h_)
+#if !defined(__geo_simpletags_h_) && !defined(LIBGEOTIFF_GEO_SIMPLETAGS_H_)
 typedef struct ST_TIFFS *ST_TIFF;
 #endif
 
@@ -199,7 +199,7 @@ private:
 LAS_DLL std::ostream& operator<<(std::ostream& ostr, const liblas::SpatialReference& srs);
 
 LAS_C_START
-#if defined(__geotiff_h_)
+#if defined(__geotiff_h_) || defined(LIBGEOTIFF_GEOTIFF_H_)
 #if defined(GEO_NORMALIZE_H_INCLUDED)
 char LAS_DLL * GTIFGetOGISDefn(GTIF*, GTIFDefn*);
 #endif
@@ -210,7 +210,7 @@ void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName);
 #if defined(_OGR_SRS_API_H_INCLUDED)
 void SetGeogCSCitation(GTIF* psGTIF, OGRSpatialReference* poSRS, char* angUnitName, int nDatum, short nSpheroid);
 #endif // defined _OGR_SRS_API_H_INCLUDED
-#endif // defined __geotiff_h_
+#endif // defined __geotiff_h_ || defined LIBGEOTIFF_GEOTIFF_H_
 
 LAS_C_END
 
