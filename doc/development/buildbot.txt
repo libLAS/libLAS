@@ -5,7 +5,7 @@ Test Suite
 ******************************************************************************
 
 Liblas includes a test suite written in C++ that can be fairly easily run
-to ensure that the library is working properly.  
+to ensure that the library is working properly.
 
 
 make test
@@ -20,22 +20,22 @@ If the liblas_test binary does not exist it may be necessary to do::
   make liblas_test test
 
 This should produce a brief report indicating the number of tests that failed,
-if any.  A detailed report will be generated in 
-liblas/Testing/Temporary/LastTest.log.  Failure reports may look something 
+if any.  A detailed report will be generated in
+liblas/Testing/Temporary/LastTest.log.  Failure reports may look something
 like::
 
   ---> group: liblas::SpatialReference, test: test<6>
        problem: assertion failed
        failed assertion: `VLR count: expected `3` actual `4``
 
-Tests failures diagnosis may require inspecting the test code in the 
+Tests failures diagnosis may require inspecting the test code in the
 liblas/test/unit directory.  In the above case searching for "test<6>" in
 the file liblas/test/unit/lasspatialreference_test.cpp would be appropriate.
 
-The tests can also be run directly in the liblas/test/unit directory by 
+The tests can also be run directly in the liblas/test/unit directory by
 running the liblas/bin/liblas_test executable.   In this case the report is
 written to stderr.  Be careful to write it in the right directory or some
-tests will fail for reasons that are not clear. 
+tests will fail for reasons that are not clear.
 
 
 Continuous Integration - TravisCI
@@ -43,7 +43,7 @@ Continuous Integration - TravisCI
 
 
 The libLAS project uses `Travis <https://travis-ci.org/libLAS/libLAS>`__ to perform
-automated builds and continuous integration. 
+automated builds and continuous integration.
 
 
 Building libLAS and running unit tests using CMake on Unix
@@ -57,15 +57,12 @@ dedicated `CDash`_ - utility dashboard hosted by the http://cdash.org website:
 The CDash is another tool liblAS uses to perform `continuous integration`_
 during development process.
 
-.. note::
-    In order to enable `CTest`_ support, `CMake 2.8.0+`_
-    version is required.
 
-* Configure libLAS core library with unit tests and CTest enabled
+* Configure libLAS core library with unit tests enabled
 
 ::
 
-    $ cmake ../main -DWITH_TESTS=ON -DENABLE_CTEST=ON
+    $ cmake ../main -DWITH_TESTS=ON
     -- The C compiler identification is GNU
     -- The CXX compiler identification is GNU
     -- Check for working C compiler: /usr/bin/gcc
@@ -78,8 +75,6 @@ during development process.
     -- Detecting CXX compiler ABI info - done
     -- Enable libLAS utilities to build - done
     -- Enable libLAS unit tests to build - done
-    -- Enable CTest to support submissions of results to CDash at http://cdash.org
-    -- Enable CTest to support submissions of results to CDash at http://cdash.org - done
     -- Configuring done
     -- Generating done
     -- Build files have been written to: /home/mloskot/dev/liblas/_hg/build
@@ -188,17 +183,15 @@ during development process.
 Ammending and Extending the Test Suite
 ..............................................................................
 
-The tests for the test suite are implemented as a set of C++ files in the 
-liblas/test/unit directory.  New tests for existing classes can be added 
+The tests for the test suite are implemented as a set of C++ files in the
+liblas/test/unit directory.  New tests for existing classes can be added
 based on the existing examples.  New files can be introduced for additional
 classes or categories of testing, but the source filename(s) will also need
 to be added in liblas/test/unit/CMakeLists.txt.
 
 
 .. _`CMake`: http://www.cmake.org/
-.. _`CTest`: http://cmake.org/cmake/help/ctest-2-8-docs.html
 .. _`CMake 2.8.0+`: http://www.cmake.org/cmake/help/cmake-2-8-docs.html
-.. _`CDash`: http://www.cdash.org/
 .. _`continuous integration`: http://en.wikipedia.org/wiki/Continuous_integration
 .. _`libLAS CDash`: http://my.cdash.org/index.php?project=libLAS
 
