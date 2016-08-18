@@ -62,11 +62,6 @@ set(WITH_PKGCONFIG FALSE CACHE BOOL
 
 set(WITH_ENDIANAWARE FALSE CACHE BOOL "Choose whether or not libLAS should do runtime endianness switching.  Note that this can slow things down considerably if enabled by default")
 
-# Enable CTest and submissions to libLAS dashboard at CDash
-# http://my.cdash.org/index.php?project=libLAS
-set(ENABLE_CTEST FALSE CACHE BOOL
-  "Enable CTest to support submissions of results to CDash at http://cdash.org")
-
 ###############################################################################
 # CMake settings
 cmake_minimum_required(VERSION 2.6.0)
@@ -359,24 +354,7 @@ if(WITH_TESTS)
   message(STATUS "Enable libLAS unit tests to build - done")
   enable_testing()
 
-
-  if(ENABLE_CTEST)
-    message(STATUS
-      "Enable CTest to support submissions of results to CDash at http://cdash.org")
-    cmake_minimum_required(VERSION 2.8.0)
-    # Dashboard has been prepared for experiments
-    # http://my.cdash.org/index.php?project=libLAS
-    include(CTest)
-    message(STATUS
-      "Enable CTest to support submissions of results to CDash at http://cdash.org - done")
-  endif()
-
   add_subdirectory(test)
-else()
-  if(ENABLE_CTEST)
-    message(WARNING
-      "CTest support requested but WITH_TESTS option not specified to build of libLAS unit tests")
-  endif()
 endif()
 
 # Add find_package(libLAS) support
