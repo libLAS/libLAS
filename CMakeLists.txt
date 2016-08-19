@@ -190,7 +190,7 @@ if(WIN32)
 endif(WIN32)
 
 find_package(Threads)
-find_package(Boost 1.38 COMPONENTS program_options thread system iostreams filesystem REQUIRED)
+find_package(Boost 1.42 COMPONENTS program_options thread system iostreams filesystem REQUIRED)
 
 if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
