@@ -132,9 +132,9 @@ class File(object):
     def open(self):
         """Open the file for processing, called by __init__
         """
-        
+
         if self._mode == 'r' or self._mode == 'rb':
-            
+
             if not os.path.exists(self.filename):
                 raise OSError("No such file or directory: '%s'" % self.filename)
 
@@ -211,7 +211,7 @@ class File(object):
         """Closes the LAS file
         """
         if self.mode == 0:
-            try: 
+            try:
                 files['read'][self.filename] -= 1
                 if files['read'][self.filename] == 0:
                     files['read'].pop(self.filename)
@@ -225,10 +225,10 @@ class File(object):
             except:
                 files['write'].remove(self.filename)
             core.las.LASWriter_Destroy(self.handle)
-        
+
         if (self._header):
             core.las.LASHeader_Destroy(self._header)
-            
+
         self._header = None
         self.handle = None
 
@@ -270,7 +270,7 @@ class File(object):
         """Returns the liblas.header.Header for the file"""
         if not self.handle:
             return None
-        
+
         if self.mode == 0:
             return lasheader.Header(handle=core.las.LASReader_GetHeader(self.handle), owned=True)
         else:
@@ -282,7 +282,7 @@ class File(object):
         """Sets the liblas.header.Header for the file.  If the file is in \
         append mode, the header will be overwritten in the file."""
         # append mode
-        if mode == 2:
+        if self.mode == 2:
             core.las.LASWriter_Destroy(self.handle)
             self.handle = core.las.LASWriter_Create(self.handle, header, 2)
             self._header = core.las.LASHeader_Copy(header.handle)
@@ -309,7 +309,7 @@ class File(object):
             copy=True)
             p.set_header(lasheader.Header(handle=self._header, copy=False))
             return p
-            
+
     def seek(self, index):
         """Seeks to the point at the given index.  Subsequent calls \
 	   to :meth:`next` will then start at that point."""
@@ -385,16 +385,16 @@ class File(object):
                                     'be of type liblas.point.Point' % pt)
         if self.mode == 1 or self.mode == 2:
             core.las.LASWriter_WritePoint(self.handle, pt.handle)
-            
+
     def get_xmlsummary(self):
         """Returns an XML string summarizing all of the points in the reader
-        
+
         .. note::
-            This method will reset the reader's read position to the 0th 
-            point to summarize the entire file, and it will again reset the 
+            This method will reset the reader's read position to the 0th
+            point to summarize the entire file, and it will again reset the
             read position to the 0th point upon completion."""
         if self.mode != 0:
             raise core.LASException("file must be in read mode, not append or write mode to provide xml summary")
         return  core.las.LASReader_GetSummaryXML(self.handle)
-        
+
     summary = property(get_xmlsummary, None, None, None)
