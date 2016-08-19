@@ -2,40 +2,40 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  laszip writer implementation for C++ libLAS 
+ * Purpose:  laszip writer implementation for C++ libLAS
  * Author:   Michael P. Gerlek (mpg@flaxen.com)
  *
  ******************************************************************************
  * Copyright (c) 2010, Michael P. Gerlek
  *
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following 
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
  * conditions are met:
- * 
- *     * Redistributions of source code must retain the above copyright 
+ *
+ *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright 
- *       notice, this list of conditions and the following disclaimer in 
- *       the documentation and/or other materials provided 
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in
+ *       the documentation and/or other materials provided
  *       with the distribution.
- *     * Neither the name of the Martin Isenburg or Iowa Department 
- *       of Natural Resources nor the names of its contributors may be 
- *       used to endorse or promote products derived from this software 
+ *     * Neither the name of the Martin Isenburg or Iowa Department
+ *       of Natural Resources nor the names of its contributors may be
+ *       used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
- * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
@@ -57,12 +57,12 @@
 #include <cstdlib> // std::size_t
 #include <cassert>
 
-namespace liblas { namespace detail { 
+namespace liblas { namespace detail {
 
 ZipWriterImpl::ZipWriterImpl(std::ostream& ofs) :
-    m_ofs(ofs), 
-    //m_point_writer(PointWriterPtr( )), 
-    m_header_writer(HeaderWriterPtr()), 
+    m_ofs(ofs),
+    //m_point_writer(PointWriterPtr( )),
+    m_header_writer(HeaderWriterPtr()),
     m_pointCount(0),
     m_zipper(NULL),
     m_zipPoint(NULL)
@@ -74,9 +74,9 @@ ZipWriterImpl::ZipWriterImpl(std::ostream& ofs) :
 void ZipWriterImpl::WriteHeader()
 {
     m_header_writer = HeaderWriterPtr(new writer::Header(m_ofs, m_pointCount, *m_header) );
-    
+
     m_header_writer->write();
-    
+
     m_header = HeaderPtr(new liblas::Header(m_header_writer->GetHeader()));
 
     if (!m_zipper)
@@ -94,7 +94,7 @@ void ZipWriterImpl::WriteHeader()
             throw liblas_error(oss.str());
         }
     }
-    
+
 }
 
 void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
@@ -102,12 +102,12 @@ void ZipWriterImpl::UpdatePointCount(boost::uint32_t count)
     std::streamoff orig_pos = m_ofs.tellp();
 
     boost::uint32_t out = m_pointCount;
-    
+
     if ( count != 0 ) { out = count; }
-    
+
     if (!m_ofs.good() ) return;
     // Skip to first byte of number of point records data member
-    std::streamsize const dataPos = 107; 
+    std::streamsize const dataPos = 107;
     m_ofs.seekp(dataPos, std::ios::beg);
     detail::write_n(m_ofs, out , sizeof(out));
 
@@ -119,8 +119,15 @@ void ZipWriterImpl::WritePoint(liblas::Point const& point)
 {
 
     bool ok = false;
-    const std::vector<boost::uint8_t>* data = &point.GetData();
-    assert(data->size() == m_zipPoint->m_lz_point_size);
+    const std::vector<boost::uint8_t>* data(0);
+    data = &point.GetData();
+
+    liblas::Point resized(point);
+    if (data->size() != m_zipPoint->m_lz_point_size)
+    {
+        resized.SetHeader(m_header.get());
+        data = &resized.GetData();
+    }
 
     for (unsigned int i=0; i<m_zipPoint->m_lz_point_size; i++)
     {
@@ -187,7 +194,7 @@ void ZipWriterImpl::SetHeader(liblas::Header const& header)
 
     if (!m_zipPoint)
     {
-            
+
         PointFormatName format = m_header->GetDataFormatId();
 
         boost::scoped_ptr<ZipPoint> z(new ZipPoint(format, m_header->GetVLRs()));
