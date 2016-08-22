@@ -13,5 +13,5 @@ make -j ${NUMTHREADS}
 echo "$(tmstamp) *** script::cmake-build finished $(date) ***"
 
 echo "$(tmstamp) *** script::cmake-test starting $(date) ***"
-LD_LIBRARY_PATH=./bin/Debug ./bin/Debug/liblas_test test/data
+LD_LIBRARY_PATH=./bin/Debug ./bin/Debug/liblas_test ../test/data
 echo "$(tmstamp) *** script::cmake-test finished $(date) ***"
