@@ -24,7 +24,7 @@
 
 #include <limits.h>
 #include <inttypes.h>
-#if defined(__linux__) || defined(__CYGWIN__) || defined(__FreeBSD_kernel__)
+#if defined(__linux__) || defined(__CYGWIN__) || defined(__FreeBSD_kernel__) || defined(__GNU__)
 
 #include <endian.h>
 #include <unistd.h>
