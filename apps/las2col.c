@@ -26,10 +26,11 @@
 #include <inttypes.h>
 #if defined(__linux__) || defined(__CYGWIN__)
 
-#	include <endian.h>
-
+#include <endian.h>
+#include <unistd.h>
 #elif defined(__APPLE__)
 
+#include <unistd.h>
 #	include <libkern/OSByteOrder.h>
 
 #	define htobe16(x) OSSwapHostToBigInt16(x)
@@ -54,6 +55,7 @@
 
 #elif defined(__OpenBSD__)
 
+#include <unistd.h>
 #	include <sys/endian.h>
 
 #elif defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
@@ -569,7 +571,7 @@ uint64_t morton2D_encodeOscar(uint64_t *answer, LASPointH p, unsigned int factor
 int64_t S64(const char *s) {
 	int64_t i;
 	char c ;
-	int scanned = sscanf(s, "%" SCNd64 "%c", &i, &c);
+	int scanned = sscanf(s, "lld%" SCNd64 "%c", &i, &c);
 	if (scanned == 1) return i;
 	fprintf(stderr, "ERROR: parsing string to int64_t.\n");
 	exit(1);
