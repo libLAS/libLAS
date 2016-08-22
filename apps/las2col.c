@@ -160,18 +160,18 @@ void usage()
     fprintf(stderr,"----------------------------------------------------------\n");
     fprintf(stderr,"\n");
 
-    fprintf(stderr,"Convert a las/laz file into columnar format (binary) of MonetDB, outputs for each entry a file <ouput_prefix>_col_<entry_name>.dat:\n");
-    fprintf(stderr,"  las2col -i <input_file> -o <ouput_prefix>\n");
+    fprintf(stderr,"Convert a las/laz file into columnar format (binary) of MonetDB, outputs for each entry a file <output_prefix>_col_<entry_name>.dat:\n");
+    fprintf(stderr,"  las2col -i <input_file> -o <output_prefix>\n");
     fprintf(stderr,"\n");
 
-    fprintf(stderr,"Convert a list of las/laz files (still outputs for each entry a file <ouput_prefix>_col_<entry_name>.dat):\n");
-    fprintf(stderr,"  las2col -i <las_file_1> -i <las_file_2> -o <ouput_prefix>\n");
+    fprintf(stderr,"Convert a list of las/laz files (still outputs for each entry a file <output_prefix>_col_<entry_name>.dat):\n");
+    fprintf(stderr,"  las2col -i <las_file_1> -i <las_file_2> -o <output_prefix>\n");
     fprintf(stderr,"Alternatively:\n");
-    fprintf(stderr,"  las2col -f <file_with_the_list_las/laz_files> -o <ouput_prefix>\n");
+    fprintf(stderr,"  las2col -f <file_with_the_list_las/laz_files> -o <output_prefix>\n");
     fprintf(stderr,"\n");
 
     fprintf(stderr,"Convert a list of las/laz files using <num_read_threads> threads (default is 1):\n");
-    fprintf(stderr,"  las2col -f <file_with_the_list_las/laz_files> -o <ouput_prefix> --num_read_threads <number_of_threads>\n");
+    fprintf(stderr,"  las2col -f <file_with_the_list_las/laz_files> -o <output_prefix> --num_read_threads <number_of_threads>\n");
     fprintf(stderr,"\n\n");
 
     fprintf(stderr,"----------------------------------------------------------\n");
@@ -218,7 +218,7 @@ void usage()
     fprintf(stderr," After generating the columnar files, import them in MonetDB. Example: \n");
     fprintf(stderr,"   mclient <db_name> -s \"COPY BINARY INTO flat FROM ('<full_parent_path>/out_col_x.dat','<full_parent_path>/out_col_y.dat','<full_parent_path>/out_col_z.dat')\"\n");
     fprintf(stderr," Note that full paths of the columnar files MUST be used. Also note that a table called flat has to be created in a MonetDB DB beforehand. The table must have \n");
-    fprintf(stderr," the columns in the same order as specified by the --parse option, and the column types must be the ones speficied above. Example: \n");
+    fprintf(stderr," the columns in the same order as specified by the --parse option, and the column types must be the ones specified above. Example: \n");
     fprintf(stderr,"   mclient <db_name> -s \"create table flat (x double, y double, z double)\"\n");
     fprintf(stderr," Note that for decimal entries (XYZ) the column definition at table-creation time must be decimal(<num_digits_unscaled_max>,<num_digits_scale>)\n");
     fprintf(stderr," For example, if the maximum X value of a file (or a list of files) is 638982.55, then the X definition when creating the table is decimal(8,2). Example:\n");
