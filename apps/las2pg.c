@@ -166,7 +166,7 @@ void usage()
     fprintf(stderr,"  las2pg -i <input_file>.las\n");
     fprintf(stderr,"\n");
 
-    fprintf(stderr,"Convert a las/laz file into PostgreSQL binary dump format, outputs <ouput_name>:\n");
+    fprintf(stderr,"Convert a las/laz file into PostgreSQL binary dump format, outputs <output_name>:\n");
     fprintf(stderr,"  las2pg -i <input_file>.las -o <output_name>\n");
     fprintf(stderr,"Use flag --stdout to write to standard output (recommended use together with a pipe, see below).\n");
     fprintf(stderr,"\n\n");
@@ -198,7 +198,7 @@ void usage()
     fprintf(stderr,"   M - vertex index number as integer\n");
     fprintf(stderr,"   k - Morton 2D code using X and Y (unscaled and no offset) as bigint\n\n");
 
-    fprintf(stderr," The moffset flag (for example '--moffset 8600000,40000000') specifies a global offset to substract to X and Y \n");
+    fprintf(stderr," The moffset flag (for example '--moffset 8600000,40000000') specifies a global offset to subtract to X and Y \n");
     fprintf(stderr," to be used when computing the Morton 2D code. Values must be unscaled \n\n");
 
     fprintf(stderr," The check flag (for example '--check 0.01,0.01') checks suitability to compute Morton 2D codes \n");
@@ -211,7 +211,7 @@ void usage()
     fprintf(stderr," The intended use of this tool is by using the --stdout flag and a pipe to avoid storing intermediate files. Example: \n");
     fprintf(stderr,"    las2pg 1.2-with-color.laz --parse xyzRGBi --stdout | psql -c \"copy flat from stdin with binary\" \n");
     fprintf(stderr," This obviously require a table called flat to be created in a PostgreSQL DB beforehand. The table must have \n");
-    fprintf(stderr," the columns in the same order as specified by the --parse option, and the column types must be the ones speficied above. Example: \n");
+    fprintf(stderr," the columns in the same order as specified by the --parse option, and the column types must be the ones specified above. Example: \n");
     fprintf(stderr,"    psql -c \"create table flat (x double precision, y double precision, z double precision, r integer, g integer, b integer, i integer)\" \n\n");
 }
 
@@ -417,7 +417,7 @@ int main(int argc, char *argv[])
     num_entries = strlen(parse_string);
 
     if (use_stdout == TRUE && file_name_out){
-      LASError_Print("If an ouput file is specified, --stdout must not be used!");
+      LASError_Print("If an output file is specified, --stdout must not be used!");
       exit(1);
     }
 
