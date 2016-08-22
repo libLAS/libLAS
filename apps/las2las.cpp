@@ -342,7 +342,7 @@ int main(int argc, char* argv[])
         if (vm.count("min-offset")) 
         {
             if (vm.count("offset")) {
-                throw std::runtime_error("min-offset cannot be used with offets.  Use one or the other");
+                throw std::runtime_error("min-offset cannot be used with offset.  Use one or the other");
             }
             
             bMinOffset = true;
