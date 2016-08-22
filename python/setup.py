@@ -6,7 +6,7 @@ try:
     from setuptools import setup, Extension
 except ImportError:
     from distutils.core import setup, Extension
-    
+
 from sys import version_info
 
 try:
@@ -18,7 +18,7 @@ install_requires = ['setuptools']
 
 import os
 
-version = '1.8.0'
+version = '1.8.1'
 
 import socket
 
@@ -28,7 +28,7 @@ if socket.gethostname() == 'fire-windows':
                          r'D:\liblas\bin\RelWithDebInfo\liblas.dll',]),]
 else:
     data_files = None
-        
+
 setup(name          = 'libLAS',
       version       = version,
       description   = 'LAS 1.0/1.1/1.2 LiDAR data format translation',

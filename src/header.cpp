@@ -2,7 +2,7 @@
  * $Id$
  *
  * Project:  libLAS - http://liblas.org - A BSD library for LAS format data.
- * Purpose:  LAS header class 
+ * Purpose:  LAS header class
  * Author:   Mateusz Loskot, mateusz@loskot.net
  *
  ******************************************************************************
@@ -10,33 +10,33 @@
  * Copyright (c) 2008, Phil Vachon
  *
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following 
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
  * conditions are met:
- * 
- *     * Redistributions of source code must retain the above copyright 
+ *
+ *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright 
- *       notice, this list of conditions and the following disclaimer in 
- *       the documentation and/or other materials provided 
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in
+ *       the documentation and/or other materials provided
  *       with the distribution.
- *     * Neither the name of the Martin Isenburg or Iowa Department 
- *       of Natural Resources nor the names of its contributors may be 
- *       used to endorse or promote products derived from this software 
+ *     * Neither the name of the Martin Isenburg or Iowa Department
+ *       of Natural Resources nor the names of its contributors may be
+ *       used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
- * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
  ****************************************************************************/
 
@@ -71,7 +71,7 @@ namespace liblas {
 
 char const* const Header::FileSignature = "LASF";
 char const* const Header::SystemIdentifier = "libLAS";
-char const* const Header::SoftwareIdentifier = "libLAS 1.8.0";
+char const* const Header::SoftwareIdentifier = "libLAS 1.8.1";
 
 
 Header::Header() : m_schema(ePointFormat3)
@@ -111,7 +111,7 @@ Header::Header(Header const& other) :
     assert(p == m_softwareId);
     std::vector<uint32_t>(other.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
     assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
-    
+
     std::vector<VariableRecord>(other.m_vlrs).swap(m_vlrs);
 
 }
@@ -138,7 +138,7 @@ Header& Header::operator=(Header const& rhs)
         m_dataOffset = rhs.m_dataOffset;
         m_recordsCount = rhs.m_recordsCount;
         m_pointRecordsCount = rhs.m_pointRecordsCount;
-        
+
         std::vector<uint32_t>(rhs.m_pointRecordsByReturn).swap(m_pointRecordsByReturn);
         assert(ePointsByReturnSize >= m_pointRecordsByReturn.size());
 
@@ -161,7 +161,7 @@ bool Header::operator==(Header const& other) const
 
     if (m_scales != other.m_scales) return false;
     if (m_offsets != other.m_offsets) return false;
-    
+
     if (m_signature != other.m_signature) return false;
     if (m_sourceId != other.m_sourceId) return false;
     if (m_reserved != other.m_reserved) return false;
@@ -254,7 +254,7 @@ void Header::SetVersionMinor(uint8_t v)
 {
     if (v > eVersionMinorMax)
         throw std::out_of_range("version minor out of range");
-    
+
     m_versionMinor = v;
 
 
@@ -304,7 +304,7 @@ void Header::SetSoftwareId(std::string const& v)
 {
     if (v.size() > eSoftwareIdSize)
         throw std::invalid_argument("generating software id too long");
-    
+
 //    m_softwareId = v;
     std::fill(m_softwareId, m_softwareId + eSoftwareIdSize, 0);
     std::strncpy(m_softwareId, v.c_str(), eSoftwareIdSize);
@@ -521,13 +521,13 @@ const Bounds<double>& Header::GetExtent() const
     return m_extent;
 }
 
-void Header::AddVLR(VariableRecord const& v) 
+void Header::AddVLR(VariableRecord const& v)
 {
     m_vlrs.push_back(v);
     m_recordsCount += 1;
 }
 
-VariableRecord const& Header::GetVLR(uint32_t index) const 
+VariableRecord const& Header::GetVLR(uint32_t index) const
 {
     return m_vlrs[index];
 }
@@ -537,8 +537,8 @@ const std::vector<VariableRecord>& Header::GetVLRs() const
     return m_vlrs;
 }
 
-void Header::DeleteVLR(uint32_t index) 
-{    
+void Header::DeleteVLR(uint32_t index)
+{
     if (index >= m_vlrs.size())
         throw std::out_of_range("index is out of range");
 
@@ -557,7 +557,7 @@ void Header::Init()
 
     m_versionMajor = 1;
     m_versionMinor = 2;
-    
+
     m_createDOY = m_createYear = 0;
     std::time_t now;
     std::time(&now);
@@ -569,7 +569,7 @@ void Header::Init()
     }
 
     m_headerSize = eHeaderSize;
-    
+
     m_projectGuid = boost::uuids::nil_uuid();
     m_sourceId = m_reserved = uint16_t();
 
@@ -608,19 +608,19 @@ bool SameVLRs(std::string const& name, uint16_t id, liblas::VariableRecord const
 void Header::DeleteVLRs(std::string const& name, uint16_t id)
 {
 
-    m_vlrs.erase( std::remove_if( m_vlrs.begin(), 
+    m_vlrs.erase( std::remove_if( m_vlrs.begin(),
                                   m_vlrs.end(),
                                   boost::bind( &SameVLRs, name, id, _1 ) ),
                   m_vlrs.end());
 
-    m_recordsCount = static_cast<uint32_t>(m_vlrs.size());        
+    m_recordsCount = static_cast<uint32_t>(m_vlrs.size());
 
 }
 
 
 
-void Header::SetGeoreference() 
-{    
+void Header::SetGeoreference()
+{
     std::vector<VariableRecord> vlrs = m_srs.GetVLRs();
 
     // Wipe the GeoTIFF-related VLR records off of the Header
@@ -630,7 +630,7 @@ void Header::SetGeoreference()
 
     std::vector<VariableRecord>::const_iterator i;
 
-    for (i = vlrs.begin(); i != vlrs.end(); ++i) 
+    for (i = vlrs.begin(); i != vlrs.end(); ++i)
     {
         AddVLR(*i);
     }
@@ -648,7 +648,7 @@ void Header::SetSRS(SpatialReference& srs)
 
 Schema const& Header::GetSchema() const
 {
-    
+
     return m_schema;
 }
 
@@ -656,7 +656,7 @@ void Header::SetSchema(const Schema& format)
 {
 
     m_schema = format;
-    
+
     // Reset the X, Y, Z dimensions with offset and scale values
     boost::optional< Dimension const& > x_c = m_schema.GetDimension("X");
     if (!x_c)
@@ -666,14 +666,14 @@ void Header::SetSchema(const Schema& format)
     x.IsFinitePrecision(true);
     x.SetOffset(m_offsets.x);
     m_schema.AddDimension(x);
-    
+
     boost::optional< Dimension const& > y_c = m_schema.GetDimension("Y");
     liblas::Dimension y(*y_c);
     y.SetScale(m_scales.y);
     y.IsFinitePrecision(true);
     y.SetOffset(m_offsets.y);
     m_schema.AddDimension(y);
-    
+
     boost::optional< Dimension const& > z_c = m_schema.GetDimension("Z");
 
     liblas::Dimension z(*z_c);
@@ -681,8 +681,8 @@ void Header::SetSchema(const Schema& format)
     z.IsFinitePrecision(true);
     z.SetOffset(m_offsets.z);
     m_schema.AddDimension(z);
-    
-} 
+
+}
 
 void Header::SetCompressed(bool b)
 {
@@ -698,30 +698,30 @@ liblas::property_tree::ptree Header::GetPTree( ) const
 {
     using liblas::property_tree::ptree;
     ptree pt;
-    
+
     pt.put("filesignature", GetFileSignature());
     pt.put("projectdid", GetProjectId());
 
     pt.put("systemid", GetSystemId());
     pt.put("softwareid", GetSoftwareId());
-    
-    
+
+
     std::ostringstream version;
     version << static_cast<int>(GetVersionMajor());
     version <<".";
     version << static_cast<int>(GetVersionMinor());
     pt.put("version", version.str());
-    
+
     pt.put("filesourceid", GetFileSourceId());
     pt.put("reserved", GetReserved());
 
     ptree srs = GetSRS().GetPTree();
     pt.add_child("srs", srs);
-    
+
     std::ostringstream date;
     date << GetCreationDOY() << "/" << GetCreationYear();
     pt.put("date", date.str());
-    
+
     pt.put("size", GetHeaderSize());
     pt.put("dataoffset", GetDataOffset());
     pt.put("header_padding", GetHeaderPadding());
@@ -735,16 +735,16 @@ liblas::property_tree::ptree Header::GetPTree( ) const
     liblas::detail::ZipPoint zp(GetDataFormatId(), GetVLRs());
     LASzip* laszip = zp.GetZipper();
     std::ostringstream zip_version;
-    zip_version <<"LASzip Version " 
-                << (int)laszip->version_major << "." 
+    zip_version <<"LASzip Version "
+                << (int)laszip->version_major << "."
                 << (int)laszip->version_minor << "r"
-                << (int)laszip->version_revision << " c" 
+                << (int)laszip->version_revision << " c"
                 << (int)laszip->compressor;
-    if (laszip->compressor == LASZIP_COMPRESSOR_CHUNKED) 
+    if (laszip->compressor == LASZIP_COMPRESSOR_CHUNKED)
         zip_version << " "<< (int)laszip->chunk_size << ":";
     else
         zip_version << ":";
-    for (int i = 0; i < (int)laszip->num_items; i++) 
+    for (int i = 0; i < (int)laszip->num_items; i++)
         zip_version <<" "<< laszip->items[i].get_name()<<" "<<  (int)laszip->items[i].version;
 
     pt.put("compression_info", zip_version.str());
@@ -759,32 +759,32 @@ liblas::property_tree::ptree Header::GetPTree( ) const
         return_count.add_child("return", r);
     }
     pt.add_child("returns", return_count);
-    
+
     pt.put("scale.x", GetScaleX());
     pt.put("scale.y", GetScaleY());
     pt.put("scale.z", GetScaleZ());
-    
+
     pt.put("offset.x", GetOffsetX());
     pt.put("offset.y", GetOffsetY());
     pt.put("offset.z", GetOffsetZ());
-    
+
     pt.put("minimum.x", GetMinX());
     pt.put("minimum.y", GetMinY());
     pt.put("minimum.z", GetMinZ());
-    
+
     pt.put("maximum.x", GetMaxX());
     pt.put("maximum.y", GetMaxY());
     pt.put("maximum.z", GetMaxZ());
 
-    
+
     for (uint32_t i=0; i< GetRecordsCount(); i++) {
         pt.add_child("vlrs.vlr", GetVLR(i).GetPTree());
-    }    
+    }
 
-    liblas::Schema const& schema = GetSchema(); 
-    ptree t = schema.GetPTree(); 
+    liblas::Schema const& schema = GetSchema();
+    ptree t = schema.GetPTree();
     pt.add_child("schema",  t);
-    
+
     return pt;
 }
 
@@ -834,7 +834,7 @@ void Header::to_rst(std::ostream& os) const
     {
           os << v.second.get<uint32_t>("count")<< " ";
 
-    }      
+    }
     os << std::endl;
 
     os.setf(std::ios_base::fixed, std::ios_base::floatfield);
@@ -845,16 +845,16 @@ void Header::to_rst(std::ostream& os) const
     uint32_t x_precision = 6;
     uint32_t y_precision = 6;
     uint32_t z_precision = 6;
-    
+
     x_precision = 14;//GetStreamPrecision(x_scale);
     y_precision = 14; //GetStreamPrecision(y_scale);
     z_precision = 14; //GetStreamPrecision(z_scale);
 
     os << "  Scale Factor X Y Z:          ";
     os.precision(x_precision);
-    os << tree.get<double>("scale.x") << " "; 
+    os << tree.get<double>("scale.x") << " ";
     os.precision(y_precision);
-    os << tree.get<double>("scale.y") << " "; 
+    os << tree.get<double>("scale.y") << " ";
     os.precision(z_precision);
     os << tree.get<double>("scale.z") << std::endl;
 
@@ -872,7 +872,7 @@ void Header::to_rst(std::ostream& os) const
 
     os << "  Min X Y Z:                   ";
     os.precision(x_precision);
-    os << tree.get<double>("minimum.x") << " "; 
+    os << tree.get<double>("minimum.x") << " ";
     os.precision(y_precision);
     os << tree.get<double>("minimum.y") << " ";
     os.precision(z_precision);
@@ -884,9 +884,9 @@ void Header::to_rst(std::ostream& os) const
     os.precision(y_precision);
     os << tree.get<double>("maximum.y") << " ";
     os.precision(z_precision);
-    os << tree.get<double>("maximum.z") << std::endl;         
+    os << tree.get<double>("maximum.z") << std::endl;
 
-    
+
     os << "  Spatial Reference:           ";
 #ifdef HAVE_GDAL
     if (tree.get<std::string>("srs.prettywkt").size() > 0)
@@ -895,8 +895,8 @@ void Header::to_rst(std::ostream& os) const
 #endif
     {
         os << std::endl << tree.get<std::string>("srs.prettywkt") << std::endl;
-        os << std::endl << tree.get<std::string>("srs.gtiff") << std::endl; 
-    } else 
+        os << std::endl << tree.get<std::string>("srs.gtiff") << std::endl;
+    } else
     {
         os << "None" << std::endl;
     }
@@ -906,9 +906,9 @@ void Header::to_rst(std::ostream& os) const
 std::ostream& operator<<(std::ostream& os, liblas::Header const& h)
 {
 
-    
+
     h.to_rst(os);
     return os;
-    
+
 }
 } // namespace liblas
