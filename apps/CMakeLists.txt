@@ -20,8 +20,11 @@ set(LAS2TXT las2txt)
 set(TXT2LAS txt2las)
 set(TS2LAS ts2las)
 set(LASBLOCK lasblock )
-set(LAS2COL las2col )
-set(LAS2PG las2pg )
+
+if (NOT WIN32)
+    set(LAS2COL las2col )
+    set(LAS2PG las2pg )
+endif()
 
 set(BIGFILE_TEST bigfile_test)
 set(LASINDEX_TEST lasindex_test)
