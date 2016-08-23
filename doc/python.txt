@@ -1,7 +1,3 @@
-.. raw:: pdf
-
-    PageBreak
-    
 .. _class_documentation:
 
 ****************************************************************
@@ -9,7 +5,12 @@
 ****************************************************************
 
 
+.. warning::
 
+    laspy https://github.com/grantbrown/laspy provides a pure-Python
+    implementation that is compatible with libLAS' API. Unless you are
+    already using libLAS, we suggest that you utlize laspy for more
+    complete Python LAS operations.
 
 
 =============================================
@@ -17,7 +18,7 @@ liblas.color.Color
 =============================================
 
 .. autoclass:: liblas.color.Color
-    :members:   __init__, 
+    :members:   __init__,
                 red,
                 green,
                 blue,
@@ -30,17 +31,17 @@ liblas.file.File
 =============================================
 
 .. autoclass:: liblas.file.File
-    :members:   __init__, 
-                close, 
-                header, 
-                read, 
+    :members:   __init__,
+                close,
+                header,
+                read,
                 write,
                 output_srs,
                 input_srs,
-                __iter__, 
+                __iter__,
                 __getitem__,
                 __len__
-                
+
 
 =============================================
 liblas.guid.GUID
@@ -84,24 +85,24 @@ liblas.point.Point
 =============================================
 
 .. autoclass:: liblas.point.Point
-    :members:   __init__, 
-                x, 
-                y, 
-                z, 
-                time, 
-                raw_time, 
-                scan_angle, 
-                scan_direction, 
-                scan_flags, 
-                flightline_edge, 
-                number_of_returns, 
+    :members:   __init__,
+                x,
+                y,
+                z,
+                time,
+                raw_time,
+                scan_angle,
+                scan_direction,
+                scan_flags,
+                flightline_edge,
+                number_of_returns,
                 return_number,
                 classification,
                 user_data,
                 point_source_id,
                 color,
                 data
-                
+
 
 =============================================
 liblas.srs.SRS
@@ -118,7 +119,7 @@ liblas.srs.SRS
                 set_proj4,
                 get_wkt_compoundok,
                 set_userinput
-                
+
 
 =============================================
 liblas.vlr.VLR

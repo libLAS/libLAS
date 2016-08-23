@@ -22,12 +22,12 @@ sys.path.append(os.path.abspath('../python'))
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = [  'sphinx.ext.autodoc', 
-                'sphinx.ext.doctest', 
-                'sphinx.ext.intersphinx', 
-                'sphinx.ext.todo', 
-                'sphinx.ext.ifconfig', 
-                'rst2pdf.pdfbuilder', 
+extensions = [  'sphinx.ext.autodoc',
+                'sphinx.ext.doctest',
+                'sphinx.ext.intersphinx',
+                'sphinx.ext.todo',
+                'sphinx.ext.ifconfig',
+                'rst2pdf.pdfbuilder',
                 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -44,7 +44,7 @@ master_doc = 'docs'
 
 # General information about the project.
 project = u'libLAS'
-copyright = u'2014, Howard Butler, Mateusz Loskot and others'
+copyright = u'2016, Howard Butler, Mateusz Loskot and others'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -58,7 +58,7 @@ def read_version(filename):
     major = 'LIBLAS_VERSION_MAJOR'
     minor = 'LIBLAS_VERSION_MINOR'
     patch = 'LIBLAS_VERSION_PATCH'
-    
+
     for line in data:
         if str(major) in line:
             line = line.replace('SET('+major+' ', '')
@@ -76,7 +76,7 @@ def read_version(filename):
             line = line.replace('"','')
             pat = line.strip()
     return '%s.%s.%s'%(maj, min, pat)
-    
+
 version = read_version('../CMakeLists.txt')
 
 # The full version, including alpha/beta/rc tags.

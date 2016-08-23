@@ -8,10 +8,17 @@ Download
 Current Release(s)
 ------------------------------------------------------------------------------
 
+* **2016-08-23**
+
+  - `libLAS-1.8.1-src.tar.bz2 <http://download.osgeo.org/liblas/libLAS-1.8.1.tar.bz2>`__
+    `(md5) <http://download2.osgeo.org/liblas/libLAS-1.8.1.tar.bz2.md5>`__
+
+Past Release
+------------------------------------------------------------------------------
+
 * **2014-08-01**
 
   - `libLAS-1.8.0-src.tar.bz2 <http://download.osgeo.org/liblas/libLAS-1.8.0.tar.bz2>`__
-    `(md5) <http://download2.osgeo.org/liblas/libLAS-1.8.0.tar.bz2.md5>`__
 
   - See `OSGeo4W <http://trac.osgeo.org/osgeo4w>`__ for Windows release.
 

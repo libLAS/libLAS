@@ -11,6 +11,6 @@
    las2las
    las2txt
    las2ogr
+   las2tindex
    txt2las
-   lasblock
    ts2las
