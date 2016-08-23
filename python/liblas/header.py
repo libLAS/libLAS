@@ -142,14 +142,14 @@ class Header(object):
             2, "Waveform Data Packets External", "If this bit is set, the
             waveform data packets are located external to this file in an
             auxiliary file with the same base name as this file and the
-            extension \".wdp\". (note that this bit is mutually exclusive with
+            extension .wdp. (note that this bit is mutually exclusive with
             bit 1)"
             3, "Return numbers have been synthetically generated", "If set,
             the point return numbers in the Point Data Records have been
             synthetically generated. This could be the case, for example, when
             a composite file is created by combining a First Return File and a
             Last Return File. In this case, first return data will be labeled
-            \"1 of 2\" and second return data will be labeled \"2 of 2\""
+            '1 of 2' and second return data will be labeled '2 of 2'"
             4:15, "Reserved", "Must be set to zero"
 
     """
@@ -256,14 +256,13 @@ class Header(object):
                 :header: "Generating Agent", "System ID"
                 :widths: 40, 60
 
-                "Hardware system", "String identifying hardware (e.g. \"ALTM
-                1210\" or \"ALS50\""
+                "Hardware system","String identifying hardware (e.g. ALTM 1210 or ALS50"
                 "Merge of one or more files","MERGE"
                 "Modification of a single file","MODIFICATION"
                 "Extraction from one or more files", "EXTRACTION"
                 "Reprojection, rescaling, warping, etc.","TRANSFORMATION"
-                "Some other operation","\"OTHER\" or a string up to 32
-                characters identifying the operation"
+                "Some other operation","OTHER or a string up to 32 characters identifying the operation"
+
 
         >>> h.system_id
         ''
