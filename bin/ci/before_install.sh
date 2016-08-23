@@ -14,7 +14,7 @@ sudo apt-get install \
     libproj-dev \
     libxml2-dev \
     libtiff4-dev \
-    libgeotiff-dev 
+    libgeotiff-dev
 # install libgeotiff from sources
 #wget http://download.osgeo.org/geotiff/libgeotiff/libgeotiff-1.4.0.tar.gz
 #tar -xzf libgeotiff-1.4.0.tar.gz

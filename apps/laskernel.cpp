@@ -4,13 +4,13 @@ bool OptechScanAngleFixer::transform(liblas::Point& p)
 {
     boost::int8_t angle = p.GetScanAngleRank();
     double a = static_cast<double>(angle);
-    
+
     double da = 1.944445 * a;
-    
+
     double rda = liblas::detail::sround(da);
-    
+
     boost::int32_t new_a = static_cast<boost::int32_t>(rda);
-    
+
     boost::int8_t output = 0;
     if (new_a > (std::numeric_limits<boost::int8_t>::max)())
     {
@@ -24,13 +24,13 @@ bool OptechScanAngleFixer::transform(liblas::Point& p)
     {
         output = static_cast<boost::int8_t>(new_a);
     }
-    
+
     p.SetScanAngleRank(output);
     return true;
-    
+
 }
 
-std::istream* OpenInput(std::string const& filename, bool bEnd) 
+std::istream* OpenInput(std::string const& filename, bool bEnd)
 {
     std::ios::openmode mode = std::ios::in | std::ios::binary;
     if (bEnd == true) {
@@ -41,11 +41,11 @@ std::istream* OpenInput(std::string const& filename, bool bEnd)
     {
         istrm = &std::cin;
     }
-    else 
+    else
     {
         istrm = new std::ifstream(filename.c_str(), mode);
     }
-    
+
     if (!istrm->good())
     {
         delete istrm;
@@ -79,9 +79,9 @@ std::vector<char> TryReadRawFileData(std::string const& filename)
         // delete[] data;
         delete infile;
         return data;
-    } 
-    else 
-    {   
+    }
+    else
+    {
         delete infile;
         return data;
     }
@@ -94,7 +94,7 @@ bool term_progress(std::ostream& os, double complete)
 
     tick = (std::min)(40, (std::max)(0, tick));
 
-    // Have we started a new progress run?  
+    // Have we started a new progress run?
     if (tick < lastTick && lastTick >= 39)
         lastTick = -1;
 
@@ -127,12 +127,12 @@ void SetStreamPrecision(std::ostream& os, double scale)
     frac = std::modf(scale, &integer);
 
     boost::uint32_t prec = static_cast<boost::uint32_t>(std::fabs(std::floor(std::log10(frac))));
-    os.precision(prec);    
+    os.precision(prec);
 }
 
 void SetHeaderCompression(liblas::Header& header, std::string const& filename)
 {
-    
+
        // our policy for determining the output format is this:
         //   if -compressed given, use LAZ
         //   else if we see .las or .laz, use LAS or LAZ (resp.)
@@ -167,12 +167,12 @@ void SetHeaderCompression(liblas::Header& header, std::string const& filename)
             throw liblas::liblas_error("Unknown output file type");
             break;
         }
-        
+
 }
 
 liblas::Header FetchHeader(std::string const& filename)
 {
-    
+
     std::ifstream ifs;
     if (!liblas::Open(ifs, filename.c_str()))
     {
@@ -198,8 +198,8 @@ void RewriteHeader(liblas::Header const& header, std::string const& filename)
     }
     ofs.close();
 
-}  
-  
+}
+
 void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& header)
 {
 
@@ -209,18 +209,18 @@ void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& head
     }
 
     liblas::property_tree::ptree tree = summary.GetPTree();
-    
+
     try
     {
         header.SetMin(tree.get<double>("summary.points.minimum.x"),
                       tree.get<double>("summary.points.minimum.y"),
                       tree.get<double>("summary.points.minimum.z"));
-    
+
         header.SetMax(tree.get<double>("summary.points.maximum.x"),
                       tree.get<double>("summary.points.maximum.y"),
                       tree.get<double>("summary.points.maximum.z"));
-        
-    }     catch (liblas::property_tree::ptree_bad_path const& ) 
+
+    }     catch (liblas::property_tree::ptree_bad_path const& )
     {
         std::cerr << "Unable to write header bounds info.  Does the outputted file have any points?";
         return;
@@ -233,25 +233,25 @@ void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& head
         {
             header.SetPointRecordsByReturnCount(i, 0);
         }
-    
+
         BOOST_FOREACH(ptree::value_type &v,
                 tree.get_child("summary.points.points_by_return"))
         {
             boost::uint32_t i = v.second.get<boost::uint32_t>("id");
             boost::uint32_t count = v.second.get<boost::uint32_t>("count");
-            header.SetPointRecordsByReturnCount(i-1, count);        
-        } 
-        
-    }     catch (liblas::property_tree::ptree_bad_path const& ) 
+            header.SetPointRecordsByReturnCount(i-1, count);
+        }
+
+    }     catch (liblas::property_tree::ptree_bad_path const& )
     {
         std::cerr << "Unable to write header point return count info.  "
                      "Does the outputted file have any points?";
         return;
     }
-    
+
 }
 
-bool IsDualRangeFilter(std::string parse_string) 
+bool IsDualRangeFilter(std::string parse_string)
 {
 
 string::size_type dash = parse_string.find_first_of("-");
@@ -262,8 +262,8 @@ if (dash != std::string::npos) {
 return false;
 }
 
-liblas::FilterPtr MakeReturnFilter( std::vector<boost::uint16_t> const& returns, 
-                                    liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeReturnFilter( std::vector<boost::uint16_t> const& returns,
+                                    liblas::FilterI::FilterType ftype)
 {
     typedef liblas::ReturnFilter filter;
     filter* return_filter = new filter(returns, false);
@@ -271,17 +271,17 @@ liblas::FilterPtr MakeReturnFilter( std::vector<boost::uint16_t> const& returns,
     return liblas::FilterPtr(return_filter);
 }
 
-liblas::FilterPtr MakeClassFilter(std::vector<liblas::Classification> const& classes, 
-                                  liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeClassFilter(std::vector<liblas::Classification> const& classes,
+                                  liblas::FilterI::FilterType ftype)
 {
     typedef liblas::ClassificationFilter filter;
-    filter* class_filter = new filter(classes); 
+    filter* class_filter = new filter(classes);
     class_filter->SetType(ftype);
     return liblas::FilterPtr(class_filter);
 }
 
-liblas::FilterPtr MakeBoundsFilter(liblas::Bounds<double> const& bounds, 
-                                   liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeBoundsFilter(liblas::Bounds<double> const& bounds,
+                                   liblas::FilterI::FilterType ftype)
 {
     typedef liblas::BoundsFilter filter;
     filter* bounds_filter = new filter(bounds);
@@ -289,8 +289,8 @@ liblas::FilterPtr MakeBoundsFilter(liblas::Bounds<double> const& bounds,
     return liblas::FilterPtr(bounds_filter);
 }
 
-liblas::FilterPtr MakeIntensityFilter(std::string intensities, 
-                                      liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeIntensityFilter(std::string intensities,
+                                      liblas::FilterI::FilterType ftype)
 {
     typedef liblas::ContinuousValueFilter<boost::uint16_t> filter;
     filter::filter_func f = &liblas::Point::GetIntensity;
@@ -299,8 +299,8 @@ liblas::FilterPtr MakeIntensityFilter(std::string intensities,
     return liblas::FilterPtr(intensity_filter);
 }
 
-liblas::FilterPtr MakeTimeFilter(std::string times, 
-                                 liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeTimeFilter(std::string times,
+                                 liblas::FilterI::FilterType ftype)
 {
     typedef liblas::ContinuousValueFilter<double> filter;
     filter::filter_func f = &liblas::Point::GetTime;
@@ -309,8 +309,8 @@ liblas::FilterPtr MakeTimeFilter(std::string times,
     return liblas::FilterPtr(time_filter);
 }
 
-liblas::FilterPtr MakeScanAngleFilter(std::string intensities, 
-                                      liblas::FilterI::FilterType ftype) 
+liblas::FilterPtr MakeScanAngleFilter(std::string intensities,
+                                      liblas::FilterI::FilterType ftype)
 {
     typedef liblas::ContinuousValueFilter<boost::int32_t> filter;
     filter::filter_func f = &liblas::Point::GetScanAngleRank;
@@ -319,8 +319,8 @@ liblas::FilterPtr MakeScanAngleFilter(std::string intensities,
     return liblas::FilterPtr(intensity_filter);
 }
 
-liblas::FilterPtr MakeColorFilter(liblas::Color const& low, 
-                                  liblas::Color const& high, 
+liblas::FilterPtr MakeColorFilter(liblas::Color const& low,
+                                  liblas::Color const& high,
                                   liblas::FilterI::FilterType ftype)
 {
     liblas::ColorFilter* filter = new liblas::ColorFilter(low, high);
@@ -328,13 +328,13 @@ liblas::FilterPtr MakeColorFilter(liblas::Color const& low,
     return liblas::FilterPtr(filter);
 }
 
-po::options_description GetFilteringOptions() 
+po::options_description GetFilteringOptions()
 {
 
 po::options_description filtering_options("Filtering options");
 
 filtering_options.add_options()
-    ("extent,e", po::value< string >(), "Extent window that points must fall within to keep.\nUse a comma-separated or quoted, space-separated list, for example, \n -e minx, miny, maxx, maxy\n or \n -e minx, miny, minz, maxx, maxy, maxz\n -e \"minx miny minz maxx maxy maxz\"")     
+    ("extent,e", po::value< string >(), "Extent window that points must fall within to keep.\nUse a comma-separated or quoted, space-separated list, for example, \n -e minx, miny, maxx, maxy\n or \n -e minx, miny, minz, maxx, maxy, maxz\n -e \"minx miny minz maxx maxy maxz\"")
     ("minx", po::value< double >(), "Extent must be greater than or equal to minx to be kept. \n --minx 1234.0")
     ("miny", po::value< double >(), "Extent must be greater than or equal to miny to be kept. \n --miny 5678.0")
     ("minz", po::value< double >(), "Extent must be greater than or equal to minz to be kept. If maxx and maxy are set but not minz *and maxz, all z values are kept. \n --minz 0.0")
@@ -358,10 +358,10 @@ filtering_options.add_options()
     ("keep-color", po::value< string >(), "Range in which to keep colors.\nDefine colors as two 3-tuples (R,G,B-R,G,B):  \n--keep-color '0,0,0-125,125,125'")
     ("drop-color", po::value< string >(), "Range in which to drop colors.\nDefine colors as two 3-tuples (R,G,B-R,G,B):  \n--drop-color '255,255,255-65536,65536,65536'")
 ;
-return filtering_options;    
+return filtering_options;
 }
 
-po::options_description GetTransformationOptions() 
+po::options_description GetTransformationOptions()
 {
     po::options_description transform_options("Transformation options");
 
@@ -374,17 +374,17 @@ po::options_description GetTransformationOptions()
         ("color-source-scale", po::value< boost::uint32_t >(), "A number used by --color-source to scale the input R, G, B  values for the point.  For example, to scale the 8 bit color data from an input raster to 16 bit, the 8 bit data should be multiplied by 256. \n--color-source-scale 256")
 
     ;
-    
+
     return transform_options;
 }
 
-po::options_description GetHeaderOptions() 
+po::options_description GetHeaderOptions()
 {
     po::options_description transform_options("Header modification options");
 
     transform_options.add_options()
         ("a_srs", po::value< string >(), "Coordinate system to assign to input LAS file")
-        ("a_vertcs", po::value< std::vector<string> >()->multitoken(), "Override vertical coordinate system information.  Use --a_vertcs \"verticalCSType [citation [verticalDatum [verticalUnits]]]\"\nFor example: --a_vertcs 5703 \"North American Vertical Datum of 1988 (NAVD88)\" 5103 9001")   
+        ("a_vertcs", po::value< std::vector<string> >()->multitoken(), "Override vertical coordinate system information.  Use --a_vertcs \"verticalCSType [citation [verticalDatum [verticalUnits]]]\"\nFor example: --a_vertcs 5703 \"North American Vertical Datum of 1988 (NAVD88)\" 5103 9001")
         ("offset", po::value< string >(), "A comma-separated or quoted, space-separated list of offsets to set on the output file: \n--offset 0,0,0\n--offset \"1234 5678 91011\"")
         ("scale", po::value< std::vector<double> >()->multitoken(), "A list of scales to set on the output file. Scales *cannot* be negative, and should always be a negative power of 10 \n--scale 0.1 0.1 0.00001")
         ("file-format,f", po::value< string >(), "Set the LAS format of the new file (only 1.0-1.2 supported at this time): \n--file-format 1.2\n-f 1.1")
@@ -399,7 +399,7 @@ po::options_description GetHeaderOptions()
         ("generating-software", po::value<std::string>(), "Set the SoftwareID for the file. --generating-software \"liblas.org\"")
         ("fix-optech-scan-angle", po::value<bool>()->zero_tokens(), "Multiply the scan angle by 1.944445 to fix up scan angle generation output by some Optech scanners")
     ;
-    
+
     return transform_options;
 }
 std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
@@ -407,18 +407,18 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
     std::vector<liblas::FilterPtr> filters;
     liblas::Bounds<double> extent;
     bool bSetExtent = false;
-    
-    if (vm.count("keep-classes")) 
+
+    if (vm.count("keep-classes"))
     {
         std::vector<boost::uint32_t> classes = vm["keep-classes"].as< std::vector<boost::uint32_t> >();
-        
+
         std::vector<liblas::Classification> klasses;
 
         ostringstream oss;
-        
+
         for (std::vector<boost::uint32_t>::const_iterator i = classes.begin();
              i != classes.end();
-             i++) 
+             i++)
             {
                 oss << *i << " ";
                 klasses.push_back(liblas::Classification(*i, false, false, false));
@@ -428,24 +428,24 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
 
                 std::cout << "Keeping classes with the values: " << oss.str() << std::endl;
         }
-        
-            
-        liblas::FilterPtr class_filter = MakeClassFilter(  klasses, 
+
+
+        liblas::FilterPtr class_filter = MakeClassFilter(  klasses,
                                                           liblas::FilterI::eInclusion);
-        filters.push_back(class_filter); 
+        filters.push_back(class_filter);
     }
 
-    if (vm.count("drop-classes")) 
+    if (vm.count("drop-classes"))
     {
         std::vector<boost::uint32_t> classes = vm["drop-classes"].as< std::vector<boost::uint32_t> >();
 
         std::vector<liblas::Classification> klasses;
 
         ostringstream oss;
-        
+
         for (std::vector<boost::uint32_t>::const_iterator i = classes.begin();
              i != classes.end();
-             i++) 
+             i++)
             {
                 oss << *i << " ";
                 klasses.push_back(liblas::Classification(*i,false, false, false));
@@ -455,12 +455,12 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
 
                 std::cout << "Dropping classes with the values: " << oss.str() << std::endl;
         }
-        liblas::FilterPtr class_filter = MakeClassFilter(  klasses, 
+        liblas::FilterPtr class_filter = MakeClassFilter(  klasses,
                                                             liblas::FilterI::eExclusion);
         filters.push_back(class_filter);
     }
 
-    if (vm.count("keep-returns")) 
+    if (vm.count("keep-returns"))
     {
         std::vector<boost::uint16_t> returns = vm["keep-returns"].as< std::vector<boost::uint16_t> >();
 
@@ -470,19 +470,19 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             ostringstream oss;
             for (std::vector<boost::uint16_t>::const_iterator i = returns.begin();
                  i != returns.end();
-                 i++) 
+                 i++)
                 {
                     oss << *i << " ";
                 }
                 std::cout << "Keeping returns with the values: " << oss.str() << std::endl;
         }
 
-        liblas::FilterPtr return_filter = MakeReturnFilter(  returns, 
+        liblas::FilterPtr return_filter = MakeReturnFilter(  returns,
                                                             liblas::FilterI::eInclusion);
-        filters.push_back(return_filter); 
+        filters.push_back(return_filter);
     }
 
-    if (vm.count("drop-returns")) 
+    if (vm.count("drop-returns"))
     {
         std::vector<boost::uint16_t> returns = vm["keep-returns"].as< std::vector<boost::uint16_t> >();
 
@@ -491,19 +491,19 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             ostringstream oss;
             for (std::vector<boost::uint16_t>::const_iterator i = returns.begin();
                  i != returns.end();
-                 i++) 
+                 i++)
                 {
                     oss << *i << " ";
                 }
                 std::cout << "Dropping returns with the values: " << oss.str() << std::endl;
         }
 
-        liblas::FilterPtr return_filter = MakeReturnFilter(  returns, 
+        liblas::FilterPtr return_filter = MakeReturnFilter(  returns,
                                                             liblas::FilterI::eExclusion);
-        filters.push_back(return_filter); 
+        filters.push_back(return_filter);
     }
 
-    if (vm.count("minx")) 
+    if (vm.count("minx"))
     {
         double minx = vm["minx"].as< double >();
         (extent.min)(0, minx);
@@ -512,7 +512,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             std::cout << "Setting minx to: " << minx << std::endl;
     }
 
-    if (vm.count("maxx")) 
+    if (vm.count("maxx"))
     {
         double maxx = vm["maxx"].as< double >();
         (extent.max)(0, maxx);
@@ -521,7 +521,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             std::cout << "Setting maxx to: " << maxx << std::endl;
     }
 
-    if (vm.count("miny")) 
+    if (vm.count("miny"))
     {
         double miny = vm["miny"].as< double >();
         (extent.min)(1, miny);
@@ -530,7 +530,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             std::cout << "Setting miny to: " << miny << std::endl;
     }
 
-    if (vm.count("maxy")) 
+    if (vm.count("maxy"))
     {
         double maxy = vm["maxy"].as< double >();
         (extent.max)(1, maxy);
@@ -539,7 +539,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             std::cout << "Setting maxy to: " << maxy << std::endl;
     }
 
-    if (vm.count("minz")) 
+    if (vm.count("minz"))
     {
         double minz = vm["minz"].as< double >();
         (extent.min)(2, minz);
@@ -548,7 +548,7 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             std::cout << "Setting minz to: " << minz << std::endl;
     }
 
-    if (vm.count("maxz")) 
+    if (vm.count("maxz"))
     {
         double maxz = vm["maxz"].as< double >();
         (extent.max)(2, maxz);
@@ -556,8 +556,8 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
         if (verbose)
             std::cout << "Setting maxz to: " << maxz << std::endl;
     }
-    
-    if (vm.count("extent")) 
+
+    if (vm.count("extent"))
     {
         std::string bounds_string = vm["extent"].as< string >();
 
@@ -569,19 +569,19 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
         for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
             vbounds.push_back(atof((*t).c_str()));
         }
-        if (vbounds.size() == 4) 
+        if (vbounds.size() == 4)
         {
-            bounds = liblas::Bounds<double>(vbounds[0], 
-                                    vbounds[1], 
-                                    vbounds[2], 
+            bounds = liblas::Bounds<double>(vbounds[0],
+                                    vbounds[1],
+                                    vbounds[2],
                                     vbounds[3]);
         } else if (vbounds.size() == 6)
         {
-            bounds = liblas::Bounds<double>(vbounds[0], 
-                                    vbounds[1], 
-                                    vbounds[2], 
-                                    vbounds[3], 
-                                    vbounds[4], 
+            bounds = liblas::Bounds<double>(vbounds[0],
+                                    vbounds[1],
+                                    vbounds[2],
+                                    vbounds[3],
+                                    vbounds[4],
                                     vbounds[5]);
         } else {
             ostringstream oss;
@@ -589,16 +589,16 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
                    "6-tuple, not a "<< vbounds.size()<<"-tuple" << "\n";
             throw std::runtime_error(oss.str());
         }
-        
-        if ( bSetExtent ) 
+
+        if ( bSetExtent )
         {
-            if (verbose) 
+            if (verbose)
             {
                 std::cout << " Growing --extent bounds with those that were set via --[x|y|z][min|max]" << std::endl;
             }
             bounds.grow(extent);
         }
-    
+
         if (verbose)
         {
             std::cout << "---------------------------------------------------------" << std::endl;
@@ -607,35 +607,35 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
 
             std::cout.setf(std::ios_base::fixed, std::ios_base::floatfield);
             std::cout.precision(6);
-    
-            std::cout << " minx: " << bounds.minx() 
-                      << " miny: " << bounds.miny() 
-                      << " minz: " << bounds.minz() 
+
+            std::cout << " minx: " << bounds.minx()
+                      << " miny: " << bounds.miny()
+                      << " minz: " << bounds.minz()
                       << std::endl;
-            std::cout << " maxx: " << bounds.maxx() 
-                      << " maxy: " << bounds.maxy() 
-                      << " maxz: " << bounds.maxz() 
+            std::cout << " maxx: " << bounds.maxx()
+                      << " maxy: " << bounds.maxy()
+                      << " maxz: " << bounds.maxz()
                       << std::endl;
             std::cout << "---------------------------------------------------------" << std::endl;
         }
 
         liblas::FilterPtr bounds_filter = MakeBoundsFilter(bounds, liblas::FilterI::eInclusion);
         // Set to false because we are using this opportunity to set the filter
-        // If it were still true after this point, *another* BoundsFilter would be 
+        // If it were still true after this point, *another* BoundsFilter would be
         // added to the filters list at the end of this function
         if (bSetExtent)
-            bSetExtent = false; 
+            bSetExtent = false;
         filters.push_back(bounds_filter);
-        
+
     }
-    if (vm.count("keep-intensity")) 
+    if (vm.count("keep-intensity"))
     {
         std::string intensities = vm["keep-intensity"].as< string >();
         if (verbose)
             std::cout << "Keeping intensities with values: " << intensities << std::endl;
         if (IsDualRangeFilter(intensities)) {
             // We need to make two filters
-            // Given a range 0-200, split the expression into two filters 
+            // Given a range 0-200, split the expression into two filters
             string::size_type dash = intensities.find_first_of("-");
             std::string low = intensities.substr(0,dash);
             std::string high = intensities.substr(dash+1, intensities.size());
@@ -643,14 +643,14 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             liblas::FilterPtr lt_filter = MakeIntensityFilter(">="+low, liblas::FilterI::eInclusion);
             filters.push_back(lt_filter);
             liblas::FilterPtr gt_filter = MakeIntensityFilter("<="+high, liblas::FilterI::eInclusion);
-            filters.push_back(gt_filter);                
+            filters.push_back(gt_filter);
         } else {
             liblas::FilterPtr intensity_filter = MakeIntensityFilter(intensities, liblas::FilterI::eInclusion);
             filters.push_back(intensity_filter);
-            
+
         }
     }
-    if (vm.count("drop-intensity")) 
+    if (vm.count("drop-intensity"))
     {
         std::string intensities = vm["drop-intensity"].as< string >();
         if (verbose)
@@ -660,17 +660,17 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             throw std::runtime_error("Range filters are not supported for drop-intensity");
         } else {
             liblas::FilterPtr intensity_filter = MakeIntensityFilter(intensities, liblas::FilterI::eExclusion);
-            filters.push_back(intensity_filter);   
+            filters.push_back(intensity_filter);
         }
     }
-    if (vm.count("keep-scan-angle")) 
+    if (vm.count("keep-scan-angle"))
     {
         std::string angles = vm["keep-scan-angle"].as< string >();
         if (verbose)
             std::cout << "Keeping scan angles with values: " << angles << std::endl;
         if (IsDualRangeFilter(angles)) {
             // We need to make two filters
-            // Given a range 0-200, split the expression into two filters 
+            // Given a range 0-200, split the expression into two filters
             string::size_type dash = angles.find_first_of("-");
             std::string low = angles.substr(0,dash);
             std::string high = angles.substr(dash+1, angles.size());
@@ -678,14 +678,14 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             liblas::FilterPtr lt_filter = MakeScanAngleFilter(">="+low, liblas::FilterI::eInclusion);
             filters.push_back(lt_filter);
             liblas::FilterPtr gt_filter = MakeScanAngleFilter("<="+high, liblas::FilterI::eInclusion);
-            filters.push_back(gt_filter);                
+            filters.push_back(gt_filter);
         } else {
             liblas::FilterPtr angle_filter = MakeScanAngleFilter(angles, liblas::FilterI::eInclusion);
             filters.push_back(angle_filter);
-            
+
         }
     }
-    if (vm.count("drop-scan-angle")) 
+    if (vm.count("drop-scan-angle"))
     {
         std::string angles = vm["drop-scan-angle"].as< string >();
         if (verbose)
@@ -695,18 +695,18 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             throw std::runtime_error("Range filters are not supported for drop-scan-angle");
         } else {
             liblas::FilterPtr angle_filter = MakeScanAngleFilter(angles, liblas::FilterI::eExclusion);
-            filters.push_back(angle_filter);   
+            filters.push_back(angle_filter);
         }
     }
-    
-    if (vm.count("keep-time")) 
+
+    if (vm.count("keep-time"))
     {
         std::string times = vm["keep-time"].as< string >();
         if (verbose)
             std::cout << "Keeping times with values: " << times << std::endl;
         if (IsDualRangeFilter(times)) {
             // We need to make two filters
-            // Given a range 0-200, split the expression into two filters 
+            // Given a range 0-200, split the expression into two filters
             string::size_type dash = times.find_first_of("-");
             std::string low = times.substr(0,dash);
             std::string high = times.substr(dash+1, times.size());
@@ -714,107 +714,107 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
             liblas::FilterPtr lt_filter = MakeTimeFilter(">="+low, liblas::FilterI::eInclusion);
             filters.push_back(lt_filter);
             liblas::FilterPtr gt_filter = MakeTimeFilter("<="+high, liblas::FilterI::eInclusion);
-            filters.push_back(gt_filter);                
+            filters.push_back(gt_filter);
         } else {
             liblas::FilterPtr time_filter = MakeTimeFilter(times, liblas::FilterI::eInclusion);
             filters.push_back(time_filter);
-            
+
         }
     }
-    if (vm.count("drop-time")) 
+    if (vm.count("drop-time"))
     {
         std::string times = vm["drop-time"].as< string >();
         if (verbose)
             std::cout << "Dropping times with values: " << times << std::endl;
-            
+
         if (IsDualRangeFilter(times)) {
             throw std::runtime_error("Range filters are not supported for drop-time");
         } else {
             liblas::FilterPtr time_filter = MakeTimeFilter(times, liblas::FilterI::eExclusion);
-            filters.push_back(time_filter);   
+            filters.push_back(time_filter);
         }
     }
 
-    if (vm.count("keep-color")) 
+    if (vm.count("keep-color"))
     {
         std::string keepers = vm["keep-color"].as< string >();
         if (verbose)
             std::cout << "Keeping colors in range:: " << keepers << std::endl;
-            
+
         // Pull apart color ranges in the form: R,G,B-R,G,B
         boost::char_separator<char> sep_dash("-");
         boost::char_separator<char> sep_comma(",");
         std::vector<liblas::Color> colors;
         tokenizer low_high(keepers, sep_dash);
         for (tokenizer::iterator t = low_high.begin(); t != low_high.end(); ++t) {
-            
+
             tokenizer rgbs((*t), sep_comma);
             std::vector<liblas::Color::value_type> rgb;
             for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
             {
                 int color_val = atoi((*c).c_str());
-                if (color_val < ((std::numeric_limits<boost::uint16_t>::min)()) || 
-                    color_val > ((std::numeric_limits<boost::uint16_t>::max)())) 
+                if (color_val < ((std::numeric_limits<boost::uint16_t>::min)()) ||
+                    color_val > ((std::numeric_limits<boost::uint16_t>::max)()))
                 {
                     ostringstream oss;
                     oss << "Color value must be between 0-65536, not " << color_val;
                     throw std::runtime_error( oss.str() );
-                    
+
                 }
                 rgb.push_back(static_cast<boost::uint16_t>(color_val));
             }
             liblas::Color color(rgb[0], rgb[1], rgb[2]);
             colors.push_back(color);
         }
-        
+
         liblas::FilterPtr color_filter = MakeColorFilter(colors[0], colors[1], liblas::FilterI::eInclusion);
         filters.push_back(color_filter);
     }
-    if (vm.count("drop-color")) 
+    if (vm.count("drop-color"))
     {
         std::string dropers = vm["drop-color"].as< string >();
         if (verbose)
             std::cout << "Dropping colors in range:: " << dropers << std::endl;
-            
+
         // Pull apart color ranges in the form: R,G,B-R,G,B
         boost::char_separator<char> sep_dash("-");
         boost::char_separator<char> sep_comma(",");
         std::vector<liblas::Color> colors;
         tokenizer low_high(dropers, sep_dash);
         for (tokenizer::iterator t = low_high.begin(); t != low_high.end(); ++t) {
-            
+
             tokenizer rgbs((*t), sep_comma);
             std::vector<liblas::Color::value_type> rgb;
             for(tokenizer::iterator c = rgbs.begin(); c != rgbs.end(); ++c)
             {
                 int color_val = atoi((*c).c_str());
-                if (color_val < (std::numeric_limits<boost::uint16_t>::min)() || 
-                    color_val > (std::numeric_limits<boost::uint16_t>::max)()) 
+                if (color_val < (std::numeric_limits<boost::uint16_t>::min)() ||
+                    color_val > (std::numeric_limits<boost::uint16_t>::max)())
                 {
                     ostringstream oss;
                     oss << "Color value must be between 0-65536, not " << color_val;
                     throw std::runtime_error( oss.str() );
-                    
+
                 }
                 rgb.push_back(static_cast<boost::uint16_t>(color_val));
             }
             liblas::Color color(rgb[0], rgb[1], rgb[2]);
             colors.push_back(color);
         }
-        
+
         liblas::FilterPtr color_filter = MakeColorFilter(colors[0], colors[1], liblas::FilterI::eExclusion);
         filters.push_back(color_filter);
     }
 
-    if (vm.count("thin")) 
+    if (vm.count("thin"))
     {
         boost::uint32_t thin = vm["thin"].as< boost::uint32_t >();
         if (thin != 0) {
             if (verbose)
                 std::cout << "Thining file by keeping every "<<thin<<"'th point "  << std::endl;
-            
+
             liblas::FilterPtr thin_filter = liblas::FilterPtr(new liblas::ThinFilter(thin));
-            filters.push_back(thin_filter);    
+            filters.push_back(thin_filter);
         }
     }
 
@@ -841,23 +841,23 @@ std::vector<liblas::FilterPtr> GetFilters(po::variables_map vm, bool verbose)
         liblas::FilterPtr return_filter = liblas::FilterPtr(new liblas::ReturnFilter(returns, false));
         filters.push_back(return_filter);
     }
-    
+
     if (vm.count("valid_only")){
         if (verbose)
             std::cout << "Keeping valid points only."  << std::endl;
         liblas::FilterPtr valid_filter = liblas::FilterPtr(new liblas::ValidationFilter());
-        filters.push_back(valid_filter);            
+        filters.push_back(valid_filter);
     }
 
 
-    // If we have bSetExtent and we haven't turned it off by merging with a --extent 
+    // If we have bSetExtent and we haven't turned it off by merging with a --extent
     // BoundsFilter, make a filter
     if (bSetExtent)
     {
         liblas::FilterPtr bounds_filter = MakeBoundsFilter(extent, liblas::FilterI::eInclusion);
         filters.push_back(bounds_filter);
     }
-    
+
     return filters;
 }
 
@@ -865,7 +865,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 {
     std::vector<liblas::TransformPtr> transforms;
 
-    if (vm.count("offset")) 
+    if (vm.count("offset"))
     {
         std::string offset_string = vm["offset"].as< string >();
         if (verbose)
@@ -879,7 +879,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             // Check if the user set --offset min,min,min
             // FIXME: make this so the user could do --offset min,min,20.00
             if (!(*t).compare(m))
-            {   
+            {
                 mins = true;
                 continue;
             }
@@ -889,7 +889,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
                 offsets.push_back(atof((*t).c_str()));
             }
         }
-        if (offsets.size() != 3) 
+        if (offsets.size() != 3)
         {
             throw std::runtime_error("All three values for setting the offset must be floats, and there must be three values");
 
@@ -898,7 +898,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
     }
 
 
-    if (vm.count("scale")) 
+    if (vm.count("scale"))
     {
         std::vector<double> scales = vm["scale"].as< std::vector<double> >();
 
@@ -910,13 +910,13 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             throw std::runtime_error(oss.str());
         }
 
-        
+
         if (verbose)
         {
             ostringstream oss;
             for (std::vector<double>::const_iterator i = scales.begin();
                  i != scales.end();
-                 i++) 
+                 i++)
                 {
                     oss << *i << " ";
                 }
@@ -926,13 +926,13 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 
         header.SetScale(scales[0], scales[1], scales[2]);
     }
-    
-    if (vm.count("file-format")) 
+
+    if (vm.count("file-format"))
     {
         std::string format_string = vm["file-format"].as< string >();
         if (verbose)
             std::cout << "Setting format to: " << format_string << std::endl;
-            
+
         boost::char_separator<char> sep(".");
         std::vector<int> versions;
         tokenizer tokens(format_string, sep);
@@ -947,30 +947,30 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             oss << "Format version must dotted -- ie, '1.0' or '1.2', not " << format_string;
             throw std::runtime_error(oss.str());
         }
-        
+
         int minor = versions[1];
         if (minor > 2){
             ostringstream oss;
             oss << "Format version must dotted -- ie, '1.0' or '1.2', not " << format_string;
             throw std::runtime_error(oss.str());
         }
-        header.SetVersionMinor(static_cast<boost::uint8_t>(minor)); 
+        header.SetVersionMinor(static_cast<boost::uint8_t>(minor));
     }
 
-    if (vm.count("point-format")) 
+    if (vm.count("point-format"))
     {
         boost::uint32_t format = vm["point-format"].as< boost::uint32_t >();
         if (verbose)
             std::cout << "Setting point format to: " << format << std::endl;
-            
+
         if (format > 3){
             ostringstream oss;
             oss << "Point format valid range is 0-3, not " << format;
             throw std::runtime_error(oss.str());
         }
-        header.SetDataFormatId(static_cast<liblas::PointFormatName>(format)); 
+        header.SetDataFormatId(static_cast<liblas::PointFormatName>(format));
     }
-    if (vm.count("pad-header")) 
+    if (vm.count("pad-header"))
     {
         std::string header_pad = vm["pad-header"].as< string >();
         if (verbose)
@@ -981,7 +981,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             ostringstream oss;
             oss << "Header pad was 0.  It must be greater than "<<offset<< " bytes";
             throw std::runtime_error(oss.str());
-            
+
         }
         header.SetDataOffset(atoi(header_pad.c_str()));
     }
@@ -995,32 +995,32 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             ostringstream oss;
             for (std::vector<std::string>::const_iterator i = creation.begin();
                  i != creation.end();
-                 i++) 
+                 i++)
                 {
                     oss << *i << " ";
                 }
                 std::cout << "Setting file creation to " << oss.str() << std::endl;
         }
-            
+
         std::string m("now");
         bool now = false;
-        if (creation.size() == 1 ) 
+        if (creation.size() == 1 )
         {
-            if (!(creation[0].compare(m))) 
+            if (!(creation[0].compare(m)))
             {
                 now = true;
-            }            
+            }
         }
-        
+
         boost::int32_t day = 0;
         boost::int32_t year = 0;
-        
-        
-        if (creation.size() == 2) 
+
+
+        if (creation.size() == 2)
         {
             day = atoi(creation[0].c_str());
             year = atoi(creation[1].c_str());
-            
+
             if (day < 0 || day > 366) {
                 ostringstream oss;
                 oss << "Day must be between 1-366, not " << day;
@@ -1032,10 +1032,10 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
                 oss << "Year must be greater than 0, not " << year;
                 throw std::runtime_error(oss.str());
             }
-            
+
         }
-        
-        if (now == true) 
+
+        if (now == true)
         {
             liblas::Header h;
             header.SetCreationDOY(h.GetCreationDOY());
@@ -1043,31 +1043,31 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         } else {
             header.SetCreationDOY(static_cast<boost::uint16_t>(day));
             header.SetCreationYear(static_cast<boost::uint16_t>(year));
-            
+
         }
     }
 
-    if (vm.count("add-schema")) 
+    if (vm.count("add-schema"))
     {
         liblas::VariableRecord vlr = header.GetSchema().GetVLR();
         header.AddVLR(vlr);
     }
 
-    if (vm.count("delete-vlr")) 
+    if (vm.count("delete-vlr"))
     {
         std::vector<std::string> vlrs = vm["delete-vlr"].as< std::vector<std::string> >();
-        
-        
+
+
         if (vlrs.size() % 2 != 0) {
             ostringstream err;
             err << "VLR descriptions must be in pairs of 2 -- A name and an ID";
             throw std::runtime_error(err.str());
         }
         ostringstream oss;
-        
+
         for (std::vector<std::string>::const_iterator i = vlrs.begin();
              i != vlrs.end();
-             i++) 
+             i++)
             {
                 oss << *i << " ";
             }
@@ -1076,7 +1076,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 
                 std::cout << "Deleting VLRs with the values: " << oss.str() << std::endl;
         }
-        
+
         for (std::vector<std::string>::size_type i = 0; i < vlrs.size(); i=i+2)
         {
             boost::int32_t id = atoi(vlrs[i+1].c_str());
@@ -1093,11 +1093,11 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         }
     }
 
-    if (vm.count("add-vlr")) 
+    if (vm.count("add-vlr"))
     {
         std::vector<std::string> vlrs = vm["add-vlr"].as< std::vector<std::string> >();
-        
-        
+
+
         if (vlrs.size() < 3) {
             ostringstream err;
             err << "VLR additions must be at least 3 arguments -- --add-vlr NAME 42 \"filename.ext\"";
@@ -1107,15 +1107,15 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             throw std::runtime_error("Only one VLR may be added at a time");
 
         ostringstream oss;
-        
+
         for (std::vector<std::string>::const_iterator i = vlrs.begin();
              i != vlrs.end();
-             i++) 
+             i++)
             {
                 oss << *i << " ";
             }
 
-        
+
         liblas::VariableRecord v;
         v.SetUserId(vlrs[0]);
 
@@ -1131,9 +1131,9 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         }
 
         v.SetRecordId(static_cast<boost::uint16_t>(id));
-        
+
         std::vector<boost::uint8_t> data;
-        
+
         std::string data_or_filename;
         if (vlrs.size() == 4){
 
@@ -1141,28 +1141,28 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             data_or_filename = vlrs[3];
         } else {
             data_or_filename = vlrs[2];
-        } 
+        }
 
         try {
             std::vector<char> d;
             d = TryReadRawFileData(data_or_filename);
-            for (std::vector<char>::const_iterator i = d.begin(); i != d.end(); ++i) 
+            for (std::vector<char>::const_iterator i = d.begin(); i != d.end(); ++i)
             {
                 data.push_back(*i);
             }
-            
+
         } catch (std::runtime_error const& ) {
             std::string::const_iterator i;
             for (i = data_or_filename.begin(); i != data_or_filename.end(); ++i)
             {
                 data.push_back(*i);
             }
-        }    
+        }
 
         if (data.size() > (std::numeric_limits<boost::uint16_t>::max)()) {
             std::ostringstream oss;
-            oss << "This VLR with length " << data.size() << " does" 
-                << " not fit within the maximum VLR size of " 
+            oss << "This VLR with length " << data.size() << " does"
+                << " not fit within the maximum VLR size of "
                 << (std::numeric_limits<boost::uint16_t>::max)();
             throw std::runtime_error(oss.str());
         }
@@ -1179,7 +1179,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         header.AddVLR(v);
     }
 
-    if (vm.count("generating-software")) 
+    if (vm.count("generating-software"))
     {
         std::string software = vm["generating-software"].as< std::string >();
         if (verbose)
@@ -1190,32 +1190,32 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         header.SetSoftwareId(software);
     }
 
-    if (vm.count("system-identifier")) 
+    if (vm.count("system-identifier"))
     {
         std::string id = vm["system-identifier"].as< std::string >();
-        
+
 
         if (verbose)
         {
 
                 std::cout << "Setting System ID to: " << id<< std::endl;
         }
-        
+
         header.SetSystemId(id);
     }
-    
 
-    if (vm.count("a_srs")) 
+
+    if (vm.count("a_srs"))
     {
         liblas::SpatialReference in_ref;
-        
+
         std::string input_srs = vm["a_srs"].as< string >();
-        
+
         if (!input_srs.empty())
         {
             in_ref.SetFromUserInput(input_srs);
         }
-        
+
         if (verbose)
             std::cout << "Setting input SRS to '" << input_srs << "'"<< std::endl;
         header.SetSRS(in_ref);
@@ -1246,29 +1246,29 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
 
             throw std::runtime_error(oss.str());
         }
-        
+
         if (verbose)
         {
             ostringstream oss;
             for (std::vector<std::string>::const_iterator i = vertical_vec.begin();
                  i != vertical_vec.end();
-                 i++) 
+                 i++)
                 {
                     oss << *i << " ";
                 }
                 std::cout << "Setting vertical info to: " << oss.str() << std::endl;
         }
-            
+
         boost::int32_t verticalCSType = boost::lexical_cast<boost::int32_t>(vertical_vec[0]);
-        
+
         std::string citation;
         int verticalDatum = -1;
         int verticalUnits = 9001;
-        
+
         if (vertical_vec.size() > 1) {
             citation = boost::lexical_cast<std::string>(vertical_vec[1]);
         }
-        
+
         if (vertical_vec.size() > 2) {
             verticalDatum = boost::lexical_cast<boost::int32_t>(vertical_vec[2]);
         }
@@ -1276,13 +1276,13 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         if (vertical_vec.size() > 3) {
             verticalUnits = boost::lexical_cast<boost::int32_t>(vertical_vec[3]);
         }
-        
+
         vert_ref.SetVerticalCS(verticalCSType, citation, verticalDatum, verticalUnits);
-        header.SetSRS(vert_ref);      
+        header.SetSRS(vert_ref);
     }
-    if (vm.count("add-wkt-srs")) 
+    if (vm.count("add-wkt-srs"))
     {
-        // Reset the SRS using WKT, which will cause both GeoTIFF keys and OGC WKT 
+        // Reset the SRS using WKT, which will cause both GeoTIFF keys and OGC WKT
         // VLRs to be written to the file.
         liblas::SpatialReference ref = header.GetSRS();
         std::string wkt = ref.GetWKT();
@@ -1290,11 +1290,11 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         header.SetSRS(ref);
     }
 
-    if (vm.count("t_srs")) 
+    if (vm.count("t_srs"))
     {
         liblas::SpatialReference in_ref;
         liblas::SpatialReference out_ref;
-        
+
         std::string output_srs = vm["t_srs"].as< string >();
         if (verbose)
             std::cout << "Setting output SRS to " << output_srs << std::endl;
@@ -1304,30 +1304,30 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
             std::string input_srs = vm["a_srs"].as< string >();
             in_ref.SetFromUserInput(input_srs);
         } else {
-            // If the user didn't assign an input SRS, we'll try to take 
+            // If the user didn't assign an input SRS, we'll try to take
             // it from our existing header.
             in_ref = header.GetSRS();
             if (in_ref.GetVLRs().size() == 0)
             {
                 throw std::runtime_error("No input SRS is available on the file you have specified.  Please use --a_srs to assign one");
             }
-            
+
         }
-        // Set the header's SRS to the output SRS now.  We've already 
-        // made the transformation, and this SRS will be used to 
+        // Set the header's SRS to the output SRS now.  We've already
+        // made the transformation, and this SRS will be used to
         // write the new file(s)
         header.SetSRS(out_ref);
-        
+
         liblas::Bounds<double> b = header.GetExtent();
-    
+
         liblas::ReprojectionTransform trans(in_ref, out_ref);
-    
+
         liblas::Point minimum(&header);
         minimum.SetCoordinates(b.minx(), b.miny(), b.minz());
 
         liblas::Point maximum(&header);
         maximum.SetCoordinates(b.maxx(), b.maxy(), b.maxz());
-        
+
         trans.transform(minimum);
         trans.transform(maximum);
         b = liblas::Bounds<double>(minimum, maximum);
@@ -1336,7 +1336,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         transforms.push_back(srs_transform);
     }
 
-    if (vm.count("color-source")) 
+    if (vm.count("color-source"))
     {
         std::string datasource = vm["color-source"].as< string >();
         std::vector<boost::uint32_t> bands;
@@ -1345,14 +1345,14 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         if (vm.count("color-source-bands"))
         {
             bands = vm["color-source-bands"].as< std::vector<boost::uint32_t> >();
-            if (bands.size() != 3) 
+            if (bands.size() != 3)
             {
                 std::ostringstream oss;
                 oss << "The bands list must have three elements, not " << bands.size();
                 throw std::runtime_error(oss.str());
             }
-        } 
-        else 
+        }
+        else
         {
             bands.resize(3);
             bands[0] = 1;
@@ -1364,9 +1364,9 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         {
             bSetScale = true;
             scale = vm["color-source-scale"].as< boost::uint32_t >();
-        }          
-        
-        
+        }
+
+
         if (verbose)
         {
             // make a displayable string for the bands list
@@ -1380,19 +1380,19 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
                 if (i2 != bands.end())
                     bnds << ", ";
             }
-            std::cout << "Fetching color from ' " << datasource 
-                      << "' using bands '" << bnds.str() 
+            std::cout << "Fetching color from ' " << datasource
+                      << "' using bands '" << bnds.str()
                       << "' for R, G, B";
             if (bSetScale)
                 std::cout << " with a scale factor of " << scale;
             std::cout<< std::endl;
-                
+
         }
 
-        
+
         // Check the schema to see if we have color
         liblas::Schema const& schema = header.GetSchema();
-        
+
         try
         {
             schema.GetDimension("Red");
@@ -1408,15 +1408,15 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         {
             throw std::runtime_error("The header for this file does not allow storing blue color information.  Alter the header's data format using the --point-format switch");
         }
-        
+
         try
         {
             schema.GetDimension("Green");
         } catch (std::runtime_error const&)
         {
             throw std::runtime_error("The header for this file does not allow storing green color information.  Alter the header's data format using the --point-format switch");
-        }        
-        
+        }
+
         liblas::TransformPtr color_fetch = liblas::TransformPtr(new liblas::ColorFetchingTransform(datasource, bands, &header));
         if (bSetScale) {
             liblas::ColorFetchingTransform* c = dynamic_cast<liblas::ColorFetchingTransform*>(color_fetch.get());
@@ -1424,7 +1424,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         }
         transforms.push_back(color_fetch);
     }
-    if (vm.count("point-translate")) 
+    if (vm.count("point-translate"))
     {
         std::string translate = vm["point-translate"].as< std::string >();
         if (verbose)
@@ -1436,7 +1436,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         transforms.push_back(trans_trans);
     }
 
-    if (vm.count("fix-optech-scan-angle")) 
+    if (vm.count("fix-optech-scan-angle"))
     {
         if (verbose)
             std::cout << "Fixing Scan Angles by multiplying by 1.944445" << std::endl;
@@ -1448,7 +1448,7 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
     return transforms;
 }
 
-liblas::property_tree::ptree SummarizeReader(liblas::Reader& reader) 
+liblas::property_tree::ptree SummarizeReader(liblas::Reader& reader)
 {
     liblas::Summary s;
 
@@ -1458,8 +1458,8 @@ liblas::property_tree::ptree SummarizeReader(liblas::Reader& reader)
     {
         throw std::runtime_error("Unable to read any points from file.");
     }
-        
-    while (read) 
+
+    while (read)
     {
         liblas::Point const& p = reader.GetPoint();
         s.AddPoint(p);

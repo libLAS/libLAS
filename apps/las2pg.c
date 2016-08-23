@@ -22,103 +22,103 @@
 #include <inttypes.h>
 #if defined(__linux__) || defined(__CYGWIN__) || defined(__FreeBSD_kernel__) || defined(__GNU__)
 
-#	include <endian.h>
+#   include <endian.h>
 
 #elif defined(__APPLE__)
 
-#	include <libkern/OSByteOrder.h>
+#   include <libkern/OSByteOrder.h>
 
-#	define htobe16(x) OSSwapHostToBigInt16(x)
-#	define htole16(x) OSSwapHostToLittleInt16(x)
-#	define be16toh(x) OSSwapBigToHostInt16(x)
-#	define le16toh(x) OSSwapLittleToHostInt16(x)
+#   define htobe16(x) OSSwapHostToBigInt16(x)
+#   define htole16(x) OSSwapHostToLittleInt16(x)
+#   define be16toh(x) OSSwapBigToHostInt16(x)
+#   define le16toh(x) OSSwapLittleToHostInt16(x)
 
-#	define htobe32(x) OSSwapHostToBigInt32(x)
-#	define htole32(x) OSSwapHostToLittleInt32(x)
-#	define be32toh(x) OSSwapBigToHostInt32(x)
-#	define le32toh(x) OSSwapLittleToHostInt32(x)
+#   define htobe32(x) OSSwapHostToBigInt32(x)
+#   define htole32(x) OSSwapHostToLittleInt32(x)
+#   define be32toh(x) OSSwapBigToHostInt32(x)
+#   define le32toh(x) OSSwapLittleToHostInt32(x)
 
-#	define htobe64(x) OSSwapHostToBigInt64(x)
-#	define htole64(x) OSSwapHostToLittleInt64(x)
-#	define be64toh(x) OSSwapBigToHostInt64(x)
-#	define le64toh(x) OSSwapLittleToHostInt64(x)
+#   define htobe64(x) OSSwapHostToBigInt64(x)
+#   define htole64(x) OSSwapHostToLittleInt64(x)
+#   define be64toh(x) OSSwapBigToHostInt64(x)
+#   define le64toh(x) OSSwapLittleToHostInt64(x)
 
-#	define __BYTE_ORDER    BYTE_ORDER
-#	define __BIG_ENDIAN    BIG_ENDIAN
-#	define __LITTLE_ENDIAN LITTLE_ENDIAN
-#	define __PDP_ENDIAN    PDP_ENDIAN
+#   define __BYTE_ORDER    BYTE_ORDER
+#   define __BIG_ENDIAN    BIG_ENDIAN
+#   define __LITTLE_ENDIAN LITTLE_ENDIAN
+#   define __PDP_ENDIAN    PDP_ENDIAN
 
 #elif defined(__OpenBSD__)
 
-#	include <sys/endian.h>
+#   include <sys/endian.h>
 
 #elif defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
 
-#	include <sys/endian.h>
+#   include <sys/endian.h>
 
-#	define be16toh(x) betoh16(x)
-#	define le16toh(x) letoh16(x)
+#   define be16toh(x) betoh16(x)
+#   define le16toh(x) letoh16(x)
 
-#	define be32toh(x) betoh32(x)
-#	define le32toh(x) letoh32(x)
+#   define be32toh(x) betoh32(x)
+#   define le32toh(x) letoh32(x)
 
-#	define be64toh(x) betoh64(x)
-#	define le64toh(x) letoh64(x)
+#   define be64toh(x) betoh64(x)
+#   define le64toh(x) letoh64(x)
 
 #elif defined(__WINDOWS__)
 
-#	include <winsock2.h>
-#	include <sys/param.h>
+#   include <winsock2.h>
+#   include <sys/param.h>
 
-#	if BYTE_ORDER == LITTLE_ENDIAN
+#   if BYTE_ORDER == LITTLE_ENDIAN
 
-#		define htobe16(x) htons(x)
-#		define htole16(x) (x)
-#		define be16toh(x) ntohs(x)
-#		define le16toh(x) (x)
+#       define htobe16(x) htons(x)
+#       define htole16(x) (x)
+#       define be16toh(x) ntohs(x)
+#       define le16toh(x) (x)
 
-#		define htobe32(x) htonl(x)
-#		define htole32(x) (x)
-#		define be32toh(x) ntohl(x)
-#		define le32toh(x) (x)
+#       define htobe32(x) htonl(x)
+#       define htole32(x) (x)
+#       define be32toh(x) ntohl(x)
+#       define le32toh(x) (x)
 
-#		define htobe64(x) htonll(x)
-#		define htole64(x) (x)
-#		define be64toh(x) ntohll(x)
-#		define le64toh(x) (x)
+#       define htobe64(x) htonll(x)
+#       define htole64(x) (x)
+#       define be64toh(x) ntohll(x)
+#       define le64toh(x) (x)
 
-#	elif BYTE_ORDER == BIG_ENDIAN
+#   elif BYTE_ORDER == BIG_ENDIAN
 
-		/* that would be xbox 360 */
-#		define htobe16(x) (x)
-#		define htole16(x) __builtin_bswap16(x)
-#		define be16toh(x) (x)
-#		define le16toh(x) __builtin_bswap16(x)
+        /* that would be xbox 360 */
+#       define htobe16(x) (x)
+#       define htole16(x) __builtin_bswap16(x)
+#       define be16toh(x) (x)
+#       define le16toh(x) __builtin_bswap16(x)
 
-#		define htobe32(x) (x)
-#		define htole32(x) __builtin_bswap32(x)
-#		define be32toh(x) (x)
-#		define le32toh(x) __builtin_bswap32(x)
+#       define htobe32(x) (x)
+#       define htole32(x) __builtin_bswap32(x)
+#       define be32toh(x) (x)
+#       define le32toh(x) __builtin_bswap32(x)
 
-#		define htobe64(x) (x)
-#		define htole64(x) __builtin_bswap64(x)
-#		define be64toh(x) (x)
-#		define le64toh(x) __builtin_bswap64(x)
+#       define htobe64(x) (x)
+#       define htole64(x) __builtin_bswap64(x)
+#       define be64toh(x) (x)
+#       define le64toh(x) __builtin_bswap64(x)
 
-#	else
+#   else
 
-#		error byte order not supported
+#       error byte order not supported
 
-#	endif
+#   endif
 
-#	define __BYTE_ORDER    BYTE_ORDER
-#	define __BIG_ENDIAN    BIG_ENDIAN
-#	define __LITTLE_ENDIAN LITTLE_ENDIAN
-#	define __PDP_ENDIAN    PDP_ENDIAN
+#   define __BYTE_ORDER    BYTE_ORDER
+#   define __BIG_ENDIAN    BIG_ENDIAN
+#   define __LITTLE_ENDIAN LITTLE_ENDIAN
+#   define __PDP_ENDIAN    PDP_ENDIAN
 
 #else
 
-#	error platform not supported
+#   error platform not supported
 
 #endif
 
@@ -331,24 +331,24 @@ int main(int argc, char *argv[])
                 )
         {
             i++;
-		    buffer = strtok (argv[i], ",");
-		    j = 0;
-		    while (buffer) {
-		        if (j == 0) {
-		            global_offset_x = S64(buffer);
-		        }
-		        else if (j == 1) {
-		            global_offset_y = S64(buffer);
-		        }
-		        j++;
-		        buffer = strtok (NULL, ",");
-		        while (buffer && *buffer == '\040')
-		            buffer++;
-		    }
-		    if (j != 2){
-		    	fprintf(stderr, "Only two int64_t are required in moffset option!\n");
-		        exit(1);
-		    }
+            buffer = strtok (argv[i], ",");
+            j = 0;
+            while (buffer) {
+                if (j == 0) {
+                    global_offset_x = S64(buffer);
+                }
+                else if (j == 1) {
+                    global_offset_y = S64(buffer);
+                }
+                j++;
+                buffer = strtok (NULL, ",");
+                while (buffer && *buffer == '\040')
+                    buffer++;
+            }
+            if (j != 2){
+                fprintf(stderr, "Only two int64_t are required in moffset option!\n");
+                exit(1);
+            }
 
         }
         else if (   strcmp(argv[i], "--check") == 0 ||
@@ -357,24 +357,24 @@ int main(int argc, char *argv[])
         {
             i++;
             check = TRUE;
-		    buffer = strtok (argv[i], ",");
-		    j = 0;
-		    while (buffer) {
-		        if (j == 0) {
-		            sscanf(buffer, "%lf", &scale_x);
-		        }
-		        else if (j == 1) {
-		            sscanf(buffer, "%lf", &scale_y);
-		        }
-		        j++;
-		        buffer = strtok (NULL, ",");
-		        while (buffer && *buffer == '\040')
-		            buffer++;
-		    }
-		    if (j != 2){
-		    	fprintf(stderr, "Only two doubles are required in moffset option!\n");
-		        exit(1);
-		    }
+            buffer = strtok (argv[i], ",");
+            j = 0;
+            while (buffer) {
+                if (j == 0) {
+                    sscanf(buffer, "%lf", &scale_x);
+                }
+                else if (j == 1) {
+                    sscanf(buffer, "%lf", &scale_y);
+                }
+                j++;
+                buffer = strtok (NULL, ",");
+                while (buffer && *buffer == '\040')
+                    buffer++;
+            }
+            if (j != 2){
+                fprintf(stderr, "Only two doubles are required in moffset option!\n");
+                exit(1);
+            }
         }
         else if (   strcmp(argv[i], "--stdout") == 0
                 )
@@ -481,37 +481,37 @@ int main(int argc, char *argv[])
 
     if (check)
     {
-    	// Check specified scales are like in the LAS file
-    	if (fabs(scale_x - file_scale_x) > TOLERANCE){
-	    fprintf(stderr, "ERROR: x scale in input file (%lf) does not match specified x scale (%lf)\n",file_scale_x, scale_x);
+        // Check specified scales are like in the LAS file
+        if (fabs(scale_x - file_scale_x) > TOLERANCE){
+        fprintf(stderr, "ERROR: x scale in input file (%lf) does not match specified x scale (%lf)\n",file_scale_x, scale_x);
             exit(1);
-    	}
-    	if (fabs(scale_y - file_scale_y) > TOLERANCE){
-    	    fprintf(stderr, "ERROR: y scale in input file (%lf) does not match specified y scale (%lf)\n",file_scale_y, scale_y);
+        }
+        if (fabs(scale_y - file_scale_y) > TOLERANCE){
+            fprintf(stderr, "ERROR: y scale in input file (%lf) does not match specified y scale (%lf)\n",file_scale_y, scale_y);
             exit(1);
-    	}
-    	/* Check that the extent of the file (taking into account the global offset)
-    	 * is within 0,2^31 */
+        }
+        /* Check that the extent of the file (taking into account the global offset)
+         * is within 0,2^31 */
         double check_min_x = 1.0 + LASHeader_GetMinX(header) - (((double) global_offset_x) * scale_x);
-    	if (check_min_x < TOLERANCE) {
-    	    fprintf(stderr, "ERROR: Specied X global offset is too large. (MinX - (GlobalX*ScaleX)) < 0\n");
+        if (check_min_x < TOLERANCE) {
+            fprintf(stderr, "ERROR: Specied X global offset is too large. (MinX - (GlobalX*ScaleX)) < 0\n");
             exit(1);
-    	}
+        }
         double check_min_y = 1.0 + LASHeader_GetMinY(header) - (((double) global_offset_y) * scale_y);
-    	if (check_min_y < TOLERANCE) {
+        if (check_min_y < TOLERANCE) {
             fprintf(stderr, "ERROR: Specied Y global offset is too large. (MinY - (GlobalY*ScaleY)) < 0\n");
             exit(1);
-    	}
+        }
         double check_max_x = LASHeader_GetMaxX(header) - (((double) global_offset_x) * scale_x);
-    	if (check_max_x > (MAX_INT_31 * scale_x)) {
-    		fprintf(stderr, "ERROR: Specied X global offset is too small. (MaxX - (GlobalX*ScaleX)) > (2^31)*ScaleX\n");
+        if (check_max_x > (MAX_INT_31 * scale_x)) {
+            fprintf(stderr, "ERROR: Specied X global offset is too small. (MaxX - (GlobalX*ScaleX)) > (2^31)*ScaleX\n");
             exit(1);
-    	}
+        }
         double check_max_y = LASHeader_GetMaxY(header) - (((double) global_offset_y) * scale_y);
-    	if (check_max_y > (MAX_INT_31 * scale_y)) {
-    		fprintf(stderr, "ERROR: Specied Y global offset is too small. (MaxY - (GlobalY*ScaleY)) > (2^31)*ScaleY\n");
+        if (check_max_y > (MAX_INT_31 * scale_y)) {
+            fprintf(stderr, "ERROR: Specied Y global offset is too small. (MaxY - (GlobalY*ScaleY)) > (2^31)*ScaleY\n");
             exit(1);
-    	}
+        }
     }
 
 
