@@ -103,11 +103,24 @@ if(TXT2LAS)
     target_link_libraries(${TXT2LAS} ${LIBLAS_C_LIB_NAME})
 endif()
 
+IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.2)
+  MESSAGE ("It is greater than 1.2")
+ELSE (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.2)
+  MESSAGE ("It is not greater than 1.2")
+ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.2)
+
 # Build las2col
 if(LAS2COL)
     set(LAS2COL_SRC lascommon.c ${LAS2COL}.c)
     add_executable(${LAS2COL} ${LAS2COL_SRC})
-    target_link_libraries(${LAS2COL} ${LIBLAS_C_LIB_NAME})
+    if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
+        set(THREADS_PREFER_PTHREAD_FLAG ON)
+        find_package(Threads REQUIRED)
+        target_link_libraries(${LAS2COL} ${LIBLAS_C_LIB_NAME} Threads::Threads)
+    else (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
+        find_package(Threads REQUIRED)
+        target_link_libraries(${LAS2COL} ${LIBLAS_C_LIB_NAME} "${CMAKE_THREAD_LIBS_INIT}")
+    endif (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
 endif()
 
 # Build las2pg
