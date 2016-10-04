@@ -103,12 +103,6 @@ if(TXT2LAS)
     target_link_libraries(${TXT2LAS} ${LIBLAS_C_LIB_NAME})
 endif()
 
-IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.2)
-  MESSAGE ("It is greater than 1.2")
-ELSE (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.2)
-  MESSAGE ("It is not greater than 1.2")
-ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.2)
-
 # Build las2col
 if(LAS2COL)
     set(LAS2COL_SRC lascommon.c ${LAS2COL}.c)
