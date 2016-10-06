@@ -30,6 +30,11 @@
  * DEALINGS IN THE SOFTWARE.
  ****************************************************************************/
 
+#ifndef NDEBUG
+// Needed by cpl_multiproc.h
+#define DEBUG 1
+#endif
+
 #include "cpl_error.h"
 #include "cpl_conv.h"
 #include "cpl_csv.h"
@@ -90,7 +95,7 @@ static const char *papszDatumEquiv[] =
 /*                       LibgeotiffOneTimeInit()                        */
 /************************************************************************/
 
-static void* hMutex = NULL;
+static CPLMutex* hMutex = NULL;
 
 void LibgeotiffOneTimeInit() 
 {
@@ -113,10 +118,10 @@ void LibgeotiffOneTimeInit()
 
 void LibgeotiffOneTimeCleanupMutex() 
 {
-    if( hMutex != NULL )
+    if( hMutex != (CPLMutex*)(NULL) )
     {
         CPLDestroyMutex(hMutex);
-        hMutex = NULL;
+        hMutex = (CPLMutex*)(NULL);
     }
 }
 
