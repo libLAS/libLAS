@@ -302,7 +302,6 @@ struct readThreadArgs {
 };
 
 void* writeFile(void *arg) {
-    int i = 0;
     struct writeThreadArgs *wTA = (struct writeThreadArgs*) arg;
 
     /*Obtain lock over data to get the pointer*/

@@ -192,9 +192,7 @@ void ZipReaderImpl::SetHeader(liblas::Header const& header)
     
 void ZipReaderImpl::ReadIdiom()
 {
-    bool ok = false;
-
-    ok = m_unzipper->read(m_zipPoint->m_lz_point);
+    bool ok = m_unzipper->read(m_zipPoint->m_lz_point);
 
     if (!ok)
     {

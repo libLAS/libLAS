@@ -162,9 +162,6 @@ SpatialReference::~SpatialReference()
 /// Keep a copy of the VLRs that are related to GeoTIFF SRS information.
 void SpatialReference::SetVLRs(std::vector<VariableRecord> const& vlrs)
 {
-
-    std::string const uid("LASF_Projection");
-
     // Wipe out any existing VLRs that might exist on the SpatialReference
     m_vlrs.clear();
 

@@ -873,19 +873,16 @@ std::vector<liblas::TransformPtr> GetTransforms(po::variables_map vm, bool verbo
         boost::char_separator<char> sep(SEPARATORS);
         std::vector<double> offsets;
         tokenizer tokens(offset_string, sep);
-        bool mins = false;
         std::string m("min");
         for (tokenizer::iterator t = tokens.begin(); t != tokens.end(); ++t) {
             // Check if the user set --offset min,min,min
             // FIXME: make this so the user could do --offset min,min,20.00
             if (!(*t).compare(m))
             {
-                mins = true;
                 continue;
             }
             else
             {
-                mins = false;
                 offsets.push_back(atof((*t).c_str()));
             }
         }

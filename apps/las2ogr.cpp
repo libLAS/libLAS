@@ -134,8 +134,6 @@ void create_layer_def(OGRLayerH lyr)
 {
     assert(0 != lyr);
 
-    std::string fldname("return_num");
-
     OGRFieldDefnH fld = create_field("return_num", OFTInteger, 10, 0);
     OGRErr err = OGR_L_CreateField(lyr, fld, 0);
     if (OGRERR_NONE != err)
