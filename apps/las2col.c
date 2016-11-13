@@ -319,8 +319,6 @@ void* writeFile(void *arg) {
         }
 
         fwrite(dataWriteT[wTA->id].values, dataWriteT[wTA->id].type, dataWriteT[wTA->id].num_points, wTA->out);
-        //for (i = 0; i < 1000; i++)
-        //    printf("%d\n", dataWriteT[wTA->id].values[i]);
         MT_set_lock(&dataLock);
         free(dataWriteT[wTA->id].values);
         dataWriteT[wTA->id].values = NULL;
