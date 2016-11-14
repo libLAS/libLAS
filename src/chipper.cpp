@@ -190,7 +190,6 @@ int Chipper::Load()
     PtRef ref;
     uint32_t idx;
     uint32_t count;
-    vector<PtRef>::iterator it;
    
     if (Allocate())
         return -1;

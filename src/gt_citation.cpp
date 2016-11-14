@@ -572,10 +572,10 @@ OGRBoolean CheckCitationKeyForStatePlaneUTM(GTIF* hGTIF, GTIFDefn* psDefn, OGRSp
     {
       const char *pStr = strstr( szCTString, "Projection Name = ") + strlen("Projection Name = ");
       const char* pReturn = strchr( pStr, '\n');
+#if GDAL_VERSION_NUM >=1900
       char CSName[128];
       strncpy(CSName, pStr, pReturn-pStr);
       CSName[pReturn-pStr] = '\0';
-#if GDAL_VERSION_NUM >=1900
       if( poSRS->ImportFromESRIStatePlaneWKT(0, NULL, NULL, 32767, CSName) == OGRERR_NONE )
       {
         // for some erdas citation keys, the state plane CS name is incomplete, the unit check is necessary.
@@ -645,7 +645,6 @@ OGRBoolean CheckCitationKeyForStatePlaneUTM(GTIF* hGTIF, GTIFDefn* psDefn, OGRSp
           || (pStr = strstr(szCTString, "State Plane Zone ")) != NULL )
       {
         pStr += strlen("State Plane Zone ");
-        int statePlaneZone = abs(atoi(pStr));
         char nad[32];
         strcpy(nad, "HARN");
         if( strstr(szCTString, "NAD83") || strstr(szCTString, "NAD = 83") )
@@ -653,6 +652,7 @@ OGRBoolean CheckCitationKeyForStatePlaneUTM(GTIF* hGTIF, GTIFDefn* psDefn, OGRSp
         else if( strstr(szCTString, "NAD27") || strstr(szCTString, "NAD = 27") )
           strcpy(nad, "NAD27");
 #if GDAL_VERSION_NUM >=1900
+        int statePlaneZone = abs(atoi(pStr));
         if( poSRS->ImportFromESRIStatePlaneWKT(statePlaneZone, (const char*)nad, (const char*)units, psDefn->PCS) == OGRERR_NONE )
           return TRUE;
 #endif

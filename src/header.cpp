@@ -842,13 +842,9 @@ void Header::to_rst(std::ostream& os) const
     double y_scale = tree.get<double>("scale.y");
     double z_scale = tree.get<double>("scale.z");
 
-    uint32_t x_precision = 6;
-    uint32_t y_precision = 6;
-    uint32_t z_precision = 6;
-
-    x_precision = 14;//GetStreamPrecision(x_scale);
-    y_precision = 14; //GetStreamPrecision(y_scale);
-    z_precision = 14; //GetStreamPrecision(z_scale);
+    uint32_t x_precision = 14;//GetStreamPrecision(x_scale);
+    uint32_t y_precision = 14; //GetStreamPrecision(y_scale);
+    uint32_t z_precision = 14; //GetStreamPrecision(z_scale);
 
     os << "  Scale Factor X Y Z:          ";
     os.precision(x_precision);

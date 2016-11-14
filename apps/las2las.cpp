@@ -260,7 +260,6 @@ int main(int argc, char* argv[])
     boost::uint32_t split_pts = 0;
     std::string input;
     std::string output;
-    std::string output_format;
     
     bool verbose = false;
     bool bMinOffset = false;

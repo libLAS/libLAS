@@ -369,6 +369,12 @@ int main(int argc, char* argv[])
     writer.SetFilters(filters);
     
     success = WritePoints(writer, istrm, hdr, verbose);
+ 
+    if (!success) 
+    {
+        std::cerr << "Unable to write output to " << output << std::endl; 
+        return 1;
+    }
 
     if (verbose)
     {
