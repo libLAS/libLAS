@@ -369,7 +369,7 @@ int main(int argc, char *argv[])
       }
       else
       {
-        fprintf(stderr, "%s has fewer points (%d) than %s\n", lasreader2->p_count, file_name_in2, file_name_in1);
+        fprintf(stderr, "%s has fewer points (%d) than %s\n", file_name_in2, lasreader2->p_count, file_name_in1);
         exit(1);
       }
     }

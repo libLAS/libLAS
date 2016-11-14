@@ -35,7 +35,6 @@ namespace liblas { namespace property_tree { namespace xml_parser
                            const xml_writer_settings<Ch> & settings
                            )
     {
-        typedef typename std::basic_string<Ch> Str;
         if (separate_line)
             write_xml_indent(stream,indent,settings);
         stream << Ch('<') << Ch('!') << Ch('-') << Ch('-');
@@ -69,7 +68,6 @@ namespace liblas { namespace property_tree { namespace xml_parser
     {
 
         typedef typename Ptree::key_type::value_type Ch;
-        typedef typename std::basic_string<Ch> Str;
         typedef typename Ptree::const_iterator It;
 
         bool want_pretty = settings.indent_count > 0;

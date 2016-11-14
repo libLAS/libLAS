@@ -84,7 +84,9 @@ struct ScanHdr
         OrgZ(0),
         Time(0),
         Color(0)
-    {}
+    {
+      memset( Magic, '\0', sizeof(char) * 4 );
+    }
 
     boost::int32_t HdrSize;
     boost::int32_t HdrVersion;
