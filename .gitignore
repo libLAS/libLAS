@@ -44,6 +44,7 @@ apps/liblas-config
 apps/ts2las
 apps/txt2las
 autom4te.cache
+_build*
 build.hobu
 cmake_install.cmake
 CMakeCache.txt
