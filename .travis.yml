@@ -3,10 +3,6 @@
 # http://github.com/libLAS
 language: cpp
 
-compiler:
-  - g++
-  - clang
-
 branches:
   only:
     - master
@@ -18,18 +14,35 @@ env:
     # via the "travis encrypt" command using the project repo's public key
     - secure: "Gtn9mkLA8jmtZNw0jMp/MYiwDLk6X/barU8tEh/7wMRkxnG5qvubQxFzw787w3UdPackB+16qB4OO6zbABTrz33L5L4eN0oMCWAG/T7/Y+Q3ys8nOxpg7jCBa3xh+ecGm/Ky8g/4iptdmxGNRp1cjeDfpy75C0j8UOH+vN+4HtI="
 
-addons:
-  coverity_scan:
-    project:
-      name: "libLAS/libLAS"
-      description: "C/C++ library for reading and writing the ASPRS LAS LiDAR format"
-    notification_email: mateusz@loskot.net
-    build_command_prepend: mkdir -p build.coverity && pushd build.coverity && cmake -DWITH_GDAL=ON -DWITH_GEOTIFF=ON -DCMAKE_BUILD_TYPE=Debug .. && popd
-    build_command: cmake --build ./build.coverity
-    branch_pattern: coverity_scan
+matrix:
+  include:
+    - env: COMPILER=clang
+      compiler: clang
+    - env: COMPILER=g++
+      compiler: gcc
+    - env: COMPILER=g++5 COVERITY=ON
+      compiler: gcc
+      addons:
+        apt:
+            sources:
+              - ubuntu-toolchain-r-test
+            packages:
+              - g++-5
+        coverity_scan:
+          project:
+            name: "libLAS/libLAS"
+            description: "C/C++ library for reading and writing the ASPRS LAS LiDAR format"
+          notification_email: mateusz@loskot.net
+          build_command_prepend: mkdir -p build.coverity && pushd build.coverity && cmake -DWITH_GDAL=ON -DWITH_GEOTIFF=ON -DCMAKE_BUILD_TYPE=Debug .. && popd
+          build_command: cmake --build ./build.coverity
+          branch_pattern: coverity_scan
 
 before_install:
   - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  - if [[ -n "$COVERITY" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 20; fi
+  - if [[ -n "$COVERITY" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 20; fi
+  - if [[ -n "$COVERITY" ]]; then sudo update-alternatives --config gcc; fi
+  - if [[ -n "$COVERITY" ]]; then sudo update-alternatives --config g++; fi
   - ./bin/ci/before_install.sh
 
 script: ./bin/ci/script.sh
