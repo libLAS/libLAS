@@ -16,11 +16,11 @@ env:
 
 matrix:
   include:
-    - env: COMPILER=clang
+    - env: USE_CXX=clang
       compiler: clang
-    - env: COMPILER=g++
+    - env: USE_CXX=g++
       compiler: gcc
-    - env: COMPILER=g++5
+    - env: USE_CXX=g++5
       compiler: gcc
       addons:
         apt:
@@ -39,10 +39,10 @@ matrix:
 
 before_install:
   - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-  - if [[ "$COMPILER"=="g++5" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 20; fi
-  - if [[ "$COMPILER"=="g++5" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 20; fi
-  - if [[ "$COMPILER"=="g++5" ]]; then sudo update-alternatives --config gcc; fi
-  - if [[ "$COMPILER"=="g++5" ]]; then sudo update-alternatives --config g++; fi
+  - if [[ "$USE_CXX"=="g++5" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 20; fi
+  - if [[ "$USE_CXX"=="g++5" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 20; fi
+  - if [[ "$USE_CXX"=="g++5" ]]; then sudo update-alternatives --config gcc; fi
+  - if [[ "$USE_CXX"=="g++5" ]]; then sudo update-alternatives --config g++; fi
   - g++ --version
   - ./bin/ci/before_install.sh
 
