@@ -20,7 +20,7 @@ matrix:
       compiler: clang
     - env: COMPILER=g++
       compiler: gcc
-    - env: COMPILER=g++5 COVERITY=ON
+    - env: COMPILER=g++5
       compiler: gcc
       addons:
         apt:
@@ -43,6 +43,7 @@ before_install:
   - if [[ -n "$COVERITY" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 20; fi
   - if [[ -n "$COVERITY" ]]; then sudo update-alternatives --config gcc; fi
   - if [[ -n "$COVERITY" ]]; then sudo update-alternatives --config g++; fi
+  - g++ --version
   - ./bin/ci/before_install.sh
 
 script: ./bin/ci/script.sh
