@@ -130,7 +130,6 @@ during development process.
     ... las2las
     ... las2txt
     ... lasinfo
-    ... lasmerge
     ... txt2las
     ... liblas_test
 

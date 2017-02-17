@@ -39,7 +39,6 @@ apps/las2ogr
 apps/las2txt
 apps/lasindex
 apps/lasinfo
-apps/lasmerge
 apps/liblas-config
 apps/ts2las
 apps/txt2las

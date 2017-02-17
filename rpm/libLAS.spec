@@ -85,13 +85,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING LICENSE.txt README.txt
 %{_bindir}/las2las
-%{_bindir}/las2las-old
 %{_bindir}/las2txt
-%{_bindir}/las2txt-old
 %{_bindir}/lasblock
 %{_bindir}/lasinfo
-%{_bindir}/lasinfo-old
-%{_bindir}/lasmerge
 %{_bindir}/ts2las
 %{_bindir}/txt2las
 %{_libdir}/*.so.*
