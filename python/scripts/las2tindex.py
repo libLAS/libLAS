@@ -143,7 +143,7 @@ def main():
                 if re.search(r'Min X Y Z:', line) is not None or \
                 re.search(r'Max X Y Z:', line) is not None:
                     values=line.split(':')[1].lstrip().split()
-                    del values[0]
+                    del values[2]
                     bbox.append(values)
                 if len(bbox) == 2:
                     break
