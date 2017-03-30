@@ -1558,8 +1558,8 @@ LAS_DLL char* LASHeader_GetXML(const LASHeaderH hHeader)
 LAS_DLL void LASHeader_Destroy(LASHeaderH hHeader)
 {
     VALIDATE_LAS_POINTER0(hHeader, "LASHeader_Destroy");
-    // delete ((liblas::Header*) hHeader);
-    // hHeader=NULL;
+    delete ((liblas::HeaderPtr*) hHeader);
+    hHeader=NULL;
 }
 
 LAS_DLL LASHeaderH LASHeader_Copy(const LASHeaderH hHeader) {
