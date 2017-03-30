@@ -27,6 +27,7 @@ if (NOT WIN32)
 endif()
 
 set(BIGFILE_TEST bigfile_test)
+set(MEMLEAK_TEST memleak_test)
 set(LASINDEX_TEST lasindex_test)
 
 if(Boost_IOSTREAMS_FOUND)
@@ -147,6 +148,12 @@ if(BIGFILE_TEST)
     add_executable(${BIGFILE_TEST} bigtest.c)
     target_link_libraries(${BIGFILE_TEST} ${LIBLAS_C_LIB_NAME})
 endif()
+
+if(MEMLEAK_TEST)
+    add_executable(${MEMLEAK_TEST} memleak_test.c)
+    target_link_libraries(${MEMLEAK_TEST} ${LIBLAS_C_LIB_NAME})
+endif()
+
 
 if (LASINDEX_TEST)
     add_executable(${LASINDEX_TEST} lasindex_test.cpp)
