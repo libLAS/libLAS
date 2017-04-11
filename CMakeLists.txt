@@ -57,7 +57,13 @@ set(WITH_TESTS TRUE CACHE BOOL "Choose if libLAS unit tests should be built")
 set(BUILD_OSGEO4W TRUE CACHE BOOL "Should OSGeo4W package for Windows be built")
 
 # Choose to use pkg-config or not
-set(WITH_PKGCONFIG TRUE CACHE BOOL
+if (UNIX OR MINGW)
+  set(DEFAULT_WITH_PKGCONFIG TRUE)
+else()
+  set(DEFAULT_WITH_PKGCONFIG FALSE)
+endif()
+
+set(WITH_PKGCONFIG ${DEFAULT_WITH_PKGCONFIG} CACHE BOOL
   "Choose whether a pkgconfig file (libLAS.pc) should be installed")
 
 set(WITH_ENDIANAWARE FALSE CACHE BOOL "Choose whether or not libLAS should do runtime endianness switching.  Note that this can slow things down considerably if enabled by default")
