@@ -420,8 +420,7 @@ void Point::SetX( double const& value )
     offset = GetHeader()->GetOffsetX();
 
     // descale the value given our scale/offset
-    v = static_cast<int32_t>(
-                         detail::sround((value - offset) / scale));
+    v = static_cast<int32_t>((value - offset) / scale);
     SetRawX(v);
 }
 
@@ -436,8 +435,7 @@ void Point::SetY( double const& value )
 
 
     // descale the value given our scale/offset
-    v = static_cast<int32_t>(
-                         detail::sround((value - offset) / scale));
+    v = static_cast<int32_t>((value - offset) / scale);
     SetRawY(v);
 }
 
@@ -451,8 +449,7 @@ void Point::SetZ( double const& value )
     offset = GetHeader()->GetOffsetZ();
 
     // descale the value given our scale/offset
-    v = static_cast<int32_t>(
-                         detail::sround((value - offset) / scale));
+    v = static_cast<int32_t>((value - offset) / scale);
     SetRawZ(v);
 }
 
