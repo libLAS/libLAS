@@ -430,10 +430,8 @@ bool overlaps(Bounds const& other) const
 bool contains(Bounds const& other) const
 {
     for (size_type i = 0; i < dimension(); i++) {
-        if ( ranges[i].contains(other.ranges[i]) )
-            return true;
-        else // As soon as it is not contains, we're false
-            return false;
+        if ( !ranges[i].contains(other.ranges[i]) )
+            return false; // As soon as it is not contains, we're false
     }
     return true;
 }
