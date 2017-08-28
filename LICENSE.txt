@@ -1,4 +1,4 @@
-libLAS Main License
+libLAS Main License - The 3-Clause BSD License
 ==============================================================================
 
 Copyright (c) 2007, Martin Isenburg, isenburg at cs.unc.edu
