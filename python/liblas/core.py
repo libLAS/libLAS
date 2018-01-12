@@ -154,8 +154,12 @@ elif os.name == 'posix':
         free = ctypes.CDLL(find_library('libc')).free
     else:
         lib_name = 'liblas_c.so.3'
+        lib_name_alt = 'liblas_c.so.2'
         free = ctypes.CDLL(find_library('c')).free
-    las = ctypes.CDLL(lib_name)
+    try:
+        las = ctypes.CDLL(lib_name)
+    except:
+        las = ctypes.CDLL(lib_name_alt)
 else:
     raise LASException('Unsupported OS "%s"' % os.name)
 
