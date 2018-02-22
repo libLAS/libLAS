@@ -8,22 +8,31 @@ libLAS - LAS 1.0/1.1/1.2 ASPRS LiDAR data translation toolset
 libLAS is a C/C++ library for reading and writing the very common `LAS`
 `LiDAR`_ format. The `ASPRS LAS format`_ is a sequential binary format used to
 store data from LiDAR sensors and by LiDAR processing software for data
-interchange and archival.  See :ref:`features` for more details on what 
-libLAS can provide a LiDAR software developer.  See :ref:`start` for how to 
+interchange and archival.  See :ref:`features` for more details on what
+libLAS can provide a LiDAR software developer.  See :ref:`start` for how to
 get started using the library.
 
 
 libLAS' initial development was supported in 2007-2008 by the `IGSB`_ of the
-Iowa DNR for use in its state-wide `LIDAR`_ project.  Ongoing support for 
-libLAS is provided by a number of organizations including the 
+Iowa DNR for use in its state-wide `LIDAR`_ project.  Ongoing support for
+libLAS is provided by a number of organizations including the
 `U.S. Army Cold Regions Research and Engineering Laboratory`_.
 
-As of 2014, libLAS has been almost entirely superceded by `Martin Isenburg`_'s `LASlib`_ library. The only functionality that libLAS provides over LASlib is the 
-ability to work with `GDAL`_-derived coordinate system information and 
-reproject into infrequently-used coordinate systems. Additionally, libLAS' 
-Python capabilities are much better expressed by the pure-Python laspy 
-http://laspy.org library, and if manipulating LAS data in Python is your 
+As of 2018, libLAS has been replaced by the `PDAL`_ project and it is in
+hibernation or maintenance mode. libLAS does not provide support for LAS or LAZ
+1.4, which PDAL does. PDAL also provides support for many more formats, the
+notion of `PDAL pipelines`_, Python support, and has packages for OSGeo4W,
+Docker/Ubuntu/Alpine, and OSX Homebrew.  Additionally, libLAS' Python
+capabilities are much better expressed by the pure-Python laspy
+http://laspy.org library, and if manipulating LAS data in Python is your
 ultimate desire, use that instead of libLAS.
+
+In short, if you are starting fresh, start with PDAL.
+
+.. _`PDAL`: https://pdal.io
+
+.. _`PDAL pipelines`: https://www.pdal.io/pipeline.html
+
 
 
 
@@ -44,7 +53,7 @@ ultimate desire, use that instead of libLAS.
 License
 ------------------------------------------------------------------------------
 
-libLAS is available under the terms of the `BSD License`_. 
+libLAS is available under the terms of the `BSD License`_.
 See :ref:`License` for a copy.
 
 
