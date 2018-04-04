@@ -28,6 +28,7 @@ matrix:
               - ubuntu-toolchain-r-test
             packages:
               - g++-5
+              - geotif-dev
         coverity_scan:
           project:
             name: "libLAS/libLAS"
