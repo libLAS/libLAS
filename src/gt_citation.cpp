@@ -387,10 +387,10 @@ void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, char* angUnitN
         osCitation += primemName;
         bRewriteGeogCitation = TRUE;
 
-        double primemValue = poSRS->GetPrimeMeridian(NULL);
+        double primemValue = poSRS->GetPrimeMeridian();
         if(angUnitName && !EQUAL(angUnitName, "Degree"))
         {
-            double aUnit = poSRS->GetAngularUnits(NULL);
+            double aUnit = poSRS->GetAngularUnits();
             primemValue *= aUnit;
         }
         GTIFKeySet( psGTIF, GeogPrimeMeridianLongGeoKey, TYPE_DOUBLE, 1, 
