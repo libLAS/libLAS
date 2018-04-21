@@ -127,7 +127,8 @@ void ReprojectionTransform::Initialize(const SpatialReference& inSRS, const Spat
     m_in_ref_ptr = ReferencePtr(OSRNewSpatialReference(0), OGRSpatialReferenceDeleter());
     m_out_ref_ptr = ReferencePtr(OSRNewSpatialReference(0), OGRSpatialReferenceDeleter());
     
-    int result = OSRSetFromUserInput(m_in_ref_ptr.get(), inSRS.GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
+    int result = OSRSetFromUserInput(reinterpret_cast<OGRSpatialReferenceH>(m_in_ref_ptr.get()),
+                                     inSRS.GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
     if (result != OGRERR_NONE) 
     {
         std::ostringstream msg; 
@@ -137,7 +138,8 @@ void ReprojectionTransform::Initialize(const SpatialReference& inSRS, const Spat
         throw std::runtime_error(msg.str());
     }
     
-    result = OSRSetFromUserInput(m_out_ref_ptr.get(), outSRS.GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
+    result = OSRSetFromUserInput(reinterpret_cast<OGRSpatialReferenceH>(m_out_ref_ptr.get()),
+                                 outSRS.GetWKT(liblas::SpatialReference::eCompoundOK).c_str());
     if (result != OGRERR_NONE) 
     {
         std::ostringstream msg; 
@@ -147,7 +149,9 @@ void ReprojectionTransform::Initialize(const SpatialReference& inSRS, const Spat
         std::string message(msg.str());
         throw std::runtime_error(message);
     }
-    m_transform_ptr = TransformPtr(OCTNewCoordinateTransformation( m_in_ref_ptr.get(), m_out_ref_ptr.get()), OSRTransformDeleter());
+    m_transform_ptr = TransformPtr(OCTNewCoordinateTransformation( reinterpret_cast<OGRSpatialReferenceH>(m_in_ref_ptr.get()),
+                                                                   reinterpret_cast<OGRSpatialReferenceH>(m_out_ref_ptr.get())),
+                                   OSRTransformDeleter());
 #else
 
     boost::ignore_unused_variable_warning(inSRS);
@@ -170,7 +174,7 @@ bool ReprojectionTransform::transform(Point& point)
     double y = point.GetY();
     double z = point.GetZ();
 
-    ret = OCTTransform(m_transform_ptr.get(), 1, &x, &y, &z);    
+    ret = OCTTransform(reinterpret_cast<OGRCoordinateTransformationH>(m_transform_ptr.get()), 1, &x, &y, &z);
     if (!ret)
     {
         std::ostringstream msg; 
