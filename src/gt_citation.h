@@ -55,8 +55,8 @@ typedef enum
 OGRBoolean CheckCitationKeyForStatePlaneUTM(GTIF* hGTIF, GTIFDefn* psDefn, OGRSpatialReference* poSRS, OGRBoolean* pLinearUnitIsSet);
 //char* ImagineCitationTranslation(char* psCitation, geokey_t keyID);
 //char** CitationStringParse(char* psCitation, geokey_t keyID);
-void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName);
-void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, char* angUnitName, int nDatum, short nSpheroid);
+void SetLinearUnitCitation(GTIF* psGTIF, const char* pszLinearUOMName);
+void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, const char* angUnitName, int nDatum, short nSpheroid);
 OGRBoolean SetCitationToSRS(GTIF* hGTIF, char* szCTString, int nCTStringLen,
                             geokey_t geoKey, OGRSpatialReference* poSRS, OGRBoolean* linearUnitIsSet);
 void GetGeogCSFromCitation(char* szGCSName, int nGCSName,

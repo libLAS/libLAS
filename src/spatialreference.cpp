@@ -602,8 +602,12 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
 
         if (pretty) {
             OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
+#if GDAL_VERSION_MAJOR > 2 || (GDAL_VERSION_MAJOR == 2 && GDAL_VERSION_MINOR >= 3)
+            poSRS->importFromWkt( pszWKT );
+#else
             char *pszOrigWKT = pszWKT;
             poSRS->importFromWkt( &pszOrigWKT );
+#endif
 
             CPLFree( pszWKT );
             pszWKT = NULL;
@@ -623,8 +627,12 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
             && strstr(pszWKT,"COMPD_CS") != NULL )
         {
             OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
+#if GDAL_VERSION_MAJOR > 2 || (GDAL_VERSION_MAJOR == 2 && GDAL_VERSION_MINOR >= 3)
+            poSRS->importFromWkt( pszWKT );
+#else
             char *pszOrigWKT = pszWKT;
             poSRS->importFromWkt( &pszOrigWKT );
+#endif
 
             CPLFree( pszWKT );
             pszWKT = NULL;
@@ -661,7 +669,7 @@ void SpatialReference::SetFromUserInput(std::string const& v)
 
     // OGRSpatialReference* poSRS = (OGRSpatialReference*) OSRNewSpatialReference(NULL);
     OGRSpatialReference srs(NULL);
-    if (OGRERR_NONE != srs.SetFromUserInput(const_cast<char *> (input)))
+    if (OGRERR_NONE != srs.SetFromUserInput(input))
     {
         throw std::invalid_argument("could not import coordinate system into OSRSpatialReference SetFromUserInput");
     }
@@ -760,7 +768,11 @@ std::string SpatialReference::GetProj4() const
     const char* poWKT = wkt.c_str();
 
     OGRSpatialReference srs(NULL);
+#if GDAL_VERSION_MAJOR > 2 || (GDAL_VERSION_MAJOR == 2 && GDAL_VERSION_MINOR >= 3)
+    if (OGRERR_NONE != srs.importFromWkt(poWKT))
+#else
     if (OGRERR_NONE != srs.importFromWkt(const_cast<char **> (&poWKT)))
+#endif
     {
         return std::string();
     }
