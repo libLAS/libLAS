@@ -578,7 +578,7 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
             else
                 poSRS->exportToWkt( &pszWKT );
 
-            OSRDestroySpatialReference( poSRS );
+            OGRSpatialReference::DestroySpatialReference( poSRS );
 
             result_wkt = pszWKT;
             CPLFree( pszWKT );
@@ -612,7 +612,7 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
             CPLFree( pszWKT );
             pszWKT = NULL;
             poSRS->exportToPrettyWkt(&pszWKT, false);
-            OSRDestroySpatialReference( poSRS );
+            OGRSpatialReference::DestroySpatialReference( poSRS );
 
         }
 
@@ -643,7 +643,7 @@ std::string SpatialReference::GetWKT(WKTModeFlag mode_flag , bool pretty) const
             else
                 poSRS->exportToWkt( &pszWKT );
 
-            OSRDestroySpatialReference( poSRS );
+            OGRSpatialReference::DestroySpatialReference( poSRS );
         }
 #else
         boost::ignore_unused_variable_warning(mode_flag);
