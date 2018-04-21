@@ -90,7 +90,11 @@ static const char *papszDatumEquiv[] =
 /*                       LibgeotiffOneTimeInit()                        */
 /************************************************************************/
 
+#if GDAL_VERSION_MAJOR >= 2
+static CPLMutex* hMutex = NULL;
+#else
 static void* hMutex = NULL;
+#endif
 
 void LibgeotiffOneTimeInit()
 {
