@@ -1196,7 +1196,11 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 /*      string.                                                         */
 /* -------------------------------------------------------------------- */
     poSRS = new OGRSpatialReference();
+#if GDAL_VERSION_MAJOR > 2 || (GDAL_VERSION_MAJOR == 2 && GDAL_VERSION_MINOR >= 3)
+    if( poSRS->importFromWkt(pszOGCWKT) != OGRERR_NONE )
+#else
     if( poSRS->importFromWkt((char **) &pszOGCWKT) != OGRERR_NONE )
+#endif
     {
         delete poSRS;
         return FALSE;
@@ -1262,7 +1266,11 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 /* -------------------------------------------------------------------- */
 /*      Get the linear units.                                           */
 /* -------------------------------------------------------------------- */
+#if GDAL_VERSION_MAJOR > 2 || (GDAL_VERSION_MAJOR == 2 && GDAL_VERSION_MINOR >= 3)
+    const char  *pszLinearUOMName = NULL;
+#else
     char        *pszLinearUOMName = NULL;
+#endif
     double	dfLinearUOM = poSRS->GetLinearUnits( &pszLinearUOMName );
     int         nUOMLengthCode = 9001; /* meters */
 
@@ -2161,8 +2169,11 @@ int GTIFSetFromOGISDefn( GTIF * psGTIF, const char *pszOGCWKT )
 /*      Write angular units.  Always Degrees for now.                   */
 /*   Changed to support different angular units                         */
 /* -------------------------------------------------------------------- */
-
+#if GDAL_VERSION_MAJOR > 2 || (GDAL_VERSION_MAJOR == 2 && GDAL_VERSION_MINOR >= 3)
+    const char* angUnitName = NULL;
+#else
     char* angUnitName = NULL;
+#endif
     double angUnitValue = poSRS->GetAngularUnits(&angUnitName);
     if(EQUAL(angUnitName, "Degree"))
         GTIFKeySet(psGTIF, GeogAngularUnitsGeoKey, TYPE_SHORT, 1,

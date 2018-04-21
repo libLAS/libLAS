@@ -308,7 +308,7 @@ char** CitationStringParse(char* psCitation, geokey_t keyID)
 /*                                                                      */
 /*      Set linear unit Citation string                                 */
 /************************************************************************/
-void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName)
+void SetLinearUnitCitation(GTIF* psGTIF, const char* pszLinearUOMName)
 {
     char szName[512];
     CPLString osCitation;
@@ -338,7 +338,7 @@ void SetLinearUnitCitation(GTIF* psGTIF, char* pszLinearUOMName)
 /*                                                                      */
 /*      Set geogcs Citation string                                      */
 /************************************************************************/
-void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, char* angUnitName, int nDatum, short nSpheroid)
+void SetGeogCSCitation(GTIF * psGTIF, OGRSpatialReference *poSRS, const char* angUnitName, int nDatum, short nSpheroid)
 {
     int bRewriteGeogCitation = FALSE;
     char szName[256];
