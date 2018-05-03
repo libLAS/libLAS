@@ -134,7 +134,7 @@ liblas.vlr.VLR
                 reserved,
                 data
 
-.. _specification: http://liblas.org/static/specifications/asprs_las_format_v13.pdf
+.. _specification: http://liblas.org/_static/specifications/asprs_las_format_v13.pdf
 .. _GDAL: http://www.gdal.org
 .. _Proj.4: http://proj.osgeo.org
 .. _SetFromUserInput: http://www.gdal.org/ogr/ogr__srs__api_8h.html#7a043a4b3d477847dcc89efdff3a563a

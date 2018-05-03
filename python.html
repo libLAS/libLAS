@@ -26,7 +26,7 @@
 <table width="100%" style="width: 100%; background-color: white;">
   <tr>
     <td rowspan="2" style="padding: 10px 0px 10px 10px;">
-      <a href="index.html" title="Home"><img src="static/liblaslogo.png" alt="libLAS banner" border="0" /></a>
+      <a href="index.html" title="Home"><img src="_static/liblaslogo.png" alt="libLAS banner" border="0" /></a>
     </td>
     <td style="padding: 10px 10px 0px 0px; text-align: right; vertical-align: top;">
       <a href="index.html" title="Home">Home</a> |
@@ -433,7 +433,7 @@ properly written, an exception will be thrown.</p>
 <dl class="attribute">
 <dt id="liblas.header.Header.data_format_id">
 <code class="descname">data_format_id</code><a class="headerlink" href="#liblas.header.Header.data_format_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>The point format as an integer. See the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a> for more
+<dd><p>The point format as an integer. See the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a> for more
 detail.</p>
 <blockquote>
 <div><p>It can be 3, 2, 1, or 0.</p>
@@ -493,7 +493,7 @@ you if you use <a class="reference external" href="https://docs.python.org/3/lib
 <dt id="liblas.header.Header.encoding">
 <code class="descname">encoding</code><a class="headerlink" href="#liblas.header.Header.encoding" title="Permalink to this definition">¶</a></dt>
 <dd><p>Global encoding for the file.</p>
-<p>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
+<p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
 <div><p>This is a bit field used to indicate certain global properties about
 the file. In LAS 1.2 (the version in which this field was introduced),
@@ -560,7 +560,7 @@ Last Return File. In this case, first return data will be labeled
 <code class="descname">file_signature</code><a class="headerlink" href="#liblas.header.Header.file_signature" title="Permalink to this definition">¶</a></dt>
 <dd><p>The file signature for the file.  It should always be ‘LASF’</p>
 <dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
 <dd>The file signature must contain the four characters “LASF”, and it is
 required by the LAS specification. These four characters can be
 checked by user software as a quick look initial determination of file
@@ -573,7 +573,7 @@ type.</dd>
 <code class="descname">file_source_id</code><a class="headerlink" href="#liblas.header.Header.file_source_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>File Source ID for the file.</p>
 <dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
 <dd>This field should be set to a value between 1 and 65,535, inclusive. A
 value of zero (0) is interpreted to mean that an ID has not been
 assigned. In this case, processing software is free to assign any
@@ -661,7 +661,7 @@ header.</p>
 <code class="descname">offset</code><a class="headerlink" href="#liblas.header.Header.offset" title="Permalink to this definition">¶</a></dt>
 <dd><p>The offset factors in [x, y, z] for the point data.</p>
 <dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
 <dd>The offset fields should be used to set the overall offset for the
 point records. In general these numbers will be zero, but for
 certain cases the resolution of the point data may not be large
@@ -699,7 +699,7 @@ expect the unexpected.</p>
 it is the same as <a class="reference internal" href="#liblas.header.Header.guid" title="liblas.header.Header.guid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.guid</span></code></a>. Use that to
 manipulate the ProjectID for the file.</p>
 <dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
 <dd>The four fields that comprise a complete Globally Unique Identifier
 (GUID) are now reserved for use as a Project Identifier (Project
 ID). The field remains optional. The time of assignment of the
@@ -737,7 +737,7 @@ keep these data up-to-date with what actually exists in the file.</p>
 <dd><p>The scale factors in [x, y, z] for the point data.  libLAS uses         the scale factors plus the <a class="reference internal" href="#liblas.header.Header.offset" title="liblas.header.Header.offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.offset</span></code></a> values
 to store the point coordinates as integers in the file.</p>
 <dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
 <dd>The scale factor fields contain a double floating point value that
 is used to scale the corresponding X, Y, and Z long values within
 the point records. The corresponding X, Y, and Z scale factor must
@@ -847,7 +847,7 @@ release)</p>
 </tbody>
 </table>
 <dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
 <dd>This information is ASCII data describing the generating software
 itself. This field provides a mechanism for specifying which
 generating software package and version was used during LAS file
@@ -883,7 +883,7 @@ be null.</dd>
 </tr>
 </tbody>
 </table>
-<p>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
+<p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
 <div><table border="1" class="colwidths-given docutils" id="id2">
 <caption><span class="caption-text">System Identifier</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
@@ -971,7 +971,7 @@ should not normally be used.</li>
 <code class="descname">classification</code><a class="headerlink" href="#liblas.point.Point.classification" title="Permalink to this definition">¶</a></dt>
 <dd><p>The point’s classification as a raw byte value.</p>
 <p>The following large section of information is verboten from the
-<a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a> for your convenience:</p>
+<a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a> for your convenience:</p>
 <p>This filed represents the “class” attributes of a point. If a point
 has never been classified, this byte must be set to zero. There are no
 user defined classes since all point formats 0 supply 8 bits per point
@@ -1122,7 +1122,7 @@ color values from different camera bit depths to be accurately merged.</p>
 <dt id="liblas.point.Point.flightline_edge">
 <code class="descname">flightline_edge</code><a class="headerlink" href="#liblas.point.Point.flightline_edge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flightline edge flag for the point</p>
-<p>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
+<p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
 <div>The Edge of Flight Line data bit has a value of 1 only when the point
 is at the end of a scan. It is the last point on a given scan line
@@ -1133,7 +1133,7 @@ before it changes direction.</div></blockquote>
 <dt id="liblas.point.Point.number_of_returns">
 <code class="descname">number_of_returns</code><a class="headerlink" href="#liblas.point.Point.number_of_returns" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of returns for a given laser pulse.</p>
-<p>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
+<p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
 <div>The Number of Returns is the total number of returns for a given
 pulse. For example, a laser data point may be return two (Return
@@ -1144,7 +1144,7 @@ Number) within a total number of five returns.</div></blockquote>
 <dt id="liblas.point.Point.point_source_id">
 <code class="descname">point_source_id</code><a class="headerlink" href="#liblas.point.Point.point_source_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Point Source ID for the point.</p>
-<p>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
+<p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
 <div>This value indicates the file from which this point originated. Valid
 values for this field are 1 to 65,535 inclusive with zero being used
@@ -1175,7 +1175,7 @@ specifications for more detail.</p>
 <dt id="liblas.point.Point.return_number">
 <code class="descname">return_number</code><a class="headerlink" href="#liblas.point.Point.return_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>The pulse return number for a given laser pulse.</p>
-<p>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
+<p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
 <div>The Return Number is the pulse return number for a given output pulse.
 A given output laser pulse can have many returns, and they must be
@@ -1189,7 +1189,7 @@ returns.</div></blockquote>
 <code class="descname">scan_angle</code><a class="headerlink" href="#liblas.point.Point.scan_angle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scan angle of the point.</p>
 <dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
 <dd>The Scan Angle Rank is a signed one-byte number with a valid range
 from -90 to +90. The Scan Angle Rank is the angle (rounded to the
 nearest integer in the absolute value sense) at which the laser point
@@ -1204,7 +1204,7 @@ degrees to the left side of the aircraft in the direction of flight.</dd>
 <dt id="liblas.point.Point.scan_direction">
 <code class="descname">scan_direction</code><a class="headerlink" href="#liblas.point.Point.scan_direction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scan direction for the point</p>
-<p>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
+<p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
 <div>The Scan Direction Flag denotes the direction at which the scanner
 mirror was traveling at the time of the output pulse. A bit value of 1
@@ -1413,7 +1413,7 @@ invalid, GDAL can’t ingest it, or <a class="reference external" href="http://w
 </tr>
 </tbody>
 </table>
-<p>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
+<p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
 <div>The Public Header Block is followed by one or more Variable Length
 Records (There is one mandatory Variable Length Record,
@@ -1460,7 +1460,7 @@ Length Record Header is 60 bytes in length.</div></blockquote>
 <code class="descname">description</code><a class="headerlink" href="#liblas.vlr.VLR.description" title="Permalink to this definition">¶</a></dt>
 <dd><p>Description of this VLR instance (clipped to 32 bytes long)</p>
 <dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
 <dd>Optional, null terminated text description of the data. Any remaining
 characters not used must be null.</dd>
 </dl>
@@ -1471,7 +1471,7 @@ characters not used must be null.</dd>
 <code class="descname">recordid</code><a class="headerlink" href="#liblas.vlr.VLR.recordid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Record ID for the VLR</p>
 <dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
 <dd>The Record ID is dependent upon the User ID. There can be 0 to 65535
 Record IDs for every User ID. The LAS specification manages its own
 Record IDs (User IDs owned by the specification), otherwise Record IDs
@@ -1506,7 +1506,7 @@ for all extra VLRs that libLAS itself can interpret.</p>
 <p class="last"><a class="reference internal" href="development/specifications.html#liblas-vlr-key"><span class="std std-ref">VLR Key</span></a> has more detail on the key and name.</p>
 </div>
 <dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
 <dd>The User ID field is ASCII character data that identifies the user
 which created the variable length record. It is possible to have many
 Variable Length Records from different sources with different User

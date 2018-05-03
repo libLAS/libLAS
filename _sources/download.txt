@@ -52,7 +52,7 @@ To start on the documentation, please visit :ref:`docs`. Additionally, the
 entire documentation is available as a `single PDF document <./libLAS.pdf>`__
 |image|.
 
-.. |image| image:: ./static/pdf.png
+.. |image| image:: ./_static/pdf.png
    :height: 15
    :width: 15
    :alt: PDF icon
