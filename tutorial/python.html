@@ -1,0 +1,419 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Python Tutorial &#8212; liblas.org</title>
+    <link rel="stylesheet" href="../_static/sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="C++ Tutorial" href="cpp.html" />
+    <link rel="prev" title="Tutorials" href="index.html" />
+
+ 
+
+  </head><body>
+
+<table width="100%" style="width: 100%; background-color: white;">
+  <tr>
+    <td rowspan="2" style="padding: 10px 0px 10px 10px;">
+      <a href="../index.html" title="Home"><img src="../_static/liblaslogo.png" alt="libLAS banner" border="0" /></a>
+    </td>
+    <td style="padding: 10px 10px 0px 0px; text-align: right; vertical-align: top;">
+      <a href="../index.html" title="Home">Home</a> |
+      <a href="../docs.html" title="Docs">Docs</a> |
+      <a href="https://github.com/libLAS/libLAS/issues/" title="Bugs">github</a> |
+      <a href="../faq.html" title="FAQ">FAQ</a> |
+      <a href="../download.html" title="Download">Download</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 0px 10px 0px 0px; text-align: right; vertical-align: bottom;">
+
+    </td>
+  </tr>
+</table>
+
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cpp.html" title="C++ Tutorial"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Tutorials"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../docs.html">Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Tutorials</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="python-tutorial">
+<span id="id1"></span><h1>Python Tutorial<a class="headerlink" href="#python-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This basic tutorial explains how to use libLAS to read and write
+LIDAR data encoded in LAS file format from Python.</p>
+<div class="section" id="reading">
+<h2>Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h2>
+<p>1. Reading LAS data in Python is a simple as opening the file with the
+file.File class and using the iterator to chug through the points.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="nb">file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;file.las&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="s1">&#39;X,Y,Z: &#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">z</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>You can also read specific points from a file:</li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="nb">file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;file.las&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span>
+<span class="go">&lt;liblas.point.Point object at 0x7377f0&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="file-versions-and-formats">
+<h3>File versions and formats<a class="headerlink" href="#file-versions-and-formats" title="Permalink to this headline">¶</a></h3>
+<p>The LAS format, as of this writing, provides three different file format
+versions (1.0, 1.1, and 1.2) and four different point format verions (0, 1, 2, 3).
+It is important that you be mindful of the minor_version and the dataformat_id
+when working with files.  If the dataformat_id is not correct for the type of
+data you want to store (color, time, or color + time), none of that data will
+be read or written, even though placeholders will exist on the liblas.point
+for them.</p>
+<table border="1" class="docutils" id="id2">
+<caption><span class="caption-text">Point format versions and their properties</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">dataformat_id</th>
+<th class="head">Time</th>
+<th class="head">Color</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>x</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>&#160;</td>
+<td>x</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>x</td>
+<td>x</td>
+</tr>
+</tbody>
+</table>
+<p>You control whether or not color, time, or color + time is stored in the
+file by setting the dataformat_id in the header that you use to create
+the file.File.  This has to be done when you instantiate the file, it
+cannot be changed after the fact.  Attempting to do so may result in
+disastrous results.</p>
+<table border="1" class="docutils" id="id3">
+<caption><span class="caption-text">Base properties of all points regardless of dataformat_id</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>x</td>
+</tr>
+<tr class="row-odd"><td>y</td>
+</tr>
+<tr class="row-even"><td>z</td>
+</tr>
+<tr class="row-odd"><td>intensity</td>
+</tr>
+<tr class="row-even"><td>return_number</td>
+</tr>
+<tr class="row-odd"><td>number_of_returns</td>
+</tr>
+<tr class="row-even"><td>scan_direction</td>
+</tr>
+<tr class="row-odd"><td>flightline_edge</td>
+</tr>
+<tr class="row-even"><td>classification</td>
+</tr>
+<tr class="row-odd"><td>scan_angle</td>
+</tr>
+<tr class="row-even"><td>user_data</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="header">
+<h2>Header<a class="headerlink" href="#header" title="Permalink to this headline">¶</a></h2>
+<p>Headers, points, VLRs, colors, and GUIDs are <em>copies</em>, not references in
+the libLAS Python bindings.  After opening a LAS file, you can fetch
+the header with the following property:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">header</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span>
+<span class="go">&lt;liblas.header.Header object at 0x737790&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="discussion">
+<h3>Discussion<a class="headerlink" href="#discussion" title="Permalink to this headline">¶</a></h3>
+<p>There are many properties of the header that you can get and set:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">major_version</span><span class="p">,</span> <span class="n">h</span><span class="o">.</span><span class="n">minor_version</span>
+<span class="go">(1, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">dataformat_id</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">min</span>
+<span class="go">[289020.90000000002, 4320942.6100000003, 166.78]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">max</span>
+<span class="go">[290106.02000000002, 4323641.5700000003, 215.48000000000002]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">scale</span>
+<span class="go">[0.01, 0.01, 0.01]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">offset</span>
+<span class="go">[-0.0, -0.0, -0.0]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">point_records_count</span>
+<span class="go">3265110L</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="n">guid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">project_id</span>
+<span class="go">&#39;00000000-0000-0000-0000-000000000000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">guid</span>
+<span class="go">00000000-0000-0000-0000-000000000000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">guid</span><span class="o">.</span><span class="n">GUID</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">5cb59173-124b-476b-9729-bafa87cfb27c</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">guid</span> <span class="o">=</span> <span class="n">g</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">guid</span>
+<span class="go">5cb59173-124b-476b-9729-bafa87cfb27c</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">project_id</span>
+<span class="go">&#39;5cb59173-124b-476b-9729-bafa87cfb27c&#39;</span>
+
+<span class="go"># only works if you have libgeotiff and/or GDAL linked in</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">srs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">proj4</span>
+<span class="go">+proj=tmerc +lat_0=0.000000000 +lon_0=-93.000000000 +k=0.999600 \</span>
+<span class="go">+x_0=500000.000 +y_0=0.000 +ellps=WGS84 +units=m</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="point">
+<h2>Point<a class="headerlink" href="#point" title="Permalink to this headline">¶</a></h2>
+<p>The liblas.point module contains a Point class that you can use to manipulate
+LAS point data.  It is fairly basic and contains a number of properties you
+can set and get:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">z</span>
+<span class="go">(289814.15000000002, 4320978.6100000003, 170.75999999999999)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">scan_angle</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">scan_direction</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">return_number</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">number_of_returns</span>
+<span class="go">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">flightline_edge</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">classification</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">time</span>
+<span class="go">datetime.datetime(1970, 1, 6, 12, 44, 10, 1)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">intensity</span>
+<span class="go">120</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">color</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">red</span>
+<span class="go">255</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">blue</span>
+<span class="go">255</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">green</span>
+<span class="go">255</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="vlrs">
+<h2>VLRs<a class="headerlink" href="#vlrs" title="Permalink to this headline">¶</a></h2>
+<p>Variable Length Records (VLR) are frequently used by applications to store
+anything they wish in the file as a “blob” written into the header of the
+file.  libLAS supports writing and creating your own VLRs in addition to
+taking on the work of interpreting and using VLR records related to
+spatial reference systems if GDAL and proj.4 are linked into the library.</p>
+<p>The following code demonstrates how to write your own VLR by opening an
+XML file and inserting it into a new file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="nb">file</span> <span class="k">as</span> <span class="n">lasfile</span>
+<span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="n">vlr</span>
+<span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="n">header</span> <span class="k">as</span> <span class="n">lasheader</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">lasfile</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;test/data/srs_utm17.las&#39;</span><span class="p">,</span><span class="bp">None</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">header</span>
+
+<span class="n">v</span> <span class="o">=</span> <span class="n">vlr</span><span class="o">.</span><span class="n">VLR</span><span class="p">()</span>
+
+<span class="n">text</span> <span class="o">=</span>  <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;schemas/las.xml&#39;</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="kn">import</span> <span class="nn">ctypes</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">create_string_buffer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">v</span><span class="o">.</span><span class="n">userid</span><span class="o">=</span><span class="s1">&#39;hobu&#39;</span>
+<span class="n">v</span><span class="o">.</span><span class="n">recordid</span> <span class="o">=</span> <span class="mi">12345</span>
+<span class="n">v</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+<span class="n">h</span><span class="o">.</span><span class="n">add_vlr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+<span class="n">f2</span> <span class="o">=</span> <span class="n">lasfile</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;junk.las&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="n">h</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f2</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">f2</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="writing">
+<h2>Writing<a class="headerlink" href="#writing" title="Permalink to this headline">¶</a></h2>
+<p>To write a new LAS file, you are first required to have a header. The header
+will have a number of default values, but it is important to set the
+dataformat_id and version_minor if you wish to have 1.1 files or records that
+also include time values.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="n">header</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span>
+
+<span class="go">### Support storing time values</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">dataformat_id</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="go">### Store a 1.1 version file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">minor_version</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Another important item to not is possible to have the same file open for
+read and write at the same time because LAS files are sequential.  For example,
+the following will fail:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;junk.las&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;junk.las&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">LASException</span>: <span class="n">(&#39;File %s is already open.  Close the file or delete the reference to it&#39;, &#39;junk.las&#39;)</span>
+</pre></div>
+</div>
+<p>Writing to a LAS file is as simple as opening the file for write mode
+with the header you want to write and issuing the write() command with some
+liblas.point.Point instances:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;junk.las&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span> <span class="n">h</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span> <span class="o">=</span> <span class="n">liblas</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">Point</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../docs.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../start.html">Getting Started with libLAS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../osgeo4w.html">Windows Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compilation.html">Compilation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Python Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cpp.html">C++ Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qhull.html">Generating Convex Hulls with libLAS and Qhull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csharp.html">C# Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boo.html">Boo Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ironpython.html">IronPython Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vbnet.html">VB.NET Tutorial</a></li>
+<li class="toctree-l2"><a class="reference external" href="http://trac.liblas.org/raw-attachment/wiki/WikiStart/ASPRS-Workshop-NOAA-Demo.pdf">ASPRS NOAA Workshop (Python)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">LAS Utility Applications</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://liblas.org/doxygen/annotated.html">C++ Class API</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://liblas.org/doxygen/liblas_8h.html">C API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lastools.html">libLAS’ Relationship to LAStools</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/tutorial/python.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cpp.html" title="C++ Tutorial"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Tutorials"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../docs.html">Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Tutorials</a> &#187;</li> 
+      </ul>
+    </div>
+<div class="footer">
+        &copy; <a href="../copyright.html">Copyright</a> 2016, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 02, 2018 
+      and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+
+
+</div>
+
+
+  </body>
+</html>

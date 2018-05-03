@@ -1,0 +1,106 @@
+.. _download:
+
+******************************************************************************
+Download
+******************************************************************************
+
+
+Current Release(s)
+------------------------------------------------------------------------------
+
+* **2016-08-23**
+
+  - `libLAS-1.8.1-src.tar.bz2 <http://download.osgeo.org/liblas/libLAS-1.8.1.tar.bz2>`__
+    `(md5) <http://download2.osgeo.org/liblas/libLAS-1.8.1.tar.bz2.md5>`__
+
+Past Release
+------------------------------------------------------------------------------
+
+* **2014-08-01**
+
+  - `libLAS-1.8.0-src.tar.bz2 <http://download.osgeo.org/liblas/libLAS-1.8.0.tar.bz2>`__
+
+  - See `OSGeo4W <http://trac.osgeo.org/osgeo4w>`__ for Windows release.
+
+
+
+.. note::
+    You may also want `LASzip`_ for compression support.
+
+.. seealso::
+    :ref:`source`
+
+.. seealso::
+    A `sample library <http://liblas.org/samples>`__ is also available to provide
+    data to test your tools.
+
+.. seealso::
+    See :ref:`start` for information
+    how to get started using the tools once they are installed.
+
+
+Development Source
+..............................................................................
+
+* Current Trunk: https://github.com/libLAS/libLAS
+
+
+Documentation
+------------------------------------------------------------------------------
+
+To start on the documentation, please visit :ref:`docs`. Additionally, the
+entire documentation is available as a `single PDF document <./libLAS.pdf>`__
+|image|.
+
+.. |image| image:: ./_static/pdf.png
+   :height: 15
+   :width: 15
+   :alt: PDF icon
+   :target: /libLAS.pdf
+
+
+
+Binaries
+------------------------------------------------------------------------------
+
+.. _windows:
+
+Windows
+..............................................................................
+
+
+`OSGeo4W`_
+    OSGeo4W is a binary distribution of a broad set of Open Source geospatial
+    software for Win32 environments (Windows XP, Vista, etc). OSGeo4W includes
+    GDAL/OGR, GRASS, MapServer, and QGIS. Choose the OSGeo4W64 platform, and
+    libLAS 1.8.0+ is only available on OSGeo4W64.
+
+    .. seealso::
+        :ref:`osgeo4w_install` contains information how to install and configure
+        your OSGeo4W build to utilize libLAS.
+
+
+.. _`OSGeo4W`: http://trac.osgeo.org/osgeo4w/
+
+Mac
+..............................................................................
+
+`Homebrew <http://brew.sh/>`__ has you covered on OSX
+
+
+.. _linux:
+
+Linux
+..............................................................................
+
+
+`DebianGIS`_
+    DebianGIS provides a number of packages including MapServer, PostGIS,
+    GDAL, QGIS, GEOS, and libLAS.  It sometimes lags a little bit behind the absolute
+    latest release, but DebianGIS provides a solid integration environment
+    for a giant slug of Open Source GIS software.
+
+.. _`DebianGIS`: http://wiki.debian.org/DebianGis
+
+
+.. _`LASzip`: http://laszip.org

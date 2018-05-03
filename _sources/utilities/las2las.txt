@@ -1,0 +1,463 @@
+
+.. raw:: pdf
+
+    PageBreak
+    
+.. _las2las:
+    
+****************************************************************
+  las2las: Advanced LAS filtering and manipulation
+****************************************************************
+
+:Author: Howard Butler
+:Contact: hobu.inc@gmail.com
+
+Description
+-----------
+
+:ref:`las2las <las2las>` reads and writes LiDAR data in the ASPRS LAS 1.0, 1.1, and 1.2 formats while 
+modifying its contents. :ref:`las2las <las2las>` is designed for filtering and 
+transformation operations of LAS files.  
+
+While `lasinfo` can do a few simple operations like 
+updating header information, more drastic changes, like removing points or 
+altering values, will require :ref:`las2las <las2las>`.  :ref:`las2las` is expected to be used for 
+modifying single files at a time, and some :ref:`las2las <las2las>` operations require multiple 
+read passes through the points.   Some examples of operations `las2las` can be 
+used for include:
+
+* clipping of points to those that lie within a certain region specified 
+  by a bounding box (--extent )
+* eliminating points that are the second return (--drop-return 2), 
+* eliminating points that have a scan angle 
+  above some threshold (--drop-scan-angle "<5")
+* eliminating points that have an intensity below some 
+  threshold (--drop-intensity "<15")
+* extracting only first (--first-only) or last (--last-only) returns
+* changing the format from LAS 1.0 to 1.1 or vice versa
+* eliminating points of a given classification (--eliminate class 2)
+
+:ref:`las2las <las2las>` started a port of Martin Isenburg's :ref:`las2las` utility from `LASTools`_ 
+to the libLAS library.  It is much-improved from his version, however, and 
+provides a number of additional capabilities. 
+
+.. seealso::
+    :ref:`lastools_liblas` contains background information on the port of 
+    Isenburg and Shewchuck's utilities to the libLAS library.
+
+* Text output describing the operation(s) is only provided when the --verbose (-v)
+  switch is provided.  Errors are reported to stderr.
+
+* Coordinate reprojection, including vertical datum transformation when compiled 
+  with the latest `GDAL`_.  
+
+* Coordinate system description and alteration.
+
+* Variable Length Records (VLRs) are carried forward by default.
+
+* VLR alteration, including adding your own VLRs with files and removal of VLRs
+
+* File splitting based on a specified file size (--split-mb) or points (--split-pts)
+
+* Ability to set coordinate offsets to minimum values of the existing coordinate space.
+
+* Color filtering
+  
+Usage
+-----
+
+Clipping with a rectangle
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las in.las --output out.las --extent "63025000 483450000 63050000 483475000"
+
+clips points of in.las with x<=63025000 and y<=483450000 or x>=63050000
+and y>=483475000 and stores surviving points to out.las.
+
+::
+
+  $ las2las in.las --output out.las --extent "63025000 483450000 0 63050000 483475000 100""
+
+clips points of in.las with x <= 63025000 and y <= 483450000 and z <= 100 or x >= 63050000
+and y >= 483475000 and z >= 0
+
+.. note::
+    The quotes around the extent values are important to aid the command line parsing.  
+    An error will likely result of not quoting the values.  Alternatively, you can use 
+    commas to separate the --extent parameters to avoid quoting.
+
+Eliminating specified returns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+  
+  $ las2las --input in.las --output out.las --drop-returns 1
+
+eliminates all points of in.las that are designated first returns by the 
+value in their return_number field and stores surviving points to out.las.
+
+::
+  
+  $ las2las --input in.las --output out.las --drop-returns 2 3 4 5
+
+eliminates all returns in the specified list.
+
+Limiting based on scan angle
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --keep-scan-angle "<=15"
+
+keeps all points of in.las whose scan angle is <= 15.
+
+Limiting based on intensity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --drop-intensity "<=1000" 
+  
+eliminates all points of in.las whose intensity is below 1000 and stores 
+surviving points to out.las.
+
+Extract last returns
+~~~~~~~~~~~~~~~~~~~~
+
+::
+  
+  $ las2las --input in.las --output out.las --last-return-only
+
+extracts all last return points from in.las and stores them to out.las.
+
+Throw out invalid data
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --valid-only
+
+removes invalid (according to the ASPRS LAS file format specification) points.
+This switch should only be required in a few special circumstances. Points
+that might be invalid include those with larger-than-required scan angles.
+
+Eliminate ground points
+~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --drop-classes 2
+
+removes points with that have a classification of 2. Points with a
+classification of 2 are conventionally called ground points, but that
+convention may not be followed for older LAS 1.0 files.
+
+Eliminate ground and unclassified points
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --drop-classes 1 2
+  
+removes points that have a classification of 1 or 2.
+  
+
+
+Convert to 1.1
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las --input in.las --output out.las --format 1.1
+  
+converts the in.las file to a 1.1-formatted file.  For the most part, this 
+conversion is "in name only." 
+
+Alter vertical datum information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las in.las --a_vertcs 5703 "North American Vertical Datum of 1988 (NAVD88)" 5103 9001
+  
+sets the vertical datum information for the file to be NAVD88 with vertical 
+units of meters. 
+
+.. note::
+    This may not be relevant depending upon the circumstances of the coordinate 
+    system the file is already in.  This option only changes the *description* 
+    of the points.  It does not reproject them in any way.  Use a combination 
+    of --a_srs and --t_srs to do perform reprojection of the file
+
+File splitting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las in.las --split-mb 10
+
+splits the file into the required number of output-n.las files. Other filters
+or operations may also be applied to the operation in combination with
+splitting. Each outputted file will have its extents and point counts properly
+set.
+
+::
+
+  $ las2las in.las --split-pts 100000
+
+splits the file into the required number of output-n.las files with 100000
+points each in them. Other filters or operations may also be applied to the
+operation in combination with splitting. Each outputted file will have its
+extents and point counts properly set.
+  
+.. note::
+    --split-mb and --split-pts will not work exactly with --min-offset.  
+    --min-offset will take the minimum offsets of *the entire file*, not 
+    each individual file that is a result of the split.
+
+
+VLR addition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las in.las --add-vlr CUSTOM_VLR 42 "A VLR description" "myfile.ext"
+
+adds a new VLR with name CUSTOM_VLR and an ID of 42. "myfile.ext" can either 
+be a location to a file to read to write into the VLR, or properly escaped 
+text that will be inserted directly into the VLR.  
+
+.. warning::
+    VLRs have a size limitation of 65536 bytes.  Files that are read or 
+    escaped arguments that are larger than 64k in size will cause an error 
+    to be thrown.  Automatic truncation will not happen.
+
+.. note::
+    If you attempt to add VLRs with an ID of 34735, 34736, or 34737, your 
+    VLR will not be added.  This is because libLAS expects to manage the 
+    GeoTIFF keys for you.  You should use the SRS handling facilities if 
+    you need to set GeoTIFF keys instead of attempting to overwrite them
+    directly.
+
+VLR removal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  $ las2las in.las --delete-vlr CUSTOM_VLR 42
+
+removes all VLRs from in.las when writing the new output.las file.   
+
+.. _assign_color:
+
+Adding color from an image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to use las2las to set RGB color information from an 
+image and set it on the points.  This requires a rewrite of the file and 
+in some cases will require changing both the format and point-format of the 
+file.
+
+The following example takes the ``input.las`` file, sets its format to ``1.2``, 
+and sets the point format to ``3`` so it can store color information.  It 
+also re-orders the color bands to have the 3rd band in the image be red, 1st 
+band be green, and second band be blue.  Additionally, the color values are 
+then multiplied by the --color-source-scale factor or 256 to rescale the 
+8 bit image data to 16 bit color data.
+
+::
+
+    las2las -i input.las \
+            --color-source image.img \
+            -o output.las \
+            --file-format 1.2 \
+            --point-format 3 \
+            --color-source-scale 256 \
+            --color-source-bands 3 1 2
+
+.. note::
+    If the coordinate system of ``image.img`` is not the same as the input 
+    coordinate system of the LAS file, you should use GDAL VRTs to cause the 
+    image to be warped and reprojected as part of the read process.  See 
+    http://www.gdal.org/gdal_vrttut.html for more detail.
+    
+.. warning::
+    `GDAL`_ support must be enabled for this to work.
+
+Help listing
+---------------
+
+::
+
+    --------------------------------------------------------------------
+        las2las (libLAS 1.6.0b2 with GeoTIFF 1.3.0 GDAL 1.8dev)
+    --------------------------------------------------------------------
+
+    las2las2 options:
+      -h [ --help ]                     produce help message
+      --split-mb arg (=0)               Split file into multiple files with each 
+                                        being this size in MB or less. If this 
+                                        value is 0, no splitting is done
+      --split-pts arg (=0)              Split file into multiple files with each 
+                                        being this many points or less. If this 
+                                        value is 0, no splitting is done
+      -i [ --input ] arg                input LAS file
+      -o [ --output ] arg (=output.las) output LAS file
+      -v [ --verbose ]                  Verbose message output
+
+    Header modification options:
+      --a_srs arg               Coordinate system to assign to input LAS file
+      --a_vertcs arg            Override vertical coordinate system information.  
+                                Use --a_vertcs "verticalCSType [citation 
+                                [verticalDatum [verticalUnits]]]"
+                                For example: --a_vertcs 5703 "North American 
+                                Vertical Datum of 1988 (NAVD88)" 5103 9001
+      --offset arg              A comma-separated or quoted, space-separated list 
+                                of offsets to set on the output file: 
+                                --offset 0,0,0
+                                --offset "1234 5678 91011"
+      --scale arg               A list of scales to set on the output file. Scales 
+                                *cannot* be negative, and should always be a 
+                                negative power of 10 
+                                --scale 0.1 0.1 0.00001
+      -f [ --file-format ] arg  Set the LAS format of the new file (only 1.0-1.2 
+                                supported at this time): 
+                                --file-format 1.2
+                                -f 1.1
+      --point-format arg        Set the LAS point format of the new file (0, 1, 2, 
+                                3): 
+                                --point-format 3
+                            
+      --pad-header arg          Add extra bytes to the existing header
+      --min-offset              Set the offset of the header to the minimums of all
+                                values in the file.  Note that this requires 
+                                multiple read passes through the file to achieve.
+      --file-creation arg       Set the header's day/year.  Specify either as "1 
+                                2010" for the first day of 2010, or as "now" to 
+                                specify the current day/year
+      --add-schema              Add the liblas.org schema VLR record to the file.
+      --delete-vlr arg          Removes VLRs with the given name and id 
+                                combination. --delete-vlr LASF_Projection 34737
+      --add-vlr arg             Add VLRs with the given name and id combination. 
+                                --add-vlr hobu 1234 "Description of the VLR" 
+                                "filename.ext"
+      --system-identifier arg   Set the SystemID for the file. --system-identifier 
+                                "MODIFICATION"
+      --generating-software arg Set the SoftwareID for the file. 
+                                --generating-software "liblas.org"
+
+    Transformation options:
+      --t_srs arg              Coordinate system to reproject output LAS file to.  
+                               Use --a_srs or verify that your input LAS file has a
+                               coordinate system according to lasinfo
+      --point-translate arg    An expression to translate the X, Y, Z values of the
+                               point. For example, converting Z units that are in 
+                               meters to feet: --point-translate "x*1.0 y*1.0 
+                               z*3.2808399"
+      --color-source arg       A string to a GDAL-openable raster data source.  Use
+                               GDAL VRTs if you want to adjust the data source or 
+                               set its coordinate system, etc. 
+                               --color-source "afile.tif" 
+      --color-source-bands arg A list of three bands from the --color-source to 
+                               assign to the R, G, B  values for the point 
+                               --color-source-bands 1 2 3
+      --color-source-scale arg A number used by --color-source to scale the input 
+                               R, G, B  values for the point.  For example, to 
+                               scale the 8 bit color data from an input raster to 
+                               16 bit, the 8 bit data should be multiplied by 257. 
+                               --color-source-scale 256
+
+    Filtering options:
+      -e [ --extent ] arg    Extent window that points must fall within to keep.
+                             Use a comma-separated or quoted, space-separated list,
+                             for example, 
+                              -e minx, miny, maxx, maxy
+                              or 
+                              -e minx, miny, minz, maxx, maxy, maxz
+                              -e "minx miny minz maxx maxy maxz"
+      --minx arg             Extent must be greater than or equal to minx to be 
+                             kept. 
+                              --minx 1234.0
+      --miny arg             Extent must be greater than or equal to miny to be 
+                             kept. 
+                              --miny 5678.0
+      --minz arg             Extent must be greater than or equal to minz to be 
+                             kept. If maxx and maxy are set but not minz *and maxz,
+                             all z values are kept. 
+                              --minz 0.0
+      --maxx arg             Extent must be less than or equal to maxx to be kept. 
+                              --maxx 1234.0
+      --maxy arg             Extent must be less than or equal to maxy to be kept. 
+                              --maxy 5678.0
+      --maxz arg             Extent must be less than or equal to maxz to be kept. 
+                             If maxx and maxy are set but not maxz *and minz, all z
+                             values are kept. 
+                              --maxz 10.0
+      -t [ --thin ] arg (=0) Simple decimation-style thinning.
+                             Thin the file by removing every t'th point from the 
+                             file.
+      --last-return-only     Keep last returns (cannot be used with 
+                             --first-return-only)
+      --first-return-only    Keep first returns (cannot be used with 
+                             --last-return-only
+      --keep-returns arg     A list of return numbers to keep in the output file: 
+                             --keep-returns 1 2 3
+      --drop-returns arg     Return numbers to drop.
+                             For example, --drop-returns 2 3 4 5
+      --valid_only           Keep only valid points
+      --keep-classes arg     A list of classifications to keep:
+                             --keep-classes 2 4 12
+                             --keep-classes 2
+      --drop-classes arg     A comma-separated list of classifications to drop:
+                             --drop-classes 1,7,8
+                             --drop-classes 2
+      --keep-intensity arg   Range in which to keep intensity.
+                             The following expression types are supported:  
+                             --keep-intensity 0-100 
+                             --keep-intensity <200 
+                             --keep-intensity >400 
+                             --keep-intensity >=200
+      --drop-intensity arg   Range in which to drop intensity.
+                             The following expression types are supported:  
+                             --drop-intensity <200 
+                             --drop-intensity >400 
+                             --drop-intensity >=200
+      --keep-time arg        Range in which to keep time.
+                             The following expression types are supported:  
+                             --keep-time 413665.2336-414092.8462 
+                             --keep-time <414094.8462 
+                             --keep-time >413665.2336 
+                             --keep-time >=413665.2336
+      --drop-time arg        Range in which to drop time.
+                             The following expression types are supported:  
+                             --drop-time <413666.2336 
+                             --drop-time >413665.2336 
+                             --drop-time >=413665.2336
+      --keep-scan-angle arg  Range in which to keep scan angle.
+                             The following expression types are supported:  
+                             --keep-scan-angle 0-100 
+                             --keep-scan-angle <100
+                             --keep-scan-angle <=100
+      --drop-scan-angle arg  Range in which to drop scan angle.
+                             The following expression types are supported:  
+                             --drop-scan-angle <30 
+                             --drop-scan-angle >100 
+                             --drop-scan-angle >=100
+      --keep-color arg       Range in which to keep colors.
+                             Define colors as two 3-tuples (R,G,B-R,G,B):  
+                             --keep-color '0,0,0-125,125,125'
+      --drop-color arg       Range in which to drop colors.
+                             Define colors as two 3-tuples (R,G,B-R,G,B):  
+                             --drop-color '255,255,255-65536,65536,65536'
+
+    For more information, see the full documentation for las2las2 at:
+     http://liblas.org/utilities/las2las2.html
+    ----------------------------------------------------------
+
+
+
+ 
+.. _`GDAL`: http://www.gdal.org
+.. _`LAStools`: http://www.cs.unc.edu/~isenburg/lastools/

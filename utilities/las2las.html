@@ -1,0 +1,566 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>las2las: Advanced LAS filtering and manipulation &#8212; liblas.org</title>
+    <link rel="stylesheet" href="../_static/sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="las2txt" href="las2txt.html" />
+    <link rel="prev" title="lasinfo" href="lasinfo.html" />
+
+ 
+
+  </head><body>
+
+<table width="100%" style="width: 100%; background-color: white;">
+  <tr>
+    <td rowspan="2" style="padding: 10px 0px 10px 10px;">
+      <a href="../index.html" title="Home"><img src="../_static/liblaslogo.png" alt="libLAS banner" border="0" /></a>
+    </td>
+    <td style="padding: 10px 10px 0px 0px; text-align: right; vertical-align: top;">
+      <a href="../index.html" title="Home">Home</a> |
+      <a href="../docs.html" title="Docs">Docs</a> |
+      <a href="https://github.com/libLAS/libLAS/issues/" title="Bugs">github</a> |
+      <a href="../faq.html" title="FAQ">FAQ</a> |
+      <a href="../download.html" title="Download">Download</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 0px 10px 0px 0px; text-align: right; vertical-align: bottom;">
+
+    </td>
+  </tr>
+</table>
+
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="las2txt.html" title="las2txt"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lasinfo.html" title="lasinfo"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../docs.html">Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LAS Utility Applications</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="las2las-advanced-las-filtering-and-manipulation">
+<span id="las2las"></span><h1>las2las: Advanced LAS filtering and manipulation<a class="headerlink" href="#las2las-advanced-las-filtering-and-manipulation" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Howard Butler</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:hobu&#46;inc&#37;&#52;&#48;gmail&#46;com">hobu<span>&#46;</span>inc<span>&#64;</span>gmail<span>&#46;</span>com</a></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#las2las"><span class="std std-ref">las2las</span></a> reads and writes LiDAR data in the ASPRS LAS 1.0, 1.1, and 1.2 formats while
+modifying its contents. <a class="reference internal" href="#las2las"><span class="std std-ref">las2las</span></a> is designed for filtering and
+transformation operations of LAS files.</p>
+<p>While <cite>lasinfo</cite> can do a few simple operations like
+updating header information, more drastic changes, like removing points or
+altering values, will require <a class="reference internal" href="#las2las"><span class="std std-ref">las2las</span></a>.  <a class="reference internal" href="#las2las"><span class="std std-ref">las2las: Advanced LAS filtering and manipulation</span></a> is expected to be used for
+modifying single files at a time, and some <a class="reference internal" href="#las2las"><span class="std std-ref">las2las</span></a> operations require multiple
+read passes through the points.   Some examples of operations <cite>las2las</cite> can be
+used for include:</p>
+<ul class="simple">
+<li>clipping of points to those that lie within a certain region specified
+by a bounding box (–extent )</li>
+<li>eliminating points that are the second return (–drop-return 2),</li>
+<li>eliminating points that have a scan angle
+above some threshold (–drop-scan-angle “&lt;5”)</li>
+<li>eliminating points that have an intensity below some
+threshold (–drop-intensity “&lt;15”)</li>
+<li>extracting only first (–first-only) or last (–last-only) returns</li>
+<li>changing the format from LAS 1.0 to 1.1 or vice versa</li>
+<li>eliminating points of a given classification (–eliminate class 2)</li>
+</ul>
+<p><a class="reference internal" href="#las2las"><span class="std std-ref">las2las</span></a> started a port of Martin Isenburg’s <a class="reference internal" href="#las2las"><span class="std std-ref">las2las: Advanced LAS filtering and manipulation</span></a> utility from <a class="reference external" href="http://www.cs.unc.edu/~isenburg/lastools/">LASTools</a>
+to the libLAS library.  It is much-improved from his version, however, and
+provides a number of additional capabilities.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../lastools.html#lastools-liblas"><span class="std std-ref">libLAS’ Relationship to LAStools</span></a> contains background information on the port of
+Isenburg and Shewchuck’s utilities to the libLAS library.</p>
+</div>
+<ul class="simple">
+<li>Text output describing the operation(s) is only provided when the –verbose (-v)
+switch is provided.  Errors are reported to stderr.</li>
+<li>Coordinate reprojection, including vertical datum transformation when compiled
+with the latest <a class="reference external" href="http://www.gdal.org">GDAL</a>.</li>
+<li>Coordinate system description and alteration.</li>
+<li>Variable Length Records (VLRs) are carried forward by default.</li>
+<li>VLR alteration, including adding your own VLRs with files and removal of VLRs</li>
+<li>File splitting based on a specified file size (–split-mb) or points (–split-pts)</li>
+<li>Ability to set coordinate offsets to minimum values of the existing coordinate space.</li>
+<li>Color filtering</li>
+</ul>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="clipping-with-a-rectangle">
+<h3>Clipping with a rectangle<a class="headerlink" href="#clipping-with-a-rectangle" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las in.las --output out.las --extent &quot;63025000 483450000 63050000 483475000&quot;
+</pre></div>
+</div>
+<p>clips points of in.las with x&lt;=63025000 and y&lt;=483450000 or x&gt;=63050000
+and y&gt;=483475000 and stores surviving points to out.las.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las in.las --output out.las --extent &quot;63025000 483450000 0 63050000 483475000 100&quot;&quot;
+</pre></div>
+</div>
+<p>clips points of in.las with x &lt;= 63025000 and y &lt;= 483450000 and z &lt;= 100 or x &gt;= 63050000
+and y &gt;= 483475000 and z &gt;= 0</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The quotes around the extent values are important to aid the command line parsing.
+An error will likely result of not quoting the values.  Alternatively, you can use
+commas to separate the –extent parameters to avoid quoting.</p>
+</div>
+</div>
+<div class="section" id="eliminating-specified-returns">
+<h3>Eliminating specified returns<a class="headerlink" href="#eliminating-specified-returns" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las --input in.las --output out.las --drop-returns 1
+</pre></div>
+</div>
+<p>eliminates all points of in.las that are designated first returns by the
+value in their return_number field and stores surviving points to out.las.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las --input in.las --output out.las --drop-returns 2 3 4 5
+</pre></div>
+</div>
+<p>eliminates all returns in the specified list.</p>
+</div>
+<div class="section" id="limiting-based-on-scan-angle">
+<h3>Limiting based on scan angle<a class="headerlink" href="#limiting-based-on-scan-angle" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las --input in.las --output out.las --keep-scan-angle &quot;&lt;=15&quot;
+</pre></div>
+</div>
+<p>keeps all points of in.las whose scan angle is &lt;= 15.</p>
+</div>
+<div class="section" id="limiting-based-on-intensity">
+<h3>Limiting based on intensity<a class="headerlink" href="#limiting-based-on-intensity" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las --input in.las --output out.las --drop-intensity &quot;&lt;=1000&quot;
+</pre></div>
+</div>
+<p>eliminates all points of in.las whose intensity is below 1000 and stores
+surviving points to out.las.</p>
+</div>
+<div class="section" id="extract-last-returns">
+<h3>Extract last returns<a class="headerlink" href="#extract-last-returns" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las --input in.las --output out.las --last-return-only
+</pre></div>
+</div>
+<p>extracts all last return points from in.las and stores them to out.las.</p>
+</div>
+<div class="section" id="throw-out-invalid-data">
+<h3>Throw out invalid data<a class="headerlink" href="#throw-out-invalid-data" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las --input in.las --output out.las --valid-only
+</pre></div>
+</div>
+<p>removes invalid (according to the ASPRS LAS file format specification) points.
+This switch should only be required in a few special circumstances. Points
+that might be invalid include those with larger-than-required scan angles.</p>
+</div>
+<div class="section" id="eliminate-ground-points">
+<h3>Eliminate ground points<a class="headerlink" href="#eliminate-ground-points" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las --input in.las --output out.las --drop-classes 2
+</pre></div>
+</div>
+<p>removes points with that have a classification of 2. Points with a
+classification of 2 are conventionally called ground points, but that
+convention may not be followed for older LAS 1.0 files.</p>
+</div>
+<div class="section" id="eliminate-ground-and-unclassified-points">
+<h3>Eliminate ground and unclassified points<a class="headerlink" href="#eliminate-ground-and-unclassified-points" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las --input in.las --output out.las --drop-classes 1 2
+</pre></div>
+</div>
+<p>removes points that have a classification of 1 or 2.</p>
+</div>
+<div class="section" id="convert-to-1-1">
+<h3>Convert to 1.1<a class="headerlink" href="#convert-to-1-1" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las --input in.las --output out.las --format 1.1
+</pre></div>
+</div>
+<p>converts the in.las file to a 1.1-formatted file.  For the most part, this
+conversion is “in name only.”</p>
+</div>
+<div class="section" id="alter-vertical-datum-information">
+<h3>Alter vertical datum information<a class="headerlink" href="#alter-vertical-datum-information" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las in.las --a_vertcs 5703 &quot;North American Vertical Datum of 1988 (NAVD88)&quot; 5103 9001
+</pre></div>
+</div>
+<p>sets the vertical datum information for the file to be NAVD88 with vertical
+units of meters.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This may not be relevant depending upon the circumstances of the coordinate
+system the file is already in.  This option only changes the <em>description</em>
+of the points.  It does not reproject them in any way.  Use a combination
+of –a_srs and –t_srs to do perform reprojection of the file</p>
+</div>
+</div>
+<div class="section" id="file-splitting">
+<h3>File splitting<a class="headerlink" href="#file-splitting" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las in.las --split-mb 10
+</pre></div>
+</div>
+<p>splits the file into the required number of output-n.las files. Other filters
+or operations may also be applied to the operation in combination with
+splitting. Each outputted file will have its extents and point counts properly
+set.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las in.las --split-pts 100000
+</pre></div>
+</div>
+<p>splits the file into the required number of output-n.las files with 100000
+points each in them. Other filters or operations may also be applied to the
+operation in combination with splitting. Each outputted file will have its
+extents and point counts properly set.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">–split-mb and –split-pts will not work exactly with –min-offset.
+–min-offset will take the minimum offsets of <em>the entire file</em>, not
+each individual file that is a result of the split.</p>
+</div>
+</div>
+<div class="section" id="vlr-addition">
+<h3>VLR addition<a class="headerlink" href="#vlr-addition" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las in.las --add-vlr CUSTOM_VLR 42 &quot;A VLR description&quot; &quot;myfile.ext&quot;
+</pre></div>
+</div>
+<p>adds a new VLR with name CUSTOM_VLR and an ID of 42. “myfile.ext” can either
+be a location to a file to read to write into the VLR, or properly escaped
+text that will be inserted directly into the VLR.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">VLRs have a size limitation of 65536 bytes.  Files that are read or
+escaped arguments that are larger than 64k in size will cause an error
+to be thrown.  Automatic truncation will not happen.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you attempt to add VLRs with an ID of 34735, 34736, or 34737, your
+VLR will not be added.  This is because libLAS expects to manage the
+GeoTIFF keys for you.  You should use the SRS handling facilities if
+you need to set GeoTIFF keys instead of attempting to overwrite them
+directly.</p>
+</div>
+</div>
+<div class="section" id="vlr-removal">
+<h3>VLR removal<a class="headerlink" href="#vlr-removal" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2las in.las --delete-vlr CUSTOM_VLR 42
+</pre></div>
+</div>
+<p>removes all VLRs from in.las when writing the new output.las file.</p>
+</div>
+<div class="section" id="adding-color-from-an-image">
+<span id="assign-color"></span><h3>Adding color from an image<a class="headerlink" href="#adding-color-from-an-image" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to use las2las to set RGB color information from an
+image and set it on the points.  This requires a rewrite of the file and
+in some cases will require changing both the format and point-format of the
+file.</p>
+<p>The following example takes the <code class="docutils literal notranslate"><span class="pre">input.las</span></code> file, sets its format to <code class="docutils literal notranslate"><span class="pre">1.2</span></code>,
+and sets the point format to <code class="docutils literal notranslate"><span class="pre">3</span></code> so it can store color information.  It
+also re-orders the color bands to have the 3rd band in the image be red, 1st
+band be green, and second band be blue.  Additionally, the color values are
+then multiplied by the –color-source-scale factor or 256 to rescale the
+8 bit image data to 16 bit color data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">las2las</span> <span class="o">-</span><span class="n">i</span> <span class="nb">input</span><span class="o">.</span><span class="n">las</span> \
+        <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span> <span class="n">image</span><span class="o">.</span><span class="n">img</span> \
+        <span class="o">-</span><span class="n">o</span> <span class="n">output</span><span class="o">.</span><span class="n">las</span> \
+        <span class="o">--</span><span class="n">file</span><span class="o">-</span><span class="nb">format</span> <span class="mf">1.2</span> \
+        <span class="o">--</span><span class="n">point</span><span class="o">-</span><span class="nb">format</span> <span class="mi">3</span> \
+        <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span><span class="o">-</span><span class="n">scale</span> <span class="mi">256</span> \
+        <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span><span class="o">-</span><span class="n">bands</span> <span class="mi">3</span> <span class="mi">1</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If the coordinate system of <code class="docutils literal notranslate"><span class="pre">image.img</span></code> is not the same as the input
+coordinate system of the LAS file, you should use GDAL VRTs to cause the
+image to be warped and reprojected as part of the read process.  See
+<a class="reference external" href="http://www.gdal.org/gdal_vrttut.html">http://www.gdal.org/gdal_vrttut.html</a> for more detail.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><a class="reference external" href="http://www.gdal.org">GDAL</a> support must be enabled for this to work.</p>
+</div>
+</div>
+</div>
+<div class="section" id="help-listing">
+<h2>Help listing<a class="headerlink" href="#help-listing" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--------------------------------------------------------------------</span>
+    <span class="n">las2las</span> <span class="p">(</span><span class="n">libLAS</span> <span class="mf">1.6</span><span class="o">.</span><span class="mi">0</span><span class="n">b2</span> <span class="k">with</span> <span class="n">GeoTIFF</span> <span class="mf">1.3</span><span class="o">.</span><span class="mi">0</span> <span class="n">GDAL</span> <span class="mf">1.8</span><span class="n">dev</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------------------</span>
+
+<span class="n">las2las2</span> <span class="n">options</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span> <span class="p">[</span> <span class="o">--</span><span class="n">help</span> <span class="p">]</span>                     <span class="n">produce</span> <span class="n">help</span> <span class="n">message</span>
+  <span class="o">--</span><span class="n">split</span><span class="o">-</span><span class="n">mb</span> <span class="n">arg</span> <span class="p">(</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>               <span class="n">Split</span> <span class="n">file</span> <span class="n">into</span> <span class="n">multiple</span> <span class="n">files</span> <span class="k">with</span> <span class="n">each</span>
+                                    <span class="n">being</span> <span class="n">this</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">MB</span> <span class="ow">or</span> <span class="n">less</span><span class="o">.</span> <span class="n">If</span> <span class="n">this</span>
+                                    <span class="n">value</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">,</span> <span class="n">no</span> <span class="n">splitting</span> <span class="ow">is</span> <span class="n">done</span>
+  <span class="o">--</span><span class="n">split</span><span class="o">-</span><span class="n">pts</span> <span class="n">arg</span> <span class="p">(</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>              <span class="n">Split</span> <span class="n">file</span> <span class="n">into</span> <span class="n">multiple</span> <span class="n">files</span> <span class="k">with</span> <span class="n">each</span>
+                                    <span class="n">being</span> <span class="n">this</span> <span class="n">many</span> <span class="n">points</span> <span class="ow">or</span> <span class="n">less</span><span class="o">.</span> <span class="n">If</span> <span class="n">this</span>
+                                    <span class="n">value</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">,</span> <span class="n">no</span> <span class="n">splitting</span> <span class="ow">is</span> <span class="n">done</span>
+  <span class="o">-</span><span class="n">i</span> <span class="p">[</span> <span class="o">--</span><span class="nb">input</span> <span class="p">]</span> <span class="n">arg</span>                <span class="nb">input</span> <span class="n">LAS</span> <span class="n">file</span>
+  <span class="o">-</span><span class="n">o</span> <span class="p">[</span> <span class="o">--</span><span class="n">output</span> <span class="p">]</span> <span class="n">arg</span> <span class="p">(</span><span class="o">=</span><span class="n">output</span><span class="o">.</span><span class="n">las</span><span class="p">)</span> <span class="n">output</span> <span class="n">LAS</span> <span class="n">file</span>
+  <span class="o">-</span><span class="n">v</span> <span class="p">[</span> <span class="o">--</span><span class="n">verbose</span> <span class="p">]</span>                  <span class="n">Verbose</span> <span class="n">message</span> <span class="n">output</span>
+
+<span class="n">Header</span> <span class="n">modification</span> <span class="n">options</span><span class="p">:</span>
+  <span class="o">--</span><span class="n">a_srs</span> <span class="n">arg</span>               <span class="n">Coordinate</span> <span class="n">system</span> <span class="n">to</span> <span class="n">assign</span> <span class="n">to</span> <span class="nb">input</span> <span class="n">LAS</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">a_vertcs</span> <span class="n">arg</span>            <span class="n">Override</span> <span class="n">vertical</span> <span class="n">coordinate</span> <span class="n">system</span> <span class="n">information</span><span class="o">.</span>
+                            <span class="n">Use</span> <span class="o">--</span><span class="n">a_vertcs</span> <span class="s2">&quot;verticalCSType [citation</span>
+                            <span class="p">[</span><span class="n">verticalDatum</span> <span class="p">[</span><span class="n">verticalUnits</span><span class="p">]]]</span><span class="s2">&quot;</span>
+                            <span class="n">For</span> <span class="n">example</span><span class="p">:</span> <span class="o">--</span><span class="n">a_vertcs</span> <span class="mi">5703</span> <span class="s2">&quot;North American</span>
+                            <span class="n">Vertical</span> <span class="n">Datum</span> <span class="n">of</span> <span class="mi">1988</span> <span class="p">(</span><span class="n">NAVD88</span><span class="p">)</span><span class="s2">&quot; 5103 9001</span>
+  <span class="o">--</span><span class="n">offset</span> <span class="n">arg</span>              <span class="n">A</span> <span class="n">comma</span><span class="o">-</span><span class="n">separated</span> <span class="ow">or</span> <span class="n">quoted</span><span class="p">,</span> <span class="n">space</span><span class="o">-</span><span class="n">separated</span> <span class="nb">list</span>
+                            <span class="n">of</span> <span class="n">offsets</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">on</span> <span class="n">the</span> <span class="n">output</span> <span class="n">file</span><span class="p">:</span>
+                            <span class="o">--</span><span class="n">offset</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+                            <span class="o">--</span><span class="n">offset</span> <span class="s2">&quot;1234 5678 91011&quot;</span>
+  <span class="o">--</span><span class="n">scale</span> <span class="n">arg</span>               <span class="n">A</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">scales</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">on</span> <span class="n">the</span> <span class="n">output</span> <span class="n">file</span><span class="o">.</span> <span class="n">Scales</span>
+                            <span class="o">*</span><span class="n">cannot</span><span class="o">*</span> <span class="n">be</span> <span class="n">negative</span><span class="p">,</span> <span class="ow">and</span> <span class="n">should</span> <span class="n">always</span> <span class="n">be</span> <span class="n">a</span>
+                            <span class="n">negative</span> <span class="n">power</span> <span class="n">of</span> <span class="mi">10</span>
+                            <span class="o">--</span><span class="n">scale</span> <span class="mf">0.1</span> <span class="mf">0.1</span> <span class="mf">0.00001</span>
+  <span class="o">-</span><span class="n">f</span> <span class="p">[</span> <span class="o">--</span><span class="n">file</span><span class="o">-</span><span class="nb">format</span> <span class="p">]</span> <span class="n">arg</span>  <span class="n">Set</span> <span class="n">the</span> <span class="n">LAS</span> <span class="nb">format</span> <span class="n">of</span> <span class="n">the</span> <span class="n">new</span> <span class="n">file</span> <span class="p">(</span><span class="n">only</span> <span class="mf">1.0</span><span class="o">-</span><span class="mf">1.2</span>
+                            <span class="n">supported</span> <span class="n">at</span> <span class="n">this</span> <span class="n">time</span><span class="p">):</span>
+                            <span class="o">--</span><span class="n">file</span><span class="o">-</span><span class="nb">format</span> <span class="mf">1.2</span>
+                            <span class="o">-</span><span class="n">f</span> <span class="mf">1.1</span>
+  <span class="o">--</span><span class="n">point</span><span class="o">-</span><span class="nb">format</span> <span class="n">arg</span>        <span class="n">Set</span> <span class="n">the</span> <span class="n">LAS</span> <span class="n">point</span> <span class="nb">format</span> <span class="n">of</span> <span class="n">the</span> <span class="n">new</span> <span class="n">file</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="mi">3</span><span class="p">):</span>
+                            <span class="o">--</span><span class="n">point</span><span class="o">-</span><span class="nb">format</span> <span class="mi">3</span>
+
+  <span class="o">--</span><span class="n">pad</span><span class="o">-</span><span class="n">header</span> <span class="n">arg</span>          <span class="n">Add</span> <span class="n">extra</span> <span class="nb">bytes</span> <span class="n">to</span> <span class="n">the</span> <span class="n">existing</span> <span class="n">header</span>
+  <span class="o">--</span><span class="nb">min</span><span class="o">-</span><span class="n">offset</span>              <span class="n">Set</span> <span class="n">the</span> <span class="n">offset</span> <span class="n">of</span> <span class="n">the</span> <span class="n">header</span> <span class="n">to</span> <span class="n">the</span> <span class="n">minimums</span> <span class="n">of</span> <span class="nb">all</span>
+                            <span class="n">values</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">file</span><span class="o">.</span>  <span class="n">Note</span> <span class="n">that</span> <span class="n">this</span> <span class="n">requires</span>
+                            <span class="n">multiple</span> <span class="n">read</span> <span class="n">passes</span> <span class="n">through</span> <span class="n">the</span> <span class="n">file</span> <span class="n">to</span> <span class="n">achieve</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">file</span><span class="o">-</span><span class="n">creation</span> <span class="n">arg</span>       <span class="n">Set</span> <span class="n">the</span> <span class="n">header</span><span class="s1">&#39;s day/year.  Specify either as &quot;1</span>
+                            <span class="mi">2010</span><span class="s2">&quot; for the first day of 2010, or as &quot;</span><span class="n">now</span><span class="s2">&quot; to</span>
+                            <span class="n">specify</span> <span class="n">the</span> <span class="n">current</span> <span class="n">day</span><span class="o">/</span><span class="n">year</span>
+  <span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">schema</span>              <span class="n">Add</span> <span class="n">the</span> <span class="n">liblas</span><span class="o">.</span><span class="n">org</span> <span class="n">schema</span> <span class="n">VLR</span> <span class="n">record</span> <span class="n">to</span> <span class="n">the</span> <span class="n">file</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">delete</span><span class="o">-</span><span class="n">vlr</span> <span class="n">arg</span>          <span class="n">Removes</span> <span class="n">VLRs</span> <span class="k">with</span> <span class="n">the</span> <span class="n">given</span> <span class="n">name</span> <span class="ow">and</span> <span class="nb">id</span>
+                            <span class="n">combination</span><span class="o">.</span> <span class="o">--</span><span class="n">delete</span><span class="o">-</span><span class="n">vlr</span> <span class="n">LASF_Projection</span> <span class="mi">34737</span>
+  <span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">vlr</span> <span class="n">arg</span>             <span class="n">Add</span> <span class="n">VLRs</span> <span class="k">with</span> <span class="n">the</span> <span class="n">given</span> <span class="n">name</span> <span class="ow">and</span> <span class="nb">id</span> <span class="n">combination</span><span class="o">.</span>
+                            <span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">vlr</span> <span class="n">hobu</span> <span class="mi">1234</span> <span class="s2">&quot;Description of the VLR&quot;</span>
+                            <span class="s2">&quot;filename.ext&quot;</span>
+  <span class="o">--</span><span class="n">system</span><span class="o">-</span><span class="n">identifier</span> <span class="n">arg</span>   <span class="n">Set</span> <span class="n">the</span> <span class="n">SystemID</span> <span class="k">for</span> <span class="n">the</span> <span class="n">file</span><span class="o">.</span> <span class="o">--</span><span class="n">system</span><span class="o">-</span><span class="n">identifier</span>
+                            <span class="s2">&quot;MODIFICATION&quot;</span>
+  <span class="o">--</span><span class="n">generating</span><span class="o">-</span><span class="n">software</span> <span class="n">arg</span> <span class="n">Set</span> <span class="n">the</span> <span class="n">SoftwareID</span> <span class="k">for</span> <span class="n">the</span> <span class="n">file</span><span class="o">.</span>
+                            <span class="o">--</span><span class="n">generating</span><span class="o">-</span><span class="n">software</span> <span class="s2">&quot;liblas.org&quot;</span>
+
+<span class="n">Transformation</span> <span class="n">options</span><span class="p">:</span>
+  <span class="o">--</span><span class="n">t_srs</span> <span class="n">arg</span>              <span class="n">Coordinate</span> <span class="n">system</span> <span class="n">to</span> <span class="n">reproject</span> <span class="n">output</span> <span class="n">LAS</span> <span class="n">file</span> <span class="n">to</span><span class="o">.</span>
+                           <span class="n">Use</span> <span class="o">--</span><span class="n">a_srs</span> <span class="ow">or</span> <span class="n">verify</span> <span class="n">that</span> <span class="n">your</span> <span class="nb">input</span> <span class="n">LAS</span> <span class="n">file</span> <span class="n">has</span> <span class="n">a</span>
+                           <span class="n">coordinate</span> <span class="n">system</span> <span class="n">according</span> <span class="n">to</span> <span class="n">lasinfo</span>
+  <span class="o">--</span><span class="n">point</span><span class="o">-</span><span class="n">translate</span> <span class="n">arg</span>    <span class="n">An</span> <span class="n">expression</span> <span class="n">to</span> <span class="n">translate</span> <span class="n">the</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="n">values</span> <span class="n">of</span> <span class="n">the</span>
+                           <span class="n">point</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="n">converting</span> <span class="n">Z</span> <span class="n">units</span> <span class="n">that</span> <span class="n">are</span> <span class="ow">in</span>
+                           <span class="n">meters</span> <span class="n">to</span> <span class="n">feet</span><span class="p">:</span> <span class="o">--</span><span class="n">point</span><span class="o">-</span><span class="n">translate</span> <span class="s2">&quot;x*1.0 y*1.0</span>
+                           <span class="n">z</span><span class="o">*</span><span class="mf">3.2808399</span><span class="s2">&quot;</span>
+  <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span> <span class="n">arg</span>       <span class="n">A</span> <span class="n">string</span> <span class="n">to</span> <span class="n">a</span> <span class="n">GDAL</span><span class="o">-</span><span class="n">openable</span> <span class="n">raster</span> <span class="n">data</span> <span class="n">source</span><span class="o">.</span>  <span class="n">Use</span>
+                           <span class="n">GDAL</span> <span class="n">VRTs</span> <span class="k">if</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">adjust</span> <span class="n">the</span> <span class="n">data</span> <span class="n">source</span> <span class="ow">or</span>
+                           <span class="nb">set</span> <span class="n">its</span> <span class="n">coordinate</span> <span class="n">system</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span>
+                           <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span> <span class="s2">&quot;afile.tif&quot;</span>
+  <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span><span class="o">-</span><span class="n">bands</span> <span class="n">arg</span> <span class="n">A</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">three</span> <span class="n">bands</span> <span class="kn">from</span> <span class="nn">the</span> <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span> <span class="n">to</span>
+                           <span class="n">assign</span> <span class="n">to</span> <span class="n">the</span> <span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span>  <span class="n">values</span> <span class="k">for</span> <span class="n">the</span> <span class="n">point</span>
+                           <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span><span class="o">-</span><span class="n">bands</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span>
+  <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span><span class="o">-</span><span class="n">scale</span> <span class="n">arg</span> <span class="n">A</span> <span class="n">number</span> <span class="n">used</span> <span class="n">by</span> <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span> <span class="n">to</span> <span class="n">scale</span> <span class="n">the</span> <span class="nb">input</span>
+                           <span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span>  <span class="n">values</span> <span class="k">for</span> <span class="n">the</span> <span class="n">point</span><span class="o">.</span>  <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="n">to</span>
+                           <span class="n">scale</span> <span class="n">the</span> <span class="mi">8</span> <span class="n">bit</span> <span class="n">color</span> <span class="n">data</span> <span class="kn">from</span> <span class="nn">an</span> <span class="nb">input</span> <span class="n">raster</span> <span class="n">to</span>
+                           <span class="mi">16</span> <span class="n">bit</span><span class="p">,</span> <span class="n">the</span> <span class="mi">8</span> <span class="n">bit</span> <span class="n">data</span> <span class="n">should</span> <span class="n">be</span> <span class="n">multiplied</span> <span class="n">by</span> <span class="mf">257.</span>
+                           <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">source</span><span class="o">-</span><span class="n">scale</span> <span class="mi">256</span>
+
+<span class="n">Filtering</span> <span class="n">options</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">e</span> <span class="p">[</span> <span class="o">--</span><span class="n">extent</span> <span class="p">]</span> <span class="n">arg</span>    <span class="n">Extent</span> <span class="n">window</span> <span class="n">that</span> <span class="n">points</span> <span class="n">must</span> <span class="n">fall</span> <span class="n">within</span> <span class="n">to</span> <span class="n">keep</span><span class="o">.</span>
+                         <span class="n">Use</span> <span class="n">a</span> <span class="n">comma</span><span class="o">-</span><span class="n">separated</span> <span class="ow">or</span> <span class="n">quoted</span><span class="p">,</span> <span class="n">space</span><span class="o">-</span><span class="n">separated</span> <span class="nb">list</span><span class="p">,</span>
+                         <span class="k">for</span> <span class="n">example</span><span class="p">,</span>
+                          <span class="o">-</span><span class="n">e</span> <span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">maxy</span>
+                          <span class="ow">or</span>
+                          <span class="o">-</span><span class="n">e</span> <span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">minz</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">maxy</span><span class="p">,</span> <span class="n">maxz</span>
+                          <span class="o">-</span><span class="n">e</span> <span class="s2">&quot;minx miny minz maxx maxy maxz&quot;</span>
+  <span class="o">--</span><span class="n">minx</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">greater</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">minx</span> <span class="n">to</span> <span class="n">be</span>
+                         <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">minx</span> <span class="mf">1234.0</span>
+  <span class="o">--</span><span class="n">miny</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">greater</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">miny</span> <span class="n">to</span> <span class="n">be</span>
+                         <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">miny</span> <span class="mf">5678.0</span>
+  <span class="o">--</span><span class="n">minz</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">greater</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">minz</span> <span class="n">to</span> <span class="n">be</span>
+                         <span class="n">kept</span><span class="o">.</span> <span class="n">If</span> <span class="n">maxx</span> <span class="ow">and</span> <span class="n">maxy</span> <span class="n">are</span> <span class="nb">set</span> <span class="n">but</span> <span class="ow">not</span> <span class="n">minz</span> <span class="o">*</span><span class="ow">and</span> <span class="n">maxz</span><span class="p">,</span>
+                         <span class="nb">all</span> <span class="n">z</span> <span class="n">values</span> <span class="n">are</span> <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">minz</span> <span class="mf">0.0</span>
+  <span class="o">--</span><span class="n">maxx</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">less</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">maxx</span> <span class="n">to</span> <span class="n">be</span> <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">maxx</span> <span class="mf">1234.0</span>
+  <span class="o">--</span><span class="n">maxy</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">less</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">maxy</span> <span class="n">to</span> <span class="n">be</span> <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">maxy</span> <span class="mf">5678.0</span>
+  <span class="o">--</span><span class="n">maxz</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">less</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">maxz</span> <span class="n">to</span> <span class="n">be</span> <span class="n">kept</span><span class="o">.</span>
+                         <span class="n">If</span> <span class="n">maxx</span> <span class="ow">and</span> <span class="n">maxy</span> <span class="n">are</span> <span class="nb">set</span> <span class="n">but</span> <span class="ow">not</span> <span class="n">maxz</span> <span class="o">*</span><span class="ow">and</span> <span class="n">minz</span><span class="p">,</span> <span class="nb">all</span> <span class="n">z</span>
+                         <span class="n">values</span> <span class="n">are</span> <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">maxz</span> <span class="mf">10.0</span>
+  <span class="o">-</span><span class="n">t</span> <span class="p">[</span> <span class="o">--</span><span class="n">thin</span> <span class="p">]</span> <span class="n">arg</span> <span class="p">(</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="n">Simple</span> <span class="n">decimation</span><span class="o">-</span><span class="n">style</span> <span class="n">thinning</span><span class="o">.</span>
+                         <span class="n">Thin</span> <span class="n">the</span> <span class="n">file</span> <span class="n">by</span> <span class="n">removing</span> <span class="n">every</span> <span class="n">t</span><span class="s1">&#39;th point from the</span>
+                         <span class="n">file</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">last</span><span class="o">-</span><span class="k">return</span><span class="o">-</span><span class="n">only</span>     <span class="n">Keep</span> <span class="n">last</span> <span class="n">returns</span> <span class="p">(</span><span class="n">cannot</span> <span class="n">be</span> <span class="n">used</span> <span class="k">with</span>
+                         <span class="o">--</span><span class="n">first</span><span class="o">-</span><span class="k">return</span><span class="o">-</span><span class="n">only</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">first</span><span class="o">-</span><span class="k">return</span><span class="o">-</span><span class="n">only</span>    <span class="n">Keep</span> <span class="n">first</span> <span class="n">returns</span> <span class="p">(</span><span class="n">cannot</span> <span class="n">be</span> <span class="n">used</span> <span class="k">with</span>
+                         <span class="o">--</span><span class="n">last</span><span class="o">-</span><span class="k">return</span><span class="o">-</span><span class="n">only</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">returns</span> <span class="n">arg</span>     <span class="n">A</span> <span class="nb">list</span> <span class="n">of</span> <span class="k">return</span> <span class="n">numbers</span> <span class="n">to</span> <span class="n">keep</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">output</span> <span class="n">file</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">returns</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">returns</span> <span class="n">arg</span>     <span class="n">Return</span> <span class="n">numbers</span> <span class="n">to</span> <span class="n">drop</span><span class="o">.</span>
+                         <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">returns</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span>
+  <span class="o">--</span><span class="n">valid_only</span>           <span class="n">Keep</span> <span class="n">only</span> <span class="n">valid</span> <span class="n">points</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">classes</span> <span class="n">arg</span>     <span class="n">A</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">classifications</span> <span class="n">to</span> <span class="n">keep</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">classes</span> <span class="mi">2</span> <span class="mi">4</span> <span class="mi">12</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">classes</span> <span class="mi">2</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">classes</span> <span class="n">arg</span>     <span class="n">A</span> <span class="n">comma</span><span class="o">-</span><span class="n">separated</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">classifications</span> <span class="n">to</span> <span class="n">drop</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">classes</span> <span class="mi">1</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">classes</span> <span class="mi">2</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">intensity</span> <span class="n">arg</span>   <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">intensity</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">intensity</span> <span class="mi">0</span><span class="o">-</span><span class="mi">100</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&lt;</span><span class="mi">200</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&gt;</span><span class="mi">400</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&gt;=</span><span class="mi">200</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">intensity</span> <span class="n">arg</span>   <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">drop</span> <span class="n">intensity</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&lt;</span><span class="mi">200</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&gt;</span><span class="mi">400</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&gt;=</span><span class="mi">200</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">time</span> <span class="n">arg</span>        <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">time</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">time</span> <span class="mf">413665.2336</span><span class="o">-</span><span class="mf">414092.8462</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">time</span> <span class="o">&lt;</span><span class="mf">414094.8462</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">time</span> <span class="o">&gt;</span><span class="mf">413665.2336</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">time</span> <span class="o">&gt;=</span><span class="mf">413665.2336</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">time</span> <span class="n">arg</span>        <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">drop</span> <span class="n">time</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">time</span> <span class="o">&lt;</span><span class="mf">413666.2336</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">time</span> <span class="o">&gt;</span><span class="mf">413665.2336</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">time</span> <span class="o">&gt;=</span><span class="mf">413665.2336</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="n">arg</span>  <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">scan</span> <span class="n">angle</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="mi">0</span><span class="o">-</span><span class="mi">100</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="o">&lt;</span><span class="mi">100</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="o">&lt;=</span><span class="mi">100</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="n">arg</span>  <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">drop</span> <span class="n">scan</span> <span class="n">angle</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="o">&lt;</span><span class="mi">30</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="o">&gt;</span><span class="mi">100</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="o">&gt;=</span><span class="mi">100</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">color</span> <span class="n">arg</span>       <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">colors</span><span class="o">.</span>
+                         <span class="n">Define</span> <span class="n">colors</span> <span class="k">as</span> <span class="n">two</span> <span class="mi">3</span><span class="o">-</span><span class="n">tuples</span> <span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">B</span><span class="o">-</span><span class="n">R</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">B</span><span class="p">):</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">color</span> <span class="s1">&#39;0,0,0-125,125,125&#39;</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">color</span> <span class="n">arg</span>       <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">drop</span> <span class="n">colors</span><span class="o">.</span>
+                         <span class="n">Define</span> <span class="n">colors</span> <span class="k">as</span> <span class="n">two</span> <span class="mi">3</span><span class="o">-</span><span class="n">tuples</span> <span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">B</span><span class="o">-</span><span class="n">R</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">B</span><span class="p">):</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">color</span> <span class="s1">&#39;255,255,255-65536,65536,65536&#39;</span>
+
+<span class="n">For</span> <span class="n">more</span> <span class="n">information</span><span class="p">,</span> <span class="n">see</span> <span class="n">the</span> <span class="n">full</span> <span class="n">documentation</span> <span class="k">for</span> <span class="n">las2las2</span> <span class="n">at</span><span class="p">:</span>
+ <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">liblas</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">utilities</span><span class="o">/</span><span class="n">las2las2</span><span class="o">.</span><span class="n">html</span>
+<span class="o">----------------------------------------------------------</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../docs.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../start.html">Getting Started with libLAS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../osgeo4w.html">Windows Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compilation.html">Compilation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">LAS Utility Applications</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="lasinfo.html">lasinfo</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">las2las: Advanced LAS filtering and manipulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="las2txt.html">las2txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="las2ogr.html">las2ogr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="las2tindex.html">las2tindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="txt2las.html">txt2las</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ts2las.html">ts2las</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="http://liblas.org/doxygen/annotated.html">C++ Class API</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://liblas.org/doxygen/liblas_8h.html">C API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lastools.html">libLAS’ Relationship to LAStools</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/utilities/las2las.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="las2txt.html" title="las2txt"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lasinfo.html" title="lasinfo"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../docs.html">Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >LAS Utility Applications</a> &#187;</li> 
+      </ul>
+    </div>
+<div class="footer">
+        &copy; <a href="../copyright.html">Copyright</a> 2016, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 02, 2018 
+      and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+
+
+</div>
+
+
+  </body>
+</html>

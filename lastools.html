@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>libLAS’ Relationship to LAStools &#8212; liblas.org</title>
+    <link rel="stylesheet" href="_static/sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="libLAS - LAS 1.0/1.1/1.2 ASPRS LiDAR data translation toolset" href="index.html" />
+    <link rel="prev" title="Python Class Documentation" href="python.html" />
+
+ 
+
+  </head><body>
+
+<table width="100%" style="width: 100%; background-color: white;">
+  <tr>
+    <td rowspan="2" style="padding: 10px 0px 10px 10px;">
+      <a href="index.html" title="Home"><img src="_static/liblaslogo.png" alt="libLAS banner" border="0" /></a>
+    </td>
+    <td style="padding: 10px 10px 0px 0px; text-align: right; vertical-align: top;">
+      <a href="index.html" title="Home">Home</a> |
+      <a href="docs.html" title="Docs">Docs</a> |
+      <a href="https://github.com/libLAS/libLAS/issues/" title="Bugs">github</a> |
+      <a href="faq.html" title="FAQ">FAQ</a> |
+      <a href="download.html" title="Download">Download</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 0px 10px 0px 0px; text-align: right; vertical-align: bottom;">
+
+    </td>
+  </tr>
+</table>
+
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="libLAS - LAS 1.0/1.1/1.2 ASPRS LiDAR data translation toolset"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="python.html" title="Python Class Documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="docs.html">Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="liblas-relationship-to-lastools">
+<span id="lastools-liblas"></span><h1>libLAS’ Relationship to <a class="reference external" href="http://www.cs.unc.edu/~isenburg/lastools/">LAStools</a><a class="headerlink" href="#liblas-relationship-to-lastools" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="licensing">
+<h2>Licensing<a class="headerlink" href="#licensing" title="Permalink to this headline">¶</a></h2>
+<p>libLAS is available under the terms of the <a class="reference external" href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>. Many parts of <a class="reference external" href="http://www.cs.unc.edu/~isenburg/lastools/">LAStools</a>,
+especially those that are similar to those provided by libLAS, are now
+LGPL.  See <a class="reference external" href="http://www.cs.unc.edu/~isenburg/lastools/download/LICENSE.txt">http://www.cs.unc.edu/~isenburg/lastools/download/LICENSE.txt</a> for
+specific details on which utilities and libraries are licensed as free software.</p>
+</div>
+<div class="section" id="utilities">
+<h2>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h2>
+<p>Because libLAS’ focus is on being a software development library to enable
+LAS processing, and not so much a processing library per se, libLAS <em>did</em>
+re-implement many of the <a class="reference external" href="http://www.cs.unc.edu/~isenburg/lastools/">LAStools</a> <a class="reference internal" href="utilities/index.html#utilities"><span class="std std-ref">command-line utilities</span></a>
+to provide utility and test the functionality of the library.  libLAS’ port
+of these utilities will always lag LAStools implementations, however, and if
+you are looking for the latest and greatest in functionality, you should
+look there.  The port that libLAS contains of the LAStools has been blessed
+by the Isenburg and Shewchuk as BSD-licensed.</p>
+<p>Additionally, the libLAS version of the LAStools utilities are no longer
+command-line compatible.  So while they may have some common heritage, and
+the two packages copy each other in terms of features and behaviors, they
+are now quite divergent.</p>
+</div>
+<div class="section" id="which-one-to-use-for-what">
+<h2>Which one to use for what<a class="headerlink" href="#which-one-to-use-for-what" title="Permalink to this headline">¶</a></h2>
+<p>Use libLAS for:</p>
+<ul class="simple">
+<li>Manipulating LAS files directly in C, C++, Python, .NET, and Ruby (caveats
+apply)</li>
+<li>Embedding LAS read/write support in your own commercial software</li>
+<li>Plucking out first/last returns (<a class="reference internal" href="utilities/las2las.html#las2las"><span class="std std-ref">las2las: Advanced LAS filtering and manipulation</span></a> or do it yourself with
+libLAS’ programatic API)</li>
+<li>Reclassifying point data with your own algorithm(s)</li>
+<li>Decimating data (simple thinning by removing a given number of points)</li>
+<li>Converting data between formats (1.0 &lt;-&gt; 1.2, etc)</li>
+<li>Converting data to <a class="reference external" href="http://gdal.org/ogr/ogr_formats.html">OGR-writeable</a> formats</li>
+<li>Adding coordinate system info to an LAS file</li>
+<li>Reprojecting data from one coordinate system to another (vertical datum
+transformation included soon!)</li>
+<li>Spatially indexing data for fast bounds lookup</li>
+<li>Working in a commercial setting</li>
+</ul>
+<p>Use LAStools for:</p>
+<ul class="simple">
+<li>Creating DEMs from LAS data</li>
+<li>Creating TINs from LAS data</li>
+<li>Calculating convex or concave hulls from LAS data</li>
+<li>Generating contours from LAS data</li>
+<li>Advanced LAS command-line attribute processing (<a class="reference external" href="http://www.cs.unc.edu/~isenburg/lastools/download/las2las_README.txt">las2las</a>)</li>
+<li>Plucking out first/last returns (<a class="reference internal" href="utilities/las2las.html#las2las"><span class="std std-ref">las2las: Advanced LAS filtering and manipulation</span></a> or yourself with a
+programatic API)</li>
+<li>Decimating data (thinning by removing points within a grid or window)</li>
+<li>Converting data between formats (1.0 &lt;-&gt; 1.2, etc)</li>
+<li>Working in an academic or non-commercial setting</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="docs.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started with libLAS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="osgeo4w.html">Windows Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compilation.html">Compilation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/index.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities/index.html">LAS Utility Applications</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://liblas.org/doxygen/annotated.html">C++ Class API</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://liblas.org/doxygen/liblas_8h.html">C API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Python API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">libLAS’ Relationship to LAStools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#licensing">Licensing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#which-one-to-use-for-what">Which one to use for what</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/lastools.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="index.html" title="libLAS - LAS 1.0/1.1/1.2 ASPRS LiDAR data translation toolset"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="python.html" title="Python Class Documentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="docs.html">Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+<div class="footer">
+        &copy; <a href="copyright.html">Copyright</a> 2016, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 02, 2018 
+      and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+
+
+</div>
+
+
+  </body>
+</html>

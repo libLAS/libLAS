@@ -1,0 +1,799 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Compilation &#8212; liblas.org</title>
+    <link rel="stylesheet" href="_static/sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="Tutorials" href="tutorial/index.html" />
+    <link rel="prev" title="Installing libLAS using OSGeo4W" href="osgeo4w.html" />
+
+ 
+
+  </head><body>
+
+<table width="100%" style="width: 100%; background-color: white;">
+  <tr>
+    <td rowspan="2" style="padding: 10px 0px 10px 10px;">
+      <a href="index.html" title="Home"><img src="_static/liblaslogo.png" alt="libLAS banner" border="0" /></a>
+    </td>
+    <td style="padding: 10px 10px 0px 0px; text-align: right; vertical-align: top;">
+      <a href="index.html" title="Home">Home</a> |
+      <a href="docs.html" title="Docs">Docs</a> |
+      <a href="https://github.com/libLAS/libLAS/issues/" title="Bugs">github</a> |
+      <a href="faq.html" title="FAQ">FAQ</a> |
+      <a href="download.html" title="Download">Download</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 0px 10px 0px 0px; text-align: right; vertical-align: bottom;">
+
+    </td>
+  </tr>
+</table>
+
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial/index.html" title="Tutorials"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="osgeo4w.html" title="Installing libLAS using OSGeo4W"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="docs.html">Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="compilation">
+<span id="id1"></span><h1>Compilation<a class="headerlink" href="#compilation" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#compilation" id="id23">Compilation</a><ul>
+<li><a class="reference internal" href="#prerequisites" id="id24">Prerequisites</a><ul>
+<li><a class="reference internal" href="#boost" id="id25">Boost</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#optional-libraries" id="id26">Optional libraries</a><ul>
+<li><a class="reference internal" href="#gdal" id="id27">GDAL</a></li>
+<li><a class="reference internal" href="#libgeotiff" id="id28">libgeotiff</a></li>
+<li><a class="reference internal" href="#oci" id="id29">OCI</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-unix-makefiles-on-linux" id="id30">Using “Unix Makefiles” on Linux</a><ul>
+<li><a class="reference internal" href="#get-the-source-code" id="id31">Get the source code</a></li>
+<li><a class="reference internal" href="#prepare-a-build-directory" id="id32">Prepare a build directory</a></li>
+<li><a class="reference internal" href="#configure-base-library" id="id33">Configure base library</a></li>
+<li><a class="reference internal" href="#issue-the-make-command" id="id34">Issue the <cite>make</cite> command</a></li>
+<li><a class="reference internal" href="#run-make-install-and-test-your-installation-with-a-lasinfo-command" id="id35">Run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> and test your installation with a <a class="reference internal" href="utilities/lasinfo.html#lasinfo"><span class="std std-ref">lasinfo</span></a> command</a></li>
+<li><a class="reference internal" href="#configure-your-optional-libraries" id="id36">Configure your Optional Libraries.</a></li>
+<li><a class="reference internal" href="#build-and-install" id="id37">Build and install</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-xcode-on-os-x" id="id38">Using “XCode” on OS X</a><ul>
+<li><a class="reference internal" href="#id8" id="id39">Get the source code</a></li>
+<li><a class="reference internal" href="#id9" id="id40">Prepare a build directory</a></li>
+<li><a class="reference internal" href="#id10" id="id41">Configure base library</a></li>
+<li><a class="reference internal" href="#id11" id="id42">Configure Optional Libraries</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-visual-studio-9-2008-on-windows" id="id43">Using “Visual Studio 9 2008” on Windows</a><ul>
+<li><a class="reference internal" href="#id12" id="id44">Get the source code</a></li>
+<li><a class="reference internal" href="#msvc-prerequisites" id="id45">Prerequisites</a></li>
+<li><a class="reference internal" href="#run-cmake-gui-exe" id="id46">Run <code class="docutils literal notranslate"><span class="pre">cmake-gui.exe</span></code></a></li>
+<li><a class="reference internal" href="#id14" id="id47">Configure your Optional Libraries.</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Mateusz Loskot</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body">mateusz at loskot dot net</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Howard Butler</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body">hobu.inc at gmail dot com</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This document is only for the 1.6 libLAS release.  Unfortunately,
+there is no documentation for building earlier libLAS releases at this time, though
+it is a straightforward <a class="reference external" href="http://www.gnu.org/software/autoconf/">Autoconf</a> setup for unix and nmake files for
+windows.</p>
+</div>
+<p>As of libLAS 1.6, <a class="reference external" href="http://www.cmake.org/">CMake</a> 2.8.1+ is the prescribed tool for building
+libLAS from source as well as running unit tests. <a class="reference external" href="http://www.cmake.org/">CMake</a> is a cross-platform
+build system that provides a number of benefits, and its usage ensures a
+single, up-to-date build system for all libLAS-supported operating systems
+and compiler platforms.</p>
+<p>Like a combination of autoconf/autotools, except that it actually works on
+Windows (and works without eye-stabbing pain in general), <a class="reference external" href="http://www.cmake.org/">CMake</a> is somewhat
+of a meta-building tool. It can be used to generate MSVC project files, GNU
+Makefiles, NMake files for MSVC, XCode projects on Mac OS X, and Eclipse
+projects (as well as many others).  This functionality allows the libLAS project
+to avoid maintaining these build options by hand and target a single configuration
+and build platform.</p>
+<p>This tutorial will describe how to build libLAS using CMake on both a
+Unix platform and a Windows platform.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The only supported build environment libLAS moving forward from the 1.6
+release is <a class="reference external" href="http://www.cmake.org/">CMake</a>. <a class="reference external" href="http://www.gnu.org/software/autoconf/">Autoconf</a> configuration will be phased out and will
+no longer be updated after the 1.6 release.</p>
+</div>
+<div class="section" id="prerequisites">
+<span id="id2"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>In addition to <a class="reference external" href="http://www.cmake.org/">CMake</a> 2.8.1+, you also need a C/C++ compiler.  The
+following compilers are known to work:</p>
+<ul class="simple">
+<li>MSVC 2003 (VC 7.1) (not all optional libraries work with 2003)</li>
+<li>MSVC 2005 (VC 8.0)</li>
+<li>MSVC 2008 (VC 9.0)</li>
+<li>MSVC 2010</li>
+<li>GCC 4.0</li>
+<li>GCC 4.2</li>
+<li>LLVM 4.8/Clang 2.8</li>
+</ul>
+<div class="section" id="boost">
+<h3><a class="reference external" href="http://www.boost.org/">Boost</a><a class="headerlink" href="#boost" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://www.boost.org/">Boost</a> is required to build libLAS 1.6.  Set <code class="docutils literal notranslate"><span class="pre">Boost_INCLUDE_DIR</span></code> if
+CMake cannot find it in a default location.  Additionally, set <code class="docutils literal notranslate"><span class="pre">Boost_LIBRARY_DIRS</span></code>
+if it cannot find your libraries.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You need Boost version 1.38.0 or higher to build libLAS 1.6.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If you are building on Windows, <a class="reference external" href="http://www.boostpro.com/download/">http://www.boostpro.com/download/</a> has an
+excellent installer. The boost installer defaults are not enough, however,
+and you will need to scroll down and select “Boost ProgramOptions”, “Boost Thread”, and
+“Boost Serialization” components, and select static + multithreaded as the
+types. If you want to link in a different way, you will have to change
+your CMake cache variables <code class="docutils literal notranslate"><span class="pre">Boost_USE_STATIC_LIBS</span></code> and <code class="docutils literal notranslate"><span class="pre">Boost_USE_MULTITHREADED</span></code>
+accordingly.</p>
+<div class="last figure">
+<img alt="Selecting program_options with the Boostpro.com installer" src="_images/boostpro-options.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="optional-libraries">
+<span id="id3"></span><h2>Optional libraries<a class="headerlink" href="#optional-libraries" title="Permalink to this headline">¶</a></h2>
+<p>The base libLAS library can work without optional libraries to read and write
+LAS files, but linking in libraries like <a class="reference external" href="http://www.gdal.org">GDAL</a>, and <a class="reference external" href="http://www.remotesensing.org/geotiff/geotiff.html">libgeotiff</a> will
+provide a boost in functionality to libLAS. libLAS linkage of GDAL and
+libgeotiff enhances spatial coordinate system description and provides data
+reprojection support. By linking <a class="reference external" href="http://www.oracle.com/technology/tech/oci/index.html">OCI</a> with the <a class="reference external" href="http://www.oracle.com/technology/tech/oci/instantclient/index.html">Oracle Instant Client</a>,
+libLAS can be used to load LAS data into <a class="reference external" href="http://download.oracle.com/docs/cd/B28359_01/appdev.111/b28400/sdo_pc_pkg_ref.htm">Oracle Point Cloud</a> -enabled Oracle
+tables.</p>
+<p>Building these libraries is beyond the scope of this document, but all except
+<a class="reference external" href="http://www.oracle.com/technology/tech/oci/index.html">OCI</a> can be built from source and installed at your leisure.</p>
+<div class="section" id="gdal">
+<h3><a class="reference external" href="http://www.gdal.org">GDAL</a><a class="headerlink" href="#gdal" title="Permalink to this headline">¶</a></h3>
+<p>Obtain <a class="reference external" href="http://www.gdal.org">GDAL</a> via whatever method is convenient.  Linux platforms such as
+<a class="reference external" href="http://www.debian.org">Debian</a> have <a class="reference external" href="http://wiki.debian.org/DebianGis">DebianGIS</a>, Mac OS X has the <a class="reference external" href="http://www.kyngchaos.com/software/unixport">KyngChaos</a> software frameworks,
+and Windows has the <a class="reference external" href="http://trac.osgeo.org/osgeo4w/">OSGeo4W</a> platform.</p>
+<ul class="simple">
+<li>GDAL 1.7+ is required.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are using <a class="reference external" href="http://trac.osgeo.org/osgeo4w/">OSGeo4W</a> as your provider of GDAL, you must use the
+<code class="docutils literal notranslate"><span class="pre">gdal-dev</span></code> package, which is GDAL 1.8 as of 11/19/2010.</p>
+</div>
+</div>
+<div class="section" id="libgeotiff">
+<h3><a class="reference external" href="http://www.remotesensing.org/geotiff/geotiff.html">libgeotiff</a><a class="headerlink" href="#libgeotiff" title="Permalink to this headline">¶</a></h3>
+<p>Obtain <a class="reference external" href="http://www.remotesensing.org/geotiff/geotiff.html">libgeotiff</a> from the same place you got <a class="reference external" href="http://www.gdal.org">GDAL</a>.</p>
+<ul class="simple">
+<li>libgeotiff 1.3.0+ is required</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><cite>GDAL</cite> surreptitiously embeds a copy of <a class="reference external" href="http://www.remotesensing.org/geotiff/geotiff.html">libgeotiff</a> in its library build
+but there is no way for you to know this.  In addition to embedding
+libgeotiff, it also strips away the library symbols that libLAS needs,
+meaning that libLAS can’t simply link against <a class="reference external" href="http://www.gdal.org">GDAL</a>.  If you are
+building both of these libraries yourself, make sure you build GDAL
+using the “External libgeotiff” option, which will prevent the
+insanity that can ensue on some platforms.  <a class="reference external" href="http://trac.osgeo.org/osgeo4w/">OSGeo4W</a> users, including
+those using that platform to link and build libLAS themselves, do
+not need to worry about this issue.</p>
+</div>
+</div>
+<div class="section" id="oci">
+<h3><a class="reference external" href="http://www.oracle.com/technology/tech/oci/index.html">OCI</a><a class="headerlink" href="#oci" title="Permalink to this headline">¶</a></h3>
+<p>Obtain the <a class="reference external" href="http://www.oracle.com/technology/tech/oci/instantclient/index.html">Oracle Instant Client</a> and install in a location on your system.
+Be sure to install both the “Basic” and the “SDK” modules. Set your
+<code class="docutils literal notranslate"><span class="pre">ORACLE_HOME</span></code> environment variable system- or user-wide to point to this
+location so the CMake configuration can find your install.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p><a class="reference external" href="http://www.oracle.com/technology/tech/oci/index.html">OCI</a>’s libraries are inconsistently named.  You may need to create
+symbolic links for some library names in order for the <a class="reference external" href="http://www.cmake.org/">CMake</a> to find
+them:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span>cd $ORACLE_HOME
+ln -s libocci.so.11.1 libocci.so
+ln -s libclntsh.so.11.1 libclntsh.so
+ln -s libociei.so.11.1 libociei.so
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">MSVC should only require the oci.lib and oci.dll library and dlls.</p>
+</div>
+<ul class="simple">
+<li>Oracle 11g is recommended, but OCI for 10g will work.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="using-unix-makefiles-on-linux">
+<h2>Using “Unix Makefiles” on Linux<a class="headerlink" href="#using-unix-makefiles-on-linux" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-the-source-code">
+<h3>Get the source code<a class="headerlink" href="#get-the-source-code" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="development/source.html#source"><span class="std std-ref">libLAS Source Repository</span></a> for how to obtain the latest development version or visit
+<a class="reference internal" href="download.html#download"><span class="std std-ref">Download</span></a> to get the latest released version.</p>
+</div>
+<div class="section" id="prepare-a-build-directory">
+<h3>Prepare a build directory<a class="headerlink" href="#prepare-a-build-directory" title="Permalink to this headline">¶</a></h3>
+<p>CMake allows you to generate different builders for a project, and in this
+example, we are going to generate a “Unix Makefiles” builder
+for libLAS on Mac OS X.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd liblas
+$ mkdir makefiles
+$ cd makefiles
+</pre></div>
+</div>
+</div>
+<div class="section" id="configure-base-library">
+<h3>Configure base library<a class="headerlink" href="#configure-base-library" title="Permalink to this headline">¶</a></h3>
+<p>Configure the basic core library for the “Unix Makefiles” target:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cmake -G &quot;Unix Makefiles&quot; ../
+-- The C compiler identification is GNU
+-- The CXX compiler identification is GNU
+-- Checking whether C compiler has -isysroot
+-- Checking whether C compiler has -isysroot - yes
+-- Check for working C compiler: /usr/bin/gcc
+-- Check for working C compiler: /usr/bin/gcc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Checking whether CXX compiler has -isysroot
+-- Checking whether CXX compiler has -isysroot - yes
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Enable libLAS utilities to build - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/hobu/hg/liblas-cmake/makefiles
+</pre></div>
+</div>
+</div>
+<div class="section" id="issue-the-make-command">
+<h3>Issue the <cite>make</cite> command<a class="headerlink" href="#issue-the-make-command" title="Permalink to this headline">¶</a></h3>
+<p>This will build a base build of the library, with no extra libraries being
+configured.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make
+-- Enable libLAS utilities to build - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/hobu/hg/liblas-cmake/makefiles
+Scanning dependencies of target las
+[  3%] Building CXX object src/CMakeFiles/las.dir/lasclassification.cpp.o
+...
+[ 60%] Building CXX object src/CMakeFiles/las.dir/detail/writer/writer.cpp.o
+Linking CXX static library ../bin/Debug/liblas.a
+[ 60%] Built target las
+Scanning dependencies of target las_c
+[ 63%] Building CXX object src/CMakeFiles/las_c.dir/las_c_api.cpp.o
+Linking CXX shared library ../bin/Debug/liblas_c.dylib
+[ 63%] Built target las_c
+Scanning dependencies of target las2las
+...
+[100%] Built target txt2las
+</pre></div>
+</div>
+</div>
+<div class="section" id="run-make-install-and-test-your-installation-with-a-lasinfo-command">
+<span id="make-install"></span><h3>Run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> and test your installation with a <a class="reference internal" href="utilities/lasinfo.html#lasinfo"><span class="std std-ref">lasinfo</span></a> command<a class="headerlink" href="#run-make-install-and-test-your-installation-with-a-lasinfo-command" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> will install the <a class="reference internal" href="utilities/index.html#utilities"><span class="std std-ref">utilities</span></a> in the location
+that was specified for ‘CMAKE_INSTALL_PREFIX’.  Once installed, ensure that
+you can run lasinfo.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ lasinfo ../test/data/TO_core_last_clip.las
+
+---------------------------------------------------------
+  Header Summary
+---------------------------------------------------------
+  File Name: ../test/data/TO_core_last_clip.las
+  Version:                    1.0
+  Source ID:                  0
+  Reserved:                   0
+  Project ID/GUID:           &#39;00000000-0000-0000-0000-000000000000&#39;
+  System Identifier:         &#39;&#39;
+  Generating Software:       &#39;TerraScan&#39;
+  File Creation Day/Year:    0/0
+  Header Size                227
+  Offset to Point Data       229
+  Number Var. Length Records 0
+  Point Data Format          1
+  Point Data Record Length   28
+  Number of Point Records    213093
+  Number of Points by Return 128621 84472 0 0 0
+  Scale Factor X Y Z         0.01 0.01 0.01
+  Offset X Y Z               -0.000000 -0.000000 -0.000000
+  Min X Y Z                  630250.000000 4834500.000000 46.830000
+  Max X Y Z                  630500.000000 4834750.000000 170.650000
+ Spatial Reference
+Geotiff_Information:
+   Version: 1
+   Key_Revision: 1.0
+   Tagged_Information:
+      End_Of_Tags.
+   Keyed_Information:
+      End_Of_Keys.
+   End_Of_Geotiff.
+
+---------------------------------------------------------
+  Point Inspection Summary
+---------------------------------------------------------
+  Header Point Count: 213093
+  Actual Point Count: 213093
+
+  Minimum and Maximum Attributes (min,max)
+---------------------------------------------------------
+  Min X,Y,Z:        630250.000000,4834500.000000,46.830000
+  Max X,Y,Z:        630500.000000,4834750.000000,170.650000
+  Bounding Box:     630250.00,4834500.00,630500.00,4834750.00
+  Time:         413162.560400,414095.322000
+  Return Number:    1,2
+  Return Count:     1,2
+  Flightline Edge:  0,0
+  Intensity:        10,50200
+  Scan Direction Flag:  0,0
+  Scan Angle Rank:  0,0
+  Classification:   1,1
+  Point Source Id:  0,0
+  Minimum Color:     0 0 0
+  Maximum Color:     0 0 0
+
+  Number of Points by Return
+---------------------------------------------------------
+    (0) 128621  (1) 84472   (2) 0   (3) 0   (4) 0
+ Total Points: 213093
+
+  Number of Returns by Pulse
+---------------------------------------------------------
+    (1) 128621  (2) 84472   (3) 0   (4) 0   (5) 0   (6) 0   (7) 0
+ Total Pulses: 213093
+
+  Point Classifications
+---------------------------------------------------------
+      213093 Unclassified (1)
+</pre></div>
+</div>
+</div>
+<div class="section" id="configure-your-optional-libraries">
+<span id="configure-optional-libraries"></span><h3>Configure your <a class="reference internal" href="#id3">Optional Libraries</a>.<a class="headerlink" href="#configure-your-optional-libraries" title="Permalink to this headline">¶</a></h3>
+<p>By checking the “on” button for each, CMake may find your installations of
+these libraries, but in case it does not, set the following variables,
+substituting accordingly, to values that match your system layout.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference external" href="http://www.gdal.org">GDAL</a></td>
+<td>GDAL_CONFIG</td>
+<td>/usr/local/bin/gdal-config</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>GDAL_INCLUDE_DIR</td>
+<td>/usr/local/include</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>GDAL_LIBRARY</td>
+<td>/usr/local/lib/libgdal.so</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="http://www.remotesensing.org/geotiff/geotiff.html">libgeotiff</a></td>
+<td>GEOTIFF_INCLUDE_DIR</td>
+<td>/usr/local/include</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>GEOTIFF_LIBRARY</td>
+<td>/usr/local/lib/libgeotiff.so</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="http://www.oracle.com/technology/tech/oci/index.html">OCI</a></td>
+<td>ORACLE_INCLUDE_DIR</td>
+<td>/home/oracle/sdk/include</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>ORACLE_NNZ_LIBRARY</td>
+<td>/home/oracle/libnnz10.so</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>ORACLE_OCCI_LIBRARY</td>
+<td>/home/oracle/libocci.so</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>ORACLE_OCIEI_LIBRARY</td>
+<td>/home/oracle/libociei.so</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>ORACLE_OCI_LIBRARY</td>
+<td>/home/oracle/libclntsh.so</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="ccmake-and-cmake-gui">
+<h4>CCMake and cmake-gui<a class="headerlink" href="#ccmake-and-cmake-gui" title="Permalink to this headline">¶</a></h4>
+<p>While <a class="reference external" href="http://www.cmake.org/">CMake</a> can be run from the command-line, and this is the preferred
+way for many individuals, it can be much easier to run CMake from a GUI.
+Now that we have a basic library building, we will use CMake’s GUIs to
+help us configure the rest of the optional components of the library. Run
+<code class="docutils literal notranslate"><span class="pre">ccmake</span> <span class="pre">../</span></code> for the <a class="reference external" href="http://en.wikipedia.org/wiki/Curses_%28programming_library%29">Curses</a> interface or <code class="docutils literal notranslate"><span class="pre">cmake-gui</span> <span class="pre">../</span></code> for a GUI
+version.</p>
+<div class="figure" id="id17">
+<img alt="Running CCMake in OS X" src="_images/ccmake-osx-start.png" />
+<p class="caption"><span class="caption-text">Running the <a class="reference external" href="http://en.wikipedia.org/wiki/Curses_%28programming_library%29">Curses</a> <a class="reference external" href="http://www.cmake.org/">CMake</a> interface.  This interface is available to
+all unix-like operating systems.</span></p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If your arrow keys are not working with in CCMake, use CTRL-N and
+CTRL-P to move back and forth between the options.</p>
+</div>
+<div class="figure" id="id18">
+<img alt="Running cmake-gui in OS X" src="_images/cmake-gui-osx-start.png" />
+<p class="caption"><span class="caption-text">Running the cmake-gui <a class="reference external" href="http://www.cmake.org/">CMake</a> interface.  This interface is available
+on Linux, Windows, and Mac OS X.</span></p>
+</div>
+</div>
+</div>
+<div class="section" id="build-and-install">
+<h3>Build and install<a class="headerlink" href="#build-and-install" title="Permalink to this headline">¶</a></h3>
+<p>Once you have configured your additional libraries, you can install the
+software.  The main pieces that will be installed are:</p>
+<ul class="simple">
+<li>libLAS headers (typically in a location ./include/liblas/…)</li>
+<li>libLAS C++ (liblas.a or liblas.so) library</li>
+<li>libLAS C (liblas_c.a or liblas_c.so) library</li>
+<li><a class="reference internal" href="utilities/index.html#utilities"><span class="std std-ref">Utility</span></a> programs</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">install</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-xcode-on-os-x">
+<h2>Using “XCode” on OS X<a class="headerlink" href="#using-xcode-on-os-x" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h3>Get the source code<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="development/source.html#source"><span class="std std-ref">libLAS Source Repository</span></a> for how to obtain the latest development version or visit
+<a class="reference internal" href="download.html#download"><span class="std std-ref">Download</span></a> to get the latest released version.</p>
+</div>
+<div class="section" id="id9">
+<h3>Prepare a build directory<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>CMake allows you to generate different builders for a project, and in this
+example, we are going to generate an “Xcode” builder for libLAS on Mac OS X.
+Additionally, we’re going to use an alternative compiler – <a class="reference external" href="http://llvm.org/">LLVM</a> – which
+under certain situations can produce much faster code on Mac OS X.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export CC=/usr/bin/llvm-gcc
+$ export CXX=/usr/bin/llvm-g++
+$ cd liblas
+$ mkdir xcode
+$ cd xcode/
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>Configure base library<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>Configure the basic core library for the Xcode build:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cmake -G &quot;Xcode&quot; ..
+-- The C compiler identification is GNU
+-- The CXX compiler identification is GNU
+-- Checking whether C compiler has -isysroot
+-- Checking whether C compiler has -isysroot - yes
+-- Check for working C compiler: /usr/bin/llvm-gcc
+-- Check for working C compiler: /usr/bin/llvm-gcc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Checking whether CXX compiler has -isysroot
+-- Checking whether CXX compiler has -isysroot - yes
+-- Check for working CXX compiler: /usr/bin/llvm-g++
+-- Check for working CXX compiler: /usr/bin/llvm-g++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Enable libLAS utilities to build - done
+-- Enable libLAS unit tests to build - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/hobu/hg/liblas-cmake/xcode
+</pre></div>
+</div>
+<p>Alternatively, if you have <a class="reference external" href="http://www.kyngchaos.com/software/unixport">KyngChaos</a> frameworks for <a class="reference external" href="http://www.gdal.org">GDAL</a> and <a class="reference external" href="http://www.remotesensing.org/geotiff/geotiff.html">libgeotiff</a> installed, you can provide locations for those as part of your <code class="docutils literal notranslate"><span class="pre">cmake</span></code> invocation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cmake -G &quot;Xcode&quot; \
+  -D GDAL_CONFIG=/Library/Frameworks/GDAL.framework/Programs/gdal-config \
+  -D GEOTIFF_INCLUDE_DIR=/Library/Frameworks/UnixImageIO.framework/unix/include \
+  -D GEOTIFF_LIBRARY=/Library/Frameworks/UnixImageIO.framework/unix/lib/libgeotiff.dylib \
+  ..
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ open libLAS.xcodeproj/
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Building libLAS using the XCode project" src="_images/xcode-start.png" />
+</div>
+<div class="section" id="set-default-command-for-xcode">
+<h4>Set default command for XCode<a class="headerlink" href="#set-default-command-for-xcode" title="Permalink to this headline">¶</a></h4>
+<p>Set the default executable for the project to be <code class="docutils literal notranslate"><span class="pre">lasinfo</span></code> by opening the
+“Executables” tree, choosing “lasinfo,” and clicking the bubble next to
+the “Executable name” in the right-hand panel.</p>
+<div class="figure">
+<img alt="Setting the default executable" src="_images/xcode-set-default-executable.png" />
+</div>
+</div>
+<div class="section" id="set-arguments-for-lasinfo">
+<h4>Set arguments for <a class="reference internal" href="utilities/lasinfo.html#lasinfo"><span class="std std-ref">lasinfo</span></a><a class="headerlink" href="#set-arguments-for-lasinfo" title="Permalink to this headline">¶</a></h4>
+<p>Set the arguments for <a class="reference internal" href="utilities/lasinfo.html#lasinfo"><span class="std std-ref">lasinfo</span></a> so it can be run from within XCode. We
+use the ${PROJECT_DIR} environment variable to be able to tell lasinfo the
+location of our test file. This is similar to the <a class="reference internal" href="#make-install"><span class="std std-ref">same command</span></a> above in the “Unix Makefiles” section.</p>
+<div class="figure">
+<img alt="Setting the arguments for lasinfo" src="_images/xcode-lasinfo-arguments.png" />
+</div>
+</div>
+<div class="section" id="build-and-run-the-lasinfo-command">
+<h4>Build and run the <a class="reference internal" href="utilities/lasinfo.html#lasinfo"><span class="std std-ref">lasinfo</span></a> command<a class="headerlink" href="#build-and-run-the-lasinfo-command" title="Permalink to this headline">¶</a></h4>
+<p>Open the console by pressing CMD-SHIFT-R or by navigating to the Run-Console
+menu and press the <cite>Build and Run</cite> button.</p>
+<div class="figure">
+<img alt="lasinfo output in XCode" src="_images/xcode-lasinfo-output.png" />
+</div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>Configure <a class="reference internal" href="#id3">Optional Libraries</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p>As <a class="reference internal" href="#configure-optional-libraries"><span class="std std-ref">before</span></a>, use <code class="docutils literal notranslate"><span class="pre">ccmake</span> <span class="pre">../</span></code> or <code class="docutils literal notranslate"><span class="pre">cmake-gui</span> <span class="pre">../</span></code> to
+configure your <a class="reference internal" href="#optional-libraries"><span class="std std-ref">Optional libraries</span></a>.</p>
+<div class="figure" id="id19">
+<img alt="Configuring optional libraries with CMake GUI" src="_images/cmake-gui-osx-configured.png" />
+<p class="caption"><span class="caption-text">Configuring <a class="reference internal" href="#id3">Optional Libraries</a> with CMake GUI</span></p>
+</div>
+</div>
+</div>
+<div class="section" id="using-visual-studio-9-2008-on-windows">
+<h2>Using “Visual Studio 9 2008” on Windows<a class="headerlink" href="#using-visual-studio-9-2008-on-windows" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id12">
+<h3>Get the source code<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="development/source.html#source"><span class="std std-ref">libLAS Source Repository</span></a> for how to obtain the latest development version or visit
+<a class="reference internal" href="download.html#download"><span class="std std-ref">Download</span></a> to get the latest released version.</p>
+</div>
+<div class="section" id="msvc-prerequisites">
+<span id="id13"></span><h3>Prerequisites<a class="headerlink" href="#msvc-prerequisites" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">Ensure that you have <a class="reference external" href="http://www.cmake.org/cmake/help/cmake-2-8-docs.html">CMake 2.8.0+</a> installed on your system.</p>
+</li>
+<li><p class="first">Install <a class="reference external" href="http://trac.osgeo.org/osgeo4w/">OSGeo4W</a> on your system to get <a class="reference internal" href="#id3">Optional Libraries</a> in
+pre-compiled form.  You can build these from source yourself, but it is
+much more convenient to get them from OSGeo4W.</p>
+<ul class="simple">
+<li>gdal-dev</li>
+<li>libtiff</li>
+<li>libgeotiff</li>
+</ul>
+<div class="figure" id="id20">
+<img alt="OSGeo4W installation" src="_images/windows-osgeo4w-advanced-install.png" />
+<p class="caption"><span class="caption-text">Choose the “Advanced install” to be able to pick the libraries
+and their headers that you need.</span></p>
+</div>
+<div class="figure" id="id21">
+<img alt="Choosing libraries" src="_images/windows-osgeo4w-choosing-packages.png" />
+<p class="caption"><span class="caption-text">Open up the “Libs” tree and choose the libraries you need</span></p>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="run-cmake-gui-exe">
+<h3>Run <code class="docutils literal notranslate"><span class="pre">cmake-gui.exe</span></code><a class="headerlink" href="#run-cmake-gui-exe" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Run <code class="docutils literal notranslate"><span class="pre">cmake-gui.exe</span></code> from a “Visual Studio 2008 Command Prompt”</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">d</span><span class="p">:</span>\\<span class="n">liblas</span>
+<span class="n">cmake</span><span class="o">-</span><span class="n">gui</span> <span class="o">.</span>
+</pre></div>
+</div>
+<div class="figure" id="id22">
+<img alt="Starting CMake" src="_images/windows-cmake-start.png" />
+<p class="caption"><span class="caption-text">Upon opening cmake-gui, nothing will be configured.</span></p>
+<div class="legend">
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The Visual Studio Prompt can be found by navigating through the start
+bar to “Start” – “Microsoft Visual Studio 2008” – “Visual Studio
+Tools ” – “Visual Studio 2008 Command Prompt”. This command prompt
+sets a number of environment variables necessary for Visual Studio to
+run, and <a class="reference external" href="http://www.cmake.org/">CMake</a> must have these variables set in order for it to
+work properly.</p>
+<div class="last figure">
+<img alt="Visual Studio Command prompt" src="_images/windows-command-prompt.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="figure">
+<img alt="Generating a project" src="_images/windows-cmake-generator-visual-studio-9.png" />
+</div>
+<ul class="simple">
+<li>Click “Configure” and a window will pop up asking what type of build to
+generate. Choose “Visual Studio 9 2008.”</li>
+<li>Click “Generate” and a “libLAS.sln” file will be in <code class="docutils literal notranslate"><span class="pre">d:\\liblas</span></code></li>
+<li>Open and build the project</li>
+</ul>
+<img alt="_images/windows-msvc-build.png" src="_images/windows-msvc-build.png" />
+</div>
+<div class="section" id="id14">
+<h3>Configure your <a class="reference internal" href="#id3">Optional Libraries</a>.<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<p>By checking the “on” button for each, CMake may find your installations of
+these libraries, but in case it does not, set the following variables,
+substituting accordingly, to values that match your system layout.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are building using <a class="reference external" href="http://trac.osgeo.org/osgeo4w/">OSGeo4W</a> libraries, you must use the “gdal-dev”
+version, not the base <a class="reference external" href="http://www.gdal.org">GDAL</a> build.  libLAS requires GDAL 1.7+ to
+operate, and this is provided by the “gdal-dev” <a class="reference external" href="http://trac.osgeo.org/osgeo4w/">OSGeo4W</a> version.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You will need to choose “Advanced View” and select the location of the
+libTIFF library explicitly.</p>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference external" href="http://www.gdal.org">GDAL</a></td>
+<td>GDAL_INCLUDE_DIR</td>
+<td>c:\osgeo4w\apps\gdal-dev\include</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>GDAL_LIBRARY</td>
+<td>c:\osgeo4w\apps\gdal-dev\lib\gdal_i.lib</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="http://www.remotesensing.org/geotiff/geotiff.html">libgeotiff</a></td>
+<td>GEOTIFF_INCLUDE_DIR</td>
+<td>c:\osgeo4w\include</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>GEOTIFF_LIBRARY</td>
+<td>c:\osgeo4w\lib\geotiff_i.lib</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="http://remotesensing.org/libtiff/">libtiff</a></td>
+<td>TIFF_INCLUDE_DIR</td>
+<td>c:\osgeo4w\include</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>TIFF_LIBRARY</td>
+<td>c:\osgeo4w\lib\libtiff_i.lib</td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="docs.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started with libLAS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="osgeo4w.html">Windows Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Compilation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-libraries">Optional libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-unix-makefiles-on-linux">Using “Unix Makefiles” on Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-xcode-on-os-x">Using “XCode” on OS X</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-visual-studio-9-2008-on-windows">Using “Visual Studio 9 2008” on Windows</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/index.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities/index.html">LAS Utility Applications</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://liblas.org/doxygen/annotated.html">C++ Class API</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://liblas.org/doxygen/liblas_8h.html">C API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lastools.html">libLAS’ Relationship to LAStools</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/compilation.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial/index.html" title="Tutorials"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="osgeo4w.html" title="Installing libLAS using OSGeo4W"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="docs.html">Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+<div class="footer">
+        &copy; <a href="copyright.html">Copyright</a> 2016, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 02, 2018 
+      and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+
+
+</div>
+
+
+  </body>
+</html>

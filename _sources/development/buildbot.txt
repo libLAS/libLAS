@@ -1,0 +1,200 @@
+.. _buildbot:
+
+******************************************************************************
+Test Suite
+******************************************************************************
+
+Liblas includes a test suite written in C++ that can be fairly easily run
+to ensure that the library is working properly.
+
+
+make test
+..............................................................................
+
+The test suite can be run in the liblas main directory with::
+
+  make test
+
+If the liblas_test binary does not exist it may be necessary to do::
+
+  make liblas_test test
+
+This should produce a brief report indicating the number of tests that failed,
+if any.  A detailed report will be generated in
+liblas/Testing/Temporary/LastTest.log.  Failure reports may look something
+like::
+
+  ---> group: liblas::SpatialReference, test: test<6>
+       problem: assertion failed
+       failed assertion: `VLR count: expected `3` actual `4``
+
+Tests failures diagnosis may require inspecting the test code in the
+liblas/test/unit directory.  In the above case searching for "test<6>" in
+the file liblas/test/unit/lasspatialreference_test.cpp would be appropriate.
+
+The tests can also be run directly in the liblas/test/unit directory by
+running the liblas/bin/liblas_test executable.   In this case the report is
+written to stderr.  Be careful to write it in the right directory or some
+tests will fail for reasons that are not clear.
+
+
+Continuous Integration - TravisCI
+..............................................................................
+
+
+The libLAS project uses `Travis <https://travis-ci.org/libLAS/libLAS>`__ to perform
+automated builds and continuous integration.
+
+
+Building libLAS and running unit tests using CMake on Unix
+..............................................................................
+
+Users are encourage to run libLAS unit tests and submit test results to
+dedicated `CDash`_ - utility dashboard hosted by the http://cdash.org website:
+
+* `libLAS CDash`_
+
+The CDash is another tool liblAS uses to perform `continuous integration`_
+during development process.
+
+
+* Configure libLAS core library with unit tests enabled
+
+::
+
+    $ cmake ../main -DWITH_TESTS=ON
+    -- The C compiler identification is GNU
+    -- The CXX compiler identification is GNU
+    -- Check for working C compiler: /usr/bin/gcc
+    -- Check for working C compiler: /usr/bin/gcc -- works
+    -- Detecting C compiler ABI info
+    -- Detecting C compiler ABI info - done
+    -- Check for working CXX compiler: /usr/bin/c++
+    -- Check for working CXX compiler: /usr/bin/c++ -- works
+    -- Detecting CXX compiler ABI info
+    -- Detecting CXX compiler ABI info - done
+    -- Enable libLAS utilities to build - done
+    -- Enable libLAS unit tests to build - done
+    -- Configuring done
+    -- Generating done
+    -- Build files have been written to: /home/mloskot/dev/liblas/_hg/build
+
+
+
+* Inspect available targets
+
+::
+
+    $ make help
+    The following are some of the valid targets for this Makefile:
+    ... all (the default if no target is provided)
+    ... clean
+    ... depend
+    ... Continuous
+    ... ContinuousBuild
+    ... ContinuousConfigure
+    ... ContinuousCoverage
+    ... ContinuousMemCheck
+    ... ContinuousStart
+    ... ContinuousSubmit
+    ... ContinuousTest
+    ... ContinuousUpdate
+    ... Experimental
+    ... ExperimentalBuild
+    ... ExperimentalConfigure
+    ... ExperimentalCoverage
+    ... ExperimentalMemCheck
+    ... ExperimentalStart
+    ... ExperimentalSubmit
+    ... ExperimentalTest
+    ... ExperimentalUpdate
+    ... Nightly
+    ... NightlyBuild
+    ... NightlyConfigure
+    ... NightlyCoverage
+    ... NightlyMemCheck
+    ... NightlyMemoryCheck
+    ... NightlyStart
+    ... NightlySubmit
+    ... NightlyTest
+    ... NightlyUpdate
+    ... edit_cache
+    ... install
+    ... install/local
+    ... install/strip
+    ... list_install_components
+    ... rebuild_cache
+    ... test
+    ... las
+    ... las_c
+    ... las2las
+    ... las2txt
+    ... lasinfo
+    ... txt2las
+    ... liblas_test
+
+
+* Run `Continuous` target
+
+::
+
+    mloskot@dog:~/dev/liblas/_hg/build$ make Continuous
+       Site: dog
+       Build name: Linux-c++
+    Create new tag: 20091025-0003 - Continuous
+    Updating the repository
+       Updating the repository: /home/mloskot/dev/liblas/_hg/main
+       Use HG repository type
+       Old revision of repository is: aa303d670d1a
+       New revision of repository is: 690df0a6df0b
+       Gathering version information (one . per revision):
+        .
+       Found 1 updated files
+    Configure project
+       Each . represents 1024 bytes of output
+        . Size of output: 0K
+    Build project
+       Each symbol represents 1024 bytes of output.
+       '!' represents an error and '*' a warning.
+        ......****.* Size of output: 11K
+       0 Compiler errors
+       7 Compiler warnings
+    Test project /home/mloskot/dev/liblas/_hg/build
+        Start 1: liblas_test
+    1/1 Test #1: liblas_test ......................   Passed    0.02 sec
+
+    100% tests passed, 0 tests failed out of 1
+
+    Total Test time (real) =   0.03 sec
+    Performing coverage
+     Cannot find any coverage files. Ignoring Coverage request.
+    Submit files (using http)
+       Using HTTP submit method
+       Drop site:http://my.cdash.org/submit.php?project=libLAS
+       Uploaded: /home/mloskot/dev/liblas/_hg/build/Testing/20091025-0003/Build.xml
+       Uploaded: /home/mloskot/dev/liblas/_hg/build/Testing/20091025-0003/Configure.xml
+       Uploaded: /home/mloskot/dev/liblas/_hg/build/Testing/20091025-0003/Test.xml
+       Uploaded: /home/mloskot/dev/liblas/_hg/build/Testing/20091025-0003/Update.xml
+       Submission successful
+    Built target Continuous
+
+
+Ammending and Extending the Test Suite
+..............................................................................
+
+The tests for the test suite are implemented as a set of C++ files in the
+liblas/test/unit directory.  New tests for existing classes can be added
+based on the existing examples.  New files can be introduced for additional
+classes or categories of testing, but the source filename(s) will also need
+to be added in liblas/test/unit/CMakeLists.txt.
+
+
+.. _`CMake`: http://www.cmake.org/
+.. _`CMake 2.8.0+`: http://www.cmake.org/cmake/help/cmake-2-8-docs.html
+.. _`continuous integration`: http://en.wikipedia.org/wiki/Continuous_integration
+.. _`libLAS CDash`: http://my.cdash.org/index.php?project=libLAS
+
+.. _`IRC`: http://irc.freenode.net/
+.. _`OSGeo Buildbot`: http://buildbot.osgeo.org/
+.. _`libLAS buildbot waterfall`: http://buildbot.osgeo.org:8507/waterfall
+.. _`OSGeo Foundation`: http://osgeo.org/

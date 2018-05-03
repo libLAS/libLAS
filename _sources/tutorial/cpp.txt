@@ -1,0 +1,441 @@
+.. _cpptutorial:
+
+*********************************************
+C++ Tutorial
+*********************************************
+
+
+
+
+:Author: Mateusz Loskot
+:Contact: mateusz at loskot dot net
+:Author: Howard Butler
+:Contact: hobu.inc at gmail dot com
+:Date: 2/22/2011
+
+.. contents::
+    :depth: 2
+    :backlinks: none
+
+This basic tutorial explains how to use libLAS to read and write LIDAR data
+encoded in LAS File Format. For more examples in C++, check source of `unit
+tests package`_ for libLAS.
+
+==============================================================================
+Reading LAS data using ``liblas::Reader``
+==============================================================================
+
+1. Include required header files from libLAS and C++ Standard Library
+
+    .. code-block:: cpp
+
+        #include <liblas/liblas.hpp>
+        #include <fstream>  // std::ifstream
+        #include <iostream> // std::cout
+
+2. Create input stream and associate it with .las file opened to read in
+   **binary** mode
+
+    .. code-block:: cpp
+
+        std::ifstream ifs;
+        ifs.open("file.las", std::ios::in | std::ios::binary);
+
+3. Create a ReaderFactory and instantiate a new liblas::Reader using
+   the stream.
+
+    .. code-block:: cpp
+
+        liblas::ReaderFactory f;
+        liblas::Reader reader = f.CreateWithStream(ifs);
+
+    .. note::
+        It is possible to use the basic liblas::Reader constructor that
+        takes in a std::istream, but it will not be able to account for the fact
+        that the file might be compressed.  Using the ReaderFactory will take
+        care of all of this for you.
+
+4. After the reader has been created, you can access members of the Public
+   Header Block
+
+    .. code-block:: cpp
+
+        liblas::Header const& header = reader.GetHeader();
+
+        std::cout << "Compressed: " << (header.Compressed() == true) ? "true":"false";
+        std::cout << "Signature: " << header.GetFileSignature() << '\n';
+        std::cout << "Points count: " << header.GetPointRecordsCount() << '\n';
+
+    .. note::
+        It's correct to assume that after successful instantiation of reader, the
+        public header block is automatically accessible. In other words, there
+        never be a reader that can not serve a header data.
+
+5. Iterate through point records
+
+    .. code-block:: cpp
+
+        while (reader.ReadNextPoint())
+        {
+            liblas::Point const& p = reader.GetPoint();
+
+            std::cout << p.GetX() << ", " << p.GetY() << ", " << p.GetZ() << "\n";
+        }
+
+6. Randomly read point 2
+
+    .. code-block:: cpp
+
+        reader.ReadPointAt(2);
+        liblas::Point const& p = reader.GetPoint();
+
+    .. note::
+        A `ReadPointAt` method call implies an individual seek in the file per
+        point read.  Use ``liblas::Reader::Seek`` if you wish to read a run
+        of points starting at a specified location in the file.
+
+
+    .. warning::
+        If the file is a compressed LAS file, ReadPointAt is going to be much
+        slower than randomly reading through an uncompressed file.  The `LASzip`_
+        compression as of LASzip 1.0.1 is sequential in nature, and asking for the
+        2nd point in the file means decompressing both the 0th and 1st points.
+
+7. Seek to the 10th point to start reading.  A ``liblas::Reader`` provides a
+   `Seek` method to allow you to start reading from a specified location for
+   however many points you wish.  This functionality is useful for reading
+   strips out of files.
+
+
+    .. code-block:: cpp
+
+        reader.Seek(10);
+        while (reader.ReadNextPoint())
+        ...
+
+==============================================================================
+Writing using ``liblas::Writer``
+==============================================================================
+
+1. Include required header files from libLAS and C++ Standard Library
+
+    .. code-block:: cpp
+
+        #include <liblas/liblas.hpp>
+
+        #include <fstream>  // std::ofstream
+        #include <iostream> // std::cout
+
+2. Create output stream and associate it with .las file opened to write data
+   in **binary** mode
+
+    .. code-block:: cpp
+
+        std::ofstream ofs;
+        ofs.open("file.las", ios::out | ios::binary);
+
+    .. note::
+        It is also possible to open the stream in append mode to add data
+        to an existing file.  You should first instantiate a ``liblas::Reader``
+        and fetch the ``liblas::Header`` from the file, and then create the
+        ``liblas::Writer`` with that header and the ofstream opened in append
+        mode.
+
+        .. code-block:: cpp
+
+            liblas::Header header = reader.GetHeader();
+
+            std::ios::openmode m = std::ios::out | std::ios::in | std::ios::binary | std::ios::ate;
+            ofs.open("file.las", m);
+            liblas::Writer writer(ofs, header);
+
+
+3. Create instance of ``liblas::Header`` class to define Public Header Block and set some values
+
+    .. code-block:: cpp
+
+        liblas::Header header;
+        header.SetDataFormatId(liblas::ePointFormat1); // Time only
+
+        // Set coordinate system using GDAL support
+        liblas::SpatialReference srs;
+        srs.SetFromUserInput("EPSG:4326");
+
+        header.SetSRS(srs);
+
+        // fill other header members
+
+
+    .. note::
+        Simply setting ``header.SetCompressed(true)`` on the header will be
+        sufficient to output a compressed file when the ``liblas::Writer`` is
+        created if `LASzip`_ support is enabled in libLAS, but it is up to the
+        user to specify the proper file name extension, `.laz`, when writing the
+        file.
+
+    .. note::
+        The default constructed header object can be used as perfectly valid
+        header. It will define LAS file according to LAS 1.2 and Point Data Format
+        3.
+
+4. Create LAS file writer object attached to the output stream and the based
+   on the header object.
+
+    .. code-block:: cpp
+
+     liblas::Writer writer(ofs, header);
+     // here the header has been serialized to disk into the *file.las*
+
+5. Write some point records
+
+    .. code-block:: cpp
+
+     liblas::Point point(&header);
+     point.SetCoordinates(10, 20, 30);
+     // fill other properties of point record
+
+     writer.WritePoint(point);
+
+
+
+==============================================================================
+Copying an .las file
+==============================================================================
+
+Below, two simple examples present how to rewrite content from one LAS file to
+another, in two different ways.
+
+--------------------------------------------------
+Using interface of Reader and Writer classes
+--------------------------------------------------
+
+.. code-block:: cpp
+
+ #include <liblas/lasreader.hpp>
+ #include <liblas/laswriter.hpp>
+ #include <exception>
+ #include <iostream>
+
+ int main()
+ {
+    try
+    {
+       std::ifstream ifs("input.las", ios::in | ios::binary);
+       std::ofstream ofs("output.las", ios::out | ios::binary);
+
+       liblas::Reader reader(ifs);
+       liblas::Writer writer(ofs, reader.GetHeader());
+
+       while (reader.ReadNextPoint())
+       {
+          writer.WritePoint(reader.GetPoint());
+       }
+    }
+    catch (std::exception const& e)
+    {
+       std::cerr << "Error: " << e.what() << std::endl;
+    }
+ }
+
+----------------------------------------------------
+Using iterator classes defined for reader and writer
+----------------------------------------------------
+
+The library provides two `iterators <http://en.wikipedia.org/wiki/Iterator>`__
+compatible with `iterator concept
+<http://www.sgi.com/tech/stl/Iterators.html>`__ defined in `C++ Standard
+Template Library <http://en.wikipedia.org/wiki/C%2B%2B_standard_library>`__.
+
+* lasreader_iterator - (`input iterator
+  <http://www.sgi.com/tech/stl/InputIterator.html>`__) used to read data from
+  LAS file attached to Reader object
+* laswriter_iterator - (`output iterator
+  <http://www.sgi.com/tech/stl/OutputIterator.html>`__) used to write data into
+  LAS file attached to Writer object.
+
+.. code-block:: cpp
+
+    #include <liblas/liblas.hpp>
+    #include <algorithm>
+    #include <exception>
+    #include <iostream>
+
+    using namespace liblas;
+
+    int main()
+    {
+        try
+        {
+            std::ifstream ifs("input.las", std::ios::in | std::ios::binary);
+            std::ofstream ofs("output.las", std::ios::out | std::ios::binary);
+
+            Reader reader(ifs);
+            Writer writer(ofs, reader.GetHeader());
+
+            std::copy(lasreader_iterator(reader),  lasreader_iterator(),
+                      laswriter_iterator(writer));
+        }
+        catch (std::exception const& e)
+        {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+    }
+
+==============================================================================
+Creating a compressed .laz file from a .las file
+==============================================================================
+
+Using the `LASzip`_ library in combination with libLAS, you can write compressed
+data that will be much smaller in size than regular LAS data. Of course, there
+is some CPU cost to doing so, but its use can be a big win in the right situations.
+
+The following example reads a file, `file.las`, and writes a file, `file.laz`,
+that is an exact copy of the file except for it contains compressed data.
+
+.. code-block:: cpp
+
+    #include <liblas/liblas.hpp>
+
+    #include <fstream>  // std::ofstream
+    #include <algorithm> // std::copy
+    #include <exception> // std::exception
+
+    int main()
+    {
+        try
+        {
+            std::ifstream ifs("file.las", std::ios::in | std::ios::binary);
+            std::ofstream ofs("file.laz", std::ios::out | std::ios::binary);
+
+            liblas::ReaderFactory f;
+            liblas::Reader reader = f.CreateWithStream(ifs);
+
+            liblas::Header header = reader.GetHeader();
+            header.SetCompressed(true);
+
+            liblas::Writer writer(ofs, header);
+
+            std::copy(lasreader_iterator(reader),  lasreader_iterator(),
+                      laswriter_iterator(writer));
+        }
+        catch (std::exception const& e)
+        {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+    }
+
+
+==============================================================================
+Applying filters to a reader to extract specified classes
+==============================================================================
+
+The following example demonstrates how to use the built-in ClassificationFilter
+to filter for classes that match the specified values.  You can also provide
+your own filters by subclassing liblas::FilterI and providing a filter()
+function.
+
+
+.. note::
+    Filters are applied in the order they are read from the vector that is
+    given to the Reader/Writer in the SetFilters call.
+
+.. code-block:: cpp
+
+    #include <liblas/liblas.hpp>
+
+    #include <vector>
+    #include <iostream>
+
+    class LastReturnFilter: public liblas::FilterI
+    {
+    public:
+        LastReturnFilter();
+        bool filter(const liblas::Point& point);
+
+    private:
+        LastReturnFilter(LastReturnFilter const& other);
+        LastReturnFilter& operator=(LastReturnFilter const& rhs);
+    };
+
+    LastReturnFilter::LastReturnFilter(  ) : liblas::FilterI(eInclusion) {}
+
+    bool LastReturnFilter::filter(const liblas::Point& p)
+    {
+
+        // If the GetReturnNumber equals the GetNumberOfReturns,
+        // we're a last return
+
+        bool output = false;
+        if (p.GetReturnNumber() == p.GetNumberOfReturns())
+        {
+            output = true;
+        }
+
+        // If the type is switched to eExclusion, we'll throw out all last returns.
+        if (GetType() == eExclusion && output == true)
+        {
+            output = false;
+        } else {
+            output = true;
+        }
+        return output;
+    }
+
+    int main(int argc, char* argv[])
+    {
+        std::ifstream ifs;
+
+        if (argc < 3)
+         {
+            std::cerr << "not all arguments specified.  Usage: 'filter input.las output.las'"
+                      << std::endl;
+            exit(1);
+        }
+
+        std::string in_file(argv[1]);
+        std::string out_file(argv[2]);
+
+        if (!liblas::Open(ifs, in_file.c_str()))
+        {
+            std::cout << "Can not open file" << std::endl;;
+            exit(1);
+        }
+
+        std::vector<liblas::Classification> classes;
+        classes.push_back(liblas::Classification(2)); // ground
+        classes.push_back(liblas::Classification(9)); // water
+        classes.push_back(liblas::Classification(6)); // building
+
+        std::vector<liblas::FilterPtr> filters;
+        liblas::FilterPtr class_filter = liblas::FilterPtr(new liblas::ClassificationFilter(classes));
+
+        // eInclusion means to keep the classes that match.  eExclusion would
+        // throw out those that matched
+        class_filter->SetType(liblas::FilterI::eInclusion);
+        filters.push_back(class_filter);
+
+        liblas::FilterPtr return_filter = liblas::FilterPtr(new LastReturnFilter());
+        filters.push_back(return_filter);
+
+        liblas::ReaderFactory f;
+        f.CreateWithStream(ifs);
+        reader.SetFilters(&filters);
+
+        std::ofstream ofs;
+        if (!liblas::Create(ofs, out_file.c_str()))
+        {
+            std::cout <<std::string("Can not create \'") + out_file + "\'" << std::endl;;
+            exit(1);
+        }
+        liblas::Writer writer(ofs, reader.GetHeader());
+
+        while (reader.ReadNextPoint())
+        {
+            liblas::Point const& p = reader.GetPoint();
+            writer.WritePoint(p);
+        }
+    }
+
+.. _`unit tests package`: http://trac.liblas.org/browser/test/unit
+.. _`LASzip`: http://laszip.org
+.. _`GDAL`: http://gdal.org

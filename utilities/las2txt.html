@@ -1,0 +1,414 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>las2txt &#8212; liblas.org</title>
+    <link rel="stylesheet" href="../_static/sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="las2ogr" href="las2ogr.html" />
+    <link rel="prev" title="las2las: Advanced LAS filtering and manipulation" href="las2las.html" />
+
+ 
+
+  </head><body>
+
+<table width="100%" style="width: 100%; background-color: white;">
+  <tr>
+    <td rowspan="2" style="padding: 10px 0px 10px 10px;">
+      <a href="../index.html" title="Home"><img src="../_static/liblaslogo.png" alt="libLAS banner" border="0" /></a>
+    </td>
+    <td style="padding: 10px 10px 0px 0px; text-align: right; vertical-align: top;">
+      <a href="../index.html" title="Home">Home</a> |
+      <a href="../docs.html" title="Docs">Docs</a> |
+      <a href="https://github.com/libLAS/libLAS/issues/" title="Bugs">github</a> |
+      <a href="../faq.html" title="FAQ">FAQ</a> |
+      <a href="../download.html" title="Download">Download</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 0px 10px 0px 0px; text-align: right; vertical-align: bottom;">
+
+    </td>
+  </tr>
+</table>
+
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="las2ogr.html" title="las2ogr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="las2las.html" title="las2las: Advanced LAS filtering and manipulation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../docs.html">Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LAS Utility Applications</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="las2txt">
+<span id="id1"></span><h1>las2txt<a class="headerlink" href="#las2txt" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Martin Isenburg</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:isenburg&#37;&#52;&#48;cs&#46;unc&#46;edu">isenburg<span>&#64;</span>cs<span>&#46;</span>unc<span>&#46;</span>edu</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Howard Butler</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:hobu&#46;inc&#37;&#52;&#48;gmail&#46;com">hobu<span>&#46;</span>inc<span>&#64;</span>gmail<span>&#46;</span>com</a></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#las2txt"><span class="std std-ref">las2txt</span></a> allows you to output ASRPS LAS files into ASCII text.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--------------------------------------------------------------------</span>
+    <span class="n">las2txt</span> <span class="p">(</span><span class="n">libLAS</span> <span class="mf">1.6</span><span class="o">.</span><span class="mi">0</span><span class="n">b3</span> <span class="k">with</span> <span class="n">GeoTIFF</span> <span class="mf">1.3</span><span class="o">.</span><span class="mi">0</span> <span class="n">GDAL</span> <span class="mf">1.8</span><span class="n">dev</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------------------</span>
+
+<span class="n">las2txt</span> <span class="n">options</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span> <span class="p">[</span> <span class="o">--</span><span class="n">help</span> <span class="p">]</span>         <span class="n">produce</span> <span class="n">help</span> <span class="n">message</span>
+  <span class="o">-</span><span class="n">i</span> <span class="p">[</span> <span class="o">--</span><span class="nb">input</span> <span class="p">]</span> <span class="n">arg</span>    <span class="nb">input</span> <span class="n">LAS</span> <span class="n">file</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">o</span> <span class="p">[</span> <span class="o">--</span><span class="n">output</span> <span class="p">]</span> <span class="n">arg</span>   <span class="n">output</span> <span class="n">text</span> <span class="n">file</span><span class="o">.</span>  <span class="n">Use</span> <span class="s1">&#39;stdout&#39;</span> <span class="k">if</span> <span class="n">you</span> <span class="n">want</span> <span class="n">it</span> <span class="n">written</span>
+                        <span class="n">to</span> <span class="n">the</span> <span class="n">standard</span> <span class="n">output</span> <span class="n">stream</span>
+  <span class="o">--</span><span class="n">parse</span> <span class="n">arg</span>           <span class="n">The</span> <span class="s1">&#39;--parse txyz&#39;</span> <span class="n">flag</span> <span class="n">specifies</span> <span class="n">how</span> <span class="n">to</span> <span class="nb">format</span> <span class="n">each</span>
+                        <span class="n">each</span> <span class="n">line</span> <span class="n">of</span> <span class="n">the</span> <span class="n">ASCII</span> <span class="n">file</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="s1">&#39;txyzia&#39;</span>
+                        <span class="n">means</span> <span class="n">that</span> <span class="n">the</span> <span class="n">first</span> <span class="n">number</span> <span class="n">of</span> <span class="n">each</span> <span class="n">line</span> <span class="n">should</span> <span class="n">be</span> <span class="n">the</span>
+                        <span class="n">gpstime</span><span class="p">,</span> <span class="n">the</span> <span class="nb">next</span> <span class="n">three</span> <span class="n">numbers</span> <span class="n">should</span> <span class="n">be</span> <span class="n">the</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="ow">and</span>
+                        <span class="n">z</span> <span class="n">coordinate</span><span class="p">,</span> <span class="n">the</span> <span class="nb">next</span> <span class="n">number</span> <span class="n">should</span> <span class="n">be</span> <span class="n">the</span> <span class="n">intensity</span>
+                        <span class="ow">and</span> <span class="n">the</span> <span class="nb">next</span> <span class="n">number</span> <span class="n">should</span> <span class="n">be</span> <span class="n">the</span> <span class="n">scan</span> <span class="n">angle</span><span class="o">.</span>
+
+                         <span class="n">The</span> <span class="n">supported</span> <span class="n">entries</span> <span class="n">are</span><span class="p">:</span>
+                           <span class="n">x</span> <span class="o">-</span> <span class="n">x</span> <span class="n">coordinate</span> <span class="k">as</span> <span class="n">a</span> <span class="n">double</span>
+                           <span class="n">y</span> <span class="o">-</span> <span class="n">y</span> <span class="n">coordinate</span> <span class="k">as</span> <span class="n">a</span> <span class="n">double</span>
+                           <span class="n">z</span> <span class="o">-</span> <span class="n">z</span> <span class="n">coordinate</span> <span class="k">as</span> <span class="n">a</span> <span class="n">double</span>
+                           <span class="n">X</span> <span class="o">-</span> <span class="n">x</span> <span class="n">coordinate</span> <span class="k">as</span> <span class="n">unscaled</span> <span class="n">integer</span>
+                           <span class="n">Y</span> <span class="o">-</span> <span class="n">y</span> <span class="n">coordinate</span> <span class="k">as</span> <span class="n">unscaled</span> <span class="n">integer</span>
+                           <span class="n">Z</span> <span class="o">-</span> <span class="n">z</span> <span class="n">coordinate</span> <span class="k">as</span> <span class="n">unscaled</span> <span class="n">integer</span>
+                           <span class="n">a</span> <span class="o">-</span> <span class="n">scan</span> <span class="n">angle</span>
+                           <span class="n">i</span> <span class="o">-</span> <span class="n">intensity</span>
+                           <span class="n">n</span> <span class="o">-</span> <span class="n">number</span> <span class="n">of</span> <span class="n">returns</span> <span class="k">for</span> <span class="n">given</span> <span class="n">pulse</span>
+                           <span class="n">r</span> <span class="o">-</span> <span class="n">number</span> <span class="n">of</span> <span class="n">this</span> <span class="k">return</span>
+                           <span class="n">c</span> <span class="o">-</span> <span class="n">classification</span> <span class="n">number</span>
+                           <span class="n">C</span> <span class="o">-</span> <span class="n">classification</span> <span class="n">name</span>
+                           <span class="n">u</span> <span class="o">-</span> <span class="n">user</span> <span class="n">data</span>
+                           <span class="n">p</span> <span class="o">-</span> <span class="n">point</span> <span class="n">source</span> <span class="n">ID</span>
+                           <span class="n">e</span> <span class="o">-</span> <span class="n">edge</span> <span class="n">of</span> <span class="n">flight</span> <span class="n">line</span>
+                           <span class="n">d</span> <span class="o">-</span> <span class="n">direction</span> <span class="n">of</span> <span class="n">scan</span> <span class="n">flag</span>
+                           <span class="n">R</span> <span class="o">-</span> <span class="n">red</span> <span class="n">channel</span> <span class="n">of</span> <span class="n">RGB</span> <span class="n">color</span>
+                           <span class="n">G</span> <span class="o">-</span> <span class="n">green</span> <span class="n">channel</span> <span class="n">of</span> <span class="n">RGB</span> <span class="n">color</span>
+                           <span class="n">B</span> <span class="o">-</span> <span class="n">blue</span> <span class="n">channel</span> <span class="n">of</span> <span class="n">RGB</span> <span class="n">color</span>
+                           <span class="n">M</span> <span class="o">-</span> <span class="n">vertex</span> <span class="n">index</span> <span class="n">number</span>
+
+  <span class="o">--</span><span class="n">precision</span> <span class="n">arg</span>       <span class="n">The</span> <span class="n">number</span> <span class="n">of</span> <span class="n">decimal</span> <span class="n">places</span> <span class="n">to</span> <span class="n">use</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,[</span><span class="n">t</span><span class="p">]</span>
+                        <span class="n">output</span><span class="o">.</span>
+                         <span class="o">--</span><span class="n">precision</span> <span class="mi">7</span> <span class="mi">7</span> <span class="mi">3</span>
+                         <span class="o">--</span><span class="n">precision</span> <span class="mi">3</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">6</span>
+                        <span class="n">If</span> <span class="n">you</span> <span class="n">don</span><span class="s1">&#39;t specify any precision, las2txt uses the</span>
+                        <span class="n">implicit</span> <span class="n">values</span> <span class="n">defined</span> <span class="n">by</span> <span class="n">the</span> <span class="n">header</span><span class="s1">&#39;s scale value</span>
+                        <span class="p">(</span><span class="ow">and</span> <span class="n">a</span> <span class="n">precision</span> <span class="n">of</span> <span class="mi">8</span> <span class="ow">is</span> <span class="n">used</span> <span class="k">for</span> <span class="nb">any</span> <span class="n">time</span> <span class="n">values</span><span class="o">.</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">delimiter</span> <span class="n">arg</span>       <span class="n">The</span> <span class="n">character</span> <span class="n">to</span> <span class="n">use</span> <span class="k">for</span> <span class="n">delimiting</span> <span class="n">fields</span> <span class="ow">in</span> <span class="n">the</span>
+                        <span class="n">output</span><span class="o">.</span>
+                         <span class="o">--</span><span class="n">delimiter</span> <span class="s2">&quot;,&quot;</span>
+                         <span class="o">--</span><span class="n">delimiter</span> <span class="s2">&quot;&quot;</span>
+                         <span class="o">--</span><span class="n">delimiter</span> <span class="s2">&quot; &quot;</span>
+  <span class="o">--</span><span class="n">labels</span>              <span class="n">Print</span> <span class="n">row</span> <span class="n">of</span> <span class="n">header</span> <span class="n">labels</span>
+  <span class="o">--</span><span class="n">header</span>              <span class="n">Print</span> <span class="n">header</span> <span class="n">information</span>
+  <span class="o">-</span><span class="n">v</span> <span class="p">[</span> <span class="o">--</span><span class="n">verbose</span> <span class="p">]</span>      <span class="n">Verbose</span> <span class="n">message</span> <span class="n">output</span>
+  <span class="o">--</span><span class="n">xml</span>                 <span class="n">Output</span> <span class="k">as</span> <span class="n">XML</span> <span class="o">--</span> <span class="n">no</span> <span class="n">formatting</span> <span class="n">given</span> <span class="n">by</span> <span class="o">--</span><span class="n">parse</span> <span class="ow">is</span>
+                        <span class="n">respected</span> <span class="ow">in</span> <span class="n">this</span> <span class="n">case</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">stdout</span>              <span class="n">Output</span> <span class="n">data</span> <span class="n">to</span> <span class="n">stdout</span>
+
+<span class="n">Filtering</span> <span class="n">options</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">e</span> <span class="p">[</span> <span class="o">--</span><span class="n">extent</span> <span class="p">]</span> <span class="n">arg</span>    <span class="n">Extent</span> <span class="n">window</span> <span class="n">that</span> <span class="n">points</span> <span class="n">must</span> <span class="n">fall</span> <span class="n">within</span> <span class="n">to</span> <span class="n">keep</span><span class="o">.</span>
+                         <span class="n">Use</span> <span class="n">a</span> <span class="n">comma</span><span class="o">-</span><span class="n">separated</span> <span class="ow">or</span> <span class="n">quoted</span><span class="p">,</span> <span class="n">space</span><span class="o">-</span><span class="n">separated</span> <span class="nb">list</span><span class="p">,</span>
+                         <span class="k">for</span> <span class="n">example</span><span class="p">,</span>
+                          <span class="o">-</span><span class="n">e</span> <span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">maxy</span>
+                          <span class="ow">or</span>
+                          <span class="o">-</span><span class="n">e</span> <span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">minz</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">maxy</span><span class="p">,</span> <span class="n">maxz</span>
+                          <span class="o">-</span><span class="n">e</span> <span class="s2">&quot;minx miny minz maxx maxy maxz&quot;</span>
+  <span class="o">--</span><span class="n">minx</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">greater</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">minx</span> <span class="n">to</span> <span class="n">be</span>
+                         <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">minx</span> <span class="mf">1234.0</span>
+  <span class="o">--</span><span class="n">miny</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">greater</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">miny</span> <span class="n">to</span> <span class="n">be</span>
+                         <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">miny</span> <span class="mf">5678.0</span>
+  <span class="o">--</span><span class="n">minz</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">greater</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">minz</span> <span class="n">to</span> <span class="n">be</span>
+                         <span class="n">kept</span><span class="o">.</span> <span class="n">If</span> <span class="n">maxx</span> <span class="ow">and</span> <span class="n">maxy</span> <span class="n">are</span> <span class="nb">set</span> <span class="n">but</span> <span class="ow">not</span> <span class="n">minz</span> <span class="o">*</span><span class="ow">and</span> <span class="n">maxz</span><span class="p">,</span>
+                         <span class="nb">all</span> <span class="n">z</span> <span class="n">values</span> <span class="n">are</span> <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">minz</span> <span class="mf">0.0</span>
+  <span class="o">--</span><span class="n">maxx</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">less</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">maxx</span> <span class="n">to</span> <span class="n">be</span> <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">maxx</span> <span class="mf">1234.0</span>
+  <span class="o">--</span><span class="n">maxy</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">less</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">maxy</span> <span class="n">to</span> <span class="n">be</span> <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">maxy</span> <span class="mf">5678.0</span>
+  <span class="o">--</span><span class="n">maxz</span> <span class="n">arg</span>             <span class="n">Extent</span> <span class="n">must</span> <span class="n">be</span> <span class="n">less</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">maxz</span> <span class="n">to</span> <span class="n">be</span> <span class="n">kept</span><span class="o">.</span>
+                         <span class="n">If</span> <span class="n">maxx</span> <span class="ow">and</span> <span class="n">maxy</span> <span class="n">are</span> <span class="nb">set</span> <span class="n">but</span> <span class="ow">not</span> <span class="n">maxz</span> <span class="o">*</span><span class="ow">and</span> <span class="n">minz</span><span class="p">,</span> <span class="nb">all</span> <span class="n">z</span>
+                         <span class="n">values</span> <span class="n">are</span> <span class="n">kept</span><span class="o">.</span>
+                          <span class="o">--</span><span class="n">maxz</span> <span class="mf">10.0</span>
+  <span class="o">-</span><span class="n">t</span> <span class="p">[</span> <span class="o">--</span><span class="n">thin</span> <span class="p">]</span> <span class="n">arg</span> <span class="p">(</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="n">Simple</span> <span class="n">decimation</span><span class="o">-</span><span class="n">style</span> <span class="n">thinning</span><span class="o">.</span>
+                         <span class="n">Thin</span> <span class="n">the</span> <span class="n">file</span> <span class="n">by</span> <span class="n">removing</span> <span class="n">every</span> <span class="n">t</span><span class="s1">&#39;th point from the</span>
+                         <span class="n">file</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">last</span><span class="o">-</span><span class="k">return</span><span class="o">-</span><span class="n">only</span>     <span class="n">Keep</span> <span class="n">last</span> <span class="n">returns</span> <span class="p">(</span><span class="n">cannot</span> <span class="n">be</span> <span class="n">used</span> <span class="k">with</span>
+                         <span class="o">--</span><span class="n">first</span><span class="o">-</span><span class="k">return</span><span class="o">-</span><span class="n">only</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">first</span><span class="o">-</span><span class="k">return</span><span class="o">-</span><span class="n">only</span>    <span class="n">Keep</span> <span class="n">first</span> <span class="n">returns</span> <span class="p">(</span><span class="n">cannot</span> <span class="n">be</span> <span class="n">used</span> <span class="k">with</span>
+                         <span class="o">--</span><span class="n">last</span><span class="o">-</span><span class="k">return</span><span class="o">-</span><span class="n">only</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">returns</span> <span class="n">arg</span>     <span class="n">A</span> <span class="nb">list</span> <span class="n">of</span> <span class="k">return</span> <span class="n">numbers</span> <span class="n">to</span> <span class="n">keep</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">output</span> <span class="n">file</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">returns</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">returns</span> <span class="n">arg</span>     <span class="n">Return</span> <span class="n">numbers</span> <span class="n">to</span> <span class="n">drop</span><span class="o">.</span>
+                         <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">returns</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span>
+  <span class="o">--</span><span class="n">valid_only</span>           <span class="n">Keep</span> <span class="n">only</span> <span class="n">valid</span> <span class="n">points</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">classes</span> <span class="n">arg</span>     <span class="n">A</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">classifications</span> <span class="n">to</span> <span class="n">keep</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">classes</span> <span class="mi">2</span> <span class="mi">4</span> <span class="mi">12</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">classes</span> <span class="mi">2</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">classes</span> <span class="n">arg</span>     <span class="n">A</span> <span class="n">comma</span><span class="o">-</span><span class="n">separated</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">classifications</span> <span class="n">to</span> <span class="n">drop</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">classes</span> <span class="mi">1</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">classes</span> <span class="mi">2</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">intensity</span> <span class="n">arg</span>   <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">intensity</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">intensity</span> <span class="mi">0</span><span class="o">-</span><span class="mi">100</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&lt;</span><span class="mi">200</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&gt;</span><span class="mi">400</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&gt;=</span><span class="mi">200</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">intensity</span> <span class="n">arg</span>   <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">drop</span> <span class="n">intensity</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&lt;</span><span class="mi">200</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&gt;</span><span class="mi">400</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">intensity</span> <span class="o">&gt;=</span><span class="mi">200</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">time</span> <span class="n">arg</span>        <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">time</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">time</span> <span class="mf">413665.2336</span><span class="o">-</span><span class="mf">414092.8462</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">time</span> <span class="o">&lt;</span><span class="mf">414094.8462</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">time</span> <span class="o">&gt;</span><span class="mf">413665.2336</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">time</span> <span class="o">&gt;=</span><span class="mf">413665.2336</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">time</span> <span class="n">arg</span>        <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">drop</span> <span class="n">time</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">time</span> <span class="o">&lt;</span><span class="mf">413666.2336</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">time</span> <span class="o">&gt;</span><span class="mf">413665.2336</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">time</span> <span class="o">&gt;=</span><span class="mf">413665.2336</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="n">arg</span>  <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">scan</span> <span class="n">angle</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="mi">0</span><span class="o">-</span><span class="mi">100</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="o">&lt;</span><span class="mi">100</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="o">&lt;=</span><span class="mi">100</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="n">arg</span>  <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">drop</span> <span class="n">scan</span> <span class="n">angle</span><span class="o">.</span>
+                         <span class="n">The</span> <span class="n">following</span> <span class="n">expression</span> <span class="n">types</span> <span class="n">are</span> <span class="n">supported</span><span class="p">:</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="o">&lt;</span><span class="mi">30</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="o">&gt;</span><span class="mi">100</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">scan</span><span class="o">-</span><span class="n">angle</span> <span class="o">&gt;=</span><span class="mi">100</span>
+  <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">color</span> <span class="n">arg</span>       <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">colors</span><span class="o">.</span>
+                         <span class="n">Define</span> <span class="n">colors</span> <span class="k">as</span> <span class="n">two</span> <span class="mi">3</span><span class="o">-</span><span class="n">tuples</span> <span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">B</span><span class="o">-</span><span class="n">R</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">B</span><span class="p">):</span>
+                         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">color</span> <span class="s1">&#39;0,0,0-125,125,125&#39;</span>
+  <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">color</span> <span class="n">arg</span>       <span class="n">Range</span> <span class="ow">in</span> <span class="n">which</span> <span class="n">to</span> <span class="n">drop</span> <span class="n">colors</span><span class="o">.</span>
+                         <span class="n">Define</span> <span class="n">colors</span> <span class="k">as</span> <span class="n">two</span> <span class="mi">3</span><span class="o">-</span><span class="n">tuples</span> <span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">B</span><span class="o">-</span><span class="n">R</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">B</span><span class="p">):</span>
+                         <span class="o">--</span><span class="n">drop</span><span class="o">-</span><span class="n">color</span> <span class="s1">&#39;255,255,255-65536,65536,65536&#39;</span>
+
+<span class="n">For</span> <span class="n">more</span> <span class="n">information</span><span class="p">,</span> <span class="n">see</span> <span class="n">the</span> <span class="n">full</span> <span class="n">documentation</span> <span class="k">for</span> <span class="n">lasinfo</span> <span class="n">at</span><span class="p">:</span>
+ <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">liblas</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">utilities</span><span class="o">/</span><span class="n">las2txt</span><span class="o">.</span><span class="n">html</span>
+<span class="o">----------------------------------------------------------</span>
+</pre></div>
+</div>
+<p>The ‘-parse txyz’ flag specifies how to format each each line of the ASCII
+file. For example, ‘txyzia’ means that the first number of each line should
+be the gpstime, the next three numbers should be the x, y, and z coordinate,
+the next number should be the intensity and the next number should be the
+scan angle.</p>
+<div class="section" id="supported-entries">
+<h3>Supported entries<a class="headerlink" href="#supported-entries" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>a - scan angle</li>
+<li>i - intensity,</li>
+<li>n - number of returns for given pulse</li>
+<li>r - number of this return</li>
+<li>c - classification</li>
+<li>u - user data</li>
+<li>p - point source ID</li>
+<li>e - edge of flight line flag</li>
+<li>d - direction of scan flag</li>
+<li>R - red channel of RGB color</li>
+<li>G - green channel of RGB color</li>
+<li>B - blue channel of RGB color</li>
+<li>M - vertex index number</li>
+</ul>
+</div>
+<div class="section" id="separators">
+<h3>Separators<a class="headerlink" href="#separators" title="Permalink to this headline">¶</a></h3>
+<p>The ‘-sep space’ flag specifies what separator to use. The default is a
+space.  The following list is valid for separator characters (case sensitive):</p>
+<ul class="simple">
+<li>tab</li>
+<li>comma</li>
+<li>colon</li>
+<li>hyphen</li>
+<li>dot</li>
+<li>semicolon</li>
+</ul>
+</div>
+<div class="section" id="header-separators">
+<h3>Header Separators<a class="headerlink" href="#header-separators" title="Permalink to this headline">¶</a></h3>
+<p>The ‘-header pound’ flag results in the header information being printed at
+the beginning of the ASCII file in form of a comment that starts with the
+special character ‘#’. Other possible special characters include (case sensitive):</p>
+<ul class="simple">
+<li>percent</li>
+<li>dollar</li>
+<li>semicolon</li>
+<li>comma</li>
+<li>star</li>
+<li>colon</li>
+<li>semicolon</li>
+</ul>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="simple-conversion-to-text-file">
+<h3>Simple conversion to text file<a class="headerlink" href="#simple-conversion-to-text-file" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2txt -i lidar.las -o lidar.txt -parse xyz
+</pre></div>
+</div>
+<p>converts LAS file to ASCII and places the x, y, and z coordinate
+of each point at the 1st, 2nd, and 3rd entry of each line. the
+entries are separated by a space.</p>
+</div>
+<div class="section" id="specifying-a-separator">
+<h3>Specifying a separator<a class="headerlink" href="#specifying-a-separator" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2txt -i lidar.las -o lidar.txt -parse txyzr -sep komma
+</pre></div>
+</div>
+<p>converts LAS file to ASCII and places the gps_time as the first
+entry, the x, y, and z coordinates at the 2nd, 3rd, and 4th entry
+and the number of the return as the 5th entry of each line. the
+entries are separated by a komma.</p>
+</div>
+<div class="section" id="altering-the-header-separator">
+<h3>Altering the header separator<a class="headerlink" href="#altering-the-header-separator" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2txt -i lidar.las -o lidar.txt -parse xyzia -sep semicolon -header pound
+</pre></div>
+</div>
+<p>converts LAS file to ASCII and places the x, y, and z coordinate
+at the 1st, 2nd, and 3rd entry, the intensity at the 4th and the
+scan angle as the 5th entry of each line. The entries are separated
+by a semicolon. at the beginning of the file we print the header
+information as a comment starting with a ‘#’ symbol.</p>
+</div>
+<div class="section" id="altering-the-coordinate-order">
+<h3>Altering the coordinate order<a class="headerlink" href="#altering-the-coordinate-order" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ las2txt -i lidar.las -o lidar.txt -parse xyzcu -sep tab -header percent
+</pre></div>
+</div>
+<p>converts LAS file to ASCII and places the x, y, and z coordinate
+at the 1st, 2nd, and 3rd entry, the classification at the 4th and
+the user data as the 5th entry of each line. the entries are
+separated by a semicolon. at the beginning of the file we print
+the header information as a comment starting with a ‘%’ symbol.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../docs.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../start.html">Getting Started with libLAS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../osgeo4w.html">Windows Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compilation.html">Compilation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">LAS Utility Applications</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="lasinfo.html">lasinfo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="las2las.html">las2las: Advanced LAS filtering and manipulation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">las2txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="las2ogr.html">las2ogr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="las2tindex.html">las2tindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="txt2las.html">txt2las</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ts2las.html">ts2las</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="http://liblas.org/doxygen/annotated.html">C++ Class API</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://liblas.org/doxygen/liblas_8h.html">C API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lastools.html">libLAS’ Relationship to LAStools</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/utilities/las2txt.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="las2ogr.html" title="las2ogr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="las2las.html" title="las2las: Advanced LAS filtering and manipulation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../docs.html">Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >LAS Utility Applications</a> &#187;</li> 
+      </ul>
+    </div>
+<div class="footer">
+        &copy; <a href="../copyright.html">Copyright</a> 2016, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 02, 2018 
+      and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+
+
+</div>
+
+
+  </body>
+</html>
