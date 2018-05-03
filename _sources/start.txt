@@ -1,0 +1,312 @@
+.. _start:
+
+******************************************************************************
+Getting Started with libLAS
+******************************************************************************
+
+.. contents::
+    :depth: 3
+    :backlinks: none
+
+
+
+:Author: Howard Butler
+:Contact: hobu.inc at gmail dot com
+
+
+Overview
+------------------------------------------------------------------------------
+
+libLAS is two things: a library for embedding read and write support of the
+ASPRS LAS format into your own C/C++ applications, and a suite of command-line
+utilities based on :ref:`LASTools <lastools_liblas>` for inspecting, manipulating,
+transforming, and processing LAS LiDAR data.
+
+This document is an entry point into the world of libLAS, and will give a
+general overview of the types of operations you can do with the :ref:`libLAS utilities <utilities>`
+as well as point you to other information for developing your own applications
+with libLAS.
+
+Installation
+------------------------------------------------------------------------------
+
+:ref:`download` contains the canonical location for obtaining libLAS in
+both source and binary forms.
+
+Windows
+..............................................................................
+
+:ref:`osgeo4w_install` contains information how to install libLAS on Windows.
+
+Unix
+..............................................................................
+
+Packages are available for `DebianGIS`_, but in most other cases you are
+going to have to compile libLAS yourself. :ref:`compilation` provides an
+extensive synopsis of how to do so.
+
+OSX
+..............................................................................
+
+If you use you `Homebrew`_, you can install libLAS this way::
+
+    $ brew install liblas
+
+If you want the latest development version::
+
+    $ brew install liblas --HEAD
+
+Otherwise, you have to :ref:`compile <compilation>` libLAS yourself.
+
+
+Compilation
+..............................................................................
+
+:ref:`compilation` shows how to compile libLAS for your own use on Windows,
+Mac OSX, and Linux.
+
+Processing
+------------------------------------------------------------------------------
+
+The libLAS :ref:`command-line utilities <utilities>` provide the bulk of
+user-facing operational software for libLAS, although the underlying libLAS
+library is what powers them.  Below is a listing of common operations that
+you might want to do on LAS data, and the utilities and approaches to
+take to complete those tasks.
+
+Reprojecting an LAS file
+..............................................................................
+
+All LAS data are in some sort of coordinate system, even if that coordinate
+system is not described in the LAS file.  For terrestrial LAS data, these
+coordinate system descriptions often map to coordinate systems described
+by the `EPSG`_ database.  Another source of information about coordinate
+systems in http://spatialreference.org.
+
+The :ref:`las2las <las2las>` utility is the tool you will want to use to
+reproject LAS data.  :ref:`las2las <las2las>` can take advantage of the
+existing coordinate system description that might already be specified in the
+LAS file, or you may override the coordinate system description (or supply
+one if none was specified).
+
+We're going to use an example file at http://liblas.org/samples/srs.las which
+contains only 10 points and has a coordinate system defined.  Please
+download this file if you want to follow along.
+
+:ref:`las2las <las2las>` is very similar in behavior to another data
+translation utility for raster data -- `gdal_translate`_.  To reproject data,
+we must have a description of both the coordinate system we are starting with
+and a description of the coordinate system we are going to.  To find out what
+you are starting with, issue a :ref:`lasinfo <lasinfo>` command:
+
+::
+
+    lasinfo --no-check srs.las
+
+.. note::
+
+    The --no-check option tells lasinfo to only print the header information
+    for the file and to not scan through all of the points.  For a 10 point file,
+    this of course isn't much of a concern, but with a 50 or 500 million point
+    file, it isn't worth waiting for a full scan of the data if all you
+    want is header information.
+
+Our :ref:`lasinfo <lasinfo>` invocation tells us that the ``srs.las`` file
+is in a UTM North Zone 17 coordinate system:
+
+::
+
+    PROJCS["WGS 84 / UTM zone 17N",
+        GEOGCS["WGS 84",
+            DATUM["WGS_1984",
+                SPHEROID["WGS 84",6378137,298.257223563,
+                    AUTHORITY["EPSG","7030"]],
+                AUTHORITY["EPSG","6326"]],
+            PRIMEM["Greenwich",0],
+            UNIT["degree",0.0174532925199433],
+            AUTHORITY["EPSG","4326"]],
+        PROJECTION["Transverse_Mercator"],
+        PARAMETER["latitude_of_origin",0],
+        PARAMETER["central_meridian",-81],
+        PARAMETER["scale_factor",0.9996],
+        PARAMETER["false_easting",500000],
+        PARAMETER["false_northing",0],
+        UNIT["metre",1,
+            AUTHORITY["EPSG","9001"]],
+        AUTHORITY["EPSG","32617"]]
+
+Now that we know our input coordinate system, we can make a decision about
+what to reproject the data to.  In our first example, we're going to use
+the venerable plate carrée non-coordinate system, `EPSG:4326`_.
+
+::
+
+    las2las srs.las --t_srs EPSG:4326
+
+Our process succeeds, but after a quick inspection of the data with
+``lasinfo output.las`` we see a problem:
+
+::
+
+    ...
+    Scale Factor X Y Z:          0.01 0.01 0.01
+    Offset X Y Z:                -0.00 -0.00 -0.00
+    ...
+    Min X, Y, Z: 		-83.43, 39.01, 170.58,
+    Max X, Y, Z: 		-83.43, 39.01, 170.76,
+
+The ``srs.las`` file had a scale of 0.01, or two decimal places of precision
+for its X, Y, and Z coordinates. For UTM data, this is ok, because it implies
+an implicit precision of 1 cm. For decimal degree data of the unprojected
+Plate Carrée coordinate system, it causes us to lose a bunch of precision. We
+need to set our scale values to something that can hold more precision in our
+case:
+
+::
+
+    las2las --t_srs EPSG:4326 srs.las --scale 0.000001 0.000001 0.01
+
+Another quick inspection with :ref:`lasinfo <lasinfo>` gives us something
+we're more comfortable with:
+
+::
+
+    ...
+    Scale Factor X Y Z:          0.000001 0.000001 0.01
+    Offset X Y Z:                -0.000000 -0.000000 -0.00
+    ...
+    Min X, Y, Z: 		-83.427598, 39.012599, 170.58
+    Max X, Y, Z: 		-83.427548, 39.012618, 170.76
+
+Vertical datum transformation of an LAS file
+..............................................................................
+
+We're going to continue what we were doing in `Reprojecting an LAS file`_ but
+add a twist -- we want to change the vertical datum on the data from WGS84
+to NAVD88.
+
+.. warning:
+
+    A number of requirements are needed before you can do vertical datum
+   transformations with libLAS. The most important is GDAL support, of course,
+   but you also need a very current (possibly even unreleased) version of
+   `Proj.4`_ and the vertical datum .gtx transformation files. If you're using
+   :ref:`osgeo4w_install`, you already have all of this installed when you
+   installed libLAS. For Linux or other Unix platforms, you should be aware of
+   these requirements.
+
+Assuming you have all of the prerequisites in place, we can do the vertical
+datum transformation quite simply (again, worrying about precision as well):
+
+
+::
+
+    las2las srs.las --t_srs EPSG:4326+5703 --scale 0.000001 0.000001 0.01
+
+The key point there is adding `+5703` to the coordinate system description
+tells the GDAL/Proj.4 machinery to do a vertical transformation.  There are
+other ways to have these operations happen using `WKT`_ and even GeoTIFF
+keys, but this is the most simple way to do things via command line.
+
+Assigning color information to a LAS file
+..............................................................................
+
+.. note::
+
+    The following example assumes you are working with the `Autzen_Stadium`_
+    example file that is available from the http://liblas.org/sample sample
+    library.
+
+
+Frequent availability of combined terrestrial LiDAR and image captures means
+that its now possible to obtain .las files that you can stylize with RGB
+imagery.  The LAS 1.2 specification provides two different point data
+types that allow storing RGB data as 16 bit integers, but the tools to
+do the actual intersection operation have been somewhat limited.
+
+libLAS 1.6+ allows you to assign color information to a .las file if `GDAL`_
+is linked in at compile-time.
+
+.. note::
+    The :ref:`LAS specifications <specifications>` only allow two different
+    point format types to store color information -- point format 2 and point
+    format 3. The difference between point format 2 and point format 3 is that
+    3 also has time stored on it. Additionally, only LAS 1.2 and 1.3 versions
+    support storing color information, but libLAS only can write LAS 1.2 as of
+    libLAS 1.6.0.
+
+
+
+1. Unzip the `Autzen Stadium <Autzen_Stadium>`_ data.
+
+    ::
+
+        $ unzip Autzen_Stadium.zip
+        Archive:  Autzen_Stadium.zip
+         creating: Autzen_Stadium/
+         inflating: Autzen_Stadium/image.tif
+         inflating: Autzen_Stadium/lidar.las
+
+2. Issue the :ref:`las2las <las2las>` call
+
+    ::
+
+        $   las2las -i lidar.las \
+                    --color-source image.tif \
+                    -o output.las \
+                    --file-format 1.2 \
+                    --point-format 3 \
+                    -v
+
+    ::
+
+        Opening lidar.las to fetch Header
+        Setting format to: 1.2
+        Setting point format to: 3
+        Fetching color from ' image.tif' using bands '1, 2, 3' for R, G, B
+        Writing output:
+         - : output.las
+        0...10...20...30...40...50...60...70...80...90...100 - done.
+
+3.  Inspect the :ref:`lasinfo <lasinfo>` output and see color information
+    attached.
+
+    ::
+
+        lasinfo output.las
+
+        ...
+
+          Minimum Color:	39 56 56
+          Maximum Color:	252 254 251
+
+.. note::
+    :ref:`assign_color` contains more detailed information about this process.
+
+Compressing an LAS file with `LASzip`_
+..............................................................................
+
+libLAS provides the ability to compress data using the fantastic `LASzip`_
+compression library.
+
+
+
+.. _`LASzip`: http://laszip.org
+.. _`CMake`: http://www.cmake.org/
+.. _`CTest`: http://cmake.org/cmake/help/ctest-2-8-docs.html
+.. _`CMake 2.8.0+`: http://www.cmake.org/cmake/help/cmake-2-8-docs.html
+.. _`continuous integration`: http://en.wikipedia.org/wiki/Continuous_integration
+.. _`Curses`: http://en.wikipedia.org/wiki/Curses_%28programming_library%29
+.. _`Autoconf`: http://www.gnu.org/software/autoconf/
+.. _`LLVM`: http://llvm.org/
+.. _`OSGeo4W`: http://trac.osgeo.org/osgeo4w/
+.. _`Boost`: http://www.boost.org/
+.. _`DebianGIS`: http://wiki.debian.org/DebianGis
+.. _`gdal_translate`: http://www.gdal.org/gdal_translate.html
+.. _`EPSG`: http://www.epsg-registry.org/
+.. _`EPSG:4326`: http://spatialreference.org/ref/epsg/4326/
+.. _`Proj.4`: http://trac.osgeo.org/proj/
+.. _`WKT`: http://en.wikipedia.org/wiki/Well-known_text#Spatial_reference_systems
+.. _`GDAL`: http://gdal.org
+.. _`Autzen_Stadium`: http://liblas.org/samples/Autzen_Stadium.zip
+.. _`Homebrew`: http://brew.sh

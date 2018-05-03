@@ -1,0 +1,64 @@
+.. _osgeo4w_install:
+
+******************************************************************************
+Installing libLAS using OSGeo4W
+******************************************************************************
+
+
+:Author: Howard Butler
+:Contact: hobu.inc at gmail dot com
+:Date: 8/1/2015
+
+This document describes how to install libLAS and its related :ref:`utilities <utilities>` 
+using `OSGeo4W`_.  `OSGeo4W`_ is a collection of Windows packages that uses the `Cygwin`_ 
+installer to manage package dependencies.  libLAS in its fully-featured form 
+requires a number of dependencies, and these are all available via the OSGeo4W installer.
+
+1) Obtain the `OSGeo4W Installer`_.  It is an executable that will run and 
+   automatically download and install selected packages.  
+   
+    .. note::
+        OSGeo4W does not currently provide any options to install in any other
+        locations besides ``C:\OSGeo4W64``.
+
+.. `OSGeo4W Installer`: http://download.osgeo.org/osgeo4w/osgeo4w-setup-x86_64.exe
+
+2) Choose "Advanced Install".  
+
+    .. note::
+        libLAS is not part of any default package grouping, and it must be
+        installed individually.
+        
+.. figure:: ./images/osgeo4w-advanced-install.png
+    :alt: Choosing the "Advanced" OSGeo4W install
+
+3) Select liblas from the "Commandline_Utilities" dropdown
+
+.. figure:: ./images/osgeo4w-select-liblas.png
+    :alt: Selecting libLAS to install from the "Advanced" list tree
+
+4) *Optional*: Select liblas-python from the "Libs" dropdown
+
+5) Run the ``OSGeo4W Shell`` from Start-Programs-OSGeo4W
+
+6) Execute the ``liblas`` command to set environment variables necessary to 
+   support full libLAS operations.
+   
+    .. note::
+        libLAS needs a number of environment variables set to do its business, 
+        most notably the ones related to `GDAL`_ and `Proj.4`_ for 
+        reprojection and coordinate system description.
+
+.. figure:: ./images/osgeo4w-run-liblas-shell.png
+    :alt: Running the libLAS subshell from OSGeo4W
+
+7) Test ``lasinfo`` with your own data
+
+.. figure:: ./images/osgeo4w-lasinfo-output.png
+    :alt: Running lasinfo
+
+.. _`OSGeo4W Installer`: http://download.osgeo.org/osgeo4w/osgeo4w-setup.exe
+.. _`OSGeo4W`: http://trac.osgeo.org/osgeo4w/
+.. _`Cygwin`: http://www.cygwin.com/
+.. _`GDAL`: http://www.gdal.org
+.. _`Proj.4`: http://trac.osgeo.org/proj/
