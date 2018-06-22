@@ -89,9 +89,10 @@ existing coordinate system description that might already be specified in the
 LAS file, or you may override the coordinate system description (or supply
 one if none was specified).
 
-We're going to use an example file at http://liblas.org/samples/srs.las which
-contains only 10 points and has a coordinate system defined.  Please
-download this file if you want to follow along.
+We're going to use an example `test/data/srs.las` file available from
+https://github.com/libLAS/libLAS repository which contains only 10 points
+and has a coordinate system defined. Please download this file if you
+want to follow along.
 
 :ref:`las2las <las2las>` is very similar in behavior to another data
 translation utility for raster data -- `gdal_translate`_.  To reproject data,
