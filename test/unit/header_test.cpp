@@ -12,7 +12,7 @@
 #include "common.hpp"
 
 namespace tut
-{ 
+{
     struct lasheader_data
     {
         liblas::Header m_default;
@@ -37,14 +37,14 @@ namespace tut
     void to::test<2>()
     {
         using liblas::Header;
-        
+
         Header copy_of_default(m_default);
         test_default_header(copy_of_default);
 
         std::string sig("LASF and garbage");
 
         Header h1;
-        
+
         h1.SetFileSignature(sig);
         ensure_not(h1.GetFileSignature() == sig);
         ensure_equals(h1.GetFileSignature().size(), std::string::size_type(4));
@@ -64,7 +64,7 @@ namespace tut
     void to::test<3>()
     {
         using liblas::Header;
-        
+
         Header copy_of_default;
         copy_of_default = m_default;
         test_default_header(copy_of_default);
@@ -153,11 +153,11 @@ namespace tut
     void to::test<7>()
     {
         std::string strid("030B4A82-1B7C-11CF-9D53-00AA003C9CB6");
-        boost::uuids::uuid id = boost::uuids::string_generator()(strid);        
+        boost::uuids::uuid id = boost::uuids::string_generator()(strid);
 
         liblas::Header h;
         h.SetProjectId(id);
-        
+
         ensure_not(h.GetProjectId() == boost::uuids::nil_uuid());
         ensure_equals(h.GetProjectId(), id);
     }
@@ -254,7 +254,7 @@ namespace tut
     template<>
     void to::test<11>()
     {
-        typedef ::liblas::Header::RecordsByReturnArray::size_type size_type;
+//         typedef ::liblas::Header::RecordsByReturnArray::size_type size_type;
         typedef ::boost::uint32_t count_type;
 
         liblas::Header h;

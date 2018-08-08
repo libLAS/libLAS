@@ -4,7 +4,7 @@
  * Purpose: LAS information with optional configuration
  * Author:  Howard Butler, hobu.inc at gmail.com
  ***************************************************************************
- * Copyright (c) 2010, Howard Butler, hobu.inc at gmail.com 
+ * Copyright (c) 2010, Howard Butler, hobu.inc at gmail.com
  *
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
@@ -30,14 +30,14 @@ liblas::Summary check_points(   liblas::Reader& reader,
 
     liblas::Summary summary;
     summary.SetHeader(reader.GetHeader());
-    
+
     reader.SetFilters(filters);
     reader.SetTransforms(transforms);
 
 
 
     if (verbose)
-    std::cout << "Scanning points:" 
+    std::cout << "Scanning points:"
         << "\n - : "
         << std::endl;
 
@@ -46,7 +46,7 @@ liblas::Summary check_points(   liblas::Reader& reader,
     //
     boost::uint32_t i = 0;
     boost::uint32_t const size = reader.GetHeader().GetPointRecordsCount();
-    
+
 
     while (reader.ReadNextPoint())
     {
@@ -59,9 +59,9 @@ liblas::Summary check_points(   liblas::Reader& reader,
     }
     if (verbose)
         std::cout << std::endl;
-    
+
     return summary;
-    
+
 }
 
 void OutputHelp( std::ostream & oss, po::options_description const& options)
@@ -73,7 +73,7 @@ void OutputHelp( std::ostream & oss, po::options_description const& options)
     oss << options;
 
     oss <<"\nFor more information, see the full documentation for lasinfo at:\n";
-    
+
     oss << " http://liblas.org/utilities/lasinfo.html\n";
     oss << "----------------------------------------------------------\n";
 
@@ -83,17 +83,17 @@ void PrintVLRs(std::ostream& os, liblas::Header const& header)
 {
     if (!header.GetRecordsCount())
         return ;
-        
+
     os << "---------------------------------------------------------" << std::endl;
     os << "  VLR Summary" << std::endl;
     os << "---------------------------------------------------------" << std::endl;
-    
+
     typedef std::vector<VariableRecord>::size_type size_type;
     for(size_type i = 0; i < header.GetRecordsCount(); i++) {
         liblas::VariableRecord const& v = header.GetVLR(i);
         os << v;
     }
-    
+
 }
 
 
@@ -111,10 +111,10 @@ int main(int argc, char* argv[])
     bool show_point = false;
     bool use_locale = false;
     boost::uint32_t point = 0;
-    
+
     std::vector<liblas::FilterPtr> filters;
     std::vector<liblas::TransformPtr> transforms;
-    
+
     liblas::Header header;
 
     try {
@@ -153,18 +153,18 @@ int main(int argc, char* argv[])
 
         po::notify(vm);
 
-        if (vm.count("help")) 
+        if (vm.count("help"))
         {
             OutputHelp(std::cout, options);
             return 1;
         }
 
-        if (vm.count("point")) 
+        if (vm.count("point"))
         {
             show_point = true;
         }
 
-        if (vm.count("input")) 
+        if (vm.count("input"))
         {
             input = vm["input"].as< string >();
             std::ifstream ifs;
@@ -191,15 +191,15 @@ int main(int argc, char* argv[])
         if (!liblas::Open(ifs, input.c_str()))
         {
             std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
-            return false;
+            return -1;
         }
-    
+
 
         liblas::ReaderFactory f;
         liblas::Reader reader = f.CreateWithStream(ifs);
         if (show_point)
         {
-            try 
+            try
             {
                 reader.ReadPointAt(point);
                 liblas::Point const& p = reader.GetPoint();
@@ -208,8 +208,8 @@ int main(int argc, char* argv[])
                     tree.add_child("points.point", p.GetPTree());
                     liblas::property_tree::write_xml(std::cout, tree);
                     exit(0);
-                } 
-                else 
+                }
+                else
                 {
                     if (use_locale)
                     {
@@ -217,28 +217,28 @@ int main(int argc, char* argv[])
                         std::cout.imbue(l);
                     }
                     std::cout <<  p << std::endl;
-                    exit(0);    
+                    exit(0);
                 }
-                
+
             } catch (std::out_of_range const& e)
             {
                 std::cerr << "Unable to read point at index " << point << ": " << e.what() << std::endl;
                 exit(1);
-                
+
             }
 
         }
-        
+
         liblas::Summary summary;
         if (check)
-            summary = check_points(  reader, 
+            summary = check_points(  reader,
                             filters,
                             transforms,
                             verbose
                             );
 
 
-        
+
         if (output_xml && output_json) {
             std::cerr << "both JSON and XML output cannot be chosen";
             return 1;
@@ -247,11 +247,11 @@ int main(int argc, char* argv[])
             liblas::property_tree::ptree tree;
             if (check)
                 tree = summary.GetPTree();
-            else 
+            else
             {
                 tree.add_child("summary.header", header.GetPTree());
             }
-            
+
             liblas::property_tree::write_xml(std::cout, tree);
             return 0;
         }
@@ -262,16 +262,16 @@ int main(int argc, char* argv[])
             std::cout.imbue(l);
         }
 
-        std::cout << header << std::endl;        
+        std::cout << header << std::endl;
         if (show_vlrs)
             PrintVLRs(std::cout, header);
 
         if (show_schema)
             std::cout << header.GetSchema();
-                    
+
         if (check) {
             std::cout << summary << std::endl;
-            
+
         }
     }
     catch(std::exception& e) {
@@ -281,7 +281,7 @@ int main(int argc, char* argv[])
     catch(...) {
         std::cerr << "Exception of unknown type!\n";
     }
-    
+
     return 0;
 
 

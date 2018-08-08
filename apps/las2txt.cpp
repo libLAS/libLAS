@@ -2,10 +2,10 @@
  *
  * Project: libLAS -- C/C++ read/write library for LAS LIDAR data
  * Purpose: LAS translation to ASCII text with optional configuration
- * Author:  Martin Isenburg isenburg@cs.unc.edu 
+ * Author:  Martin Isenburg isenburg@cs.unc.edu
  * Author:  Howard Butler, hobu.inc at gmail.com
  ***************************************************************************
- * Copyright (c) 2010, Howard Butler, hobu.inc at gmail.com 
+ * Copyright (c) 2010, Howard Butler, hobu.inc at gmail.com
  *
  * See LICENSE.txt in this source distribution for more information.
  **************************************************************************/
@@ -35,14 +35,14 @@ std::string GetLabels(std::string const& parse_string,
                     std::string const& delimiter)
 {
     std::ostringstream output;
-    
+
     boost::uint32_t i = 0;
     for (;;)
     {
-        
+
         switch (parse_string[i])
         {
-        /* // the x coordinate */      
+        /* // the x coordinate */
         case 'x':
             output << "\"X\"";
             break;
@@ -50,11 +50,11 @@ std::string GetLabels(std::string const& parse_string,
         case 'y':
             output << "\"Y\"";
             break;
-        /* // the z coordinate */ 
+        /* // the z coordinate */
         case 'z':
             output << "\"Z\"";
             break;
-        /* // the raw x coordinate */      
+        /* // the raw x coordinate */
         case 'X':
             output << "\"Raw X\"";
             break;
@@ -62,12 +62,12 @@ std::string GetLabels(std::string const& parse_string,
         case 'Y':
             output << "\"Raw Y\"";
             break;
-        /* // the raw z coordinate */ 
+        /* // the raw z coordinate */
         case 'Z':
             output << "\"Raw Z\"";
             break;
         /* // the gps-time */
-        case 't': 
+        case 't':
             output << "\"Time\"";
             break;
         /* // the intensity */
@@ -79,7 +79,7 @@ std::string GetLabels(std::string const& parse_string,
             output << "\"Scan Angle\"";
             break;
         /* the number of the return */
-        case 'r': 
+        case 'r':
             output << "\"Return Number\"";
             break;
         /* the classification */
@@ -91,7 +91,7 @@ std::string GetLabels(std::string const& parse_string,
             output << "\"Classification Name\"";
             break;
         /* the user data */
-        case 'u': 
+        case 'u':
             output << "\"User Data\"";
             break;
         /* the number of returns of given pulse */
@@ -101,15 +101,15 @@ std::string GetLabels(std::string const& parse_string,
         /* the red channel color */
         case 'R':
             output << "\"Red\"";
-            break;            
+            break;
         /* the green channel color */
-        case 'G': 
+        case 'G':
             output << "\"Green\"";
-            break;            
+            break;
         /* the blue channel color */
-        case 'B': 
+        case 'B':
             output << "\"Blue\"";
-            break;            
+            break;
         case 'M':
             output << "\"ID\"";
             break;
@@ -117,11 +117,11 @@ std::string GetLabels(std::string const& parse_string,
             output << "\"Point Source ID\"";
             break;
         /* the edge of flight line flag */
-        case 'e': 
+        case 'e':
             output << "\"Flight Line Edge\"";
             break;
         /* the direction of scan flag */
-        case 'd': 
+        case 'd':
             output << "\"Scan Direction\"";
             break;
         }
@@ -144,21 +144,21 @@ std::string GetLabels(std::string const& parse_string,
 
 std::string GetPointString( std::string const& parse_string,
                             std::string const& delimiter,
-                            liblas::Point const& p, 
-                            boost::array<boost::uint32_t, 4> precisions, 
+                            liblas::Point const& p,
+                            boost::array<boost::uint32_t, 4> precisions,
                             boost::uint32_t index)
 {
-    
+
     std::ostringstream output;
 
     boost::uint32_t i = 0;
     liblas::Color const& c = p.GetColor();
     for (;;)
     {
-        
+
         switch (parse_string[i])
         {
-        /* // the x coordinate */      
+        /* // the x coordinate */
         case 'x':
             output.setf(std::ios_base::fixed, std::ios_base::floatfield);
             output.precision(precisions[0]); //x precision
@@ -174,7 +174,7 @@ std::string GetPointString( std::string const& parse_string,
             output.unsetf(std::ios_base::fixed);
             output.unsetf(std::ios_base::floatfield);
             break;
-        /* // the z coordinate */ 
+        /* // the z coordinate */
         case 'z':
             output.setf(std::ios_base::fixed, std::ios_base::floatfield);
             output.precision(precisions[2]); //z precision
@@ -182,7 +182,7 @@ std::string GetPointString( std::string const& parse_string,
             output.unsetf(std::ios_base::fixed);
             output.unsetf(std::ios_base::floatfield);
             break;
-        /* // the raw x coordinate */      
+        /* // the raw x coordinate */
         case 'X':
             output << p.GetRawX();
             break;
@@ -190,12 +190,12 @@ std::string GetPointString( std::string const& parse_string,
         case 'Y':
             output << p.GetRawY();
             break;
-        /* // the raw z coordinate */ 
+        /* // the raw z coordinate */
         case 'Z':
             output << p.GetRawZ();
             break;
         /* // the gps-time */
-        case 't': 
+        case 't':
             output.setf(std::ios_base::fixed, std::ios_base::floatfield);
             output.precision(precisions[3]); //t precision
             output << p.GetTime();
@@ -211,7 +211,7 @@ std::string GetPointString( std::string const& parse_string,
             output << (int)p.GetScanAngleRank();
             break;
         /* the number of the return */
-        case 'r': 
+        case 'r':
             output << p.GetReturnNumber();
             break;
         /* the classification */
@@ -223,7 +223,7 @@ std::string GetPointString( std::string const& parse_string,
             output << p.GetClassification().GetClassName();
             break;
         /* the user data */
-        case 'u': 
+        case 'u':
             // output.setf( std::ios_base::hex, std::ios_base::basefield );
             // output.setf( std::ios::showbase);
             output << (int)p.GetUserData();
@@ -238,15 +238,15 @@ std::string GetPointString( std::string const& parse_string,
         /* the red channel color */
         case 'R':
             output << c.GetRed();
-            break;            
+            break;
         /* the green channel color */
-        case 'G': 
+        case 'G':
             output << c.GetGreen();
-            break;            
+            break;
         /* the blue channel color */
-        case 'B': 
+        case 'B':
             output << c.GetBlue();
-            break;            
+            break;
         case 'M':
             output << index;
             break;
@@ -254,11 +254,11 @@ std::string GetPointString( std::string const& parse_string,
             output << p.GetPointSourceID();
             break;
         /* the edge of flight line flag */
-        case 'e': 
+        case 'e':
             output << p.GetFlightLineEdge();
             break;
         /* the direction of scan flag */
-        case 'd': 
+        case 'd':
             output << p.GetScanDirection();
             break;
         }
@@ -277,7 +277,7 @@ std::string GetPointString( std::string const& parse_string,
 
     }
 
-    
+
     return output.str();
 }
 
@@ -286,7 +286,7 @@ std::string GetHeader(liblas::Reader& reader)
     boost::ignore_unused_variable_warning(reader);
 
     std::ostringstream oss;
-    
+
     return oss.str();
 }
 void write_points(  liblas::Reader& reader,
@@ -302,13 +302,13 @@ void write_points(  liblas::Reader& reader,
 {
 
     liblas::Summary summary;
-    
+
     reader.SetFilters(filters);
     reader.SetTransforms(transforms);
 
 
     if (verbose)
-    std::cout << "Writing points:" 
+    std::cout << "Writing points:"
         << "\n - : "
         << std::endl;
 
@@ -317,13 +317,13 @@ void write_points(  liblas::Reader& reader,
     //
     boost::uint32_t i = 0;
     boost::uint32_t const size = reader.GetHeader().GetPointRecordsCount();
-    
+
     if (bPrintHeader)
     {
         oss << GetHeader(reader);
     }
-    
-    if (bPrintLabels) 
+
+    if (bPrintLabels)
     {
         oss << GetLabels(parse_string, delimiter);
     }
@@ -332,9 +332,9 @@ void write_points(  liblas::Reader& reader,
     while (reader.ReadNextPoint())
     {
         liblas::Point const& p = reader.GetPoint();
-        // summary.AddPoint(p); 
+        // summary.AddPoint(p);
         std::string output = GetPointString(parse_string, delimiter, p, precisions, i);
-        
+
         oss << output;
         if (verbose)
             term_progress(std::cout, (i + 1) / static_cast<double>(size));
@@ -343,8 +343,8 @@ void write_points(  liblas::Reader& reader,
     }
     if (verbose)
         std::cout << std::endl;
-    
-    
+
+
 }
 
 void OutputHelp( std::ostream & oss, po::options_description const& options)
@@ -356,7 +356,7 @@ void OutputHelp( std::ostream & oss, po::options_description const& options)
     oss << options;
 
     oss <<"\nFor more information, see the full documentation for lasinfo at:\n";
-    
+
     oss << " http://liblas.org/utilities/las2txt.html\n";
     oss << "----------------------------------------------------------\n";
 
@@ -371,27 +371,27 @@ int main(int argc, char* argv[])
     std::string parse_string("xyz");
     std::string delimiter(",");
     std::ostream* os = NULL;
-    
+
     bool verbose = false;
     bool output_xml = false;
     bool bPrintLabels = false;
     bool bPrintHeader = false;
     bool bUseStdout = false;
-    
+
     std::vector<liblas::FilterPtr> filters;
     std::vector<liblas::TransformPtr> transforms;
-    
+
     liblas::Header header;
     boost::array<boost::uint32_t, 4> precisions;
     precisions.assign(0);
-    
+
 const char* parse_description = "The '--parse txyz' flag specifies how to format each"
-                                " each line of the ASCII file. For example, 'txyzia'" 
-    " means that the first number of each line should be the" 
+                                " each line of the ASCII file. For example, 'txyzia'"
+    " means that the first number of each line should be the"
     " gpstime, the next three numbers should be the x, y, and"
     " z coordinate, the next number should be the intensity"
-    " and the next number should be the scan angle.\n\n" 
-    " The supported entries are:\n" 
+    " and the next number should be the scan angle.\n\n"
+    " The supported entries are:\n"
     "   x - x coordinate as a double\n"
     "   y - y coordinate as a double\n"
     "   z - z coordinate as a double\n"
@@ -424,8 +424,8 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
         po::positional_options_description p;
         p.add("input", 1);
         p.add("output", 1);
-        
-        
+
+
         file_options.add_options()
             ("help,h", "produce help message")
             ("input,i", po::value< string >(), "input LAS file.")
@@ -450,14 +450,14 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
 
         po::notify(vm);
 
-        if (vm.count("help")) 
+        if (vm.count("help"))
         {
             OutputHelp(std::cout, options);
             return 1;
         }
 
 
-        if (vm.count("input")) 
+        if (vm.count("input"))
         {
             input = vm["input"].as< string >();
             std::ifstream ifs;
@@ -478,21 +478,21 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
         }
 
 
-        if (vm.count("output")) 
+        if (vm.count("output"))
         {
             output = vm["output"].as< string >();
-            
+
             std::ios::openmode const mode = std::ios::out | std::ios::binary;
             if (compare_no_case(output.c_str(),"STDOUT",5) == 0)
             {
                 os = &std::cout;
                 bUseStdout = true;
             }
-            else 
+            else
             {
                 os = new std::ofstream(output.c_str(), mode);
             }
-    
+
             if (!os->good())
             {
                 delete os;
@@ -500,14 +500,14 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
                 return 1;
             }
 
-            
+
 
         } else {
-            
-            if (bUseStdout) 
+
+            if (bUseStdout)
             {
                 os = &std::cout;
-            } else 
+            } else
             {
                 std::cerr << "Output text file not specified!\n";
                 OutputHelp(std::cout, options);
@@ -521,10 +521,10 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
         if (!liblas::Open(ifs, input.c_str()))
         {
             std::cerr << "Cannot open " << input << " for read.  Exiting..." << std::endl;
-            return false;
+            return -1;
         }
 
-        if (vm.count("precision")) 
+        if (vm.count("precision"))
         {
             std::vector<std::string> precision_str = vm["precision"].as< std::vector<std::string> >();
             if (precision_str.size() > 4) {
@@ -544,21 +544,21 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
                 ostringstream oss;
                 for (std::vector<std::string>::const_iterator i = precision_str.begin();
                      i != precision_str.end();
-                     i++) 
+                     i++)
                     {
                         oss << *i << " ";
                     }
                     std::cout << "Setting precisions to: " << oss.str() << std::endl;
-            }        
+            }
 
             precisions[0] = boost::lexical_cast<boost::uint32_t>(precision_str[0]);
             precisions[1] = boost::lexical_cast<boost::uint32_t>(precision_str[1]);
             precisions[2] = boost::lexical_cast<boost::uint32_t>(precision_str[2]);
-            
+
             if (precision_str.size() == 4)
             {
                 precisions[3] = boost::lexical_cast<boost::uint32_t>(precision_str[3]);
-    
+
             } else {
                 precisions[3] = 8;
             }
@@ -572,24 +572,24 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
             ostringstream oss;
             for (boost::array<boost::uint32_t, 4>::const_iterator i = precisions.begin();
                  i != precisions.end();
-                 i++) 
+                 i++)
                 {
                     oss << *i << " ";
-                }            
+                }
             if (verbose)
             {
                 std::cout << "Setting precisions from header to " << oss.str() << std::endl;
             }
-        }    
+        }
 
-        if (vm.count("delimiter")) 
+        if (vm.count("delimiter"))
         {
             std::string delim = vm["delimiter"].as< string >();
             std::string tab("\\t");
             std::string newline("\\n");
-            if (!delim.compare(tab)) 
-            { 
-                delimiter = "\t"; 
+            if (!delim.compare(tab))
+            {
+                delimiter = "\t";
             } else if (!delim.compare(newline))
             {
                 delimiter = "\n";
@@ -597,9 +597,9 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
             if (verbose)
             {
                 std::cout << "Using delimiter '" << delim << "'"<< std::endl;
-            } 
-            
-        } 
+            }
+
+        }
 
         liblas::ReaderFactory f;
         liblas::Reader reader = f.CreateWithStream(ifs);
@@ -626,7 +626,7 @@ const char* parse_description = "The '--parse txyz' flag specifies how to format
     catch(...) {
         std::cerr << "Exception of unknown type!\n";
     }
-    
+
     return 0;
 
 
