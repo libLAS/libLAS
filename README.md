@@ -1,6 +1,6 @@
 # libLAS
 
-http://www.liblas.org
+http://liblas.org
 
 ## Build Status
 
