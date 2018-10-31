@@ -5,6 +5,8 @@
 #
 #
 ###############################################################################
+cmake_minimum_required(VERSION 2.8.11)
+
 # libLAS general settings
 project(libLAS)
 
@@ -26,24 +28,12 @@ if(WIN32)
   # Name of C library
   set(LIBLAS_C_LIB_NAME liblas_c)
 
-  # Name of Chipper library
-  set(LASCHIP_LIB_NAME liblas_chipper )
-
-  # Name of Kernel libray
-  set(LASKERNEL_LIB_NAME liblas_kernel )
-
 else()
   # Name of C++ library
   set(LIBLAS_LIB_NAME las)
 
   # Name of C library
   set(LIBLAS_C_LIB_NAME las_c)
-
-  # Name of Chipper library
-  set(LASCHIP_LIB_NAME las_chipper )
-
-  # Name of Kernel libray
-  set(LASKERNEL_LIB_NAME las_kernel )
 endif()
 
 # Name of test suite runner
@@ -70,8 +60,6 @@ set(WITH_ENDIANAWARE FALSE CACHE BOOL "Choose whether or not libLAS should do ru
 
 ###############################################################################
 # CMake settings
-cmake_minimum_required(VERSION 2.6.0)
-
 set(CMAKE_COLOR_MAKEFILE ON)
 
 # Allow advanced users to generate Makefiles printing detailed commands

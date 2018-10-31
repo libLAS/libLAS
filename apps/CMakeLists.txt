@@ -73,7 +73,7 @@ endif()
 
 
 set(APPS_CPP_DEPENDENCIES
-    ${LIBLAS_LIB_NAME}
+    las
 )
 
 # link_directories(${Boost_LIBRARY_DIRS})
@@ -101,7 +101,7 @@ endif()
 if(TXT2LAS)
     set(TXT2LAS_SRC lascommon.c ${TXT2LAS}.c)
     add_executable(${TXT2LAS} ${TXT2LAS_SRC})
-    target_link_libraries(${TXT2LAS} ${LIBLAS_C_LIB_NAME})
+    target_link_libraries(${TXT2LAS} las_c)
 endif()
 
 # Build las2col
@@ -111,10 +111,10 @@ if(LAS2COL)
     if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
         set(THREADS_PREFER_PTHREAD_FLAG ON)
         find_package(Threads REQUIRED)
-        target_link_libraries(${LAS2COL} ${LIBLAS_C_LIB_NAME} Threads::Threads)
+        target_link_libraries(${LAS2COL} las_c Threads::Threads)
     else (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
         find_package(Threads REQUIRED)
-        target_link_libraries(${LAS2COL} ${LIBLAS_C_LIB_NAME} "${CMAKE_THREAD_LIBS_INIT}")
+        target_link_libraries(${LAS2COL} las_c "${CMAKE_THREAD_LIBS_INIT}")
     endif (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
 endif()
 
@@ -122,7 +122,7 @@ endif()
 if(LAS2PG)
     set(LAS2PG_SRC lascommon.c ${LAS2PG}.c)
     add_executable(${LAS2PG} ${LAS2PG_SRC})
-    target_link_libraries(${LAS2PG} ${LIBLAS_C_LIB_NAME})
+    target_link_libraries(${LAS2PG} las_c)
 endif()
 
 if(TS2LAS)
@@ -146,12 +146,12 @@ endif()
 
 if(BIGFILE_TEST)
     add_executable(${BIGFILE_TEST} bigtest.c)
-    target_link_libraries(${BIGFILE_TEST} ${LIBLAS_C_LIB_NAME})
+    target_link_libraries(${BIGFILE_TEST} las_c)
 endif()
 
 if(MEMLEAK_TEST)
     add_executable(${MEMLEAK_TEST} memleak_test.c)
-    target_link_libraries(${MEMLEAK_TEST} ${LIBLAS_C_LIB_NAME})
+    target_link_libraries(${MEMLEAK_TEST} las_c)
 endif()
 
 
