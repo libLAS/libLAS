@@ -176,9 +176,6 @@ endif()
 #  endif()
 #endif()
 
-# Standard include directory of libLAS library
-include_directories(../include)
-
 ###############################################################################
 # Targets settings
 
@@ -236,11 +233,20 @@ set_target_properties(las
   VERSION "${LIBLAS_LIB_VERSION}"
   SOVERSION "${LIBLAS_LIB_SOVERSION}"
   OUTPUT_NAME "${LIBLAS_LIB_NAME}")
+target_include_directories(las
+  PUBLIC
+    $<BUILD_INTERFACE:${libLAS_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${LIBLAS_INCLUDE_DIR}>)
+
 set_target_properties(las_c
   PROPERTIES
   VERSION "${LIBLAS_C_LIB_VERSION}"
   SOVERSION "${LIBLAS_C_LIB_SOVERSION}"
   OUTPUT_NAME "${LIBLAS_C_LIB_NAME}")
+target_include_directories(las_c
+  PUBLIC
+    $<BUILD_INTERFACE:${libLAS_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${LIBLAS_INCLUDE_DIR}>)
 
 if (APPLE)
   set_target_properties(

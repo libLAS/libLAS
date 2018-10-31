@@ -5,6 +5,8 @@
 #
 #
 ###############################################################################
+cmake_minimum_required(VERSION 2.8.11)
+
 # libLAS general settings
 project(libLAS)
 
@@ -58,8 +60,6 @@ set(WITH_ENDIANAWARE FALSE CACHE BOOL "Choose whether or not libLAS should do ru
 
 ###############################################################################
 # CMake settings
-cmake_minimum_required(VERSION 2.6.0)
-
 set(CMAKE_COLOR_MAKEFILE ON)
 
 # Allow advanced users to generate Makefiles printing detailed commands
