@@ -141,10 +141,10 @@ bool IndexOutput::InitiateOutput(void)
 		
 		return true;
 	}
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		return false;
 	}
-	catch (std::out_of_range) {
+	catch (std::out_of_range const&) {
 		return false;
 	}
 
@@ -335,10 +335,10 @@ bool IndexOutput::OutputCell(liblas::detail::IndexCell *CellBlock, uint32_t x, u
 		} // if
 		return true;
 	} // try
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		return false;
 	}
-	catch (std::out_of_range) {
+	catch (std::out_of_range const&) {
 		return false;
 	}
 	
@@ -367,10 +367,10 @@ bool IndexOutput::InitializeVLRData(uint32_t CurCellX, uint32_t CurCellY)
 
 		return true;
 	}
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		return false;
 	}
-	catch (std::out_of_range) {
+	catch (std::out_of_range const&) {
 		return false;
 	}
 } // IndexOutput::InitializeVLRData
@@ -401,10 +401,10 @@ bool IndexOutput::FinalizeOutput(void)
 		} // if
 		return true;
 	}
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		return false;
 	}
-	catch (std::out_of_range) {
+	catch (std::out_of_range const&) {
 		return false;
 	}
 

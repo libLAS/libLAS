@@ -73,7 +73,7 @@ bool Index::Prep(IndexData const& ParamSrc)
 			m_reader = new liblas::Reader(*ParamSrc.m_ifs);
  			m_readerCreated = true;
  		} // try
- 		catch (std::runtime_error) {
+ 		catch (std::runtime_error const&) {
  			return (InputFileError("Index::Prep"));
  		} // catch
 	} // if
@@ -328,7 +328,7 @@ const std::vector<uint32_t>& Index::Filter(IndexData & ParamSrc)
 				ParamSrc.m_iterator->m_curVLR = i;
 		} // m_reader
 	} // try
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		m_filterResult.resize(0);
 	} // catch
 	return (m_filterResult);
@@ -342,7 +342,7 @@ IndexIterator* Index::Filter(IndexData const& ParamSrc, uint32_t ChunkSize)
 	try {
 		NewIter = new IndexIterator(this, ParamSrc, ChunkSize);
 	} // try
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		return (NULL);
 	} // catch
 
@@ -359,7 +359,7 @@ IndexIterator* Index::Filter(double LowFilterX, double HighFilterX, double LowFi
 		NewIter = new IndexIterator(this, LowFilterX, HighFilterX, LowFilterY, HighFilterY, 
 			LowFilterZ, HighFilterZ, ChunkSize);
 	} // try
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		return (NULL);
 	} // catch
 
@@ -374,7 +374,7 @@ IndexIterator* Index::Filter(Bounds<double> const& BoundsSrc, uint32_t ChunkSize
 	try {
 		NewIter = new IndexIterator(this, BoundsSrc, ChunkSize);
 	} // try
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		return (NULL);
 	} // catch
 
@@ -500,10 +500,10 @@ bool Index::LoadIndexVLR(VariableRecord const& vlr)
 		CalcRangeY(); 
 		CalcRangeZ();
 	} // try
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		return (false);
 	} // catch
-	catch (std::out_of_range) {
+	catch (std::out_of_range const&) {
 		return (false);
 	} // catch
 	return true;
@@ -708,10 +708,10 @@ bool Index::FilterOneVLR(VariableRecord const& vlr, uint32_t& i, IndexData & Par
 		} // else if
 		// need to be more sophisticated but this is a test
 	} // try
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		return (false);
 	} // catch
-	catch (std::out_of_range) {
+	catch (std::out_of_range const&) {
 		return (false);
 	} // catch
 	return true;
@@ -759,7 +759,7 @@ bool Index::FilterPointSeries(uint32_t & PointID, uint32_t & PointsScanned,
 		} // for
 		return (true);
 	} // try
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		return (false);
 	} // catch
 
@@ -1043,7 +1043,7 @@ bool Index::BuildIndex(void)
     try {
 		m_bounds.verify();
 	} // try
-	catch (std::runtime_error) {
+	catch (std::runtime_error const&) {
 		return (InputBoundsError("Index::BuildIndex"));
 	} // catch
 	CalcRangeX();
@@ -1300,7 +1300,7 @@ bool Index::BuildIndex(void)
 			} // else
 		} // if
 	} // try
-	catch (std::bad_alloc) {
+	catch (std::bad_alloc const&) {
 		CloseTempFile();
 		return (MemoryError("Index::BuildIndex"));
 	} // catch
@@ -1570,7 +1570,7 @@ bool Index::SaveIndexInLASFile(void)
 				return (OutputFileError("Index::SaveIndexInLASFile"));
 		} // while
 	} // try
-	catch (std::runtime_error) {
+	catch (std::runtime_error const&) {
 		return (OutputFileError("Index::SaveIndexInLASFile"));
 	} // catch
 	return true;
@@ -1590,7 +1590,7 @@ bool Index::SaveIndexInStandAloneFile(void)
 		} // while
 		*/
 	} // try
-	catch (std::runtime_error) {
+	catch (std::runtime_error const&) {
 		return (OutputFileError("Index::SaveIndexInStandAloneFile"));
 	} // catch
 	return true;
@@ -2021,7 +2021,7 @@ bool IndexData::SetFilterValues(double LowFilterX, double HighFilterX, double Lo
 		m_filter.verify();
 		m_filter.clip(index.GetBounds());
 	} // try
-	catch (std::runtime_error) {
+	catch (std::runtime_error const&) {
 		return (false);
 	} // catch verification error
 	return (CalcFilterEnablers());
@@ -2035,7 +2035,7 @@ bool IndexData::SetFilterValues(Bounds<double> const& src, Index const& index)
 		m_filter.verify();
 		m_filter.clip(index.GetBounds());
 	} // try
-	catch (std::runtime_error) {
+	catch (std::runtime_error const&) {
 		return (false);
 	} // catch verification error
 	return (CalcFilterEnablers());

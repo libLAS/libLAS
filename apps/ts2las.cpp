@@ -256,7 +256,7 @@ bool WritePoints(liblas::Writer& writer, std::istream& strm, ScanHdr* hdr, bool 
 
         try {
             writer.WritePoint(p);
-        } catch (std::exception) 
+        } catch (std::exception const&) 
         {
             std::cerr << "Point writing failed!" << std::endl; 
         }
