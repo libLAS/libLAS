@@ -15,9 +15,12 @@
 
 #include "tut_exception.hpp"
 
-#ifndef _MSC_VER
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
 namespace tut
@@ -307,8 +310,10 @@ void skip(const M& msg)
 
 }
 
-#ifndef _MSC_VER
+#ifdef __clang__
 #pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
 #endif
 
 #endif
