@@ -26,24 +26,12 @@ if(WIN32)
   # Name of C library
   set(LIBLAS_C_LIB_NAME liblas_c)
 
-  # Name of Chipper library
-  set(LASCHIP_LIB_NAME liblas_chipper )
-
-  # Name of Kernel libray
-  set(LASKERNEL_LIB_NAME liblas_kernel )
-
 else()
   # Name of C++ library
   set(LIBLAS_LIB_NAME las)
 
   # Name of C library
   set(LIBLAS_C_LIB_NAME las_c)
-
-  # Name of Chipper library
-  set(LASCHIP_LIB_NAME las_chipper )
-
-  # Name of Kernel libray
-  set(LASKERNEL_LIB_NAME las_kernel )
 endif()
 
 # Name of test suite runner
