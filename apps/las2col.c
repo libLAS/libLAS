@@ -1042,7 +1042,7 @@ int main(int argc, char *argv[])
         fflush(files_out[i]);
         if (verbose)
             printf("close file %d\n", i);
-        fsync(files_out[i]);
+        fflush(files_out[i]);
         fclose(files_out[i]);
     }
     free(files_out);
