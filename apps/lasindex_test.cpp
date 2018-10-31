@@ -192,13 +192,13 @@ bool ReportIteratorResults(FILE *debugger, uint32_t resultSize, uint32_t pointCo
 int main(int argc, char* argv[])
 {
     boost::ignore_unused_variable_warning(argv);
-    char *tmpfilenme = 0;
-    char *lasinfilenme = 0;
-    char *lasoutfilenme = 0;
-    char *idxinfilenme = 0;
-    char *authorname = 0;
-    char *commentfield = 0;
-    char *datefield = 0;
+    const char *tmpfilenme = 0;
+    const char *lasinfilenme = 0;
+    const char *lasoutfilenme = 0;
+    const char *idxinfilenme = 0;
+    const char *authorname = 0;
+    const char *commentfield = 0;
+    const char *datefield = 0;
     double zbinheight = 0.0;
     double oLowFilterX = 0.0, oHighFilterX = 0.0, oLowFilterY = 0.0, oHighFilterY = 0.0, oLowFilterZ = 0.0, oHighFilterZ = 0.0;
     boost::uint32_t maxmem = 0;
@@ -352,120 +352,120 @@ int main(int argc, char* argv[])
     
     for (int i = 1; i < argc; i++)
     {
-        if (    strcmp((const char *)arggv[i],"-h") == 0 ||
-                strcmp((const char *)arggv[i],"--help") == 0
+        if (    strcmp(arggv[i],"-h") == 0 ||
+                strcmp(arggv[i],"--help") == 0
             )
         {
             usage(debugger);
             exit(0);
         }
-        else if (   strcmp((const char *)arggv[i],"-t") == 0 ||
-                    strcmp((const char *)arggv[i],"--tempfile") == 0
+        else if (   strcmp(arggv[i],"-t") == 0 ||
+                    strcmp(arggv[i],"--tempfile") == 0
             )
         {
             i++;
-            tmpfilenme = (char *)arggv[i];
+            tmpfilenme = arggv[i];
         }
-        else if (   strcmp((const char *)arggv[i],"-i") == 0 ||
-                    strcmp((const char *)arggv[i],"--infile") == 0
+        else if (   strcmp(arggv[i],"-i") == 0 ||
+                    strcmp(arggv[i],"--infile") == 0
             )
         {
             i++;
-            lasinfilenme = (char *)arggv[i];
+            lasinfilenme = arggv[i];
         }
-        else if (   strcmp((const char *)arggv[i],"-o") == 0 ||
-                    strcmp((const char *)arggv[i],"--outfile") == 0
+        else if (   strcmp(arggv[i],"-o") == 0 ||
+                    strcmp(arggv[i],"--outfile") == 0
             )
         {
             i++;
-            lasoutfilenme = (char *)arggv[i];
+            lasoutfilenme = arggv[i];
         }
-        else if (   strcmp((const char *)arggv[i],"-n") == 0 ||
-                    strcmp((const char *)arggv[i],"--indexfile") == 0
+        else if (   strcmp(arggv[i],"-n") == 0 ||
+                    strcmp(arggv[i],"--indexfile") == 0
             )
         {
             i++;
-            idxinfilenme = (char *)arggv[i];
+            idxinfilenme = arggv[i];
         }
-        else if (   strcmp((const char *)arggv[i],"-b") == 0 ||
-                    strcmp((const char *)arggv[i],"--zbinheight") == 0
+        else if (   strcmp(arggv[i],"-b") == 0 ||
+                    strcmp(arggv[i],"--zbinheight") == 0
             )
         {
             i++;
-            zbinheight = atof((const char *)arggv[i]);
+            zbinheight = atof(arggv[i]);
         }
-        else if (   strcmp((const char *)arggv[i],"-m") == 0 ||
-                    strcmp((const char *)arggv[i],"--maxmem") == 0
+        else if (   strcmp(arggv[i],"-m") == 0 ||
+                    strcmp(arggv[i],"--maxmem") == 0
             )
         {
             i++;
-            maxmem = atoi((const char *)arggv[i]);
+            maxmem = atoi(arggv[i]);
         }
-        else if (   strcmp((const char *)arggv[i],"-a") == 0 ||
-                    strcmp((const char *)arggv[i],"--author") == 0
+        else if (   strcmp(arggv[i],"-a") == 0 ||
+                    strcmp(arggv[i],"--author") == 0
             )
         {
             i++;
-            authorname = (char *)arggv[i];
+            authorname = arggv[i];
         }
-        else if (   strcmp((const char *)arggv[i],"-c") == 0 ||
-                    strcmp((const char *)arggv[i],"--comment") == 0
+        else if (   strcmp(arggv[i],"-c") == 0 ||
+                    strcmp(arggv[i],"--comment") == 0
             )
         {
             i++;
-            commentfield = (char *)arggv[i];
+            commentfield = arggv[i];
         }
-        else if (   strcmp((const char *)arggv[i],"-d") == 0 ||
-                    strcmp((const char *)arggv[i],"--date") == 0
+        else if (   strcmp(arggv[i],"-d") == 0 ||
+                    strcmp(arggv[i],"--date") == 0
             )
         {
             i++;
-            datefield = (char *)arggv[i];
+            datefield = arggv[i];
         }
-        else if (   strcmp((const char *)arggv[i],"-r") == 0 ||
-                    strcmp((const char *)arggv[i],"--readonly") == 0
+        else if (   strcmp(arggv[i],"-r") == 0 ||
+                    strcmp(arggv[i],"--readonly") == 0
             )
         {
             readonly = true;
         }
-        else if (   strcmp((const char *)arggv[i],"-s") == 0 ||
-                    strcmp((const char *)arggv[i],"--standalone") == 0
+        else if (   strcmp(arggv[i],"-s") == 0 ||
+                    strcmp(arggv[i],"--standalone") == 0
             )
         {
             writestandaloneindex = true;
         }
-        else if (   strcmp((const char *)arggv[i],"-x") == 0
+        else if (   strcmp(arggv[i],"-x") == 0
             )
         {
             i++;
-            oLowFilterX = atof((const char *)arggv[i]);
+            oLowFilterX = atof(arggv[i]);
             i++;
-            oHighFilterX = atof((const char *)arggv[i]);
+            oHighFilterX = atof(arggv[i]);
             boundssetbyuser = true;
         }
-        else if (   strcmp((const char *)arggv[i],"-y") == 0
+        else if (   strcmp(arggv[i],"-y") == 0
             )
         {
             i++;
-            oLowFilterY = atof((const char *)arggv[i]);
+            oLowFilterY = atof(arggv[i]);
             i++;
-            oHighFilterY = atof((const char *)arggv[i]);
+            oHighFilterY = atof(arggv[i]);
             boundssetbyuser = true;
         }
-        else if (   strcmp((const char *)arggv[i],"-z") == 0
+        else if (   strcmp(arggv[i],"-z") == 0
             )
         {
             i++;
-            oLowFilterZ = atof((const char *)arggv[i]);
+            oLowFilterZ = atof(arggv[i]);
             i++;
-            oHighFilterZ = atof((const char *)arggv[i]);
+            oHighFilterZ = atof(arggv[i]);
             boundssetbyuser = true;
         }
-        else if (   strcmp((const char *)arggv[i],"-it") == 0
+        else if (   strcmp(arggv[i],"-it") == 0
             )
         {
             i++;
-            chunkSize = atoi((const char *)arggv[i]);
+            chunkSize = atoi(arggv[i]);
             useiterator = true;
         }
     } // for
