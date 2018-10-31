@@ -79,9 +79,7 @@ mark_as_advanced(CMAKE_VERBOSE_MAKEFILE)
 
 # Path to additional CMake modules
 set(CMAKE_MODULE_PATH "${libLAS_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
-if (CMAKE_MAJOR_VERSION GREATER 2)
-    cmake_policy(SET CMP0042 OLD)
-endif()
+set(CMAKE_MACOSX_RPATH OFF)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 set(CMAKE_SKIP_RPATH ON)
