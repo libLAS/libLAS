@@ -218,35 +218,37 @@ if (NOT WITH_STATIC_LASZIP)
 endif()
 endif()
 
-add_library(${LIBLAS_LIB_NAME} SHARED ${LIBLAS_SOURCES})
-add_library(${LIBLAS_C_LIB_NAME} SHARED ${LIBLAS_C_SOURCES})
+add_library(las SHARED ${LIBLAS_SOURCES})
+add_library(las_c SHARED ${LIBLAS_C_SOURCES})
 
-target_link_libraries(${LIBLAS_LIB_NAME}
+target_link_libraries(las
   ${TIFF_LIBRARY}
   ${GEOTIFF_LIBRARY}
   ${GDAL_LIBRARY}
   ${LASZIP_LIBRARY}
   ${Boost_LIBRARIES})
 
-target_link_libraries(${LIBLAS_C_LIB_NAME}
-  ${LIBLAS_LIB_NAME} )
+target_link_libraries(las_c
+  las )
 
-set_target_properties(${LIBLAS_LIB_NAME}
+set_target_properties(las
   PROPERTIES
   VERSION "${LIBLAS_LIB_VERSION}"
-  SOVERSION "${LIBLAS_LIB_SOVERSION}")
-set_target_properties(${LIBLAS_C_LIB_NAME}
+  SOVERSION "${LIBLAS_LIB_SOVERSION}"
+  OUTPUT_NAME "${LIBLAS_LIB_NAME}")
+set_target_properties(las_c
   PROPERTIES
   VERSION "${LIBLAS_C_LIB_VERSION}"
-  SOVERSION "${LIBLAS_C_LIB_SOVERSION}")
+  SOVERSION "${LIBLAS_C_LIB_SOVERSION}"
+  OUTPUT_NAME "${LIBLAS_C_LIB_NAME}")
 
 if (APPLE)
   set_target_properties(
-    ${LIBLAS_C_LIB_NAME}
+    las_c
     PROPERTIES
     INSTALL_NAME_DIR "@rpath" BUILD_WITH_INSTALL_RPATH ON)
   set_target_properties(
-    ${LIBLAS_LIB_NAME}
+    las
     PROPERTIES
     INSTALL_NAME_DIR "@rpath" BUILD_WITH_INSTALL_RPATH ON)
 endif()
@@ -256,7 +258,7 @@ endif()
 # which packages up information about the libraries for
 # liblas-config.cmake.
 
-install(TARGETS ${LIBLAS_LIB_NAME} ${LIBLAS_C_LIB_NAME}
+install(TARGETS las las_c
   EXPORT depends
   RUNTIME DESTINATION ${LIBLAS_BIN_DIR}
   LIBRARY DESTINATION ${LIBLAS_LIB_DIR}

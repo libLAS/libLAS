@@ -20,11 +20,7 @@ set (libLAS_LIBRARY_DIRS "${PROJECT_ROOT_DIR}/lib")
 set (libLAS_BINARY_DIRS "${PROJECT_ROOT_DIR}/bin")
 
 include ("${_DIR}/liblas-depends.cmake")
-if(WIN32)
-  set (libLAS_LIBRARIES liblas liblas_c)
-else()
-  set (libLAS_LIBRARIES las las_c)
-endif()
+set (libLAS_LIBRARIES las las_c)
 
 # For backwards compatibility
 set (LIBLAS_FOUND TRUE)
