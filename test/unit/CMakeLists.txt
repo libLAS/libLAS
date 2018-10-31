@@ -15,7 +15,6 @@ SET(LIBLAS_UNIT_TEST_SRC
     point_test.cpp
     reader_iterator_test.cpp
     reader_test.cpp
-    spatialreference_test.cpp
     transform_test.cpp
     variablerecord_test.cpp
     writer_test.cpp
@@ -26,8 +25,15 @@ SET(LIBLAS_UNIT_TEST_SRC
 INCLUDE_DIRECTORIES(
     .
     ../../include
-    ${GDAL_INCLUDE_DIR}
-    ${GEOTIFF_INCLUDE_DIR})
+    ${GDAL_INCLUDE_DIR})
+
+if (WITH_GEOTIFF)
+    list(APPEND LIBLAS_UNIT_TEST_SRC
+        spatialreference_test.cpp)
+
+    INCLUDE_DIRECTORIES(
+        ${GEOTIFF_INCLUDE_DIR})
+endif ()
 
 ADD_EXECUTABLE(${LIBLAS_UNIT_TEST} ${LIBLAS_UNIT_TEST_SRC} )
 
@@ -37,8 +43,12 @@ TARGET_LINK_LIBRARIES(${LIBLAS_UNIT_TEST}
     ${LIBLAS_LIB_NAME}
     ${ZLIB_LIBRARIES}
     ${TIFF_LIBRARY}
-    ${GEOTIFF_LIBRARY}
     ${GDAL_LIBRARY}
     ${SPATIALINDEX_LIBRARY})
+
+if (WITH_GEOTIFF)
+    TARGET_LINK_LIBRARIES(${LIBLAS_UNIT_TEST}
+        ${GEOTIFF_LIBRARY})
+endif ()
 
 ADD_TEST(liblas_test ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/liblas_test ${CMAKE_SOURCE_DIR}/test/data)
