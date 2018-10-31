@@ -8,9 +8,11 @@
 #  libLAS_BINARY_DIRS  - the directory for dll and utilites
 #  libLAS_VERSION      - libLAS library version
 
-message (STATUS "Reading ${CMAKE_CURRENT_LIST_FILE}")
-# libLAS_VERSION is set by version file
-message (STATUS "libLAS configuration, version " ${libLAS_VERSION})
+if (NOT libLAS_FIND_QUIETLY)
+  message (STATUS "Reading ${CMAKE_CURRENT_LIST_FILE}")
+  # libLAS_VERSION is set by version file
+  message (STATUS "libLAS configuration, version " ${libLAS_VERSION})
+endif ()
 
 # Tell the user project where to find our headers and libraries
 get_filename_component (_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
