@@ -69,10 +69,6 @@ mark_as_advanced(CMAKE_VERBOSE_MAKEFILE)
 set(CMAKE_MODULE_PATH "${libLAS_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
 set(CMAKE_MACOSX_RPATH OFF)
 
-if (CMAKE_SYSTEM_NAME MATCHES "Linux")
-set(CMAKE_SKIP_RPATH ON)
-endif()
-
 ###############################################################################
 # General build settings
 
