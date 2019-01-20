@@ -119,16 +119,32 @@ inline std::istream* Open(std::string const& filename, std::ios::openmode mode) 
 {
 #ifdef USE_BOOST_IO
     namespace io = boost::iostreams;
-    io::stream<io::file_source>* ifs = new io::stream<io::file_source>();
-    ifs->open(filename.c_str(), mode);
-    if (ifs->is_open() == false) return NULL;
-    return ifs;
+    io::stream<io::file_source>* ifs = NULL;
+    try
+    {
+        ifs = new io::stream<io::file_source>();
+        ifs->open(filename.c_str(), mode);
+        if (ifs->is_open() == false) return NULL;
+        return ifs;
+    }
+    catch (...)
+    {
+        delete ifs;
+    }
 #else
-    std::ifstream* ifs = new std::ifstream();
-    ifs->open(filename.c_str(), mode);
-    if (ifs->is_open() == false) return NULL;
-    return ifs;
+    std::ifstream* ifs = NULL;
+    try
+    {
+        ifs = new std::ifstream();
+        ifs->open(filename.c_str(), mode);
+        if (ifs->is_open() == false) return NULL;
+    }
+    catch (...)
+    {
+        delete ifs;
+    }
 #endif
+    return NULL;
 }
 
 /// Create file and open to write in binary mode.
