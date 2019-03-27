@@ -271,6 +271,8 @@ if(WITH_GEOTIFF)
   else()
     message(FATAL_ERROR "Unable to find sufficient GeoTIFF")
   endif()
+else()
+  set(GEOTIFF_LIBRARY "")
 endif()
 
 
