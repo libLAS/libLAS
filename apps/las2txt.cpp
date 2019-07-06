@@ -286,6 +286,8 @@ std::string GetHeader(liblas::Reader& reader)
     boost::ignore_unused_variable_warning(reader);
 
     std::ostringstream oss;
+  
+    oss << reader.GetHeader();
 
     return oss.str();
 }
