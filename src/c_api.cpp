@@ -243,6 +243,12 @@ LAS_DLL LASReaderH LASReader_Create(const char* filename)
         return NULL;
     }
 
+    if (istrm == NULL) {
+        delete istrm;
+        LASError_PushError(LE_Failure, "Something went wrong while opening the file", "LASReader_Create");
+        return NULL;
+    }
+
     try {
         liblas::ReaderFactory f;
         liblas::Reader* reader = new liblas::Reader(f.CreateWithStream(*istrm));
@@ -273,6 +279,12 @@ LAS_DLL LASReaderH LASReader_CreateWithHeader(  const char* filename,
     {
         if (istrm) delete istrm;
         LASError_PushError(LE_Failure, e.what(), "LASReader_Create");
+        return NULL;
+    }
+
+    if (istrm == NULL) {
+        delete istrm;
+        LASError_PushError(LE_Failure, "Something went wrong while opening the file", "LASReader_Create");
         return NULL;
     }
 
