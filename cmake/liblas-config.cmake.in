@@ -14,6 +14,9 @@ if (NOT libLAS_FIND_QUIETLY)
   message (STATUS "libLAS configuration, version " ${libLAS_VERSION})
 endif ()
 
+include (CMakeFindDependencyMacro)
+find_dependency (Boost @Boost_VERSION_STRING@ EXACT COMPONENTS program_options thread system iostreams filesystem)
+
 # Tell the user project where to find our headers and libraries
 get_filename_component (_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
 get_filename_component (PROJECT_ROOT_DIR "${_DIR}/@PROJECT_ROOT_DIR@" ABSOLUTE)
