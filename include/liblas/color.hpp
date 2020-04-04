@@ -64,18 +64,20 @@ public:
 
     /// User-defined constructor.
     /// Initializes object with given RGB values.
-    /// \exception std::invalid_argument if color component value is out of range of unsigned 8-bit integer.
+    /// The color component values must be normalized to range from 0 to 65535.
+    /// \exception std::invalid_argument if color component value is out of range of unsigned 16-bit integer.
     Color(uint32_t red, uint32_t green, uint32_t blue);
 
     /// User-defined constructor.
-    /// Initializes colour components based on values of 3-element array.
-    /// \exception std::invalid_argument if color component value is out of range of unsigned 8-bit integer.
+    /// Initializes color components based on values of 3-element array.
+    /// The color component values must be normalized to range from 0 to 65535.
+    /// \exception std::invalid_argument if color component value is out of range of unsigned 16-bit integer.
     Color(boost::array<value_type, 3> const& color);
 
     /// Copy constructor.
     Color(Color const& other);
 
-    /// Assignment opreator.
+    /// Assignment operator.
     Color& operator=(Color const& rhs);
 
     /// Fetch value of the red image channel 
