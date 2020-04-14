@@ -523,14 +523,14 @@ const GTIF* SpatialReference::GetGTIF()
         }
 
         if (uid == record.GetUserId(true).c_str() &&
-            34736 == record.GetRecordId())
+            34736 == record.GetRecordId() && !data.empty())
         {
             int count = data.size() / sizeof(double);
             ST_SetKey(m_tiff, record.GetRecordId(), count, STT_DOUBLE, &(data[0]));
         }
 
         if (uid == record.GetUserId(true).c_str() &&
-            34737 == record.GetRecordId())
+            34737 == record.GetRecordId() && !data.empty())
         {
             int count = data.size()/sizeof(uint8_t);
             ST_SetKey(m_tiff, record.GetRecordId(), count, STT_ASCII, &(data[0]));
