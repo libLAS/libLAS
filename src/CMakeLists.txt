@@ -248,17 +248,6 @@ target_include_directories(las_c
     $<BUILD_INTERFACE:${libLAS_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${LIBLAS_INCLUDE_DIR}>)
 
-if (APPLE)
-  set_target_properties(
-    las_c
-    PROPERTIES
-    INSTALL_NAME_DIR "@rpath" BUILD_WITH_INSTALL_RPATH ON)
-  set_target_properties(
-    las
-    PROPERTIES
-    INSTALL_NAME_DIR "@rpath" BUILD_WITH_INSTALL_RPATH ON)
-endif()
-
 ###############################################################################
 # Targets installation.  The EXPORT clause specifies a depends target
 # which packages up information about the libraries for
