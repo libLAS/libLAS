@@ -137,7 +137,10 @@ inline std::istream* Open(std::string const& filename, std::ios::openmode mode) 
     {
         ifs = new std::ifstream();
         ifs->open(filename.c_str(), mode);
-        if (ifs->is_open() == false) return NULL;
+        if (ifs->is_open() == false) {
+            delete ifs;
+            return NULL;
+        }
         return ifs;
     }
     catch (...)
