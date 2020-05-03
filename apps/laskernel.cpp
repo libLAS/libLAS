@@ -202,53 +202,53 @@ void RewriteHeader(liblas::Header const& header, std::string const& filename)
 
 void RepairHeader(liblas::CoordinateSummary const& summary, liblas::Header& header)
 {
-
-    for (boost::uint32_t i = 0; i < 5; i++)
-    {
-        header.SetPointRecordsByReturnCount(i, 0);
-    }
-
-    liblas::property_tree::ptree tree = summary.GetPTree();
-
-    try
-    {
-        header.SetMin(tree.get<double>("summary.points.minimum.x"),
-                      tree.get<double>("summary.points.minimum.y"),
-                      tree.get<double>("summary.points.minimum.z"));
-
-        header.SetMax(tree.get<double>("summary.points.maximum.x"),
-                      tree.get<double>("summary.points.maximum.y"),
-                      tree.get<double>("summary.points.maximum.z"));
-
-    }     catch (liblas::property_tree::ptree_bad_path const& )
-    {
-        std::cerr << "Unable to write header bounds info.  Does the outputted file have any points?";
-        return;
-    }
-
-    try
-    {
-
+    if(header.GetPointRecordsCount()){ //check if there are any points
         for (boost::uint32_t i = 0; i < 5; i++)
         {
             header.SetPointRecordsByReturnCount(i, 0);
         }
 
-        BOOST_FOREACH(ptree::value_type &v,
-                tree.get_child("summary.points.points_by_return"))
+        liblas::property_tree::ptree tree = summary.GetPTree();
+
+        try
         {
-            boost::uint32_t i = v.second.get<boost::uint32_t>("id");
-            boost::uint32_t count = v.second.get<boost::uint32_t>("count");
-            header.SetPointRecordsByReturnCount(i-1, count);
+            header.SetMin(tree.get<double>("summary.points.minimum.x"),
+                          tree.get<double>("summary.points.minimum.y"),
+                          tree.get<double>("summary.points.minimum.z"));
+
+            header.SetMax(tree.get<double>("summary.points.maximum.x"),
+                          tree.get<double>("summary.points.maximum.y"),
+                          tree.get<double>("summary.points.maximum.z"));
+
+        }     catch (liblas::property_tree::ptree_bad_path const& )
+        {
+            std::cerr << "Unable to write header bounds info.  Does the outputted file have any points?";
+            return;
         }
 
-    }     catch (liblas::property_tree::ptree_bad_path const& )
-    {
-        std::cerr << "Unable to write header point return count info.  "
-                     "Does the outputted file have any points?";
-        return;
-    }
+        try
+        {
 
+            for (boost::uint32_t i = 0; i < 5; i++)
+            {
+                header.SetPointRecordsByReturnCount(i, 0);
+            }
+
+            BOOST_FOREACH(ptree::value_type &v,
+                    tree.get_child("summary.points.points_by_return"))
+            {
+                boost::uint32_t i = v.second.get<boost::uint32_t>("id");
+                boost::uint32_t count = v.second.get<boost::uint32_t>("count");
+                header.SetPointRecordsByReturnCount(i-1, count);
+            }
+
+        }     catch (liblas::property_tree::ptree_bad_path const& )
+        {
+            std::cerr << "Unable to write header point return count info.  "
+                         "Does the outputted file have any points?";
+            return;
+        }
+    }
 }
 
 bool IsDualRangeFilter(std::string parse_string)
