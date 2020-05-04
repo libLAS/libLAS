@@ -1,5 +1,10 @@
 # libLAS
 
+libLAS is a C++03 library and C API for reading and writing point cloud data
+captured by LiDAR sensores and the stored in the very common
+[ASPRS LAS file format](https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities)
+with support for the specification versions 1.0, 1.1, 1.2 and 1.3 (rudimentary support).
+
 http://liblas.org
 
 ## Build Status
