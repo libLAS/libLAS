@@ -33,6 +33,8 @@
 ./bin
 .DS_Store
 .libs
+.py*env
+.venv
 aclocal.m4
 apps/las2las
 apps/las2oci
