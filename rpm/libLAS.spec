@@ -28,9 +28,10 @@ BuildRequires:  libxml2-devel, libgeotiff-devel
 
 %description
 libLAS is a C/C++ library for reading and writing the very common LAS LiDAR
-format.  The ASPRS LAS format is a sequential binary format used to store data
-from LiDAR sensors and by LiDAR processing software for data interchange and
-archival storage.
+format. The ASPRS LAS format is a sequential binary file format used to store
+data from LiDAR sensors and by LiDAR processing software for data interchange
+and archival storage. libLAS supports the ASPRS LAS format specification
+versions: 1.0, 1.1, 1.2.
 
 %package        devel
 Summary:        Development files for %{name}

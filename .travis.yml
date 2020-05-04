@@ -32,7 +32,7 @@ matrix:
         coverity_scan:
           project:
             name: "libLAS/libLAS"
-            description: "C/C++ library for reading and writing the ASPRS LAS LiDAR format"
+            description: "C/C++ library for reading and writing the ASPRS LAS format"
           notification_email: mateusz@loskot.net
           build_command_prepend: mkdir -p build.coverity && pushd build.coverity && cmake -DWITH_GDAL=ON -DWITH_GEOTIFF=ON -DCMAKE_BUILD_TYPE=Debug .. && popd
           build_command: cmake --build ./build.coverity

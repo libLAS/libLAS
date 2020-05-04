@@ -2,20 +2,19 @@
 libLAS - LAS 1.0/1.1/1.2 ASPRS LiDAR data translation toolset
 ******************************************************************************
 
-
 libLAS is a C/C++ library for reading and writing the very common `LAS`
-`LiDAR`_ format. The `ASPRS LAS format`_ is a sequential binary format used to
-store data from LiDAR sensors and by LiDAR processing software for data
-interchange and archival. 
+`LiDAR`_ format. The `ASPRS LAS format`_ is a sequential binary file format
+used to store data from LiDAR sensors and by LiDAR processing software for
+data interchange and archival.
+
+libLAS supports the ASPRS LAS format specification versions: 1.0, 1.1, 1.2.
 
 libLAS' initial development was supported in 2007-2008 by the `IGSB`_ of the
-Iowa DNR for use in its state-wide `LIDAR`_ project.  Ongoing support for 
-libLAS is provided by a number of organizations including the 
+Iowa DNR for use in its state-wide `LIDAR`_ project.  Later, support for 
+libLAS was provided by a number of organizations including the 
 `U.S. Army Cold Regions Research and Engineering Laboratory`_.
 
-
 .. _`U.S. Army Cold Regions Research and Engineering Laboratory` : http://www.crrel.usace.army.mil/
-
 
 Pre-requisites
 ------------------------------------------------------------------------------
@@ -86,8 +85,8 @@ See `License`_ for a copy.
 .. _`LAStools`: http://www.cs.unc.edu/~isenburg/lastools/
 .. _`Martin Isenburg and Jonathan Shewchuk`: http://www.cs.unc.edu/~isenburg/lastools/
 .. _`LAS Format`: http://www.lasformat.org/
-.. _`ASPRS Standards Committee`: http://www.asprs.org/society/committees/standards/lidar_exchange_format.html
-.. _`ASPRS LAS format`: http://www.asprs.org/society/committees/standards/lidar_exchange_format.html
+.. _`ASPRS Standards Committee`: https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities
+.. _`ASPRS LAS format`: https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities
 
 .. _`BSD license`: http://www.opensource.org/licenses/bsd-license.php
 .. _`OSGeo4W`: http://wiki.osgeo.org/wiki/OSGeo_Win32_Installer
