@@ -607,7 +607,7 @@ bool SameVLRs(std::string const& name, uint16_t id, liblas::VariableRecord const
 
 void Header::DeleteVLRs(std::string const& name, uint16_t id)
 {
-	using namespace boost::placeholders;
+    using namespace boost::placeholders;
 
     m_vlrs.erase( std::remove_if( m_vlrs.begin(),
                                   m_vlrs.end(),

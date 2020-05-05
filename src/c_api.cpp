@@ -499,7 +499,7 @@ LAS_DLL LASHeaderH LASReader_GetHeader(const LASReaderH hReader)
 
 LAS_DLL LASErrorEnum LASReader_SetOutputSRS(LASReaderH hReader, const LASSRSH hSRS) {
    
-	using namespace boost::placeholders;
+    using namespace boost::placeholders;
     VALIDATE_LAS_POINTER1(hReader, "LASReader_SetOutputSRS", LE_Failure);
     VALIDATE_LAS_POINTER1(hSRS, "LASReader_SetOutputSRS", LE_Failure);
 
@@ -1842,7 +1842,7 @@ LAS_DLL LASErrorEnum LASWriter_SetInputSRS(LASWriterH hWriter, const LASSRSH hSR
 
 LAS_DLL LASErrorEnum LASWriter_SetOutputSRS(LASWriterH hWriter, const LASSRSH hSRS) {
 
-	using namespace boost::placeholders;
+    using namespace boost::placeholders;
     VALIDATE_LAS_POINTER1(hWriter, "LASWriter_SetOutputSRS", LE_Failure);
     VALIDATE_LAS_POINTER1(hSRS, "LASWriter_SetOutputSRS", LE_Failure);
 
