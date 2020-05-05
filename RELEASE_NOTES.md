@@ -30,12 +30,20 @@
 - Header was missing from las2txt output ([#167](https://github.com/libLAS/libLAS/issues/167)).
 - Avoid memory leak in C API ([9e9f140](https://github.com/libLAS/libLAS/commit/9e9f140)).
 - Avoid slicing exceptions when catching ([f4ad631](https://github.com/libLAS/libLAS/commit/f4ad631)).
+- Update use of Boost Bind placeholders ([#189](https://github.com/libLAS/libLAS/pull/189)).
 
 ### Security
 - CVE-2018-20536 issue [#183](https://github.com/libLAS/libLAS/issues/183)
 - CVE-2018-20537 issue [#184](https://github.com/libLAS/libLAS/issues/184)
 - CVE-2018-20539 issue [#183](https://github.com/libLAS/libLAS/issues/183)
 - CVE-2018-20540 issue [#182](https://github.com/libLAS/libLAS/issues/182)
+
+## Acknowledgements
+
+Adeel Ahmad, Andy Maloney, Bas Couwenberg, Ben Boeckel, Björn Piltz, Dan Lipsa,
+Even Rouault, Felipe M. López, Florent Guiotte, Howard Butler, John Papadakis,
+Māris Nartišs, Mateusz Loskot, Oskar Karlin, Panagiotis Koutsourakis,
+Piotr Dobrowolski, Ronald van Haren, Sandro Mani, Wei Mingzhi, Yuksel Yonsel
 
 ## 1.8.1 (2016-08-23)
 
