@@ -54,7 +54,7 @@
 // boost
 #include <boost/cstdint.hpp>
 #include <boost/lambda/lambda.hpp>
-
+#include <boost/bind/bind.hpp>
 //std
 #include <algorithm>
 #include <fstream>
@@ -607,6 +607,7 @@ bool SameVLRs(std::string const& name, uint16_t id, liblas::VariableRecord const
 
 void Header::DeleteVLRs(std::string const& name, uint16_t id)
 {
+    using namespace boost::placeholders;
 
     m_vlrs.erase( std::remove_if( m_vlrs.begin(),
                                   m_vlrs.end(),
