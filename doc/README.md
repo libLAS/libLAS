@@ -34,3 +34,7 @@ $ cd doc
 $ make clean
 $ make html
 ```
+
+## Deploy
+
+- Copy `doc/api/html/` as `liblas.org/doxygen/`

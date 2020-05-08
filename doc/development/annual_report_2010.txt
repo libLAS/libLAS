@@ -115,7 +115,7 @@ New Website
 
 We rewrote the libLAS website and transformed it from a bunch of wiki pages 
 in Trac to a Sphinx-backed HTML website.  We have added tons more documentation, 
-provided it in formats such as `PDF`_, and organized things significantly.  
+provided it in formats such as PDF, and organized things significantly.  
 
 Generic LAS Schema Support
 ..............................................................................
@@ -242,4 +242,3 @@ types.
 
 .. _refactored: http://en.wikipedia.org/wiki/Code_refactoring
 .. _`Oracle Point Cloud`: http://download.oracle.com/docs/cd/B28359_01/appdev.111/b28400/sdo_pc_pkg_ref.htm
-.. _`PDF`: http://liblas.org/pdf/libLAS.pdf

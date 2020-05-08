@@ -4,16 +4,6 @@
 libLAS Documentation
 ******************************************************************************
 
-.. note::
-    The entire documentation is also available as a single
-    `PDF document <./pdf/libLAS.pdf>`__ |image|  and `ePub document <./libLAS.epub>`__
-
-.. |image| image:: ./_static/pdf.png
-   :height: 15
-   :width: 15
-   :alt: PDF icon
-   :target: /pdf/libLAS.pdf
-
 .. toctree::
    :maxdepth: 2
    
