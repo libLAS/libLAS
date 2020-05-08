@@ -12,7 +12,7 @@ Create Python virtual environment:
 
 ```console
 $ python3 -m venv .pyenv
-$ source ~/.pyenv/bin/activate
+$ source ./.pyenv/bin/activate
 ```
 
 Install Sphinx and Sphinx extensions:
@@ -20,12 +20,12 @@ Install Sphinx and Sphinx extensions:
 ```console
 (.pyenv)$ pip install --upgrade pip
 (.pyenv)$ pip install sphinx
-(.pyenv)$ pip install rst2pdf
 ```
 
 ## Build
 
 ```console
+$ cd doc
 $ make clean
 $ make html
 ```
