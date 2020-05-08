@@ -25,6 +25,11 @@ Install Sphinx and Sphinx extensions:
 ## Build
 
 ```console
+$ cd doc/api
+$ doxygen doxygen.conf
+```
+
+```console
 $ cd doc
 $ make clean
 $ make html
