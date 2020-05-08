@@ -1,0 +1,11 @@
+<map id="liblas::FilterI" name="liblas::FilterI">
+<area shape="rect" id="node2" href="$classliblas_1_1BoundsFilter.html" title="A filter for keeping or rejecting points that fall within a specified bounds. " alt="" coords="5,219,145,340"/>
+<area shape="rect" id="node3" href="$classliblas_1_1ClassificationFilter.html" title="A filter for keeping or rejecting a list of classification ids. " alt="" coords="169,233,344,325"/>
+<area shape="rect" id="node4" href="$classliblas_1_1ColorFilter.html" title="A filter for color ranges. " alt="" coords="369,226,494,333"/>
+<area shape="rect" id="node5" href="$classliblas_1_1ContinuousValueFilter.html" title="A templated class that allows you to create complex filters using functions that are callable from th..." alt="" coords="519,226,755,333"/>
+<area shape="rect" id="node6" href="$classliblas_1_1CoordinateSummary.html" title="{liblas::CoordinateSummary\n||+ CoordinateSummary()\l+ CoordinateSummary()\l+ operator=()\l+ filter()\l+ AddPoint()\l+ GetPTree()\l+ SetHeader()\l+ ~CoordinateSummary()\l}" alt="" coords="779,189,974,369"/>
+<area shape="rect" id="node7" href="$classliblas_1_1ReturnFilter.html" title="A filter for keeping or rejecting a list of return ids. " alt="" coords="998,233,1131,325"/>
+<area shape="rect" id="node8" href="$classliblas_1_1Summary.html" title="A summarization utililty for LAS points. " alt="" coords="1155,189,1281,369"/>
+<area shape="rect" id="node9" href="$classliblas_1_1ThinFilter.html" title="A filter simple decimation. " alt="" coords="1305,233,1424,325"/>
+<area shape="rect" id="node10" href="$classliblas_1_1ValidationFilter.html" title="{liblas::ValidationFilter\n||+ ValidationFilter()\l+ filter()\l}" alt="" coords="1447,233,1602,325"/>
+</map>

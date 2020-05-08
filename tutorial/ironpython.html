@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>IronPython Tutorial &#8212; liblas.org</title>
     <link rel="stylesheet" href="../_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="copyright" title="Copyright" href="../copyright.html" />
@@ -84,10 +85,10 @@ LIDAR data encoded in LAS file format from IronPython.</p>
                                <span class="n">lasreader</span> <span class="o">=</span> <span class="n">LASReader</span><span class="p">()</span>
                                <span class="n">lasheader</span> <span class="o">=</span> <span class="n">lasreader</span><span class="o">.</span><span class="n">GetHeader</span><span class="p">()</span>
                                <span class="n">laswriter</span> <span class="o">=</span> <span class="n">LASWriter</span><span class="p">()</span>
-                               <span class="n">Console</span><span class="o">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s1">&#39;Number of points in file= {0}&#39;</span><span class="p">,</span> <span class="n">lasheader</span><span class="o">.</span><span class="n">PointRecordsCount</span><span class="p">)</span>
+                               <span class="n">Console</span><span class="o">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s1">&#39;Number of points in file= </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">lasheader</span><span class="o">.</span><span class="n">PointRecordsCount</span><span class="p">)</span>
                        <span class="k">except</span> <span class="n">LASException</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
-                               <span class="n">Console</span><span class="o">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">LASException! Msg: {0}&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">Message</span><span class="p">)</span>
-                       <span class="k">except</span> <span class="bp">None</span><span class="p">:</span>
+                               <span class="n">Console</span><span class="o">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">LASException! Msg: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">Message</span><span class="p">)</span>
+                       <span class="k">except</span> <span class="kc">None</span><span class="p">:</span>
                                <span class="n">Console</span><span class="o">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s1">&#39;Unknown exception caught&#39;</span><span class="p">)</span>
                <span class="k">finally</span><span class="p">:</span>
                        <span class="n">Console</span><span class="o">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s1">&#39;Do i need something to do?&#39;</span><span class="p">)</span>
@@ -104,7 +105,7 @@ LIDAR data encoded in LAS file format from IronPython.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../docs.html">Table Of Contents</a></h3>
+<h3><a href="../docs.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../start.html">Getting Started with libLAS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../osgeo4w.html">Windows Installation</a></li>
@@ -137,17 +138,15 @@ LIDAR data encoded in LAS file format from IronPython.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -169,8 +168,8 @@ LIDAR data encoded in LAS file format from IronPython.</p>
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="../copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="../copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

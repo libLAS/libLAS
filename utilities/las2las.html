@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>las2las: Advanced LAS filtering and manipulation &#8212; liblas.org</title>
     <link rel="stylesheet" href="../_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="copyright" title="Copyright" href="../copyright.html" />
@@ -69,16 +70,14 @@
             
   <div class="section" id="las2las-advanced-las-filtering-and-manipulation">
 <span id="las2las"></span><h1>las2las: Advanced LAS filtering and manipulation<a class="headerlink" href="#las2las-advanced-las-filtering-and-manipulation" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Howard Butler</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:hobu&#46;inc&#37;&#52;&#48;gmail&#46;com">hobu<span>&#46;</span>inc<span>&#64;</span>gmail<span>&#46;</span>com</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Howard Butler</p>
+</dd>
+<dt class="field-even">Contact</dt>
+<dd class="field-even"><p><a class="reference external" href="mailto:hobu&#46;inc&#37;&#52;&#48;gmail&#46;com">hobu<span>&#46;</span>inc<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+</dd>
+</dl>
 <div class="section" id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="#las2las"><span class="std std-ref">las2las</span></a> reads and writes LiDAR data in the ASPRS LAS 1.0, 1.1, and 1.2 formats while
@@ -91,36 +90,36 @@ modifying single files at a time, and some <a class="reference internal" href="#
 read passes through the points.   Some examples of operations <cite>las2las</cite> can be
 used for include:</p>
 <ul class="simple">
-<li>clipping of points to those that lie within a certain region specified
-by a bounding box (–extent )</li>
-<li>eliminating points that are the second return (–drop-return 2),</li>
-<li>eliminating points that have a scan angle
-above some threshold (–drop-scan-angle “&lt;5”)</li>
-<li>eliminating points that have an intensity below some
-threshold (–drop-intensity “&lt;15”)</li>
-<li>extracting only first (–first-only) or last (–last-only) returns</li>
-<li>changing the format from LAS 1.0 to 1.1 or vice versa</li>
-<li>eliminating points of a given classification (–eliminate class 2)</li>
+<li><p>clipping of points to those that lie within a certain region specified
+by a bounding box (–extent )</p></li>
+<li><p>eliminating points that are the second return (–drop-return 2),</p></li>
+<li><p>eliminating points that have a scan angle
+above some threshold (–drop-scan-angle “&lt;5”)</p></li>
+<li><p>eliminating points that have an intensity below some
+threshold (–drop-intensity “&lt;15”)</p></li>
+<li><p>extracting only first (–first-only) or last (–last-only) returns</p></li>
+<li><p>changing the format from LAS 1.0 to 1.1 or vice versa</p></li>
+<li><p>eliminating points of a given classification (–eliminate class 2)</p></li>
 </ul>
 <p><a class="reference internal" href="#las2las"><span class="std std-ref">las2las</span></a> started a port of Martin Isenburg’s <a class="reference internal" href="#las2las"><span class="std std-ref">las2las: Advanced LAS filtering and manipulation</span></a> utility from <a class="reference external" href="http://www.cs.unc.edu/~isenburg/lastools/">LASTools</a>
 to the libLAS library.  It is much-improved from his version, however, and
 provides a number of additional capabilities.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../lastools.html#lastools-liblas"><span class="std std-ref">libLAS’ Relationship to LAStools</span></a> contains background information on the port of
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../lastools.html#lastools-liblas"><span class="std std-ref">libLAS’ Relationship to LAStools</span></a> contains background information on the port of
 Isenburg and Shewchuck’s utilities to the libLAS library.</p>
 </div>
 <ul class="simple">
-<li>Text output describing the operation(s) is only provided when the –verbose (-v)
-switch is provided.  Errors are reported to stderr.</li>
-<li>Coordinate reprojection, including vertical datum transformation when compiled
-with the latest <a class="reference external" href="http://www.gdal.org">GDAL</a>.</li>
-<li>Coordinate system description and alteration.</li>
-<li>Variable Length Records (VLRs) are carried forward by default.</li>
-<li>VLR alteration, including adding your own VLRs with files and removal of VLRs</li>
-<li>File splitting based on a specified file size (–split-mb) or points (–split-pts)</li>
-<li>Ability to set coordinate offsets to minimum values of the existing coordinate space.</li>
-<li>Color filtering</li>
+<li><p>Text output describing the operation(s) is only provided when the –verbose (-v)
+switch is provided.  Errors are reported to stderr.</p></li>
+<li><p>Coordinate reprojection, including vertical datum transformation when compiled
+with the latest <a class="reference external" href="http://www.gdal.org">GDAL</a>.</p></li>
+<li><p>Coordinate system description and alteration.</p></li>
+<li><p>Variable Length Records (VLRs) are carried forward by default.</p></li>
+<li><p>VLR alteration, including adding your own VLRs with files and removal of VLRs</p></li>
+<li><p>File splitting based on a specified file size (–split-mb) or points (–split-pts)</p></li>
+<li><p>Ability to set coordinate offsets to minimum values of the existing coordinate space.</p></li>
+<li><p>Color filtering</p></li>
 </ul>
 </div>
 <div class="section" id="usage">
@@ -138,8 +137,8 @@ and y&gt;=483475000 and stores surviving points to out.las.</p>
 <p>clips points of in.las with x &lt;= 63025000 and y &lt;= 483450000 and z &lt;= 100 or x &gt;= 63050000
 and y &gt;= 483475000 and z &gt;= 0</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The quotes around the extent values are important to aid the command line parsing.
+<p class="admonition-title">Note</p>
+<p>The quotes around the extent values are important to aid the command line parsing.
 An error will likely result of not quoting the values.  Alternatively, you can use
 commas to separate the –extent parameters to avoid quoting.</p>
 </div>
@@ -219,8 +218,8 @@ conversion is “in name only.”</p>
 <p>sets the vertical datum information for the file to be NAVD88 with vertical
 units of meters.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This may not be relevant depending upon the circumstances of the coordinate
+<p class="admonition-title">Note</p>
+<p>This may not be relevant depending upon the circumstances of the coordinate
 system the file is already in.  This option only changes the <em>description</em>
 of the points.  It does not reproject them in any way.  Use a combination
 of –a_srs and –t_srs to do perform reprojection of the file</p>
@@ -243,8 +242,8 @@ points each in them. Other filters or operations may also be applied to the
 operation in combination with splitting. Each outputted file will have its
 extents and point counts properly set.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">–split-mb and –split-pts will not work exactly with –min-offset.
+<p class="admonition-title">Note</p>
+<p>–split-mb and –split-pts will not work exactly with –min-offset.
 –min-offset will take the minimum offsets of <em>the entire file</em>, not
 each individual file that is a result of the split.</p>
 </div>
@@ -258,14 +257,14 @@ each individual file that is a result of the split.</p>
 be a location to a file to read to write into the VLR, or properly escaped
 text that will be inserted directly into the VLR.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">VLRs have a size limitation of 65536 bytes.  Files that are read or
+<p class="admonition-title">Warning</p>
+<p>VLRs have a size limitation of 65536 bytes.  Files that are read or
 escaped arguments that are larger than 64k in size will cause an error
 to be thrown.  Automatic truncation will not happen.</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If you attempt to add VLRs with an ID of 34735, 34736, or 34737, your
+<p class="admonition-title">Note</p>
+<p>If you attempt to add VLRs with an ID of 34735, 34736, or 34737, your
 VLR will not be added.  This is because libLAS expects to manage the
 GeoTIFF keys for you.  You should use the SRS handling facilities if
 you need to set GeoTIFF keys instead of attempting to overwrite them
@@ -301,15 +300,15 @@ then multiplied by the –color-source-scale factor or 256 to rescale the
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If the coordinate system of <code class="docutils literal notranslate"><span class="pre">image.img</span></code> is not the same as the input
+<p class="admonition-title">Note</p>
+<p>If the coordinate system of <code class="docutils literal notranslate"><span class="pre">image.img</span></code> is not the same as the input
 coordinate system of the LAS file, you should use GDAL VRTs to cause the
 image to be warped and reprojected as part of the read process.  See
 <a class="reference external" href="http://www.gdal.org/gdal_vrttut.html">http://www.gdal.org/gdal_vrttut.html</a> for more detail.</p>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last"><a class="reference external" href="http://www.gdal.org">GDAL</a> support must be enabled for this to work.</p>
+<p class="admonition-title">Warning</p>
+<p><a class="reference external" href="http://www.gdal.org">GDAL</a> support must be enabled for this to work.</p>
 </div>
 </div>
 </div>
@@ -490,7 +489,7 @@ image to be warped and reprojected as part of the read process.  See
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../docs.html">Table Of Contents</a></h3>
+<h3><a href="../docs.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../start.html">Getting Started with libLAS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../osgeo4w.html">Windows Installation</a></li>
@@ -522,17 +521,15 @@ image to be warped and reprojected as part of the read process.  See
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -554,8 +551,8 @@ image to be warped and reprojected as part of the read process.  See
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="../copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="../copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

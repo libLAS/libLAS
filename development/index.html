@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Development &#8212; liblas.org</title>
     <link rel="stylesheet" href="../_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="copyright" title="Copyright" href="../copyright.html" />
@@ -91,6 +92,25 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="http://www.youtube.com/watch?v=u6XAPnuFjJc">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annual_report_2010.html">2010 Annual Report</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#vertical-datum-reprojection-and-transformation">Vertical Datum Reprojection and Transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#liblas-processing-kernel">libLAS Processing Kernel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#re-engineering-of-las2las-las2txt-and-lasinfo">Re-engineering of <span class="xref std std-ref">las2las</span> <span class="xref std std-ref">las2txt</span> and <span class="xref std std-ref">lasinfo</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#chipper">Chipper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#indexing">Indexing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#cmake">CMake</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#osgeo4w">OSGeo4W</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#new-website">New Website</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#generic-las-schema-support">Generic LAS Schema Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#refactoring-of-liblas-point-class">Refactoring of liblas::Point class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#refactoring-of-internal-reader-and-writer-code">Refactoring of internal Reader and Writer code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#generic-interfaces">Generic interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#faster-binary-i-o">Faster binary i/o</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#caching-reader">Caching reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#seek-support">Seek support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annual_report_2010.html#classification-class">Classification class</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="rfc/index.html">RFCs</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="rfc/rfc_1_verticalcs.html">libLAS RFC 1: Vertical Coordinate Systems</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="rfc/rfc_1_verticalcs.html#vertical-cs-in-geotiff">Vertical CS in GeoTIFF</a></li>
@@ -143,11 +163,11 @@
 <p>The libLAS development team are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference external" href="http://hobu.biz">Howard Butler</a></li>
-<li><a class="reference external" href="http://mateusz.loskot.net">Mateusz Loskot</a></li>
-<li><a class="reference external" href="http://www.geoscan.info">Phil Vachon</a></li>
-<li>Martin Vales</li>
-<li><a class="reference external" href="http://home.gdal.org/warmerda/">Frank Warmerdam</a></li>
+<li><p><a class="reference external" href="http://hobu.biz">Howard Butler</a></p></li>
+<li><p><a class="reference external" href="http://mateusz.loskot.net">Mateusz Loskot</a></p></li>
+<li><p><a class="reference external" href="http://www.geoscan.info">Phil Vachon</a></p></li>
+<li><p>Martin Vales</p></li>
+<li><p><a class="reference external" href="http://home.gdal.org/warmerda/">Frank Warmerdam</a></p></li>
 </ul>
 </div></blockquote>
 <p>Special thanks to <a class="reference external" href="http://www.cs.unc.edu/~isenburg/lastools/">Martin Isenburg and Jonathan Shewchuk</a> for their
@@ -162,7 +182,7 @@ development of the libLAS library possible.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../docs.html">Table Of Contents</a></h3>
+<h3><a href="../docs.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../start.html">Getting Started with libLAS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../osgeo4w.html">Windows Installation</a></li>
@@ -189,17 +209,15 @@ development of the libLAS library possible.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -220,8 +238,8 @@ development of the libLAS library possible.</p>
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="../copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="../copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

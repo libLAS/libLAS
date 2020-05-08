@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>libLAS - LAS 1.0/1.1/1.2 ASPRS LiDAR data translation toolset &#8212; liblas.org</title>
     <link rel="stylesheet" href="_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="copyright" title="Copyright" href="copyright.html" />
@@ -69,14 +70,15 @@
   <div class="section" id="liblas-las-1-0-1-1-1-2-asprs-lidar-data-translation-toolset">
 <span id="home"></span><h1>libLAS - LAS 1.0/1.1/1.2 ASPRS LiDAR data translation toolset<a class="headerlink" href="#liblas-las-1-0-1-1-1-2-asprs-lidar-data-translation-toolset" title="Permalink to this headline">¶</a></h1>
 <p>libLAS is a C/C++ library for reading and writing the very common <cite>LAS</cite>
-<a class="reference external" href="http://en.wikipedia.org/wiki/LIDAR">LiDAR</a> format. The <a class="reference external" href="http://www.asprs.org/society/committees/standards/lidar_exchange_format.html">ASPRS LAS format</a> is a sequential binary format used to
-store data from LiDAR sensors and by LiDAR processing software for data
-interchange and archival.  See <a class="reference internal" href="features.html#features"><span class="std std-ref">Features</span></a> for more details on what
+<a class="reference external" href="http://en.wikipedia.org/wiki/LIDAR">LiDAR</a> format. The <a class="reference external" href="https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities">ASPRS LAS format</a> is a sequential binary file format
+used to store data from LiDAR sensors and by LiDAR processing software for
+data interchange and archival.  See <a class="reference internal" href="features.html#features"><span class="std std-ref">Features</span></a> for more details on what
 libLAS can provide a LiDAR software developer.  See <a class="reference internal" href="start.html#start"><span class="std std-ref">Getting Started with libLAS</span></a> for how to
 get started using the library.</p>
+<p>libLAS supports the ASPRS LAS format specification versions: 1.0, 1.1, 1.2.</p>
 <p>libLAS’ initial development was supported in 2007-2008 by the <a class="reference external" href="http://www.igsb.uiowa.edu/">IGSB</a> of the
-Iowa DNR for use in its state-wide <a class="reference external" href="http://en.wikipedia.org/wiki/LIDAR">LIDAR</a> project.  Ongoing support for
-libLAS is provided by a number of organizations including the
+Iowa DNR for use in its state-wide <a class="reference external" href="http://en.wikipedia.org/wiki/LIDAR">LIDAR</a> project. Later support for
+libLAS was provided by a number of organizations including the
 <a class="reference external" href="http://www.crrel.usace.army.mil/">U.S. Army Cold Regions Research and Engineering Laboratory</a>.</p>
 <p>As of 2018, libLAS has been replaced by the <a class="reference external" href="https://pdal.io">PDAL</a> project and it is in
 hibernation or maintenance mode. libLAS does not provide support for LAS or LAZ
@@ -112,17 +114,15 @@ See <a class="reference internal" href="copyright.html#license"><span class="std
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -143,8 +143,8 @@ See <a class="reference internal" href="copyright.html#license"><span class="std
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

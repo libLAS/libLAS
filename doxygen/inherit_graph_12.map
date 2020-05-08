@@ -1,0 +1,12 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classliblas_1_1FilterI.html" title="Defines public interface to LAS filter implementation. " alt="" coords="5,208,100,235"/>
+<area shape="rect" id="node2" href="$classliblas_1_1BoundsFilter.html" title="A filter for keeping or rejecting points that fall within a specified bounds. " alt="" coords="196,5,336,32"/>
+<area shape="rect" id="node3" href="$classliblas_1_1ClassificationFilter.html" title="A filter for keeping or rejecting a list of classification ids. " alt="" coords="179,56,353,83"/>
+<area shape="rect" id="node4" href="$classliblas_1_1ColorFilter.html" title="A filter for color ranges. " alt="" coords="203,107,329,133"/>
+<area shape="rect" id="node5" href="$classliblas_1_1ContinuousValueFilter.html" title="A templated class that allows you to create complex filters using functions that are callable from th..." alt="" coords="148,157,384,184"/>
+<area shape="rect" id="node6" href="$classliblas_1_1CoordinateSummary.html" title="liblas::CoordinateSummary" alt="" coords="169,208,363,235"/>
+<area shape="rect" id="node7" href="$classliblas_1_1ReturnFilter.html" title="A filter for keeping or rejecting a list of return ids. " alt="" coords="199,259,333,285"/>
+<area shape="rect" id="node8" href="$classliblas_1_1Summary.html" title="A summarization utililty for LAS points. " alt="" coords="203,309,329,336"/>
+<area shape="rect" id="node9" href="$classliblas_1_1ThinFilter.html" title="A filter simple decimation. " alt="" coords="207,360,325,387"/>
+<area shape="rect" id="node10" href="$classliblas_1_1ValidationFilter.html" title="liblas::ValidationFilter" alt="" coords="189,411,343,437"/>
+</map>

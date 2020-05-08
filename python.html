@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Python Class Documentation &#8212; liblas.org</title>
     <link rel="stylesheet" href="_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="copyright" title="Copyright" href="copyright.html" />
@@ -69,37 +70,33 @@
   <div class="section" id="python-class-documentation">
 <span id="class-documentation"></span><h1>Python Class Documentation<a class="headerlink" href="#python-class-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">laspy <a class="reference external" href="https://github.com/grantbrown/laspy">https://github.com/grantbrown/laspy</a> provides a pure-Python
+<p class="admonition-title">Warning</p>
+<p>laspy <a class="reference external" href="https://github.com/grantbrown/laspy">https://github.com/grantbrown/laspy</a> provides a pure-Python
 implementation that is compatible with libLAS’ API. Unless you are
 already using libLAS, we suggest that you utlize laspy for more
 complete Python LAS operations.</p>
 </div>
 <div class="section" id="liblas-color-color">
 <h2>liblas.color.Color<a class="headerlink" href="#liblas-color-color" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="liblas.color.Color">
-<em class="property">class </em><code class="descclassname">liblas.color.</code><code class="descname">Color</code><span class="sig-paren">(</span><em>red=0</em>, <em>green=0</em>, <em>blue=0</em>, <em>owned=True</em>, <em>handle=None</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.color.Color" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">liblas.color.</code><code class="sig-name descname">Color</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">red</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">green</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">blue</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">owned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.color.Color" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="liblas.color.Color.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>red=0</em>, <em>green=0</em>, <em>blue=0</em>, <em>owned=True</em>, <em>handle=None</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.color.Color.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>red</strong> (<em>integer</em>) – Red value for the point</li>
-<li><strong>green</strong> (<em>integer</em>) – Green value for the point</li>
-<li><strong>blue</strong> (<em>integer</em>) – Blue value for the point</li>
-<li><strong>owned</strong> (<em>boolean</em>) – flag to denote whether or not the instance owns
-its shadow</li>
-<li><strong>handle</strong> – raw ctypes object</li>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">red</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">green</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">blue</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">owned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.color.Color.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>red</strong> (<em>integer</em>) – Red value for the point</p></li>
+<li><p><strong>green</strong> (<em>integer</em>) – Green value for the point</p></li>
+<li><p><strong>blue</strong> (<em>integer</em>) – Blue value for the point</p></li>
+<li><p><strong>owned</strong> (<em>boolean</em>) – flag to denote whether or not the instance owns
+its shadow</p></li>
+<li><p><strong>handle</strong> – raw ctypes object</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="k">import</span> <span class="n">color</span>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="n">color</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">color</span><span class="o">.</span><span class="n">Color</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">red</span>
 <span class="go">0</span>
@@ -109,7 +106,7 @@ its shadow</li>
 <span class="go">0</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">color</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="n">red</span> <span class="o">=</span> <span class="mi">123</span><span class="p">,</span> <span class="n">blue</span> <span class="o">=</span> <span class="mi">125</span><span class="p">,</span> <span class="n">green</span> <span class="o">=</span> <span class="mi">124</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">color</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="n">red</span> <span class="o">=</span> <span class="mi">123</span><span class="p">,</span> <span class="n">blue</span> <span class="o">=</span> <span class="mi">125</span><span class="p">,</span> <span class="n">green</span> <span class="o">=</span> <span class="mi">124</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">red</span>
 <span class="go">123</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">green</span>
@@ -119,8 +116,8 @@ its shadow</li>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">RGB values should always be normalized to 16 bit values. For
+<p class="admonition-title">Note</p>
+<p>RGB values should always be normalized to 16 bit values. For
 example, when encoding an 8 bit per channel pixel, multiply each
 channel value by 256 prior to storage in these fields. This
 normalization allows color values from different camera bit depths
@@ -128,38 +125,38 @@ to be accurately merged.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.color.Color.__iter__">
-<code class="descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.color.Color.__iter__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.color.Color.__iter__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterator support.  Values are returned in [R,G,B] order</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span> <span class="n">i</span>
 <span class="go">123</span>
 <span class="go">124</span>
 <span class="go">125</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">[123, 124, 125]</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.color.Color.blue">
-<code class="descname">blue</code><a class="headerlink" href="#liblas.color.Color.blue" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">blue</code><a class="headerlink" href="#liblas.color.Color.blue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Blue value of the color triple</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.color.Color.green">
-<code class="descname">green</code><a class="headerlink" href="#liblas.color.Color.green" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">green</code><a class="headerlink" href="#liblas.color.Color.green" title="Permalink to this definition">¶</a></dt>
 <dd><p>Green value of the color triple</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.color.Color.red">
-<code class="descname">red</code><a class="headerlink" href="#liblas.color.Color.red" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">red</code><a class="headerlink" href="#liblas.color.Color.red" title="Permalink to this definition">¶</a></dt>
 <dd><p>Red value of the color triple</p>
 </dd></dl>
 
@@ -168,14 +165,14 @@ to be accurately merged.</p>
 </div>
 <div class="section" id="liblas-file-file">
 <h2>liblas.file.File<a class="headerlink" href="#liblas-file-file" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="liblas.file.File">
-<em class="property">class </em><code class="descclassname">liblas.file.</code><code class="descname">File</code><span class="sig-paren">(</span><em>filename</em>, <em>header=None</em>, <em>mode='r'</em>, <em>in_srs=None</em>, <em>out_srs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">liblas.file.</code><code class="sig-name descname">File</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'r'</span></em>, <em class="sig-param"><span class="n">in_srs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out_srs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="liblas.file.File.__getitem__">
-<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.__getitem__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Index and slicing support</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
 <span class="go">[&lt;liblas.point.Point object at ...&gt;,</span>
 <span class="go">&lt;liblas.point.Point object at ...&gt;,</span>
 <span class="go">&lt;liblas.point.Point object at ...&gt;]</span>
@@ -183,45 +180,41 @@ to be accurately merged.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.file.File.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>filename</em>, <em>header=None</em>, <em>mode='r'</em>, <em>in_srs=None</em>, <em>out_srs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'r'</span></em>, <em class="sig-param"><span class="n">in_srs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out_srs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a file object to represent an LAS file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>filename</strong> – The filename to open</li>
-<li><strong>header</strong> (an <code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.header.Header</span></code> instance) – A header open the file with</li>
-<li><strong>mode</strong> (<em>string</em>) – “r” for read, “w” for write, and “w+” for append</li>
-<li><strong>in_srs</strong> (an <a class="reference internal" href="#liblas.srs.SRS" title="liblas.srs.SRS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.srs.SRS</span></code></a> instance) – Input SRS to override the existing file’s SRS with</li>
-<li><strong>out_srs</strong> (an <a class="reference internal" href="#liblas.srs.SRS" title="liblas.srs.SRS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.srs.SRS</span></code></a> instance) – Output SRS to reproject points on-the-fly to as         they are read/written.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – The filename to open</p></li>
+<li><p><strong>header</strong> (an <code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.header.Header</span></code> instance) – A header open the file with</p></li>
+<li><p><strong>mode</strong> (<em>string</em>) – “r” for read, “w” for write, and “w+” for append</p></li>
+<li><p><strong>in_srs</strong> (an <a class="reference internal" href="#liblas.srs.SRS" title="liblas.srs.SRS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.srs.SRS</span></code></a> instance) – Input SRS to override the existing file’s SRS with</p></li>
+<li><p><strong>out_srs</strong> (an <a class="reference internal" href="#liblas.srs.SRS" title="liblas.srs.SRS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.srs.SRS</span></code></a> instance) – Output SRS to reproject points on-the-fly to as         they are read/written.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">To open a file in write mode, you must provide a
+<p class="admonition-title">Note</p>
+<p>To open a file in write mode, you must provide a
 liblas.header.Header instance which will be immediately written to
 the file. If you provide a header instance in read mode, the
 values of that header will be used in place of those in the actual
 file.</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If a file is open for write, it cannot be opened for read and vice
+<p class="admonition-title">Note</p>
+<p>If a file is open for write, it cannot be opened for read and vice
 versa.</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="k">import</span> <span class="n">file</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="n">file</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;file.las&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span> <span class="s1">&#39;X,Y,Z: &#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">z</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">header</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">header</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;file2.las&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">f2</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
@@ -230,11 +223,11 @@ versa.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.file.File.__iter__">
-<code class="descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.__iter__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.__iter__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterator support (read mode only)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
 <span class="gp">... </span>  <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 <span class="gp">... </span>  <span class="nb">print</span> <span class="n">i</span> 
@@ -243,25 +236,25 @@ versa.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.file.File.__len__">
-<code class="descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.__len__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.__len__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the number of points in the file according to the header</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.file.File.close">
-<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.close" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Closes the LAS file</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.file.File.header">
-<code class="descname">header</code><a class="headerlink" href="#liblas.file.File.header" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">header</code><a class="headerlink" href="#liblas.file.File.header" title="Permalink to this definition">¶</a></dt>
 <dd><p>The file’s <a class="reference internal" href="#liblas.header.Header" title="liblas.header.Header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header</span></code></a></p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If the file is in append mode, the header will be overwritten in the
+<p class="admonition-title">Note</p>
+<p>If the file is in append mode, the header will be overwritten in the
 file. Setting the header for the file when it is in read mode has no
 effect. If you wish to override existing header information with your
 own at read time, you must instantiate a new <a class="reference internal" href="#liblas.file.File" title="liblas.file.File"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.file.File</span></code></a>
@@ -269,17 +262,17 @@ instance.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.file.File.input_srs">
-<code class="descname">input_srs</code><a class="headerlink" href="#liblas.file.File.input_srs" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">input_srs</code><a class="headerlink" href="#liblas.file.File.input_srs" title="Permalink to this definition">¶</a></dt>
 <dd><p>The input <a class="reference internal" href="#liblas.srs.SRS" title="liblas.srs.SRS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.srs.SRS</span></code></a> for the file.  This overrides the
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.SRS</span></code>.  It is useful in cases where the header’s
 SRS is not valid or does not exist.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.file.File.output_srs">
-<code class="descname">output_srs</code><a class="headerlink" href="#liblas.file.File.output_srs" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">output_srs</code><a class="headerlink" href="#liblas.file.File.output_srs" title="Permalink to this definition">¶</a></dt>
 <dd><p>The output <a class="reference internal" href="#liblas.srs.SRS" title="liblas.srs.SRS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.srs.SRS</span></code></a> for the file.  Data will be
 reprojected to this SRS according to either the <a class="reference internal" href="#liblas.file.File.input_srs" title="liblas.file.File.input_srs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_srs</span></code></a> if it
 was set or default to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.SRS</span></code> if it was
@@ -288,29 +281,26 @@ to occur. GDAL support must also be enabled for the library for
 reprojection to happen.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.file.File.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the point at the given index</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.file.File.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>pt</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pt</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.file.File.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes the point to the file if it is append or write mode. LAS
 files are written sequentially starting from the first point (in pure
 write mode) or from the last point that exists (in append mode).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pt</strong> (<a class="reference internal" href="#liblas.point.Point" title="liblas.point.Point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.point.Point</span></code></a> instance to write) – The point to write.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pt</strong> (<a class="reference internal" href="#liblas.point.Point" title="liblas.point.Point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.point.Point</span></code></a> instance to write) – The point to write.</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">At this time, it is not possible to duck-type point objects and
+<p class="admonition-title">Note</p>
+<p>At this time, it is not possible to duck-type point objects and
 have them be written into the LAS file (from say numpy or
 something). You have to take care of this adaptation yourself.</p>
 </div>
@@ -321,49 +311,42 @@ something). You have to take care of this adaptation yourself.</p>
 </div>
 <div class="section" id="liblas-guid-guid">
 <h2>liblas.guid.GUID<a class="headerlink" href="#liblas-guid-guid" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="liblas.guid.GUID">
-<em class="property">class </em><code class="descclassname">liblas.guid.</code><code class="descname">GUID</code><span class="sig-paren">(</span><em>key=None</em>, <em>handle=None</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.guid.GUID" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">liblas.guid.</code><code class="sig-name descname">GUID</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.guid.GUID" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="liblas.guid.GUID.__eq__">
-<code class="descname">__eq__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.guid.GUID.__eq__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__eq__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.guid.GUID.__eq__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test GUID for equality against another <a class="reference internal" href="#liblas.guid.GUID" title="liblas.guid.GUID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.guid.GUID</span></code></a>
 instance</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – The <a class="reference internal" href="#liblas.guid.GUID" title="liblas.guid.GUID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.guid.GUID</span></code></a> instance to test against</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – The <a class="reference internal" href="#liblas.guid.GUID" title="liblas.guid.GUID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.guid.GUID</span></code></a> instance to test against</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.guid.GUID.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>key=None</em>, <em>handle=None</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.guid.GUID.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>key</strong> (<em>string</em>) – GUID string to create with</li>
-<li><strong>handle</strong> – raw ctypes object</li>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.guid.GUID.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>string</em>) – GUID string to create with</p></li>
+<li><p><strong>handle</strong> – raw ctypes object</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="k">import</span> <span class="n">guid</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="k">import</span> <span class="n">header</span>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="n">guid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="n">header</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g2</span> <span class="o">=</span> <span class="n">guid</span><span class="o">.</span><span class="n">GUID</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;8388f1b8-aa1b-4108-bca3-6bc68e7b062e&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g2</span> <span class="o">=</span> <span class="n">guid</span><span class="o">.</span><span class="n">GUID</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;8388f1b8-aa1b-4108-bca3-6bc68e7b062e&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g2</span>
 <span class="go">8388f1b8-aa1b-4108-bca3-6bc68e7b062e</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="o">.</span><span class="n">guid</span> <span class="o">=</span> <span class="n">g2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="o">.</span><span class="n">guid</span>
 <span class="go">8388f1b8-aa1b-4108-bca3-6bc68e7b062e</span>
@@ -371,22 +354,22 @@ instance</p>
 <span class="go">&#39;8388f1b8-aa1b-4108-bca3-6bc68e7b062e&#39;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span> <span class="o">=</span> <span class="n">guid</span><span class="o">.</span><span class="n">GUID</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;8388f1b8-aa1b-4108-bca3-6bc68e7b062e&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span> <span class="o">=</span> <span class="n">guid</span><span class="o">.</span><span class="n">GUID</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;8388f1b8-aa1b-4108-bca3-6bc68e7b062e&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g2</span> <span class="o">==</span> <span class="n">g3</span>
 <span class="go">True</span>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">In Python 2.5+, you can use the <a class="reference external" href="https://docs.python.org/3/library/uuid.html#module-uuid" title="(in Python v3.6)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">uuid</span></code></a> module to control the
+<p class="admonition-title">Note</p>
+<p>In Python 2.5+, you can use the <a class="reference external" href="https://docs.python.org/3/library/uuid.html#module-uuid" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">uuid</span></code></a> module to control the
 creation of UUIDs in alternative ways. Otherwise, the GUID()
 constructor will create them for you, but rather simply.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.guid.GUID.__str__">
-<code class="descname">__str__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.guid.GUID.__str__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__str__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.guid.GUID.__str__" title="Permalink to this definition">¶</a></dt>
 <dd><p>String representation of the GUID</p>
 </dd></dl>
 
@@ -395,51 +378,51 @@ constructor will create them for you, but rather simply.</p>
 </div>
 <div class="section" id="liblas-header-header">
 <h2>liblas.header.Header<a class="headerlink" href="#liblas-header-header" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="liblas.header.Header">
-<em class="property">class </em><code class="descclassname">liblas.header.</code><code class="descname">Header</code><span class="sig-paren">(</span><em>owned=True</em>, <em>handle=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.header.Header" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">liblas.header.</code><code class="sig-name descname">Header</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">copy</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.header.Header" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="liblas.header.Header.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>owned=True</em>, <em>handle=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.header.Header.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>x.__init__(…) initializes x; see help(type(x)) for signature</p>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">copy</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.header.Header.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.header.Header.__len__">
-<code class="descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.header.Header.__len__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.header.Header.__len__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the expected number of point records in the file.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This value can be grossly out of sync with the actual number of
+<p class="admonition-title">Note</p>
+<p>This value can be grossly out of sync with the actual number of
 points in the file, because some some softwares are not careful to
 keep it up-to-date. If libLAS detects a case where it is not
 properly written, an exception will be thrown.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.count">
-<code class="descname">count</code><a class="headerlink" href="#liblas.header.Header.count" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">count</code><a class="headerlink" href="#liblas.header.Header.count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the expected number of point records in the file.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This value can be grossly out of sync with the actual number of
+<p class="admonition-title">Note</p>
+<p>This value can be grossly out of sync with the actual number of
 points in the file, because some some softwares are not careful to
 keep it up-to-date. If libLAS detects a case where it is not
 properly written, an exception will be thrown.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.data_format_id">
-<code class="descname">data_format_id</code><a class="headerlink" href="#liblas.header.Header.data_format_id" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">data_format_id</code><a class="headerlink" href="#liblas.header.Header.data_format_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>The point format as an integer. See the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a> for more
 detail.</p>
 <blockquote>
 <div><p>It can be 3, 2, 1, or 0.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Use <code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.schema.Schema</span></code> and set the
+<p class="admonition-title">Note</p>
+<p>Use <code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.schema.Schema</span></code> and set the
 <a class="reference internal" href="#liblas.header.Header.schema" title="liblas.header.Header.schema"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.schema</span></code></a> object instead of using the
 dataformat_id directly. Otherwise, you will have to account for
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.data_record_length</span></code>.</p>
@@ -447,15 +430,15 @@ the <code class="xref py py-obj docutils literal notranslate"><span class="pre">
 </div></blockquote>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.data_offset">
-<code class="descname">data_offset</code><a class="headerlink" href="#liblas.header.Header.data_offset" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">data_offset</code><a class="headerlink" href="#liblas.header.Header.data_offset" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of bytes of offset between the end of the header and
 the start of the point data in the file. Set this to a large value if you
 plan to include many <a class="reference internal" href="#liblas.vlr.VLR" title="liblas.vlr.VLR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.vlr.VLR</span></code></a>’s to the file.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">libLAS will manage this value for you as you add or remove VLRs or
+<p class="admonition-title">Note</p>
+<p>libLAS will manage this value for you as you add or remove VLRs or
 <a class="reference internal" href="#liblas.srs.SRS" title="liblas.srs.SRS"><code class="xref py py-class docutils literal notranslate"><span class="pre">liblas.srs.SRS</span></code></a> instances to the header. Make sure to adjust
 your header information before opening a new file to write, as that is
 when the header’s VLRs are written to the file, and they cannot be
@@ -463,35 +446,32 @@ adjusted after that.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.date">
-<code class="descname">date</code><a class="headerlink" href="#liblas.header.Header.date" title="Permalink to this definition">¶</a></dt>
-<dd><p>The header’s date from a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instance.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> – <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instance or none to use the         current time</td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">19</span><span class="p">)</span>
+<em class="property">property </em><code class="sig-name descname">date</code><a class="headerlink" href="#liblas.header.Header.date" title="Permalink to this definition">¶</a></dt>
+<dd><p>The header’s date from a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instance or none to use the         current time</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">19</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">t</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">date</span>
 <span class="go">datetime.datetime(2008, 3, 19, 0, 0)</span>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">LAS files do not support storing full datetimes in their headers,
+<p class="admonition-title">Note</p>
+<p>LAS files do not support storing full datetimes in their headers,
 only the year and the day number. The conversion is handled for
-you if you use <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instances, however.</p>
+you if you use <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instances, however.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.encoding">
-<code class="descname">encoding</code><a class="headerlink" href="#liblas.header.Header.encoding" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">encoding</code><a class="headerlink" href="#liblas.header.Header.encoding" title="Permalink to this definition">¶</a></dt>
 <dd><p>Global encoding for the file.</p>
 <p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
@@ -500,120 +480,120 @@ the file. In LAS 1.2 (the version in which this field was introduced),
 only the low bit is defined (this is the bit, that if set, would have
 the unsigned integer yield a value of 1). This bit field is defined
 as:</p>
-<table border="1" class="colwidths-given docutils" id="id1">
+<table class="colwidths-given docutils align-default" id="id1">
 <caption><span class="caption-text">Global Encoding - Bit Field Encoding</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
 <colgroup>
-<col width="11%" />
-<col width="22%" />
-<col width="67%" />
+<col style="width: 11%" />
+<col style="width: 22%" />
+<col style="width: 67%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Bits</th>
-<th class="head">Field Name</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Field Name</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>0</td>
-<td>GPS Time Type</td>
-<td>The meaning of GPS Time in the Point Records
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>GPS Time Type</p></td>
+<td><p>The meaning of GPS Time in the Point Records
 0 (not set) -&gt; GPS time in the point record fields is GPS Week
 Time (the same as previous versions of LAS) 1 (set) -&gt; GPS Time is
 standard GPS Time (satellite GPS Time) minus 1 x 10^9 (Adjusted
 Standard GPS Time). The offset moves the time back to near zero to
-improve floating point resolution.</td>
+improve floating point resolution.</p></td>
 </tr>
-<tr class="row-odd"><td>1</td>
-<td>Waveform Data Packets Internal</td>
-<td>If this bit is set, the
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Waveform Data Packets Internal</p></td>
+<td><p>If this bit is set, the
 waveform data packets are located within this file (note that this
-bit is mutually exclusive with bit 2)</td>
+bit is mutually exclusive with bit 2)</p></td>
 </tr>
-<tr class="row-even"><td>2</td>
-<td>Waveform Data Packets External</td>
-<td>If this bit is set, the
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Waveform Data Packets External</p></td>
+<td><p>If this bit is set, the
 waveform data packets are located external to this file in an
 auxiliary file with the same base name as this file and the
 extension .wdp. (note that this bit is mutually exclusive with
-bit 1)</td>
+bit 1)</p></td>
 </tr>
-<tr class="row-odd"><td>3</td>
-<td>Return numbers have been synthetically generated</td>
-<td>If set,
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Return numbers have been synthetically generated</p></td>
+<td><p>If set,
 the point return numbers in the Point Data Records have been
 synthetically generated. This could be the case, for example, when
 a composite file is created by combining a First Return File and a
 Last Return File. In this case, first return data will be labeled
-‘1 of 2’ and second return data will be labeled ‘2 of 2’</td>
+‘1 of 2’ and second return data will be labeled ‘2 of 2’</p></td>
 </tr>
-<tr class="row-even"><td>4:15</td>
-<td>Reserved</td>
-<td>Must be set to zero</td>
+<tr class="row-even"><td><p>4:15</p></td>
+<td><p>Reserved</p></td>
+<td><p>Must be set to zero</p></td>
 </tr>
 </tbody>
 </table>
 </div></blockquote>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.file_signature">
-<code class="descname">file_signature</code><a class="headerlink" href="#liblas.header.Header.file_signature" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">file_signature</code><a class="headerlink" href="#liblas.header.Header.file_signature" title="Permalink to this definition">¶</a></dt>
 <dd><p>The file signature for the file.  It should always be ‘LASF’</p>
-<dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
-<dd>The file signature must contain the four characters “LASF”, and it is
+<dl class="simple">
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt><dd><p>The file signature must contain the four characters “LASF”, and it is
 required by the LAS specification. These four characters can be
 checked by user software as a quick look initial determination of file
-type.</dd>
+type.</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.file_source_id">
-<code class="descname">file_source_id</code><a class="headerlink" href="#liblas.header.Header.file_source_id" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">file_source_id</code><a class="headerlink" href="#liblas.header.Header.file_source_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>File Source ID for the file.</p>
-<dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
-<dd>This field should be set to a value between 1 and 65,535, inclusive. A
+<dl class="simple">
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt><dd><p>This field should be set to a value between 1 and 65,535, inclusive. A
 value of zero (0) is interpreted to mean that an ID has not been
 assigned. In this case, processing software is free to assign any
 valid number. Note that this scheme allows a LIDAR project to contain
 up to 65,535 unique sources. A source can be considered an original
 flight line or it can be the result of merge and/or extract
-operations.</dd>
+operations.</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.guid">
-<code class="descname">guid</code><a class="headerlink" href="#liblas.header.Header.guid" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">guid</code><a class="headerlink" href="#liblas.header.Header.guid" title="Permalink to this definition">¶</a></dt>
 <dd><p>The GUID/<a class="reference internal" href="#liblas.header.Header.project_id" title="liblas.header.Header.project_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.project_id</span></code></a> for the file.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.header_length">
-<code class="descname">header_length</code><a class="headerlink" href="#liblas.header.Header.header_length" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">header_length</code><a class="headerlink" href="#liblas.header.Header.header_length" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of bytes that the header contains. For libLAS, this is
 always 227, and it is not configurable.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.major">
-<code class="descname">major</code><a class="headerlink" href="#liblas.header.Header.major" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">major</code><a class="headerlink" href="#liblas.header.Header.major" title="Permalink to this definition">¶</a></dt>
 <dd><p>Major version number for the file.  For all practical purposes,     this is always ‘1’</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.max">
-<code class="descname">max</code><a class="headerlink" href="#liblas.header.Header.max" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">max</code><a class="headerlink" href="#liblas.header.Header.max" title="Permalink to this definition">¶</a></dt>
 <dd><p>The maximum values of [x, y, z] for the data in the file.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">libLAS does not manage these values automatically for you. You
+<p class="admonition-title">Note</p>
+<p>libLAS does not manage these values automatically for you. You
 must cumulate and generate the histogram manually if you wish to
 keep these data up-to-date with what actually exists in the file.</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">max</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">max</span>
 <span class="go">[0.0, 0.0, 0.0]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="p">[</span><span class="mf">33452344.2333</span><span class="p">,</span> <span class="mf">523442.344</span><span class="p">,</span> <span class="o">-</span><span class="mf">90.993</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">max</span>
@@ -622,17 +602,17 @@ keep these data up-to-date with what actually exists in the file.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.min">
-<code class="descname">min</code><a class="headerlink" href="#liblas.header.Header.min" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">min</code><a class="headerlink" href="#liblas.header.Header.min" title="Permalink to this definition">¶</a></dt>
 <dd><p>The minimum values of [x, y, z] for the data in the file.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">libLAS does not manage these values automatically for you. You
+<p class="admonition-title">Note</p>
+<p>libLAS does not manage these values automatically for you. You
 must cumulate and generate the histogram manually if you wish to
 keep these data up-to-date with what actually exists in the file.</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">min</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">min</span>
 <span class="go">[0.0, 0.0, 0.0]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="p">[</span><span class="mf">33452344.2333</span><span class="p">,</span> <span class="mf">523442.344</span><span class="p">,</span> <span class="o">-</span><span class="mf">90.993</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">min</span>
@@ -641,49 +621,48 @@ keep these data up-to-date with what actually exists in the file.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.minor">
-<code class="descname">minor</code><a class="headerlink" href="#liblas.header.Header.minor" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">minor</code><a class="headerlink" href="#liblas.header.Header.minor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Minor version for the file. [0, 1, 2] are currently supported.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.num_vlrs">
-<code class="descname">num_vlrs</code><a class="headerlink" href="#liblas.header.Header.num_vlrs" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">num_vlrs</code><a class="headerlink" href="#liblas.header.Header.num_vlrs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the number of user-defined header records in the header.
 libLAS will manage this value you for you as you add new
 <a class="reference internal" href="#liblas.srs.SRS" title="liblas.srs.SRS"><code class="xref py py-class docutils literal notranslate"><span class="pre">liblas.srs.SRS</span></code></a> or <a class="reference internal" href="#liblas.vlr.VLR" title="liblas.vlr.VLR"><code class="xref py py-class docutils literal notranslate"><span class="pre">liblas.vlr.VLR</span></code></a> instances to the
 header.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.offset">
-<code class="descname">offset</code><a class="headerlink" href="#liblas.header.Header.offset" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">offset</code><a class="headerlink" href="#liblas.header.Header.offset" title="Permalink to this definition">¶</a></dt>
 <dd><p>The offset factors in [x, y, z] for the point data.</p>
-<dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
-<dd>The offset fields should be used to set the overall offset for the
+<dl class="simple">
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt><dd><p>The offset fields should be used to set the overall offset for the
 point records. In general these numbers will be zero, but for
 certain cases the resolution of the point data may not be large
 enough for a given projection system. However, it should always be
 assumed that these numbers are used. So to scale a given X from
 the point record, take the point record X multiplied by the X
-scale factor, and then add the X offset.</dd>
-<dt>Coordinates are calculated using the following formula(s):</dt>
-<dd><ul class="first last simple">
-<li>x = (x_int * x_scale) + x_offset</li>
-<li>y = (y_int * y_scale) + y_offset</li>
-<li>z = (z_int * z_scale) + z_offset</li>
+scale factor, and then add the X offset.</p>
+</dd>
+<dt>Coordinates are calculated using the following formula(s):</dt><dd><ul class="simple">
+<li><p>x = (x_int * x_scale) + x_offset</p></li>
+<li><p>y = (y_int * y_scale) + y_offset</p></li>
+<li><p>z = (z_int * z_scale) + z_offset</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">libLAS uses this header value when reading/writing raw point data
+<p class="admonition-title">Note</p>
+<p>libLAS uses this header value when reading/writing raw point data
 to the file. If you change it in the middle of writing data,
 expect the unexpected.</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">offset</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">offset</span>
 <span class="go">[0.0, 0.0, 0.0]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">offset</span>
@@ -692,36 +671,36 @@ expect the unexpected.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.project_id">
-<code class="descname">project_id</code><a class="headerlink" href="#liblas.header.Header.project_id" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">project_id</code><a class="headerlink" href="#liblas.header.Header.project_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>ProjectID for the file.          libLAS does not currently support setting this value from Python, as
 it is the same as <a class="reference internal" href="#liblas.header.Header.guid" title="liblas.header.Header.guid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.guid</span></code></a>. Use that to
 manipulate the ProjectID for the file.</p>
-<dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
-<dd>The four fields that comprise a complete Globally Unique Identifier
+<dl class="simple">
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt><dd><p>The four fields that comprise a complete Globally Unique Identifier
 (GUID) are now reserved for use as a Project Identifier (Project
 ID). The field remains optional. The time of assignment of the
 Project ID is at the discretion of processing software. The
 Project ID should be the same for all files that are associated
 with a unique project. By assigning a Project ID and using a File
 Source ID (defined above) every file within a project and every
-point within a file can be uniquely identified, globally.</dd>
+point within a file can be uniquely identified, globally.</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.return_count">
-<code class="descname">return_count</code><a class="headerlink" href="#liblas.header.Header.return_count" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">return_count</code><a class="headerlink" href="#liblas.header.Header.return_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>The histogram of point records by return number for returns 0…8</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">libLAS does not manage these values automatically for you. You
+<p class="admonition-title">Note</p>
+<p>libLAS does not manage these values automatically for you. You
 must cumulate and generate the histogram manually if you wish to
 keep these data up-to-date with what actually exists in the file.</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">point_return_count</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">point_return_count</span>
 <span class="go">[0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1341235</span><span class="n">L</span><span class="p">,</span> <span class="mi">3412341222</span><span class="n">L</span><span class="p">,</span> <span class="mi">0</span><span class="n">L</span><span class="p">,</span> <span class="mi">0</span><span class="n">L</span><span class="p">,</span> <span class="mi">4321</span><span class="n">L</span><span class="p">,</span> <span class="mi">0</span><span class="n">L</span><span class="p">,</span> <span class="mi">0</span><span class="n">L</span><span class="p">,</span> <span class="mi">0</span><span class="n">L</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">point_return_count</span> <span class="o">=</span> <span class="n">l</span>
@@ -731,35 +710,34 @@ keep these data up-to-date with what actually exists in the file.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.scale">
-<code class="descname">scale</code><a class="headerlink" href="#liblas.header.Header.scale" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">scale</code><a class="headerlink" href="#liblas.header.Header.scale" title="Permalink to this definition">¶</a></dt>
 <dd><p>The scale factors in [x, y, z] for the point data.  libLAS uses         the scale factors plus the <a class="reference internal" href="#liblas.header.Header.offset" title="liblas.header.Header.offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.offset</span></code></a> values
 to store the point coordinates as integers in the file.</p>
-<dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
-<dd>The scale factor fields contain a double floating point value that
+<dl class="simple">
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt><dd><p>The scale factor fields contain a double floating point value that
 is used to scale the corresponding X, Y, and Z long values within
 the point records. The corresponding X, Y, and Z scale factor must
 be multiplied by the X, Y, or Z point record value to get the
 actual X, Y, or Z coordinate. For example, if the X, Y, and Z
 coordinates are intended to have two decimal point values, then
-each scale factor will contain the number 0.01</dd>
-<dt>Coordinates are calculated using the following formula(s):</dt>
-<dd><ul class="first last simple">
-<li>x = (x_int * x_scale) + x_offset</li>
-<li>y = (y_int * y_scale) + y_offset</li>
-<li>z = (z_int * z_scale) + z_offset</li>
+each scale factor will contain the number 0.01</p>
+</dd>
+<dt>Coordinates are calculated using the following formula(s):</dt><dd><ul class="simple">
+<li><p>x = (x_int * x_scale) + x_offset</p></li>
+<li><p>y = (y_int * y_scale) + y_offset</p></li>
+<li><p>z = (z_int * z_scale) + z_offset</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">libLAS uses this header value when reading/writing raw point data
+<p class="admonition-title">Note</p>
+<p>libLAS uses this header value when reading/writing raw point data
 to the file. If you change it in the middle of writing data,
 expect the unexpected.</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">scale</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">scale</span>
 <span class="go">[0.01, 0.01, 0.01]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hdr</span><span class="o">.</span><span class="n">scale</span>
@@ -768,13 +746,13 @@ expect the unexpected.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.schema">
-<code class="descname">schema</code><a class="headerlink" href="#liblas.header.Header.schema" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">schema</code><a class="headerlink" href="#liblas.header.Header.schema" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">liblas.schmea.Schema</span></code> for this file</p>
 <p>Use the schema to set whether or not color or time should be stored
 on the points:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">liblas</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">liblas</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">liblas</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Schema</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="kc">True</span>
@@ -792,7 +770,7 @@ on the points:</p>
 <p>The following example demonstrates how to make a point schema that does
 not store color or time, but also provides 22 extra bytes to store
 <a class="reference internal" href="#liblas.point.Point.data" title="liblas.point.Point.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.point.Point.data</span></code></a></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">liblas</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">liblas</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">schema</span>
 <span class="go">&lt;liblas.schema.Schema object at 0x100779f90&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">time</span>
@@ -816,46 +794,44 @@ not store color or time, but also provides 22 extra bytes to store
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.header.Header.set_count">
-<code class="descname">set_count</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.header.Header.set_count" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.header.Header.set_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the number of point records expected in the file.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Don’t use this unless you have a damn good reason to. As you write
+<p class="admonition-title">Note</p>
+<p>Don’t use this unless you have a damn good reason to. As you write
 points to a file, libLAS is going to keep this up-to-date for you
 and write it back into the header of the file once the file is
 closed after writing data.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.software_id">
-<code class="descname">software_id</code><a class="headerlink" href="#liblas.header.Header.software_id" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">software_id</code><a class="headerlink" href="#liblas.header.Header.software_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>The software identifier. The value is truncated to 31 characters
 and defaults to ‘libLAS 1.LASVERSION’ (ie, libLAS 1.6 for the 1.6
 release)</p>
 <blockquote>
-<div><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">arg value:</th><td class="field-body">a string that will automatically be truncated to 31         characters</td>
-</tr>
-<tr class="field-even field"><th class="field-name">type value:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
-<dd>This information is ASCII data describing the generating software
+<div><dl class="field-list simple">
+<dt class="field-odd">arg value</dt>
+<dd class="field-odd"><p>a string that will automatically be truncated to 31         characters</p>
+</dd>
+<dt class="field-even">type value</dt>
+<dd class="field-even"><p>string</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt><dd><p>This information is ASCII data describing the generating software
 itself. This field provides a mechanism for specifying which
 generating software package and version was used during LAS file
 creation (e.g. “TerraScan V-10.8”, “REALM V-4.2” and etc.). If the
 character data is less than 32 characters, the remaining data must
-be null.</dd>
+be null.</p>
+</dd>
 </dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">software_id</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">software_id</span>
 <span class="go">&#39;libLAS 1.0&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">software_id</span> <span class="o">=</span> <span class="s1">&#39;hobu&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">software_id</span>
@@ -868,57 +844,54 @@ be null.</dd>
 </div></blockquote>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.header.Header.system_id">
-<code class="descname">system_id</code><a class="headerlink" href="#liblas.header.Header.system_id" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>The system identifier. The value is truncated to 31 characters and</dt>
-<dd>defaults to ‘libLAS’</dd>
+<em class="property">property </em><code class="sig-name descname">system_id</code><a class="headerlink" href="#liblas.header.Header.system_id" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>The system identifier. The value is truncated to 31 characters and</dt><dd><p>defaults to ‘libLAS’</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>string</em>) – a string that will automatically be truncated to 31         characters</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>string</em>) – a string that will automatically be truncated to 31         characters</p>
+</dd>
+</dl>
 <p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
-<div><table border="1" class="colwidths-given docutils" id="id2">
+<div><table class="colwidths-given docutils align-default" id="id2">
 <caption><span class="caption-text">System Identifier</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
 <colgroup>
-<col width="40%" />
-<col width="60%" />
+<col style="width: 40%" />
+<col style="width: 60%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Generating Agent</th>
-<th class="head">System ID</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Generating Agent</p></th>
+<th class="head"><p>System ID</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>Hardware system</td>
-<td>String identifying hardware (e.g. ALTM 1210 or ALS50</td>
+<tbody>
+<tr class="row-even"><td><p>Hardware system</p></td>
+<td><p>String identifying hardware (e.g. ALTM 1210 or ALS50</p></td>
 </tr>
-<tr class="row-odd"><td>Merge of one or more files</td>
-<td>MERGE</td>
+<tr class="row-odd"><td><p>Merge of one or more files</p></td>
+<td><p>MERGE</p></td>
 </tr>
-<tr class="row-even"><td>Modification of a single file</td>
-<td>MODIFICATION</td>
+<tr class="row-even"><td><p>Modification of a single file</p></td>
+<td><p>MODIFICATION</p></td>
 </tr>
-<tr class="row-odd"><td>Extraction from one or more files</td>
-<td>EXTRACTION</td>
+<tr class="row-odd"><td><p>Extraction from one or more files</p></td>
+<td><p>EXTRACTION</p></td>
 </tr>
-<tr class="row-even"><td>Reprojection, rescaling, warping, etc.</td>
-<td>TRANSFORMATION</td>
+<tr class="row-even"><td><p>Reprojection, rescaling, warping, etc.</p></td>
+<td><p>TRANSFORMATION</p></td>
 </tr>
-<tr class="row-odd"><td>Some other operation</td>
-<td>OTHER or a string up to 32 characters identifying the operation</td>
+<tr class="row-odd"><td><p>Some other operation</p></td>
+<td><p>OTHER or a string up to 32 characters identifying the operation</p></td>
 </tr>
 </tbody>
 </table>
 </div></blockquote>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">system_id</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">system_id</span>
 <span class="go">&#39;&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">system_id</span> <span class="o">=</span> <span class="s1">&#39;MODIFICATION&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">system_id</span>
@@ -932,43 +905,39 @@ be null.</dd>
 </div>
 <div class="section" id="liblas-point-point">
 <h2>liblas.point.Point<a class="headerlink" href="#liblas-point-point" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="liblas.point.Point">
-<em class="property">class </em><code class="descclassname">liblas.point.</code><code class="descname">Point</code><span class="sig-paren">(</span><em>owned=True</em>, <em>handle=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.point.Point" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">liblas.point.</code><code class="sig-name descname">Point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">copy</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.point.Point" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="liblas.point.Point.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>owned=True</em>, <em>handle=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.point.Point.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">copy</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.point.Point.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiates a <a class="reference internal" href="#liblas.point.Point" title="liblas.point.Point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.point.Point</span></code></a> object.  If you are         creating and working with your own instances, you should normally         not need to use any of the parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>owned</strong> – boolean
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>owned</strong> – boolean
 A flag to denote whether or not the point owns itself and can
 destroy itself upon going out of scope. There are instances where
 <a class="reference internal" href="#liblas.file.File" title="liblas.file.File"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.file.File</span></code></a> may actually own the point as it is read
-from or written to files.</li>
-<li><strong>handle</strong> – ctypes object reference
+from or written to files.</p></li>
+<li><p><strong>handle</strong> – ctypes object reference
 A handle to an existing ctypes LASPointH object reference. Only
-internal liblas code should have to worry about using this.</li>
-<li><strong>copy</strong> – boolean
+internal liblas code should have to worry about using this.</p></li>
+<li><p><strong>copy</strong> – boolean
 A flag to denote whether or not to copy the point upon creation.
 Used in coordination with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">handle</span></code> parameter, and it
-should not normally be used.</li>
+should not normally be used.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#liblas.point.Point" title="liblas.point.Point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.point.Point</span></code></a> object</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#liblas.point.Point" title="liblas.point.Point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.point.Point</span></code></a> object</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.classification">
-<code class="descname">classification</code><a class="headerlink" href="#liblas.point.Point.classification" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">classification</code><a class="headerlink" href="#liblas.point.Point.classification" title="Permalink to this definition">¶</a></dt>
 <dd><p>The point’s classification as a raw byte value.</p>
 <p>The following large section of information is verboten from the
 <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a> for your convenience:</p>
@@ -976,111 +945,111 @@ should not normally be used.</li>
 has never been classified, this byte must be set to zero. There are no
 user defined classes since all point formats 0 supply 8 bits per point
 for user defined operations.</p>
-<table border="1" class="colwidths-given docutils" id="id3">
+<table class="colwidths-given docutils align-default" id="id3">
 <caption><span class="caption-text">Classification Bit Field Encoding</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
 <colgroup>
-<col width="6%" />
-<col width="19%" />
-<col width="75%" />
+<col style="width: 6%" />
+<col style="width: 19%" />
+<col style="width: 75%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Bits</th>
-<th class="head">Field Name</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Field Name</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>0:4</td>
-<td>Classification</td>
-<td>Standard ASPRS classification as defined
-in the following classification table.</td>
+<tbody>
+<tr class="row-even"><td><p>0:4</p></td>
+<td><p>Classification</p></td>
+<td><p>Standard ASPRS classification as defined
+in the following classification table.</p></td>
 </tr>
-<tr class="row-odd"><td>5</td>
-<td>Synthetic</td>
-<td>If set then this point was created by a technique
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>Synthetic</p></td>
+<td><p>If set then this point was created by a technique
 other than LIDAR collection such as digitized from a
-photogrammetric stereo model or by traversing a waveform.</td>
+photogrammetric stereo model or by traversing a waveform.</p></td>
 </tr>
-<tr class="row-even"><td>6</td>
-<td>Key-point</td>
-<td>If set, this point is considered to be a model
+<tr class="row-even"><td><p>6</p></td>
+<td><p>Key-point</p></td>
+<td><p>If set, this point is considered to be a model
 key- point and thus generally should not be withheld in a thinning
-algorithm.</td>
+algorithm.</p></td>
 </tr>
-<tr class="row-odd"><td>7</td>
-<td>Witheld</td>
-<td>If set, this point should not be included in
-processing (synonymous with Deleted).</td>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>Witheld</p></td>
+<td><p>If set, this point should not be included in
+processing (synonymous with Deleted).</p></td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Bits 5, 6 and 7 are treated as flags and can be set or clear in
+<p class="admonition-title">Note</p>
+<p>Bits 5, 6 and 7 are treated as flags and can be set or clear in
 any combination. For example, a point with bits 5 and 6 both set
 to one and the lower five bits set to 2 (see table below) would be
 a ground point that had been Synthetically collected and marked as
 a model key-point.</p>
 </div>
-<table border="1" class="colwidths-given docutils" id="id4">
+<table class="colwidths-given docutils align-default" id="id4">
 <caption><span class="caption-text">ASPRS Standard LiDAR Point Classes</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
 <colgroup>
-<col width="25%" />
-<col width="75%" />
+<col style="width: 25%" />
+<col style="width: 75%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Classification</th>
-<th class="head">Meaning</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Classification</p></th>
+<th class="head"><p>Meaning</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>0</td>
-<td>Created, never classified</td>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>Created, never classified</p></td>
 </tr>
-<tr class="row-odd"><td>1</td>
-<td>Unclassified</td>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Unclassified</p></td>
 </tr>
-<tr class="row-even"><td>2</td>
-<td>Ground</td>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Ground</p></td>
 </tr>
-<tr class="row-odd"><td>3</td>
-<td>Low Vegetation</td>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Low Vegetation</p></td>
 </tr>
-<tr class="row-even"><td>4</td>
-<td>Medium Vegetation</td>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>Medium Vegetation</p></td>
 </tr>
-<tr class="row-odd"><td>5</td>
-<td>High Vegetation</td>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>High Vegetation</p></td>
 </tr>
-<tr class="row-even"><td>6</td>
-<td>Building</td>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>Building</p></td>
 </tr>
-<tr class="row-odd"><td>7</td>
-<td>Low Point (noise)</td>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>Low Point (noise)</p></td>
 </tr>
-<tr class="row-even"><td>8</td>
-<td>Model Key-point (mass point)</td>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>Model Key-point (mass point)</p></td>
 </tr>
-<tr class="row-odd"><td>9</td>
-<td>Water</td>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>Water</p></td>
 </tr>
-<tr class="row-even"><td>10</td>
-<td>Reserved for ASPRS Definition</td>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>Reserved for ASPRS Definition</p></td>
 </tr>
-<tr class="row-odd"><td>11</td>
-<td>Reserved for ASPRS Definition</td>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>Reserved for ASPRS Definition</p></td>
 </tr>
-<tr class="row-even"><td>12</td>
-<td>Overlap Points</td>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>Overlap Points</p></td>
 </tr>
-<tr class="row-odd"><td>13-31</td>
-<td>Reserved for ASPRS Definition</td>
+<tr class="row-odd"><td><p>13-31</p></td>
+<td><p>Reserved for ASPRS Definition</p></td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">We are using both 0 and 1 as Unclassified to maintain
+<p class="admonition-title">Note</p>
+<p>We are using both 0 and 1 as Unclassified to maintain
 compatibility with current popular classification software such as
 TerraScan. We extend the idea of classification value 1 to include
 cases in which data have been subjected to a classification
@@ -1090,63 +1059,65 @@ structures – points that emerge without having been assigned as
 belonging to structures could be remapped from class 0 to class 1</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Overlap Points are those points that were immediately culled
+<p class="admonition-title">Note</p>
+<p>Overlap Points are those points that were immediately culled
 during the merging of overlapping flight lines. In general, the
 Withheld bit should be set since these points are not subsequently
 classified.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.color">
-<code class="descname">color</code><a class="headerlink" href="#liblas.point.Point.color" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">color</code><a class="headerlink" href="#liblas.point.Point.color" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raw color value for the point as an <a class="reference internal" href="#liblas.color.Color" title="liblas.color.Color"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.color.Color</span></code></a>
 instance.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">RGB values should always be normalized to 16 bit values. For example,
+<p class="admonition-title">Note</p>
+<p>RGB values should always be normalized to 16 bit values. For example,
 when encoding an 8 bit per channel pixel, multiply each channel value
 by 256 prior to storage in these fields. This normalization allows
 color values from different camera bit depths to be accurately merged.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.data">
-<code class="descname">data</code><a class="headerlink" href="#liblas.point.Point.data" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#liblas.point.Point.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raw data for the point. Shoot yourself in the foot if you must!</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.flightline_edge">
-<code class="descname">flightline_edge</code><a class="headerlink" href="#liblas.point.Point.flightline_edge" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">flightline_edge</code><a class="headerlink" href="#liblas.point.Point.flightline_edge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flightline edge flag for the point</p>
 <p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
-<div>The Edge of Flight Line data bit has a value of 1 only when the point
+<div><p>The Edge of Flight Line data bit has a value of 1 only when the point
 is at the end of a scan. It is the last point on a given scan line
-before it changes direction.</div></blockquote>
+before it changes direction.</p>
+</div></blockquote>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.number_of_returns">
-<code class="descname">number_of_returns</code><a class="headerlink" href="#liblas.point.Point.number_of_returns" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">number_of_returns</code><a class="headerlink" href="#liblas.point.Point.number_of_returns" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of returns for a given laser pulse.</p>
 <p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
-<div>The Number of Returns is the total number of returns for a given
+<div><p>The Number of Returns is the total number of returns for a given
 pulse. For example, a laser data point may be return two (Return
-Number) within a total number of five returns.</div></blockquote>
+Number) within a total number of five returns.</p>
+</div></blockquote>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.point_source_id">
-<code class="descname">point_source_id</code><a class="headerlink" href="#liblas.point.Point.point_source_id" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">point_source_id</code><a class="headerlink" href="#liblas.point.Point.point_source_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Point Source ID for the point.</p>
 <p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
-<div>This value indicates the file from which this point originated. Valid
+<div><p>This value indicates the file from which this point originated. Valid
 values for this field are 1 to 65,535 inclusive with zero being used
 for a special case discussed below. The numerical value corresponds to
 the File Source ID from which this point originated. Zero is reserved
@@ -1154,16 +1125,17 @@ as a convenience to system implementers. A Point Source ID of zero
 implies that this point originated in this file. This implies that
 processing software should set the Point Source ID equal to the File
 Source ID of the file containing this point at some time during
-processing.</div></blockquote>
+processing.</p>
+</div></blockquote>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.raw_time">
-<code class="descname">raw_time</code><a class="headerlink" href="#liblas.point.Point.raw_time" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">raw_time</code><a class="headerlink" href="#liblas.point.Point.raw_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uninterpeted time value for the point.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Because no header is available, no coordination is done with
+<p class="admonition-title">Note</p>
+<p>Because no header is available, no coordination is done with
 respect to the allowable LAS time types. You must coordinate with
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.global_encoding</span></code> to determine the
 actual time value for the point. See the ASPRS LAS 1.1-1.3
@@ -1171,66 +1143,68 @@ specifications for more detail.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.return_number">
-<code class="descname">return_number</code><a class="headerlink" href="#liblas.point.Point.return_number" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">return_number</code><a class="headerlink" href="#liblas.point.Point.return_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>The pulse return number for a given laser pulse.</p>
 <p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
-<div>The Return Number is the pulse return number for a given output pulse.
+<div><p>The Return Number is the pulse return number for a given output pulse.
 A given output laser pulse can have many returns, and they must be
 marked in sequence of return. The first return will have a Return
 Number of one, the second a Return Number of two, and so on up to five
-returns.</div></blockquote>
+returns.</p>
+</div></blockquote>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.scan_angle">
-<code class="descname">scan_angle</code><a class="headerlink" href="#liblas.point.Point.scan_angle" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">scan_angle</code><a class="headerlink" href="#liblas.point.Point.scan_angle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scan angle of the point.</p>
-<dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
-<dd>The Scan Angle Rank is a signed one-byte number with a valid range
+<dl class="simple">
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt><dd><p>The Scan Angle Rank is a signed one-byte number with a valid range
 from -90 to +90. The Scan Angle Rank is the angle (rounded to the
 nearest integer in the absolute value sense) at which the laser point
 was output from the laser system including the roll of the aircraft.
 The scan angle is within 1 degree of accuracy from +90 to -90 degrees.
 The scan angle is an angle based on 0 degrees being nadir, and -90
-degrees to the left side of the aircraft in the direction of flight.</dd>
+degrees to the left side of the aircraft in the direction of flight.</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.scan_direction">
-<code class="descname">scan_direction</code><a class="headerlink" href="#liblas.point.Point.scan_direction" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">scan_direction</code><a class="headerlink" href="#liblas.point.Point.scan_direction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scan direction for the point</p>
 <p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
-<div>The Scan Direction Flag denotes the direction at which the scanner
+<div><p>The Scan Direction Flag denotes the direction at which the scanner
 mirror was traveling at the time of the output pulse. A bit value of 1
 is a positive scan direction, and a bit value of 0 is a negative scan
 direction (where positive scan direction is a scan moving from the
 left side of the in-track direction to the right side and negative the
-opposite).</div></blockquote>
+opposite).</p>
+</div></blockquote>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.scan_flags">
-<code class="descname">scan_flags</code><a class="headerlink" href="#liblas.point.Point.scan_flags" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">scan_flags</code><a class="headerlink" href="#liblas.point.Point.scan_flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scan flags for the point. This is a combination of the
 <a class="reference internal" href="#liblas.point.Point.flightline_edge" title="liblas.point.Point.flightline_edge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flightline_edge</span></code></a> <a class="reference internal" href="#liblas.point.Point.return_number" title="liblas.point.Point.return_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_number</span></code></a> <a class="reference internal" href="#liblas.point.Point.number_of_returns" title="liblas.point.Point.number_of_returns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_returns</span></code></a> and
 <a class="reference internal" href="#liblas.point.Point.scan_direction" title="liblas.point.Point.scan_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scan_direction</span></code></a>. Use the individual methods for setting these values
 for convenience.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.time">
-<code class="descname">time</code><a class="headerlink" href="#liblas.point.Point.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpeted (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instance) time value for
+<em class="property">property </em><code class="sig-name descname">time</code><a class="headerlink" href="#liblas.point.Point.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpeted (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instance) time value for
 the point.</p>
 <blockquote>
 <div><p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">td</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="c1"># my timezone is -6</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">td</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="c1"># my timezone is -6</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">19</span><span class="p">)</span> <span class="o">-</span> <span class="n">td</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">t</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">time</span>
@@ -1238,8 +1212,8 @@ the point.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Because no header is available, no coordination is done with
+<p class="admonition-title">Note</p>
+<p>Because no header is available, no coordination is done with
 respect to the allowable LAS time types. You must coordinate with
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header.global_encoding</span></code> to determine the
 actual time value for the point. If you want to merely preserve
@@ -1248,42 +1222,42 @@ existing point data, use <a class="reference internal" href="#liblas.point.Point
 </div></blockquote>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.user_data">
-<code class="descname">user_data</code><a class="headerlink" href="#liblas.point.Point.user_data" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">user_data</code><a class="headerlink" href="#liblas.point.Point.user_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>User Data for the point.  This is a single byte of data and     and can be anything the software wants to attach to the point</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.x">
-<code class="descname">x</code><a class="headerlink" href="#liblas.point.Point.x" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>The raw X coordinate of the point without its header’s scaling</dt>
-<dd>applied.</dd>
+<em class="property">property </em><code class="sig-name descname">x</code><a class="headerlink" href="#liblas.point.Point.x" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>The raw X coordinate of the point without its header’s scaling</dt><dd><p>applied.</p>
+</dd>
 </dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Use obj:<cite>liblas.point.Point.x</cite> if you want the scaled <code class="docutils literal notranslate"><span class="pre">x</span></code> data.</p>
+<p class="admonition-title">Note</p>
+<p>Use obj:<cite>liblas.point.Point.x</cite> if you want the scaled <code class="docutils literal notranslate"><span class="pre">x</span></code> data.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.y">
-<code class="descname">y</code><a class="headerlink" href="#liblas.point.Point.y" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">y</code><a class="headerlink" href="#liblas.point.Point.y" title="Permalink to this definition">¶</a></dt>
 <dd><p>Y coordinate of the LAS point as a double (scale applied).</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Use obj:<cite>liblas.point.Point.raw_y</cite> if you want the unscaled <code class="docutils literal notranslate"><span class="pre">y</span></code> data.</p>
+<p class="admonition-title">Note</p>
+<p>Use obj:<cite>liblas.point.Point.raw_y</cite> if you want the unscaled <code class="docutils literal notranslate"><span class="pre">y</span></code> data.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.point.Point.z">
-<code class="descname">z</code><a class="headerlink" href="#liblas.point.Point.z" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">z</code><a class="headerlink" href="#liblas.point.Point.z" title="Permalink to this definition">¶</a></dt>
 <dd><p>Z coordinate of the LAS point as a double (scale applied).</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Use obj:<cite>liblas.point.Point.raw_z</cite> if you want the unscaled <code class="docutils literal notranslate"><span class="pre">z</span></code> data.</p>
+<p class="admonition-title">Note</p>
+<p>Use obj:<cite>liblas.point.Point.raw_z</cite> if you want the unscaled <code class="docutils literal notranslate"><span class="pre">z</span></code> data.</p>
 </div>
 </dd></dl>
 
@@ -1292,101 +1266,93 @@ existing point data, use <a class="reference internal" href="#liblas.point.Point
 </div>
 <div class="section" id="liblas-srs-srs">
 <h2>liblas.srs.SRS<a class="headerlink" href="#liblas-srs-srs" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="liblas.srs.SRS">
-<em class="property">class </em><code class="descclassname">liblas.srs.</code><code class="descname">SRS</code><span class="sig-paren">(</span><em>owned=True</em>, <em>handle=None</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">liblas.srs.</code><code class="sig-name descname">SRS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS" title="Permalink to this definition">¶</a></dt>
 <dd><p>While the ASPRS specification mandates using GeoTIFF keys for its     coordinate system description, these are unwieldy to use in an application.
 libLAS provides the most featureful access when by linking <a class="reference external" href="http://www.gdal.org">GDAL</a>.  The
 <a class="reference internal" href="#liblas.srs.SRS" title="liblas.srs.SRS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.srs.SRS</span></code></a> object can be set on the <a class="reference internal" href="#liblas.header.Header" title="liblas.header.Header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.header.Header</span></code></a>
 or it may be set on the <a class="reference internal" href="#liblas.file.File" title="liblas.file.File"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liblas.file.File</span></code></a> in various ways of
 controlling reprojection of input or output.</p>
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.srs.SRS.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>owned=True</em>, <em>handle=None</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>owned</strong> – flag to denote whether or not the VLR owns itself</li>
-<li><strong>handle</strong> – raw ctypes object</li>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>owned</strong> – flag to denote whether or not the VLR owns itself</p></li>
+<li><p><strong>handle</strong> – raw ctypes object</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.srs.SRS.get_proj4">
-<code class="descname">get_proj4</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.get_proj4" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_proj4</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.get_proj4" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a <a class="reference external" href="http://proj.osgeo.org">Proj.4</a> string that describes the SRS</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.srs.SRS.get_wkt">
-<code class="descname">get_wkt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.get_wkt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_wkt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.get_wkt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the horizontal-only WKT for the SRS</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.srs.SRS.get_wkt_compoundok">
-<code class="descname">get_wkt_compoundok</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.get_wkt_compoundok" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_wkt_compoundok</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.get_wkt_compoundok" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the WKT for the SRS with COMP_CS elements describing the
 vertical datum and other extra information</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.srs.SRS.proj4">
-<code class="descname">proj4</code><a class="headerlink" href="#liblas.srs.SRS.proj4" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">proj4</code><a class="headerlink" href="#liblas.srs.SRS.proj4" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a <a class="reference external" href="http://proj.osgeo.org">Proj.4</a> string that describes the SRS</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.srs.SRS.set_proj4">
-<code class="descname">set_proj4</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.set_proj4" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_proj4</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.set_proj4" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the SRS description with a given <a class="reference external" href="http://proj.osgeo.org">Proj.4</a> string</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.srs.SRS.set_userinput">
-<code class="descname">set_userinput</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.set_userinput" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_userinput</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.set_userinput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the SRS description using <a class="reference external" href="http://www.gdal.org">GDAL</a>’s <a class="reference external" href="http://www.gdal.org/ogr/ogr__srs__api_8h.html#7a043a4b3d477847dcc89efdff3a563a">SetFromUserInput</a> method</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.srs.SRS.set_verticalcs">
-<code class="descname">set_verticalcs</code><span class="sig-paren">(</span><em>verticalCSType</em>, <em>citation=''</em>, <em>verticalDatum=-1</em>, <em>verticalUnits=9001</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.set_verticalcs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_verticalcs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verticalCSType</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">verticalDatum</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">verticalUnits</span><span class="o">=</span><span class="default_value">9001</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.set_verticalcs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the vertical coordinate system using geotiff key values. This
 operation should normally be done after setting the horizontal portion
 of the coordinate system with something like <a class="reference internal" href="#liblas.srs.SRS.set_wkt" title="liblas.srs.SRS.set_wkt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_wkt()</span></code></a>,
 <a class="reference internal" href="#liblas.srs.SRS.set_proj4" title="liblas.srs.SRS.set_proj4"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_proj4()</span></code></a>, or <a class="reference internal" href="#liblas.srs.SRS.set_userinput" title="liblas.srs.SRS.set_userinput"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_userinput()</span></code></a></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>verticalCSType</strong> – An EPSG vertical coordinate system code,         normally in the range 5600 to 5799, or -1 if one is not available.</li>
-<li><strong>citation</strong> – a textual description of the vertical coordinate         system or an empty string if nothing is available.</li>
-<li><strong>verticalDatum</strong> – the EPSG vertical datum code, often in the         range 5100 to 5299 - implied by verticalCSType if that is provided,         or -1 if no value is available.</li>
-<li><strong>verticalUnits</strong> – the EPSG vertical units code, often 9001 for         Metre.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>verticalCSType</strong> – An EPSG vertical coordinate system code,         normally in the range 5600 to 5799, or -1 if one is not available.</p></li>
+<li><p><strong>citation</strong> – a textual description of the vertical coordinate         system or an empty string if nothing is available.</p></li>
+<li><p><strong>verticalDatum</strong> – the EPSG vertical datum code, often in the         range 5100 to 5299 - implied by verticalCSType if that is provided,         or -1 if no value is available.</p></li>
+<li><p><strong>verticalUnits</strong> – the EPSG vertical units code, often 9001 for         Metre.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="liblas.srs.SRS.set_wkt">
-<code class="descname">set_wkt</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.set_wkt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_wkt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.srs.SRS.set_wkt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the wkt for the SRS. An exception will be thrown if the WKT is
 invalid, GDAL can’t ingest it, or <a class="reference external" href="http://www.gdal.org">GDAL</a> is not linked into libLAS</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.srs.SRS.wkt">
-<code class="descname">wkt</code><a class="headerlink" href="#liblas.srs.SRS.wkt" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">wkt</code><a class="headerlink" href="#liblas.srs.SRS.wkt" title="Permalink to this definition">¶</a></dt>
 <dd><p>WKT description of the SRS</p>
 </dd></dl>
 
@@ -1395,27 +1361,23 @@ invalid, GDAL can’t ingest it, or <a class="reference external" href="http://w
 </div>
 <div class="section" id="liblas-vlr-vlr">
 <h2>liblas.vlr.VLR<a class="headerlink" href="#liblas-vlr-vlr" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="liblas.vlr.VLR">
-<em class="property">class </em><code class="descclassname">liblas.vlr.</code><code class="descname">VLR</code><span class="sig-paren">(</span><em>owned=True</em>, <em>handle=None</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.vlr.VLR" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">liblas.vlr.</code><code class="sig-name descname">VLR</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.vlr.VLR" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="liblas.vlr.VLR.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>owned=True</em>, <em>handle=None</em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.vlr.VLR.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>owned</strong> – flag to denote whether or not the VLR owns itself.                          If it is owned, the underlying C object will be                         destroyed once it goes out of scope.</li>
-<li><strong>handle</strong> – raw ctypes object</li>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#liblas.vlr.VLR.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>owned</strong> – flag to denote whether or not the VLR owns itself.                          If it is owned, the underlying C object will be                         destroyed once it goes out of scope.</p></li>
+<li><p><strong>handle</strong> – raw ctypes object</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</p>
 <blockquote>
-<div>The Public Header Block is followed by one or more Variable Length
+<div><p>The Public Header Block is followed by one or more Variable Length
 Records (There is one mandatory Variable Length Record,
 GeoKeyDirectoryTag). The number of Variable Length Records is
 specified in the “Number of Variable Length Records”
@@ -1423,8 +1385,9 @@ specified in the “Number of Variable Length Records”
 Header Block. The Variable Length Records must be accessed
 sequentially since the size of each variable length record is
 contained in the Variable Length Record Header. Each Variable
-Length Record Header is 60 bytes in length.</div></blockquote>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="k">import</span> <span class="n">vlr</span>
+Length Record Header is 60 bytes in length.</p>
+</div></blockquote>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">liblas</span> <span class="kn">import</span> <span class="n">vlr</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">vlr</span><span class="o">.</span><span class="n">VLR</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">reserved</span>
 <span class="go">0</span>
@@ -1440,7 +1403,7 @@ Length Record Header is 60 bytes in length.</div></blockquote>
 <span class="go">&#39;liblas.org&#39;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">description</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">description</span>
 <span class="go">&#39;&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;libLAS&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">description</span>
@@ -1449,65 +1412,64 @@ Length Record Header is 60 bytes in length.</div></blockquote>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.vlr.VLR.data">
-<code class="descname">data</code><a class="headerlink" href="#liblas.vlr.VLR.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Raw data (in the form of an array of <a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_ubyte" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ctypes.c_ubyte</span></code></a>)</p>
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#liblas.vlr.VLR.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raw data (in the form of an array of <a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_ubyte" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ctypes.c_ubyte</span></code></a>)</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.vlr.VLR.description">
-<code class="descname">description</code><a class="headerlink" href="#liblas.vlr.VLR.description" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">description</code><a class="headerlink" href="#liblas.vlr.VLR.description" title="Permalink to this definition">¶</a></dt>
 <dd><p>Description of this VLR instance (clipped to 32 bytes long)</p>
-<dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
-<dd>Optional, null terminated text description of the data. Any remaining
-characters not used must be null.</dd>
+<dl class="simple">
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt><dd><p>Optional, null terminated text description of the data. Any remaining
+characters not used must be null.</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.vlr.VLR.recordid">
-<code class="descname">recordid</code><a class="headerlink" href="#liblas.vlr.VLR.recordid" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">recordid</code><a class="headerlink" href="#liblas.vlr.VLR.recordid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Record ID for the VLR</p>
-<dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
-<dd>The Record ID is dependent upon the User ID. There can be 0 to 65535
+<dl class="simple">
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt><dd><p>The Record ID is dependent upon the User ID. There can be 0 to 65535
 Record IDs for every User ID. The LAS specification manages its own
 Record IDs (User IDs owned by the specification), otherwise Record IDs
 will be managed by the owner of the given User ID. Thus each User ID
 is allowed to assign 0 to 65535 Record IDs in any manner they desire.
 Publicizing the meaning of a given Record ID is left to the owner of
 the given User ID. Unknown User ID/Record ID combinations should be
-ignore</dd>
+ignore</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.vlr.VLR.recordlength">
-<code class="descname">recordlength</code><a class="headerlink" href="#liblas.vlr.VLR.recordlength" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">recordlength</code><a class="headerlink" href="#liblas.vlr.VLR.recordlength" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of bytes long the VLR is</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.vlr.VLR.reserved">
-<code class="descname">reserved</code><a class="headerlink" href="#liblas.vlr.VLR.reserved" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">reserved</code><a class="headerlink" href="#liblas.vlr.VLR.reserved" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reserved value for the VLR.  Currently unused.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="liblas.vlr.VLR.userid">
-<code class="descname">userid</code><a class="headerlink" href="#liblas.vlr.VLR.userid" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">userid</code><a class="headerlink" href="#liblas.vlr.VLR.userid" title="Permalink to this definition">¶</a></dt>
 <dd><p>User ID key for this VLR (clipped to 16 bytes long)</p>
 <p>The User ID for libLAS is <code class="docutils literal notranslate"><span class="pre">liblas</span></code>, and it will be used 
 for all extra VLRs that libLAS itself can interpret.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="development/specifications.html#liblas-vlr-key"><span class="std std-ref">VLR Key</span></a> has more detail on the key and name.</p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="development/specifications.html#liblas-vlr-key"><span class="std std-ref">VLR Key</span></a> has more detail on the key and name.</p>
 </div>
-<dl class="docutils">
-<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt>
-<dd>The User ID field is ASCII character data that identifies the user
+<dl class="simple">
+<dt>From the <a class="reference external" href="http://liblas.org/_static/specifications/asprs_las_format_v13.pdf">specification</a>:</dt><dd><p>The User ID field is ASCII character data that identifies the user
 which created the variable length record. It is possible to have many
 Variable Length Records from different sources with different User
 IDs. If the character data is less than 16 characters, the remaining
@@ -1517,7 +1479,8 @@ that no two individuals accidentally use the same User ID. The
 specification will initially use two IDs: one for globally specified
 records (LASF_Spec), and another for projection types
 (LASF_Projection). Keys may be requested at
-<a class="reference external" href="http://www.asprs.org/lasform/keyform.html">http://www.asprs.org/lasform/keyform.html</a></dd>
+<a class="reference external" href="http://www.asprs.org/lasform/keyform.html">http://www.asprs.org/lasform/keyform.html</a></p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1532,7 +1495,7 @@ records (LASF_Spec), and another for projection types
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="docs.html">Table Of Contents</a></h3>
+<h3><a href="docs.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started with libLAS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="osgeo4w.html">Windows Installation</a></li>
@@ -1564,17 +1527,15 @@ records (LASF_Spec), and another for projection types
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -1595,8 +1556,8 @@ records (LASF_Spec), and another for projection types
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

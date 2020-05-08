@@ -1,0 +1,5 @@
+<map id="liblas::TransformI" name="liblas::TransformI">
+<area shape="rect" id="node2" href="$classliblas_1_1ColorFetchingTransform.html" title="{liblas::ColorFetchingTransform\n||+ ColorFetchingTransform()\l+ ColorFetchingTransform()\l+ SetScaleFactor()\l+ ~ColorFetchingTransform()\l+ transform()\l+ ModifiesHeader()\l}" alt="" coords="5,160,216,311"/>
+<area shape="rect" id="node3" href="$classliblas_1_1ReprojectionTransform.html" title="{liblas::ReprojectionTransform\n||+ ReprojectionTransform()\l+ ReprojectionTransform()\l+ ~ReprojectionTransform()\l+ transform()\l+ SetHeader()\l+ ModifiesHeader()\l}" alt="" coords="240,160,443,311"/>
+<area shape="rect" id="node4" href="$classliblas_1_1TranslationTransform.html" title="{liblas::TranslationTransform\n||+ TranslationTransform()\l+ ~TranslationTransform()\l+ transform()\l+ ModifiesHeader()\l}" alt="" coords="467,175,661,296"/>
+</map>

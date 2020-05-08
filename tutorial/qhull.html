@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Generating Convex Hulls with libLAS and Qhull &#8212; liblas.org</title>
     <link rel="stylesheet" href="../_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="copyright" title="Copyright" href="../copyright.html" />
@@ -69,16 +70,14 @@
             
   <div class="section" id="generating-convex-hulls-with-liblas-and-qhull">
 <span id="qhull"></span><h1>Generating Convex Hulls with libLAS and Qhull<a class="headerlink" href="#generating-convex-hulls-with-liblas-and-qhull" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Mateusz Loskot</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body">mateusz at loskot dot net</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Mateusz Loskot</p>
+</dd>
+<dt class="field-even">Contact</dt>
+<dd class="field-even"><p>mateusz at loskot dot net</p>
+</dd>
+</dl>
 <p>This article is dedicate to tools, techniques and
 <a class="reference external" href="http://en.wikipedia.org/wiki/Convex_hull_algorithms">algorithms</a> useful to
 create <a class="reference external" href="http://en.wikipedia.org/wiki/Convex_hull">convex hull</a> of cloud of
@@ -89,15 +88,15 @@ to play with.</p>
 <p>Calculation of convex hull of points stored in LAS file using
 <a class="reference external" href="http://www.qhull.org/">Qhull</a> program involves two steps:</p>
 <ul class="simple">
-<li>output coordinates of points from LAS file to form of acceptable by
-‘qhull’ as input</li>
-<li>pass that output to ‘’qhull’’ that will calculate convex hull</li>
+<li><p>output coordinates of points from LAS file to form of acceptable by
+‘qhull’ as input</p></li>
+<li><p>pass that output to ‘’qhull’’ that will calculate convex hull</p></li>
 </ul>
 <p>The ‘qhull’ accepts plain text input that consists of basic 3 blocks:</p>
 <ul class="simple">
-<li>dimension</li>
-<li>number of points</li>
-<li>point coordinates</li>
+<li><p>dimension</p></li>
+<li><p>number of points</p></li>
+<li><p>point coordinates</p></li>
 </ul>
 <p>It is possible to use <a class="reference internal" href="../utilities/las2txt.html#las2txt"><span class="std std-ref">las2txt</span></a> and basic command line utilities
 available in every Unix system to generate all the three blocks and output
@@ -170,10 +169,10 @@ using libLAS <a class="reference internal" href="cpp.html#cpptutorial"><span cla
 <div class="section" id="other-hull-information-sources">
 <h2>Other hull information sources<a class="headerlink" href="#other-hull-information-sources" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference external" href="http://www.netlib.org/voronoi/hull.html">http://www.netlib.org/voronoi/hull.html</a></li>
-<li><a class="reference external" href="http://netlib.sandia.gov/voronoi/">http://netlib.sandia.gov/voronoi/</a></li>
-<li><a class="reference external" href="http://code.flickr.com/blog/2008/10/30/the-shape-of-alpha/">http://code.flickr.com/blog/2008/10/30/the-shape-of-alpha/</a></li>
-<li><a class="reference external" href="http://gis.stackexchange.com/questions/1200/concave-hull-definition-algorithms-and-practical-solutions">http://gis.stackexchange.com/questions/1200/concave-hull-definition-algorithms-and-practical-solutions</a></li>
+<li><p><a class="reference external" href="http://www.netlib.org/voronoi/hull.html">http://www.netlib.org/voronoi/hull.html</a></p></li>
+<li><p><a class="reference external" href="http://netlib.sandia.gov/voronoi/">http://netlib.sandia.gov/voronoi/</a></p></li>
+<li><p><a class="reference external" href="http://code.flickr.com/blog/2008/10/30/the-shape-of-alpha/">http://code.flickr.com/blog/2008/10/30/the-shape-of-alpha/</a></p></li>
+<li><p><a class="reference external" href="http://gis.stackexchange.com/questions/1200/concave-hull-definition-algorithms-and-practical-solutions">http://gis.stackexchange.com/questions/1200/concave-hull-definition-algorithms-and-practical-solutions</a></p></li>
 </ul>
 </div>
 </div>
@@ -184,7 +183,7 @@ using libLAS <a class="reference internal" href="cpp.html#cpptutorial"><span cla
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../docs.html">Table Of Contents</a></h3>
+<h3><a href="../docs.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../start.html">Getting Started with libLAS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../osgeo4w.html">Windows Installation</a></li>
@@ -217,17 +216,15 @@ using libLAS <a class="reference internal" href="cpp.html#cpptutorial"><span cla
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -249,8 +246,8 @@ using libLAS <a class="reference internal" href="cpp.html#cpptutorial"><span cla
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="../copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="../copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

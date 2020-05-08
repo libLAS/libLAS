@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>txt2las &#8212; liblas.org</title>
     <link rel="stylesheet" href="../_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="copyright" title="Copyright" href="../copyright.html" />
@@ -69,16 +70,14 @@
             
   <div class="section" id="txt2las">
 <span id="id1"></span><h1>txt2las<a class="headerlink" href="#txt2las" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Martin Isenburg</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:isenburg&#37;&#52;&#48;cs&#46;unc&#46;edu">isenburg<span>&#64;</span>cs<span>&#46;</span>unc<span>&#46;</span>edu</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Martin Isenburg</p>
+</dd>
+<dt class="field-even">Contact</dt>
+<dd class="field-even"><p><a class="reference external" href="mailto:isenburg&#37;&#52;&#48;cs&#46;unc&#46;edu">isenburg<span>&#64;</span>cs<span>&#46;</span>unc<span>&#46;</span>edu</a></p>
+</dd>
+</dl>
 <p>txt2las converts LIDAR data from a standard ASCII format into the more
 efficient binary LAS representation.</p>
 <div class="section" id="usage">
@@ -115,17 +114,16 @@ file. For example, ‘tsxyzssa’ means that the first number is the gpstime,
 the next number should be skipped, the next three numbers are the x, y,
 and z coordinate, the next two should be skipped, and the next number
 is the scan angle.</p>
-<dl class="docutils">
-<dt>The other supported entries are:</dt>
-<dd><ul class="first last simple">
-<li>i - intensity</li>
-<li>n - number of returns of given pulse</li>
-<li>r - number of return</li>
-<li>c - classification</li>
-<li>u - user data</li>
-<li>p - point source ID</li>
-<li>e - edge of flight line flag</li>
-<li>d - direction of scan flag.</li>
+<dl class="simple">
+<dt>The other supported entries are:</dt><dd><ul class="simple">
+<li><p>i - intensity</p></li>
+<li><p>n - number of returns of given pulse</p></li>
+<li><p>r - number of return</p></li>
+<li><p>c - classification</p></li>
+<li><p>u - user data</p></li>
+<li><p>p - point source ID</p></li>
+<li><p>e - edge of flight line flag</p></li>
+<li><p>d - direction of scan flag.</p></li>
 </ul>
 </dd>
 </dl>
@@ -152,7 +150,7 @@ or ‘-generating_software “TerraScan”’ are available too.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../docs.html">Table Of Contents</a></h3>
+<h3><a href="../docs.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../start.html">Getting Started with libLAS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../osgeo4w.html">Windows Installation</a></li>
@@ -184,17 +182,15 @@ or ‘-generating_software “TerraScan”’ are available too.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -216,8 +212,8 @@ or ‘-generating_software “TerraScan”’ are available too.</p>
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="../copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="../copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

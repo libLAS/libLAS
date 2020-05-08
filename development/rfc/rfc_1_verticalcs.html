@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>libLAS RFC 1: Vertical Coordinate Systems &#8212; liblas.org</title>
     <link rel="stylesheet" href="../../_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="copyright" title="Copyright" href="../../copyright.html" />
@@ -70,34 +71,36 @@
             
   <div class="section" id="liblas-rfc-1-vertical-coordinate-systems">
 <h1><a class="toc-backref" href="#id1">libLAS RFC 1: Vertical Coordinate Systems</a><a class="headerlink" href="#liblas-rfc-1-vertical-coordinate-systems" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Frank Warmerdam</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:warmerdam&#37;&#52;&#48;pobox&#46;com">warmerdam<span>&#64;</span>pobox<span>&#46;</span>com</a></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">1/6/10</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status:</th><td class="field-body">Implemented</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body">libLAS 1.3</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Frank Warmerdam</p>
+</dd>
+<dt class="field-even">Contact</dt>
+<dd class="field-even"><p><a class="reference external" href="mailto:warmerdam&#37;&#52;&#48;pobox&#46;com">warmerdam<span>&#64;</span>pobox<span>&#46;</span>com</a></p>
+</dd>
+<dt class="field-odd">Date</dt>
+<dd class="field-odd"><p>1/6/10</p>
+</dd>
+<dt class="field-even">Status</dt>
+<dd class="field-even"><p>Implemented</p>
+</dd>
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p>libLAS 1.3</p>
+</dd>
+</dl>
 <div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
+<p class="topic-title">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#liblas-rfc-1-vertical-coordinate-systems" id="id1">libLAS RFC 1: Vertical Coordinate Systems</a><ul>
-<li><a class="reference internal" href="#vertical-cs-in-geotiff" id="id2">Vertical CS in GeoTIFF</a></li>
-<li><a class="reference internal" href="#vertical-cs-in-ogc-wkt" id="id3">Vertical CS in OGC WKT</a></li>
-<li><a class="reference internal" href="#vertical-cs-in-proj-4" id="id4">Vertical CS in PROJ.4</a></li>
-<li><a class="reference internal" href="#sample-data" id="id5">Sample Data</a></li>
-<li><a class="reference internal" href="#proposed-lasspatialreference-interfaces" id="id6">Proposed LASSpatialReference Interfaces</a></li>
-<li><a class="reference internal" href="#proposed-changes-to-las2las" id="id7">Proposed Changes to las2las</a></li>
-<li><a class="reference internal" href="#changes-in-gdal" id="id8">Changes in GDAL</a></li>
-<li><a class="reference internal" href="#changes-in-libgeotiff" id="id9">Changes in libgeotiff</a></li>
+<li><p><a class="reference internal" href="#liblas-rfc-1-vertical-coordinate-systems" id="id1">libLAS RFC 1: Vertical Coordinate Systems</a></p>
+<ul>
+<li><p><a class="reference internal" href="#vertical-cs-in-geotiff" id="id2">Vertical CS in GeoTIFF</a></p></li>
+<li><p><a class="reference internal" href="#vertical-cs-in-ogc-wkt" id="id3">Vertical CS in OGC WKT</a></p></li>
+<li><p><a class="reference internal" href="#vertical-cs-in-proj-4" id="id4">Vertical CS in PROJ.4</a></p></li>
+<li><p><a class="reference internal" href="#sample-data" id="id5">Sample Data</a></p></li>
+<li><p><a class="reference internal" href="#proposed-lasspatialreference-interfaces" id="id6">Proposed LASSpatialReference Interfaces</a></p></li>
+<li><p><a class="reference internal" href="#proposed-changes-to-las2las" id="id7">Proposed Changes to las2las</a></p></li>
+<li><p><a class="reference internal" href="#changes-in-gdal" id="id8">Changes in GDAL</a></p></li>
+<li><p><a class="reference internal" href="#changes-in-libgeotiff" id="id9">Changes in libgeotiff</a></p></li>
 </ul>
 </li>
 </ul>
@@ -146,37 +149,35 @@ system from the EPSG coordinate reference system table. The vertical
 coordinate system 5701 is based on vertical datum 5101 (Ordnance Datum Newlyn)
 from the EPSG datum table. The 5701 vertical coordinate system also specifies
 use of meters as the vertical linear measure.</p>
-<dl class="docutils">
-<dt>So there are four GeoTIFF tags related to vertical coordinate system information:</dt>
-<dd><ul class="first last simple">
-<li>VerticalCSTypeGeoKey: an EPSG coordinate system code of type vertical
-(normally 5600-5799).</li>
-<li>VerticalCitationGeoKey: a description of the vertical coordinate system,
-often the EPSG user name for the VerticalCS.</li>
-<li>VerticalDatumGeoKey: An EPSG vertical datum code (normally 5000 to 5299).</li>
-<li>VerticalUnitsGeoKey: An EPSG units code (normally 9000 to 9199, 9001=meter)</li>
+<dl class="simple">
+<dt>So there are four GeoTIFF tags related to vertical coordinate system information:</dt><dd><ul class="simple">
+<li><p>VerticalCSTypeGeoKey: an EPSG coordinate system code of type vertical
+(normally 5600-5799).</p></li>
+<li><p>VerticalCitationGeoKey: a description of the vertical coordinate system,
+often the EPSG user name for the VerticalCS.</p></li>
+<li><p>VerticalDatumGeoKey: An EPSG vertical datum code (normally 5000 to 5299).</p></li>
+<li><p>VerticalUnitsGeoKey: An EPSG units code (normally 9000 to 9199, 9001=meter)</p></li>
 </ul>
 </dd>
-<dt>Interesting things to note:</dt>
-<dd><ul class="first last simple">
-<li>There does not appear to be a VerticalUnitSizeGeoKey allowing user defined
+<dt>Interesting things to note:</dt><dd><ul class="simple">
+<li><p>There does not appear to be a VerticalUnitSizeGeoKey allowing user defined
 vertical units similarly to the ProjLinearSizeGeoKey, so it is not
-appropriate to use KvUserDefined for VerticalUnitsGeoKey.</li>
-<li>The libgeotiff epsg_vertcs.inc file seems to imply that the vertical datum
+appropriate to use KvUserDefined for VerticalUnitsGeoKey.</p></li>
+<li><p>The libgeotiff epsg_vertcs.inc file seems to imply that the vertical datum
 codes in the range 5000 to 5299 should be considered vertical coordinate
 systems which they are not in the EPSG data model. It is not clear whether
 this is something that changed in the EPSG data model after the initiation
 of the GeoTIFF specification, or if it was an error by the
 GeoTIFF/libgeotiff authors. This mismatch is why Unknown-5101 above is not
 reported as Newlyn directly. Spec issue reported at
-<a class="reference external" href="http://trac.osgeo.org/geotiff/ticket/24">http://trac.osgeo.org/geotiff/ticket/24</a></li>
-<li>The EPSG and OGC models include an EPSG code for a composite coordinate
+<a class="reference external" href="http://trac.osgeo.org/geotiff/ticket/24">http://trac.osgeo.org/geotiff/ticket/24</a></p></li>
+<li><p>The EPSG and OGC models include an EPSG code for a composite coordinate
 system. The composite coordinate system is a collection of a horizontal
 coordinate system (like PCS_WGS84_UTM_zone_15N) and a vertical coordinate
 system (like 5701 - ODN height). An example is
 [<a class="reference external" href="http://spatialreference.org/ref/epsg/7405/html">http://spatialreference.org/ref/epsg/7405/html</a> EPSG:7405] - OSGB36 /
 British National Grid + ODN. There is no way to represent this in a GeoTIFF
-tag.</li>
+tag.</p></li>
 </ul>
 </dd>
 </dl>
@@ -224,17 +225,16 @@ An example from the CT 1.0 specification (OGC 09-001) looks like this:</p>
 <p>The VERT_CS portion is analogous to the information we store in GeoTIFF file
 about vertical coordinate systems, though we have no mechanism to hold the
 overall name or authority code of the COMPD_CS wrapper.</p>
-<dl class="docutils">
-<dt>Interesting things to note:</dt>
-<dd><ul class="first last simple">
-<li>The VERT_DATUM keyword includes a name and a datum type code (2005 in this
+<dl class="simple">
+<dt>Interesting things to note:</dt><dd><ul class="simple">
+<li><p>The VERT_DATUM keyword includes a name and a datum type code (2005 in this
 case). The set from the specification is specified in on page 58, section
 12.3.8 which is roughly captured in [wiki:OGCVerticalDatumTypes OGC
-Vertical Datum Types].</li>
-<li>For reference, the same compound coordinate system is handled similarly in
-[<a class="reference external" href="http://spatialreference.org/ref/epsg/7405/html">http://spatialreference.org/ref/epsg/7405/html</a> Geotools]</li>
-<li>GDAL/OGR, used to process libLAS OGC WKT does not currently have meaningful
-support for vertical or compound coordinate systems.</li>
+Vertical Datum Types].</p></li>
+<li><p>For reference, the same compound coordinate system is handled similarly in
+[<a class="reference external" href="http://spatialreference.org/ref/epsg/7405/html">http://spatialreference.org/ref/epsg/7405/html</a> Geotools]</p></li>
+<li><p>GDAL/OGR, used to process libLAS OGC WKT does not currently have meaningful
+support for vertical or compound coordinate systems.</p></li>
 </ul>
 </dd>
 </dl>
@@ -344,16 +344,16 @@ implementation of this functionality is in GTIFSetFromOGISDefn() in GDAL.</p>
 <p>It is proposed to add two new options to las2las</p>
 <blockquote>
 <div><ul class="simple">
-<li>-a_srs &lt;coordinate system info&gt;: This would override the coordinate system
+<li><p>-a_srs &lt;coordinate system info&gt;: This would override the coordinate system
 information as part of the las2las conversion, but without actually doing
 any geometric transformation - analygous to -a_srs in tools like
-gdal_translate or ogr2ogr.</li>
-<li>-a_vertcs verticalCSType citation verticalDatum verticalUnits: This option
+gdal_translate or ogr2ogr.</p></li>
+<li><p>-a_vertcs verticalCSType citation verticalDatum verticalUnits: This option
 would allow overriding/setting the vertical coordinate system information
 during las2las processing. Mostly this would be used to set vertical
 coordinate system information when it was missing. The arguments are the
 epsg code numbers except for citation which is a string (empty to not set a
-citation).</li>
+citation).</p></li>
 </ul>
 </div></blockquote>
 <p>The goal is to make las2las more useful as a “coordinate system fixing up”
@@ -366,15 +366,15 @@ system information on files that were missing it.</p>
 coordinate system handling:</p>
 <blockquote>
 <div><ul class="simple">
-<li>SetFromUserInput() was modified to recognise COMPD_CS as a valid root so a
-compound coordinate system can be set this way. Mainly useful for las2las.</li>
-<li>GTIFGetOGISDefn() was extended to build a COMPD_CS coordinate system if
-there is vertical coordinate system info.</li>
-<li>GTIFSetFromOGISDefn() was extended to write vertical cs tags if there is
-vertical cs information in the WKT.</li>
-<li>OGRSpatialReference was extended with the StripVertical() method to remove
+<li><p>SetFromUserInput() was modified to recognise COMPD_CS as a valid root so a
+compound coordinate system can be set this way. Mainly useful for las2las.</p></li>
+<li><p>GTIFGetOGISDefn() was extended to build a COMPD_CS coordinate system if
+there is vertical coordinate system info.</p></li>
+<li><p>GTIFSetFromOGISDefn() was extended to write vertical cs tags if there is
+vertical cs information in the WKT.</p></li>
+<li><p>OGRSpatialReference was extended with the StripVertical() method to remove
 COMPD_CS wrappers from a compound coordinate system (used by GetWKT() to
-strip off vertical stuff).</li>
+strip off vertical stuff).</p></li>
 </ul>
 </div></blockquote>
 <p>These changes will be in GDAL 1.7.</p>
@@ -385,12 +385,12 @@ strip off vertical stuff).</li>
 vertical coordinate system handling:</p>
 <blockquote>
 <div><ul class="simple">
-<li>GTIFValueName() now knows how to translate !VerticalUnitsGeoKey.</li>
-<li>GTIFNew() now reads existing geotiff file tags in a way that support update
-in place within the GTIF structure.</li>
-<li>libLASSortKeys() was rewritten to be less fragile in the face of malformed sets
+<li><p>GTIFValueName() now knows how to translate !VerticalUnitsGeoKey.</p></li>
+<li><p>GTIFNew() now reads existing geotiff file tags in a way that support update
+in place within the GTIF structure.</p></li>
+<li><p>libLASSortKeys() was rewritten to be less fragile in the face of malformed sets
 of geokeys, such as those common in LAS files with several “0” keys at the
-end.</li>
+end.</p></li>
 </ul>
 </div></blockquote>
 <p>These changes will be in libgeotiff 1.3.0.  They are mostly useful for las2las.</p>
@@ -403,7 +403,7 @@ end.</li>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../../docs.html">Table Of Contents</a></h3>
+<h3><a href="../../docs.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../start.html">Getting Started with libLAS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../osgeo4w.html">Windows Installation</a></li>
@@ -430,17 +430,15 @@ end.</li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -463,8 +461,8 @@ end.</li>
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="../../copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="../../copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

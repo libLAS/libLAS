@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>libLAS’ Relationship to LAStools &#8212; liblas.org</title>
     <link rel="stylesheet" href="_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="copyright" title="Copyright" href="copyright.html" />
@@ -94,33 +95,33 @@ are now quite divergent.</p>
 <h2>Which one to use for what<a class="headerlink" href="#which-one-to-use-for-what" title="Permalink to this headline">¶</a></h2>
 <p>Use libLAS for:</p>
 <ul class="simple">
-<li>Manipulating LAS files directly in C, C++, Python, .NET, and Ruby (caveats
-apply)</li>
-<li>Embedding LAS read/write support in your own commercial software</li>
-<li>Plucking out first/last returns (<a class="reference internal" href="utilities/las2las.html#las2las"><span class="std std-ref">las2las: Advanced LAS filtering and manipulation</span></a> or do it yourself with
-libLAS’ programatic API)</li>
-<li>Reclassifying point data with your own algorithm(s)</li>
-<li>Decimating data (simple thinning by removing a given number of points)</li>
-<li>Converting data between formats (1.0 &lt;-&gt; 1.2, etc)</li>
-<li>Converting data to <a class="reference external" href="http://gdal.org/ogr/ogr_formats.html">OGR-writeable</a> formats</li>
-<li>Adding coordinate system info to an LAS file</li>
-<li>Reprojecting data from one coordinate system to another (vertical datum
-transformation included soon!)</li>
-<li>Spatially indexing data for fast bounds lookup</li>
-<li>Working in a commercial setting</li>
+<li><p>Manipulating LAS files directly in C, C++, Python, .NET, and Ruby (caveats
+apply)</p></li>
+<li><p>Embedding LAS read/write support in your own commercial software</p></li>
+<li><p>Plucking out first/last returns (<a class="reference internal" href="utilities/las2las.html#las2las"><span class="std std-ref">las2las: Advanced LAS filtering and manipulation</span></a> or do it yourself with
+libLAS’ programatic API)</p></li>
+<li><p>Reclassifying point data with your own algorithm(s)</p></li>
+<li><p>Decimating data (simple thinning by removing a given number of points)</p></li>
+<li><p>Converting data between formats (1.0 &lt;-&gt; 1.2, etc)</p></li>
+<li><p>Converting data to <a class="reference external" href="http://gdal.org/ogr/ogr_formats.html">OGR-writeable</a> formats</p></li>
+<li><p>Adding coordinate system info to an LAS file</p></li>
+<li><p>Reprojecting data from one coordinate system to another (vertical datum
+transformation included soon!)</p></li>
+<li><p>Spatially indexing data for fast bounds lookup</p></li>
+<li><p>Working in a commercial setting</p></li>
 </ul>
 <p>Use LAStools for:</p>
 <ul class="simple">
-<li>Creating DEMs from LAS data</li>
-<li>Creating TINs from LAS data</li>
-<li>Calculating convex or concave hulls from LAS data</li>
-<li>Generating contours from LAS data</li>
-<li>Advanced LAS command-line attribute processing (<a class="reference external" href="http://www.cs.unc.edu/~isenburg/lastools/download/las2las_README.txt">las2las</a>)</li>
-<li>Plucking out first/last returns (<a class="reference internal" href="utilities/las2las.html#las2las"><span class="std std-ref">las2las: Advanced LAS filtering and manipulation</span></a> or yourself with a
-programatic API)</li>
-<li>Decimating data (thinning by removing points within a grid or window)</li>
-<li>Converting data between formats (1.0 &lt;-&gt; 1.2, etc)</li>
-<li>Working in an academic or non-commercial setting</li>
+<li><p>Creating DEMs from LAS data</p></li>
+<li><p>Creating TINs from LAS data</p></li>
+<li><p>Calculating convex or concave hulls from LAS data</p></li>
+<li><p>Generating contours from LAS data</p></li>
+<li><p>Advanced LAS command-line attribute processing (<a class="reference external" href="http://www.cs.unc.edu/~isenburg/lastools/download/las2las_README.txt">las2las</a>)</p></li>
+<li><p>Plucking out first/last returns (<a class="reference internal" href="utilities/las2las.html#las2las"><span class="std std-ref">las2las: Advanced LAS filtering and manipulation</span></a> or yourself with a
+programatic API)</p></li>
+<li><p>Decimating data (thinning by removing points within a grid or window)</p></li>
+<li><p>Converting data between formats (1.0 &lt;-&gt; 1.2, etc)</p></li>
+<li><p>Working in an academic or non-commercial setting</p></li>
 </ul>
 </div>
 </div>
@@ -131,7 +132,7 @@ programatic API)</li>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="docs.html">Table Of Contents</a></h3>
+<h3><a href="docs.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started with libLAS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="osgeo4w.html">Windows Installation</a></li>
@@ -159,17 +160,15 @@ programatic API)</li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -190,8 +189,8 @@ programatic API)</li>
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classliblas_1_1TransformI.html" title="Defines public interface to LAS transform implementation. " alt="" coords="5,56,133,83"/>
+<area shape="rect" id="node2" href="$classliblas_1_1ColorFetchingTransform.html" title="liblas::ColorFetchingTransform" alt="" coords="181,5,392,32"/>
+<area shape="rect" id="node3" href="$classliblas_1_1ReprojectionTransform.html" title="liblas::ReprojectionTransform" alt="" coords="185,56,388,83"/>
+<area shape="rect" id="node4" href="$classliblas_1_1TranslationTransform.html" title="liblas::TranslationTransform" alt="" coords="190,107,383,133"/>
+</map>

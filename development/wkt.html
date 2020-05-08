@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Georeferencing LAS files with LAS 1.4 &#8212; liblas.org</title>
     <link rel="stylesheet" href="../_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="copyright" title="Copyright" href="../copyright.html" />
@@ -69,18 +70,17 @@
             
   <div class="section" id="georeferencing-las-files-with-las-1-4">
 <span id="srs-wkt"></span><h1>Georeferencing LAS files with LAS 1.4<a class="headerlink" href="#georeferencing-las-files-with-las-1-4" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Howard Butler</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body">hobu.inc at gmail dot com</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">2/28/2011</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Howard Butler</p>
+</dd>
+<dt class="field-even">Contact</dt>
+<dd class="field-even"><p>hobu.inc at gmail dot com</p>
+</dd>
+<dt class="field-odd">Date</dt>
+<dd class="field-odd"><p>2/28/2011</p>
+</dd>
+</dl>
 <div class="section" id="summary">
 <h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
 <p>This document proposes how to handle describing spatial reference systems
@@ -96,14 +96,14 @@ found in the file.</p>
 specification</a>, but use of the GeoTIFF keys within LAS has a number of
 deficiencies:</p>
 <ul class="simple">
-<li>GeoTIFF is typically tied to the <a class="reference external" href="http://www.epsg-registry.org/">EPSG database</a> and does not provide
-simple mechanisms for extended definitions.</li>
-<li>Only a few softwares provide support for working with GeoTIFF keys directly.</li>
-<li>The GeoTIFF specification has no organization backing its continued
-development.</li>
-<li>GeoTIFF does not offer a mechanism to represent transformations between
-datums, while OGC WKT offers the TOWGS84[] mechanism</li>
-<li>GeoTIFF does not offer the possibility of fitted coordinate systems.</li>
+<li><p>GeoTIFF is typically tied to the <a class="reference external" href="http://www.epsg-registry.org/">EPSG database</a> and does not provide
+simple mechanisms for extended definitions.</p></li>
+<li><p>Only a few softwares provide support for working with GeoTIFF keys directly.</p></li>
+<li><p>The GeoTIFF specification has no organization backing its continued
+development.</p></li>
+<li><p>GeoTIFF does not offer a mechanism to represent transformations between
+datums, while OGC WKT offers the TOWGS84[] mechanism</p></li>
+<li><p>GeoTIFF does not offer the possibility of fitted coordinate systems.</p></li>
 </ul>
 </div>
 <div class="section" id="wkt">
@@ -136,22 +136,22 @@ can also be specified to apply to a <code class="docutils literal notranslate"><
 <p>OGC Math Transform WKT strings shall be provided in a VLR with the
 following attributes:</p>
 <ul class="simple">
-<li>User ID: LASF_Projection</li>
-<li>Record ID: 2111</li>
+<li><p>User ID: LASF_Projection</p></li>
+<li><p>Record ID: 2111</p></li>
 </ul>
 <p>The following conditions should also apply:</p>
 <ul class="simple">
-<li>Because VLRs can only be 65536 bytes size, an OGC Math Transform WKT
-string in a VLR data block is functionally limited to 64K in size.</li>
-<li>The OGC Math Transform WKT VLR data shall be a null-terminated string.</li>
-<li>The OGC Math Transform WKT VLR data shall be considered UTF-8.</li>
-<li>The OGC Math Transform WKT VLR data shall be considered <code class="docutils literal notranslate"><span class="pre">C</span></code>
+<li><p>Because VLRs can only be 65536 bytes size, an OGC Math Transform WKT
+string in a VLR data block is functionally limited to 64K in size.</p></li>
+<li><p>The OGC Math Transform WKT VLR data shall be a null-terminated string.</p></li>
+<li><p>The OGC Math Transform WKT VLR data shall be considered UTF-8.</p></li>
+<li><p>The OGC Math Transform WKT VLR data shall be considered <code class="docutils literal notranslate"><span class="pre">C</span></code>
 locale-based, and no localization of the numeric strings within the WKT
-should be performed.</li>
+should be performed.</p></li>
 </ul>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Math Transform WKT’s widespread use is not expected, but it is provided
+<p class="admonition-title">Note</p>
+<p>Math Transform WKT’s widespread use is not expected, but it is provided
 for completeness and flexibility.</p>
 </div>
 </div>
@@ -160,22 +160,22 @@ for completeness and flexibility.</p>
 <p>OGC Coordinate System WKT strings shall be provided in a VLR with the
 following attributes:</p>
 <ul class="simple">
-<li>User ID: LASF_Projection</li>
-<li>Record ID: 2112</li>
+<li><p>User ID: LASF_Projection</p></li>
+<li><p>Record ID: 2112</p></li>
 </ul>
 <p>The following conditions should also apply:</p>
 <ul class="simple">
-<li>Because VLRs can only be 65536 bytes size, an OGC Coordinate System WKT
-string in a VLR data block is functionally limited to 64K in size.</li>
-<li>The OGC Coordinate System WKT VLR data shall be a null-terminated string.</li>
-<li>The OGC Coordinate System WKT VLR data shall be considered UTF-8.</li>
-<li>The OGC Coordinate System WKT VLR data shall be considered <code class="docutils literal notranslate"><span class="pre">C</span></code>
+<li><p>Because VLRs can only be 65536 bytes size, an OGC Coordinate System WKT
+string in a VLR data block is functionally limited to 64K in size.</p></li>
+<li><p>The OGC Coordinate System WKT VLR data shall be a null-terminated string.</p></li>
+<li><p>The OGC Coordinate System WKT VLR data shall be considered UTF-8.</p></li>
+<li><p>The OGC Coordinate System WKT VLR data shall be considered <code class="docutils literal notranslate"><span class="pre">C</span></code>
 locale-based, and no localization of the numeric strings within the WKT
-should be performed.</li>
+should be performed.</p></li>
 </ul>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Though not specifically mentioned in previous LAS specifications,
+<p class="admonition-title">Note</p>
+<p>Though not specifically mentioned in previous LAS specifications,
 coordinate system information (in GeoTIFF or WKT) applies to the final
 coordinate data that are produced by transforming the raw coordinates by
 the scale and offset specified in the header for the given dimension.</p>
@@ -212,14 +212,14 @@ available to help an implementor of ASPRS LAS utilize Coordinate System and
 Math Transform WKT in their software.</p>
 <p>Some common open source softwares include:</p>
 <ul class="simple">
-<li><a class="reference external" href="http://www.gdal.org">GDAL</a>’s <a class="reference external" href="http://www.gdal.org/ogr/osr_tutorial.html">OSR</a></li>
-<li><a class="reference external" href="http://trac.osgeo.org/csmap/">CS-Map</a></li>
-<li><a class="reference external" href="http://www.geotools.org/">GeoTools</a>/<a class="reference external" href="http://www.geotoolkit.org/">Geotoolkit</a></li>
+<li><p><a class="reference external" href="http://www.gdal.org">GDAL</a>’s <a class="reference external" href="http://www.gdal.org/ogr/osr_tutorial.html">OSR</a></p></li>
+<li><p><a class="reference external" href="http://trac.osgeo.org/csmap/">CS-Map</a></p></li>
+<li><p><a class="reference external" href="http://www.geotools.org/">GeoTools</a>/<a class="reference external" href="http://www.geotoolkit.org/">Geotoolkit</a></p></li>
 </ul>
 <p>Some commercial options include:</p>
 <ul class="simple">
-<li><a class="reference external" href="http://www.bluemarblegeo.com/">Blue Marble®</a></li>
-<li><a class="reference external" href="http://www.arcgis.com">ArcGIS®</a></li>
+<li><p><a class="reference external" href="http://www.bluemarblegeo.com/">Blue Marble®</a></p></li>
+<li><p><a class="reference external" href="http://www.arcgis.com">ArcGIS®</a></p></li>
 </ul>
 </div>
 <div class="section" id="questions">
@@ -237,7 +237,7 @@ the <a class="reference external" href="http://trac.osgeo.org/metacrs/">MetaCRS<
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../docs.html">Table Of Contents</a></h3>
+<h3><a href="../docs.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../start.html">Getting Started with libLAS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../osgeo4w.html">Windows Installation</a></li>
@@ -264,17 +264,15 @@ the <a class="reference external" href="http://trac.osgeo.org/metacrs/">MetaCRS<
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -296,8 +294,8 @@ the <a class="reference external" href="http://trac.osgeo.org/metacrs/">MetaCRS<
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="../copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="../copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

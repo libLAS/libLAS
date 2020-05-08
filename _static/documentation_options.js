@@ -1,9 +1,12 @@
 var DOCUMENTATION_OPTIONS = {
-    URL_ROOT: '',
+    URL_ROOT: document.getElementById("documentation_options").getAttribute('data-url_root'),
     VERSION: 'SET(CPACK_PACKAGE_VERSION_MAJOR ${LIBLAS_VERSION_MAJOR}.SET(CPACK_PACKAGE_VERSION_PATCH ${LIBLAS_VERSION_MINOR}.set(VERSION ${LIBLAS_VERSION_MAJOR}.${LIBLAS_VERSION_MINOR}.${LIBLAS_VERSION_PATCH}',
     LANGUAGE: 'None',
     COLLAPSE_INDEX: false,
+    BUILDER: 'html',
     FILE_SUFFIX: '.html',
+    LINK_SUFFIX: '.html',
     HAS_SOURCE: true,
-    SOURCELINK_SUFFIX: '.txt'
+    SOURCELINK_SUFFIX: '.txt',
+    NAVIGATION_WITH_KEYS: false
 };

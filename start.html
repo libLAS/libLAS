@@ -1,18 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Getting Started with libLAS &#8212; liblas.org</title>
     <link rel="stylesheet" href="_static/sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="copyright" title="Copyright" href="copyright.html" />
@@ -69,38 +70,39 @@
   <div class="section" id="getting-started-with-liblas">
 <span id="start"></span><h1>Getting Started with libLAS<a class="headerlink" href="#getting-started-with-liblas" title="Permalink to this headline">¶</a></h1>
 <div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
+<p class="topic-title">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#getting-started-with-liblas" id="id2">Getting Started with libLAS</a><ul>
-<li><a class="reference internal" href="#overview" id="id3">Overview</a></li>
-<li><a class="reference internal" href="#installation" id="id4">Installation</a><ul>
-<li><a class="reference internal" href="#windows" id="id5">Windows</a></li>
-<li><a class="reference internal" href="#unix" id="id6">Unix</a></li>
-<li><a class="reference internal" href="#osx" id="id7">OSX</a></li>
-<li><a class="reference internal" href="#compilation" id="id8">Compilation</a></li>
+<li><p><a class="reference internal" href="#getting-started-with-liblas" id="id2">Getting Started with libLAS</a></p>
+<ul>
+<li><p><a class="reference internal" href="#overview" id="id3">Overview</a></p></li>
+<li><p><a class="reference internal" href="#installation" id="id4">Installation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#windows" id="id5">Windows</a></p></li>
+<li><p><a class="reference internal" href="#unix" id="id6">Unix</a></p></li>
+<li><p><a class="reference internal" href="#osx" id="id7">OSX</a></p></li>
+<li><p><a class="reference internal" href="#compilation" id="id8">Compilation</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#processing" id="id9">Processing</a><ul>
-<li><a class="reference internal" href="#reprojecting-an-las-file" id="id10">Reprojecting an LAS file</a></li>
-<li><a class="reference internal" href="#vertical-datum-transformation-of-an-las-file" id="id11">Vertical datum transformation of an LAS file</a></li>
-<li><a class="reference internal" href="#assigning-color-information-to-a-las-file" id="id12">Assigning color information to a LAS file</a></li>
-<li><a class="reference internal" href="#compressing-an-las-file-with-laszip" id="id13">Compressing an LAS file with LASzip</a></li>
+<li><p><a class="reference internal" href="#processing" id="id9">Processing</a></p>
+<ul>
+<li><p><a class="reference internal" href="#reprojecting-an-las-file" id="id10">Reprojecting an LAS file</a></p></li>
+<li><p><a class="reference internal" href="#vertical-datum-transformation-of-an-las-file" id="id11">Vertical datum transformation of an LAS file</a></p></li>
+<li><p><a class="reference internal" href="#assigning-color-information-to-a-las-file" id="id12">Assigning color information to a LAS file</a></p></li>
+<li><p><a class="reference internal" href="#compressing-an-las-file-with-laszip" id="id13">Compressing an LAS file with LASzip</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Howard Butler</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body">hobu.inc at gmail dot com</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Howard Butler</p>
+</dd>
+<dt class="field-even">Contact</dt>
+<dd class="field-even"><p>hobu.inc at gmail dot com</p>
+</dd>
+</dl>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>libLAS is two things: a library for embedding read and write support of the
@@ -163,9 +165,10 @@ reproject LAS data.  <a class="reference internal" href="utilities/las2las.html#
 existing coordinate system description that might already be specified in the
 LAS file, or you may override the coordinate system description (or supply
 one if none was specified).</p>
-<p>We’re going to use an example file at <a class="reference external" href="http://liblas.org/samples/srs.las">http://liblas.org/samples/srs.las</a> which
-contains only 10 points and has a coordinate system defined.  Please
-download this file if you want to follow along.</p>
+<p>We’re going to use an example <cite>test/data/srs.las</cite> file available from
+<a class="reference external" href="https://github.com/libLAS/libLAS">https://github.com/libLAS/libLAS</a> repository which contains only 10 points
+and has a coordinate system defined. Please download this file if you
+want to follow along.</p>
 <p><a class="reference internal" href="utilities/las2las.html#las2las"><span class="std std-ref">las2las</span></a> is very similar in behavior to another data
 translation utility for raster data – <a class="reference external" href="http://www.gdal.org/gdal_translate.html">gdal_translate</a>.  To reproject data,
 we must have a description of both the coordinate system we are starting with
@@ -175,8 +178,8 @@ you are starting with, issue a <a class="reference internal" href="utilities/las
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The –no-check option tells lasinfo to only print the header information
+<p class="admonition-title">Note</p>
+<p>The –no-check option tells lasinfo to only print the header information
 for the file and to not scan through all of the points.  For a 10 point file,
 this of course isn’t much of a concern, but with a 50 or 500 million point
 file, it isn’t worth waiting for a full scan of the data if all you
@@ -258,8 +261,8 @@ keys, but this is the most simple way to do things via command line.</p>
 <div class="section" id="assigning-color-information-to-a-las-file">
 <h3>Assigning color information to a LAS file<a class="headerlink" href="#assigning-color-information-to-a-las-file" title="Permalink to this headline">¶</a></h3>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The following example assumes you are working with the <a class="reference external" href="http://liblas.org/samples/Autzen_Stadium.zip">Autzen_Stadium</a>
+<p class="admonition-title">Note</p>
+<p>The following example assumes you are working with the <a class="reference external" href="http://liblas.org/samples/Autzen_Stadium.zip">Autzen_Stadium</a>
 example file that is available from the <a class="reference external" href="http://liblas.org/sample">http://liblas.org/sample</a> sample
 library.</p>
 </div>
@@ -271,8 +274,8 @@ do the actual intersection operation have been somewhat limited.</p>
 <p>libLAS 1.6+ allows you to assign color information to a .las file if <a class="reference external" href="http://gdal.org">GDAL</a>
 is linked in at compile-time.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The <a class="reference internal" href="development/specifications.html#specifications"><span class="std std-ref">LAS specifications</span></a> only allow two different
+<p class="admonition-title">Note</p>
+<p>The <a class="reference internal" href="development/specifications.html#specifications"><span class="std std-ref">LAS specifications</span></a> only allow two different
 point format types to store color information – point format 2 and point
 format 3. The difference between point format 2 and point format 3 is that
 3 also has time stored on it. Additionally, only LAS 1.2 and 1.3 versions
@@ -280,7 +283,7 @@ support storing color information, but libLAS only can write LAS 1.2 as of
 libLAS 1.6.0.</p>
 </div>
 <ol class="arabic">
-<li><p class="first">Unzip the <a class="reference external" href="Autzen_Stadium">Autzen Stadium</a> data.</p>
+<li><p>Unzip the <a class="reference external" href="Autzen_Stadium">Autzen Stadium</a> data.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ unzip Autzen_Stadium.zip
 Archive:  Autzen_Stadium.zip
@@ -291,7 +294,7 @@ Archive:  Autzen_Stadium.zip
 </div>
 </div></blockquote>
 </li>
-<li><p class="first">Issue the <a class="reference internal" href="utilities/las2las.html#las2las"><span class="std std-ref">las2las</span></a> call</p>
+<li><p>Issue the <a class="reference internal" href="utilities/las2las.html#las2las"><span class="std std-ref">las2las</span></a> call</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$   las2las -i lidar.las \
             --color-source image.tif \
@@ -312,7 +315,7 @@ Archive:  Autzen_Stadium.zip
 </div>
 </div></blockquote>
 </li>
-<li><p class="first">Inspect the <a class="reference internal" href="utilities/lasinfo.html#lasinfo"><span class="std std-ref">lasinfo</span></a> output and see color information
+<li><p>Inspect the <a class="reference internal" href="utilities/lasinfo.html#lasinfo"><span class="std std-ref">lasinfo</span></a> output and see color information
 attached.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lasinfo</span> <span class="n">output</span><span class="o">.</span><span class="n">las</span>
 
@@ -325,8 +328,8 @@ attached.</p>
 </li>
 </ol>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><a class="reference internal" href="utilities/las2las.html#assign-color"><span class="std std-ref">Adding color from an image</span></a> contains more detailed information about this process.</p>
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="utilities/las2las.html#assign-color"><span class="std std-ref">Adding color from an image</span></a> contains more detailed information about this process.</p>
 </div>
 </div>
 <div class="section" id="compressing-an-las-file-with-laszip">
@@ -343,7 +346,7 @@ compression library.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="docs.html">Table Of Contents</a></h3>
+<h3><a href="docs.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started with libLAS</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
@@ -371,17 +374,15 @@ compression library.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -402,8 +403,8 @@ compression library.</p>
       </ul>
     </div>
 <div class="footer">
-        &copy; <a href="copyright.html">Copyright</a> 2018, Howard Butler, Mateusz Loskot and others.
-      Website was last updated on May 03, 2018 
+        &copy; <a href="copyright.html">Copyright</a> 2020, Howard Butler, Mateusz Loskot and others.
+      Website was last updated on May 08, 2020 
       and created with <a href="http://sphinx.pocoo.org/">Sphinx</a>.
 
 

@@ -1,0 +1,8 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$classliblas_1_1invalid__point__data.html" title="Exception reporting invalid point data. " alt="" coords="164,46,341,73"/>
+<area shape="rect" id="node3" href="$classliblas_1_1liblas__error.html" title="liblas::liblas_error" alt="" coords="187,97,319,123"/>
+<area shape="rect" id="node4" href="$classliblas_1_1configuration__error.html" title="liblas::configuration\l_error" alt="" coords="418,5,563,47"/>
+<area shape="rect" id="node5" href="$classliblas_1_1invalid__expression.html" title="liblas::invalid_expression" alt="" coords="401,71,580,98"/>
+<area shape="rect" id="node6" href="$classliblas_1_1invalid__format.html" title="liblas::invalid_format" alt="" coords="415,122,567,149"/>
+<area shape="rect" id="node7" href="$classliblas_1_1not__yet__implemented.html" title="liblas::not_yet_implemented" alt="" coords="389,173,592,199"/>
+</map>
