@@ -27,7 +27,6 @@ matrix:
               - ubuntu-toolchain-r-test
             packages:
               - g++-5
-              - libgdal-dev
               - libgeotiff-dev
         coverity_scan:
           project:
