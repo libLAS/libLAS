@@ -11,7 +11,7 @@ LIDAR data encoded in LAS file format from C#.
 Hello world
 =============================================
 
-.. code-block:: cpp
+.. code-block:: csharp
 
  using System;
  using System.Text;
