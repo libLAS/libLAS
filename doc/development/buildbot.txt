@@ -54,7 +54,7 @@ dedicated `CDash`_ - utility dashboard hosted by the http://cdash.org website:
 
 * `libLAS CDash`_
 
-The CDash is another tool liblAS uses to perform `continuous integration`_
+The `CDash_` is another tool libLAS uses to perform `continuous integration`_
 during development process.
 
 
@@ -189,6 +189,7 @@ classes or categories of testing, but the source filename(s) will also need
 to be added in liblas/test/unit/CMakeLists.txt.
 
 
+.. _`CDash`: http://cdash.org/
 .. _`CMake`: http://www.cmake.org/
 .. _`CMake 2.8.0+`: http://www.cmake.org/cmake/help/cmake-2-8-docs.html
 .. _`continuous integration`: http://en.wikipedia.org/wiki/Continuous_integration
