@@ -4,12 +4,6 @@
 libLAS Documentation
 ******************************************************************************
 
-.. |image| image:: ./_static/pdf.png
-   :height: 15
-   :width: 15
-   :alt: PDF icon
-   :target: /pdf/libLAS.pdf
-
 .. toctree::
    :maxdepth: 2
    
