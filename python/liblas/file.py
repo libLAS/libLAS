@@ -98,13 +98,10 @@ class File(object):
         else:
             self.filename = filename
         self._header = None
-        self.ownheader = True
 
         # import pdb;pdb.set_trace()
-        if header != None:
-
-            self.ownheader = False
-            self._header = header.handle
+        if header is not None:
+            self._header = core.las.LASHeader_Copy(header.handle)
 
         self.handle = None
         self._mode = mode.lower()
