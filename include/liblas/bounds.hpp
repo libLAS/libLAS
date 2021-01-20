@@ -472,11 +472,11 @@ void shift(std::vector<T> deltas)
     typedef typename std::vector< T >::size_type size_type;
 
     size_type i;
-    if( dimension() <= deltas.size()) 
+    if( dimension() != deltas.size()) 
     {
         std::ostringstream msg; 
         msg << "liblas::Bounds::shift: Delta vector size, " << deltas.size()
-            << ", is larger than the dimensionality of the bounds, "<< dimension() << ".";
+            << ", is not equal to the dimensionality of the bounds, "<< dimension() << ".";
         throw std::runtime_error(msg.str());
     }
     for (i = 0; i < deltas.size(); ++i){
@@ -484,21 +484,21 @@ void shift(std::vector<T> deltas)
     }
 }
 
-/// Scale each dimension by a vector of deltas
-void scale(std::vector<T> deltas)
+/// Scale each dimension by a vector of alphas
+void scale(std::vector<T> alphas)
 {
     typedef typename std::vector< T >::size_type size_type;
 
     size_type i;
-    if( dimension() <= deltas.size()) 
+    if( dimension() != alphas.size()) 
     {
         std::ostringstream msg; 
-        msg << "liblas::Bounds::scale: Delta vector size, " << deltas.size()
-            << ", is larger than the dimensionality of the bounds, "<< dimension() << ".";
+        msg << "liblas::Bounds::scale: Alpha vector size, " << alphas.size()
+            << ", is not equal to the dimensionality of the bounds, "<< dimension() << ".";
         throw std::runtime_error(msg.str());
     }
-    for (i = 0; i < deltas.size(); ++i){
-        ranges[i].scale(deltas[i]);
+    for (i = 0; i < alphas.size(); ++i){
+        ranges[i].scale(alphas[i]);
     }
 }
 
