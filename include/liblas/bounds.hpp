@@ -484,21 +484,21 @@ void shift(std::vector<T> deltas)
     }
 }
 
-/// Scale each dimension by a vector of alphas
-void scale(std::vector<T> alphas)
+/// Scale each dimension by a vector of scale factors
+void scale(std::vector<T> factors)
 {
     typedef typename std::vector< T >::size_type size_type;
 
     size_type i;
-    if( dimension() != alphas.size()) 
+    if( dimension() != factors.size()) 
     {
         std::ostringstream msg; 
-        msg << "liblas::Bounds::scale: Alpha vector size, " << alphas.size()
+        msg << "liblas::Bounds::scale: Scale factor vector size, " << factors.size()
             << ", is not equal to the dimensionality of the bounds, "<< dimension() << ".";
         throw std::runtime_error(msg.str());
     }
-    for (i = 0; i < alphas.size(); ++i){
-        ranges[i].scale(alphas[i]);
+    for (i = 0; i < factors.size(); ++i){
+        ranges[i].scale(factors[i]);
     }
 }
 
