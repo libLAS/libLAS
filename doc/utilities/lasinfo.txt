@@ -115,8 +115,8 @@
 Example data
 ------------
 
-Visit the libLAS sample library for LiDAR data in LAS format:
+Visit the PDAL data library for LiDAR data in LAS format:
 
-http://liblas.org/samples/
+https://github.com/PDAL/data
 
 .. _`LAStools`: http://www.cs.unc.edu/~isenburg/lastools/

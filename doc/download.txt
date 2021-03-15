@@ -31,7 +31,7 @@ Past Release
     :ref:`source`
 
 .. seealso::
-    A `sample library <http://liblas.org/samples>`__ is also available to provide
+    A `sample library <https://github.com/PDAL/data>`__ is also available to provide
     data to test your tools.
 
 .. seealso::
