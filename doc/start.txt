@@ -215,7 +215,7 @@ Assigning color information to a LAS file
 .. note::
 
     The following example assumes you are working with the `Autzen_Stadium`_
-    example file that is available from the http://liblas.org/sample sample
+    example file that is available from the https://github.com/PDAL/data sample
     library.
 
 
@@ -309,5 +309,5 @@ compression library.
 .. _`Proj.4`: http://trac.osgeo.org/proj/
 .. _`WKT`: http://en.wikipedia.org/wiki/Well-known_text#Spatial_reference_systems
 .. _`GDAL`: http://gdal.org
-.. _`Autzen_Stadium`: http://liblas.org/samples/Autzen_Stadium.zip
+.. _`Autzen_Stadium`: https://github.com/PDAL/data/raw/master/autzen/Autzen_Stadium.zip
 .. _`Homebrew`: http://brew.sh
