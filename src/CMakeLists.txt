@@ -223,7 +223,8 @@ target_link_libraries(las
   ${GEOTIFF_LIBRARY}
   ${GDAL_LIBRARY}
   ${LASZIP_LIBRARY}
-  ${Boost_LIBRARIES})
+  ${Boost_LIBRARIES}
+  ${PROJ_LIBRARIES})
 
 target_link_libraries(las_c
   las )
