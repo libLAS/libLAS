@@ -110,8 +110,11 @@ public:
     Point(Point const& other);
     Point& operator=(Point const& rhs);
 
+    /// Returns the scaled and shifted X-coordinate. Scaling and shifting (offset) parameters are defined in the header.
     double GetX() const;
+    /// Returns the scaled and shifted Y-coordinate. Scaling and shifting (offset) parameters are defined in the header.
     double GetY() const;
+    /// Returns the scaled and shifted Z-coordinate. Scaling and shifting (offset) parameters are defined in the header.
     double GetZ() const;
     
     int32_t GetRawX() const;

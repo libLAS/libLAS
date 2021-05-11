@@ -11,7 +11,7 @@ Generating Convex Hulls with libLAS and Qhull
 This article is dedicate to tools, techniques and
 `algorithms <http://en.wikipedia.org/wiki/Convex_hull_algorithms>`__ useful to
 create `convex hull <http://en.wikipedia.org/wiki/Convex_hull>`__ of cloud of
-points serialized in LAS file. You can find samples at http://liblas.org/samples 
+points serialized in LAS file. You can find samples at https://github.com/PDAL/data 
 to play with.
 
 
