@@ -186,7 +186,7 @@ private:
     
 public:
 
-Bounds<T>()
+Bounds()
 {
     ranges.resize(0);
 }
