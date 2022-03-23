@@ -456,13 +456,17 @@ bool contains(Point const& point) const
         return false;
     if (!ranges[1].contains(point.GetY()))
         return false;
-        
-    // If our z bounds has no length, we'll say it's contained anyway.
-    if (!ranges[2].contains(point.GetZ())) 
+
+    // Only check Z if we have 3 dimensional bounds
+    if (ranges.size() > 2)
     {
-        if (detail::compare_distance(ranges[2].length(), 0.0))
-            return true;
-        return false;
+    // If our z bounds has no length, we'll say it's contained anyway.
+        if (!ranges[2].contains(point.GetZ())) 
+        {
+            if (detail::compare_distance(ranges[2].length(), 0.0))
+                return true;
+            return false;
+        }
     }
     return true;
 }
