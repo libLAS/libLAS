@@ -452,17 +452,26 @@ bool contains(Point const& point) const
     //           << " r.z.min: " << ranges[2].min 
     //           << " r.z.max: " << ranges[2].max 
     //           << " p.z: " << point.GetZ() << std::endl;
+
+    
+    if (ranges.size() < 2) 
+        return false;
+    
     if (!ranges[0].contains(point.GetX()))
         return false;
     if (!ranges[1].contains(point.GetY()))
         return false;
-        
-    // If our z bounds has no length, we'll say it's contained anyway.
-    if (!ranges[2].contains(point.GetZ())) 
+
+    // Only check Z if we have 3 dimensional bounds
+    if (ranges.size() > 2)
     {
-        if (detail::compare_distance(ranges[2].length(), 0.0))
-            return true;
-        return false;
+    // If our z bounds has no length, we'll say it's contained anyway.
+        if (!ranges[2].contains(point.GetZ())) 
+        {
+            if (detail::compare_distance(ranges[2].length(), 0.0))
+                return true;
+            return false;
+        }
     }
     return true;
 }
