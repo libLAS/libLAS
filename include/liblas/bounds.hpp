@@ -452,6 +452,11 @@ bool contains(Point const& point) const
     //           << " r.z.min: " << ranges[2].min 
     //           << " r.z.max: " << ranges[2].max 
     //           << " p.z: " << point.GetZ() << std::endl;
+
+    
+    if (ranges.size() < 2) 
+        return false;
+    
     if (!ranges[0].contains(point.GetX()))
         return false;
     if (!ranges[1].contains(point.GetY()))
