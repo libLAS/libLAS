@@ -36,9 +36,9 @@ install:
   # make an install directory for packacing
   - ps: mkdir C:\liblas | out-null
   # get the OSGeo installer
-  - ps: (new-object net.webclient).DownloadFile("http://download.osgeo.org/osgeo4w/osgeo4w-setup-x86_64.exe", "C:\temp\osgeo4w-setup.exe")
+  - ps: (new-object net.webclient).DownloadFile("http://download.osgeo.org/osgeo4w/v1/osgeo4w-setup-x86_64-v1.exe", "C:\temp\osgeo4w-setup.exe")
   # and install our dependencies
-  - C:\temp\osgeo4w-setup.exe -q -k -r -A -s http://download.osgeo.org/osgeo4w/ -a x86_64 -P gdal,geos,laszip,libgeotiff,libtiff,proj,zlib -R %OSGEO4W_ROOT% > NUL
+  - C:\temp\osgeo4w-setup.exe -q -k -r -A -s http://download.osgeo.org/osgeo4w/v1 -a x86_64 -P gdal,geos,laszip,libgeotiff,libtiff,proj,zlib -R %OSGEO4W_ROOT% > NUL
   # call CMake configuration script
   - call .\\bin\\appveyor\\config.cmd
 
