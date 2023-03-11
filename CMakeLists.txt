@@ -21,6 +21,13 @@ SET(LIBLAS_C_LIB_VERSION "2.4.0")
 SET(LIBLAS_C_LIB_SOVERSION "3")
 SET(OSGEO4W_UPSTREAM_RELEASE "1")
 
+# Cygwin compatibility
+if(CYGWIN)
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS ON)
+endif()  
+
 if(WIN32)
   # Name of C++ library
   set(LIBLAS_LIB_NAME liblas)
