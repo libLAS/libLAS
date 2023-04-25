@@ -184,11 +184,13 @@ if(WIN32)
 endif(WIN32)
 
 find_package(Threads)
-find_package(Boost 1.42 COMPONENTS program_options thread system iostreams filesystem REQUIRED)
+find_package(Boost 1.42 COMPONENTS iostreams program_options serialization thread REQUIRED)
 
-if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-endif()
+# The following header-only and their dependencies are additionally required,
+# but cannot be explicitly requested via find_package, so make sure they exists:
+# - foreach interprocess lambda property_tree uuid
+
+include_directories(${Boost_INCLUDE_DIRS})
 
 # make these available for the user to set.
 mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
