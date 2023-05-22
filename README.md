@@ -1,5 +1,11 @@
 # libLAS
 
+> **STATUS NOTICE**: As of 2018, libLAS has been replaced by the [PDAL](https://pdal.io) and it is in
+**hibernation mode** with very sporadic maintenance. libLAS does not provide support for LAS or LAZ 1.4, which PDAL does.
+> If you are interested in submitting a fix or an improvement, *please consider becoming a contributor* helping with releasing any new changes.
+
+----
+
 libLAS is a C/C++ library for reading and writing the very common `LAS`
 LiDAR format. The [ASPRS LAS format](https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities)
 is a sequential binary file format used to store data from LiDAR sensors
