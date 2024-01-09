@@ -256,6 +256,9 @@ if(WITH_GEOTIFF)
     include_directories(${GEOTIFF_INCLUDE_DIR})
     add_definitions(-DHAVE_LIBGEOTIFF=1)
 
+    # geotiff probably depends on proj, so we need those libs to avoid linker errors
+    find_package(PROJ)
+
     mark_as_advanced(CLEAR TIFF_INCLUDE_DIR)
     mark_as_advanced(CLEAR TIFF_LIBRARY)
     if (WIN32)
