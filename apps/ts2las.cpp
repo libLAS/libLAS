@@ -343,6 +343,7 @@ int main(int argc, char* argv[])
     if (!opened)
     {
         std::cerr << "Could not open file '" << input << "' to read TerraSolid .bin data! " << std::endl;
+        if (hdr) delete hdr;
         return 1;
     }
     
