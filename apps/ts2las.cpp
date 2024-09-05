@@ -30,6 +30,7 @@ namespace po = boost::program_options;
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <memory>
 
 using namespace liblas;
 
@@ -336,14 +337,13 @@ int main(int argc, char* argv[])
     if (verbose)
         std::cout << "input: " << input<<  " output: " <<output<<std::endl;
     
-    ScanHdr* hdr = new ScanHdr;
+    std::unique_ptr<ScanHdr> hdr = std::make_unique<ScanHdr>();
 
     std::ifstream istrm;
     bool opened = liblas::Open(istrm, input);
     if (!opened)
     {
         std::cerr << "Could not open file '" << input << "' to read TerraSolid .bin data! " << std::endl;
-        delete hdr;
         return 1;
     }
     
@@ -356,20 +356,19 @@ int main(int argc, char* argv[])
     }
     
     bool success;
-    success = ReadHeader(hdr, istrm);
+    success = ReadHeader(hdr.get(), istrm); 
     if (!success) 
     {
         std::cerr<<"Unable to read " << input << "to read file!" << std::endl; 
         return 1;
     }
     
-    // std::cout << "stream position is: " << istrm->tellg() << std::endl;
-    liblas::Header header = CreateHeader(hdr, verbose);
+    liblas::Header header = CreateHeader(hdr.get(), verbose);
     liblas::Writer writer(ostrm, header);
     
     writer.SetFilters(filters);
     
-    success = WritePoints(writer, istrm, hdr, verbose);
+    success = WritePoints(writer, istrm, hdr.get(), verbose);
  
     if (!success) 
     {
