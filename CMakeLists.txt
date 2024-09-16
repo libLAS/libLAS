@@ -10,9 +10,7 @@ cmake_minimum_required(VERSION 2.8.11)
 # libLAS general settings
 project(libLAS)
 
-
-
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ standard version to use (default is 14)")
 
 SET(LIBLAS_VERSION_MAJOR "1")
 SET(LIBLAS_VERSION_MINOR "8")
