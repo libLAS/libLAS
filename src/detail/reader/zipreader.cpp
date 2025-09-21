@@ -46,7 +46,7 @@
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/detail/zippoint.hpp>
 // laszip
-#include <laszip/lasunzipper.hpp>
+#include <lasunzipper.hpp>
 // boost
 #include <boost/cstdint.hpp>
 // std

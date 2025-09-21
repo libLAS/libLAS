@@ -48,8 +48,8 @@
 #include <liblas/detail/private_utility.hpp>
 #include <liblas/detail/zippoint.hpp>
 // laszip
-#include <laszip/laszipper.hpp>
-#include <laszip/laszip.hpp>
+#include <laszipper.hpp>
+#include <laszip.hpp>
 // std
 #include <vector>
 #include <fstream>

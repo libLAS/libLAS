@@ -52,7 +52,7 @@
 #endif
 
 #ifdef HAVE_LASZIP
-#include <laszip/laszip.hpp>
+#include <laszip.hpp>
 #endif
 
 #include <liblas/spatialreference.hpp>
