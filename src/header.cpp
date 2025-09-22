@@ -48,7 +48,7 @@
 
 #ifdef HAVE_LASZIP
 #include <liblas/detail/zippoint.hpp>
-#include <laszip/laszip.hpp>
+#include <laszip.hpp>
 #endif
 
 // boost
