@@ -34,7 +34,9 @@
 #include "geovalues.h"
 #include "gt_citation.h"
 
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3,12,0)
 CPL_CVSID("$Id: gt_citation.cpp 21848 2011-02-25 16:41:38Z warmerdam $")
+#endif
 
 static const char *apszUnitMap[] = {
     "meters", "1.0",
