@@ -45,7 +45,9 @@
 #include "gt_wkt_srs_for_gdal.h"
 #include "gt_citation.h"
 
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3,12,0)
 CPL_CVSID("$Id$")
+#endif
 
 #define ProjLinearUnitsInterpCorrectGeoKey   3059
 
