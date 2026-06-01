@@ -35,6 +35,16 @@
 #include "geo_normalize.h"
 #include "ogr_spatialref.h"
 
+#ifndef MAX
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef MIN
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+#ifndef ABS
+#define ABS(x) (((x) < 0) ? (-1 * (x)) : (x))
+#endif
+
 char* ImagineCitationTranslation(char* psCitation, geokey_t keyID);
 char** CitationStringParse(char* psCitation, geokey_t keyID);
 
